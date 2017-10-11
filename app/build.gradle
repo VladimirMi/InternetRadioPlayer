@@ -1,9 +1,11 @@
 apply plugin: 'com.android.application'
 apply plugin: 'kotlin-android'
+apply plugin: 'kotlin-kapt'
+apply plugin: 'kotlin-android-extensions'
 
 android {
     compileSdkVersion 25
-    buildToolsVersion "26.0.1"
+    buildToolsVersion "26.0.2"
     defaultConfig {
         applicationId "io.github.vladimirmi.radius"
         minSdkVersion 16
@@ -11,6 +13,12 @@ android {
         versionCode 1
         versionName "1.0"
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
+
+        javaCompileOptions {
+            annotationProcessorOptions {
+                arguments = [ toothpick_registry_package_name : 'io.github.vladimirmi.radius' ]
+            }
+        }
     }
     buildTypes {
         release {
@@ -20,15 +28,32 @@ android {
     }
 }
 
+ext {
+    supportLibraryVersion = "25.4.0"
+    toothpickVersion = "1.0.8"
+    moxyVersion = "1.4.6"
+}
+
 dependencies {
     compile fileTree(dir: 'libs', include: ['*.jar'])
     androidTestCompile('com.android.support.test.espresso:espresso-core:2.2.2', {
         exclude group: 'com.android.support', module: 'support-annotations'
     })
-    compile 'com.android.support:appcompat-v7:25.3.1'
     testCompile 'junit:junit:4.12'
+    //Kotlin
     compile "org.jetbrains.kotlin:kotlin-stdlib-jre7:$kotlin_version"
-}
-repositories {
-    mavenCentral()
+    //Support
+    compile "com.android.support:appcompat-v7:$supportLibraryVersion"
+    compile "com.android.support:design:$supportLibraryVersion"
+    //DI
+    compile "com.github.stephanenicolas.toothpick:toothpick-runtime:$toothpickVersion"
+    kapt "com.github.stephanenicolas.toothpick:toothpick-compiler:$toothpickVersion"
+    //Moxy
+    kapt "com.arello-mobile:moxy-compiler:$moxyVersion"
+    compile "com.arello-mobile:moxy-app-compat:$moxyVersion"
+    //Navigation
+    compile "ru.terrakok.cicerone:cicerone:1.2.1"
+    //Logging
+    compile "com.jakewharton.timber:timber:4.5.1"
+    compile 'com.facebook.stetho:stetho:1.5.0'
 }

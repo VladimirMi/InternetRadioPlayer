@@ -5,6 +5,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import io.github.vladimirmi.radius.R
+import io.github.vladimirmi.radius.model.entity.GroupingMedia
 import io.github.vladimirmi.radius.model.entity.Media
 import kotlinx.android.synthetic.main.item_group_item.view.*
 import kotlinx.android.synthetic.main.item_group_title.view.*
@@ -19,18 +20,15 @@ class MediaListAdapter : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
         const val GROUP_ITEM = 1
     }
 
-    private val mediaList = ArrayList<Media>()
+    private val mediaList = GroupingMedia()
 
     fun setData(data: List<Media>) {
-        mediaList.addAll(data)
+        mediaList.setData(data)
         notifyDataSetChanged()
     }
 
-    private var prevGroup = ""
-    override fun getItemViewType(position: Int): Int {
-        val genre = mediaList[position].genres.first()
-        return if (genre != prevGroup) GROUP_TITLE else GROUP_ITEM
-    }
+    override fun getItemViewType(position: Int): Int =
+            if (mediaList.isGroupTitle(position)) GROUP_TITLE else GROUP_ITEM
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): RecyclerView.ViewHolder {
         val inflater = LayoutInflater.from(parent.context)
@@ -43,13 +41,12 @@ class MediaListAdapter : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
 
     override fun onBindViewHolder(holder: RecyclerView.ViewHolder, position: Int) {
         when (holder) {
-            is MediaGroupTitleVH -> holder.bind(mediaList[position].genres.first())
-            is MediaGroupItemVH -> holder.bind(mediaList[position].name)
+            is MediaGroupTitleVH -> holder.bind(mediaList.getGroupTitle(position))
+            is MediaGroupItemVH -> holder.bind(mediaList.getGroupItem(position).name)
         }
     }
 
-    override fun getItemCount(): Int
-            = mediaList.size + mediaList.distinctBy { it.genres.first() }.size
+    override fun getItemCount(): Int = mediaList.size()
 
 }
 

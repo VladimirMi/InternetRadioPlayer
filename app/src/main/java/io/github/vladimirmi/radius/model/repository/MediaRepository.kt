@@ -1,6 +1,6 @@
 package io.github.vladimirmi.radius.model.repository
 
-import io.github.vladimirmi.radius.model.data.Preferences
+import io.github.vladimirmi.radius.model.data.MediaSource
 import io.github.vladimirmi.radius.model.entity.Media
 import javax.inject.Inject
 
@@ -9,9 +9,7 @@ import javax.inject.Inject
  */
 
 class MediaRepository
-@Inject constructor(private val prefs: Preferences) {
+@Inject constructor(private val mediaSource: MediaSource) {
 
-    fun getMediaList(): List<Media> {
-        return emptyList()
-    }
+    fun getMediaList(): List<Media> = mediaSource.mediaList
 }

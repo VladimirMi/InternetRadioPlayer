@@ -5,7 +5,7 @@ apply plugin: 'kotlin-android-extensions'
 
 android {
     compileSdkVersion 25
-    buildToolsVersion "26.0.1"
+    buildToolsVersion "26.0.2"
     defaultConfig {
         applicationId "io.github.vladimirmi.radius"
         minSdkVersion 16
@@ -29,7 +29,7 @@ android {
 }
 
 ext {
-    supportLibraryVersion = "25.3.1"
+    supportLibraryVersion = "25.4.0"
     toothpickVersion = "1.0.8"
     moxyVersion = "1.4.6"
 }
@@ -55,8 +55,5 @@ dependencies {
     compile "ru.terrakok.cicerone:cicerone:1.2.1"
     //Logging
     compile "com.jakewharton.timber:timber:4.5.1"
-}
-
-repositories {
-    mavenCentral()
+    compile 'com.facebook.stetho:stetho:1.5.0'
 }

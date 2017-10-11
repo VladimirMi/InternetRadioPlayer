@@ -28,7 +28,7 @@ class RootActivity : MvpAppCompatActivity(), RootView {
 
     @ProvidePresenter
     fun providePresenter() : RootPresenter {
-        return Toothpick.openScopes(Scopes.APP, Scopes.REPOSITORY, this).apply {
+        return Toothpick.openScopes(Scopes.APP, Scopes.REPOSITORY, Scopes.ROOT_ACTIVITY).apply {
             installModules(RootActivityModule())
             Toothpick.inject(this@RootActivity, this)
         }.getInstance(RootPresenter::class.java)
@@ -51,7 +51,11 @@ class RootActivity : MvpAppCompatActivity(), RootView {
 
     override fun onDestroy() {
         super.onDestroy()
-        if (isFinishing) Toothpick.closeScope(this)
+        if (isFinishing) Toothpick.closeScope(Scopes.ROOT_ACTIVITY)
+    }
+
+    override fun onRequestPermissionsResult(requestCode: Int, permissions: Array<out String>, grantResults: IntArray) {
+        presenter.onRequestPermissionsResult(requestCode, permissions, grantResults)
     }
 
     private val navigator = object : SupportAppNavigator(this, R.id.fragment_container) {

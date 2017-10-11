@@ -1,6 +1,7 @@
 package io.github.vladimirmi.radius
 
 import android.app.Application
+import com.facebook.stetho.Stetho
 import io.github.vladimirmi.radius.di.Scopes
 import io.github.vladimirmi.radius.di.module.AppModule
 import timber.log.Timber
@@ -17,6 +18,8 @@ class App : Application() {
 
     override fun onCreate() {
         super.onCreate()
+
+        Stetho.initializeWithDefaults(this)
 
         if (BuildConfig.DEBUG) {
             Timber.plant(Timber.DebugTree())

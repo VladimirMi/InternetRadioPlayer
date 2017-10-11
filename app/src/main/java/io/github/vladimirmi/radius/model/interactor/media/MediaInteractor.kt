@@ -11,7 +11,5 @@ import javax.inject.Inject
 class MediaInteractor
 @Inject constructor(private val mediaRepository: MediaRepository) {
 
-    fun getMediaList(): List<Media> {
-        return mediaRepository.getMediaList()
-    }
+    fun getMediaList(): List<Media> = mediaRepository.getMediaList()
 }

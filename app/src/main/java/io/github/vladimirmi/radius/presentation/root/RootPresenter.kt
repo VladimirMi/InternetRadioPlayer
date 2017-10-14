@@ -27,6 +27,8 @@ class RootPresenter
         if (checkAndRequestPermissions(permissions, REQUEST_WRITE)) {
             nextScreen()
         }
+
+
     }
 
     private fun checkAndRequestPermissions(permissions: Array<String>, requestCode: Int): Boolean {

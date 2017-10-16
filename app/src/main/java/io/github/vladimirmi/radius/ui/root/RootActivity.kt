@@ -29,7 +29,7 @@ class RootActivity : MvpAppCompatActivity(), RootView {
     @ProvidePresenter
     fun providePresenter() : RootPresenter {
         return Toothpick.openScopes(Scopes.APP, Scopes.REPOSITORY, Scopes.ROOT_ACTIVITY).apply {
-            installModules(RootActivityModule())
+            installModules(RootActivityModule(this@RootActivity))
             Toothpick.inject(this@RootActivity, this)
         }.getInstance(RootPresenter::class.java)
     }

@@ -1,5 +1,6 @@
 package io.github.vladimirmi.radius.ui.media
 
+import android.net.Uri
 import android.os.Bundle
 import android.support.v7.widget.LinearLayoutManager
 import android.view.View
@@ -19,10 +20,10 @@ import toothpick.Toothpick
  * Created by Vladimir Mikhalev 30.09.2017.
  */
 
-class MediaFragment : BaseFragment(), MediaView {
+class MediaFragment : BaseFragment(), MediaView, MediaCallback {
 
     override val layoutRes = R.layout.fragment_media
-    private val adapter = MediaListAdapter()
+    private val adapter = MediaListAdapter(this)
 
     @InjectPresenter lateinit var presenter: MediaPresenter
 
@@ -42,5 +43,9 @@ class MediaFragment : BaseFragment(), MediaView {
     override fun setMediaList(mediaList: List<Media>) {
         Timber.e("setMediaList: ${mediaList.size}")
         adapter.setData(mediaList)
+    }
+
+    override fun onPlayPause(uri: Uri) {
+        presenter.playPause(uri)
     }
 }

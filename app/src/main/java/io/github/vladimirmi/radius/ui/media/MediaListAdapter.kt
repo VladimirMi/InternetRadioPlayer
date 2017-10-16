@@ -1,5 +1,6 @@
 package io.github.vladimirmi.radius.ui.media
 
+import android.net.Uri
 import android.support.v7.widget.RecyclerView
 import android.view.LayoutInflater
 import android.view.View
@@ -14,7 +15,8 @@ import kotlinx.android.synthetic.main.item_group_title.view.*
  * Created by Vladimir Mikhalev 04.10.2017.
  */
 
-class MediaListAdapter : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
+class MediaListAdapter(private val callback: MediaCallback)
+    : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
     private companion object {
         const val GROUP_TITLE = 0
         const val GROUP_ITEM = 1
@@ -42,7 +44,7 @@ class MediaListAdapter : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
     override fun onBindViewHolder(holder: RecyclerView.ViewHolder, position: Int) {
         when (holder) {
             is MediaGroupTitleVH -> holder.bind(mediaList.getGroupTitle(position))
-            is MediaGroupItemVH -> holder.bind(mediaList.getGroupItem(position).name)
+            is MediaGroupItemVH -> holder.bind(mediaList.getGroupItem(position), callback)
         }
     }
 
@@ -57,7 +59,12 @@ class MediaGroupTitleVH(itemView: View) : RecyclerView.ViewHolder(itemView) {
 }
 
 class MediaGroupItemVH(itemView: View) : RecyclerView.ViewHolder(itemView) {
-    fun bind(name: String) {
-        itemView.name.text = name
+    fun bind(media: Media, callback: MediaCallback) {
+        itemView.name.text = media.name
+        itemView.play_pause.setOnClickListener { callback.onPlayPause(media.uri) }
     }
+}
+
+interface MediaCallback {
+    fun onPlayPause(uri: Uri)
 }

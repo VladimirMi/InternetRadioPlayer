@@ -3,12 +3,16 @@ package io.github.vladimirmi.radius.service
 
 import android.app.Service
 import android.content.Intent
+import android.net.Uri
 import android.os.Bundle
 import android.support.v4.media.MediaBrowserCompat
 import android.support.v4.media.MediaBrowserServiceCompat
 import android.support.v4.media.session.MediaSessionCompat
 import android.support.v4.media.session.PlaybackStateCompat
-import io.github.vladimirmi.radius.App
+import android.support.v4.media.session.PlaybackStateCompat.*
+import com.google.android.exoplayer2.ExoPlaybackException
+import com.google.android.exoplayer2.ExoPlaybackException.*
+import com.google.android.exoplayer2.Player
 import io.github.vladimirmi.radius.BuildConfig
 import io.github.vladimirmi.radius.R
 import timber.log.Timber
@@ -17,7 +21,7 @@ import timber.log.Timber
  * Developer Vladimir Mikhalev, 09.05.2017.
  */
 
-class PlayerService : MediaBrowserServiceCompat(), PlaybackCallback {
+class PlayerService : MediaBrowserServiceCompat() {
 
     companion object {
         const val ACTION_PLAY = BuildConfig.APPLICATION_ID + ".ACTION_PLAY"
@@ -33,16 +37,15 @@ class PlayerService : MediaBrowserServiceCompat(), PlaybackCallback {
     private var serviceStarted: Boolean = false
 
     override fun onCreate() {
+        Timber.e("onCreate")
         super.onCreate()
 
         session = MediaSessionCompat(this, javaClass.simpleName)
         sessionToken = session.sessionToken
-        session.setCallback(PlayerSessionCallback())
+        session.setCallback(SessionCallback())
         session.setFlags(MediaSessionCompat.FLAG_HANDLES_MEDIA_BUTTONS or MediaSessionCompat.FLAG_HANDLES_TRANSPORT_CONTROLS)
 
-        playback = Playback(this)
-        playback.state = PlaybackStateCompat.STATE_NONE
-        playback.callback = this
+        playback = Playback(this, playerCallback)
     }
 
     override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
@@ -60,14 +63,15 @@ class PlayerService : MediaBrowserServiceCompat(), PlaybackCallback {
                     handlePlayRequest()
                 }
             }
-            ACTION_PAUSE -> {
-                handlePauseRequest()
-            }
             ACTION_STOP -> {
                 handleStopRequest()
             }
         }
         return Service.START_STICKY
+    }
+
+    override fun onDestroy() {
+        playback.releasePlayer()
     }
 
     override fun onGetRoot(clientPackageName: String, clientUid: Int, rootHints: Bundle?): MediaBrowserServiceCompat.BrowserRoot? {
@@ -78,61 +82,74 @@ class PlayerService : MediaBrowserServiceCompat(), PlaybackCallback {
         result.sendResult(emptyList())
     }
 
-    override fun onCompletion() {
-        Timber.w("onCompletion")
-        handlePlayRequest()
+    private val playerCallback = object : EmptyPlayerCallback() {
+
+        override fun onPlayerStateChanged(playWhenReady: Boolean, playbackState: Int) {
+            val state = when (playbackState) {
+                Player.STATE_BUFFERING -> STATE_BUFFERING
+                Player.STATE_ENDED -> STATE_PAUSED
+                Player.STATE_READY -> if (playWhenReady) STATE_PLAYING else STATE_STOPPED
+                else -> STATE_NONE
+            }
+
+            session.setPlaybackState(createPlaybackState(state))
+        }
+
+        override fun onPlayerError(error: ExoPlaybackException?) {
+            when (error?.type) {
+                TYPE_RENDERER -> Timber.e("RENDERER error occurred: ${error.rendererException}")
+                TYPE_SOURCE -> Timber.e("SOURCE error occurred: ${error.sourceException}")
+                TYPE_UNEXPECTED -> Timber.e("UNEXPECTED error occurred: ${error.unexpectedException}")
+            }
+        }
+
+        private fun createPlaybackState(state: Int): PlaybackStateCompat {
+            val availableActions = if (state == STATE_PLAYING) {
+                PlaybackStateCompat.ACTION_STOP or PlaybackStateCompat.ACTION_PAUSE
+            } else {
+                PlaybackStateCompat.ACTION_PLAY
+            }
+
+            return Builder().setActions(availableActions)
+                    .setState(state, PLAYBACK_POSITION_UNKNOWN, 1.0f)
+                    .build()
+        }
     }
 
-    override fun onPlaybackStatusChanged(state: Int) = updatePlaybackState()
-
-    override fun onError(error: String) = Timber.e(error)
+    private fun handlePlayRequest(uri: Uri) {
+        Timber.d("handlePlayRequest with url $uri")
+        startService()
+        playback.play(uri)
+    }
 
     private fun handlePlayRequest() {
-        val stationUrl = App.stationsRep.stations.first().uri.toString()
-        Timber.d("handlePlayRequest: mState=${playback.state}, with url $stationUrl")
+        startService()
+        playback.resume()
+    }
 
+    private fun handleStopRequest() {
+        Timber.d("handleStopRequest")
+        playback.stop()
+        stopSelf()
+        serviceStarted = false
+        session.isActive = false
+    }
+
+    private fun startService() {
         if (!serviceStarted) {
             Timber.v("Starting service")
             startService(Intent(applicationContext, PlayerService::class.java))
             serviceStarted = true
         }
         session.isActive = true
-        playback.play(stationUrl)
     }
 
-    private fun handlePauseRequest() {
-        Timber.d("handlePauseRequest: mState=${playback.state}")
-        playback.pause()
-    }
+    inner class SessionCallback : MediaSessionCompat.Callback() {
 
-    private fun handleStopRequest() {
-        Timber.d("handleStopRequest: mState=${playback.state}")
-        playback.stop(true)
-        stopSelf()
-        serviceStarted = false
-        session.isActive = false
-    }
-
-    private fun updatePlaybackState() {
-        Timber.d("updatePlaybackState, playback state=" + playback.state)
-
-        val stateBuilder = PlaybackStateCompat.Builder()
-                .setActions(availableActions)
-                .setState(playback.state, PlaybackStateCompat.PLAYBACK_POSITION_UNKNOWN, 1.0f)
-
-        session.setPlaybackState(stateBuilder.build())
-    }
-
-    private val availableActions: Long
-        get() {
-            return if (playback.isPlaying) {
-                PlaybackStateCompat.ACTION_STOP or PlaybackStateCompat.ACTION_PAUSE
-            } else {
-                PlaybackStateCompat.ACTION_PLAY
-            }
+        override fun onPlayFromUri(uri: Uri, extras: Bundle?) {
+            Timber.d("onPlayFromUri $uri")
+            handlePlayRequest(uri)
         }
-
-    inner class PlayerSessionCallback : MediaSessionCompat.Callback() {
 
         override fun onPlay() {
             Timber.d("play")
@@ -140,13 +157,13 @@ class PlayerService : MediaBrowserServiceCompat(), PlaybackCallback {
         }
 
         override fun onStop() {
-            Timber.d("stop. current state=" + playback.state)
+            Timber.d("stop")
             handleStopRequest()
         }
 
         override fun onPause() {
-            Timber.d("pause. current state=" + playback.state)
-            handlePauseRequest()
+            Timber.d("pause")
+            handleStopRequest()
         }
     }
 }

@@ -17,6 +17,7 @@ import io.github.vladimirmi.radius.BuildConfig
 import io.github.vladimirmi.radius.R
 import timber.log.Timber
 
+
 /**
  * Developer Vladimir Mikhalev, 09.05.2017.
  */
@@ -31,19 +32,20 @@ class PlayerService : MediaBrowserServiceCompat() {
         const val EXTRA_STATION = "EXTRA_STATION"
     }
 
-    private var mStationUrl: String? = null
+    private var stationUrl: String? = null
     private lateinit var session: MediaSessionCompat
     private lateinit var playback: Playback
     private var serviceStarted: Boolean = false
 
     override fun onCreate() {
-        Timber.e("onCreate")
         super.onCreate()
 
         session = MediaSessionCompat(this, javaClass.simpleName)
         sessionToken = session.sessionToken
         session.setCallback(SessionCallback())
         session.setFlags(MediaSessionCompat.FLAG_HANDLES_MEDIA_BUTTONS or MediaSessionCompat.FLAG_HANDLES_TRANSPORT_CONTROLS)
+//        val activityIntent = Intent(applicationContext, RootActivity::class.java)
+//        session.setSessionActivity(PendingIntent.getActivity(applicationContext, 0, activityIntent, 0))
 
         playback = Playback(this, playerCallback)
     }
@@ -58,14 +60,14 @@ class PlayerService : MediaBrowserServiceCompat() {
             null -> Timber.e("onStartCommand: actions null")
             ACTION_PLAY -> {
                 if (intent.hasExtra(EXTRA_STATION)) {
-                    mStationUrl = intent.getStringExtra(EXTRA_STATION)
-//                    playback.setStationUrl(mStationUrl);
+                    stationUrl = intent.getStringExtra(EXTRA_STATION)
+                    handlePlayRequest(Uri.parse(stationUrl))
+                } else {
                     handlePlayRequest()
                 }
             }
-            ACTION_STOP -> {
-                handleStopRequest()
-            }
+            ACTION_PAUSE -> handlePauseRequest()
+            ACTION_STOP -> handleStopRequest()
         }
         return Service.START_STICKY
     }
@@ -111,9 +113,23 @@ class PlayerService : MediaBrowserServiceCompat() {
             }
 
             return Builder().setActions(availableActions)
-                    .setState(state, PLAYBACK_POSITION_UNKNOWN, 1.0f)
+                    .setState(state, 0, 1F)
                     .build()
         }
+    }
+
+    private fun startService() {
+        if (!serviceStarted) {
+            Timber.v("Starting service")
+            startService(Intent(applicationContext, PlayerService::class.java))
+            serviceStarted = true
+            session.isActive = true
+        }
+    }
+
+    private fun handlePlayRequest() {
+        Timber.d("handlePlayRequest")
+        playback.resume()
     }
 
     private fun handlePlayRequest(uri: Uri) {
@@ -122,9 +138,9 @@ class PlayerService : MediaBrowserServiceCompat() {
         playback.play(uri)
     }
 
-    private fun handlePlayRequest() {
-        startService()
-        playback.resume()
+    private fun handlePauseRequest() {
+        Timber.d("handlePauseRequest")
+        playback.pause()
     }
 
     private fun handleStopRequest() {
@@ -135,34 +151,21 @@ class PlayerService : MediaBrowserServiceCompat() {
         session.isActive = false
     }
 
-    private fun startService() {
-        if (!serviceStarted) {
-            Timber.v("Starting service")
-            startService(Intent(applicationContext, PlayerService::class.java))
-            serviceStarted = true
-        }
-        session.isActive = true
-    }
-
     inner class SessionCallback : MediaSessionCompat.Callback() {
 
-        override fun onPlayFromUri(uri: Uri, extras: Bundle?) {
-            Timber.d("onPlayFromUri $uri")
-            handlePlayRequest(uri)
-        }
-
         override fun onPlay() {
-            Timber.d("play")
             handlePlayRequest()
         }
 
-        override fun onStop() {
-            Timber.d("stop")
-            handleStopRequest()
+        override fun onPlayFromUri(uri: Uri, extras: Bundle?) {
+            handlePlayRequest(uri)
         }
 
         override fun onPause() {
-            Timber.d("pause")
+            handlePauseRequest()
+        }
+
+        override fun onStop() {
             handleStopRequest()
         }
     }

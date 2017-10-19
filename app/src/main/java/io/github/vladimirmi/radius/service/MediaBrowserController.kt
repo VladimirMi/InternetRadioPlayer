@@ -26,7 +26,7 @@ class MediaBrowserController
 
     private val connectionCallbacks = object : MediaBrowserCompat.ConnectionCallback() {
         override fun onConnected() {
-            Timber.d("onConnected: session token " + mediaBrowser.sessionToken)
+            Timber.d("onConnected: session token ${mediaBrowser.sessionToken.token}")
 
             try {
                 mediaController = MediaControllerCompat(activity, mediaBrowser.sessionToken)
@@ -54,7 +54,7 @@ class MediaBrowserController
 
     private val controllerCallback: MediaControllerCompat.Callback = object : MediaControllerCompat.Callback() {
         override fun onPlaybackStateChanged(state: PlaybackStateCompat) {
-            Timber.d("onPlaybackStateChanged ", state)
+            Timber.d("onPlaybackStateChanged $state")
             playbackState = state.state
         }
     }

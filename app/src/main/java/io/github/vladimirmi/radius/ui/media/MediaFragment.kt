@@ -20,7 +20,7 @@ import toothpick.Toothpick
  * Created by Vladimir Mikhalev 30.09.2017.
  */
 
-class MediaFragment : BaseFragment(), MediaView, MediaCallback {
+class MediaFragment : BaseFragment(), MediaView, MediaItemCallback {
 
     override val layoutRes = R.layout.fragment_media
     private val adapter = MediaListAdapter(this)

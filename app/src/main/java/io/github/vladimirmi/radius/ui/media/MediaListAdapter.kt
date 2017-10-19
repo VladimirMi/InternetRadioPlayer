@@ -15,7 +15,7 @@ import kotlinx.android.synthetic.main.item_group_title.view.*
  * Created by Vladimir Mikhalev 04.10.2017.
  */
 
-class MediaListAdapter(private val callback: MediaCallback)
+class MediaListAdapter(private val itemCallback: MediaItemCallback)
     : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
     private companion object {
         const val GROUP_TITLE = 0
@@ -44,7 +44,7 @@ class MediaListAdapter(private val callback: MediaCallback)
     override fun onBindViewHolder(holder: RecyclerView.ViewHolder, position: Int) {
         when (holder) {
             is MediaGroupTitleVH -> holder.bind(mediaList.getGroupTitle(position))
-            is MediaGroupItemVH -> holder.bind(mediaList.getGroupItem(position), callback)
+            is MediaGroupItemVH -> holder.bind(mediaList.getGroupItem(position), itemCallback)
         }
     }
 
@@ -59,12 +59,15 @@ class MediaGroupTitleVH(itemView: View) : RecyclerView.ViewHolder(itemView) {
 }
 
 class MediaGroupItemVH(itemView: View) : RecyclerView.ViewHolder(itemView) {
-    fun bind(media: Media, callback: MediaCallback) {
+    fun bind(media: Media, itemCallback: MediaItemCallback) {
         itemView.name.text = media.name
-        itemView.play_pause.setOnClickListener { callback.onPlayPause(media.uri) }
+        itemView.play_pause.setOnClickListener {
+            itemCallback.onPlayPause(media.uri)
+            itemView.play_pause.setImageResource(R.drawable.ic_stop)
+        }
     }
 }
 
-interface MediaCallback {
+interface MediaItemCallback {
     fun onPlayPause(uri: Uri)
 }

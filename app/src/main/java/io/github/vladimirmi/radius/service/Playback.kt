@@ -1,5 +1,6 @@
 package io.github.vladimirmi.radius.service
 
+import android.bluetooth.BluetoothDevice
 import android.content.BroadcastReceiver
 import android.content.Context
 import android.content.Intent
@@ -20,7 +21,8 @@ import io.github.vladimirmi.radius.service.Playback.AudioFocus.*
 import timber.log.Timber
 
 
-class Playback(private val service: PlayerService, private val playerCallback: EmptyPlayerCallback)
+class Playback(private val service: PlayerService,
+               private val playerCallback: EmptyPlayerCallback)
     : AudioManager.OnAudioFocusChangeListener {
 
     companion object {
@@ -36,7 +38,6 @@ class Playback(private val service: PlayerService, private val playerCallback: E
 
     private var audioFocus = NO_FOCUSED_NO_DUCK
     private var playAgainOnFocus = false
-    private var audioNoisyReceiverRegistered = false
     private var player: SimpleExoPlayer? = null
 
     private val wifiLock = (service.applicationContext.getSystemService(Context.WIFI_SERVICE) as WifiManager)
@@ -47,8 +48,8 @@ class Playback(private val service: PlayerService, private val playerCallback: E
         get() = playAgainOnFocus || player?.playWhenReady ?: false
 
     fun play(uri: Uri) {
-        Timber.d("play")
         stop(releaseResources = false)
+        Timber.d("play")
         holdResources()
         if (player == null) createPlayer()
         preparePlayer(uri)
@@ -81,13 +82,7 @@ class Playback(private val service: PlayerService, private val playerCallback: E
         player = null
     }
 
-    /**
-     * Called by AudioManager on audio focus changes.
-     * Implementation of [AudioManager.OnAudioFocusChangeListener]
-     */
     override fun onAudioFocusChange(focusChange: Int) {
-        Timber.d("onAudioFocusChange: focusChange=$focusChange")
-
         audioFocus = when (focusChange) {
             AUDIOFOCUS_GAIN -> FOCUSED
             AUDIOFOCUS_LOSS_TRANSIENT_CAN_DUCK -> NO_FOCUSED_CAN_DUCK
@@ -168,30 +163,41 @@ class Playback(private val service: PlayerService, private val playerCallback: E
     }
 
     private val audioNoisyReceiver = object : BroadcastReceiver() {
+        val filter = IntentFilter(ACTION_AUDIO_BECOMING_NOISY).apply {
+            addAction(Intent.ACTION_HEADSET_PLUG)
+            addAction(BluetoothDevice.ACTION_ACL_CONNECTED)
+        }
+
+        @Suppress("DEPRECATION")
         override fun onReceive(context: Context, intent: Intent) {
+            val action = intent.action
+            Timber.e("onReceive: $action")
+
             if (intent.action == AudioManager.ACTION_AUDIO_BECOMING_NOISY) {
-                Timber.d("Headphones disconnected.")
-                if (isPlaying) {
-                    val i = Intent(context, PlayerService::class.java).apply {
-                        action = PlayerService.ACTION_STOP
-                    }
-                    service.startService(i)
+                pause()
+
+            } else if (action == Intent.ACTION_HEADSET_PLUG && intent.getIntExtra("state", 0) == 1) {
+                resume()
+
+            } else if (BluetoothDevice.ACTION_ACL_CONNECTED == action) {
+                var count = 0
+                while (!audioManager.isBluetoothA2dpOn && count < 10) {
+                    Timber.e("onReceive: $count")
+                    Thread.sleep(1000)
+                    count++
+                }
+                if (audioManager.isBluetoothA2dpOn) {
+                    resume()
                 }
             }
         }
     }
 
     private fun registerAudioNoisyReceiver() {
-        if (!audioNoisyReceiverRegistered) {
-            service.registerReceiver(audioNoisyReceiver, IntentFilter(AudioManager.ACTION_AUDIO_BECOMING_NOISY))
-            audioNoisyReceiverRegistered = true
-        }
+        service.registerReceiver(audioNoisyReceiver, audioNoisyReceiver.filter)
     }
 
     private fun unregisterAudioNoisyReceiver() {
-        if (audioNoisyReceiverRegistered) {
-            service.unregisterReceiver(audioNoisyReceiver)
-            audioNoisyReceiverRegistered = false
-        }
+        service.unregisterReceiver(audioNoisyReceiver)
     }
 }

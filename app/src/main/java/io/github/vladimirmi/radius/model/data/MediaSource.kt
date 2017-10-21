@@ -26,6 +26,8 @@ class MediaSource
         parseFileTree()
     }
 
+    var currentMedia = mediaList.firstOrNull()
+
     private fun copyFilesFromAssets() {
         context.assets.list("")
                 .filter { it.endsWith(".pls") }

@@ -44,9 +44,6 @@ class Playback(private val service: PlayerService,
             .createWifiLock(WifiManager.WIFI_MODE_FULL, BuildConfig.APPLICATION_ID)
     private val audioManager = service.getSystemService(Context.AUDIO_SERVICE) as AudioManager
 
-    val isPlaying: Boolean
-        get() = playAgainOnFocus || player?.playWhenReady ?: false
-
     fun play(uri: Uri) {
         stop(releaseResources = false)
         Timber.d("play")
@@ -110,7 +107,6 @@ class Playback(private val service: PlayerService,
     @Suppress("DEPRECATION")
     private fun tryToGetAudioFocus() {
         if (audioFocus != FOCUSED) {
-            Timber.d("tryToGetAudioFocus")
             val result = audioManager.requestAudioFocus(this, AudioManager.STREAM_MUSIC,
                     AUDIOFOCUS_GAIN)
             if (result == AudioManager.AUDIOFOCUS_REQUEST_GRANTED) {
@@ -122,7 +118,6 @@ class Playback(private val service: PlayerService,
     @Suppress("DEPRECATION")
     private fun giveUpAudioFocus() {
         if (audioFocus == FOCUSED) {
-            Timber.d("giveUpAudioFocus")
             if (audioManager.abandonAudioFocus(this) == AudioManager.AUDIOFOCUS_REQUEST_GRANTED) {
                 audioFocus = NO_FOCUSED_NO_DUCK
             }
@@ -131,7 +126,7 @@ class Playback(private val service: PlayerService,
 
     private fun createPlayer() {
         Timber.d("createPlayer")
-        val renderersFactory = DefaultRenderersFactory(service.applicationContext)
+        val renderersFactory = DefaultRenderersFactory(service)
         val trackSelector = DefaultTrackSelector()
         val loadControl = DefaultLoadControl(DefaultAllocator(true, C.DEFAULT_BUFFER_SEGMENT_SIZE * 2))
         player = ExoPlayerFactory.newSimpleInstance(renderersFactory, trackSelector, loadControl)
@@ -148,8 +143,6 @@ class Playback(private val service: PlayerService,
     private fun holdResources() {
         Timber.d("holdResources")
         tryToGetAudioFocus()
-        //todo implement
-//        service.startForeground()
         registerAudioNoisyReceiver()
         if (!wifiLock.isHeld) wifiLock.acquire()
     }
@@ -157,7 +150,6 @@ class Playback(private val service: PlayerService,
     private fun releaseResources() {
         Timber.d("releaseResources")
         giveUpAudioFocus()
-//        service.stopForeground(true)
         unregisterAudioNoisyReceiver()
         if (wifiLock.isHeld) wifiLock.release()
     }
@@ -171,9 +163,7 @@ class Playback(private val service: PlayerService,
         @Suppress("DEPRECATION")
         override fun onReceive(context: Context, intent: Intent) {
             val action = intent.action
-            Timber.e("onReceive: $action")
-
-            if (intent.action == AudioManager.ACTION_AUDIO_BECOMING_NOISY) {
+            if (action == AudioManager.ACTION_AUDIO_BECOMING_NOISY) {
                 pause()
 
             } else if (action == Intent.ACTION_HEADSET_PLUG && intent.getIntExtra("state", 0) == 1) {
@@ -182,7 +172,6 @@ class Playback(private val service: PlayerService,
             } else if (BluetoothDevice.ACTION_ACL_CONNECTED == action) {
                 var count = 0
                 while (!audioManager.isBluetoothA2dpOn && count < 10) {
-                    Timber.e("onReceive: $count")
                     Thread.sleep(1000)
                     count++
                 }

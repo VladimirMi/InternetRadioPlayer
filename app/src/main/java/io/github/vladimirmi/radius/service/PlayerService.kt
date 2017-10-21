@@ -15,7 +15,11 @@ import com.google.android.exoplayer2.ExoPlaybackException.*
 import com.google.android.exoplayer2.Player
 import io.github.vladimirmi.radius.BuildConfig
 import io.github.vladimirmi.radius.R
+import io.github.vladimirmi.radius.di.Scopes
+import io.github.vladimirmi.radius.model.repository.MediaRepository
 import timber.log.Timber
+import toothpick.Toothpick
+import javax.inject.Inject
 
 
 /**
@@ -32,13 +36,20 @@ class PlayerService : MediaBrowserServiceCompat() {
         const val EXTRA_STATION = "EXTRA_STATION"
     }
 
+    @Inject lateinit var mediaRepository: MediaRepository
+
     private var stationUrl: String? = null
     private lateinit var session: MediaSessionCompat
     private lateinit var playback: Playback
+    private lateinit var notification: MediaNotification
     private var serviceStarted: Boolean = false
 
     override fun onCreate() {
         super.onCreate()
+        Toothpick.openScope(Scopes.REPOSITORY).apply {
+            Toothpick.inject(this@PlayerService, this)
+            Toothpick.closeScope(this)
+        }
 
         session = MediaSessionCompat(this, javaClass.simpleName)
         sessionToken = session.sessionToken
@@ -48,6 +59,7 @@ class PlayerService : MediaBrowserServiceCompat() {
 //        session.setSessionActivity(PendingIntent.getActivity(applicationContext, 0, activityIntent, 0))
 
         playback = Playback(this, playerCallback)
+        notification = MediaNotification(this, session)
     }
 
     override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
@@ -63,7 +75,7 @@ class PlayerService : MediaBrowserServiceCompat() {
                     stationUrl = intent.getStringExtra(EXTRA_STATION)
                     handlePlayRequest(Uri.parse(stationUrl))
                 } else {
-                    handlePlayRequest()
+                    handleResumeRequest()
                 }
             }
             ACTION_PAUSE -> handlePauseRequest()
@@ -73,6 +85,7 @@ class PlayerService : MediaBrowserServiceCompat() {
     }
 
     override fun onDestroy() {
+        handleStopRequest()
         playback.releasePlayer()
     }
 
@@ -88,13 +101,16 @@ class PlayerService : MediaBrowserServiceCompat() {
 
         override fun onPlayerStateChanged(playWhenReady: Boolean, playbackState: Int) {
             val state = when (playbackState) {
+                Player.STATE_IDLE -> STATE_STOPPED
                 Player.STATE_BUFFERING -> STATE_BUFFERING
+                Player.STATE_READY -> if (playWhenReady) STATE_PLAYING else STATE_PAUSED
                 Player.STATE_ENDED -> STATE_PAUSED
-                Player.STATE_READY -> if (playWhenReady) STATE_PLAYING else STATE_STOPPED
                 else -> STATE_NONE
             }
 
-            session.setPlaybackState(createPlaybackState(state))
+            val stateCompat = createPlaybackState(state)
+            session.setPlaybackState(stateCompat)
+            notification.show(mediaRepository.currentMedia()!!, stateCompat)
         }
 
         override fun onPlayerError(error: ExoPlaybackException?) {
@@ -103,6 +119,11 @@ class PlayerService : MediaBrowserServiceCompat() {
                 TYPE_SOURCE -> Timber.e("SOURCE error occurred: ${error.sourceException}")
                 TYPE_UNEXPECTED -> Timber.e("UNEXPECTED error occurred: ${error.unexpectedException}")
             }
+            handleStopRequest()
+        }
+
+        override fun onMetadata(key: String, value: String) {
+            TODO("not implemented")
         }
 
         private fun createPlaybackState(state: Int): PlaybackStateCompat {
@@ -111,7 +132,6 @@ class PlayerService : MediaBrowserServiceCompat() {
             } else {
                 PlaybackStateCompat.ACTION_PLAY
             }
-
             return Builder().setActions(availableActions)
                     .setState(state, 0, 1F)
                     .build()
@@ -127,15 +147,16 @@ class PlayerService : MediaBrowserServiceCompat() {
         }
     }
 
-    private fun handlePlayRequest() {
-        Timber.d("handlePlayRequest")
-        playback.resume()
-    }
-
     private fun handlePlayRequest(uri: Uri) {
-        Timber.d("handlePlayRequest with url $uri")
+        Timber.d("handleResumeRequest with url $uri")
         startService()
         playback.play(uri)
+        mediaRepository.currentMedia(uri)
+    }
+
+    private fun handleResumeRequest() {
+        Timber.d("handleResumeRequest")
+        playback.resume()
     }
 
     private fun handlePauseRequest() {
@@ -154,7 +175,7 @@ class PlayerService : MediaBrowserServiceCompat() {
     inner class SessionCallback : MediaSessionCompat.Callback() {
 
         override fun onPlay() {
-            handlePlayRequest()
+            handleResumeRequest()
         }
 
         override fun onPlayFromUri(uri: Uri, extras: Bundle?) {

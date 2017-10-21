@@ -8,7 +8,7 @@ import com.google.android.exoplayer2.source.TrackGroupArray
 import com.google.android.exoplayer2.trackselection.TrackSelectionArray
 
 
-open class EmptyPlayerCallback : Player.EventListener {
+abstract class EmptyPlayerCallback : Player.EventListener {
 
     override fun onPlaybackParametersChanged(playbackParameters: PlaybackParameters?) {}
 
@@ -25,4 +25,6 @@ open class EmptyPlayerCallback : Player.EventListener {
     override fun onRepeatModeChanged(repeatMode: Int) {}
 
     override fun onTimelineChanged(timeline: Timeline?, manifest: Any?) {}
+
+    abstract fun onMetadata(key: String, value: String)
 }

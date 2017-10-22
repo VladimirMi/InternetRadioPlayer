@@ -5,11 +5,11 @@ import android.app.PendingIntent
 import android.content.Intent
 import android.support.v4.app.NotificationCompat
 import android.support.v4.app.NotificationManagerCompat
+import android.support.v4.media.MediaMetadataCompat
 import android.support.v4.media.session.MediaSessionCompat
 import android.support.v4.media.session.PlaybackStateCompat
 import io.github.vladimirmi.radius.R
 import io.github.vladimirmi.radius.extensions.getBitmap
-import io.github.vladimirmi.radius.model.entity.Media
 import io.github.vladimirmi.radius.service.PlayerService.Companion.ACTION_PAUSE
 import io.github.vladimirmi.radius.service.PlayerService.Companion.ACTION_PLAY
 import io.github.vladimirmi.radius.service.PlayerService.Companion.ACTION_STOP
@@ -34,17 +34,17 @@ class MediaNotification(private val service: PlayerService,
         const val PLAYER_NOTIFICATION_ID = 50
     }
 
-    fun show(media: Media, state: PlaybackStateCompat) {
+    fun show(state: PlaybackStateCompat) {
         when (state.state) {
             PlaybackStateCompat.STATE_PLAYING -> {
                 Timber.e("show: play")
-                service.startForeground(PLAYER_NOTIFICATION_ID, getNotification(media, state))
+                service.startForeground(PLAYER_NOTIFICATION_ID, getNotification(state))
             }
             PlaybackStateCompat.STATE_PAUSED -> {
                 Timber.e("show: pause")
                 service.stopForeground(false)
                 NotificationManagerCompat.from(service)
-                        .notify(PLAYER_NOTIFICATION_ID, getNotification(media, state))
+                        .notify(PLAYER_NOTIFICATION_ID, getNotification(state))
             }
             PlaybackStateCompat.STATE_STOPPED -> {
                 Timber.e("show: stop")
@@ -54,7 +54,7 @@ class MediaNotification(private val service: PlayerService,
     }
 
     //todo enum with pending intents
-    private fun getNotification(media: Media, state: PlaybackStateCompat): Notification {
+    private fun getNotification(state: PlaybackStateCompat): Notification {
         val playIntent = Intent(service, PlayerService::class.java).apply {
             action = ACTION_PLAY
         }
@@ -74,6 +74,8 @@ class MediaNotification(private val service: PlayerService,
         val openPendingIntent = PendingIntent.getService(service, PENDING_OPEN_REQ, openIntent,
                 PendingIntent.FLAG_UPDATE_CURRENT)
 
+        val metadata = mediaSession.controller.metadata
+
         val style = android.support.v4.media.app.NotificationCompat.MediaStyle()
                 .setMediaSession(mediaSession.sessionToken)
                 .setShowActionsInCompactView(0)
@@ -89,8 +91,9 @@ class MediaNotification(private val service: PlayerService,
                 .setPriority(NotificationCompat.PRIORITY_HIGH)
                 .setSmallIcon(R.drawable.ic_radius)
                 .setLargeIcon(service.getBitmap(R.drawable.ic_radius))
-                .setContentTitle(media.name)
-                .setContentText("STUB!!!")
+                .setContentInfo(metadata.getString(MediaMetadataCompat.METADATA_KEY_ALBUM))
+                .setContentTitle(metadata.getString(MediaMetadataCompat.METADATA_KEY_ARTIST))
+                .setContentText(metadata.getString(MediaMetadataCompat.METADATA_KEY_TITLE))
                 .setStyle(style)
 
         if (state.actions == PlaybackStateCompat.ACTION_PLAY) {

@@ -7,6 +7,7 @@ import android.net.Uri
 import android.os.Bundle
 import android.support.v4.media.MediaBrowserCompat
 import android.support.v4.media.MediaBrowserServiceCompat
+import android.support.v4.media.MediaMetadataCompat
 import android.support.v4.media.session.MediaSessionCompat
 import android.support.v4.media.session.PlaybackStateCompat
 import android.support.v4.media.session.PlaybackStateCompat.*
@@ -97,7 +98,7 @@ class PlayerService : MediaBrowserServiceCompat() {
         result.sendResult(emptyList())
     }
 
-    private val playerCallback = object : EmptyPlayerCallback() {
+    private val playerCallback = object : PlayerCallback() {
 
         override fun onPlayerStateChanged(playWhenReady: Boolean, playbackState: Int) {
             val state = when (playbackState) {
@@ -110,7 +111,8 @@ class PlayerService : MediaBrowserServiceCompat() {
 
             val stateCompat = createPlaybackState(state)
             session.setPlaybackState(stateCompat)
-            notification.show(mediaRepository.currentMedia()!!, stateCompat)
+
+            notification.show(stateCompat)
         }
 
         override fun onPlayerError(error: ExoPlaybackException?) {
@@ -123,7 +125,16 @@ class PlayerService : MediaBrowserServiceCompat() {
         }
 
         override fun onMetadata(key: String, value: String) {
-            TODO("not implemented")
+            Timber.e("onMetadata: $key = $value")
+            val (artist, title) = value.split("-").map { it.trim() }
+            val metadataCompat = MediaMetadataCompat.Builder()
+                    .putString(MediaMetadataCompat.METADATA_KEY_ARTIST, artist)
+                    .putString(MediaMetadataCompat.METADATA_KEY_TITLE, title)
+                    .putString(MediaMetadataCompat.METADATA_KEY_ALBUM, mediaRepository.currentMedia()?.name)
+                    .build()
+
+            session.setMetadata(metadataCompat)
+            notification.show(session.controller.playbackState)
         }
 
         private fun createPlaybackState(state: Int): PlaybackStateCompat {

@@ -8,7 +8,7 @@ import com.google.android.exoplayer2.source.TrackGroupArray
 import com.google.android.exoplayer2.trackselection.TrackSelectionArray
 
 
-abstract class EmptyPlayerCallback : Player.EventListener {
+abstract class PlayerCallback : Player.EventListener {
 
     override fun onPlaybackParametersChanged(playbackParameters: PlaybackParameters?) {}
 

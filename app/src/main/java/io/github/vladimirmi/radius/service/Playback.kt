@@ -14,15 +14,13 @@ import com.google.android.exoplayer2.extractor.DefaultExtractorsFactory
 import com.google.android.exoplayer2.source.ExtractorMediaSource
 import com.google.android.exoplayer2.trackselection.DefaultTrackSelector
 import com.google.android.exoplayer2.upstream.DefaultAllocator
-import com.google.android.exoplayer2.upstream.DefaultBandwidthMeter
-import com.google.android.exoplayer2.upstream.DefaultHttpDataSourceFactory
 import io.github.vladimirmi.radius.BuildConfig
 import io.github.vladimirmi.radius.service.Playback.AudioFocus.*
 import timber.log.Timber
 
 
 class Playback(private val service: PlayerService,
-               private val playerCallback: EmptyPlayerCallback)
+               private val playerCallback: PlayerCallback)
     : AudioManager.OnAudioFocusChangeListener {
 
     companion object {
@@ -134,7 +132,7 @@ class Playback(private val service: PlayerService,
     }
 
     private fun preparePlayer(uri: Uri) {
-        val dataSourceFactory = DefaultHttpDataSourceFactory(BuildConfig.APPLICATION_ID, DefaultBandwidthMeter())
+        val dataSourceFactory = HttpDataSourceFactory(playerCallback)
         val mediaSource = ExtractorMediaSource(uri, dataSourceFactory, DefaultExtractorsFactory(),
                 32, null, null, null, 1024 * 1024)
         player?.prepare(mediaSource)

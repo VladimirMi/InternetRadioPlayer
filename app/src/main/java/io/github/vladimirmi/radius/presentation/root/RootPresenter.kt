@@ -7,7 +7,7 @@ import android.support.v4.app.ActivityCompat
 import android.support.v4.content.ContextCompat
 import com.arellomobile.mvp.MvpPresenter
 import io.github.vladimirmi.radius.Screens
-import io.github.vladimirmi.radius.service.MediaBrowserController
+import io.github.vladimirmi.radius.data.repository.MediaBrowserController
 import io.github.vladimirmi.radius.ui.root.RootActivity
 import ru.terrakok.cicerone.Router
 import javax.inject.Inject

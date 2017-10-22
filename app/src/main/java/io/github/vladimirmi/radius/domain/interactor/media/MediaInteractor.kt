@@ -1,7 +1,7 @@
-package io.github.vladimirmi.radius.model.interactor.media
+package io.github.vladimirmi.radius.domain.interactor.media
 
-import io.github.vladimirmi.radius.model.entity.Media
-import io.github.vladimirmi.radius.model.repository.MediaRepository
+import io.github.vladimirmi.radius.data.entity.Media
+import io.github.vladimirmi.radius.data.repository.MediaRepository
 import javax.inject.Inject
 
 /**

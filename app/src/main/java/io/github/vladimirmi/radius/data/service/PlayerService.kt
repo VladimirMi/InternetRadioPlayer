@@ -1,6 +1,7 @@
-package io.github.vladimirmi.radius.service
+package io.github.vladimirmi.radius.data.service
 
 
+import android.app.PendingIntent
 import android.app.Service
 import android.content.Intent
 import android.net.Uri
@@ -17,11 +18,11 @@ import com.google.android.exoplayer2.Player
 import io.github.vladimirmi.radius.BuildConfig
 import io.github.vladimirmi.radius.R
 import io.github.vladimirmi.radius.di.Scopes
-import io.github.vladimirmi.radius.model.repository.MediaRepository
+import io.github.vladimirmi.radius.data.repository.MediaRepository
+import io.github.vladimirmi.radius.ui.root.RootActivity
 import timber.log.Timber
 import toothpick.Toothpick
 import javax.inject.Inject
-
 
 /**
  * Developer Vladimir Mikhalev, 09.05.2017.
@@ -56,8 +57,8 @@ class PlayerService : MediaBrowserServiceCompat() {
         sessionToken = session.sessionToken
         session.setCallback(SessionCallback())
         session.setFlags(MediaSessionCompat.FLAG_HANDLES_MEDIA_BUTTONS or MediaSessionCompat.FLAG_HANDLES_TRANSPORT_CONTROLS)
-//        val activityIntent = Intent(applicationContext, RootActivity::class.java)
-//        session.setSessionActivity(PendingIntent.getActivity(applicationContext, 0, activityIntent, 0))
+        val activityIntent = Intent(applicationContext, RootActivity::class.java)
+        session.setSessionActivity(PendingIntent.getActivity(applicationContext, 0, activityIntent, 0))
 
         playback = Playback(this, playerCallback)
         notification = MediaNotification(this, session)
@@ -111,8 +112,7 @@ class PlayerService : MediaBrowserServiceCompat() {
 
             val stateCompat = createPlaybackState(state)
             session.setPlaybackState(stateCompat)
-
-            notification.show(stateCompat)
+            notification.update()
         }
 
         override fun onPlayerError(error: ExoPlaybackException?) {
@@ -125,7 +125,6 @@ class PlayerService : MediaBrowserServiceCompat() {
         }
 
         override fun onMetadata(key: String, value: String) {
-            Timber.e("onMetadata: $key = $value")
             val (artist, title) = value.split("-").map { it.trim() }
             val metadataCompat = MediaMetadataCompat.Builder()
                     .putString(MediaMetadataCompat.METADATA_KEY_ARTIST, artist)
@@ -134,7 +133,7 @@ class PlayerService : MediaBrowserServiceCompat() {
                     .build()
 
             session.setMetadata(metadataCompat)
-            notification.show(session.controller.playbackState)
+            notification.update()
         }
 
         private fun createPlaybackState(state: Int): PlaybackStateCompat {

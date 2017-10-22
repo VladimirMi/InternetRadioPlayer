@@ -1,5 +1,6 @@
-package io.github.vladimirmi.radius.service
+package io.github.vladimirmi.radius.data.source
 
+import io.github.vladimirmi.radius.data.service.PlayerCallback
 import java.io.FilterInputStream
 import java.io.InputStream
 
@@ -32,10 +33,10 @@ class IcyInputStream(inS: InputStream,
 
     private fun readMetadata() {
         remainingBytes = window
-        val size = `in`.read() * 16
+        val size = super.read() * 16
         if (size < 1) return
         val buffer = ByteArray(size)
-        `in`.read(buffer)
+        super.read(buffer, 0, size)
         val actualSize = buffer.indexOfFirst { it.toInt() == 0 }
         parseMetadata(String(buffer, 0, actualSize, Charsets.UTF_8))
     }

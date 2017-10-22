@@ -34,7 +34,7 @@ class RootActivity : MvpAppCompatActivity(), RootView {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         Toothpick.openScopes(Scopes.APP, Scopes.REPOSITORY, Scopes.ROOT_ACTIVITY).apply {
-            installModules(RootActivityModule(this@RootActivity))
+            installModules(RootActivityModule())
             Toothpick.inject(this@RootActivity, this)
         }
         super.onCreate(savedInstanceState)

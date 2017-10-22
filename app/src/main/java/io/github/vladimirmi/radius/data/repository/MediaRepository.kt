@@ -1,8 +1,8 @@
-package io.github.vladimirmi.radius.model.repository
+package io.github.vladimirmi.radius.data.repository
 
 import android.net.Uri
-import io.github.vladimirmi.radius.model.data.MediaSource
-import io.github.vladimirmi.radius.model.entity.Media
+import io.github.vladimirmi.radius.data.source.MediaSource
+import io.github.vladimirmi.radius.data.entity.Media
 import javax.inject.Inject
 
 /**

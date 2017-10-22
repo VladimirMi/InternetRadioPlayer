@@ -1,4 +1,4 @@
-package io.github.vladimirmi.radius.service
+package io.github.vladimirmi.radius.data.service
 
 import android.app.Notification
 import android.app.PendingIntent
@@ -10,9 +10,9 @@ import android.support.v4.media.session.MediaSessionCompat
 import android.support.v4.media.session.PlaybackStateCompat
 import io.github.vladimirmi.radius.R
 import io.github.vladimirmi.radius.extensions.getBitmap
-import io.github.vladimirmi.radius.service.PlayerService.Companion.ACTION_PAUSE
-import io.github.vladimirmi.radius.service.PlayerService.Companion.ACTION_PLAY
-import io.github.vladimirmi.radius.service.PlayerService.Companion.ACTION_STOP
+import io.github.vladimirmi.radius.data.service.PlayerService.Companion.ACTION_PAUSE
+import io.github.vladimirmi.radius.data.service.PlayerService.Companion.ACTION_PLAY
+import io.github.vladimirmi.radius.data.service.PlayerService.Companion.ACTION_STOP
 import io.github.vladimirmi.radius.ui.root.RootActivity
 import timber.log.Timber
 
@@ -34,27 +34,27 @@ class MediaNotification(private val service: PlayerService,
         const val PLAYER_NOTIFICATION_ID = 50
     }
 
-    fun show(state: PlaybackStateCompat) {
-        when (state.state) {
+    fun update() {
+        when (mediaSession.controller.playbackState.state) {
             PlaybackStateCompat.STATE_PLAYING -> {
-                Timber.e("show: play")
-                service.startForeground(PLAYER_NOTIFICATION_ID, getNotification(state))
+                service.startForeground(PLAYER_NOTIFICATION_ID, getNotification())
             }
             PlaybackStateCompat.STATE_PAUSED -> {
-                Timber.e("show: pause")
                 service.stopForeground(false)
                 NotificationManagerCompat.from(service)
-                        .notify(PLAYER_NOTIFICATION_ID, getNotification(state))
+                        .notify(PLAYER_NOTIFICATION_ID, getNotification())
             }
             PlaybackStateCompat.STATE_STOPPED -> {
-                Timber.e("show: stop")
                 service.stopForeground(true)
             }
         }
     }
 
     //todo enum with pending intents
-    private fun getNotification(state: PlaybackStateCompat): Notification {
+    private fun getNotification(): Notification {
+        val playbackState = mediaSession.controller.playbackState
+        val metadata = mediaSession.controller.metadata
+
         val playIntent = Intent(service, PlayerService::class.java).apply {
             action = ACTION_PLAY
         }
@@ -73,8 +73,6 @@ class MediaNotification(private val service: PlayerService,
         val openIntent = Intent(service, RootActivity::class.java)
         val openPendingIntent = PendingIntent.getService(service, PENDING_OPEN_REQ, openIntent,
                 PendingIntent.FLAG_UPDATE_CURRENT)
-
-        val metadata = mediaSession.controller.metadata
 
         val style = android.support.v4.media.app.NotificationCompat.MediaStyle()
                 .setMediaSession(mediaSession.sessionToken)
@@ -96,7 +94,7 @@ class MediaNotification(private val service: PlayerService,
                 .setContentText(metadata.getString(MediaMetadataCompat.METADATA_KEY_TITLE))
                 .setStyle(style)
 
-        if (state.actions == PlaybackStateCompat.ACTION_PLAY) {
+        if (playbackState.actions == PlaybackStateCompat.ACTION_PLAY) {
             builder.addAction(R.drawable.ic_play, "PLAY", playPendingIntent)
         } else {
             builder.addAction(R.drawable.ic_stop, "STOP", pausePendingIntent)

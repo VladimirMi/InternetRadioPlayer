@@ -6,8 +6,8 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import io.github.vladimirmi.radius.R
-import io.github.vladimirmi.radius.model.entity.GroupingMedia
-import io.github.vladimirmi.radius.model.entity.Media
+import io.github.vladimirmi.radius.data.entity.GroupingMedia
+import io.github.vladimirmi.radius.data.entity.Media
 import kotlinx.android.synthetic.main.item_group_item.view.*
 import kotlinx.android.synthetic.main.item_group_title.view.*
 

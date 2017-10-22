@@ -1,6 +1,6 @@
 package io.github.vladimirmi.radius.di.module
 
-import io.github.vladimirmi.radius.model.repository.MediaRepository
+import io.github.vladimirmi.radius.data.repository.MediaRepository
 import toothpick.config.Module
 
 /**

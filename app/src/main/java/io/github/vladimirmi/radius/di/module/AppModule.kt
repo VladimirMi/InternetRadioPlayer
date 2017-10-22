@@ -1,7 +1,7 @@
 package io.github.vladimirmi.radius.di.module
 
 import android.content.Context
-import io.github.vladimirmi.radius.model.data.MediaSource
+import io.github.vladimirmi.radius.data.source.MediaSource
 import toothpick.config.Module
 
 /**

@@ -1,4 +1,4 @@
-package io.github.vladimirmi.radius.service
+package io.github.vladimirmi.radius.data.service
 
 import android.bluetooth.BluetoothDevice
 import android.content.BroadcastReceiver
@@ -15,7 +15,8 @@ import com.google.android.exoplayer2.source.ExtractorMediaSource
 import com.google.android.exoplayer2.trackselection.DefaultTrackSelector
 import com.google.android.exoplayer2.upstream.DefaultAllocator
 import io.github.vladimirmi.radius.BuildConfig
-import io.github.vladimirmi.radius.service.Playback.AudioFocus.*
+import io.github.vladimirmi.radius.data.service.Playback.AudioFocus.*
+import io.github.vladimirmi.radius.data.source.IcyDataSourceFactory
 import timber.log.Timber
 
 
@@ -132,7 +133,7 @@ class Playback(private val service: PlayerService,
     }
 
     private fun preparePlayer(uri: Uri) {
-        val dataSourceFactory = HttpDataSourceFactory(playerCallback)
+        val dataSourceFactory = IcyDataSourceFactory(playerCallback)
         val mediaSource = ExtractorMediaSource(uri, dataSourceFactory, DefaultExtractorsFactory(),
                 32, null, null, null, 1024 * 1024)
         player?.prepare(mediaSource)

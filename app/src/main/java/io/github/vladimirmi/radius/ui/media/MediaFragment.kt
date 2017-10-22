@@ -8,7 +8,7 @@ import com.arellomobile.mvp.presenter.InjectPresenter
 import com.arellomobile.mvp.presenter.ProvidePresenter
 import io.github.vladimirmi.radius.R
 import io.github.vladimirmi.radius.di.Scopes
-import io.github.vladimirmi.radius.model.entity.Media
+import io.github.vladimirmi.radius.data.entity.Media
 import io.github.vladimirmi.radius.presentation.media.MediaPresenter
 import io.github.vladimirmi.radius.presentation.media.MediaView
 import io.github.vladimirmi.radius.ui.base.BaseFragment

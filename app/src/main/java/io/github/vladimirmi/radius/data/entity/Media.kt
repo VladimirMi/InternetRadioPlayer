@@ -1,4 +1,4 @@
-package io.github.vladimirmi.radius.model.entity
+package io.github.vladimirmi.radius.data.entity
 
 import android.net.Uri
 

@@ -27,6 +27,9 @@ android {
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
         }
     }
+    compileOptions {
+        incremental = false
+    }
 }
 
 ext {
@@ -47,6 +50,8 @@ dependencies {
     //Support
     compile 'com.android.support:appcompat-v7:' + supportLibraryVersion
     compile 'com.android.support:design:' + supportLibraryVersion
+    compile 'com.android.support.constraint:constraint-layout:1.0.2'
+
     //DI
     compile 'com.github.stephanenicolas.toothpick:toothpick-runtime:' + toothpickVersion
     kapt 'com.github.stephanenicolas.toothpick:toothpick-compiler:' + toothpickVersion

@@ -25,11 +25,6 @@ class MediaPresenter
 
     override fun onFirstViewAttach() {
         viewState.setMediaList(mediaInteractor.getMediaList())
-        browserController.registerCallback(callback)
-    }
-
-    override fun onDestroy() {
-        browserController.unRegisterCallback(callback)
     }
 
     fun playPause(uri: Uri) {
@@ -41,18 +36,6 @@ class MediaPresenter
     }
 
     fun onBackPressed() = router.exit()
-
-    private val callback = object : MediaControllerCompat.Callback() {
-        override fun onPlaybackStateChanged(state: PlaybackStateCompat) {
-            Timber.e("onPlaybackStateChanged: $state")
-        }
-
-        override fun onMetadataChanged(metadata: MediaMetadataCompat) {
-            Timber.e("onMetadataChanged: ${metadata.getString(MediaMetadataCompat.METADATA_KEY_ALBUM)}: " +
-                    " ${metadata.getString(MediaMetadataCompat.METADATA_KEY_ARTIST)} - " +
-                    " ${metadata.getString(MediaMetadataCompat.METADATA_KEY_TITLE)}")
-        }
-    }
 }
 
 

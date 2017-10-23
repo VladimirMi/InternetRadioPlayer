@@ -2,11 +2,22 @@
 <android.support.constraint.ConstraintLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:orientation="vertical"
     >
+
+    <TextView
+        android:id="@+id/media_tag"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="16dp"
+        android:layout_marginStart="16dp"
+        android:layout_marginTop="8dp"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        android:text="Station: "
+        />
 
     <TextView
         android:id="@+id/media_info"
@@ -16,7 +27,8 @@
         android:layout_marginStart="16dp"
         android:ellipsize="marquee"
         android:marqueeRepeatLimit="marquee_forever"
-        android:text="Nocere sed mire ducunt ad secundus classis."
+        android:singleLine="true"
+        android:text="Nocere sed mire ducunt ad secundus classis. Hercle, decor regius!, gemna!"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toEndOf="@+id/media_tag"
         app:layout_constraintTop_toTopOf="@+id/media_tag"
@@ -56,18 +68,6 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toTopOf="@+id/media_icon"
         app:srcCompat="@drawable/ic_star"
-        />
-
-    <TextView
-        android:id="@+id/media_tag"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginLeft="16dp"
-        android:layout_marginStart="16dp"
-        android:layout_marginTop="8dp"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        tools:text="Station"
         />
 
 

@@ -1,5 +1,7 @@
 package io.github.vladimirmi.radius.ui.playercontrol
 
+import android.os.Bundle
+import android.view.View
 import com.arellomobile.mvp.presenter.InjectPresenter
 import com.arellomobile.mvp.presenter.ProvidePresenter
 import io.github.vladimirmi.radius.R
@@ -7,6 +9,7 @@ import io.github.vladimirmi.radius.di.Scopes
 import io.github.vladimirmi.radius.presentation.playercontrol.PlayerControlPresenter
 import io.github.vladimirmi.radius.presentation.playercontrol.PlayerControlView
 import io.github.vladimirmi.radius.ui.base.BaseFragment
+import kotlinx.android.synthetic.main.fragment_player_controls.*
 import toothpick.Toothpick
 
 /**
@@ -25,5 +28,9 @@ class PlayerControlFragment : BaseFragment(), PlayerControlView {
                 .getInstance(PlayerControlPresenter::class.java).also {
             Toothpick.closeScope(this)
         }
+    }
+
+    override fun onViewCreated(view: View?, savedInstanceState: Bundle?) {
+        media_info.isSelected = true
     }
 }

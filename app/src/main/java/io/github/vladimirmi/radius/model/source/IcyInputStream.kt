@@ -1,6 +1,6 @@
-package io.github.vladimirmi.radius.data.source
+package io.github.vladimirmi.radius.model.source
 
-import io.github.vladimirmi.radius.data.service.PlayerCallback
+import io.github.vladimirmi.radius.model.service.PlayerCallback
 import java.io.FilterInputStream
 import java.io.InputStream
 

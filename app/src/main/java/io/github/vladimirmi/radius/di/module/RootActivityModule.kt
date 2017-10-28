@@ -1,6 +1,6 @@
 package io.github.vladimirmi.radius.di.module
 
-import io.github.vladimirmi.radius.data.repository.MediaBrowserController
+import io.github.vladimirmi.radius.model.repository.MediaBrowserController
 import ru.terrakok.cicerone.Cicerone
 import ru.terrakok.cicerone.NavigatorHolder
 import ru.terrakok.cicerone.Router

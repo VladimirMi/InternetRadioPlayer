@@ -1,4 +1,4 @@
-package io.github.vladimirmi.radius.data.service
+package io.github.vladimirmi.radius.model.service
 
 import android.bluetooth.BluetoothDevice
 import android.content.BroadcastReceiver
@@ -15,8 +15,8 @@ import com.google.android.exoplayer2.source.ExtractorMediaSource
 import com.google.android.exoplayer2.trackselection.DefaultTrackSelector
 import com.google.android.exoplayer2.upstream.DefaultAllocator
 import io.github.vladimirmi.radius.BuildConfig
-import io.github.vladimirmi.radius.data.service.Playback.AudioFocus.*
-import io.github.vladimirmi.radius.data.source.IcyDataSourceFactory
+import io.github.vladimirmi.radius.model.service.Playback.AudioFocus.*
+import io.github.vladimirmi.radius.model.source.IcyDataSourceFactory
 import timber.log.Timber
 
 

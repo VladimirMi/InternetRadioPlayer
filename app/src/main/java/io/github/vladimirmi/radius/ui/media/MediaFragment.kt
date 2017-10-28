@@ -1,6 +1,7 @@
 package io.github.vladimirmi.radius.ui.media
 
-import android.net.Uri
+import android.arch.lifecycle.LiveData
+import android.arch.lifecycle.Observer
 import android.os.Bundle
 import android.support.v7.widget.LinearLayoutManager
 import android.view.View
@@ -8,12 +9,11 @@ import com.arellomobile.mvp.presenter.InjectPresenter
 import com.arellomobile.mvp.presenter.ProvidePresenter
 import io.github.vladimirmi.radius.R
 import io.github.vladimirmi.radius.di.Scopes
-import io.github.vladimirmi.radius.data.entity.Media
+import io.github.vladimirmi.radius.model.entity.Media
 import io.github.vladimirmi.radius.presentation.media.MediaPresenter
 import io.github.vladimirmi.radius.presentation.media.MediaView
 import io.github.vladimirmi.radius.ui.base.BaseFragment
 import kotlinx.android.synthetic.main.fragment_media.*
-import timber.log.Timber
 import toothpick.Toothpick
 
 /**
@@ -40,12 +40,11 @@ class MediaFragment : BaseFragment(), MediaView, MediaItemCallback {
         media_recycler.adapter = adapter
     }
 
-    override fun setMediaList(mediaList: List<Media>) {
-        Timber.e("setMediaList: ${mediaList.size}")
-        adapter.setData(mediaList)
+    override fun setMediaList(mediaList: LiveData<List<Media>>) {
+        mediaList.observe(this, Observer { adapter.setData(it!!) })
     }
 
-    override fun onPlayPause(uri: Uri) {
-        presenter.playPause(uri)
+    override fun onItemSelected(media: Media) {
+        presenter.select(media)
     }
 }

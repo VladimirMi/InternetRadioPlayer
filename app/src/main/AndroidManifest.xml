@@ -25,7 +25,7 @@
         </activity>
 
         <service
-            android:name=".data.service.PlayerService"
+            android:name=".model.service.PlayerService"
             android:exported="false">
             <intent-filter>
                 <action android:name="android.media.browse.MediaBrowserService"/>

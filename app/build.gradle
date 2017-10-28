@@ -33,7 +33,7 @@ android {
 }
 
 ext {
-    supportLibraryVersion = "26.0.2"
+    supportLibraryVersion = "26.1.0"
     toothpickVersion = "1.0.8"
     moxyVersion = "1.4.6"
     exoPlayerVersion = '2.5.1'
@@ -51,6 +51,7 @@ dependencies {
     compile 'com.android.support:appcompat-v7:' + supportLibraryVersion
     compile 'com.android.support:design:' + supportLibraryVersion
     compile 'com.android.support.constraint:constraint-layout:1.0.2'
+    implementation "android.arch.lifecycle:extensions:1.0.0-rc1"
 
     //DI
     compile 'com.github.stephanenicolas.toothpick:toothpick-runtime:' + toothpickVersion
@@ -66,4 +67,5 @@ dependencies {
     //ExoPlayer
     compile 'com.google.android.exoplayer:exoplayer-core:r' + exoPlayerVersion
     compile 'com.google.android.exoplayer:extension-mediasession:r' + exoPlayerVersion
+
 }

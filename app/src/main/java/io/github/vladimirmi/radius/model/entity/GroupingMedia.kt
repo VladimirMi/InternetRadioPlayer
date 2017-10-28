@@ -1,4 +1,4 @@
-package io.github.vladimirmi.radius.data.entity
+package io.github.vladimirmi.radius.model.entity
 
 /**
  * Created by Vladimir Mikhalev 11.10.2017.

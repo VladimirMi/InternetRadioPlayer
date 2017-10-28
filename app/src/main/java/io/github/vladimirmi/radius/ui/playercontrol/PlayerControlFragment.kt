@@ -32,5 +32,22 @@ class PlayerControlFragment : BaseFragment(), PlayerControlView {
 
     override fun onViewCreated(view: View?, savedInstanceState: Bundle?) {
         media_info.isSelected = true
+        play_pause.setOnClickListener { presenter.playPause() }
+    }
+
+    override fun showBuffering() {
+        media_info.text = "Загрузка..."
+    }
+
+    override fun showStopped() {
+        play_pause.setImageResource(R.drawable.ic_play)
+    }
+
+    override fun showPlaying() {
+        play_pause.setImageResource(R.drawable.ic_stop)
+    }
+
+    override fun setMediaInfo(info: String) {
+        media_info.text = info
     }
 }

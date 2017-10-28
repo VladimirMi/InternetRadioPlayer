@@ -1,4 +1,4 @@
-package io.github.vladimirmi.radius.data.service
+package io.github.vladimirmi.radius.model.service
 
 import android.app.Notification
 import android.app.PendingIntent
@@ -10,11 +10,10 @@ import android.support.v4.media.session.MediaSessionCompat
 import android.support.v4.media.session.PlaybackStateCompat
 import io.github.vladimirmi.radius.R
 import io.github.vladimirmi.radius.extensions.getBitmap
-import io.github.vladimirmi.radius.data.service.PlayerService.Companion.ACTION_PAUSE
-import io.github.vladimirmi.radius.data.service.PlayerService.Companion.ACTION_PLAY
-import io.github.vladimirmi.radius.data.service.PlayerService.Companion.ACTION_STOP
+import io.github.vladimirmi.radius.model.service.PlayerService.Companion.ACTION_PAUSE
+import io.github.vladimirmi.radius.model.service.PlayerService.Companion.ACTION_PLAY
+import io.github.vladimirmi.radius.model.service.PlayerService.Companion.ACTION_STOP
 import io.github.vladimirmi.radius.ui.root.RootActivity
-import timber.log.Timber
 
 
 /**

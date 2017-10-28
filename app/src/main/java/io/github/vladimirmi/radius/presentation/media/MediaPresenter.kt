@@ -1,14 +1,9 @@
 package io.github.vladimirmi.radius.presentation.media
 
-import android.net.Uri
-import android.support.v4.media.MediaMetadataCompat
-import android.support.v4.media.session.MediaControllerCompat
-import android.support.v4.media.session.PlaybackStateCompat
 import com.arellomobile.mvp.InjectViewState
 import com.arellomobile.mvp.MvpPresenter
-import io.github.vladimirmi.radius.domain.interactor.media.MediaInteractor
-import io.github.vladimirmi.radius.data.repository.MediaBrowserController
-import ru.terrakok.cicerone.Router
+import io.github.vladimirmi.radius.model.entity.Media
+import io.github.vladimirmi.radius.model.repository.MediaRepository
 import timber.log.Timber
 import javax.inject.Inject
 
@@ -18,24 +13,18 @@ import javax.inject.Inject
 
 @InjectViewState
 class MediaPresenter
-@Inject constructor(private val mediaInteractor: MediaInteractor,
-                    private val router: Router,
-                    private val browserController: MediaBrowserController)
+@Inject constructor(private val mediaRepository: MediaRepository)
     : MvpPresenter<MediaView>() {
 
     override fun onFirstViewAttach() {
-        viewState.setMediaList(mediaInteractor.getMediaList())
+        mediaRepository.initMedia()
+        viewState.setMediaList(mediaRepository.mediaListData)
     }
 
-    fun playPause(uri: Uri) {
-        if (browserController.isPlaying(uri)) {
-            browserController.stop()
-        } else {
-            browserController.play(uri)
-        }
+    fun select(media: Media) {
+        Timber.e("select: ${media.uri}")
+        mediaRepository.selectedMediaData.value = media
     }
-
-    fun onBackPressed() = router.exit()
 }
 
 

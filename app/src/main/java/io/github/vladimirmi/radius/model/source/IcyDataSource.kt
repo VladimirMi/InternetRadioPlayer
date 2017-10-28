@@ -1,8 +1,8 @@
-package io.github.vladimirmi.radius.data.source
+package io.github.vladimirmi.radius.model.source
 
 import com.google.android.exoplayer2.util.Predicate
 import io.github.vladimirmi.radius.com.google.android.exoplayer2.upstream.DefaultHttpDataSource
-import io.github.vladimirmi.radius.data.service.PlayerCallback
+import io.github.vladimirmi.radius.model.service.PlayerCallback
 import timber.log.Timber
 import java.io.InputStream
 import java.net.HttpURLConnection

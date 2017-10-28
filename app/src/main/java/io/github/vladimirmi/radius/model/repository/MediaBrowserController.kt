@@ -1,4 +1,4 @@
-package io.github.vladimirmi.radius.data.repository
+package io.github.vladimirmi.radius.model.repository
 
 import android.content.ComponentName
 import android.content.Context
@@ -7,7 +7,7 @@ import android.os.RemoteException
 import android.support.v4.media.MediaBrowserCompat
 import android.support.v4.media.session.MediaControllerCompat
 import android.support.v4.media.session.PlaybackStateCompat
-import io.github.vladimirmi.radius.data.service.PlayerService
+import io.github.vladimirmi.radius.model.service.PlayerService
 import timber.log.Timber
 import javax.inject.Inject
 
@@ -70,7 +70,7 @@ class MediaBrowserController
     }
 
     fun isPlaying(uri: Uri) = controller?.playbackState?.state == PlaybackStateCompat.STATE_PLAYING
-            && mediaRepository.currentMedia()?.uri == uri
+            && mediaRepository.selectedMediaData.value?.uri == uri
 
     fun play(uri: Uri) {
         controller?.transportControls?.playFromUri(uri, null)

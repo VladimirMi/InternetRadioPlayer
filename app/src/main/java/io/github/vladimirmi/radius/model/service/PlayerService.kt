@@ -1,5 +1,4 @@
-package io.github.vladimirmi.radius.data.service
-
+package io.github.vladimirmi.radius.model.service
 
 import android.app.PendingIntent
 import android.app.Service
@@ -18,7 +17,7 @@ import com.google.android.exoplayer2.Player
 import io.github.vladimirmi.radius.BuildConfig
 import io.github.vladimirmi.radius.R
 import io.github.vladimirmi.radius.di.Scopes
-import io.github.vladimirmi.radius.data.repository.MediaRepository
+import io.github.vladimirmi.radius.model.repository.MediaRepository
 import io.github.vladimirmi.radius.ui.root.RootActivity
 import timber.log.Timber
 import toothpick.Toothpick
@@ -48,7 +47,7 @@ class PlayerService : MediaBrowserServiceCompat() {
 
     override fun onCreate() {
         super.onCreate()
-        Toothpick.openScope(Scopes.REPOSITORY).apply {
+        Toothpick.openScope(Scopes.APP).apply {
             Toothpick.inject(this@PlayerService, this)
             Toothpick.closeScope(this)
         }
@@ -129,7 +128,8 @@ class PlayerService : MediaBrowserServiceCompat() {
             val metadataCompat = MediaMetadataCompat.Builder()
                     .putString(MediaMetadataCompat.METADATA_KEY_ARTIST, artist)
                     .putString(MediaMetadataCompat.METADATA_KEY_TITLE, title)
-                    .putString(MediaMetadataCompat.METADATA_KEY_ALBUM, mediaRepository.currentMedia()?.name)
+                    .putString(MediaMetadataCompat.METADATA_KEY_ALBUM,
+                            mediaRepository.selectedMediaData.value?.name)
                     .build()
 
             session.setMetadata(metadataCompat)
@@ -158,10 +158,9 @@ class PlayerService : MediaBrowserServiceCompat() {
     }
 
     private fun handlePlayRequest(uri: Uri) {
-        Timber.d("handleResumeRequest with url $uri")
+        Timber.d("handlePlayRequest with url $uri")
         startService()
         playback.play(uri)
-        mediaRepository.currentMedia(uri)
     }
 
     private fun handleResumeRequest() {

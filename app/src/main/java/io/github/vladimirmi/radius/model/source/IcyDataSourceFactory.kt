@@ -1,9 +1,8 @@
-package io.github.vladimirmi.radius.data.source
+package io.github.vladimirmi.radius.model.source
 
 import com.google.android.exoplayer2.upstream.DataSource
 import io.github.vladimirmi.radius.BuildConfig
-import io.github.vladimirmi.radius.data.service.PlayerCallback
-import io.github.vladimirmi.radius.data.source.IcyDataSource
+import io.github.vladimirmi.radius.model.service.PlayerCallback
 
 /**
  * Created by Vladimir Mikhalev 21.10.2017.

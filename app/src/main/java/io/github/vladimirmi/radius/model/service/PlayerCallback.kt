@@ -1,4 +1,4 @@
-package io.github.vladimirmi.radius.data.service
+package io.github.vladimirmi.radius.model.service
 
 import com.google.android.exoplayer2.ExoPlaybackException
 import com.google.android.exoplayer2.PlaybackParameters

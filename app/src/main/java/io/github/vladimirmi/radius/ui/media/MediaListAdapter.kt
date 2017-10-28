@@ -1,13 +1,12 @@
 package io.github.vladimirmi.radius.ui.media
 
-import android.net.Uri
 import android.support.v7.widget.RecyclerView
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import io.github.vladimirmi.radius.R
-import io.github.vladimirmi.radius.data.entity.GroupingMedia
-import io.github.vladimirmi.radius.data.entity.Media
+import io.github.vladimirmi.radius.model.entity.GroupingMedia
+import io.github.vladimirmi.radius.model.entity.Media
 import kotlinx.android.synthetic.main.item_group_item.view.*
 import kotlinx.android.synthetic.main.item_group_title.view.*
 
@@ -61,13 +60,10 @@ class MediaGroupTitleVH(itemView: View) : RecyclerView.ViewHolder(itemView) {
 class MediaGroupItemVH(itemView: View) : RecyclerView.ViewHolder(itemView) {
     fun bind(media: Media, itemCallback: MediaItemCallback) {
         itemView.name.text = media.name
-        itemView.play_pause.setOnClickListener {
-            itemCallback.onPlayPause(media.uri)
-            itemView.play_pause.setImageResource(R.drawable.ic_stop)
-        }
+        itemView.setOnClickListener { itemCallback.onItemSelected(media) }
     }
 }
 
 interface MediaItemCallback {
-    fun onPlayPause(uri: Uri)
+    fun onItemSelected(media: Media)
 }

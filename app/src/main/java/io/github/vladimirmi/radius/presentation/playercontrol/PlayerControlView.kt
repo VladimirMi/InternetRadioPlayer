@@ -6,4 +6,9 @@ import com.arellomobile.mvp.MvpView
  * Created by Vladimir Mikhalev 23.10.2017.
  */
 
-interface PlayerControlView: MvpView
+interface PlayerControlView : MvpView {
+    fun showBuffering()
+    fun showStopped()
+    fun showPlaying()
+    fun setMediaInfo(info: String)
+}

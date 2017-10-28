@@ -1,9 +1,10 @@
-package io.github.vladimirmi.radius.data.manager
+package io.github.vladimirmi.radius.model.source
 
 import android.content.Context
 import android.net.Uri
 import android.os.Environment
-import io.github.vladimirmi.radius.data.entity.Media
+import io.github.vladimirmi.radius.model.entity.Media
+import io.github.vladimirmi.radius.model.manager.Preferences
 import timber.log.Timber
 import java.io.File
 import java.io.FileOutputStream
@@ -13,27 +14,41 @@ import javax.inject.Inject
  * Created by Vladimir Mikhalev 30.09.2017.
  */
 
-class MediaManager
-@Inject constructor(private val context: Context, private val preferences: Preferences) {
+class MediaSource
+@Inject constructor(private val context: Context,
+                    private val preferences: Preferences) {
 
-    init {
+    fun getMediaList(): List<Media> {
+        copyFilesFromAssets()
+        val mediaList = ArrayList<Media>()
+        val treeWalk = getPlaylistDir().walkTopDown()
+        var groupDirName: String? = null
+        treeWalk.forEach {
+            if (it.isDirectory) {
+                groupDirName = it.name
+            } else {
+                val media = fromFile(it)!!
+                media.genres.add(groupDirName ?: "NONE")
+                mediaList.add(media)
+            }
+        }
+        return mediaList
+    }
+
+    private fun copyFilesFromAssets() {
         if (preferences.firstRun) {
-            copyFilesToSdCard()
+            context.assets.list("")
+                    .filter { it.endsWith(".pls") }
+                    .forEach { copyFile(it, getPlaylistDir().path) }
             preferences.firstRun = false
         }
     }
 
-    private fun copyFilesToSdCard() {
-        context.assets.list("")
-                .filter { it.endsWith(".pls") }
-                .forEach { copyFile(it, getPlaylistDir()!!.path) }
-    }
-
-    private fun getPlaylistDir(): File? {
+    private fun getPlaylistDir(): File {
         val appDir = Environment.getExternalStoragePublicDirectory("Radius")
         val playlistDir = File(appDir, "Playlist")
         if (!playlistDir.mkdirs() && (!playlistDir.exists() || !playlistDir.isDirectory)) {
-            return null
+            throw IllegalStateException("Can not create playlist folder")
         }
         return playlistDir
     }
@@ -47,7 +62,7 @@ class MediaManager
         }
     }
 
-    fun fromFile(file: File): Media? {
+    private fun fromFile(file: File): Media? {
         var name: String? = null
         var uri: Uri? = null
         file.useLines { line ->

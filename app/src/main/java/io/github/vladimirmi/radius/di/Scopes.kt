@@ -6,6 +6,5 @@ package io.github.vladimirmi.radius.di
 
 object Scopes {
     const val APP = "app scope"
-    const val REPOSITORY = "repositories scope"
     const val ROOT_ACTIVITY = "root activity scope"
 }

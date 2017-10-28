@@ -1,4 +1,4 @@
-package io.github.vladimirmi.radius.model.data
+package io.github.vladimirmi.radius.model.manager
 
 import android.content.Context
 import io.github.vladimirmi.radius.extensions.Preference

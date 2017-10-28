@@ -1,5 +1,6 @@
 package io.github.vladimirmi.radius.di.module
 
+import io.github.vladimirmi.radius.model.repository.MediaBrowserController
 import ru.terrakok.cicerone.Cicerone
 import ru.terrakok.cicerone.NavigatorHolder
 import ru.terrakok.cicerone.Router
@@ -14,5 +15,6 @@ class RootActivityModule : Module() {
         val cicerone = Cicerone.create()
         bind(Router::class.java).toInstance(cicerone.router)
         bind(NavigatorHolder::class.java).toInstance(cicerone.navigatorHolder)
+        bind(MediaBrowserController::class.java).singletonInScope()
     }
 }

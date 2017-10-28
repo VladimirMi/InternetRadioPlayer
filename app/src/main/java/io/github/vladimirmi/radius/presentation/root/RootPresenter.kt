@@ -7,6 +7,7 @@ import android.support.v4.app.ActivityCompat
 import android.support.v4.content.ContextCompat
 import com.arellomobile.mvp.MvpPresenter
 import io.github.vladimirmi.radius.Screens
+import io.github.vladimirmi.radius.model.repository.MediaBrowserController
 import io.github.vladimirmi.radius.ui.root.RootActivity
 import ru.terrakok.cicerone.Router
 import javax.inject.Inject
@@ -16,15 +17,32 @@ import javax.inject.Inject
  */
 
 class RootPresenter
-@Inject constructor(private val router: Router) : MvpPresenter<RootView>() {
+@Inject constructor(private val router: Router,
+                    private val mediaBrowserController: MediaBrowserController)
+    : MvpPresenter<RootView>() {
 
     companion object {
-        const val REQUEST_WRITE = 102
+        const val REQUEST_WRITE = 100
     }
 
     override fun onFirstViewAttach() {
         val permissions = arrayOf(Manifest.permission.WRITE_EXTERNAL_STORAGE)
         if (checkAndRequestPermissions(permissions, REQUEST_WRITE)) {
+            nextScreen()
+        }
+        mediaBrowserController.connect()
+    }
+
+    override fun onDestroy() {
+        mediaBrowserController.disconnect()
+    }
+
+    fun onRequestPermissionsResult(requestCode: Int, permissions: Array<out String>, grantResults: IntArray) {
+        val requestCanceled = grantResults.contains(PackageManager.PERMISSION_DENIED) ||
+                grantResults.isEmpty() || permissions.isEmpty()
+        if (requestCanceled) {
+//            showPermissionSnackBar()
+        } else if (requestCode == REQUEST_WRITE) {
             nextScreen()
         }
     }
@@ -42,16 +60,6 @@ class RootPresenter
             }
         }
         return allGranted
-    }
-
-    fun onRequestPermissionsResult(requestCode: Int, permissions: Array<out String>, grantResults: IntArray) {
-        val requestCanceled = grantResults.contains(PackageManager.PERMISSION_DENIED) ||
-                grantResults.isEmpty() || permissions.isEmpty()
-        if (requestCanceled) {
-//            showPermissionSnackBar()
-        } else if (requestCode == REQUEST_WRITE) {
-            nextScreen()
-        }
     }
 
     private fun nextScreen() {

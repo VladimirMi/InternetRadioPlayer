@@ -38,7 +38,7 @@ class Preference<T>(
     }
 
     @SuppressLint("CommitPrefEdits")
-    private fun <U> putPreference(name: String, value: U) = with(prefs.edit()) {
+    private fun putPreference(name: String, value: T) = with(prefs.edit()) {
         when (value) {
             is Long -> putLong(name, value)
             is String -> putString(name, value)

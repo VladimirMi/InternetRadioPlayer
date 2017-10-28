@@ -1,0 +1,80 @@
+<?xml version="1.0" encoding="utf-8"?>
+<android.support.constraint.ConstraintLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:background="@color/player_controls"
+    android:orientation="vertical"
+    >
+
+    <ImageView
+        android:id="@+id/shadow"
+        android:layout_width="0dp"
+        android:layout_height="3dp"
+        app:layout_constraintEnd_toEndOf="@+id/media_info"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:srcCompat="@drawable/shadow_reverse"
+        tools:ignore="ContentDescription"
+        />
+
+    <TextView
+        android:id="@+id/media_info"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="8dp"
+        android:layout_marginStart="8dp"
+        android:layout_marginTop="8dp"
+        android:ellipsize="marquee"
+        android:marqueeRepeatLimit="marquee_forever"
+        android:singleLine="true"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toEndOf="@+id/media_icon"
+        app:layout_constraintTop_toTopOf="parent"
+        tools:text="Nocere sed mire ducunt ad secundus classis. Hercle, decor regius!, gemna!"
+        />
+
+    <ImageView
+        android:id="@+id/media_icon"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:contentDescription="media icon"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintDimensionRatio="h,1:1"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:srcCompat="@drawable/ic_radius"
+        />
+
+    <ImageView
+        android:id="@+id/play_pause"
+        android:layout_width="60dp"
+        android:layout_height="60dp"
+        android:contentDescription="play/pause button"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/media_info"
+        app:srcCompat="@drawable/ic_play"
+        />
+
+    <ImageView
+        android:id="@+id/star"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:layout_marginBottom="8dp"
+        android:layout_marginEnd="16dp"
+        android:layout_marginRight="16dp"
+        android:layout_marginTop="8dp"
+        android:contentDescription="add to favorite"
+        app:layout_constraintBottom_toBottomOf="@+id/play_pause"
+        app:layout_constraintDimensionRatio="h,1:1"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="@+id/play_pause"
+        app:srcCompat="@drawable/ic_star"
+        />
+
+
+</android.support.constraint.ConstraintLayout>

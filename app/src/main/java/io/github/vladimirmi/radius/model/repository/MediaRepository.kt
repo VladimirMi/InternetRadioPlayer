@@ -1,7 +1,8 @@
 package io.github.vladimirmi.radius.model.repository
 
-import io.github.vladimirmi.radius.model.data.MediaSource
+import android.arch.lifecycle.MutableLiveData
 import io.github.vladimirmi.radius.model.entity.Media
+import io.github.vladimirmi.radius.model.source.MediaSource
 import javax.inject.Inject
 
 /**
@@ -10,6 +11,11 @@ import javax.inject.Inject
 
 class MediaRepository
 @Inject constructor(private val mediaSource: MediaSource) {
+    val mediaListData: MutableLiveData<List<Media>> = MutableLiveData()
+    val selectedMediaData: MutableLiveData<Media> = MutableLiveData()
 
-    fun getMediaList(): List<Media> = mediaSource.mediaList
+    fun initMedia() {
+        mediaListData.value = mediaSource.getMediaList()
+        selectedMediaData.value = mediaListData.value?.firstOrNull()
+    }
 }

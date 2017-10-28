@@ -1,17 +1,22 @@
-<?xml version="1.0" encoding="utf-8"?>
+<!--?xml version="1.0" encoding="UTF-8"?-->
 <resources>
-    <color name="colorPrimary">#3F51B5</color>
-    <color name="colorPrimaryDark">#303F9F</color>
-    <color name="colorAccent">#FF4081</color>
+    <color name="primaryColor">#757575</color>
+    <color name="primaryLightColor">#a4a4a4</color>
+    <color name="primaryDarkColor">#494949</color>
+    <color name="secondaryColor">#aed581</color>
+    <color name="secondaryLightColor">#e1ffb1</color>
+    <color name="secondaryDarkColor">#7da453</color>
+    <color name="primaryTextColor">#ffffff</color>
+    <color name="secondaryTextColor">#616161</color>
 
-    <color name="background">#EDEFF3</color>
-    <color name="grey_light">#8c8c8c</color>
-    <color name="grey">#414141</color>
-    <color name="grey_dark">#212121</color>
-    <color name="text_color">#151515</color>
-    <color name="text_color_grey">#666666</color>
-
-    <color name="transparent">#00FFFFFF</color>
+    <color name="red">#c0392b</color>
+    <color name="green">#27ae60</color>
+    <color name="yellow">#f1c40f</color>
     <color name="black">#000000</color>
     <color name="white">#ffffff</color>
+    <color name="grey_50">#fafafa</color>
+    <color name="grey_300">#e0e0e0</color>
+    <color name="transparent">#0fff</color>
+
+    <color name="player_controls">#c1d5e0</color>
 </resources>

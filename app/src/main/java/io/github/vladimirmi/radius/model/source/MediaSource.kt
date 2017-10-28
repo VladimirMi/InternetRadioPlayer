@@ -1,9 +1,10 @@
-package io.github.vladimirmi.radius.model.data
+package io.github.vladimirmi.radius.model.source
 
 import android.content.Context
 import android.net.Uri
 import android.os.Environment
 import io.github.vladimirmi.radius.model.entity.Media
+import io.github.vladimirmi.radius.model.manager.Preferences
 import timber.log.Timber
 import java.io.File
 import java.io.FileOutputStream
@@ -14,22 +15,33 @@ import javax.inject.Inject
  */
 
 class MediaSource
-@Inject constructor(private val context: Context, preferences: Preferences) {
+@Inject constructor(private val context: Context,
+                    private val preferences: Preferences) {
 
-    val mediaList = ArrayList<Media>()
-
-    init {
-        if (preferences.firstRun) {
-            copyFilesFromAssets()
-            preferences.firstRun = false
+    fun getMediaList(): List<Media> {
+        copyFilesFromAssets()
+        val mediaList = ArrayList<Media>()
+        val treeWalk = getPlaylistDir().walkTopDown()
+        var groupDirName: String? = null
+        treeWalk.forEach {
+            if (it.isDirectory) {
+                groupDirName = it.name
+            } else {
+                val media = fromFile(it)!!
+                media.genres.add(groupDirName ?: "NONE")
+                mediaList.add(media)
+            }
         }
-        parseFileTree()
+        return mediaList
     }
 
     private fun copyFilesFromAssets() {
-        context.assets.list("")
-                .filter { it.endsWith(".pls") }
-                .forEach { copyFile(it, getPlaylistDir().path) }
+        if (preferences.firstRun) {
+            context.assets.list("")
+                    .filter { it.endsWith(".pls") }
+                    .forEach { copyFile(it, getPlaylistDir().path) }
+            preferences.firstRun = false
+        }
     }
 
     private fun getPlaylistDir(): File {
@@ -46,20 +58,6 @@ class MediaSource
         context.assets.open(filePath).use { inS ->
             FileOutputStream(File(destination, filePath)).use { outS ->
                 inS.copyTo(outS)
-            }
-        }
-    }
-
-    private fun parseFileTree() {
-        val treeWalk = getPlaylistDir().walkTopDown()
-        var groupDirName: String? = null
-        treeWalk.forEach {
-            if (it.isDirectory) {
-                groupDirName = it.name
-            } else {
-                val media = fromFile(it)!!
-                media.genres.add(groupDirName ?: "NONE")
-                mediaList.add(media)
             }
         }
     }

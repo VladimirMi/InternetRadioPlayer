@@ -1,4 +1,4 @@
-package io.github.vladimirmi.radius.model.data
+package io.github.vladimirmi.radius.model.manager
 
 import android.content.Context
 import android.net.Uri
@@ -14,7 +14,8 @@ import javax.inject.Inject
  */
 
 class MediaManager
-@Inject constructor(private val context: Context, private val preferences: Preferences) {
+@Inject constructor(private val context: Context,
+                    preferences: Preferences) {
 
     init {
         if (preferences.firstRun) {

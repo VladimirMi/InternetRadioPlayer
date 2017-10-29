@@ -10,4 +10,6 @@ import io.github.vladimirmi.radius.model.entity.Media
 
 interface MediaView : MvpView {
     fun setMediaList(mediaList: LiveData<List<Media>>)
+    fun select(media: Media, playing: Boolean)
+    fun unselect(media: Media)
 }

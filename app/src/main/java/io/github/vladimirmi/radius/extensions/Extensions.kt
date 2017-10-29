@@ -8,6 +8,7 @@ import android.graphics.drawable.VectorDrawable
 import android.support.annotation.DrawableRes
 import android.support.graphics.drawable.VectorDrawableCompat
 import android.support.v4.content.ContextCompat
+import android.view.View
 
 
 /**
@@ -29,4 +30,8 @@ fun Context.getBitmap(@DrawableRes id: Int): Bitmap {
     } else {
         throw IllegalArgumentException("unsupported drawable type")
     }
+}
+
+fun View.setBackgroundColorExt(id: Int) {
+    setBackgroundColor(ContextCompat.getColor(context, id))
 }

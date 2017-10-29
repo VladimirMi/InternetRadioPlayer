@@ -31,7 +31,6 @@ class IcyDataSource(userAgent: String,
                 Timber.e(e, "$metaWindow cannot be parsed"); 0
             }
             if (window > 0) {
-                Timber.d("getInputStream: with window $window")
                 return IcyInputStream(connection.inputStream, window, playerCallback)
             }
         }

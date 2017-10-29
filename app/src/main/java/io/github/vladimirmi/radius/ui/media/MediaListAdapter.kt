@@ -5,6 +5,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import io.github.vladimirmi.radius.R
+import io.github.vladimirmi.radius.extensions.setBackgroundColorExt
 import io.github.vladimirmi.radius.model.entity.GroupingMedia
 import io.github.vladimirmi.radius.model.entity.Media
 import kotlinx.android.synthetic.main.item_group_item.view.*
@@ -16,6 +17,7 @@ import kotlinx.android.synthetic.main.item_group_title.view.*
 
 class MediaListAdapter(private val itemCallback: MediaItemCallback)
     : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
+
     private companion object {
         const val GROUP_TITLE = 0
         const val GROUP_ITEM = 1
@@ -49,6 +51,9 @@ class MediaListAdapter(private val itemCallback: MediaItemCallback)
 
     override fun getItemCount(): Int = mediaList.size()
 
+    fun getItemPosition(media: Media): Int {
+        return mediaList.getGroupItemPosition(media)
+    }
 }
 
 class MediaGroupTitleVH(itemView: View) : RecyclerView.ViewHolder(itemView) {
@@ -62,6 +67,16 @@ class MediaGroupItemVH(itemView: View) : RecyclerView.ViewHolder(itemView) {
         itemView.name.text = media.name
         itemView.setOnClickListener { itemCallback.onItemSelected(media) }
     }
+
+    fun select(playing: Boolean) {
+        if (playing) itemView.setBackgroundColorExt(R.color.green_100)
+        else itemView.setBackgroundColorExt(R.color.grey_300)
+    }
+
+    fun unselect() {
+        itemView.setBackgroundColorExt(R.color.grey_50)
+    }
+
 }
 
 interface MediaItemCallback {

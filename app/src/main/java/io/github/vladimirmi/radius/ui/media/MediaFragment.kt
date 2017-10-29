@@ -47,4 +47,17 @@ class MediaFragment : BaseFragment(), MediaView, MediaItemCallback {
     override fun onItemSelected(media: Media) {
         presenter.select(media)
     }
+
+    override fun select(media: Media, playing: Boolean) {
+        findMediaGroupItemVH(media).select(playing)
+    }
+
+    override fun unselect(media: Media) {
+        findMediaGroupItemVH(media).unselect()
+    }
+
+    private fun findMediaGroupItemVH(media: Media): MediaGroupItemVH {
+        val position = adapter.getItemPosition(media)
+        return media_recycler.findViewHolderForLayoutPosition(position) as MediaGroupItemVH
+    }
 }

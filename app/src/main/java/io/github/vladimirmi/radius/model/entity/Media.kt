@@ -8,6 +8,5 @@ import android.net.Uri
 
 data class Media(val name: String,
                  val uri: Uri,
-                 val genres: MutableList<String> = ArrayList(),
-                 val tags: MutableList<String> = ArrayList(),
-                 val fav: Boolean = false)
+                 val fav: Boolean = false,
+                 val genres: ArrayList<String> = ArrayList())

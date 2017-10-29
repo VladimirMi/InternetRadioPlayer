@@ -1,13 +1,18 @@
 package io.github.vladimirmi.radius.model.entity
 
+import java.lang.IllegalStateException
+import java.util.NoSuchElementException
+import kotlin.collections.ArrayList
+import kotlin.collections.HashMap
+
 /**
  * Created by Vladimir Mikhalev 11.10.2017.
  */
 
 class GroupingMedia {
 
-    class GroupMapping(val group: String, val itemIdx: Int? = null) {
-        fun isGroupTitle() = itemIdx == null
+    class GroupMapping(val group: String, val index: Int? = null) {
+        fun isGroupTitle() = index == null
     }
 
     private val groups = HashMap<String, ArrayList<Media>>()
@@ -20,7 +25,6 @@ class GroupingMedia {
             if (list.isEmpty()) idxMapping.add(GroupMapping(key))
             idxMapping.add(GroupMapping(key, list.size))
             list.add(media)
-
         }
     }
 
@@ -37,7 +41,8 @@ class GroupingMedia {
     fun getGroupItem(position: Int): Media {
         checkRange(position)
         val groupMapping = idxMapping[position]
-        return groups[groupMapping.group]!![groupMapping.itemIdx!!]
+        if (groupMapping.index == null) throw IllegalStateException("Should call getGroupTitle()")
+        return groups[groupMapping.group]!![groupMapping.index]
     }
 
     fun size() = idxMapping.size
@@ -46,5 +51,15 @@ class GroupingMedia {
         if (position < 0 || position >= idxMapping.size) {
             throw  IndexOutOfBoundsException()
         }
+    }
+
+    fun getGroupItemPosition(media: Media): Int {
+        idxMapping.forEachIndexed { groupIndex, groupMapping ->
+            val mediaList = groups[groupMapping.group]!!
+            mediaList.forEachIndexed { mediaIndex, m ->
+                if (m == media) return groupIndex + mediaIndex + 1
+            }
+        }
+        throw NoSuchElementException()
     }
 }

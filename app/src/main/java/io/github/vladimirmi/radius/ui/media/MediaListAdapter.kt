@@ -52,7 +52,7 @@ class MediaListAdapter(private val itemCallback: MediaItemCallback)
             is MediaGroupTitleVH -> holder.bind(mediaList.getGroupTitle(position))
             is MediaGroupItemVH -> {
                 val media = mediaList.getGroupItem(position)
-                holder.bind(media, getIconColors(media.name[0]), itemCallback)
+                holder.bind(media, getIconColors(media.title[0]), itemCallback)
             }
         }
     }
@@ -78,8 +78,8 @@ class MediaGroupTitleVH(itemView: View) : RecyclerView.ViewHolder(itemView) {
 
 class MediaGroupItemVH(itemView: View) : RecyclerView.ViewHolder(itemView) {
     fun bind(media: Media, colors: Pair<Int, Int>, itemCallback: MediaItemCallback) {
-        itemView.name.text = media.name
-        itemView.icon.text = media.name.first().toString()
+        itemView.name.text = media.title
+        itemView.icon.text = media.title.first().toString()
         itemView.icon.setTextColor(colors.first)
         itemView.icon.setBackgroundColor(colors.second)
         itemView.setOnClickListener { itemCallback.onItemSelected(media) }

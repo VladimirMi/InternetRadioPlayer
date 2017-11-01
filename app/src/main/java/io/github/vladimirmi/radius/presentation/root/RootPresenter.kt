@@ -8,6 +8,7 @@ import android.support.v4.content.ContextCompat
 import com.arellomobile.mvp.MvpPresenter
 import io.github.vladimirmi.radius.Screens
 import io.github.vladimirmi.radius.model.repository.MediaBrowserController
+import io.github.vladimirmi.radius.model.repository.MediaRepository
 import io.github.vladimirmi.radius.ui.root.RootActivity
 import ru.terrakok.cicerone.Router
 import javax.inject.Inject
@@ -18,7 +19,8 @@ import javax.inject.Inject
 
 class RootPresenter
 @Inject constructor(private val router: Router,
-                    private val mediaBrowserController: MediaBrowserController)
+                    private val mediaBrowserController: MediaBrowserController,
+                    private val repository: MediaRepository)
     : MvpPresenter<RootView>() {
 
     companion object {
@@ -63,6 +65,7 @@ class RootPresenter
     }
 
     private fun nextScreen() {
+        repository.initMedia()
         router.navigateTo(Screens.MEDIA_SCREEN)
     }
 }

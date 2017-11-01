@@ -19,8 +19,10 @@ class GroupingMedia {
     private val idxMapping = ArrayList<GroupMapping>()
 
     fun setData(mediaList: List<Media>) {
+        groups.clear()
+        idxMapping.clear()
         for (media in mediaList) {
-            val key = media.genres.first()
+            val key = media.dirName
             val list = groups.getOrPut(key) { ArrayList() }
             if (list.isEmpty()) idxMapping.add(GroupMapping(key))
             idxMapping.add(GroupMapping(key, list.size))

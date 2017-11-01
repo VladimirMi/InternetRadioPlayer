@@ -15,26 +15,30 @@ import javax.inject.Inject
 
 @InjectViewState
 class MediaPresenter
-@Inject constructor(private val mediaRepository: MediaRepository,
+@Inject constructor(private val repository: MediaRepository,
                     private val mediaBrowserController: MediaBrowserController)
     : BasePresenter<MediaView>() {
 
     override fun onFirstAttach() {
-        mediaRepository.initMedia()
-        viewState.setMediaList(mediaRepository.mediaListData)
+        repository.mediaListData.observe(this, Observer {
+            it?.let { viewState.setMediaList(it) }
+        })
+
+        repository.selectedData.observe(this, Observer {
+            it?.let { viewState.select(it, playing = false) }
+        })
+
         mediaBrowserController.playbackState.observe(this, Observer {
-            val media = mediaRepository.selectedMediaData.value ?: return@Observer
             if (it?.state == PlaybackStateCompat.STATE_PLAYING) {
-                viewState.select(media, playing = true)
+                repository.selectedData.value?.let { viewState.select(it, playing = true) }
             } else {
-                viewState.select(media, playing = false)
+                repository.selectedData.value?.let { viewState.select(it, playing = false) }
             }
         })
     }
 
     fun select(media: Media) {
-        mediaRepository.selectedMediaData.value?.let { viewState.unselect(it) }
-        mediaRepository.selectedMediaData.value = media
+        repository.setSelected(media)
     }
 }
 

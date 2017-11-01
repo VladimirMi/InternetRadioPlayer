@@ -23,8 +23,11 @@ class PlayerControlPresenter
     override fun onFirstAttach() {
         browserController.playbackState.observe(this, Observer { handleState(it) })
         browserController.playbackMetaData.observe(this, Observer { handleMetadata(it) })
-        mediaRepository.selectedMediaData.observe(this, Observer {
-            it?.let { browserController.play(it.uri) }
+        mediaRepository.selectedData.observe(this, Observer {
+            mediaRepository.selectedData.value?.let {
+                browserController.play(it.uri)
+                viewState.setMedia(it)
+            }
         })
     }
 
@@ -46,11 +49,18 @@ class PlayerControlPresenter
     }
 
     fun playPause() {
-        val uri = mediaRepository.selectedMediaData.value?.uri ?: return
+        val uri = mediaRepository.selectedData.value?.uri ?: return
         if (browserController.isPlaying(uri)) {
             browserController.stop()
         } else {
             browserController.play(uri)
         }
+    }
+
+    fun switchFavorite() {
+        val selected = mediaRepository.selectedData.value ?: return
+        val copy = selected.copy(fav = !selected.fav)
+        mediaRepository.updateAndSave(copy)
+        viewState.setMedia(copy)
     }
 }

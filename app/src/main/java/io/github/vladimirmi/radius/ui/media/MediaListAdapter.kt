@@ -27,6 +27,8 @@ class MediaListAdapter(private val itemCallback: MediaItemCallback)
     }
 
     private val mediaList = GroupingMedia()
+    private var selected: Media? = null
+    private var playing = false
     private var iconColors = Toothpick.openScope(Scopes.APP).getInstance(Context::class.java)
             .resources.getIntArray(R.array.icon_color_set)
 
@@ -52,15 +54,20 @@ class MediaListAdapter(private val itemCallback: MediaItemCallback)
             is MediaGroupTitleVH -> holder.bind(mediaList.getGroupTitle(position))
             is MediaGroupItemVH -> {
                 val media = mediaList.getGroupItem(position)
-                holder.bind(media, getIconColors(media.title[0]), itemCallback)
+                holder.setCallback(itemCallback, media)
+                holder.bind(media, getIconColors(media.title[0]))
+                if (media.uri == selected?.uri) holder.select(playing)
+                else holder.unselect()
             }
         }
     }
 
     override fun getItemCount(): Int = mediaList.size()
 
-    fun getItemPosition(media: Media): Int {
-        return mediaList.getGroupItemPosition(media)
+    fun select(media: Media, playing: Boolean) {
+        selected = media
+        this.playing = playing
+        notifyDataSetChanged()
     }
 
     private fun getIconColors(char: Char): Pair<Int, Int> {
@@ -77,11 +84,15 @@ class MediaGroupTitleVH(itemView: View) : RecyclerView.ViewHolder(itemView) {
 }
 
 class MediaGroupItemVH(itemView: View) : RecyclerView.ViewHolder(itemView) {
-    fun bind(media: Media, colors: Pair<Int, Int>, itemCallback: MediaItemCallback) {
+    fun bind(media: Media, colors: Pair<Int, Int>) {
         itemView.name.text = media.title
         itemView.icon.text = media.title.first().toString()
         itemView.icon.setTextColor(colors.first)
         itemView.icon.setBackgroundColor(colors.second)
+        itemView.favorite.visibility = if (media.fav) View.VISIBLE else View.INVISIBLE
+    }
+
+    fun setCallback(itemCallback: MediaItemCallback, media: Media) {
         itemView.setOnClickListener { itemCallback.onItemSelected(media) }
     }
 
@@ -93,7 +104,6 @@ class MediaGroupItemVH(itemView: View) : RecyclerView.ViewHolder(itemView) {
     fun unselect() {
         itemView.setBackgroundColorExt(R.color.grey_50)
     }
-
 }
 
 interface MediaItemCallback {

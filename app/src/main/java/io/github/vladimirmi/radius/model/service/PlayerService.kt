@@ -129,7 +129,7 @@ class PlayerService : MediaBrowserServiceCompat() {
                     .putString(MediaMetadataCompat.METADATA_KEY_ARTIST, artist)
                     .putString(MediaMetadataCompat.METADATA_KEY_TITLE, title)
                     .putString(MediaMetadataCompat.METADATA_KEY_ALBUM,
-                            mediaRepository.selectedMediaData.value?.title)
+                            mediaRepository.selectedData.value?.title)
                     .build()
 
             session.setMetadata(metadataCompat)

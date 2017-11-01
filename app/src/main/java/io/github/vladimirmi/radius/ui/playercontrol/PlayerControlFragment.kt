@@ -6,6 +6,7 @@ import com.arellomobile.mvp.presenter.InjectPresenter
 import com.arellomobile.mvp.presenter.ProvidePresenter
 import io.github.vladimirmi.radius.R
 import io.github.vladimirmi.radius.di.Scopes
+import io.github.vladimirmi.radius.model.entity.Media
 import io.github.vladimirmi.radius.presentation.playercontrol.PlayerControlPresenter
 import io.github.vladimirmi.radius.presentation.playercontrol.PlayerControlView
 import io.github.vladimirmi.radius.ui.base.BaseFragment
@@ -33,6 +34,7 @@ class PlayerControlFragment : BaseFragment(), PlayerControlView {
     override fun onViewCreated(view: View?, savedInstanceState: Bundle?) {
         media_info.isSelected = true
         play_pause.setOnClickListener { presenter.playPause() }
+        favorite.setOnClickListener { presenter.switchFavorite() }
     }
 
     override fun showBuffering() {
@@ -49,5 +51,9 @@ class PlayerControlFragment : BaseFragment(), PlayerControlView {
 
     override fun setMediaInfo(info: String) {
         media_info.text = info
+    }
+
+    override fun setMedia(media: Media) {
+        favorite.setImageResource(if (media.fav) R.drawable.ic_star else R.drawable.ic_empty_star)
     }
 }

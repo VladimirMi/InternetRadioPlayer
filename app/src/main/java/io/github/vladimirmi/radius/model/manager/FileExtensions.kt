@@ -23,10 +23,10 @@ fun File.parsePls(): Media? {
             }
         }
     }
-    return uri?.let { Media(title, it, parent, path, fav) }
+    return uri?.let { Media(title, it, parentFile.name, path, fav) }
 }
 
-fun File.update(media: Media) {
+fun File.save(media: Media) {
     val newContent = StringBuilder()
     readText().lines().forEach {
         val line = when {
@@ -35,7 +35,7 @@ fun File.update(media: Media) {
             it.startsWith("favorite") -> "favorite=${media.fav}\n"
             else -> it
         }
-        newContent.append(line)
+        newContent.appendln(line)
     }
     clear()
     writeText(newContent.toString())

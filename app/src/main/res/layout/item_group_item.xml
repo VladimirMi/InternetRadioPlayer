@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+              xmlns:app="http://schemas.android.com/apk/res-auto"
               xmlns:tools="http://schemas.android.com/tools"
               android:layout_width="match_parent"
               android:layout_height="48dp"
-              xmlns:app="http://schemas.android.com/apk/res-auto"
               android:orientation="horizontal"
     >
 
@@ -11,21 +11,32 @@
         android:id="@+id/icon"
         android:layout_width="48dp"
         android:layout_height="48dp"
-        android:gravity="center"
-        app:autoSizeTextType="uniform"
-        android:layout_marginRight="8dp"
         android:layout_marginEnd="8dp"
-        tools:text="S"
+        android:layout_marginRight="8dp"
+        android:textSize="32sp"
         android:fontFamily="@font/audiowide_regular"
+        android:gravity="center"
+        tools:text="S"
         />
 
     <TextView
         android:id="@+id/name"
-        android:layout_width="match_parent"
+        android:layout_width="0dp"
         android:layout_height="match_parent"
+        android:layout_weight="1"
         android:gravity="center_vertical"
         android:textSize="16sp"
         tools:text="Item name"
+        />
+
+    <ImageView
+        android:id="@+id/favorite"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:padding="12dp"
+        android:visibility="invisible"
+        tools:visibility="visible"
+        app:srcCompat="@drawable/ic_star"
         />
 
 </LinearLayout>

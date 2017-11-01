@@ -1,7 +1,5 @@
 package io.github.vladimirmi.radius.ui.media
 
-import android.arch.lifecycle.LiveData
-import android.arch.lifecycle.Observer
 import android.os.Bundle
 import android.support.v7.widget.LinearLayoutManager
 import android.view.View
@@ -40,8 +38,8 @@ class MediaFragment : BaseFragment(), MediaView, MediaItemCallback {
         media_recycler.adapter = adapter
     }
 
-    override fun setMediaList(mediaList: LiveData<List<Media>>) {
-        mediaList.observe(this, Observer { adapter.setData(it!!) })
+    override fun setMediaList(mediaList: List<Media>) {
+        adapter.setData(mediaList)
     }
 
     override fun onItemSelected(media: Media) {
@@ -49,15 +47,6 @@ class MediaFragment : BaseFragment(), MediaView, MediaItemCallback {
     }
 
     override fun select(media: Media, playing: Boolean) {
-        findMediaGroupItemVH(media).select(playing)
-    }
-
-    override fun unselect(media: Media) {
-        findMediaGroupItemVH(media).unselect()
-    }
-
-    private fun findMediaGroupItemVH(media: Media): MediaGroupItemVH {
-        val position = adapter.getItemPosition(media)
-        return media_recycler.findViewHolderForLayoutPosition(position) as MediaGroupItemVH
+        adapter.select(media, playing)
     }
 }

@@ -9,6 +9,6 @@ import android.net.Uri
 data class Media(val title: String,
                  val uri: Uri,
                  val dirName: String,
-                 val playlistPath: String,
+                 val path: String,
                  val fav: Boolean = false)
 

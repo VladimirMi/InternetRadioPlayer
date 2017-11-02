@@ -51,6 +51,7 @@ class MediaBrowserController
 
     private val controllerCallback = object : MediaControllerCompat.Callback() {
         override fun onPlaybackStateChanged(state: PlaybackStateCompat) {
+            Timber.e("onPlaybackStateChanged: ${state.state}")
             playbackState.value = state
         }
 

@@ -3,6 +3,7 @@ package io.github.vladimirmi.radius.model.repository
 import android.arch.lifecycle.LiveData
 import android.arch.lifecycle.MutableLiveData
 import io.github.vladimirmi.radius.model.entity.Media
+import io.github.vladimirmi.radius.model.manager.Preferences
 import io.github.vladimirmi.radius.model.source.MediaSource
 import javax.inject.Inject
 
@@ -11,14 +12,16 @@ import javax.inject.Inject
  */
 
 class MediaRepository
-@Inject constructor(private val mediaSource: MediaSource) {
+@Inject constructor(private val mediaSource: MediaSource,
+                    private val preferences: Preferences) {
     val mediaListData: LiveData<List<Media>> = MutableLiveData()
     val selectedPosData: LiveData<Int> = MutableLiveData()
 
     fun initMedia() {
-        setMediaList(mediaSource.getMediaList())
-        if (mediaListData.value?.isNotEmpty() == true) {
-            setSelected(mediaListData.value!!.first())
+        val mediaList = mediaSource.getMediaList()
+        setMediaList(mediaList)
+        if (mediaList.isNotEmpty()) {
+            setSelected(preferences.selectedPos)
         }
     }
 
@@ -27,7 +30,9 @@ class MediaRepository
     }
 
     fun setSelected(media: Media) {
-        (selectedPosData as MutableLiveData).value = indexOfFirst(media)
+        val pos = indexOfFirst(media)
+        (selectedPosData as MutableLiveData).value = pos
+        preferences.selectedPos = pos
     }
 
     fun getSelected(): Media? {
@@ -47,6 +52,10 @@ class MediaRepository
 
     private fun save(media: Media) {
         mediaSource.save(media)
+    }
+
+    private fun setSelected(pos: Int) {
+        (selectedPosData as MutableLiveData).value = pos
     }
 
     private fun indexOfFirst(media: Media): Int {

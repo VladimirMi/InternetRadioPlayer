@@ -18,16 +18,18 @@ import javax.inject.Inject
 @InjectViewState
 class PlayerControlPresenter
 @Inject constructor(private val browserController: MediaBrowserController,
-                    private val mediaRepository: MediaRepository)
+                    private val repository: MediaRepository)
     : BasePresenter<PlayerControlView>() {
 
     override fun onFirstAttach() {
         browserController.playbackState.observe(this, Observer { handleState(it) })
         browserController.playbackMetaData.observe(this, Observer { handleMetadata(it) })
-        mediaRepository.selectedPosData.observe(this, Observer {
-            mediaRepository.getSelected()?.let {
-                browserController.play(it.uri)
+        repository.selectedPosData.observe(this, Observer {
+            repository.getSelected()?.let {
                 viewState.setMedia(it)
+                if (browserController.playbackState.value?.state == PlaybackStateCompat.STATE_PLAYING) {
+                    browserController.play(it.uri)
+                }
             }
         })
     }
@@ -50,7 +52,7 @@ class PlayerControlPresenter
     }
 
     fun playPause() {
-        val uri = mediaRepository.getSelected()?.uri ?: return
+        val uri = repository.getSelected()?.uri ?: return
         if (browserController.isPlaying(uri)) {
             browserController.stop()
         } else {
@@ -59,10 +61,10 @@ class PlayerControlPresenter
     }
 
     fun switchFavorite() {
-        val selected = mediaRepository.getSelected() ?: return
+        val selected = repository.getSelected() ?: return
         val copy = selected.copy(fav = !selected.fav)
         Timber.e("switchFavorite: to ${copy.fav}")
-        mediaRepository.updateAndSave(copy)
+        repository.updateAndSave(copy)
         viewState.setMedia(copy)
     }
 }

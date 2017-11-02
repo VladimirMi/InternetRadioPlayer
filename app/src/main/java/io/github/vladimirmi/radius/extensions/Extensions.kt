@@ -10,7 +10,6 @@ import android.support.graphics.drawable.VectorDrawableCompat
 import android.support.v4.content.ContextCompat
 import android.view.View
 import io.github.vladimirmi.radius.R
-import timber.log.Timber
 
 
 /**
@@ -38,7 +37,6 @@ fun Context.getIconTextColors(char: Char): Pair<Int, Int> {
     val textColors = resources.getIntArray(R.array.icon_text_color_set)
     val bgColors = resources.getIntArray(R.array.icon_bg_color_set)
     val colorIdx = char.toInt() % textColors.size
-    Timber.e("getIconTextColors: $colorIdx")
     return Pair(textColors[colorIdx], bgColors[colorIdx])
 }
 

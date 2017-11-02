@@ -13,19 +13,25 @@ import javax.inject.Inject
 class MediaRepository
 @Inject constructor(private val mediaSource: MediaSource) {
     val mediaListData: LiveData<List<Media>> = MutableLiveData()
-    val selectedData: LiveData<Media> = MutableLiveData()
+    val selectedPosData: LiveData<Int> = MutableLiveData()
 
     fun initMedia() {
         setMediaList(mediaSource.getMediaList())
-        setSelected(mediaListData.value?.firstOrNull())
+        if (mediaListData.value?.isNotEmpty() == true) {
+            setSelected(mediaListData.value!!.first())
+        }
     }
 
-    fun setMediaList(mediaList: List<Media>) {
+    private fun setMediaList(mediaList: List<Media>) {
         (mediaListData as MutableLiveData).value = mediaList
     }
 
-    fun setSelected(media: Media?) {
-        (selectedData as MutableLiveData).value = media
+    fun setSelected(media: Media) {
+        (selectedPosData as MutableLiveData).value = indexOfFirst(media)
+    }
+
+    fun getSelected(): Media? {
+        return selectedPosData.value?.let { mediaListData.value?.get(it) }
     }
 
     fun updateAndSave(media: Media) {
@@ -33,17 +39,17 @@ class MediaRepository
         save(media)
     }
 
-    fun update(media: Media) {
+    private fun update(media: Media) {
         val list = mediaListData.value as ArrayList
         list[indexOfFirst(media)] = media
         setMediaList(list)
     }
 
     private fun save(media: Media) {
-        mediaSource.save(media.path, media)
+        mediaSource.save(media)
     }
 
     private fun indexOfFirst(media: Media): Int {
-        return mediaListData.value?.indexOfFirst { it.path == media.path } ?: return -1
+        return mediaListData.value?.indexOfFirst { it.uri == media.uri } ?: return -1
     }
 }

@@ -6,7 +6,7 @@ import io.github.vladimirmi.radius.model.entity.Media
 import io.github.vladimirmi.radius.model.manager.Preferences
 import io.github.vladimirmi.radius.model.manager.clear
 import io.github.vladimirmi.radius.model.manager.parsePls
-import io.github.vladimirmi.radius.model.manager.save
+import io.github.vladimirmi.radius.model.manager.savePls
 import timber.log.Timber
 import java.io.File
 import java.io.FileOutputStream
@@ -33,12 +33,12 @@ class MediaSource
         return mediaList
     }
 
-    fun save(path: String, media: Media) {
-        File(path).save(media)
+    fun save(media: Media) {
+        media.savePls()
     }
 
-    fun clear(path: String) {
-        File(path).clear()
+    fun clear(media: Media) {
+        File(media.path).clear()
     }
 
     private fun copyFilesFromAssets() {

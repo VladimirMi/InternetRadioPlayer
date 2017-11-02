@@ -24,15 +24,15 @@ class MediaPresenter
             it?.let { viewState.setMediaList(it) }
         })
 
-        repository.selectedData.observe(this, Observer {
-            it?.let { viewState.select(it, playing = false) }
+        repository.selectedPosData.observe(this, Observer {
+            repository.getSelected()?.let { viewState.select(it, playing = false) }
         })
 
         mediaBrowserController.playbackState.observe(this, Observer {
             if (it?.state == PlaybackStateCompat.STATE_PLAYING) {
-                repository.selectedData.value?.let { viewState.select(it, playing = true) }
+                repository.getSelected()?.let { viewState.select(it, playing = true) }
             } else {
-                repository.selectedData.value?.let { viewState.select(it, playing = false) }
+                repository.getSelected()?.let { viewState.select(it, playing = false) }
             }
         })
     }

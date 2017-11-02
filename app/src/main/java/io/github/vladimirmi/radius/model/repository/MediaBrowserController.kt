@@ -74,7 +74,7 @@ class MediaBrowserController
     }
 
     fun isPlaying(uri: Uri) = controller?.playbackState?.state == PlaybackStateCompat.STATE_PLAYING
-            && mediaRepository.selectedData.value?.uri == uri
+            && mediaRepository.getSelected()?.uri == uri
 
     fun play(uri: Uri) {
         controller?.transportControls?.playFromUri(uri, null)

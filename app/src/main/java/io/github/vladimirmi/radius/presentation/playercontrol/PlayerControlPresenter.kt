@@ -8,6 +8,7 @@ import com.arellomobile.mvp.InjectViewState
 import io.github.vladimirmi.radius.model.repository.MediaBrowserController
 import io.github.vladimirmi.radius.model.repository.MediaRepository
 import io.github.vladimirmi.radius.ui.base.BasePresenter
+import timber.log.Timber
 import javax.inject.Inject
 
 /**
@@ -23,8 +24,8 @@ class PlayerControlPresenter
     override fun onFirstAttach() {
         browserController.playbackState.observe(this, Observer { handleState(it) })
         browserController.playbackMetaData.observe(this, Observer { handleMetadata(it) })
-        mediaRepository.selectedData.observe(this, Observer {
-            mediaRepository.selectedData.value?.let {
+        mediaRepository.selectedPosData.observe(this, Observer {
+            mediaRepository.getSelected()?.let {
                 browserController.play(it.uri)
                 viewState.setMedia(it)
             }
@@ -49,7 +50,7 @@ class PlayerControlPresenter
     }
 
     fun playPause() {
-        val uri = mediaRepository.selectedData.value?.uri ?: return
+        val uri = mediaRepository.getSelected()?.uri ?: return
         if (browserController.isPlaying(uri)) {
             browserController.stop()
         } else {
@@ -58,8 +59,9 @@ class PlayerControlPresenter
     }
 
     fun switchFavorite() {
-        val selected = mediaRepository.selectedData.value ?: return
+        val selected = mediaRepository.getSelected() ?: return
         val copy = selected.copy(fav = !selected.fav)
+        Timber.e("switchFavorite: to ${copy.fav}")
         mediaRepository.updateAndSave(copy)
         viewState.setMedia(copy)
     }

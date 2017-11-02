@@ -19,26 +19,23 @@ fun File.parsePls(): Media? {
             when {
                 it.startsWith("Title1=") -> title = it.substring(7).trim()
                 it.startsWith("File1=") -> uri = Uri.parse(it.substring(6).trim())
-                it.startsWith("favorite") -> fav = it.substring(8).trim().toBoolean()
+                it.startsWith("favorite=") -> fav = it.substring(9).trim().toBoolean()
             }
         }
     }
     return uri?.let { Media(title, it, parentFile.name, path, fav) }
 }
 
-fun File.save(media: Media) {
-    val newContent = StringBuilder()
-    readText().lines().forEach {
-        val line = when {
-            it.startsWith("Title1=") -> "Title1=${media.title}\n"
-            it.startsWith("File1=") -> "File1=${media.uri}\n"
-            it.startsWith("favorite") -> "favorite=${media.fav}\n"
-            else -> it
-        }
-        newContent.appendln(line)
-    }
-    clear()
-    writeText(newContent.toString())
+fun Media.savePls() {
+    val content = """[playlist]
+        |File1=$uri
+        |Title1=$title
+        |favorite=$fav
+    """.trimMargin()
+
+    val file = File(path)
+    file.clear()
+    file.writeText(content)
 }
 
 fun File.clear() {

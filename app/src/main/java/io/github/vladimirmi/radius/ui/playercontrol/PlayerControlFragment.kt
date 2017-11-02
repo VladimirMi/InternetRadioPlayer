@@ -6,6 +6,7 @@ import com.arellomobile.mvp.presenter.InjectPresenter
 import com.arellomobile.mvp.presenter.ProvidePresenter
 import io.github.vladimirmi.radius.R
 import io.github.vladimirmi.radius.di.Scopes
+import io.github.vladimirmi.radius.extensions.getIconTextColors
 import io.github.vladimirmi.radius.model.entity.Media
 import io.github.vladimirmi.radius.presentation.playercontrol.PlayerControlPresenter
 import io.github.vladimirmi.radius.presentation.playercontrol.PlayerControlView
@@ -55,5 +56,8 @@ class PlayerControlFragment : BaseFragment(), PlayerControlView {
 
     override fun setMedia(media: Media) {
         favorite.setImageResource(if (media.fav) R.drawable.ic_star else R.drawable.ic_empty_star)
+        val colors = context.getIconTextColors(media.title[0])
+        media_icon_text.text = media.title[0].toString()
+        media_icon_text.setTextColor(colors.first)
     }
 }

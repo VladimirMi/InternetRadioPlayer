@@ -1,18 +1,16 @@
 package io.github.vladimirmi.radius.ui.media
 
-import android.content.Context
 import android.support.v7.widget.RecyclerView
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import io.github.vladimirmi.radius.R
-import io.github.vladimirmi.radius.di.Scopes
+import io.github.vladimirmi.radius.extensions.getIconTextColors
 import io.github.vladimirmi.radius.extensions.setBackgroundColorExt
 import io.github.vladimirmi.radius.model.entity.GroupingMedia
 import io.github.vladimirmi.radius.model.entity.Media
 import kotlinx.android.synthetic.main.item_group_item.view.*
 import kotlinx.android.synthetic.main.item_group_title.view.*
-import toothpick.Toothpick
 
 /**
  * Created by Vladimir Mikhalev 04.10.2017.
@@ -29,8 +27,6 @@ class MediaListAdapter(private val itemCallback: MediaItemCallback)
     private val mediaList = GroupingMedia()
     private var selected: Media? = null
     private var playing = false
-    private var iconColors = Toothpick.openScope(Scopes.APP).getInstance(Context::class.java)
-            .resources.getIntArray(R.array.icon_color_set)
 
     fun setData(data: List<Media>) {
         mediaList.setData(data)
@@ -55,7 +51,7 @@ class MediaListAdapter(private val itemCallback: MediaItemCallback)
             is MediaGroupItemVH -> {
                 val media = mediaList.getGroupItem(position)
                 holder.setCallback(itemCallback, media)
-                holder.bind(media, getIconColors(media.title[0]))
+                holder.bind(media)
                 if (media.uri == selected?.uri) holder.select(playing)
                 else holder.unselect()
             }
@@ -69,12 +65,6 @@ class MediaListAdapter(private val itemCallback: MediaItemCallback)
         this.playing = playing
         notifyDataSetChanged()
     }
-
-    private fun getIconColors(char: Char): Pair<Int, Int> {
-        val textColorIdx = char.toInt() % iconColors.size
-        val bgColorIdx = (textColorIdx + 4) % iconColors.size
-        return Pair(iconColors[textColorIdx], iconColors[bgColorIdx])
-    }
 }
 
 class MediaGroupTitleVH(itemView: View) : RecyclerView.ViewHolder(itemView) {
@@ -84,12 +74,14 @@ class MediaGroupTitleVH(itemView: View) : RecyclerView.ViewHolder(itemView) {
 }
 
 class MediaGroupItemVH(itemView: View) : RecyclerView.ViewHolder(itemView) {
-    fun bind(media: Media, colors: Pair<Int, Int>) {
+    fun bind(media: Media) {
         itemView.name.text = media.title
+        itemView.favorite.visibility = if (media.fav) View.VISIBLE else View.INVISIBLE
+
+        val colors = itemView.context.getIconTextColors(media.title[0])
         itemView.icon.text = media.title.first().toString()
         itemView.icon.setTextColor(colors.first)
         itemView.icon.setBackgroundColor(colors.second)
-        itemView.favorite.visibility = if (media.fav) View.VISIBLE else View.INVISIBLE
     }
 
     fun setCallback(itemCallback: MediaItemCallback, media: Media) {

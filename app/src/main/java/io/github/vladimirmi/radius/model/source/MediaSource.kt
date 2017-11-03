@@ -21,7 +21,7 @@ class MediaSource
                     private val preferences: Preferences) {
     private lateinit var appDir: File
 
-    fun getMediaList(): List<Media> {
+    fun getMediaList(): ArrayList<Media> {
         copyFilesFromAssets()
         val mediaList = ArrayList<Media>()
         val treeWalk = getAppDir().walkTopDown()

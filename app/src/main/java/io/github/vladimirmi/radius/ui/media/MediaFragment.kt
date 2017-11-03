@@ -7,6 +7,7 @@ import com.arellomobile.mvp.presenter.InjectPresenter
 import com.arellomobile.mvp.presenter.ProvidePresenter
 import io.github.vladimirmi.radius.R
 import io.github.vladimirmi.radius.di.Scopes
+import io.github.vladimirmi.radius.model.entity.GroupedList
 import io.github.vladimirmi.radius.model.entity.Media
 import io.github.vladimirmi.radius.presentation.media.MediaPresenter
 import io.github.vladimirmi.radius.presentation.media.MediaView
@@ -38,8 +39,12 @@ class MediaFragment : BaseFragment(), MediaView, MediaItemCallback {
         media_recycler.adapter = adapter
     }
 
-    override fun setMediaList(mediaList: List<Media>) {
+    override fun setMediaList(mediaList: GroupedList<Media>) {
         adapter.setData(mediaList)
+    }
+
+    override fun onGroupSelected(group: String) {
+        presenter.selectGroup(group)
     }
 
     override fun onItemSelected(media: Media) {
@@ -48,5 +53,9 @@ class MediaFragment : BaseFragment(), MediaView, MediaItemCallback {
 
     override fun select(media: Media, playing: Boolean) {
         adapter.select(media, playing)
+    }
+
+    override fun notifyList() {
+        adapter.notifyDataSetChanged()
     }
 }

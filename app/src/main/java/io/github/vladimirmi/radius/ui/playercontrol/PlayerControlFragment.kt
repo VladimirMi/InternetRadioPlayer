@@ -44,6 +44,7 @@ class PlayerControlFragment : BaseFragment(), PlayerControlView {
 
     override fun showStopped() {
         play_pause.setImageResource(R.drawable.ic_play)
+        media_info.text = ""
     }
 
     override fun showPlaying() {

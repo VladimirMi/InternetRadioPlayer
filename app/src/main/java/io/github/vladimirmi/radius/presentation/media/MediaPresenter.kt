@@ -20,11 +20,11 @@ class MediaPresenter
     : BasePresenter<MediaView>() {
 
     override fun onFirstAttach() {
-        repository.mediaListData.observe(this, Observer {
-            it?.let { viewState.setMediaList(it) }
+        repository.groupedMediaData.observe(this, Observer {
+            viewState.setMediaList(repository.getGrouped())
         })
 
-        repository.selectedPosData.observe(this, Observer {
+        repository.selectedData.observe(this, Observer {
             repository.getSelected()?.let { viewState.select(it, playing = false) }
         })
 
@@ -39,6 +39,16 @@ class MediaPresenter
 
     fun select(media: Media) {
         repository.setSelected(media)
+    }
+
+    fun selectGroup(group: String) {
+        //todo interactor?
+        if (repository.getGrouped().isGroupVisible(group)) {
+            repository.getGrouped().hideGroup(group)
+        } else {
+            repository.getGrouped().showGroup(group)
+        }
+        viewState.notifyList()
     }
 }
 

@@ -1,67 +1,68 @@
 package io.github.vladimirmi.radius.model.entity
 
 import java.lang.IllegalStateException
-import java.util.NoSuchElementException
-import kotlin.collections.ArrayList
-import kotlin.collections.HashMap
 
 /**
  * Created by Vladimir Mikhalev 11.10.2017.
  */
 
-class GroupingMedia {
+class GroupingMedia(mediaList: ArrayList<Media>)
+    : MutableList<Media> by mediaList, GroupedList<Media> {
 
-    class GroupMapping(val group: String, val index: Int? = null) {
-        fun isGroupTitle() = index == null
-    }
+    private val groups = HashMap<String, ArrayList<Int>>()
+    private val mappings = ArrayList<GroupMapping>()
 
-    private val groups = HashMap<String, ArrayList<Media>>()
-    private val idxMapping = ArrayList<GroupMapping>()
-
-    fun setData(mediaList: List<Media>) {
-        groups.clear()
-        idxMapping.clear()
-        for (media in mediaList) {
-            val key = media.dirName
-            val list = groups.getOrPut(key) { ArrayList() }
-            if (list.isEmpty()) idxMapping.add(GroupMapping(key))
-            idxMapping.add(GroupMapping(key, list.size))
-            list.add(media)
+    init {
+        mediaList.forEachIndexed { index, media ->
+            val group = media.dirName
+            val list = groups.getOrPut(group) { ArrayList() }
+            if (list.isEmpty()) mappings.add(GroupMapping(group))
+            mappings.add(GroupMapping(group, list.size))
+            list.add(index)
         }
     }
 
-    fun isGroupTitle(position: Int): Boolean {
-        checkRange(position)
-        return idxMapping[position].isGroupTitle()
+    override fun isGroupTitle(position: Int): Boolean {
+        return getGroupMapping(position).isGroupTitle()
     }
 
-    fun getGroupTitle(position: Int): String {
-        checkRange(position)
-        return idxMapping[position].group
+    override fun getGroupTitle(position: Int): String {
+        return getGroupMapping(position).group
     }
 
-    fun getGroupItem(position: Int): Media {
-        checkRange(position)
-        val groupMapping = idxMapping[position]
+    override fun getGroupItem(position: Int): Media {
+        val groupMapping = getGroupMapping(position)
         if (groupMapping.index == null) throw IllegalStateException("Should call getGroupTitle()")
-        return groups[groupMapping.group]!![groupMapping.index]
+        val group = groups[groupMapping.group] ?: throw IllegalStateException("Can not find group")
+        return get(group[groupMapping.index])
     }
 
-    fun size() = idxMapping.size
-
-    private fun checkRange(position: Int) {
-        if (position < 0 || position >= idxMapping.size) {
-            throw  IndexOutOfBoundsException()
-        }
+    override fun hideGroup(group: String) {
+        setGroupVisible(group, false)
     }
 
-    fun getGroupItemPosition(media: Media): Int {
-        idxMapping.forEachIndexed { groupIndex, groupMapping ->
-            val mediaList = groups[groupMapping.group]!!
-            mediaList.forEachIndexed { mediaIndex, m ->
-                if (m == media) return groupIndex + mediaIndex + 1
+    override fun showGroup(group: String) {
+        setGroupVisible(group, true)
+    }
+
+    override fun isGroupVisible(group: String): Boolean {
+        return mappings.find { it.group == group && !it.isGroupTitle() }?.visible ?: false
+    }
+
+    override fun groupedSize(): Int {
+        return mappings.count { it.visible }
+    }
+
+    private fun setGroupVisible(group: String, visible: Boolean) {
+        mappings.forEach {
+            if (it.group == group && !it.isGroupTitle()) {
+                it.visible = visible
             }
         }
-        throw NoSuchElementException()
+    }
+
+    private fun getGroupMapping(position: Int): GroupMapping {
+        val hided = (0..position).count { !mappings[it].visible }
+        return mappings[position + hided]
     }
 }

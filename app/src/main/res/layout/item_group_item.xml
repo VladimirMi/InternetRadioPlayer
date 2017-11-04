@@ -1,42 +1,75 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-              xmlns:app="http://schemas.android.com/apk/res-auto"
-              xmlns:tools="http://schemas.android.com/tools"
-              android:layout_width="match_parent"
-              android:layout_height="48dp"
-              android:orientation="horizontal"
+
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+             xmlns:app="http://schemas.android.com/apk/res-auto"
+             xmlns:tools="http://schemas.android.com/tools"
+             android:layout_width="match_parent"
+             android:layout_height="52dp"
+             android:orientation="vertical"
     >
 
-    <TextView
-        android:id="@+id/icon"
-        android:layout_width="48dp"
-        android:layout_height="48dp"
-        android:layout_marginEnd="8dp"
-        android:layout_marginRight="8dp"
-        app:autoSizeTextType="uniform"
-        android:fontFamily="@font/audiowide_regular"
-        android:gravity="center"
-        tools:text="S"
+    <ImageView
+        android:layout_width="match_parent"
+        android:layout_height="2dp"
+        app:layout_constraintEnd_toEndOf="@+id/media_info"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:srcCompat="@drawable/shadow_reverse"
+        tools:ignore="ContentDescription"
+        android:layout_gravity="top"
         />
 
-    <TextView
-        android:id="@+id/name"
-        android:layout_width="0dp"
+    <LinearLayout
+        android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_weight="1"
+        android:orientation="horizontal"
         android:gravity="center_vertical"
-        android:textSize="16sp"
-        tools:text="Item name"
-        />
+        >
+
+        <TextView
+            android:id="@+id/icon"
+            android:layout_width="48dp"
+            android:layout_height="48dp"
+            android:layout_marginEnd="8dp"
+            android:layout_marginRight="8dp"
+            app:autoSizeTextType="uniform"
+            android:fontFamily="@font/audiowide_regular"
+            android:gravity="center"
+            tools:text="S"
+            tools:background="@color/brown_200"
+            />
+
+        <TextView
+            android:id="@+id/name"
+            android:layout_width="0dp"
+            android:layout_height="48dp"
+            android:layout_weight="1"
+            android:gravity="center_vertical"
+            android:textSize="16sp"
+            tools:text="Item name"
+            />
+
+        <ImageView
+            android:id="@+id/favorite"
+            android:layout_width="48dp"
+            android:layout_height="48dp"
+            android:padding="12dp"
+            android:visibility="invisible"
+            tools:visibility="visible"
+            app:srcCompat="@drawable/ic_star"
+            />
+
+    </LinearLayout>
 
     <ImageView
-        android:id="@+id/favorite"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:padding="12dp"
-        android:visibility="invisible"
-        tools:visibility="visible"
-        app:srcCompat="@drawable/ic_star"
+        android:layout_width="match_parent"
+        android:layout_height="2dp"
+        app:layout_constraintEnd_toEndOf="@+id/media_info"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:srcCompat="@drawable/shadow"
+        tools:ignore="ContentDescription"
+        android:layout_gravity="bottom"
         />
 
-</LinearLayout>
+</FrameLayout>

@@ -16,7 +16,7 @@
         app:layout_constraintEnd_toEndOf="@+id/media_info"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        app:srcCompat="@drawable/shadow_reverse"
+        app:srcCompat="@drawable/shadow_controls"
         tools:ignore="ContentDescription"
         />
 

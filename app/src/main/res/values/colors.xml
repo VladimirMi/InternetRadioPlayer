@@ -35,7 +35,10 @@
     <color name="brown_200">#bcaaa4</color>
     <color name="brown_500">#795548</color>
     <color name="grey_50">#fafafa</color>
+    <color name="grey_100">#f5f5f5</color>
+    <color name="grey_200">#eeeeee</color>
     <color name="grey_300">#e0e0e0</color>
+    <color name="grey_400">#bdbdbd</color>
     <color name="grey_500">#9E9E9E</color>
     <color name="grey_700">#455a64</color>
     <color name="blue_grey_500">#607D8B</color>

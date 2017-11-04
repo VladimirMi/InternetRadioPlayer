@@ -8,6 +8,8 @@ import android.graphics.drawable.VectorDrawable
 import android.support.annotation.DrawableRes
 import android.support.graphics.drawable.VectorDrawableCompat
 import android.support.v4.content.ContextCompat
+import android.view.View
+import io.github.vladimirmi.radius.R
 
 
 /**
@@ -29,4 +31,15 @@ fun Context.getBitmap(@DrawableRes id: Int): Bitmap {
     } else {
         throw IllegalArgumentException("unsupported drawable type")
     }
+}
+
+fun Context.getIconTextColors(char: Char): Pair<Int, Int> {
+    val textColors = resources.getIntArray(R.array.icon_text_color_set)
+    val bgColors = resources.getIntArray(R.array.icon_bg_color_set)
+    val colorIdx = char.toInt() % textColors.size
+    return Pair(textColors[colorIdx], bgColors[colorIdx])
+}
+
+fun View.setBackgroundColorExt(id: Int) {
+    setBackgroundColor(ContextCompat.getColor(context, id))
 }

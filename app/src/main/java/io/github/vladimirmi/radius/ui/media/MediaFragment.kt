@@ -1,7 +1,5 @@
 package io.github.vladimirmi.radius.ui.media
 
-import android.arch.lifecycle.LiveData
-import android.arch.lifecycle.Observer
 import android.os.Bundle
 import android.support.v7.widget.LinearLayoutManager
 import android.view.View
@@ -9,6 +7,7 @@ import com.arellomobile.mvp.presenter.InjectPresenter
 import com.arellomobile.mvp.presenter.ProvidePresenter
 import io.github.vladimirmi.radius.R
 import io.github.vladimirmi.radius.di.Scopes
+import io.github.vladimirmi.radius.model.entity.GroupedList
 import io.github.vladimirmi.radius.model.entity.Media
 import io.github.vladimirmi.radius.presentation.media.MediaPresenter
 import io.github.vladimirmi.radius.presentation.media.MediaView
@@ -40,11 +39,23 @@ class MediaFragment : BaseFragment(), MediaView, MediaItemCallback {
         media_recycler.adapter = adapter
     }
 
-    override fun setMediaList(mediaList: LiveData<List<Media>>) {
-        mediaList.observe(this, Observer { adapter.setData(it!!) })
+    override fun setMediaList(mediaList: GroupedList<Media>) {
+        adapter.setData(mediaList)
+    }
+
+    override fun onGroupSelected(group: String) {
+        presenter.selectGroup(group)
     }
 
     override fun onItemSelected(media: Media) {
         presenter.select(media)
+    }
+
+    override fun select(media: Media, playing: Boolean) {
+        adapter.select(media, playing)
+    }
+
+    override fun notifyList() {
+        adapter.notifyDataSetChanged()
     }
 }

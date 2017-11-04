@@ -16,7 +16,7 @@
         app:layout_constraintEnd_toEndOf="@+id/media_info"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        app:srcCompat="@drawable/shadow_reverse"
+        app:srcCompat="@drawable/shadow_controls"
         tools:ignore="ContentDescription"
         />
 
@@ -24,57 +24,80 @@
         android:id="@+id/media_info"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:layout_marginLeft="8dp"
-        android:layout_marginStart="8dp"
-        android:layout_marginTop="8dp"
         android:ellipsize="marquee"
         android:marqueeRepeatLimit="marquee_forever"
+        android:paddingLeft="8dp"
+        android:paddingRight="8dp"
         android:singleLine="true"
         app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintStart_toEndOf="@+id/media_icon"
-        app:layout_constraintTop_toTopOf="parent"
-        tools:text="Nocere sed mire ducunt ad secundus classis. Hercle, decor regius!, gemna!"
+        app:layout_constraintTop_toBottomOf="@+id/shadow"
+        tools:text=" Hercle, decor regius!, gemna!"
         />
 
-    <ImageView
+    <FrameLayout
         android:id="@+id/media_icon"
         android:layout_width="0dp"
         android:layout_height="0dp"
-        android:contentDescription="media icon"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintDimensionRatio="h,1:1"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        app:srcCompat="@drawable/ic_radius"
-        />
+        >
+
+        <ImageView
+            android:id="@+id/media_icon_img"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:contentDescription="media icon"
+            android:visibility="gone"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintDimensionRatio="h,1:1"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            />
+
+        <TextView
+            android:id="@+id/media_icon_text"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_marginTop="8dp"
+            android:fontFamily="@font/audiowide_regular"
+            android:gravity="center"
+            app:autoSizeTextType="uniform"
+            tools:text="S"
+            />
+    </FrameLayout>
+
 
     <ImageView
         android:id="@+id/play_pause"
-        android:layout_width="60dp"
-        android:layout_height="60dp"
+        android:layout_width="72dp"
+        android:layout_height="72dp"
         android:contentDescription="play/pause button"
+        android:paddingTop="10dp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/media_info"
+        app:layout_constraintTop_toTopOf="parent"
         app:srcCompat="@drawable/ic_play"
         />
 
     <ImageView
-        android:id="@+id/star"
+        android:id="@+id/favorite"
         android:layout_width="0dp"
         android:layout_height="0dp"
-        android:layout_marginBottom="8dp"
-        android:layout_marginEnd="16dp"
-        android:layout_marginRight="16dp"
-        android:layout_marginTop="8dp"
         android:contentDescription="add to favorite"
+        android:paddingLeft="12dp"
+        android:paddingRight="12dp"
+        android:paddingBottom="12dp"
+        android:paddingTop="20dp"
         app:layout_constraintBottom_toBottomOf="@+id/play_pause"
         app:layout_constraintDimensionRatio="h,1:1"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toTopOf="@+id/play_pause"
+        app:layout_constraintTop_toTopOf="parent"
         app:srcCompat="@drawable/ic_star"
         />
-
 
 </android.support.constraint.ConstraintLayout>

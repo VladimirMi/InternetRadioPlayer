@@ -1,10 +1,12 @@
 package io.github.vladimirmi.radius.presentation.media
 
+import android.arch.lifecycle.Observer
+import android.support.v4.media.session.PlaybackStateCompat
 import com.arellomobile.mvp.InjectViewState
-import com.arellomobile.mvp.MvpPresenter
 import io.github.vladimirmi.radius.model.entity.Media
+import io.github.vladimirmi.radius.model.repository.MediaBrowserController
 import io.github.vladimirmi.radius.model.repository.MediaRepository
-import timber.log.Timber
+import io.github.vladimirmi.radius.ui.base.BasePresenter
 import javax.inject.Inject
 
 /**
@@ -13,17 +15,40 @@ import javax.inject.Inject
 
 @InjectViewState
 class MediaPresenter
-@Inject constructor(private val mediaRepository: MediaRepository)
-    : MvpPresenter<MediaView>() {
+@Inject constructor(private val repository: MediaRepository,
+                    private val mediaBrowserController: MediaBrowserController)
+    : BasePresenter<MediaView>() {
 
-    override fun onFirstViewAttach() {
-        mediaRepository.initMedia()
-        viewState.setMediaList(mediaRepository.mediaListData)
+    override fun onFirstAttach() {
+        repository.groupedMediaData.observe(this, Observer {
+            viewState.setMediaList(repository.getGrouped())
+        })
+
+        repository.selectedData.observe(this, Observer {
+            repository.getSelected()?.let { viewState.select(it, playing = false) }
+        })
+
+        mediaBrowserController.playbackState.observe(this, Observer {
+            if (it?.state == PlaybackStateCompat.STATE_PLAYING) {
+                repository.getSelected()?.let { viewState.select(it, playing = true) }
+            } else {
+                repository.getSelected()?.let { viewState.select(it, playing = false) }
+            }
+        })
     }
 
     fun select(media: Media) {
-        Timber.e("select: ${media.uri}")
-        mediaRepository.selectedMediaData.value = media
+        repository.setSelected(media)
+    }
+
+    fun selectGroup(group: String) {
+        //todo interactor?
+        if (repository.getGrouped().isGroupVisible(group)) {
+            repository.getGrouped().hideGroup(group)
+        } else {
+            repository.getGrouped().showGroup(group)
+        }
+        viewState.notifyList()
     }
 }
 

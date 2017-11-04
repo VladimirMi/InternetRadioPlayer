@@ -89,8 +89,8 @@ class MediaNotification(private val service: PlayerService,
                 .setSmallIcon(R.drawable.ic_radius)
                 .setLargeIcon(service.getBitmap(R.drawable.ic_radius))
                 .setContentInfo(metadata.getString(MediaMetadataCompat.METADATA_KEY_ALBUM))
-                .setContentTitle(metadata.getString(MediaMetadataCompat.METADATA_KEY_ARTIST))
-                .setContentText(metadata.getString(MediaMetadataCompat.METADATA_KEY_TITLE))
+                .setContentTitle(metadata.getString(MediaMetadataCompat.METADATA_KEY_TITLE))
+                .setContentText(metadata.getString(MediaMetadataCompat.METADATA_KEY_ARTIST))
                 .setStyle(style)
 
         if (playbackState.actions == PlaybackStateCompat.ACTION_PLAY) {

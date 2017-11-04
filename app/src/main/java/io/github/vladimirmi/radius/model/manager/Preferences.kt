@@ -12,4 +12,5 @@ class Preferences
 @Inject constructor(context: Context) {
 
     var firstRun: Boolean by Preference(context, "first_run", true)
+    var selectedPos: Int by Preference(context, "selected_position", 0)
 }

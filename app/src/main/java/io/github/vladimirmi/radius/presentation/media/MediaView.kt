@@ -1,7 +1,7 @@
 package io.github.vladimirmi.radius.presentation.media
 
-import android.arch.lifecycle.LiveData
 import com.arellomobile.mvp.MvpView
+import io.github.vladimirmi.radius.model.entity.GroupedList
 import io.github.vladimirmi.radius.model.entity.Media
 
 /**
@@ -9,5 +9,7 @@ import io.github.vladimirmi.radius.model.entity.Media
  */
 
 interface MediaView : MvpView {
-    fun setMediaList(mediaList: LiveData<List<Media>>)
+    fun setMediaList(mediaList: GroupedList<Media>)
+    fun select(media: Media, playing: Boolean)
+    fun notifyList()
 }

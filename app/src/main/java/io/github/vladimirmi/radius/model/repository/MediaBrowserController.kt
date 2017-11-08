@@ -67,6 +67,7 @@ class MediaBrowserController
     }
 
     fun connect() {
+        if (mediaBrowser.isConnected) return
         mediaBrowser.connect()
     }
 
@@ -78,6 +79,7 @@ class MediaBrowserController
             && mediaRepository.getSelected()?.uri == uri
 
     fun play(uri: Uri) {
+        if (isPlaying(uri)) return
         controller?.transportControls?.playFromUri(uri, null)
     }
 

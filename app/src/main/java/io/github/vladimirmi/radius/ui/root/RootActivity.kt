@@ -14,7 +14,6 @@ import io.github.vladimirmi.radius.presentation.root.RootView
 import io.github.vladimirmi.radius.ui.media.MediaFragment
 import ru.terrakok.cicerone.NavigatorHolder
 import ru.terrakok.cicerone.android.SupportAppNavigator
-import timber.log.Timber
 import toothpick.Toothpick
 import javax.inject.Inject
 
@@ -45,9 +44,7 @@ class RootActivity : MvpAppCompatActivity(), RootView {
     override fun onResumeFragments() {
         super.onResumeFragments()
         navigatorHolder.setNavigator(navigator)
-        if (intent != null) {
-            Timber.e("onResumeFragments: intent: ${intent.data}")
-        }
+        intent?.data?.let { presenter.addMedia(it) }
     }
 
     override fun onPause() {

@@ -68,4 +68,5 @@ dependencies {
     compile 'com.google.android.exoplayer:exoplayer-core:r' + exoPlayerVersion
     compile 'com.google.android.exoplayer:extension-mediasession:r' + exoPlayerVersion
 
+    compile 'org.jetbrains.kotlinx:kotlinx-coroutines-core:0.19.3'
 }

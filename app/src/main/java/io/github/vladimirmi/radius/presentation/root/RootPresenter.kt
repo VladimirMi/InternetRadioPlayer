@@ -2,6 +2,7 @@ package io.github.vladimirmi.radius.presentation.root
 
 import android.Manifest
 import android.content.pm.PackageManager
+import android.net.Uri
 import android.os.Build
 import android.support.v4.app.ActivityCompat
 import android.support.v4.content.ContextCompat
@@ -47,6 +48,10 @@ class RootPresenter
         } else if (requestCode == REQUEST_WRITE) {
             nextScreen()
         }
+    }
+
+    fun addMedia(uri: Uri) {
+        repository.addMedia(uri)
     }
 
     private fun checkAndRequestPermissions(permissions: Array<String>, requestCode: Int): Boolean {

@@ -2,11 +2,13 @@ package io.github.vladimirmi.radius.model.repository
 
 import android.arch.lifecycle.LiveData
 import android.arch.lifecycle.MutableLiveData
+import android.net.Uri
 import io.github.vladimirmi.radius.model.entity.GroupedList
 import io.github.vladimirmi.radius.model.entity.GroupingMedia
 import io.github.vladimirmi.radius.model.entity.Media
 import io.github.vladimirmi.radius.model.manager.Preferences
 import io.github.vladimirmi.radius.model.source.MediaSource
+import timber.log.Timber
 import javax.inject.Inject
 
 /**
@@ -23,7 +25,7 @@ class MediaRepository
     fun initMedia() {
         mediaList = GroupingMedia(mediaSource.getMediaList())
         setGrouped(mediaList)
-        if (mediaList.isNotEmpty()) {
+        if (mediaList.size > preferences.selectedPos) {
             setSelected(preferences.selectedPos)
         }
     }
@@ -62,5 +64,10 @@ class MediaRepository
 
     private fun indexOfFirst(media: Media): Int {
         return mediaList.indexOfFirst { it.id == media.id }
+    }
+
+    fun addMedia(uri: Uri) {
+        Timber.e("addMedia: $uri")
+        mediaSource.download(uri)
     }
 }

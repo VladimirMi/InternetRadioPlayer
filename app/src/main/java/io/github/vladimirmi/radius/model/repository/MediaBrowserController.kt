@@ -75,11 +75,11 @@ class MediaBrowserController
         mediaBrowser.disconnect()
     }
 
-    fun isPlaying(uri: Uri) = controller?.playbackState?.state == PlaybackStateCompat.STATE_PLAYING
-            && mediaRepository.getSelected()?.uri == uri
+    val isPlaying get() = controller?.playbackState?.state == PlaybackStateCompat.STATE_PLAYING
+
+    fun isPlaying(uri: Uri) = isPlaying && mediaRepository.getSelected()?.uri == uri
 
     fun play(uri: Uri) {
-        if (isPlaying(uri)) return
         controller?.transportControls?.playFromUri(uri, null)
     }
 

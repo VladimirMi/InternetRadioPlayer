@@ -45,14 +45,15 @@ class MediaNotification(private val service: PlayerService,
             }
             PlaybackStateCompat.STATE_STOPPED -> {
                 service.stopForeground(true)
+                NotificationManagerCompat.from(service).cancelAll()
             }
         }
     }
 
     //todo enum with pending intents
-    private fun getNotification(): Notification {
+    private fun getNotification(): Notification? {
         val playbackState = mediaSession.controller.playbackState
-        val metadata = mediaSession.controller.metadata
+        val metadata: MediaMetadataCompat? = mediaSession.controller.metadata
 
         val playIntent = Intent(service, PlayerService::class.java).apply {
             action = ACTION_PLAY
@@ -88,9 +89,9 @@ class MediaNotification(private val service: PlayerService,
                 .setPriority(NotificationCompat.PRIORITY_HIGH)
                 .setSmallIcon(R.drawable.ic_radius)
                 .setLargeIcon(service.getBitmap(R.drawable.ic_radius))
-                .setContentInfo(metadata.getString(MediaMetadataCompat.METADATA_KEY_ALBUM))
-                .setContentTitle(metadata.getString(MediaMetadataCompat.METADATA_KEY_TITLE))
-                .setContentText(metadata.getString(MediaMetadataCompat.METADATA_KEY_ARTIST))
+                .setContentInfo(metadata?.getString(MediaMetadataCompat.METADATA_KEY_ALBUM) ?: "")
+                .setContentTitle(metadata?.getString(MediaMetadataCompat.METADATA_KEY_TITLE) ?: "")
+                .setContentText(metadata?.getString(MediaMetadataCompat.METADATA_KEY_ARTIST) ?: "")
                 .setStyle(style)
 
         if (playbackState.actions == PlaybackStateCompat.ACTION_PLAY) {

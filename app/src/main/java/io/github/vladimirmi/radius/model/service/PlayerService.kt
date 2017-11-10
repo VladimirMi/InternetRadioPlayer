@@ -46,7 +46,6 @@ class PlayerService : MediaBrowserServiceCompat() {
     private var serviceStarted: Boolean = false
 
     override fun onCreate() {
-        Timber.e("onCreate: ")
         super.onCreate()
         Toothpick.openScope(Scopes.APP).apply {
             Toothpick.inject(this@PlayerService, this)
@@ -87,7 +86,6 @@ class PlayerService : MediaBrowserServiceCompat() {
     }
 
     override fun onDestroy() {
-        Timber.e("onDestroy: ")
         handleStopRequest()
         playback.releasePlayer()
     }
@@ -111,8 +109,8 @@ class PlayerService : MediaBrowserServiceCompat() {
                 else -> STATE_NONE
             }
 
-            val stateCompat = createPlaybackState(state)
-            session.setPlaybackState(stateCompat)
+            session.setPlaybackState(createPlaybackState(state))
+            session.setMetadata(createMetadata())
             notification.update()
         }
 
@@ -126,16 +124,7 @@ class PlayerService : MediaBrowserServiceCompat() {
         }
 
         override fun onMetadata(key: String, value: String) {
-            Timber.e("onMetadata: $key-$value")
-            val (artist, title) = value.split("-").map { it.trim() }
-            val metadataCompat = MediaMetadataCompat.Builder()
-                    .putString(MediaMetadataCompat.METADATA_KEY_ARTIST, artist)
-                    .putString(MediaMetadataCompat.METADATA_KEY_TITLE, title)
-                    .putString(MediaMetadataCompat.METADATA_KEY_ALBUM,
-                            mediaRepository.getSelected()?.title)
-                    .build()
-
-            session.setMetadata(metadataCompat)
+            session.setMetadata(createMetadata(key, value))
             notification.update()
         }
 
@@ -147,6 +136,20 @@ class PlayerService : MediaBrowserServiceCompat() {
             }
             return Builder().setActions(availableActions)
                     .setState(state, 0, 1F)
+                    .build()
+        }
+
+        private fun createMetadata(key: String = "", value: String = ""): MediaMetadataCompat {
+            val (artist, title) = if (value.isEmpty()) {
+                listOf("", "")
+            } else {
+                value.split("-").map { it.trim() }
+            }
+            return MediaMetadataCompat.Builder()
+                    .putString(MediaMetadataCompat.METADATA_KEY_ARTIST, artist)
+                    .putString(MediaMetadataCompat.METADATA_KEY_TITLE, title)
+                    .putString(MediaMetadataCompat.METADATA_KEY_ALBUM,
+                            mediaRepository.getSelected()?.title)
                     .build()
         }
     }

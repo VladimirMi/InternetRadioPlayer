@@ -14,7 +14,6 @@ import io.github.vladimirmi.radius.model.repository.MediaBrowserController
 import io.github.vladimirmi.radius.model.repository.MediaRepository
 import io.github.vladimirmi.radius.ui.root.RootActivity
 import ru.terrakok.cicerone.Router
-import timber.log.Timber
 import javax.inject.Inject
 
 /**
@@ -42,11 +41,6 @@ class RootPresenter
 
     override fun onDestroy() {
         mediaBrowserController.disconnect()
-    }
-
-    override fun attachView(view: RootView?) {
-        Timber.e("attachView: ")
-        super.attachView(view)
     }
 
     fun onRequestPermissionsResult(requestCode: Int, permissions: Array<out String>, grantResults: IntArray) {

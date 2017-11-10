@@ -6,7 +6,7 @@ import java.lang.IllegalStateException
  * Created by Vladimir Mikhalev 11.10.2017.
  */
 
-class GroupingMedia(mediaList: ArrayList<Media>)
+class GroupingMedia(private val mediaList: ArrayList<Media>)
     : MutableList<Media> by mediaList, GroupedList<Media> {
 
     private val groups = HashMap<String, ArrayList<Int>>()
@@ -14,16 +14,12 @@ class GroupingMedia(mediaList: ArrayList<Media>)
 
     init {
         mediaList.forEachIndexed { index, media ->
-            val group = media.dirName
-            val list = groups.getOrPut(group) { ArrayList() }
-            if (list.isEmpty()) mappings.add(GroupMapping(group))
-            mappings.add(GroupMapping(group, list.size))
-            list.add(index)
+            addToMappings(media, index)
         }
     }
 
     override fun isGroupTitle(position: Int): Boolean {
-        return getGroupMapping(position).isGroupTitle()
+        return getGroupMapping(position).isGroupTitle
     }
 
     override fun getGroupTitle(position: Int): String {
@@ -46,7 +42,7 @@ class GroupingMedia(mediaList: ArrayList<Media>)
     }
 
     override fun isGroupVisible(group: String): Boolean {
-        return mappings.find { it.group == group && !it.isGroupTitle() }?.visible ?: false
+        return mappings.find { it.group == group && !it.isGroupTitle }?.visible ?: false
     }
 
     override fun groupedSize(): Int {
@@ -55,7 +51,7 @@ class GroupingMedia(mediaList: ArrayList<Media>)
 
     private fun setGroupVisible(group: String, visible: Boolean) {
         mappings.forEach {
-            if (it.group == group && !it.isGroupTitle()) {
+            if (it.group == group && !it.isGroupTitle) {
                 it.visible = visible
             }
         }
@@ -64,5 +60,18 @@ class GroupingMedia(mediaList: ArrayList<Media>)
     private fun getGroupMapping(position: Int): GroupMapping {
         val hided = (0..position).count { !mappings[it].visible }
         return mappings[position + hided]
+    }
+
+    private fun addToMappings(media: Media, index: Int) {
+        val group = media.dirName
+        val list = groups.getOrPut(group) { ArrayList() }
+        if (list.isEmpty()) mappings.add(GroupMapping(group))
+        mappings.add(GroupMapping(group, list.size))
+        list.add(index)
+    }
+
+    override fun add(element: Media): Boolean {
+        addToMappings(element, mediaList.size)
+        return mediaList.add(element)
     }
 }

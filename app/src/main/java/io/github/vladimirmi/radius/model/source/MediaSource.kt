@@ -7,8 +7,6 @@ import io.github.vladimirmi.radius.extensions.clear
 import io.github.vladimirmi.radius.extensions.toUrl
 import io.github.vladimirmi.radius.model.entity.Media
 import io.github.vladimirmi.radius.model.manager.Preferences
-import io.github.vladimirmi.radius.model.manager.parsePls
-import io.github.vladimirmi.radius.model.manager.saveToPls
 import kotlinx.coroutines.experimental.launch
 import timber.log.Timber
 import java.io.File
@@ -42,7 +40,18 @@ class MediaSource
     }
 
     fun save(media: Media) {
-        media.saveToPls()
+        with(media) {
+            val content =
+                    """[playlist]
+                        |File1=$uri
+                        |Title1=$title
+                        |favorite=$fav
+                    """.trimMargin()
+
+            val file = File(path)
+            file.clear()
+            file.writeText(content)
+        }
     }
 
     fun clear(media: Media) {
@@ -83,9 +92,8 @@ class MediaSource
     }
 
     private fun fromNet(url: URL, cb: (Media?) -> Unit) {
-        val file = File(appDir, "test")
         launch {
-            val media = url.openStream().bufferedReader().readLines().parsePls(file)
+            val media = url.openStream().bufferedReader().readLines().parsePls()
             media?.let { save(it) }
             cb(media)
         }
@@ -93,12 +101,32 @@ class MediaSource
 
     private fun fromFile(file: File): Media? {
         return when (file.extension) {
-            "pls" -> file.parsePls()
+            "pls" -> file.readLines().parsePls(file.path)
             else -> null
         }
     }
 
     private fun fromFile(file: File, cb: (Media?) -> Unit) {
         cb(fromFile(file))
+    }
+
+    private fun Iterable<String>.parsePls(name: String = "default_name",
+                                          dir: String = ""): Media? {
+        var title = name
+        var uri: Uri? = null
+        var fav = false
+        this.forEach {
+            when {
+                it.startsWith("Title1=") -> title = it.substring(7).trim()
+                it.startsWith("File1=") -> uri = Uri.parse(it.substring(6).trim())
+                it.startsWith("favorite=") -> fav = it.substring(9).trim().toBoolean()
+            }
+        }
+        if (uri == null) return null
+
+        val parentPath = appDir.path + if (!dir.isEmpty()) "/$dir" else dir
+        val path = "$parentPath/$title.pls"
+
+        return Media(title, uri!!, path, dir, fav)
     }
 }

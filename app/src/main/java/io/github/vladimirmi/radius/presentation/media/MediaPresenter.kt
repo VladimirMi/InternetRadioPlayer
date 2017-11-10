@@ -21,7 +21,7 @@ class MediaPresenter
 
     override fun onFirstAttach() {
         repository.groupedMediaData.observe(this, Observer {
-            viewState.setMediaList(repository.getGrouped())
+            viewState.setMediaList(repository.groupedMediaList)
         })
 
         repository.selectedData.observe(this, Observer {
@@ -43,10 +43,10 @@ class MediaPresenter
 
     fun selectGroup(group: String) {
         //todo interactor?
-        if (repository.getGrouped().isGroupVisible(group)) {
-            repository.getGrouped().hideGroup(group)
+        if (repository.groupedMediaList.isGroupVisible(group)) {
+            repository.groupedMediaList.hideGroup(group)
         } else {
-            repository.getGrouped().showGroup(group)
+            repository.groupedMediaList.showGroup(group)
         }
         viewState.notifyList()
     }

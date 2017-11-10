@@ -14,6 +14,7 @@ interface GroupedList<out E> {
 }
 
 class GroupMapping(val group: String, val index: Int? = null) {
-    var visible = true
-    fun isGroupTitle() = index == null
+    val isGroupTitle get() = index == null
+
+    var visible = !(isGroupTitle && group.isBlank())
 }

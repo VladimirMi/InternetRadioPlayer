@@ -8,7 +8,6 @@ import io.github.vladimirmi.radius.model.entity.GroupingMedia
 import io.github.vladimirmi.radius.model.entity.Media
 import io.github.vladimirmi.radius.model.manager.Preferences
 import io.github.vladimirmi.radius.model.source.MediaSource
-import timber.log.Timber
 import javax.inject.Inject
 
 /**
@@ -21,10 +20,11 @@ class MediaRepository
     private lateinit var mediaList: GroupingMedia
     val selectedData: LiveData<Int> = MutableLiveData()
     val groupedMediaData: LiveData<GroupedList<Media>> = MutableLiveData()
+    val groupedMediaList: GroupedList<Media> get() = mediaList
 
     fun initMedia() {
         mediaList = GroupingMedia(mediaSource.getMediaList())
-        setGrouped(mediaList)
+        (groupedMediaData as MutableLiveData).value = mediaList
         if (mediaList.size > preferences.selectedPos) {
             setSelected(preferences.selectedPos)
         }
@@ -38,12 +38,6 @@ class MediaRepository
 
     fun getSelected(): Media? = selectedData.value?.let { mediaList[it] }
 
-    fun setGrouped(grouping: GroupingMedia) {
-        (groupedMediaData as MutableLiveData).value = grouping
-    }
-
-    fun getGrouped(): GroupedList<Media> = mediaList
-
     fun updateAndSave(media: Media) {
         update(media)
         save(media)
@@ -51,7 +45,7 @@ class MediaRepository
 
     private fun update(media: Media) {
         mediaList[indexOfFirst(media)] = media
-        setGrouped(mediaList)
+        (groupedMediaData as MutableLiveData).value = mediaList
     }
 
     private fun save(media: Media) {
@@ -67,9 +61,11 @@ class MediaRepository
     }
 
     fun addMedia(uri: Uri) {
-        Timber.e("addMedia: $uri")
         mediaSource.fromUri(uri) {
-            Timber.e("addMedia: $it")
+            if (it != null) {
+                mediaList.add(it)
+                (groupedMediaData as MutableLiveData).postValue(mediaList)
+            }
         }
     }
 }

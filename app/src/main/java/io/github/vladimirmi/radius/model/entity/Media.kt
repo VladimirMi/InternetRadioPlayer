@@ -9,8 +9,8 @@ import java.util.*
 
 data class Media(val title: String,
                  val uri: Uri,
-                 val dirName: String,
                  val path: String,
+                 val dirName: String = "",
                  val fav: Boolean = false,
                  val id: String = UUID.randomUUID().toString())
 

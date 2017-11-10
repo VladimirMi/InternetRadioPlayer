@@ -1,7 +1,9 @@
 package io.github.vladimirmi.radius.ui.root
 
+import android.content.Intent
 import android.os.Bundle
 import android.support.v4.app.Fragment
+import android.widget.Toast
 import com.arellomobile.mvp.MvpAppCompatActivity
 import com.arellomobile.mvp.presenter.InjectPresenter
 import com.arellomobile.mvp.presenter.ProvidePresenter
@@ -27,7 +29,7 @@ class RootActivity : MvpAppCompatActivity(), RootView {
     @InjectPresenter lateinit var presenter: RootPresenter
 
     @ProvidePresenter
-    fun providePresenter() : RootPresenter {
+    fun providePresenter(): RootPresenter {
         return Toothpick.openScopes(Scopes.APP, Scopes.ROOT_ACTIVITY)
                 .getInstance(RootPresenter::class.java)
     }
@@ -44,6 +46,10 @@ class RootActivity : MvpAppCompatActivity(), RootView {
     override fun onResumeFragments() {
         super.onResumeFragments()
         navigatorHolder.setNavigator(navigator)
+    }
+
+    override fun onNewIntent(intent: Intent?) {
+        super.onNewIntent(intent)
         intent?.data?.let { presenter.addMedia(it) }
     }
 
@@ -69,5 +75,9 @@ class RootActivity : MvpAppCompatActivity(), RootView {
             Screens.MEDIA_SCREEN -> MediaFragment()
             else -> null
         }
+    }
+
+    override fun showToast(resId: Int) {
+        Toast.makeText(this, resId, Toast.LENGTH_SHORT).show()
     }
 }

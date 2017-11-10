@@ -46,6 +46,7 @@ class PlayerService : MediaBrowserServiceCompat() {
     private var serviceStarted: Boolean = false
 
     override fun onCreate() {
+        Timber.e("onCreate: ")
         super.onCreate()
         Toothpick.openScope(Scopes.APP).apply {
             Toothpick.inject(this@PlayerService, this)
@@ -86,6 +87,7 @@ class PlayerService : MediaBrowserServiceCompat() {
     }
 
     override fun onDestroy() {
+        Timber.e("onDestroy: ")
         handleStopRequest()
         playback.releasePlayer()
     }
@@ -124,6 +126,7 @@ class PlayerService : MediaBrowserServiceCompat() {
         }
 
         override fun onMetadata(key: String, value: String) {
+            Timber.e("onMetadata: $key-$value")
             val (artist, title) = value.split("-").map { it.trim() }
             val metadataCompat = MediaMetadataCompat.Builder()
                     .putString(MediaMetadataCompat.METADATA_KEY_ARTIST, artist)

@@ -1,3 +1,5 @@
 <resources>
     <string name="app_name">Radius</string>
+    <string name="toast_add_success">Станция добавлена</string>
+    <string name="toast_add_error">Не удалось добавить станцию</string>
 </resources>

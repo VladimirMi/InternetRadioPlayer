@@ -7,7 +7,10 @@ import io.github.vladimirmi.radius.extensions.clear
 import io.github.vladimirmi.radius.extensions.toUrl
 import io.github.vladimirmi.radius.model.entity.Media
 import io.github.vladimirmi.radius.model.manager.Preferences
+import kotlinx.coroutines.experimental.CommonPool
+import kotlinx.coroutines.experimental.android.UI
 import kotlinx.coroutines.experimental.launch
+import kotlinx.coroutines.experimental.run
 import timber.log.Timber
 import java.io.File
 import java.io.FileOutputStream
@@ -92,9 +95,12 @@ class MediaSource
     }
 
     private fun fromNet(url: URL, cb: (Media?) -> Unit) {
-        launch {
-            val media = url.openStream().bufferedReader().readLines().parsePls()
-            media?.let { save(it) }
+        launch(UI) {
+            val media = run(CommonPool) {
+                val media = url.openStream().bufferedReader().readLines().parsePls()
+                media?.let { save(it) }
+                media
+            }
             cb(media)
         }
     }
@@ -107,7 +113,9 @@ class MediaSource
     }
 
     private fun fromFile(file: File, cb: (Media?) -> Unit) {
-        cb(fromFile(file))
+        val media = fromFile(file)
+        media?.let { save(it) }
+        cb(media)
     }
 
     private fun Iterable<String>.parsePls(name: String = "default_name",

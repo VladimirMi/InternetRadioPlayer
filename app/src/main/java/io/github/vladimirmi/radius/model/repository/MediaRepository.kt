@@ -57,15 +57,18 @@ class MediaRepository
     }
 
     private fun indexOfFirst(media: Media): Int {
-        return mediaList.indexOfFirst { it.id == media.id }
+        return mediaList.indexOfFirst { it.path == media.path }
     }
 
-    fun addMedia(uri: Uri) {
-        mediaSource.fromUri(uri) {
-            if (it != null) {
-                mediaList.add(it)
-                (groupedMediaData as MutableLiveData).postValue(mediaList)
+    fun addMedia(uri: Uri, cb: (Media?) -> Unit) {
+        mediaSource.fromUri(uri) { media ->
+            if (media != null) {
+                setSelected(media)
+                if (mediaList.find { it.path == media.path } != null) return@fromUri
+                mediaList.add(media)
+                (groupedMediaData as MutableLiveData).value = mediaList
             }
+            cb(media)
         }
     }
 }

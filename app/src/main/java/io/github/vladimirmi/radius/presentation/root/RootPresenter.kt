@@ -6,18 +6,22 @@ import android.net.Uri
 import android.os.Build
 import android.support.v4.app.ActivityCompat
 import android.support.v4.content.ContextCompat
+import com.arellomobile.mvp.InjectViewState
 import com.arellomobile.mvp.MvpPresenter
+import io.github.vladimirmi.radius.R
 import io.github.vladimirmi.radius.Screens
 import io.github.vladimirmi.radius.model.repository.MediaBrowserController
 import io.github.vladimirmi.radius.model.repository.MediaRepository
 import io.github.vladimirmi.radius.ui.root.RootActivity
 import ru.terrakok.cicerone.Router
+import timber.log.Timber
 import javax.inject.Inject
 
 /**
  * Created by Vladimir Mikhalev 01.10.2017.
  */
 
+@InjectViewState
 class RootPresenter
 @Inject constructor(private val router: Router,
                     private val mediaBrowserController: MediaBrowserController,
@@ -40,6 +44,11 @@ class RootPresenter
         mediaBrowserController.disconnect()
     }
 
+    override fun attachView(view: RootView?) {
+        Timber.e("attachView: ")
+        super.attachView(view)
+    }
+
     fun onRequestPermissionsResult(requestCode: Int, permissions: Array<out String>, grantResults: IntArray) {
         val requestCanceled = grantResults.contains(PackageManager.PERMISSION_DENIED) ||
                 grantResults.isEmpty() || permissions.isEmpty()
@@ -51,7 +60,13 @@ class RootPresenter
     }
 
     fun addMedia(uri: Uri) {
-        repository.addMedia(uri)
+        repository.addMedia(uri) {
+            if (it == null) {
+                viewState.showToast(R.string.toast_add_error)
+            } else {
+                viewState.showToast(R.string.toast_add_success)
+            }
+        }
     }
 
     private fun checkAndRequestPermissions(permissions: Array<String>, requestCode: Int): Boolean {
@@ -71,6 +86,6 @@ class RootPresenter
 
     private fun nextScreen() {
         repository.initMedia()
-        router.navigateTo(Screens.MEDIA_SCREEN)
+        router.newRootScreen(Screens.MEDIA_SCREEN)
     }
 }

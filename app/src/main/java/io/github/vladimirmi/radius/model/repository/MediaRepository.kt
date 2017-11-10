@@ -68,6 +68,8 @@ class MediaRepository
 
     fun addMedia(uri: Uri) {
         Timber.e("addMedia: $uri")
-        mediaSource.download(uri)
+        mediaSource.fromUri(uri) {
+            Timber.e("addMedia: $it")
+        }
     }
 }

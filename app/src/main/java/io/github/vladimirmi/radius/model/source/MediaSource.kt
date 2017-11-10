@@ -1,19 +1,20 @@
 package io.github.vladimirmi.radius.model.source
 
-import android.app.DownloadManager
 import android.content.Context
 import android.net.Uri
 import android.os.Environment
-import io.github.vladimirmi.radius.extensions.getContentType
+import io.github.vladimirmi.radius.extensions.clear
+import io.github.vladimirmi.radius.extensions.toUrl
 import io.github.vladimirmi.radius.model.entity.Media
 import io.github.vladimirmi.radius.model.manager.Preferences
-import io.github.vladimirmi.radius.model.manager.clear
 import io.github.vladimirmi.radius.model.manager.parsePls
-import io.github.vladimirmi.radius.model.manager.savePls
+import io.github.vladimirmi.radius.model.manager.saveToPls
 import kotlinx.coroutines.experimental.launch
 import timber.log.Timber
 import java.io.File
 import java.io.FileOutputStream
+import java.net.URI
+import java.net.URL
 import javax.inject.Inject
 
 
@@ -24,6 +25,7 @@ import javax.inject.Inject
 class MediaSource
 @Inject constructor(private val context: Context,
                     private val preferences: Preferences) {
+
     private val appDir: File by lazy { initAppDir() }
 
     fun getMediaList(): ArrayList<Media> {
@@ -32,6 +34,7 @@ class MediaSource
         val treeWalk = initAppDir().walkTopDown()
         treeWalk.forEach {
             if (!it.isDirectory) {
+                Timber.e("file ${it.path}")
                 fromFile(it)?.let { mediaList.add(it) }
             }
         }
@@ -39,26 +42,18 @@ class MediaSource
     }
 
     fun save(media: Media) {
-        media.savePls()
+        media.saveToPls()
     }
 
     fun clear(media: Media) {
         File(media.path).clear()
     }
 
-    fun download(uri: Uri) {
-        launch {
-            Timber.e("download: type ${uri.getContentType()}")
+    fun fromUri(uri: Uri, cb: (Media?) -> Unit) {
+        when {
+            uri.scheme.startsWith("http") -> fromNet(uri.toUrl() ?: return, cb)
+            uri.scheme.startsWith("file") -> fromFile(File(URI.create(uri.toString())), cb)
         }
-        File(appDir, uri.lastPathSegment).delete()
-        val request = DownloadManager.Request(uri)
-        request.setDescription("Some descrition")
-                .setTitle("Some title")
-                .setNotificationVisibility(DownloadManager.Request.VISIBILITY_VISIBLE_NOTIFY_COMPLETED)
-                .setDestinationUri(Uri.withAppendedPath(Uri.fromFile(appDir), uri.lastPathSegment))
-
-        val manager = context.getSystemService(Context.DOWNLOAD_SERVICE) as DownloadManager
-        manager.enqueue(request)
     }
 
     private fun copyFilesFromAssets() {
@@ -87,6 +82,15 @@ class MediaSource
         }
     }
 
+    private fun fromNet(url: URL, cb: (Media?) -> Unit) {
+        val file = File(appDir, "test")
+        launch {
+            val media = url.openStream().bufferedReader().readLines().parsePls(file)
+            media?.let { save(it) }
+            cb(media)
+        }
+    }
+
     private fun fromFile(file: File): Media? {
         return when (file.extension) {
             "pls" -> file.parsePls()
@@ -94,7 +98,7 @@ class MediaSource
         }
     }
 
-//    private fun fromUri(uri: Uri): Media {
-//
-//    }
+    private fun fromFile(file: File, cb: (Media?) -> Unit) {
+        cb(fromFile(file))
+    }
 }

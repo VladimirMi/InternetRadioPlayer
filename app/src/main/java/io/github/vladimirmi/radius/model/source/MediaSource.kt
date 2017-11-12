@@ -107,7 +107,7 @@ class MediaSource
 
     private fun fromFile(file: File): Media? {
         return when (file.extension) {
-            "pls" -> file.readLines().parsePls(file.path)
+            "pls" -> file.parsePls()
             else -> null
         }
     }
@@ -137,4 +137,7 @@ class MediaSource
 
         return Media(title, uri!!, path, dir, fav)
     }
+
+    private fun File.parsePls(): Media? = readLines().parsePls(name,
+            if (parentFile.name == "Radius") "" else parentFile.name)
 }

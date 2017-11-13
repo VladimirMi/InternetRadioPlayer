@@ -20,7 +20,7 @@ import javax.inject.Inject
 
 class MediaBrowserController
 @Inject constructor(context: Context,
-                    private val mediaRepository: MediaRepository) {
+                    private val stationRepository: StationRepository) {
 
     private lateinit var mediaBrowser: MediaBrowserCompat
     private var controller: MediaControllerCompat? = null
@@ -77,7 +77,7 @@ class MediaBrowserController
 
     val isPlaying get() = controller?.playbackState?.state == PlaybackStateCompat.STATE_PLAYING
 
-    fun isPlaying(uri: Uri) = isPlaying && mediaRepository.getSelected()?.uri == uri
+    fun isPlaying(uri: Uri) = isPlaying && stationRepository.getSelected()?.uri == uri
 
     fun play(uri: Uri) {
         controller?.transportControls?.playFromUri(uri, null)

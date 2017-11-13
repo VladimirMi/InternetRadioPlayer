@@ -6,14 +6,14 @@ import java.lang.IllegalStateException
  * Created by Vladimir Mikhalev 11.10.2017.
  */
 
-class GroupingMedia(private val mediaList: ArrayList<Media>)
-    : MutableList<Media> by mediaList, GroupedList<Media> {
+class GroupingList(private val stationList: ArrayList<Station>)
+    : MutableList<Station> by stationList, GroupedList<Station> {
 
     private val groups = HashMap<String, ArrayList<Int>>()
     private val mappings = ArrayList<GroupMapping>()
 
     init {
-        mediaList.forEachIndexed { index, media ->
+        stationList.forEachIndexed { index, media ->
             addToMappings(media, index)
         }
     }
@@ -26,7 +26,7 @@ class GroupingMedia(private val mediaList: ArrayList<Media>)
         return getGroupMapping(position).group
     }
 
-    override fun getGroupItem(position: Int): Media {
+    override fun getGroupItem(position: Int): Station {
         val groupMapping = getGroupMapping(position)
         if (groupMapping.index == null) throw IllegalStateException("Should call getGroupTitle()")
         val group = groups[groupMapping.group] ?: throw IllegalStateException("Can not find group")
@@ -62,16 +62,16 @@ class GroupingMedia(private val mediaList: ArrayList<Media>)
         return mappings[position + hided]
     }
 
-    private fun addToMappings(media: Media, index: Int) {
-        val group = media.dirName
+    private fun addToMappings(station: Station, index: Int) {
+        val group = station.group
         val list = groups.getOrPut(group) { ArrayList() }
         if (list.isEmpty()) mappings.add(GroupMapping(group))
         mappings.add(GroupMapping(group, list.size))
         list.add(index)
     }
 
-    override fun add(element: Media): Boolean {
-        addToMappings(element, mediaList.size)
-        return mediaList.add(element)
+    override fun add(element: Station): Boolean {
+        addToMappings(element, stationList.size)
+        return stationList.add(element)
     }
 }

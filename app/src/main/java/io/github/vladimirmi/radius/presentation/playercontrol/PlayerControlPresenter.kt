@@ -6,7 +6,7 @@ import android.support.v4.media.session.PlaybackStateCompat
 import android.support.v4.media.session.PlaybackStateCompat.*
 import com.arellomobile.mvp.InjectViewState
 import io.github.vladimirmi.radius.model.repository.MediaBrowserController
-import io.github.vladimirmi.radius.model.repository.MediaRepository
+import io.github.vladimirmi.radius.model.repository.StationRepository
 import io.github.vladimirmi.radius.ui.base.BasePresenter
 import javax.inject.Inject
 
@@ -17,7 +17,7 @@ import javax.inject.Inject
 @InjectViewState
 class PlayerControlPresenter
 @Inject constructor(private val browserController: MediaBrowserController,
-                    private val repository: MediaRepository)
+                    private val repository: StationRepository)
     : BasePresenter<PlayerControlView>() {
 
     override fun onFirstAttach() {

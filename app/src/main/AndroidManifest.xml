@@ -62,7 +62,7 @@
             android:name=".model.service.PlayerService"
             android:exported="false">
             <intent-filter>
-                <action android:name="android.media.browse.MediaBrowserService"/>
+                <action android:name="android.station.browse.MediaBrowserService"/>
             </intent-filter>
         </service>
 

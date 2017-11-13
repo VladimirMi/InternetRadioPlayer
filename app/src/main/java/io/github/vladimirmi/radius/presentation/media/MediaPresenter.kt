@@ -3,9 +3,9 @@ package io.github.vladimirmi.radius.presentation.media
 import android.arch.lifecycle.Observer
 import android.support.v4.media.session.PlaybackStateCompat
 import com.arellomobile.mvp.InjectViewState
-import io.github.vladimirmi.radius.model.entity.Media
+import io.github.vladimirmi.radius.model.entity.Station
 import io.github.vladimirmi.radius.model.repository.MediaBrowserController
-import io.github.vladimirmi.radius.model.repository.MediaRepository
+import io.github.vladimirmi.radius.model.repository.StationRepository
 import io.github.vladimirmi.radius.ui.base.BasePresenter
 import javax.inject.Inject
 
@@ -15,13 +15,13 @@ import javax.inject.Inject
 
 @InjectViewState
 class MediaPresenter
-@Inject constructor(private val repository: MediaRepository,
+@Inject constructor(private val repository: StationRepository,
                     private val mediaBrowserController: MediaBrowserController)
     : BasePresenter<MediaView>() {
 
     override fun onFirstAttach() {
-        repository.groupedMediaData.observe(this, Observer {
-            viewState.setMediaList(repository.groupedMediaList)
+        repository.groupedStationData.observe(this, Observer {
+            viewState.setMediaList(repository.groupedStationList)
         })
 
         repository.selectedData.observe(this, Observer {
@@ -37,16 +37,16 @@ class MediaPresenter
         })
     }
 
-    fun select(media: Media) {
-        repository.setSelected(media)
+    fun select(station: Station) {
+        repository.setSelected(station)
     }
 
     fun selectGroup(group: String) {
         //todo interactor?
-        if (repository.groupedMediaList.isGroupVisible(group)) {
-            repository.groupedMediaList.hideGroup(group)
+        if (repository.groupedStationList.isGroupVisible(group)) {
+            repository.groupedStationList.hideGroup(group)
         } else {
-            repository.groupedMediaList.showGroup(group)
+            repository.groupedStationList.showGroup(group)
         }
         viewState.notifyList()
     }

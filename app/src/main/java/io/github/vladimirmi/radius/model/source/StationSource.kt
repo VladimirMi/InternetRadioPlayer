@@ -5,15 +5,15 @@ import android.net.Uri
 import android.os.Environment
 import io.github.vladimirmi.radius.extensions.clear
 import io.github.vladimirmi.radius.extensions.toUrl
-import io.github.vladimirmi.radius.model.entity.Media
+import io.github.vladimirmi.radius.model.entity.Station
 import io.github.vladimirmi.radius.model.manager.Preferences
 import kotlinx.coroutines.experimental.CommonPool
-import kotlinx.coroutines.experimental.android.UI
 import kotlinx.coroutines.experimental.launch
 import kotlinx.coroutines.experimental.run
 import timber.log.Timber
 import java.io.File
 import java.io.FileOutputStream
+import java.io.InputStream
 import java.net.URI
 import java.net.URL
 import javax.inject.Inject
@@ -23,27 +23,27 @@ import javax.inject.Inject
  * Created by Vladimir Mikhalev 30.09.2017.
  */
 
-class MediaSource
+class StationSource
 @Inject constructor(private val context: Context,
                     private val preferences: Preferences) {
 
     private val appDir: File by lazy { initAppDir() }
 
-    fun getMediaList(): ArrayList<Media> {
+    fun getStationList(): ArrayList<Station> {
         copyFilesFromAssets()
-        val mediaList = ArrayList<Media>()
+        val stationList = ArrayList<Station>()
         val treeWalk = initAppDir().walkTopDown()
         treeWalk.forEach {
             if (!it.isDirectory) {
                 Timber.e("file ${it.path}")
-                fromFile(it)?.let { mediaList.add(it) }
+                fromFile(it)?.let { stationList.add(it) }
             }
         }
-        return mediaList
+        return stationList
     }
 
-    fun save(media: Media) {
-        with(media) {
+    fun save(station: Station) {
+        with(station) {
             val content =
                     """[playlist]
                         |File1=$uri
@@ -57,11 +57,11 @@ class MediaSource
         }
     }
 
-    fun clear(media: Media) {
-        File(media.path).clear()
+    fun clear(station: Station) {
+        File(station.path).clear()
     }
 
-    fun fromUri(uri: Uri, cb: (Media?) -> Unit) {
+    fun fromUri(uri: Uri, cb: (Station?) -> Unit) {
         when {
             uri.scheme.startsWith("http") -> fromNet(uri.toUrl() ?: return, cb)
             uri.scheme.startsWith("file") -> fromFile(File(URI.create(uri.toString())), cb)
@@ -94,10 +94,10 @@ class MediaSource
         }
     }
 
-    private fun fromNet(url: URL, cb: (Media?) -> Unit) {
+    private fun fromNet(url: URL, cb: (Station?) -> Unit) {
         launch(UI) {
             val media = run(CommonPool) {
-                val media = url.openStream().bufferedReader().readLines().parsePls()
+                val media = url.openStream().parsePls()
                 media?.let { save(it) }
                 media
             }
@@ -105,25 +105,26 @@ class MediaSource
         }
     }
 
-    private fun fromFile(file: File): Media? {
+    private fun fromFile(file: File): Station? {
         return when (file.extension) {
             "pls" -> file.parsePls()
             else -> null
         }
     }
 
-    private fun fromFile(file: File, cb: (Media?) -> Unit) {
+    private fun fromFile(file: File, cb: (Station?) -> Unit) {
         val media = fromFile(file)
         media?.let { save(it) }
         cb(media)
     }
 
-    private fun Iterable<String>.parsePls(name: String = "default_name",
-                                          dir: String = ""): Media? {
+
+    private fun InputStream.parsePls(name: String = "default_name",
+                                     dir: String = ""): Station? {
         var title = name
         var uri: Uri? = null
         var fav = false
-        this.forEach {
+        this.bufferedReader().readLines().forEach {
             when {
                 it.startsWith("Title1=") -> title = it.substring(7).trim()
                 it.startsWith("File1=") -> uri = Uri.parse(it.substring(6).trim())
@@ -135,9 +136,9 @@ class MediaSource
         val parentPath = appDir.path + if (!dir.isEmpty()) "/$dir" else dir
         val path = "$parentPath/$title.pls"
 
-        return Media(title, uri!!, path, dir, fav)
+        return Station(uri!!, path, fav)
     }
 
-    private fun File.parsePls(): Media? = readLines().parsePls(name,
+    private fun File.parsePls(): Station? = inputStream().parsePls(name,
             if (parentFile.name == "Radius") "" else parentFile.name)
 }

@@ -17,7 +17,7 @@ import com.google.android.exoplayer2.Player
 import io.github.vladimirmi.radius.BuildConfig
 import io.github.vladimirmi.radius.R
 import io.github.vladimirmi.radius.di.Scopes
-import io.github.vladimirmi.radius.model.repository.MediaRepository
+import io.github.vladimirmi.radius.model.repository.StationRepository
 import io.github.vladimirmi.radius.ui.root.RootActivity
 import timber.log.Timber
 import toothpick.Toothpick
@@ -37,7 +37,7 @@ class PlayerService : MediaBrowserServiceCompat() {
         const val EXTRA_STATION = "EXTRA_STATION"
     }
 
-    @Inject lateinit var mediaRepository: MediaRepository
+    @Inject lateinit var stationRepository: StationRepository
 
     private var stationUrl: String? = null
     private lateinit var session: MediaSessionCompat
@@ -149,7 +149,7 @@ class PlayerService : MediaBrowserServiceCompat() {
                     .putString(MediaMetadataCompat.METADATA_KEY_ARTIST, artist)
                     .putString(MediaMetadataCompat.METADATA_KEY_TITLE, title)
                     .putString(MediaMetadataCompat.METADATA_KEY_ALBUM,
-                            mediaRepository.getSelected()?.title)
+                            stationRepository.getSelected()?.title)
                     .build()
         }
     }

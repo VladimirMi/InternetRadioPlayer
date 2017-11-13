@@ -11,7 +11,7 @@ import com.arellomobile.mvp.MvpPresenter
 import io.github.vladimirmi.radius.R
 import io.github.vladimirmi.radius.Screens
 import io.github.vladimirmi.radius.model.repository.MediaBrowserController
-import io.github.vladimirmi.radius.model.repository.MediaRepository
+import io.github.vladimirmi.radius.model.repository.StationRepository
 import io.github.vladimirmi.radius.ui.root.RootActivity
 import ru.terrakok.cicerone.Router
 import javax.inject.Inject
@@ -24,7 +24,7 @@ import javax.inject.Inject
 class RootPresenter
 @Inject constructor(private val router: Router,
                     private val mediaBrowserController: MediaBrowserController,
-                    private val repository: MediaRepository)
+                    private val repository: StationRepository)
     : MvpPresenter<RootView>() {
 
     companion object {
@@ -54,7 +54,7 @@ class RootPresenter
     }
 
     fun addMedia(uri: Uri) {
-        repository.addMedia(uri) {
+        repository.addStation(uri) {
             if (it == null) {
                 viewState.showToast(R.string.toast_add_error)
             } else {
@@ -79,7 +79,7 @@ class RootPresenter
     }
 
     private fun nextScreen() {
-        repository.initMedia()
+        repository.initStations()
         router.newRootScreen(Screens.MEDIA_SCREEN)
     }
 }

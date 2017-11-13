@@ -1,5 +1,7 @@
 package io.github.vladimirmi.radius.model.entity
 
+import com.jakewharton.rxrelay2.BehaviorRelay
+import io.reactivex.Observable
 import java.lang.IllegalStateException
 
 /**
@@ -70,8 +72,20 @@ class GroupingList(private val stationList: ArrayList<Station>)
         list.add(index)
     }
 
+    private val obs: BehaviorRelay<GroupedList<Station>> = BehaviorRelay.createDefault(this)
+
+    override fun observe(): Observable<GroupedList<Station>> = obs
+
     override fun add(element: Station): Boolean {
         addToMappings(element, stationList.size)
-        return stationList.add(element)
+        val tru = stationList.add(element)
+        obs.accept(this)
+        return tru
+    }
+
+    override fun set(index: Int, element: Station): Station {
+        val old = this.set(index, element)
+        obs.accept(this)
+        return old
     }
 }

@@ -1,6 +1,5 @@
 package io.github.vladimirmi.radius.presentation.playercontrol
 
-import android.arch.lifecycle.Observer
 import android.support.v4.media.MediaMetadataCompat
 import android.support.v4.media.session.PlaybackStateCompat
 import android.support.v4.media.session.PlaybackStateCompat.*
@@ -8,6 +7,8 @@ import com.arellomobile.mvp.InjectViewState
 import io.github.vladimirmi.radius.model.repository.MediaBrowserController
 import io.github.vladimirmi.radius.model.repository.StationRepository
 import io.github.vladimirmi.radius.ui.base.BasePresenter
+import io.reactivex.rxkotlin.addTo
+import io.reactivex.rxkotlin.subscribeBy
 import javax.inject.Inject
 
 /**
@@ -20,17 +21,22 @@ class PlayerControlPresenter
                     private val repository: StationRepository)
     : BasePresenter<PlayerControlView>() {
 
-    override fun onFirstAttach() {
-        browserController.playbackState.observe(this, Observer { handleState(it) })
-        browserController.playbackMetaData.observe(this, Observer { handleMetadata(it) })
-        repository.selectedData.observe(this, Observer {
-            repository.getSelected()?.let {
-                viewState.setMedia(it)
-                if (browserController.playbackState.value?.state == PlaybackStateCompat.STATE_PLAYING) {
-                    browserController.play(it.uri)
+    override fun onFirstViewAttach() {
+        browserController.playbackState
+                .subscribeBy { this.handleState(it) }
+                .addTo(compDisp)
+
+        browserController.playbackMetaData
+                .subscribeBy { this.handleMetadata(it) }
+                .addTo(compDisp)
+
+        repository.selected
+                .subscribeBy {
+                    viewState.setMedia(it)
+                    if (browserController.playbackState.value?.state == PlaybackStateCompat.STATE_PLAYING) {
+                        browserController.play(it.uri)
+                    }
                 }
-            }
-        })
     }
 
     private fun handleMetadata(metadata: MediaMetadataCompat?) {
@@ -51,7 +57,7 @@ class PlayerControlPresenter
     }
 
     fun playPause() {
-        val uri = repository.getSelected()?.uri ?: return
+        val uri = repository.selected.value?.uri ?: return
         if (browserController.isPlaying(uri)) {
             browserController.stop()
         } else {
@@ -60,7 +66,7 @@ class PlayerControlPresenter
     }
 
     fun switchFavorite() {
-        val selected = repository.getSelected() ?: return
+        val selected = repository.selected.value ?: return
         val copy = selected.copy(fav = !selected.fav)
         repository.updateAndSave(copy)
         viewState.setMedia(copy)

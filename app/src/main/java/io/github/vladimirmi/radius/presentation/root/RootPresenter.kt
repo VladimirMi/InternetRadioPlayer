@@ -7,12 +7,14 @@ import android.os.Build
 import android.support.v4.app.ActivityCompat
 import android.support.v4.content.ContextCompat
 import com.arellomobile.mvp.InjectViewState
-import com.arellomobile.mvp.MvpPresenter
 import io.github.vladimirmi.radius.R
 import io.github.vladimirmi.radius.Screens
 import io.github.vladimirmi.radius.model.repository.MediaBrowserController
 import io.github.vladimirmi.radius.model.repository.StationRepository
+import io.github.vladimirmi.radius.ui.base.BasePresenter
 import io.github.vladimirmi.radius.ui.root.RootActivity
+import io.reactivex.rxkotlin.addTo
+import io.reactivex.rxkotlin.subscribeBy
 import ru.terrakok.cicerone.Router
 import javax.inject.Inject
 
@@ -25,7 +27,7 @@ class RootPresenter
 @Inject constructor(private val router: Router,
                     private val mediaBrowserController: MediaBrowserController,
                     private val repository: StationRepository)
-    : MvpPresenter<RootView>() {
+    : BasePresenter<RootView>() {
 
     companion object {
         const val REQUEST_WRITE = 100
@@ -54,13 +56,11 @@ class RootPresenter
     }
 
     fun addMedia(uri: Uri) {
-        repository.addStation(uri) {
-            if (it == null) {
-                viewState.showToast(R.string.toast_add_error)
-            } else {
-                viewState.showToast(R.string.toast_add_success)
-            }
-        }
+        repository.parseStation(uri)
+                .subscribeBy(onSuccess = { viewState.showToast(R.string.toast_add_success) },
+                        onError = { viewState.showToast(R.string.toast_add_error) })
+                .addTo(compDisp)
+
     }
 
     private fun checkAndRequestPermissions(permissions: Array<String>, requestCode: Int): Boolean {

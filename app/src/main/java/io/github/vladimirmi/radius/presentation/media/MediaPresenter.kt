@@ -1,12 +1,13 @@
 package io.github.vladimirmi.radius.presentation.media
 
-import android.arch.lifecycle.Observer
 import android.support.v4.media.session.PlaybackStateCompat
 import com.arellomobile.mvp.InjectViewState
 import io.github.vladimirmi.radius.model.entity.Station
 import io.github.vladimirmi.radius.model.repository.MediaBrowserController
 import io.github.vladimirmi.radius.model.repository.StationRepository
 import io.github.vladimirmi.radius.ui.base.BasePresenter
+import io.reactivex.rxkotlin.addTo
+import io.reactivex.rxkotlin.subscribeBy
 import javax.inject.Inject
 
 /**
@@ -19,22 +20,25 @@ class MediaPresenter
                     private val mediaBrowserController: MediaBrowserController)
     : BasePresenter<MediaView>() {
 
-    override fun onFirstAttach() {
-        repository.groupedStationData.observe(this, Observer {
-            viewState.setMediaList(repository.groupedStationList)
-        })
 
-        repository.selectedData.observe(this, Observer {
-            repository.getSelected()?.let { viewState.select(it, playing = false) }
-        })
+    override fun onFirstViewAttach() {
+        repository.groupedStationList.observe()
+                .subscribeBy { viewState.setMediaList(it) }
+                .addTo(compDisp)
 
-        mediaBrowserController.playbackState.observe(this, Observer {
-            if (it?.state == PlaybackStateCompat.STATE_PLAYING) {
-                repository.getSelected()?.let { viewState.select(it, playing = true) }
-            } else {
-                repository.getSelected()?.let { viewState.select(it, playing = false) }
-            }
-        })
+        repository.selected
+                .subscribeBy { viewState.select(it, playing = false) }
+                .addTo(compDisp)
+
+        mediaBrowserController.playbackState
+                .subscribeBy {
+                    val station = repository.selected.value ?: return@subscribeBy
+                    if (it.state == PlaybackStateCompat.STATE_PLAYING) {
+                        viewState.select(station, playing = true)
+                    } else {
+                        viewState.select(station, playing = false)
+                    }
+                }.addTo(compDisp)
     }
 
     fun select(station: Station) {
@@ -42,7 +46,6 @@ class MediaPresenter
     }
 
     fun selectGroup(group: String) {
-        //todo interactor?
         if (repository.groupedStationList.isGroupVisible(group)) {
             repository.groupedStationList.hideGroup(group)
         } else {

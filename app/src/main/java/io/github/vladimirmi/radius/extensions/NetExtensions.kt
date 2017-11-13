@@ -5,6 +5,7 @@ import android.net.Uri
 import java.io.IOException
 import java.net.HttpURLConnection
 import java.net.MalformedURLException
+import java.net.URI
 import java.net.URL
 import java.util.*
 
@@ -20,6 +21,8 @@ fun Uri.toUrl(): URL? {
         null
     }
 }
+
+fun Uri.toURI(): URI = URI.create(this.toString())
 
 fun Uri.getContentType(): String {
     return this.toUrl()?.getContentType() ?: ""

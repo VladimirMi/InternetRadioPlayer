@@ -47,7 +47,7 @@ class PlayerService : MediaBrowserServiceCompat() {
 
     override fun onCreate() {
         super.onCreate()
-        Toothpick.openScope(Scopes.APP).apply {
+        Scopes.app.apply {
             Toothpick.inject(this@PlayerService, this)
             Toothpick.closeScope(this)
         }

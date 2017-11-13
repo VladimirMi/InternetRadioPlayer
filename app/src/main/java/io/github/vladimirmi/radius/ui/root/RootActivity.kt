@@ -30,12 +30,11 @@ class RootActivity : MvpAppCompatActivity(), RootView {
 
     @ProvidePresenter
     fun providePresenter(): RootPresenter {
-        return Toothpick.openScopes(Scopes.APP, Scopes.ROOT_ACTIVITY)
-                .getInstance(RootPresenter::class.java)
+        return Scopes.rootActivity.getInstance(RootPresenter::class.java)
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
-        Toothpick.openScopes(Scopes.APP, Scopes.ROOT_ACTIVITY).apply {
+        Scopes.rootActivity.apply {
             installModules(RootActivityModule())
             Toothpick.inject(this@RootActivity, this)
         }

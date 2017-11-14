@@ -8,5 +8,5 @@ import java.io.PrintWriter
  */
 
 fun File.clear() {
-    PrintWriter(this).close()
+    if (exists()) PrintWriter(this).close()
 }

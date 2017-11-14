@@ -77,6 +77,7 @@ class GroupingList(private val stationList: ArrayList<Station>)
     override fun observe(): Observable<GroupedList<Station>> = obs
 
     override fun add(element: Station): Boolean {
+        if (stationList.find { it.path == element.path } != null) return false
         addToMappings(element, stationList.size)
         val tru = stationList.add(element)
         obs.accept(this)

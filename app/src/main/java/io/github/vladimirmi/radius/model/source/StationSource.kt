@@ -26,28 +26,19 @@ class StationSource
         copyFilesFromAssets()
         val stationList = ArrayList<Station>()
         val treeWalk = initAppDir().walkTopDown()
-        treeWalk.forEach {
-            if (!it.isDirectory) {
-                Timber.e("file ${it.path}")
-                //todo can throw error
-                stationList.add(Station.fromFile(it))
+        treeWalk.forEach { file ->
+            if (!file.isDirectory) {
+                Timber.e("file ${file.path}")
+                Station.fromFile(file)?.let { stationList.add(it) }
             }
         }
         return stationList
     }
 
     fun save(station: Station) {
-        with(station) {
-            val content =
-                    """[playlist]
-                        |File1=$uri
-                        |Title1=$title
-                        |favorite=$fav
-                    """.trimMargin()
-
-            val file = File(path)
-            file.clear()
-            file.writeText(content)
+        with(File(station.path)) {
+            clear()
+            writeText(station.toContent())
         }
     }
 
@@ -55,9 +46,7 @@ class StationSource
         File(station.path).clear()
     }
 
-    fun parseStation(uri: Uri): Station {
-        return Station.fromUri(uri)
-    }
+    fun parseStation(uri: Uri): Station? = Station.fromUri(uri)
 
     private fun copyFilesFromAssets() {
         if (preferences.firstRun) {
@@ -74,7 +63,6 @@ class StationSource
             throw IllegalStateException("Can not create playlist folder")
         }
         preferences.appDirPath = appDir.path
-        Timber.e("initAppDir: ${appDir.path}")
         return appDir
     }
 

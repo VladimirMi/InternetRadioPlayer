@@ -12,4 +12,7 @@ interface MediaView : MvpView {
     fun setMediaList(stationList: GroupedList<Station>)
     fun select(station: Station, playing: Boolean)
     fun notifyList()
+    fun showToast(resId: Int)
+    fun openAddDialog(station: Station)
+    fun closeAddDialog()
 }

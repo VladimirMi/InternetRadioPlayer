@@ -5,19 +5,18 @@ import io.github.vladimirmi.radius.di.Scopes
 import io.github.vladimirmi.radius.model.entity.Station
 import java.io.File
 import java.io.InputStream
-import java.text.ParseException
 
 /**
  * Created by Vladimir Mikhalev 13.11.2017.
  */
 
-fun File.parsePls(): Station {
+fun File.parsePls(): Station? {
     val group = if (parentFile.path == Scopes.app.getInstance(Preferences::class.java).appDirPath) ""
     else parentFile.name
     return inputStream().parsePls(name, group)
 }
 
-fun InputStream.parsePls(name: String = "default", group: String = ""): Station {
+fun InputStream.parsePls(name: String = "default", group: String = ""): Station? {
     var title = name
     var uri: Uri? = null
     var fav = false
@@ -28,6 +27,6 @@ fun InputStream.parsePls(name: String = "default", group: String = ""): Station 
             it.startsWith("favorite=") -> fav = it.substring(9).trim().toBoolean()
         }
     }
-    return uri?.let { Station(it, title, group, fav) } ?: throw ParseException("uri not found", 0)
+    return uri?.let { Station(it, title, group, fav) }
 }
 

@@ -1,11 +1,14 @@
 package io.github.vladimirmi.radius.presentation.media
 
+import android.net.Uri
 import android.support.v4.media.session.PlaybackStateCompat
 import com.arellomobile.mvp.InjectViewState
+import io.github.vladimirmi.radius.R
 import io.github.vladimirmi.radius.model.entity.Station
 import io.github.vladimirmi.radius.model.repository.MediaBrowserController
 import io.github.vladimirmi.radius.model.repository.StationRepository
 import io.github.vladimirmi.radius.ui.base.BasePresenter
+import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.rxkotlin.addTo
 import io.reactivex.rxkotlin.subscribeBy
 import javax.inject.Inject
@@ -52,6 +55,24 @@ class MediaPresenter
             repository.groupedStationList.showGroup(group)
         }
         viewState.notifyList()
+    }
+
+    fun addStation(uri: Uri) {
+        repository.parseStation(uri)
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribeBy(onSuccess = { viewState.openAddDialog(it) },
+                        onComplete = { viewState.showToast(R.string.toast_add_error) })
+                .addTo(compDisp)
+    }
+
+    fun addStation(station: Station) {
+        if (repository.add(station)) {
+            viewState.closeAddDialog()
+            viewState.showToast(R.string.toast_add_success)
+            select(station)
+        } else {
+            viewState.showToast(R.string.toast_add_force)
+        }
     }
 }
 

@@ -2,4 +2,11 @@
     <string name="app_name">Radius</string>
     <string name="toast_add_success">Станция добавлена</string>
     <string name="toast_add_error">Не удалось добавить станцию</string>
+    <string name="toast_add_force">Станция с заданным именем уже есть</string>
+    <string name="button_ok">OK</string>
+    <string name="button_cancel">Отмена</string>
+    <string name="dialog_new_station">Добавить станцию</string>
+    <string name="dialog_name">Название</string>
+    <string name="dialog_group">Группа</string>
+    <string name="message_err_name">Необходимо задать имя</string>
 </resources>

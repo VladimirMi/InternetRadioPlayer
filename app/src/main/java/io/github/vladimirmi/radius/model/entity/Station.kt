@@ -6,6 +6,7 @@ import io.github.vladimirmi.radius.extensions.toURI
 import io.github.vladimirmi.radius.extensions.toUrl
 import io.github.vladimirmi.radius.model.manager.Preferences
 import io.github.vladimirmi.radius.model.manager.parsePls
+import timber.log.Timber
 import java.io.File
 import java.net.URL
 import java.util.*
@@ -21,31 +22,34 @@ data class Station(val uri: Uri,
                    val id: String = UUID.randomUUID().toString()) {
 
     val path = Scopes.app.getInstance(Preferences::class.java).appDirPath +
-            if (group.isBlank()) "/$title" else "/$group/$title"
+            if (group.isBlank()) "/$title.pls" else "/$group/$title.pls"
 
+    fun toContent(): String {
+        return """[playlist]
+                        |File1=$uri
+                        |Title1=$title
+                        |favorite=$fav
+                    """.trimMargin()
+    }
 
     companion object {
-        fun fromUri(uri: Uri): Station {
+        fun fromUri(uri: Uri): Station? {
+            Timber.e("fromUri: ${Thread.currentThread().name}")
             return when {
-                uri.scheme.startsWith("http") -> fromNet(uri.toUrl()
-                        ?: throw  IllegalStateException("$uri to url convertation error"))
-
+                uri.scheme.startsWith("http") -> fromNet(uri.toUrl() ?: return null)
                 uri.scheme.startsWith("file") -> fromFile(File(uri.toURI()))
-
-                else -> throw  IllegalStateException("${uri.scheme} doesn't supported")
+                else -> null
             }
         }
 
-        fun fromFile(file: File): Station {
+        fun fromFile(file: File): Station? {
             return when (file.extension) {
                 "pls" -> file.parsePls()
-                else -> throw  IllegalStateException("${file.extension} doesn't supported")
+                else -> null
             }
         }
 
-        private fun fromNet(url: URL): Station {
-            return url.openStream().parsePls()
-        }
+        private fun fromNet(url: URL): Station? = url.openStream().parsePls()
     }
 }
 

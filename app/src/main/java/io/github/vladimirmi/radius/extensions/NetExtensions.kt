@@ -2,6 +2,7 @@ package io.github.vladimirmi.radius.extensions
 
 import android.app.DownloadManager
 import android.net.Uri
+import timber.log.Timber
 import java.io.IOException
 import java.net.HttpURLConnection
 import java.net.MalformedURLException
@@ -28,36 +29,36 @@ fun Uri.getContentType(): String = this.toUrl()?.getContentType() ?: ""
 
 fun URI.toUri(): Uri = Uri.parse(this.toString())
 
-fun URL.getContentType(): String {
+fun <T> URL.useConnection(runnable: HttpURLConnection.() -> T?): T? {
     return try {
         val connection = openConnection() as HttpURLConnection
         connection.connectTimeout = 5000
         connection.readTimeout = 5000
-        val contentType = connection.contentType.trim().toLowerCase(Locale.ENGLISH)
+        val result = connection.runnable()
         connection.disconnect()
-        contentType
+        result
     } catch (e: IOException) {
         e.printStackTrace()
-        ""
+        null
     }
 }
 
+fun URL.getContentType(): String =
+        useConnection {
+            Timber.d("getContentType: $headerFields")
+            contentType.trim().toLowerCase(Locale.ENGLISH)
+        } ?: ""
+
 fun URL.getRedirected(): URL {
-    return try {
-        val connection = openConnection() as HttpURLConnection
-        connection.connectTimeout = 5000
-        connection.readTimeout = 5000
-        val redirected: URL = if (connection.responseCode == 301) {
-            URL(connection.headerFields["Location"].toString().trim('[', ']'))
+    return useConnection {
+        Timber.d("getRedirected: $headerFields")
+        if (responseCode == HttpURLConnection.HTTP_MOVED_PERM ||
+                responseCode == HttpURLConnection.HTTP_MOVED_TEMP) {
+            URL(headerFields["Location"].toString().trim('[', ']'))
         } else {
-            this
+            this@getRedirected
         }
-        connection.disconnect()
-        redirected
-    } catch (e: IOException) {
-        e.printStackTrace()
-        this
-    }
+    } ?: this
 }
 
 fun DownloadManager.download(from: Uri, to: Uri) {

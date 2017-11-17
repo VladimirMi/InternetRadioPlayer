@@ -1,7 +1,6 @@
 package io.github.vladimirmi.radius.model.manager
 
 import android.net.Uri
-import io.github.vladimirmi.radius.di.Scopes
 import io.github.vladimirmi.radius.extensions.toUri
 import io.github.vladimirmi.radius.model.entity.Station
 import timber.log.Timber
@@ -14,13 +13,9 @@ import java.net.URISyntaxException
  * Created by Vladimir Mikhalev 13.11.2017.
  */
 
-fun File.parsePls(): Station? {
-    val group = if (parentFile.path == Scopes.app.getInstance(Preferences::class.java).appDirPath) ""
-    else parentFile.name
-    return inputStream().parsePls(name, group)
-}
+fun File.parsePls(group: String) = inputStream().parsePls(name, group)
 
-fun InputStream.parsePls(name: String = "default", group: String = ""): Station? {
+fun InputStream.parsePls(name: String = "", group: String = ""): Station? {
     var title = name
     var uri: Uri? = null
     var fav = false
@@ -35,13 +30,9 @@ fun InputStream.parsePls(name: String = "default", group: String = ""): Station?
 }
 
 
-fun File.parseM3u(): Station? {
-    val group = if (parentFile.path == Scopes.app.getInstance(Preferences::class.java).appDirPath) ""
-    else parentFile.name
-    return inputStream().parseM3u(name, group)
-}
+fun File.parseM3u(group: String) = inputStream().parseM3u(name, group)
 
-fun InputStream.parseM3u(name: String = "default", group: String = ""): Station? {
+fun InputStream.parseM3u(name: String = "", group: String = ""): Station? {
     var extended = false
     var title = name
     var uri: Uri? = null

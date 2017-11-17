@@ -15,7 +15,7 @@ open class BaseDialog(layoutId: Int, viewGroup: ViewGroup) {
         LayoutInflater.from(viewGroup.context).inflate(layoutId, null, false)
     }
 
-    private val dialog: AlertDialog by lazy {
+    protected val dialog: AlertDialog by lazy {
         AlertDialog.Builder(viewGroup.context)
                 .setView(dialogView)
                 .create()

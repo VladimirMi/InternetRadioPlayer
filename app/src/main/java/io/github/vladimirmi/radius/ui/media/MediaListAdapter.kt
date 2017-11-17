@@ -80,7 +80,7 @@ class MediaGroupItemVH(itemView: View) : RecyclerView.ViewHolder(itemView) {
         itemView.favorite.visibility = if (station.fav) View.VISIBLE else View.INVISIBLE
 
         val colors = itemView.context.getIconTextColors(station.title[0])
-        itemView.icon.text = station.title.first().toString()
+        itemView.icon.text = station.title.first().toString().toUpperCase()
         itemView.icon.setTextColor(colors.first)
         itemView.icon.setBackgroundColor(colors.second)
     }

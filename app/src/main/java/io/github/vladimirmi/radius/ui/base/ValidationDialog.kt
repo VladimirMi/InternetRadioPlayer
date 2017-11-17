@@ -16,14 +16,14 @@ import java.util.regex.Pattern
  * Created by Vladimir Mikhalev 13.11.2017.
  */
 
-abstract class ValidationDialog<T>(layoutId: Int, viewGroup: ViewGroup)
+abstract class ValidationDialog(layoutId: Int, viewGroup: ViewGroup)
     : BaseDialog(layoutId, viewGroup) {
 
     private val colorNormal = ContextCompat.getColor(viewGroup.context, R.color.grey_500)
     private val colorError = ContextCompat.getColor(viewGroup.context, R.color.red_800)
     private val colorText = ContextCompat.getColor(viewGroup.context, R.color.black)
 
-    protected val NAME_PATTERN: Pattern = Pattern.compile(".{3,20}")
+    protected val NAME_PATTERN: Pattern = Pattern.compile(".{3,50}")
     protected val DESCRIPTION_PATTERN: Pattern = Pattern.compile(".{3,400}", Pattern.DOTALL)
 
     protected val compDisp = CompositeDisposable()
@@ -33,7 +33,6 @@ abstract class ValidationDialog<T>(layoutId: Int, viewGroup: ViewGroup)
         val name = nameField.text
         val drawable = background as GradientDrawable
         return afterTextChangeEvents()
-                .skipInitialValue()
                 .map { pattern.matcher(it.editable().toString()).matches() }
                 .doOnNext { matches ->
                     if (matches) {

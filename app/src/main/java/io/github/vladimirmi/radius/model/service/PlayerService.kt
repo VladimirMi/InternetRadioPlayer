@@ -90,9 +90,8 @@ class PlayerService : MediaBrowserServiceCompat() {
         playback.releasePlayer()
     }
 
-    override fun onGetRoot(clientPackageName: String, clientUid: Int, rootHints: Bundle?): MediaBrowserServiceCompat.BrowserRoot? {
-        return MediaBrowserServiceCompat.BrowserRoot(getString(R.string.app_name), null)
-    }
+    override fun onGetRoot(clientPackageName: String, clientUid: Int, rootHints: Bundle?): MediaBrowserServiceCompat.BrowserRoot? =
+            MediaBrowserServiceCompat.BrowserRoot(getString(R.string.app_name), null)
 
     override fun onLoadChildren(parentId: String, result: MediaBrowserServiceCompat.Result<List<MediaBrowserCompat.MediaItem>>) {
         result.sendResult(emptyList())
@@ -110,7 +109,6 @@ class PlayerService : MediaBrowserServiceCompat() {
             }
 
             session.setPlaybackState(createPlaybackState(state))
-            session.setMetadata(createMetadata())
             notification.update()
         }
 

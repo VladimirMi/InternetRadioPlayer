@@ -48,6 +48,7 @@ class MediaFragment : BaseFragment(), MediaView, MediaItemCallback {
     override fun onResume() {
         super.onResume()
         activity?.intent?.data?.let { presenter.addStation(it) }
+        activity?.intent = null
     }
 
     override fun setMediaList(stationList: GroupedList<Station>) {

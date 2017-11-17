@@ -12,7 +12,7 @@ import kotlinx.android.synthetic.main.dialog_new_station.view.*
  */
 
 class NewStationDialog(viewGroup: ViewGroup, submit: (Station) -> Unit)
-    : ValidationDialog<Station>(R.layout.dialog_new_station, viewGroup) {
+    : ValidationDialog(R.layout.dialog_new_station, viewGroup) {
 
     private val name = dialogView.name
     private val group = dialogView.group
@@ -22,6 +22,7 @@ class NewStationDialog(viewGroup: ViewGroup, submit: (Station) -> Unit)
     lateinit var station: Station
 
     init {
+        dialog.setCanceledOnTouchOutside(false)
         cancel.setOnClickListener { close() }
         ok.setOnClickListener {
             val request = station.copy(

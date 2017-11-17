@@ -51,7 +51,7 @@ class MediaNotification(private val service: PlayerService,
     }
 
     //todo enum with pending intents
-    private fun getNotification(): Notification? {
+    private fun getNotification(): Notification {
         val playbackState = mediaSession.controller.playbackState
         val metadata: MediaMetadataCompat? = mediaSession.controller.metadata
 

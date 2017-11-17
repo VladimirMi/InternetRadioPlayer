@@ -51,6 +51,7 @@ class StationRepository
     }
 
     fun add(station: Station): Boolean {
+        if (stationList.find { it.title == station.title } != null) return false
         val added = stationList.add(station)
         if (added) save(station)
         return added

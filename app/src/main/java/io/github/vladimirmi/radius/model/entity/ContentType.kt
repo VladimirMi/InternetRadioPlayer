@@ -27,5 +27,17 @@ enum class ContentTypes(val types: Array<String>) {
         }
 
         fun isSupported(type: String) = isPlaylist(type) || isAudio(type)
+
+        private val map: Map<String, ContentTypes> by lazy {
+            val map = HashMap<String, ContentTypes>()
+            values().forEach { contentTypes ->
+                contentTypes.types.forEach {
+                    map.put(it, contentTypes)
+                }
+            }
+            map
+        }
+
+        fun fromString(type: String): ContentTypes? = map[type]
     }
 }

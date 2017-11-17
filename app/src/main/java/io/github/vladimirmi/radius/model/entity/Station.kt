@@ -2,9 +2,12 @@ package io.github.vladimirmi.radius.model.entity
 
 import android.net.Uri
 import io.github.vladimirmi.radius.di.Scopes
+import io.github.vladimirmi.radius.extensions.getContentType
+import io.github.vladimirmi.radius.extensions.getRedirected
 import io.github.vladimirmi.radius.extensions.toURI
 import io.github.vladimirmi.radius.extensions.toUrl
 import io.github.vladimirmi.radius.model.manager.Preferences
+import io.github.vladimirmi.radius.model.manager.parseM3u
 import io.github.vladimirmi.radius.model.manager.parsePls
 import timber.log.Timber
 import java.io.File
@@ -34,7 +37,7 @@ data class Station(val uri: Uri,
 
     companion object {
         fun fromUri(uri: Uri): Station? {
-            Timber.e("fromUri: ${Thread.currentThread().name}")
+            Timber.e("fromUri: $uri")
             return when {
                 uri.scheme.startsWith("http") -> fromNet(uri.toUrl() ?: return null)
                 uri.scheme.startsWith("file") -> fromFile(File(uri.toURI()))
@@ -45,11 +48,21 @@ data class Station(val uri: Uri,
         fun fromFile(file: File): Station? {
             return when (file.extension) {
                 "pls" -> file.parsePls()
+                "m3u", "m3u8", "ram" -> file.parseM3u()
                 else -> null
             }
         }
 
-        private fun fromNet(url: URL): Station? = url.openStream().parsePls()
+        private fun fromNet(url: URL): Station? {
+            val newUrl = url.getRedirected()
+            Timber.e("fromNet: ${newUrl.getContentType()}")
+            val station = when (ContentTypes.fromString(newUrl.getContentType())) {
+                ContentTypes.PLS -> newUrl.openStream().parsePls()
+                else -> newUrl.openStream().parseM3u()
+            }
+            Timber.e("fromNet: $station")
+            return station
+        }
     }
 }
 

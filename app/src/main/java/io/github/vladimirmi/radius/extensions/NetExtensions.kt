@@ -24,9 +24,9 @@ fun Uri.toUrl(): URL? {
 
 fun Uri.toURI(): URI = URI.create(this.toString())
 
-fun Uri.getContentType(): String {
-    return this.toUrl()?.getContentType() ?: ""
-}
+fun Uri.getContentType(): String = this.toUrl()?.getContentType() ?: ""
+
+fun URI.toUri(): Uri = Uri.parse(this.toString())
 
 fun URL.getContentType(): String {
     return try {
@@ -39,6 +39,24 @@ fun URL.getContentType(): String {
     } catch (e: IOException) {
         e.printStackTrace()
         ""
+    }
+}
+
+fun URL.getRedirected(): URL {
+    return try {
+        val connection = openConnection() as HttpURLConnection
+        connection.connectTimeout = 5000
+        connection.readTimeout = 5000
+        val redirected: URL = if (connection.responseCode == 301) {
+            URL(connection.headerFields["Location"].toString().trim('[', ']'))
+        } else {
+            this
+        }
+        connection.disconnect()
+        redirected
+    } catch (e: IOException) {
+        e.printStackTrace()
+        this
     }
 }
 

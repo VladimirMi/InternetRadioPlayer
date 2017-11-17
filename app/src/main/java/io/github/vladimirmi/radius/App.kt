@@ -33,7 +33,6 @@ class App : Application() {
             MemberInjectorRegistryLocator.setRootRegistry(io.github.vladimirmi.radius.MemberInjectorRegistry())
         }
 
-        val appScope = Toothpick.openScope(Scopes.APP)
-        appScope.installModules(AppModule(this))
+        Scopes.app.installModules(AppModule(this))
     }
 }

@@ -5,10 +5,11 @@ import android.content.pm.PackageManager
 import android.os.Build
 import android.support.v4.app.ActivityCompat
 import android.support.v4.content.ContextCompat
-import com.arellomobile.mvp.MvpPresenter
+import com.arellomobile.mvp.InjectViewState
 import io.github.vladimirmi.radius.Screens
 import io.github.vladimirmi.radius.model.repository.MediaBrowserController
-import io.github.vladimirmi.radius.model.repository.MediaRepository
+import io.github.vladimirmi.radius.model.repository.StationRepository
+import io.github.vladimirmi.radius.ui.base.BasePresenter
 import io.github.vladimirmi.radius.ui.root.RootActivity
 import ru.terrakok.cicerone.Router
 import javax.inject.Inject
@@ -17,11 +18,12 @@ import javax.inject.Inject
  * Created by Vladimir Mikhalev 01.10.2017.
  */
 
+@InjectViewState
 class RootPresenter
 @Inject constructor(private val router: Router,
                     private val mediaBrowserController: MediaBrowserController,
-                    private val repository: MediaRepository)
-    : MvpPresenter<RootView>() {
+                    private val repository: StationRepository)
+    : BasePresenter<RootView>() {
 
     companion object {
         const val REQUEST_WRITE = 100
@@ -65,7 +67,7 @@ class RootPresenter
     }
 
     private fun nextScreen() {
-        repository.initMedia()
-        router.navigateTo(Screens.MEDIA_SCREEN)
+        repository.initStations()
+        router.newRootScreen(Screens.MEDIA_SCREEN)
     }
 }

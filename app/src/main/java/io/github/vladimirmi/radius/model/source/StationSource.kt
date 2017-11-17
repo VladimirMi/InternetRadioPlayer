@@ -1,48 +1,54 @@
 package io.github.vladimirmi.radius.model.source
 
 import android.content.Context
+import android.net.Uri
 import android.os.Environment
-import io.github.vladimirmi.radius.model.entity.Media
+import io.github.vladimirmi.radius.extensions.clear
+import io.github.vladimirmi.radius.model.entity.Station
 import io.github.vladimirmi.radius.model.manager.Preferences
-import io.github.vladimirmi.radius.model.manager.clear
-import io.github.vladimirmi.radius.model.manager.parsePls
-import io.github.vladimirmi.radius.model.manager.savePls
 import timber.log.Timber
 import java.io.File
 import java.io.FileOutputStream
 import javax.inject.Inject
 
+
 /**
  * Created by Vladimir Mikhalev 30.09.2017.
  */
 
-class MediaSource
+class StationSource
 @Inject constructor(private val context: Context,
                     private val preferences: Preferences) {
-    private lateinit var appDir: File
 
-    fun getMediaList(): ArrayList<Media> {
+    private val appDir: File by lazy { initAppDir() }
+
+    fun getStationList(): ArrayList<Station> {
         copyFilesFromAssets()
-        val mediaList = ArrayList<Media>()
-        val treeWalk = getAppDir().walkTopDown()
-        treeWalk.forEach {
-            if (!it.isDirectory) {
-                fromFile(it)?.let { mediaList.add(it) }
+        val stationList = ArrayList<Station>()
+        val treeWalk = initAppDir().walkTopDown()
+        treeWalk.forEach { file ->
+            if (!file.isDirectory) {
+                Timber.e("file ${file.path}")
+                Station.fromFile(file)?.let { stationList.add(it) }
             }
         }
-        return mediaList
+        return stationList
     }
 
-    fun save(media: Media) {
-        media.savePls()
+    fun save(station: Station) {
+        with(File(station.path)) {
+            clear()
+            writeText(station.toContent())
+        }
     }
 
-    fun clear(media: Media) {
-        File(media.path).clear()
+    fun clear(station: Station) {
+        File(station.path).clear()
     }
+
+    fun parseStation(uri: Uri): Station? = Station.fromUri(uri)
 
     private fun copyFilesFromAssets() {
-        appDir = getAppDir()
         if (preferences.firstRun) {
             context.assets.list("")
                     .filter { it.endsWith(".pls") }
@@ -51,11 +57,12 @@ class MediaSource
         }
     }
 
-    private fun getAppDir(): File {
+    private fun initAppDir(): File {
         val appDir = Environment.getExternalStoragePublicDirectory("Radius")
         if (!appDir.mkdirs() && (!appDir.exists() || !appDir.isDirectory)) {
             throw IllegalStateException("Can not create playlist folder")
         }
+        preferences.appDirPath = appDir.path
         return appDir
     }
 
@@ -65,13 +72,6 @@ class MediaSource
             FileOutputStream(File(destination, filePath)).use { outS ->
                 inS.copyTo(outS)
             }
-        }
-    }
-
-    private fun fromFile(file: File): Media? {
-        return when (file.extension) {
-            "pls" -> file.parsePls()
-            else -> null
         }
     }
 }

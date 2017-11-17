@@ -17,7 +17,7 @@ import com.google.android.exoplayer2.Player
 import io.github.vladimirmi.radius.BuildConfig
 import io.github.vladimirmi.radius.R
 import io.github.vladimirmi.radius.di.Scopes
-import io.github.vladimirmi.radius.model.repository.MediaRepository
+import io.github.vladimirmi.radius.model.repository.StationRepository
 import io.github.vladimirmi.radius.ui.root.RootActivity
 import timber.log.Timber
 import toothpick.Toothpick
@@ -37,7 +37,7 @@ class PlayerService : MediaBrowserServiceCompat() {
         const val EXTRA_STATION = "EXTRA_STATION"
     }
 
-    @Inject lateinit var mediaRepository: MediaRepository
+    @Inject lateinit var stationRepository: StationRepository
 
     private var stationUrl: String? = null
     private lateinit var session: MediaSessionCompat
@@ -47,7 +47,7 @@ class PlayerService : MediaBrowserServiceCompat() {
 
     override fun onCreate() {
         super.onCreate()
-        Toothpick.openScope(Scopes.APP).apply {
+        Scopes.app.apply {
             Toothpick.inject(this@PlayerService, this)
             Toothpick.closeScope(this)
         }
@@ -90,9 +90,8 @@ class PlayerService : MediaBrowserServiceCompat() {
         playback.releasePlayer()
     }
 
-    override fun onGetRoot(clientPackageName: String, clientUid: Int, rootHints: Bundle?): MediaBrowserServiceCompat.BrowserRoot? {
-        return MediaBrowserServiceCompat.BrowserRoot(getString(R.string.app_name), null)
-    }
+    override fun onGetRoot(clientPackageName: String, clientUid: Int, rootHints: Bundle?): MediaBrowserServiceCompat.BrowserRoot? =
+            MediaBrowserServiceCompat.BrowserRoot(getString(R.string.app_name), null)
 
     override fun onLoadChildren(parentId: String, result: MediaBrowserServiceCompat.Result<List<MediaBrowserCompat.MediaItem>>) {
         result.sendResult(emptyList())
@@ -109,8 +108,7 @@ class PlayerService : MediaBrowserServiceCompat() {
                 else -> STATE_NONE
             }
 
-            val stateCompat = createPlaybackState(state)
-            session.setPlaybackState(stateCompat)
+            session.setPlaybackState(createPlaybackState(state))
             notification.update()
         }
 
@@ -124,15 +122,7 @@ class PlayerService : MediaBrowserServiceCompat() {
         }
 
         override fun onMetadata(key: String, value: String) {
-            val (artist, title) = value.split("-").map { it.trim() }
-            val metadataCompat = MediaMetadataCompat.Builder()
-                    .putString(MediaMetadataCompat.METADATA_KEY_ARTIST, artist)
-                    .putString(MediaMetadataCompat.METADATA_KEY_TITLE, title)
-                    .putString(MediaMetadataCompat.METADATA_KEY_ALBUM,
-                            mediaRepository.getSelected()?.title)
-                    .build()
-
-            session.setMetadata(metadataCompat)
+            session.setMetadata(createMetadata(key, value))
             notification.update()
         }
 
@@ -144,6 +134,20 @@ class PlayerService : MediaBrowserServiceCompat() {
             }
             return Builder().setActions(availableActions)
                     .setState(state, 0, 1F)
+                    .build()
+        }
+
+        private fun createMetadata(key: String = "", value: String = ""): MediaMetadataCompat {
+            val (artist, title) = if (value.isEmpty()) {
+                listOf("", "")
+            } else {
+                value.split("-").map { it.trim() }
+            }
+            return MediaMetadataCompat.Builder()
+                    .putString(MediaMetadataCompat.METADATA_KEY_ARTIST, artist)
+                    .putString(MediaMetadataCompat.METADATA_KEY_TITLE, title)
+                    .putString(MediaMetadataCompat.METADATA_KEY_ALBUM,
+                            stationRepository.selected.value?.title)
                     .build()
         }
     }

@@ -181,11 +181,19 @@ class Playback(private val service: PlayerService,
         }
     }
 
+    private var audioNoisyReceiverRegistered = false
+
     private fun registerAudioNoisyReceiver() {
-        service.registerReceiver(audioNoisyReceiver, audioNoisyReceiver.filter)
+        if (!audioNoisyReceiverRegistered) {
+            service.registerReceiver(audioNoisyReceiver, audioNoisyReceiver.filter)
+            audioNoisyReceiverRegistered = true
+        }
     }
 
     private fun unregisterAudioNoisyReceiver() {
-        service.unregisterReceiver(audioNoisyReceiver)
+        if (audioNoisyReceiverRegistered) {
+            service.unregisterReceiver(audioNoisyReceiver)
+            audioNoisyReceiverRegistered = false
+        }
     }
 }

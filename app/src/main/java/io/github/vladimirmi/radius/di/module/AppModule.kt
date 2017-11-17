@@ -1,8 +1,8 @@
 package io.github.vladimirmi.radius.di.module
 
 import android.content.Context
-import io.github.vladimirmi.radius.model.repository.MediaRepository
-import io.github.vladimirmi.radius.model.source.MediaSource
+import io.github.vladimirmi.radius.model.repository.StationRepository
+import io.github.vladimirmi.radius.model.source.StationSource
 import toothpick.config.Module
 
 /**
@@ -12,7 +12,7 @@ import toothpick.config.Module
 class AppModule(context: Context) : Module() {
     init {
         bind(Context::class.java).toInstance(context)
-        bind(MediaSource::class.java).singletonInScope()
-        bind(MediaRepository::class.java).singletonInScope()
+        bind(StationSource::class.java).singletonInScope()
+        bind(StationRepository::class.java).singletonInScope()
     }
 }

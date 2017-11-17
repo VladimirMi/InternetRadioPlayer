@@ -1,7 +1,9 @@
 package io.github.vladimirmi.radius.ui.root
 
+import android.content.Intent
 import android.os.Bundle
 import android.support.v4.app.Fragment
+import android.widget.Toast
 import com.arellomobile.mvp.MvpAppCompatActivity
 import com.arellomobile.mvp.presenter.InjectPresenter
 import com.arellomobile.mvp.presenter.ProvidePresenter
@@ -14,6 +16,7 @@ import io.github.vladimirmi.radius.presentation.root.RootView
 import io.github.vladimirmi.radius.ui.media.MediaFragment
 import ru.terrakok.cicerone.NavigatorHolder
 import ru.terrakok.cicerone.android.SupportAppNavigator
+import timber.log.Timber
 import toothpick.Toothpick
 import javax.inject.Inject
 
@@ -27,13 +30,12 @@ class RootActivity : MvpAppCompatActivity(), RootView {
     @InjectPresenter lateinit var presenter: RootPresenter
 
     @ProvidePresenter
-    fun providePresenter() : RootPresenter {
-        return Toothpick.openScopes(Scopes.APP, Scopes.ROOT_ACTIVITY)
-                .getInstance(RootPresenter::class.java)
+    fun providePresenter(): RootPresenter {
+        return Scopes.rootActivity.getInstance(RootPresenter::class.java)
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
-        Toothpick.openScopes(Scopes.APP, Scopes.ROOT_ACTIVITY).apply {
+        Scopes.rootActivity.apply {
             installModules(RootActivityModule())
             Toothpick.inject(this@RootActivity, this)
         }
@@ -46,14 +48,20 @@ class RootActivity : MvpAppCompatActivity(), RootView {
         navigatorHolder.setNavigator(navigator)
     }
 
+    override fun onNewIntent(intent: Intent?) {
+        Timber.e("onNewIntent: ")
+        super.onNewIntent(intent)
+        setIntent(intent)
+    }
+
     override fun onPause() {
         navigatorHolder.removeNavigator()
         super.onPause()
     }
 
     override fun onDestroy() {
-        super.onDestroy()
         if (isFinishing) Toothpick.closeScope(Scopes.ROOT_ACTIVITY)
+        super.onDestroy()
     }
 
     override fun onRequestPermissionsResult(requestCode: Int, permissions: Array<out String>, grantResults: IntArray) {
@@ -68,5 +76,9 @@ class RootActivity : MvpAppCompatActivity(), RootView {
             Screens.MEDIA_SCREEN -> MediaFragment()
             else -> null
         }
+    }
+
+    override fun showToast(resId: Int) {
+        Toast.makeText(this, resId, Toast.LENGTH_SHORT).show()
     }
 }

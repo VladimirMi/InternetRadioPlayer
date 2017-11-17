@@ -1,5 +1,6 @@
 package io.github.vladimirmi.radius.extensions
 
+import android.app.DownloadManager
 import android.content.Context
 import android.graphics.Bitmap
 import android.graphics.Canvas
@@ -39,6 +40,9 @@ fun Context.getIconTextColors(char: Char): Pair<Int, Int> {
     val colorIdx = char.toInt() % textColors.size
     return Pair(textColors[colorIdx], bgColors[colorIdx])
 }
+
+val Context.downloadManager: DownloadManager
+    get() = getSystemService(Context.DOWNLOAD_SERVICE) as DownloadManager
 
 fun View.setBackgroundColorExt(id: Int) {
     setBackgroundColor(ContextCompat.getColor(context, id))

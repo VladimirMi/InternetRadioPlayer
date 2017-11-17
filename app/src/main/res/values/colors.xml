@@ -40,13 +40,14 @@
     <color name="grey_300">#e0e0e0</color>
     <color name="grey_400">#bdbdbd</color>
     <color name="grey_500">#9E9E9E</color>
-    <color name="grey_700">#455a64</color>
+    <color name="grey_700">#616161</color>
+    <color name="grey_800">#616161</color>
+    <color name="grey_900">#212121</color>
     <color name="blue_grey_500">#607D8B</color>
 
     <color name="black">#000000</color>
     <color name="white">#ffffff</color>
     <color name="transparent">#0fff</color>
-
 
     <color name="player_controls">#cfd8dc</color>
 

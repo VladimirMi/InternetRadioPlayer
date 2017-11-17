@@ -1,6 +1,5 @@
 package io.github.vladimirmi.radius.model.repository
 
-import android.arch.lifecycle.MutableLiveData
 import android.content.ComponentName
 import android.content.Context
 import android.net.Uri
@@ -9,6 +8,7 @@ import android.support.v4.media.MediaBrowserCompat
 import android.support.v4.media.MediaMetadataCompat
 import android.support.v4.media.session.MediaControllerCompat
 import android.support.v4.media.session.PlaybackStateCompat
+import com.jakewharton.rxrelay2.BehaviorRelay
 import io.github.vladimirmi.radius.model.service.PlayerService
 import timber.log.Timber
 import javax.inject.Inject
@@ -20,12 +20,13 @@ import javax.inject.Inject
 
 class MediaBrowserController
 @Inject constructor(context: Context,
-                    private val mediaRepository: MediaRepository) {
+                    private val stationRepository: StationRepository) {
 
     private lateinit var mediaBrowser: MediaBrowserCompat
     private var controller: MediaControllerCompat? = null
-    val playbackState: MutableLiveData<PlaybackStateCompat> = MutableLiveData()
-    val playbackMetaData: MutableLiveData<MediaMetadataCompat> = MutableLiveData()
+
+    val playbackState: BehaviorRelay<PlaybackStateCompat> = BehaviorRelay.create()
+    val playbackMetaData: BehaviorRelay<MediaMetadataCompat> = BehaviorRelay.create()
 
     private val connectionCallbacks = object : MediaBrowserCompat.ConnectionCallback() {
         override fun onConnected() {
@@ -52,11 +53,11 @@ class MediaBrowserController
     private val controllerCallback = object : MediaControllerCompat.Callback() {
         override fun onPlaybackStateChanged(state: PlaybackStateCompat) {
             Timber.e("onPlaybackStateChanged: ${state.state}")
-            playbackState.value = state
+            playbackState.accept(state)
         }
 
         override fun onMetadataChanged(metadata: MediaMetadataCompat) {
-            playbackMetaData.value = metadata
+            playbackMetaData.accept(metadata)
         }
     }
 
@@ -67,6 +68,7 @@ class MediaBrowserController
     }
 
     fun connect() {
+        if (mediaBrowser.isConnected) return
         mediaBrowser.connect()
     }
 
@@ -74,8 +76,9 @@ class MediaBrowserController
         mediaBrowser.disconnect()
     }
 
-    fun isPlaying(uri: Uri) = controller?.playbackState?.state == PlaybackStateCompat.STATE_PLAYING
-            && mediaRepository.getSelected()?.uri == uri
+    val isPlaying get() = controller?.playbackState?.state == PlaybackStateCompat.STATE_PLAYING
+
+    fun isPlaying(uri: Uri) = isPlaying && stationRepository.selected.value?.uri == uri
 
     fun play(uri: Uri) {
         controller?.transportControls?.playFromUri(uri, null)

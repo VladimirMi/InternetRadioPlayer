@@ -1,7 +1,7 @@
 package io.github.vladimirmi.radius.presentation.playercontrol
 
 import com.arellomobile.mvp.MvpView
-import io.github.vladimirmi.radius.model.entity.Media
+import io.github.vladimirmi.radius.model.entity.Station
 
 /**
  * Created by Vladimir Mikhalev 23.10.2017.
@@ -12,5 +12,5 @@ interface PlayerControlView : MvpView {
     fun showStopped()
     fun showPlaying()
     fun setMediaInfo(info: String)
-    fun setMedia(media: Media)
+    fun setMedia(station: Station)
 }

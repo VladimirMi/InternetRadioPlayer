@@ -13,4 +13,5 @@ class Preferences
 
     var firstRun: Boolean by Preference(context, "first_run", true)
     var selectedPos: Int by Preference(context, "selected_position", 0)
+    var appDirPath: String by Preference(context, "app dir path", "")
 }

@@ -1,12 +1,16 @@
 package io.github.vladimirmi.radius.presentation.media
 
-import android.arch.lifecycle.Observer
+import android.net.Uri
 import android.support.v4.media.session.PlaybackStateCompat
 import com.arellomobile.mvp.InjectViewState
-import io.github.vladimirmi.radius.model.entity.Media
+import io.github.vladimirmi.radius.R
+import io.github.vladimirmi.radius.model.entity.Station
 import io.github.vladimirmi.radius.model.repository.MediaBrowserController
-import io.github.vladimirmi.radius.model.repository.MediaRepository
+import io.github.vladimirmi.radius.model.repository.StationRepository
 import io.github.vladimirmi.radius.ui.base.BasePresenter
+import io.reactivex.android.schedulers.AndroidSchedulers
+import io.reactivex.rxkotlin.addTo
+import io.reactivex.rxkotlin.subscribeBy
 import javax.inject.Inject
 
 /**
@@ -15,40 +19,60 @@ import javax.inject.Inject
 
 @InjectViewState
 class MediaPresenter
-@Inject constructor(private val repository: MediaRepository,
+@Inject constructor(private val repository: StationRepository,
                     private val mediaBrowserController: MediaBrowserController)
     : BasePresenter<MediaView>() {
 
-    override fun onFirstAttach() {
-        repository.groupedMediaData.observe(this, Observer {
-            viewState.setMediaList(repository.getGrouped())
-        })
 
-        repository.selectedData.observe(this, Observer {
-            repository.getSelected()?.let { viewState.select(it, playing = false) }
-        })
+    override fun onFirstViewAttach() {
+        repository.groupedStationList.observe()
+                .subscribeBy { viewState.setMediaList(it) }
+                .addTo(compDisp)
 
-        mediaBrowserController.playbackState.observe(this, Observer {
-            if (it?.state == PlaybackStateCompat.STATE_PLAYING) {
-                repository.getSelected()?.let { viewState.select(it, playing = true) }
-            } else {
-                repository.getSelected()?.let { viewState.select(it, playing = false) }
-            }
-        })
+        repository.selected
+                .subscribeBy { viewState.select(it, playing = false) }
+                .addTo(compDisp)
+
+        mediaBrowserController.playbackState
+                .subscribeBy {
+                    val station = repository.selected.value ?: return@subscribeBy
+                    if (it.state == PlaybackStateCompat.STATE_PLAYING) {
+                        viewState.select(station, playing = true)
+                    } else {
+                        viewState.select(station, playing = false)
+                    }
+                }.addTo(compDisp)
     }
 
-    fun select(media: Media) {
-        repository.setSelected(media)
+    fun select(station: Station) {
+        repository.setSelected(station)
     }
 
     fun selectGroup(group: String) {
-        //todo interactor?
-        if (repository.getGrouped().isGroupVisible(group)) {
-            repository.getGrouped().hideGroup(group)
+        if (repository.groupedStationList.isGroupVisible(group)) {
+            repository.groupedStationList.hideGroup(group)
         } else {
-            repository.getGrouped().showGroup(group)
+            repository.groupedStationList.showGroup(group)
         }
         viewState.notifyList()
+    }
+
+    fun addStation(uri: Uri) {
+        repository.parseStation(uri)
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribeBy(onSuccess = { viewState.openAddDialog(it) },
+                        onComplete = { viewState.showToast(R.string.toast_add_error) })
+                .addTo(compDisp)
+    }
+
+    fun addStation(station: Station) {
+        if (repository.add(station)) {
+            viewState.closeAddDialog()
+            viewState.showToast(R.string.toast_add_success)
+            select(station)
+        } else {
+            viewState.showToast(R.string.toast_add_force)
+        }
     }
 }
 

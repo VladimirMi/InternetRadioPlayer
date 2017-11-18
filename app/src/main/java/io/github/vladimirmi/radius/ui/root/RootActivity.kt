@@ -16,7 +16,6 @@ import io.github.vladimirmi.radius.presentation.root.RootView
 import io.github.vladimirmi.radius.ui.media.MediaFragment
 import ru.terrakok.cicerone.NavigatorHolder
 import ru.terrakok.cicerone.android.SupportAppNavigator
-import timber.log.Timber
 import toothpick.Toothpick
 import javax.inject.Inject
 
@@ -30,9 +29,8 @@ class RootActivity : MvpAppCompatActivity(), RootView {
     @InjectPresenter lateinit var presenter: RootPresenter
 
     @ProvidePresenter
-    fun providePresenter(): RootPresenter {
-        return Scopes.rootActivity.getInstance(RootPresenter::class.java)
-    }
+    fun providePresenter(): RootPresenter =
+            Scopes.rootActivity.getInstance(RootPresenter::class.java)
 
     override fun onCreate(savedInstanceState: Bundle?) {
         Scopes.rootActivity.apply {
@@ -49,7 +47,6 @@ class RootActivity : MvpAppCompatActivity(), RootView {
     }
 
     override fun onNewIntent(intent: Intent?) {
-        Timber.e("onNewIntent: ")
         super.onNewIntent(intent)
         setIntent(intent)
     }
@@ -81,4 +78,6 @@ class RootActivity : MvpAppCompatActivity(), RootView {
     override fun showToast(resId: Int) {
         Toast.makeText(this, resId, Toast.LENGTH_SHORT).show()
     }
+
+
 }

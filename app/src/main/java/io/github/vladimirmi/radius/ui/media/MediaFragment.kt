@@ -17,6 +17,7 @@ import io.github.vladimirmi.radius.presentation.media.MediaPresenter
 import io.github.vladimirmi.radius.presentation.media.MediaView
 import io.github.vladimirmi.radius.ui.base.BaseFragment
 import io.github.vladimirmi.radius.ui.dialogs.NewStationDialog
+import io.github.vladimirmi.radius.ui.dialogs.RemoveStationDialog
 import kotlinx.android.synthetic.main.fragment_media.*
 import toothpick.Toothpick
 
@@ -31,6 +32,21 @@ class MediaFragment : BaseFragment(), MediaView, MediaItemCallback {
 
     private val addAction: (Station) -> Unit = { presenter.addStation(it) }
     private val addMediaDialog: NewStationDialog by lazy { NewStationDialog(view as ViewGroup, addAction) }
+    private lateinit var removeDialog: RemoveStationDialog
+
+    private val itemTouchHelper = ItemTouchHelper(object : ItemSwipeCallback(Scopes.context,
+            0,
+            ItemTouchHelper.LEFT or ItemTouchHelper.RIGHT) {
+        override fun onSwiped(viewHolder: RecyclerView.ViewHolder, direction: Int) {
+            val station = adapter.getData(viewHolder.adapterPosition) ?: return
+            if (direction == ItemTouchHelper.LEFT) {
+                presenter.removeStation(station)
+            } else {
+                presenter.select(station)
+                presenter.showStation(station)
+            }
+        }
+    })
 
     @InjectPresenter lateinit var presenter: MediaPresenter
 
@@ -45,7 +61,7 @@ class MediaFragment : BaseFragment(), MediaView, MediaItemCallback {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         media_recycler.layoutManager = LinearLayoutManager(context)
         media_recycler.adapter = adapter
-        initSwipe()
+        itemTouchHelper.attachToRecyclerView(media_recycler)
     }
 
     override fun onResume() {
@@ -79,26 +95,16 @@ class MediaFragment : BaseFragment(), MediaView, MediaItemCallback {
         addMediaDialog.open()
     }
 
-    override fun closeAddDialog() = addMediaDialog.close()
+    override fun closeAddDialog() {
+        addMediaDialog.close()
+    }
 
     override fun showToast(resId: Int) {
         Toast.makeText(context, resId, Toast.LENGTH_SHORT).show()
     }
 
-    private lateinit var itemTouchHelper: ItemTouchHelper
-
-    private fun initSwipe() {
-        val callback = object : ItemSwipeCallback(context, 0, ItemTouchHelper.LEFT or ItemTouchHelper.RIGHT) {
-            override fun onSwiped(viewHolder: RecyclerView.ViewHolder, direction: Int) {
-                val station = adapter.getData(viewHolder.adapterPosition) ?: return
-                if (direction == ItemTouchHelper.LEFT) {
-                    presenter.removeStation(station)
-                } else {
-                    presenter.showStation(station)
-                }
-            }
-        }
-        itemTouchHelper = ItemTouchHelper(callback)
-        itemTouchHelper.attachToRecyclerView(media_recycler)
+    override fun openRemoveDialog(station: Station) {
+        removeDialog = RemoveStationDialog.newInstance(station)
+        removeDialog.show(fragmentManager, "remove dialog")
     }
 }

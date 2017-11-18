@@ -38,6 +38,10 @@ class StationRepository
         preferences.selectedPos = pos
     }
 
+    fun getStation(id: String): Station {
+        return stationList.find { it.id == id } ?: throw IllegalStateException()
+    }
+
     fun parseStation(uri: Uri): Maybe<Station> {
         Maybe.fromCallable { }
         return { stationSource.parseStation(uri) }
@@ -55,6 +59,12 @@ class StationRepository
         val added = stationList.add(station)
         if (added) save(station)
         return added
+    }
+
+    fun remove(station: Station) {
+        if (stationList.remove(station)) {
+            stationSource.remove(station)
+        }
     }
 
     private fun save(station: Station) {

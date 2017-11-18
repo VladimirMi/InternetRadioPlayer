@@ -76,8 +76,8 @@ class MediaPresenter
         }
     }
 
-    fun removeStation(station: Station) {
-        Timber.e("removeStation $station")
+    fun removeStation(station: Station, submit: Boolean = false) {
+        viewState.openRemoveDialog(station)
     }
 
     fun showStation(station: Station) {

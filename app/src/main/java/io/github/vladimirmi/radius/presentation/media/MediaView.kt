@@ -15,4 +15,5 @@ interface MediaView : MvpView {
     fun showToast(resId: Int)
     fun openAddDialog(station: Station)
     fun closeAddDialog()
+    fun openRemoveDialog(station: Station)
 }

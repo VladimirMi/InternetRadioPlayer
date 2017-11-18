@@ -11,7 +11,7 @@ import android.view.ViewGroup
 
 open class BaseDialog(layoutId: Int, viewGroup: ViewGroup) {
 
-    val dialogView: View by lazy {
+    protected val dialogView: View by lazy {
         LayoutInflater.from(viewGroup.context).inflate(layoutId, null, false)
     }
 

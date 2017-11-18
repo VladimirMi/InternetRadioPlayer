@@ -11,6 +11,7 @@ import io.github.vladimirmi.radius.ui.base.BasePresenter
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.rxkotlin.addTo
 import io.reactivex.rxkotlin.subscribeBy
+import timber.log.Timber
 import javax.inject.Inject
 
 /**
@@ -73,6 +74,14 @@ class MediaPresenter
         } else {
             viewState.showToast(R.string.toast_add_force)
         }
+    }
+
+    fun removeStation(station: Station) {
+        Timber.e("removeStation $station")
+    }
+
+    fun showStation(station: Station) {
+        Timber.e("showStation $station")
     }
 }
 

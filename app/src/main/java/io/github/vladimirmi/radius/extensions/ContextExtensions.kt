@@ -9,7 +9,8 @@ import android.graphics.drawable.VectorDrawable
 import android.support.annotation.DrawableRes
 import android.support.graphics.drawable.VectorDrawableCompat
 import android.support.v4.content.ContextCompat
-import android.view.View
+import android.util.DisplayMetrics
+import android.view.WindowManager
 import io.github.vladimirmi.radius.R
 
 
@@ -34,6 +35,7 @@ fun Context.getBitmap(@DrawableRes id: Int): Bitmap {
     }
 }
 
+//todo wtf
 fun Context.getIconTextColors(char: Char): Pair<Int, Int> {
     val textColors = resources.getIntArray(R.array.icon_text_color_set)
     val bgColors = resources.getIntArray(R.array.icon_bg_color_set)
@@ -41,9 +43,15 @@ fun Context.getIconTextColors(char: Char): Pair<Int, Int> {
     return Pair(textColors[colorIdx], bgColors[colorIdx])
 }
 
+val Context.dp get() = getDisplayMetrics().density.toInt()
+
+val Context.sp get() = getDisplayMetrics().scaledDensity.toInt()
+
+fun Context.getDisplayMetrics(): DisplayMetrics {
+    val displayMetrics = DisplayMetrics()
+    (this.getSystemService(Context.WINDOW_SERVICE) as WindowManager).defaultDisplay.getMetrics(displayMetrics)
+    return displayMetrics
+}
+
 val Context.downloadManager: DownloadManager
     get() = getSystemService(Context.DOWNLOAD_SERVICE) as DownloadManager
-
-fun View.setBackgroundColorExt(id: Int) {
-    setBackgroundColor(ContextCompat.getColor(context, id))
-}

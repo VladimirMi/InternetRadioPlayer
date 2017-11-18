@@ -65,6 +65,11 @@ class MediaListAdapter(private val callback: MediaItemCallback)
         this.playing = playing
         notifyDataSetChanged()
     }
+
+    fun getData(position: Int): Station? {
+        return if (stationList.isGroupTitle(position)) null
+        else stationList.getGroupItem(position)
+    }
 }
 
 class MediaGroupTitleVH(itemView: View) : RecyclerView.ViewHolder(itemView) {

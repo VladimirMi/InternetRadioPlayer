@@ -2,6 +2,8 @@ package io.github.vladimirmi.radius.ui.media
 
 import android.os.Bundle
 import android.support.v7.widget.LinearLayoutManager
+import android.support.v7.widget.RecyclerView
+import android.support.v7.widget.helper.ItemTouchHelper
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
@@ -43,6 +45,7 @@ class MediaFragment : BaseFragment(), MediaView, MediaItemCallback {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         media_recycler.layoutManager = LinearLayoutManager(context)
         media_recycler.adapter = adapter
+        initSwipe()
     }
 
     override fun onResume() {
@@ -80,5 +83,22 @@ class MediaFragment : BaseFragment(), MediaView, MediaItemCallback {
 
     override fun showToast(resId: Int) {
         Toast.makeText(context, resId, Toast.LENGTH_SHORT).show()
+    }
+
+    private lateinit var itemTouchHelper: ItemTouchHelper
+
+    private fun initSwipe() {
+        val callback = object : ItemSwipeCallback(context, 0, ItemTouchHelper.LEFT or ItemTouchHelper.RIGHT) {
+            override fun onSwiped(viewHolder: RecyclerView.ViewHolder, direction: Int) {
+                val station = adapter.getData(viewHolder.adapterPosition) ?: return
+                if (direction == ItemTouchHelper.LEFT) {
+                    presenter.removeStation(station)
+                } else {
+                    presenter.showStation(station)
+                }
+            }
+        }
+        itemTouchHelper = ItemTouchHelper(callback)
+        itemTouchHelper.attachToRecyclerView(media_recycler)
     }
 }

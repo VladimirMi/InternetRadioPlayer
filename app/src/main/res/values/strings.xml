@@ -9,4 +9,6 @@
     <string name="dialog_name">Название</string>
     <string name="dialog_group">Группа</string>
     <string name="message_err_name">Необходимо задать имя</string>
+    <string name="remove">Удалить</string>
+    <string name="edit">Редактировать</string>
 </resources>

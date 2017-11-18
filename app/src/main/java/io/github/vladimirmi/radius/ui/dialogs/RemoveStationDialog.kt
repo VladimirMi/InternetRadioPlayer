@@ -43,10 +43,8 @@ class RemoveStationDialog : BaseDialogFragment(), RemoveStationView {
         presenter.id = arguments.getString("id")
         ok.setOnClickListener { presenter.ok() }
         cancel.setOnClickListener { presenter.cancel() }
-        dialog_message.setText(R.string.remove)
+        dialog_message.setText(R.string.remove_message)
     }
 
-    override fun close() {
-        dismiss()
-    }
+    override fun close() = dismiss()
 }

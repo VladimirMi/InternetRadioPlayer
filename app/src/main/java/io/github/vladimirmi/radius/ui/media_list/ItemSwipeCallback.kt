@@ -1,4 +1,4 @@
-package io.github.vladimirmi.radius.ui.media
+package io.github.vladimirmi.radius.ui.media_list
 
 import android.content.Context
 import android.graphics.Canvas
@@ -28,7 +28,7 @@ abstract class ItemSwipeCallback(context: Context,
         private const val RIGHT_COLOR = R.color.deep_orange_500
         private const val LEFT_COLOR = R.color.secondaryDarkColor
         private const val RIGHT_TEXT = R.string.remove
-        private const val LEFT_TEXT = R.string.edit
+        private const val LEFT_TEXT = R.string.show
         private const val TEXT_SIZE_SP = 15f
         private const val ICON_SIZE_DP = 24f
         private const val HORIZONTAL_MARGIN_ICON_DP = 16f

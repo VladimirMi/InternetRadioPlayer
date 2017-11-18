@@ -11,9 +11,11 @@ import io.github.vladimirmi.radius.R
 import io.github.vladimirmi.radius.Screens
 import io.github.vladimirmi.radius.di.Scopes
 import io.github.vladimirmi.radius.di.module.RootActivityModule
+import io.github.vladimirmi.radius.model.entity.Station
 import io.github.vladimirmi.radius.presentation.root.RootPresenter
 import io.github.vladimirmi.radius.presentation.root.RootView
-import io.github.vladimirmi.radius.ui.media.MediaFragment
+import io.github.vladimirmi.radius.ui.media_list.MediaListFragment
+import io.github.vladimirmi.radius.ui.station.StationFragment
 import ru.terrakok.cicerone.NavigatorHolder
 import ru.terrakok.cicerone.android.SupportAppNavigator
 import toothpick.Toothpick
@@ -70,7 +72,8 @@ class RootActivity : MvpAppCompatActivity(), RootView {
         override fun createActivityIntent(screenKey: String?, data: Any?) = null
 
         override fun createFragment(screenKey: String?, data: Any?): Fragment? = when (screenKey) {
-            Screens.MEDIA_SCREEN -> MediaFragment()
+            Screens.MEDIA_LIST_SCREEN -> MediaListFragment()
+            Screens.STATION_SCREEN -> StationFragment.newInstance(data as Station)
             else -> null
         }
     }

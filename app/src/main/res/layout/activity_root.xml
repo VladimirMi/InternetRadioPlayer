@@ -43,7 +43,7 @@
 
     <fragment
         android:id="@+id/player_controls"
-        android:name="io.github.vladimirmi.radius.ui.playercontrol.PlayerControlFragment"
+        android:name="io.github.vladimirmi.radius.ui.player_control.PlayerControlFragment"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_alignParentBottom="true"

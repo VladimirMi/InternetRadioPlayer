@@ -1,4 +1,4 @@
-package io.github.vladimirmi.radius.ui.media
+package io.github.vladimirmi.radius.ui.media_list
 
 import android.support.v7.widget.RecyclerView
 import android.view.LayoutInflater

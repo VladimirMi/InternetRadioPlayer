@@ -1,5 +1,6 @@
 package io.github.vladimirmi.radius.di
 
+import android.content.Context
 import toothpick.Scope
 import toothpick.Toothpick
 
@@ -13,4 +14,7 @@ object Scopes {
 
     val app: Scope get() = Toothpick.openScope(APP)
     val rootActivity: Scope get() = Toothpick.openScopes(APP, ROOT_ACTIVITY)
+
+    //Shortcuts
+    val context: Context get() = app.getInstance(Context::class.java)
 }

@@ -1,4 +1,4 @@
-package io.github.vladimirmi.radius.ui.media
+package io.github.vladimirmi.radius.ui.mediaList
 
 import android.support.v7.widget.RecyclerView
 import android.view.LayoutInflater
@@ -64,6 +64,11 @@ class MediaListAdapter(private val callback: MediaItemCallback)
         selected = station
         this.playing = playing
         notifyDataSetChanged()
+    }
+
+    fun getData(position: Int): Station? {
+        return if (stationList.isGroupTitle(position)) null
+        else stationList.getGroupItem(position)
     }
 }
 

@@ -5,6 +5,6 @@ package io.github.vladimirmi.radius
  */
 
 object Screens {
-    const val MEDIA_SCREEN = "media screen"
-    const val MEDIA_SCREEN_DETAIL = "media detail screen"
+    const val MEDIA_LIST_SCREEN = "media list screen"
+    const val STATION_SCREEN = "station screen"
 }

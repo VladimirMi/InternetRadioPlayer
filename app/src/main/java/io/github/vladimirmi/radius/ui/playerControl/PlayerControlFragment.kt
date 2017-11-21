@@ -1,4 +1,4 @@
-package io.github.vladimirmi.radius.ui.playercontrol
+package io.github.vladimirmi.radius.ui.playerControl
 
 import android.os.Bundle
 import android.view.View
@@ -8,8 +8,8 @@ import io.github.vladimirmi.radius.R
 import io.github.vladimirmi.radius.di.Scopes
 import io.github.vladimirmi.radius.extensions.getIconTextColors
 import io.github.vladimirmi.radius.model.entity.Station
-import io.github.vladimirmi.radius.presentation.playercontrol.PlayerControlPresenter
-import io.github.vladimirmi.radius.presentation.playercontrol.PlayerControlView
+import io.github.vladimirmi.radius.presentation.playerControl.PlayerControlPresenter
+import io.github.vladimirmi.radius.presentation.playerControl.PlayerControlView
 import io.github.vladimirmi.radius.ui.base.BaseFragment
 import kotlinx.android.synthetic.main.fragment_player_controls.*
 import toothpick.Toothpick
@@ -36,6 +36,7 @@ class PlayerControlFragment : BaseFragment(), PlayerControlView {
         media_info.isSelected = true
         play_pause.setOnClickListener { presenter.playPause() }
         favorite.setOnClickListener { presenter.switchFavorite() }
+        media_icon.setOnClickListener { presenter.showStation() }
     }
 
     override fun showBuffering() {

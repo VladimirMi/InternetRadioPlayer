@@ -11,12 +11,13 @@ import io.github.vladimirmi.radius.R
 import io.github.vladimirmi.radius.Screens
 import io.github.vladimirmi.radius.di.Scopes
 import io.github.vladimirmi.radius.di.module.RootActivityModule
+import io.github.vladimirmi.radius.model.entity.Station
 import io.github.vladimirmi.radius.presentation.root.RootPresenter
 import io.github.vladimirmi.radius.presentation.root.RootView
-import io.github.vladimirmi.radius.ui.media.MediaFragment
+import io.github.vladimirmi.radius.ui.mediaList.MediaListFragment
+import io.github.vladimirmi.radius.ui.station.StationFragment
 import ru.terrakok.cicerone.NavigatorHolder
 import ru.terrakok.cicerone.android.SupportAppNavigator
-import timber.log.Timber
 import toothpick.Toothpick
 import javax.inject.Inject
 
@@ -30,9 +31,8 @@ class RootActivity : MvpAppCompatActivity(), RootView {
     @InjectPresenter lateinit var presenter: RootPresenter
 
     @ProvidePresenter
-    fun providePresenter(): RootPresenter {
-        return Scopes.rootActivity.getInstance(RootPresenter::class.java)
-    }
+    fun providePresenter(): RootPresenter =
+            Scopes.rootActivity.getInstance(RootPresenter::class.java)
 
     override fun onCreate(savedInstanceState: Bundle?) {
         Scopes.rootActivity.apply {
@@ -49,7 +49,6 @@ class RootActivity : MvpAppCompatActivity(), RootView {
     }
 
     override fun onNewIntent(intent: Intent?) {
-        Timber.e("onNewIntent: ")
         super.onNewIntent(intent)
         setIntent(intent)
     }
@@ -73,7 +72,8 @@ class RootActivity : MvpAppCompatActivity(), RootView {
         override fun createActivityIntent(screenKey: String?, data: Any?) = null
 
         override fun createFragment(screenKey: String?, data: Any?): Fragment? = when (screenKey) {
-            Screens.MEDIA_SCREEN -> MediaFragment()
+            Screens.MEDIA_LIST_SCREEN -> MediaListFragment()
+            Screens.STATION_SCREEN -> StationFragment.newInstance(data as Station)
             else -> null
         }
     }
@@ -81,4 +81,6 @@ class RootActivity : MvpAppCompatActivity(), RootView {
     override fun showToast(resId: Int) {
         Toast.makeText(this, resId, Toast.LENGTH_SHORT).show()
     }
+
+
 }

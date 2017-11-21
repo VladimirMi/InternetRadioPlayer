@@ -1,14 +1,16 @@
-package io.github.vladimirmi.radius.presentation.playercontrol
+package io.github.vladimirmi.radius.presentation.playerControl
 
 import android.support.v4.media.MediaMetadataCompat
 import android.support.v4.media.session.PlaybackStateCompat
 import android.support.v4.media.session.PlaybackStateCompat.*
 import com.arellomobile.mvp.InjectViewState
+import io.github.vladimirmi.radius.Screens
 import io.github.vladimirmi.radius.model.repository.MediaBrowserController
 import io.github.vladimirmi.radius.model.repository.StationRepository
 import io.github.vladimirmi.radius.ui.base.BasePresenter
 import io.reactivex.rxkotlin.addTo
 import io.reactivex.rxkotlin.subscribeBy
+import ru.terrakok.cicerone.Router
 import javax.inject.Inject
 
 /**
@@ -18,7 +20,8 @@ import javax.inject.Inject
 @InjectViewState
 class PlayerControlPresenter
 @Inject constructor(private val browserController: MediaBrowserController,
-                    private val repository: StationRepository)
+                    private val repository: StationRepository,
+                    private val router: Router)
     : BasePresenter<PlayerControlView>() {
 
     override fun onFirstViewAttach() {
@@ -70,5 +73,9 @@ class PlayerControlPresenter
         val copy = selected.copy(fav = !selected.fav)
         repository.update(copy)
         viewState.setMedia(copy)
+    }
+
+    fun showStation() {
+        router.navigateTo(Screens.STATION_SCREEN, repository.selected.value)
     }
 }

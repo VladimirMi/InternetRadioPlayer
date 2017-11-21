@@ -14,6 +14,7 @@ interface GroupedList<E> {
     fun showGroup(group: String)
     fun groupedSize(): Int
     fun observe(): Observable<GroupedList<E>>
+    fun notifyObservers()
 }
 
 class GroupMapping(val group: String, val index: Int? = null) {

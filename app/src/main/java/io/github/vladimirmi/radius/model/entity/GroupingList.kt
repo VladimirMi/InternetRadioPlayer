@@ -15,10 +15,7 @@ class GroupingList(private val stationList: ArrayList<Station>)
     private val mappings = ArrayList<GroupMapping>()
 
     init {
-        stationList.forEachIndexed { index, media ->
-            addToMappings(media, index)
-        }
-        sortMappings()
+        initMappings()
     }
 
     override fun isGroupTitle(position: Int): Boolean = getGroupMapping(position).isGroupTitle
@@ -45,12 +42,28 @@ class GroupingList(private val stationList: ArrayList<Station>)
 
     override fun groupedSize(): Int = mappings.count { it.visible }
 
+    private fun initMappings() {
+        stationList.forEachIndexed { index, media ->
+            addToMappings(media, index)
+        }
+        sortMappings()
+    }
+
     private fun addToMappings(station: Station, index: Int) {
         val group = station.group
         val list = groups.getOrPut(group) { ArrayList() }
         if (list.isEmpty()) mappings.add(GroupMapping(group))
         mappings.add(GroupMapping(group, list.size))
         list.add(index)
+    }
+
+    private fun sortMappings() {
+        mappings.sortBy { it.group }
+    }
+
+    private fun getGroupMapping(position: Int): GroupMapping {
+        val hided = (0..position).count { !mappings[it].visible }
+        return mappings[position + hided]
     }
 
     private fun setGroupVisible(group: String, visible: Boolean) {
@@ -61,18 +74,13 @@ class GroupingList(private val stationList: ArrayList<Station>)
         }
     }
 
-    private fun getGroupMapping(position: Int): GroupMapping {
-        val hided = (0..position).count { !mappings[it].visible }
-        return mappings[position + hided]
-    }
-
-    private fun sortMappings() {
-        mappings.sortBy { it.group }
-    }
-
     private val obs: BehaviorRelay<GroupedList<Station>> = BehaviorRelay.createDefault(this)
 
     override fun observe(): Observable<GroupedList<Station>> = obs
+
+    override fun notifyObservers() {
+        obs.accept(this)
+    }
 
     override fun add(element: Station): Boolean {
         addToMappings(element, stationList.size)
@@ -83,8 +91,19 @@ class GroupingList(private val stationList: ArrayList<Station>)
     }
 
     override fun set(index: Int, element: Station): Station {
-        val old = this.set(index, element)
+        val old = stationList.set(index, element)
         obs.accept(this)
         return old
+    }
+
+    override fun remove(element: Station): Boolean {
+        val removed = stationList.remove(element)
+        if (removed) {
+            groups.clear()
+            mappings.clear()
+            initMappings()
+            obs.accept(this)
+        }
+        return removed
     }
 }

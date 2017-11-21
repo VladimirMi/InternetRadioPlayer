@@ -3,6 +3,7 @@ package io.github.vladimirmi.radius.model.repository
 import android.content.ComponentName
 import android.content.Context
 import android.net.Uri
+import android.os.Bundle
 import android.os.RemoteException
 import android.support.v4.media.MediaBrowserCompat
 import android.support.v4.media.MediaMetadataCompat
@@ -19,14 +20,14 @@ import javax.inject.Inject
 
 
 class MediaBrowserController
-@Inject constructor(context: Context,
-                    private val stationRepository: StationRepository) {
+@Inject constructor(context: Context) {
 
     private lateinit var mediaBrowser: MediaBrowserCompat
     private var controller: MediaControllerCompat? = null
 
     val playbackState: BehaviorRelay<PlaybackStateCompat> = BehaviorRelay.create()
     val playbackMetaData: BehaviorRelay<MediaMetadataCompat> = BehaviorRelay.create()
+    var currentUri: String? = null
 
     private val connectionCallbacks = object : MediaBrowserCompat.ConnectionCallback() {
         override fun onConnected() {
@@ -59,6 +60,10 @@ class MediaBrowserController
         override fun onMetadataChanged(metadata: MediaMetadataCompat) {
             playbackMetaData.accept(metadata)
         }
+
+        override fun onExtrasChanged(extras: Bundle) {
+            currentUri = extras.getString(PlayerService.URI_KEY)
+        }
     }
 
     init {
@@ -78,9 +83,10 @@ class MediaBrowserController
 
     val isPlaying get() = controller?.playbackState?.state == PlaybackStateCompat.STATE_PLAYING
 
-    fun isPlaying(uri: Uri) = isPlaying && stationRepository.selected.value?.uri == uri
+    fun isPlaying(uri: Uri) = isPlaying && currentUri == uri.toString()
 
     fun play(uri: Uri) {
+        if (isPlaying(uri)) return
         controller?.transportControls?.playFromUri(uri, null)
     }
 

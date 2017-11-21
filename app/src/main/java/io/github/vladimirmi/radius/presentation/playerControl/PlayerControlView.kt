@@ -1,4 +1,4 @@
-package io.github.vladimirmi.radius.presentation.playercontrol
+package io.github.vladimirmi.radius.presentation.playerControl
 
 import com.arellomobile.mvp.MvpView
 import io.github.vladimirmi.radius.model.entity.Station

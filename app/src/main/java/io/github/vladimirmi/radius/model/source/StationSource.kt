@@ -37,13 +37,17 @@ class StationSource
 
     fun save(station: Station) {
         with(File(station.path)) {
-            clear()
-            writeText(station.toContent())
+            if (exists() || parentFile.mkdirs()) {
+                clear()
+                writeText(station.toContent())
+            }
         }
     }
 
-    fun clear(station: Station) {
-        File(station.path).clear()
+    fun remove(station: Station) {
+        val file = File(station.path)
+        file.delete()
+        file.parentFile.delete()
     }
 
     fun parseStation(uri: Uri): Station? = Station.fromUri(uri)

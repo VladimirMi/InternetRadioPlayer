@@ -68,6 +68,6 @@ class RootPresenter
 
     private fun nextScreen() {
         repository.initStations()
-        router.newRootScreen(Screens.MEDIA_SCREEN)
+        router.newRootScreen(Screens.MEDIA_LIST_SCREEN)
     }
 }

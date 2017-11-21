@@ -35,11 +35,11 @@ class PlayerService : MediaBrowserServiceCompat() {
         const val ACTION_STOP = BuildConfig.APPLICATION_ID + ".ACTION_STOP"
 
         const val EXTRA_STATION = "EXTRA_STATION"
+        const val URI_KEY = BuildConfig.APPLICATION_ID + ".URI_KEY"
     }
 
     @Inject lateinit var stationRepository: StationRepository
 
-    private var stationUrl: String? = null
     private lateinit var session: MediaSessionCompat
     private lateinit var playback: Playback
     private lateinit var notification: MediaNotification
@@ -73,8 +73,8 @@ class PlayerService : MediaBrowserServiceCompat() {
             null -> Timber.e("onStartCommand: actions null")
             ACTION_PLAY -> {
                 if (intent.hasExtra(EXTRA_STATION)) {
-                    stationUrl = intent.getStringExtra(EXTRA_STATION)
-                    handlePlayRequest(Uri.parse(stationUrl))
+                    val stationUri = intent.getStringExtra(EXTRA_STATION)
+                    handlePlayRequest(Uri.parse(stationUri))
                 } else {
                     handleResumeRequest()
                 }
@@ -126,6 +126,10 @@ class PlayerService : MediaBrowserServiceCompat() {
             notification.update()
         }
 
+        override fun onPlayUri(uri: Uri) {
+            session.setExtras(Bundle().apply { putString(URI_KEY, uri.toString()) })
+        }
+
         private fun createPlaybackState(state: Int): PlaybackStateCompat {
             val availableActions = if (state == STATE_PLAYING) {
                 PlaybackStateCompat.ACTION_STOP or PlaybackStateCompat.ACTION_PAUSE
@@ -164,6 +168,7 @@ class PlayerService : MediaBrowserServiceCompat() {
     private fun handlePlayRequest(uri: Uri) {
         Timber.d("handlePlayRequest with url $uri")
         startService()
+        playerCallback.onPlayUri(uri)
         playback.play(uri)
     }
 

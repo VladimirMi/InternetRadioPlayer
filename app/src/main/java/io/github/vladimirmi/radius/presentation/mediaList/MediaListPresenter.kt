@@ -1,9 +1,10 @@
-package io.github.vladimirmi.radius.presentation.media
+package io.github.vladimirmi.radius.presentation.mediaList
 
 import android.net.Uri
 import android.support.v4.media.session.PlaybackStateCompat
 import com.arellomobile.mvp.InjectViewState
 import io.github.vladimirmi.radius.R
+import io.github.vladimirmi.radius.Screens
 import io.github.vladimirmi.radius.model.entity.Station
 import io.github.vladimirmi.radius.model.repository.MediaBrowserController
 import io.github.vladimirmi.radius.model.repository.StationRepository
@@ -11,6 +12,7 @@ import io.github.vladimirmi.radius.ui.base.BasePresenter
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.rxkotlin.addTo
 import io.reactivex.rxkotlin.subscribeBy
+import ru.terrakok.cicerone.Router
 import javax.inject.Inject
 
 /**
@@ -18,10 +20,11 @@ import javax.inject.Inject
  */
 
 @InjectViewState
-class MediaPresenter
+class MediaListPresenter
 @Inject constructor(private val repository: StationRepository,
-                    private val mediaBrowserController: MediaBrowserController)
-    : BasePresenter<MediaView>() {
+                    private val mediaBrowserController: MediaBrowserController,
+                    private val router: Router)
+    : BasePresenter<MediaListView>() {
 
 
     override fun onFirstViewAttach() {
@@ -73,6 +76,14 @@ class MediaPresenter
         } else {
             viewState.showToast(R.string.toast_add_force)
         }
+    }
+
+    fun removeStation(station: Station, submit: Boolean = false) {
+        viewState.openRemoveDialog(station)
+    }
+
+    fun showStation(station: Station) {
+        router.navigateTo(Screens.STATION_SCREEN, station)
     }
 }
 

@@ -4,6 +4,8 @@ import android.app.Application
 import com.facebook.stetho.Stetho
 import io.github.vladimirmi.radius.di.Scopes
 import io.github.vladimirmi.radius.di.module.AppModule
+import io.github.vladimirmi.radius.extensions.FileLoggingTree
+import io.github.vladimirmi.radius.model.manager.Preferences
 import timber.log.Timber
 import toothpick.Toothpick
 import toothpick.configuration.Configuration
@@ -22,10 +24,6 @@ class App : Application() {
         Stetho.initializeWithDefaults(this)
 
         if (BuildConfig.DEBUG) {
-            Timber.plant(Timber.DebugTree())
-        }
-
-        if (BuildConfig.DEBUG) {
             Toothpick.setConfiguration(Configuration.forDevelopment().preventMultipleRootScopes())
         } else {
             Toothpick.setConfiguration(Configuration.forProduction().disableReflection())
@@ -34,5 +32,9 @@ class App : Application() {
         }
 
         Scopes.app.installModules(AppModule(this))
+
+        if (BuildConfig.DEBUG) {
+            Timber.plant(FileLoggingTree(Scopes.app.getInstance(Preferences::class.java)))
+        }
     }
 }

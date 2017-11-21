@@ -50,14 +50,15 @@ class StationRepository
     }
 
     fun update(station: Station) {
+        if (station.id == selected.value.id) selected.accept(station)
         stationList[indexOfFirst(station)] = station
-        save(station)
+        stationSource.save(station)
     }
 
     fun add(station: Station): Boolean {
         if (stationList.find { it.title == station.title } != null) return false
         val added = stationList.add(station)
-        if (added) save(station)
+        if (added) stationSource.save(station)
         return added
     }
 
@@ -65,10 +66,6 @@ class StationRepository
         if (stationList.remove(station)) {
             stationSource.remove(station)
         }
-    }
-
-    private fun save(station: Station) {
-        stationSource.save(station)
     }
 
     private fun indexOfFirst(station: Station) = stationList.indexOfFirst { it.path == station.path }

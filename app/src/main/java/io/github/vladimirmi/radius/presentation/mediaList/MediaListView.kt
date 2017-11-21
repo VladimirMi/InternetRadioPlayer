@@ -1,6 +1,8 @@
-package io.github.vladimirmi.radius.presentation.media_list
+package io.github.vladimirmi.radius.presentation.mediaList
 
 import com.arellomobile.mvp.MvpView
+import com.arellomobile.mvp.viewstate.strategy.OneExecutionStateStrategy
+import com.arellomobile.mvp.viewstate.strategy.StateStrategyType
 import io.github.vladimirmi.radius.model.entity.GroupedList
 import io.github.vladimirmi.radius.model.entity.Station
 
@@ -15,5 +17,6 @@ interface MediaListView : MvpView {
     fun showToast(resId: Int)
     fun openAddDialog(station: Station)
     fun closeAddDialog()
+    @StateStrategyType(OneExecutionStateStrategy::class)
     fun openRemoveDialog(station: Station)
 }

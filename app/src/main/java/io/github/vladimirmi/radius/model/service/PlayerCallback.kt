@@ -1,5 +1,6 @@
 package io.github.vladimirmi.radius.model.service
 
+import android.net.Uri
 import com.google.android.exoplayer2.ExoPlaybackException
 import com.google.android.exoplayer2.PlaybackParameters
 import com.google.android.exoplayer2.Player
@@ -27,4 +28,6 @@ abstract class PlayerCallback : Player.EventListener {
     override fun onTimelineChanged(timeline: Timeline?, manifest: Any?) {}
 
     abstract fun onMetadata(key: String, value: String)
+
+    abstract fun onPlayUri(uri: Uri)
 }

@@ -14,7 +14,7 @@ import io.github.vladimirmi.radius.di.module.RootActivityModule
 import io.github.vladimirmi.radius.model.entity.Station
 import io.github.vladimirmi.radius.presentation.root.RootPresenter
 import io.github.vladimirmi.radius.presentation.root.RootView
-import io.github.vladimirmi.radius.ui.media_list.MediaListFragment
+import io.github.vladimirmi.radius.ui.mediaList.MediaListFragment
 import io.github.vladimirmi.radius.ui.station.StationFragment
 import ru.terrakok.cicerone.NavigatorHolder
 import ru.terrakok.cicerone.android.SupportAppNavigator

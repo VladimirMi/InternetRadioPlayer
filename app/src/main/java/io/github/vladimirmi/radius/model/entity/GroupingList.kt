@@ -91,7 +91,7 @@ class GroupingList(private val stationList: ArrayList<Station>)
     }
 
     override fun set(index: Int, element: Station): Station {
-        val old = this.set(index, element)
+        val old = stationList.set(index, element)
         obs.accept(this)
         return old
     }

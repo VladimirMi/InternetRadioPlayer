@@ -1,4 +1,4 @@
-package io.github.vladimirmi.radius.presentation.media_list
+package io.github.vladimirmi.radius.presentation.mediaList
 
 import android.net.Uri
 import android.support.v4.media.session.PlaybackStateCompat

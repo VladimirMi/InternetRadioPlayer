@@ -50,7 +50,7 @@
             android:id="@+id/media_icon_img"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:contentDescription="media icon"
+            android:contentDescription="@string/desc_media_icon"
             android:visibility="gone"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintDimensionRatio="h,1:1"
@@ -67,6 +67,7 @@
             android:gravity="center"
             app:autoSizeTextType="uniform"
             tools:text="S"
+            tools:ignore="MissingPrefix"
             />
     </FrameLayout>
 
@@ -75,7 +76,7 @@
         android:id="@+id/play_pause"
         android:layout_width="72dp"
         android:layout_height="72dp"
-        android:contentDescription="play/pause button"
+        android:contentDescription="@string/desc_play_pause_button"
         android:paddingTop="10dp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
@@ -88,7 +89,7 @@
         android:id="@+id/favorite"
         android:layout_width="0dp"
         android:layout_height="0dp"
-        android:contentDescription="add to favorite"
+        android:contentDescription="@string/desc_favorite"
         android:paddingLeft="12dp"
         android:paddingRight="12dp"
         android:paddingBottom="12dp"

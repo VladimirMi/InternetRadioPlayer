@@ -197,7 +197,6 @@ class PlayerService : MediaBrowserServiceCompat() {
         }
 
         override fun onPlayFromUri(uri: Uri, extras: Bundle?) {
-            //todo refactor
             handlePlayRequest(uri)
         }
 

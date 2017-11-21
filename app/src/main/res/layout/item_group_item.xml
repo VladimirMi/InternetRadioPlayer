@@ -37,6 +37,7 @@
             android:gravity="center"
             tools:text="S"
             tools:background="@color/green_500"
+            tools:ignore="MissingPrefix"
             />
 
         <TextView
@@ -57,6 +58,7 @@
             android:visibility="invisible"
             tools:visibility="visible"
             app:srcCompat="@drawable/ic_star"
+            android:contentDescription="@string/desc_favorite"
             />
 
     </LinearLayout>

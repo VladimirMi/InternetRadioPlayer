@@ -13,4 +13,8 @@
     <string name="remove_message">Вы дейстаительно хотие удалить станцию</string>
     <string name="edit">Редактировать</string>
     <string name="show">Подробнее</string>
+    <string name="desc_favorite">add to favorite</string>
+    <string name="desc_expand_collapse">expand/collapse</string>
+    <string name="desc_media_icon">media icon</string>
+    <string name="desc_play_pause_button">play/pause button</string>
 </resources>

@@ -17,6 +17,7 @@
         android:layout_marginLeft="8dp"
         app:srcCompat="@drawable/ic_collapse"
         android:layout_marginStart="8dp"
+        android:contentDescription="@string/desc_expand_collapse"
         />
 
     <TextView

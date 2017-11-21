@@ -31,7 +31,6 @@ class MediaBrowserController
 
     private val connectionCallbacks = object : MediaBrowserCompat.ConnectionCallback() {
         override fun onConnected() {
-            Timber.d("onConnected: session token ${mediaBrowser.sessionToken.token}")
             try {
                 controller = MediaControllerCompat(context, mediaBrowser.sessionToken)
             } catch (e: RemoteException) {

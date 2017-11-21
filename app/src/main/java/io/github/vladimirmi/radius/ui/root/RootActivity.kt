@@ -18,6 +18,7 @@ import io.github.vladimirmi.radius.ui.mediaList.MediaListFragment
 import io.github.vladimirmi.radius.ui.station.StationFragment
 import ru.terrakok.cicerone.NavigatorHolder
 import ru.terrakok.cicerone.android.SupportAppNavigator
+import ru.terrakok.cicerone.commands.Command
 import toothpick.Toothpick
 import javax.inject.Inject
 
@@ -69,12 +70,22 @@ class RootActivity : MvpAppCompatActivity(), RootView {
 
     private val navigator = object : SupportAppNavigator(this, R.id.fragment_container) {
 
+        private var currentScreen: String? = null
+
         override fun createActivityIntent(screenKey: String?, data: Any?) = null
 
-        override fun createFragment(screenKey: String?, data: Any?): Fragment? = when (screenKey) {
-            Screens.MEDIA_LIST_SCREEN -> MediaListFragment()
-            Screens.STATION_SCREEN -> StationFragment.newInstance(data as Station)
-            else -> null
+        override fun createFragment(screenKey: String?, data: Any?): Fragment? {
+            if (screenKey == currentScreen) return null
+            currentScreen = screenKey
+            return when (screenKey) {
+                Screens.MEDIA_LIST_SCREEN -> MediaListFragment()
+                Screens.STATION_SCREEN -> StationFragment.newInstance(data as Station)
+                else -> null
+            }
+        }
+
+        override fun unknownScreen(command: Command?) {
+            //do nothing
         }
     }
 

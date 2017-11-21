@@ -45,7 +45,8 @@ class App : Application() {
 
         if (BuildConfig.DEBUG) {
             Timber.plant(FileLoggingTree(Scopes.app.getInstance(Preferences::class.java)))
+        } else {
+            Timber.plant(CrashlyticsTree())
         }
-        Timber.plant(CrashlyticsTree())
     }
 }

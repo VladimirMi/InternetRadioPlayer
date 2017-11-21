@@ -71,12 +71,12 @@ dependencies {
     kapt 'com.arello-mobile:moxy-compiler:' + MOXY_VERSION
     compile 'com.arello-mobile:moxy-app-compat:' + MOXY_VERSION
     //Navigation
-    compile "ru.terrakok.cicerone:cicerone:1.2.1"
+    compile "ru.terrakok.cicerone:cicerone:2.1.0"
     //Logging
-    compile "com.jakewharton.timber:timber:4.5.1"
+    compile "com.jakewharton.timber:timber:4.6.0"
     compile 'com.facebook.stetho:stetho:1.5.0'
     compile('com.crashlytics.sdk.android:crashlytics:2.7.1@aar') {
-        transitive = true;
+        transitive = true
     }
     //ExoPlayer
     compile 'com.google.android.exoplayer:exoplayer-core:r' + EXO_PLAYER_VERSION

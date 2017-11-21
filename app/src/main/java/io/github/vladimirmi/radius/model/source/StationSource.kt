@@ -28,7 +28,6 @@ class StationSource
         val treeWalk = initAppDir().walkTopDown()
         treeWalk.forEach { file ->
             if (!file.isDirectory) {
-                Timber.e("file ${file.path}")
                 Station.fromFile(file)?.let { stationList.add(it) }
             }
         }

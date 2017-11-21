@@ -23,7 +23,7 @@ class FileLoggingTree(prefs: Preferences) : Timber.DebugTree() {
     private val fileNameFormat = SimpleDateFormat("dd_MM_yyyy", Locale.getDefault())
     private val timeStampFormat = SimpleDateFormat("dd.MM.yyyy 'at' hh:mm:ss:SSS", Locale.getDefault())
 
-    override fun log(priority: Int, tag: String?, message: String?, t: Throwable?) {
+    override fun log(priority: Int, tag: String?, message: String, t: Throwable?) {
         writeLog(priority, "$tag: $message")
         super.log(priority, tag, message, t)
     }
@@ -64,7 +64,7 @@ class CrashlyticsTree : Timber.DebugTree() {
         private const val CRASHLYTICS_KEY_MESSAGE = "message"
     }
 
-    override fun log(priority: Int, tag: String?, message: String?, t: Throwable?) {
+    override fun log(priority: Int, tag: String?, message: String, t: Throwable?) {
         if (priority == Log.VERBOSE || priority == Log.DEBUG || priority == Log.INFO) {
             return
         }

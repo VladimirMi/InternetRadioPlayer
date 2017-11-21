@@ -2,6 +2,11 @@ apply plugin: 'com.android.application'
 apply plugin: 'kotlin-android'
 apply plugin: 'kotlin-kapt'
 apply plugin: 'kotlin-android-extensions'
+apply plugin: 'io.fabric'
+
+repositories {
+    maven { url 'https://maven.fabric.io/public' }
+}
 
 android {
     compileSdkVersion 26
@@ -70,6 +75,9 @@ dependencies {
     //Logging
     compile "com.jakewharton.timber:timber:4.5.1"
     compile 'com.facebook.stetho:stetho:1.5.0'
+    compile('com.crashlytics.sdk.android:crashlytics:2.7.1@aar') {
+        transitive = true;
+    }
     //ExoPlayer
     compile 'com.google.android.exoplayer:exoplayer-core:r' + EXO_PLAYER_VERSION
     compile 'com.google.android.exoplayer:extension-mediasession:r' + EXO_PLAYER_VERSION

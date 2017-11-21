@@ -1,6 +1,7 @@
 package io.github.vladimirmi.radius.extensions
 
 import android.util.Log
+import com.crashlytics.android.Crashlytics
 import io.github.vladimirmi.radius.model.manager.Preferences
 import timber.log.Timber
 import java.io.File
@@ -22,27 +23,9 @@ class FileLoggingTree(prefs: Preferences) : Timber.DebugTree() {
     private val fileNameFormat = SimpleDateFormat("dd_MM_yyyy", Locale.getDefault())
     private val timeStampFormat = SimpleDateFormat("dd.MM.yyyy 'at' hh:mm:ss:SSS", Locale.getDefault())
 
-    override fun e(message: String, vararg args: Any?) {
-        log(Log.ERROR, message, args)
-    }
-
-    override fun d(message: String, vararg args: Any?) {
-        log(Log.DEBUG, message, args)
-    }
-
-    override fun i(message: String, vararg args: Any?) {
-        log(Log.INFO, message, args)
-    }
-
-    override fun w(message: String, vararg args: Any?) {
-        log(Log.WARN, message, args)
-    }
-
-    override fun log(priority: Int, message: String, vararg args: Any?) {
-        val tag = getTag().trim('$')
-        Timber.tag(tag)
+    override fun log(priority: Int, tag: String?, message: String?, t: Throwable?) {
         writeLog(priority, "$tag: $message")
-        super.log(priority, message, *args)
+        super.log(priority, tag, message, t)
     }
 
     private fun writeLog(priority: Int, message: String) {
@@ -52,17 +35,8 @@ class FileLoggingTree(prefs: Preferences) : Timber.DebugTree() {
             File(logsDir, fileName).appendText(Logs.priority(priority).format(timeStamp, message))
 
         } catch (e: Exception) {
-            super.e(e)
+            //ignore
         }
-    }
-
-    private fun getTag(): String {
-        val stackTrace = Throwable().stackTrace
-        if (stackTrace.size <= 5) {
-            throw IllegalStateException(
-                    "Synthetic stacktrace didn't have enough elements: are you using proguard?")
-        }
-        return createStackElementTag(stackTrace[5])
     }
 
     enum class Logs(private val color: String) {
@@ -80,5 +54,27 @@ class FileLoggingTree(prefs: Preferences) : Timber.DebugTree() {
             private val map = values().associateBy { it.ordinal + 2 }
             fun priority(int: Int) = map[int]!!
         }
+    }
+}
+
+class CrashlyticsTree : Timber.DebugTree() {
+    companion object {
+        private const val CRASHLYTICS_KEY_PRIORITY = "priority"
+        private const val CRASHLYTICS_KEY_TAG = "tag"
+        private const val CRASHLYTICS_KEY_MESSAGE = "message"
+    }
+
+    override fun log(priority: Int, tag: String?, message: String?, t: Throwable?) {
+        if (priority == Log.VERBOSE || priority == Log.DEBUG || priority == Log.INFO) {
+            return
+        }
+
+        Crashlytics.setInt(CRASHLYTICS_KEY_PRIORITY, priority)
+        Crashlytics.setString(CRASHLYTICS_KEY_TAG, tag)
+        Crashlytics.setString(CRASHLYTICS_KEY_MESSAGE, message)
+
+        Crashlytics.logException(t ?: Exception(message))
+
+        super.log(priority, tag, message, t)
     }
 }

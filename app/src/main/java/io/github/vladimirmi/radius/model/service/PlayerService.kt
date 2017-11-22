@@ -34,6 +34,8 @@ class PlayerService : MediaBrowserServiceCompat() {
         const val ACTION_PLAY = BuildConfig.APPLICATION_ID + ".ACTION_PLAY"
         const val ACTION_PAUSE = BuildConfig.APPLICATION_ID + ".ACTION_PAUSE"
         const val ACTION_STOP = BuildConfig.APPLICATION_ID + ".ACTION_STOP"
+        const val ACTION_SKIP_TO_NEXT = BuildConfig.APPLICATION_ID + ".ACTION_SKIP_TO_NEXT"
+        const val ACTION_SKIP_TO_PREVIOUS = BuildConfig.APPLICATION_ID + ".ACTION_SKIP_TO_PREVIOUS"
 
         const val EXTRA_STATION_ID = "EXTRA_STATION_ID"
     }
@@ -83,11 +85,14 @@ class PlayerService : MediaBrowserServiceCompat() {
             }
             ACTION_PAUSE -> handlePauseRequest()
             ACTION_STOP -> handleStopRequest()
+            ACTION_SKIP_TO_NEXT -> handleSkipToNextRequest()
+            ACTION_SKIP_TO_PREVIOUS -> handleSkipToPreviousRequest()
         }
         return Service.START_STICKY
     }
 
     override fun onDestroy() {
+        Timber.e("onDestroy: ")
         handleStopRequest()
         playback.releasePlayer()
     }
@@ -186,6 +191,19 @@ class PlayerService : MediaBrowserServiceCompat() {
         session.isActive = false
     }
 
+    private fun handleSkipToNextRequest() {
+        Timber.d("handleSkipToNextRequest")
+        currentStation = repository.next()
+        currentStation?.uri?.let { handlePlayRequest(it) }
+    }
+
+    private fun handleSkipToPreviousRequest() {
+        Timber.d("handleSkipToPreviousRequest")
+        currentStation = repository.previous()
+        currentStation?.uri?.let { handlePlayRequest(it) }
+    }
+
+
     private fun handleExtras(extras: Bundle) {
         val id = extras.getString(EXTRA_STATION_ID)
         currentStation = repository.getStation(id)
@@ -208,6 +226,14 @@ class PlayerService : MediaBrowserServiceCompat() {
 
         override fun onStop() {
             handleStopRequest()
+        }
+
+        override fun onSkipToPrevious() {
+            handleSkipToPreviousRequest()
+        }
+
+        override fun onSkipToNext() {
+            handleSkipToNextRequest()
         }
     }
 }

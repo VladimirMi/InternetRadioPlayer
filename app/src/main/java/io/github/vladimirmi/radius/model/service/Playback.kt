@@ -44,7 +44,6 @@ class Playback(private val service: PlayerService,
     private val audioManager = service.getSystemService(Context.AUDIO_SERVICE) as AudioManager
 
     fun play(uri: Uri) {
-        stop(releaseResources = false)
         Timber.d("play")
         holdResources()
         if (player == null) createPlayer()
@@ -64,9 +63,9 @@ class Playback(private val service: PlayerService,
         player?.playWhenReady = false
     }
 
-    fun stop(releaseResources: Boolean = true) {
+    fun stop() {
         Timber.d("stop")
-        if (releaseResources) releaseResources()
+        releaseResources()
         playAgainOnFocus = false
         player?.stop()
     }
@@ -92,7 +91,7 @@ class Playback(private val service: PlayerService,
     }
 
     private fun configPlayerState() {
-        Timber.d("configPlayerState. audioFocus=", audioFocus)
+        Timber.d("configPlayerState. audioFocus=$audioFocus")
         when (audioFocus) {
             FOCUSED -> {
                 player?.volume = VOLUME_NORMAL
@@ -140,7 +139,6 @@ class Playback(private val service: PlayerService,
     }
 
     private fun holdResources() {
-        Timber.d("holdResources")
         tryToGetAudioFocus()
         registerAudioNoisyReceiver()
         if (!wifiLock.isHeld) wifiLock.acquire()

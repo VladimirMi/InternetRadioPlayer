@@ -29,7 +29,6 @@ class StationRepository
         if (stationList.size > preferences.selectedPos) {
             selected.accept(stationList[preferences.selectedPos])
         }
-
     }
 
     fun setSelected(station: Station) {

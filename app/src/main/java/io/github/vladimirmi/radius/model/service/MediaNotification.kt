@@ -24,14 +24,18 @@ class MediaNotification(private val service: PlayerService,
                         private val mediaSession: MediaSessionCompat) {
     companion object {
         const val PENDING_PLAY_REQ = 100
-        const val PENDING_STOP_REQ = 101
-        const val PENDING_PAUSE_REQ = 102
+        const val PENDING_PAUSE_REQ = 101
+        const val PENDING_STOP_REQ = 102
         const val PENDING_OPEN_REQ = 103
 
 
         const val CHANNEL_ID = "radius channel"
         const val PLAYER_NOTIFICATION_ID = 50
     }
+
+    private val playIntent = controlsIntent(PENDING_PLAY_REQ)
+    private val pauseIntent = controlsIntent(PENDING_PAUSE_REQ)
+    private val stopIntent = controlsIntent(PENDING_STOP_REQ)
 
     fun update() {
         when (mediaSession.controller.playbackState.state) {
@@ -50,34 +54,14 @@ class MediaNotification(private val service: PlayerService,
         }
     }
 
-    //todo enum with pending intents
     private fun getNotification(): Notification {
         val playbackState = mediaSession.controller.playbackState
         val metadata: MediaMetadataCompat? = mediaSession.controller.metadata
 
-        val playIntent = Intent(service, PlayerService::class.java).apply {
-            action = ACTION_PLAY
-        }
-        val playPendingIntent = PendingIntent.getService(service, PENDING_PLAY_REQ, playIntent,
-                PendingIntent.FLAG_UPDATE_CURRENT)
-        val stopIntent = Intent(service, PlayerService::class.java).apply {
-            action = ACTION_STOP
-        }
-        val stopPendingIntent = PendingIntent.getService(service, PENDING_STOP_REQ, stopIntent,
-                PendingIntent.FLAG_UPDATE_CURRENT)
-        val pauseIntent = Intent(service, PlayerService::class.java).apply {
-            action = ACTION_PAUSE
-        }
-        val pausePendingIntent = PendingIntent.getService(service, PENDING_PAUSE_REQ, pauseIntent,
-                PendingIntent.FLAG_UPDATE_CURRENT)
         val openIntent = Intent(service, RootActivity::class.java)
         val openPendingIntent = PendingIntent.getService(service, PENDING_OPEN_REQ, openIntent,
                 PendingIntent.FLAG_UPDATE_CURRENT)
 
-        val style = android.support.v4.media.app.NotificationCompat.MediaStyle()
-                .setMediaSession(mediaSession.sessionToken)
-                .setShowCancelButton(true)
-                .setCancelButtonIntent(stopPendingIntent)
 
         val notificationView = RemoteViews(service.packageName, R.layout.notification)
         with(notificationView) {
@@ -89,17 +73,22 @@ class MediaNotification(private val service: PlayerService,
                     metadata?.getString(MediaMetadataCompat.METADATA_KEY_ARTIST) ?: "")
 
             if (playbackState.actions == PlaybackStateCompat.ACTION_PLAY) {
-                setOnClickPendingIntent(R.id.play_pause, playPendingIntent)
+                setOnClickPendingIntent(R.id.play_pause, playIntent)
                 setInt(R.id.play_pause, "setBackgroundResource", R.drawable.ic_play)
             } else {
-                setOnClickPendingIntent(R.id.play_pause, pausePendingIntent)
+                setOnClickPendingIntent(R.id.play_pause, pauseIntent)
                 setInt(R.id.play_pause, "setBackgroundResource", R.drawable.ic_stop)
             }
         }
 
+        val style = android.support.v4.media.app.NotificationCompat.MediaStyle()
+                .setMediaSession(mediaSession.sessionToken)
+                .setShowCancelButton(true)
+                .setCancelButtonIntent(stopIntent)
+
         val builder = NotificationCompat.Builder(service, CHANNEL_ID)
                 .setShowWhen(false)
-                .setDeleteIntent(stopPendingIntent)
+                .setDeleteIntent(stopIntent)
                 .setVisibility(NotificationCompat.VISIBILITY_PUBLIC)
                 .setPriority(NotificationCompat.PRIORITY_HIGH)
                 .setSmallIcon(R.drawable.ic_radius)
@@ -108,5 +97,17 @@ class MediaNotification(private val service: PlayerService,
                 .setCustomContentView(notificationView)
 
         return builder.build()
+    }
+
+    private fun controlsIntent(requestCode: Int): PendingIntent {
+        val action = when (requestCode) {
+            PENDING_PLAY_REQ -> ACTION_PLAY
+            PENDING_PAUSE_REQ -> ACTION_PAUSE
+            PENDING_STOP_REQ -> ACTION_STOP
+            else -> throw IllegalArgumentException()
+        }
+        return PendingIntent.getService(service, requestCode,
+                Intent(service, PlayerService::class.java).apply { this.action = action },
+                PendingIntent.FLAG_UPDATE_CURRENT)
     }
 }

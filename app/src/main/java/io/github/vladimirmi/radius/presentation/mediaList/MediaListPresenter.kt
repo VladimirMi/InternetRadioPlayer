@@ -33,7 +33,7 @@ class MediaListPresenter
                 .addTo(compDisp)
 
         repository.selected
-                .subscribeBy { viewState.select(it, mediaBrowserController.currentUri == it.uri.toString()) }
+                .subscribeBy { viewState.select(it, mediaBrowserController.isPlaying(it)) }
                 .addTo(compDisp)
 
         mediaBrowserController.playbackState

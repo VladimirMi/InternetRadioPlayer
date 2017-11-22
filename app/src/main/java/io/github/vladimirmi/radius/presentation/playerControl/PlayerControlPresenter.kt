@@ -37,7 +37,7 @@ class PlayerControlPresenter
                 .subscribeBy {
                     viewState.setMedia(it)
                     if (browserController.playbackState.value?.state == PlaybackStateCompat.STATE_PLAYING) {
-                        browserController.play(it.uri)
+                        browserController.play(it)
                     }
                 }
     }
@@ -60,11 +60,11 @@ class PlayerControlPresenter
     }
 
     fun playPause() {
-        val uri = repository.selected.value?.uri ?: return
-        if (browserController.isPlaying(uri)) {
+        val station = repository.selected.value ?: return
+        if (browserController.isPlaying(station)) {
             browserController.stop()
         } else {
-            browserController.play(uri)
+            browserController.play(station)
         }
     }
 

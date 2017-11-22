@@ -17,6 +17,7 @@ import com.google.android.exoplayer2.Player
 import io.github.vladimirmi.radius.BuildConfig
 import io.github.vladimirmi.radius.R
 import io.github.vladimirmi.radius.di.Scopes
+import io.github.vladimirmi.radius.model.entity.Station
 import io.github.vladimirmi.radius.model.repository.StationRepository
 import io.github.vladimirmi.radius.ui.root.RootActivity
 import timber.log.Timber
@@ -34,16 +35,16 @@ class PlayerService : MediaBrowserServiceCompat() {
         const val ACTION_PAUSE = BuildConfig.APPLICATION_ID + ".ACTION_PAUSE"
         const val ACTION_STOP = BuildConfig.APPLICATION_ID + ".ACTION_STOP"
 
-        const val EXTRA_STATION = "EXTRA_STATION"
-        const val URI_KEY = BuildConfig.APPLICATION_ID + ".URI_KEY"
+        const val EXTRA_STATION_ID = "EXTRA_STATION_ID"
     }
 
-    @Inject lateinit var stationRepository: StationRepository
+    @Inject lateinit var repository: StationRepository
 
     private lateinit var session: MediaSessionCompat
     private lateinit var playback: Playback
     private lateinit var notification: MediaNotification
     private var serviceStarted: Boolean = false
+    private var currentStation: Station? = null
 
     override fun onCreate() {
         super.onCreate()
@@ -72,9 +73,10 @@ class PlayerService : MediaBrowserServiceCompat() {
         when (intent.action) {
             null -> Timber.e("onStartCommand: actions null")
             ACTION_PLAY -> {
-                if (intent.hasExtra(EXTRA_STATION)) {
-                    val stationUri = intent.getStringExtra(EXTRA_STATION)
-                    handlePlayRequest(Uri.parse(stationUri))
+                if (intent.hasExtra(EXTRA_STATION_ID)) {
+                    val stationId = intent.getStringExtra(EXTRA_STATION_ID)
+                    currentStation = repository.getStation(stationId)
+                    currentStation?.uri?.let { handlePlayRequest(it) }
                 } else {
                     handleResumeRequest()
                 }
@@ -126,10 +128,6 @@ class PlayerService : MediaBrowserServiceCompat() {
             notification.update()
         }
 
-        override fun onPlayUri(uri: Uri) {
-            session.setExtras(Bundle().apply { putString(URI_KEY, uri.toString()) })
-        }
-
         private fun createPlaybackState(state: Int): PlaybackStateCompat {
             val availableActions = if (state == STATE_PLAYING) {
                 PlaybackStateCompat.ACTION_STOP or PlaybackStateCompat.ACTION_PAUSE
@@ -150,8 +148,7 @@ class PlayerService : MediaBrowserServiceCompat() {
             return MediaMetadataCompat.Builder()
                     .putString(MediaMetadataCompat.METADATA_KEY_ARTIST, artist)
                     .putString(MediaMetadataCompat.METADATA_KEY_TITLE, title)
-                    .putString(MediaMetadataCompat.METADATA_KEY_ALBUM,
-                            stationRepository.selected.value?.title)
+                    .putString(MediaMetadataCompat.METADATA_KEY_ALBUM, currentStation?.title)
                     .build()
         }
     }
@@ -168,7 +165,6 @@ class PlayerService : MediaBrowserServiceCompat() {
     private fun handlePlayRequest(uri: Uri) {
         Timber.d("handlePlayRequest with url $uri")
         startService()
-        playerCallback.onPlayUri(uri)
         playback.play(uri)
     }
 
@@ -190,6 +186,11 @@ class PlayerService : MediaBrowserServiceCompat() {
         session.isActive = false
     }
 
+    private fun handleExtras(extras: Bundle) {
+        val id = extras.getString(EXTRA_STATION_ID)
+        currentStation = repository.getStation(id)
+    }
+
     inner class SessionCallback : MediaSessionCompat.Callback() {
 
         override fun onPlay() {
@@ -197,6 +198,7 @@ class PlayerService : MediaBrowserServiceCompat() {
         }
 
         override fun onPlayFromUri(uri: Uri, extras: Bundle?) {
+            if (extras != null) handleExtras(extras)
             handlePlayRequest(uri)
         }
 

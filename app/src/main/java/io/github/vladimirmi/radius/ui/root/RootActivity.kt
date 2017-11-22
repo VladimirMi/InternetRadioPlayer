@@ -18,7 +18,6 @@ import io.github.vladimirmi.radius.ui.mediaList.MediaListFragment
 import io.github.vladimirmi.radius.ui.station.StationFragment
 import ru.terrakok.cicerone.NavigatorHolder
 import ru.terrakok.cicerone.android.SupportAppNavigator
-import ru.terrakok.cicerone.commands.Back
 import ru.terrakok.cicerone.commands.Command
 import toothpick.Toothpick
 import javax.inject.Inject
@@ -71,13 +70,12 @@ class RootActivity : MvpAppCompatActivity(), RootView {
 
     private val navigator = object : SupportAppNavigator(this, R.id.fragment_container) {
 
-        private var currentScreen: String? = null
+        private var currentKey: String? = null
 
-        override fun createActivityIntent(screenKey: String?, data: Any?) = null
+        override fun createActivityIntent(screenKey: String, data: Any?) = null
 
-        override fun createFragment(screenKey: String?, data: Any?): Fragment? {
-            if (screenKey == currentScreen) return null
-            currentScreen = screenKey
+        override fun createFragment(screenKey: String, data: Any?): Fragment? {
+            if (currentKey == screenKey) return null
             return when (screenKey) {
                 Screens.MEDIA_LIST_SCREEN -> MediaListFragment()
                 Screens.STATION_SCREEN -> StationFragment.newInstance(data as Station)
@@ -86,7 +84,11 @@ class RootActivity : MvpAppCompatActivity(), RootView {
         }
 
         override fun applyCommand(command: Command?) {
-            if (command is Back) currentScreen = null
+            currentKey = with(supportFragmentManager) {
+                if (backStackEntryCount > 0) {
+                    getBackStackEntryAt(backStackEntryCount - 1)?.name
+                } else null
+            }
             super.applyCommand(command)
         }
 

@@ -100,6 +100,4 @@ class RootActivity : MvpAppCompatActivity(), RootView {
     override fun showToast(resId: Int) {
         Toast.makeText(this, resId, Toast.LENGTH_SHORT).show()
     }
-
-
 }

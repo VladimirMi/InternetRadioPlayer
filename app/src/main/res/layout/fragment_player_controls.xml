@@ -47,7 +47,7 @@
         >
 
         <ImageView
-            android:id="@+id/media_icon_img"
+            android:id="@+id/icon_img"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:contentDescription="@string/desc_media_icon"
@@ -59,11 +59,10 @@
             />
 
         <TextView
-            android:id="@+id/media_icon_text"
+            android:id="@+id/icon_text"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:layout_marginTop="8dp"
-            android:fontFamily="@font/audiowide_regular"
+            android:fontFamily="@font/audiowide"
             android:gravity="center"
             app:autoSizeTextType="uniform"
             tools:text="S"

@@ -1,5 +1,6 @@
 package io.github.vladimirmi.radius.presentation.playerControl
 
+import android.graphics.Bitmap
 import android.support.v4.media.MediaMetadataCompat
 import android.support.v4.media.session.PlaybackStateCompat
 import android.support.v4.media.session.PlaybackStateCompat.*
@@ -77,5 +78,9 @@ class PlayerControlPresenter
 
     fun showStation() {
         router.navigateTo(Screens.STATION_SCREEN, repository.selected.value)
+    }
+
+    fun saveBitmap(drawingCache: Bitmap) {
+        repository.iconBitmap = drawingCache
     }
 }

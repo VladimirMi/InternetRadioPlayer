@@ -5,11 +5,14 @@ import android.app.PendingIntent
 import android.content.Intent
 import android.support.v4.app.NotificationCompat
 import android.support.v4.app.NotificationManagerCompat
+import android.support.v4.content.ContextCompat
 import android.support.v4.media.MediaMetadataCompat
 import android.support.v4.media.session.MediaSessionCompat
 import android.support.v4.media.session.PlaybackStateCompat
 import android.widget.RemoteViews
 import io.github.vladimirmi.radius.R
+import io.github.vladimirmi.radius.di.Scopes
+import io.github.vladimirmi.radius.model.repository.StationRepository
 import io.github.vladimirmi.radius.model.service.PlayerService.Companion.ACTION_PAUSE
 import io.github.vladimirmi.radius.model.service.PlayerService.Companion.ACTION_PLAY
 import io.github.vladimirmi.radius.model.service.PlayerService.Companion.ACTION_STOP
@@ -65,7 +68,9 @@ class MediaNotification(private val service: PlayerService,
 
         val notificationView = RemoteViews(service.packageName, R.layout.notification)
         with(notificationView) {
-            setImageViewResource(R.id.big_icon, R.drawable.ic_radius)
+
+            val bitmap = Scopes.app.getInstance(StationRepository::class.java).iconBitmap
+            setImageViewBitmap(R.id.icon, bitmap)
 
             setTextViewText(R.id.content_title,
                     metadata?.getString(MediaMetadataCompat.METADATA_KEY_TITLE) ?: "")
@@ -90,11 +95,12 @@ class MediaNotification(private val service: PlayerService,
                 .setShowWhen(false)
                 .setDeleteIntent(stopIntent)
                 .setVisibility(NotificationCompat.VISIBILITY_PUBLIC)
-                .setPriority(NotificationCompat.PRIORITY_HIGH)
+                .setPriority(NotificationCompat.PRIORITY_MAX)
                 .setSmallIcon(R.drawable.ic_radius)
                 .setContentIntent(openPendingIntent)
-                .setStyle(style)
+//                .setStyle(style)
                 .setCustomContentView(notificationView)
+                .setColor(ContextCompat.getColor(service, R.color.grey_300))
 
         return builder.build()
     }

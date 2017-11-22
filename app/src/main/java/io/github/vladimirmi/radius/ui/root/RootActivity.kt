@@ -18,6 +18,7 @@ import io.github.vladimirmi.radius.ui.mediaList.MediaListFragment
 import io.github.vladimirmi.radius.ui.station.StationFragment
 import ru.terrakok.cicerone.NavigatorHolder
 import ru.terrakok.cicerone.android.SupportAppNavigator
+import ru.terrakok.cicerone.commands.Back
 import ru.terrakok.cicerone.commands.Command
 import toothpick.Toothpick
 import javax.inject.Inject
@@ -82,6 +83,11 @@ class RootActivity : MvpAppCompatActivity(), RootView {
                 Screens.STATION_SCREEN -> StationFragment.newInstance(data as Station)
                 else -> null
             }
+        }
+
+        override fun applyCommand(command: Command?) {
+            if (command is Back) currentScreen = null
+            super.applyCommand(command)
         }
 
         override fun unknownScreen(command: Command?) {

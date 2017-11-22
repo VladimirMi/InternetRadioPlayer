@@ -8,8 +8,8 @@ import android.support.v4.app.NotificationManagerCompat
 import android.support.v4.media.MediaMetadataCompat
 import android.support.v4.media.session.MediaSessionCompat
 import android.support.v4.media.session.PlaybackStateCompat
+import android.widget.RemoteViews
 import io.github.vladimirmi.radius.R
-import io.github.vladimirmi.radius.extensions.getBitmap
 import io.github.vladimirmi.radius.model.service.PlayerService.Companion.ACTION_PAUSE
 import io.github.vladimirmi.radius.model.service.PlayerService.Companion.ACTION_PLAY
 import io.github.vladimirmi.radius.model.service.PlayerService.Companion.ACTION_STOP
@@ -76,29 +76,37 @@ class MediaNotification(private val service: PlayerService,
 
         val style = android.support.v4.media.app.NotificationCompat.MediaStyle()
                 .setMediaSession(mediaSession.sessionToken)
-                .setShowActionsInCompactView(0)
                 .setShowCancelButton(true)
                 .setCancelButtonIntent(stopPendingIntent)
 
+        val notificationView = RemoteViews(service.packageName, R.layout.notification)
+        with(notificationView) {
+            setImageViewResource(R.id.big_icon, R.drawable.ic_radius)
+
+            setTextViewText(R.id.content_title,
+                    metadata?.getString(MediaMetadataCompat.METADATA_KEY_TITLE) ?: "")
+            setTextViewText(R.id.content_text,
+                    metadata?.getString(MediaMetadataCompat.METADATA_KEY_ARTIST) ?: "")
+
+            if (playbackState.actions == PlaybackStateCompat.ACTION_PLAY) {
+                setOnClickPendingIntent(R.id.play_pause, playPendingIntent)
+                setInt(R.id.play_pause, "setBackgroundResource", R.drawable.ic_play)
+            } else {
+                setOnClickPendingIntent(R.id.play_pause, pausePendingIntent)
+                setInt(R.id.play_pause, "setBackgroundResource", R.drawable.ic_stop)
+            }
+        }
 
         val builder = NotificationCompat.Builder(service, CHANNEL_ID)
                 .setShowWhen(false)
-                .setContentIntent(openPendingIntent)
                 .setDeleteIntent(stopPendingIntent)
                 .setVisibility(NotificationCompat.VISIBILITY_PUBLIC)
                 .setPriority(NotificationCompat.PRIORITY_HIGH)
                 .setSmallIcon(R.drawable.ic_radius)
-                .setLargeIcon(service.getBitmap(R.drawable.ic_radius))
-                .setContentInfo(metadata?.getString(MediaMetadataCompat.METADATA_KEY_ALBUM) ?: "")
-                .setContentTitle(metadata?.getString(MediaMetadataCompat.METADATA_KEY_TITLE) ?: "")
-                .setContentText(metadata?.getString(MediaMetadataCompat.METADATA_KEY_ARTIST) ?: "")
+                .setContentIntent(openPendingIntent)
                 .setStyle(style)
+                .setCustomContentView(notificationView)
 
-        if (playbackState.actions == PlaybackStateCompat.ACTION_PLAY) {
-            builder.addAction(R.drawable.ic_play, "PLAY", playPendingIntent)
-        } else {
-            builder.addAction(R.drawable.ic_stop, "STOP", pausePendingIntent)
-        }
         return builder.build()
     }
 }

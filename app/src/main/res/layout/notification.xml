@@ -1,0 +1,84 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+                xmlns:app="http://schemas.android.com/apk/res-auto"
+                xmlns:tools="http://schemas.android.com/tools"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+    >
+
+    <ImageView
+        android:id="@+id/big_icon"
+        android:layout_width="50dp"
+        android:layout_height="50dp"
+        android:layout_margin="8dp"
+        android:contentDescription="@string/desc_media_icon"
+        app:srcCompat="@drawable/ic_radius"
+        />
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_centerVertical="true"
+        android:layout_toEndOf="@+id/big_icon"
+        android:layout_toRightOf="@+id/big_icon"
+        android:baselineAligned="false"
+        android:gravity="center"
+        android:orientation="horizontal"
+        >
+
+        <LinearLayout
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="5"
+            android:orientation="vertical"
+            >
+
+            <TextView
+                android:id="@+id/content_title"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textAppearance="@style/TextAppearance.AppCompat.Notification.Title"
+                tools:text="Current playing"
+                />
+
+            <TextView
+                android:id="@+id/content_text"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textAppearance="@style/TextAppearance.AppCompat.Notification"
+                tools:text="artist"
+                />
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="4"
+            android:gravity="center"
+            >
+
+            <Button
+                android:id="@+id/back"
+                android:layout_width="44dp"
+                android:layout_height="44dp"
+                android:background="@drawable/ic_skip_previous"
+                />
+
+            <Button
+                android:id="@+id/play_pause"
+                android:layout_width="44dp"
+                android:layout_height="44dp"
+                android:background="@drawable/ic_stop"
+                />
+
+            <Button
+                android:id="@+id/forward"
+                android:layout_width="44dp"
+                android:layout_height="44dp"
+                android:background="@drawable/ic_skip_next"
+                />
+        </LinearLayout>
+
+    </LinearLayout>
+
+</RelativeLayout>

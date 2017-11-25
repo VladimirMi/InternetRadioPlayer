@@ -1,5 +1,6 @@
 package io.github.vladimirmi.radius.model.repository
 
+import android.graphics.Bitmap
 import android.net.Uri
 import com.jakewharton.rxrelay2.BehaviorRelay
 import io.github.vladimirmi.radius.extensions.toMaybe
@@ -23,24 +24,23 @@ class StationRepository
     private lateinit var stationList: GroupingList
     val groupedStationList: GroupedList<Station> get() = stationList
     val selected: BehaviorRelay<Station> = BehaviorRelay.create<Station>()
+    lateinit var iconBitmap: Bitmap
 
     fun initStations() {
         stationList = GroupingList(stationSource.getStationList())
         if (stationList.size > preferences.selectedPos) {
             selected.accept(stationList[preferences.selectedPos])
         }
-
     }
 
     fun setSelected(station: Station) {
-        val pos = indexOfFirst(station)
+        val pos = stationList.indexOf(station)
         selected.accept(stationList[pos])
         preferences.selectedPos = pos
     }
 
-    fun getStation(id: String): Station {
-        return stationList.find { it.id == id } ?: throw IllegalStateException()
-    }
+    fun getStation(id: String): Station =
+            stationList.find { it.id == id } ?: throw IllegalStateException()
 
     fun parseStation(uri: Uri): Maybe<Station> {
         Maybe.fromCallable { }
@@ -51,7 +51,7 @@ class StationRepository
 
     fun update(station: Station) {
         if (station.id == selected.value.id) selected.accept(station)
-        stationList[indexOfFirst(station)] = station
+        stationList[stationList.indexOfFirst { it.id == station.id }] = station
         stationSource.save(station)
     }
 
@@ -68,5 +68,17 @@ class StationRepository
         }
     }
 
-    private fun indexOfFirst(station: Station) = stationList.indexOfFirst { it.path == station.path }
+    fun next(): Station {
+        val index = stationList.indexOf(selected.value) + 1
+        val station = stationList[index % stationList.size]
+        setSelected(station)
+        return station
+    }
+
+    fun previous(): Station {
+        val index = stationList.indexOf(selected.value) - 1 + stationList.size
+        val station = stationList[index % stationList.size]
+        setSelected(station)
+        return station
+    }
 }

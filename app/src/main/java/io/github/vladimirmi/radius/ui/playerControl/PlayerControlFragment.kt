@@ -1,5 +1,7 @@
 package io.github.vladimirmi.radius.ui.playerControl
 
+import android.graphics.Bitmap
+import android.graphics.Canvas
 import android.os.Bundle
 import android.view.View
 import com.arellomobile.mvp.presenter.InjectPresenter
@@ -7,12 +9,14 @@ import com.arellomobile.mvp.presenter.ProvidePresenter
 import io.github.vladimirmi.radius.R
 import io.github.vladimirmi.radius.di.Scopes
 import io.github.vladimirmi.radius.extensions.getIconTextColors
+import io.github.vladimirmi.radius.extensions.waitForMeasure
 import io.github.vladimirmi.radius.model.entity.Station
 import io.github.vladimirmi.radius.presentation.playerControl.PlayerControlPresenter
 import io.github.vladimirmi.radius.presentation.playerControl.PlayerControlView
 import io.github.vladimirmi.radius.ui.base.BaseFragment
 import kotlinx.android.synthetic.main.fragment_player_controls.*
 import toothpick.Toothpick
+
 
 /**
  * Created by Vladimir Mikhalev 23.10.2017.
@@ -59,7 +63,16 @@ class PlayerControlFragment : BaseFragment(), PlayerControlView {
     override fun setMedia(station: Station) {
         favorite.setImageResource(if (station.fav) R.drawable.ic_star else R.drawable.ic_empty_star)
         val colors = context.getIconTextColors(station.title[0])
-        media_icon_text.text = station.title[0].toString().toUpperCase()
-        media_icon_text.setTextColor(colors.first)
+        icon_text.text = station.title[0].toString().toUpperCase()
+        icon_text.setTextColor(colors.first)
+        icon_text.waitForMeasure {
+            presenter.saveBitmap(loadBitmapFromView(icon_text))
+        }
+    }
+
+    private fun loadBitmapFromView(v: View): Bitmap {
+        val b = Bitmap.createBitmap(v.width, v.height, Bitmap.Config.ARGB_8888)
+        v.draw(Canvas(b))
+        return b
     }
 }

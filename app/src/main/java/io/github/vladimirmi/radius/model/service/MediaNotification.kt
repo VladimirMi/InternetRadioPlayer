@@ -1,19 +1,16 @@
 package io.github.vladimirmi.radius.model.service
 
 import android.app.Notification
-import android.app.PendingIntent
-import android.content.Intent
 import android.support.v4.app.NotificationCompat
 import android.support.v4.app.NotificationManagerCompat
-import android.support.v4.media.MediaMetadataCompat
+import android.support.v4.media.MediaDescriptionCompat
+import android.support.v4.media.session.MediaButtonReceiver
 import android.support.v4.media.session.MediaSessionCompat
 import android.support.v4.media.session.PlaybackStateCompat
+import android.widget.RemoteViews
 import io.github.vladimirmi.radius.R
-import io.github.vladimirmi.radius.extensions.getBitmap
-import io.github.vladimirmi.radius.model.service.PlayerService.Companion.ACTION_PAUSE
-import io.github.vladimirmi.radius.model.service.PlayerService.Companion.ACTION_PLAY
-import io.github.vladimirmi.radius.model.service.PlayerService.Companion.ACTION_STOP
-import io.github.vladimirmi.radius.ui.root.RootActivity
+import io.github.vladimirmi.radius.di.Scopes
+import io.github.vladimirmi.radius.model.repository.StationRepository
 
 
 /**
@@ -23,15 +20,18 @@ import io.github.vladimirmi.radius.ui.root.RootActivity
 class MediaNotification(private val service: PlayerService,
                         private val mediaSession: MediaSessionCompat) {
     companion object {
-        const val PENDING_PLAY_REQ = 100
-        const val PENDING_STOP_REQ = 101
-        const val PENDING_PAUSE_REQ = 102
-        const val PENDING_OPEN_REQ = 103
-
-
         const val CHANNEL_ID = "radius channel"
         const val PLAYER_NOTIFICATION_ID = 50
     }
+
+    private val playPauseIntent = MediaButtonReceiver
+            .buildMediaButtonPendingIntent(service, PlaybackStateCompat.ACTION_PLAY_PAUSE)
+    private val stopIntent = MediaButtonReceiver
+            .buildMediaButtonPendingIntent(service, PlaybackStateCompat.ACTION_STOP)
+    private val nextIntent = MediaButtonReceiver
+            .buildMediaButtonPendingIntent(service, PlaybackStateCompat.ACTION_SKIP_TO_NEXT)
+    private val previousIntent = MediaButtonReceiver
+            .buildMediaButtonPendingIntent(service, PlaybackStateCompat.ACTION_SKIP_TO_PREVIOUS)
 
     fun update() {
         when (mediaSession.controller.playbackState.state) {
@@ -50,55 +50,48 @@ class MediaNotification(private val service: PlayerService,
         }
     }
 
-    //todo enum with pending intents
     private fun getNotification(): Notification {
         val playbackState = mediaSession.controller.playbackState
-        val metadata: MediaMetadataCompat? = mediaSession.controller.metadata
+        val description: MediaDescriptionCompat? = mediaSession.controller.metadata?.description
 
-        val playIntent = Intent(service, PlayerService::class.java).apply {
-            action = ACTION_PLAY
+        val bitmap = Scopes.app.getInstance(StationRepository::class.java).iconBitmap
+
+        MediaButtonReceiver.buildMediaButtonPendingIntent(service, PlaybackStateCompat.ACTION_STOP)
+
+        val notificationView = RemoteViews(service.packageName, R.layout.notification)
+        with(notificationView) {
+
+            setImageViewBitmap(R.id.icon, bitmap)
+
+            setTextViewText(R.id.content_title, description?.title)
+            setTextViewText(R.id.content_text, description?.subtitle)
+
+            setOnClickPendingIntent(R.id.play_pause, playPauseIntent)
+            setOnClickPendingIntent(R.id.previous, previousIntent)
+            setOnClickPendingIntent(R.id.next, nextIntent)
+
+            if (playbackState.state == PlaybackStateCompat.STATE_PLAYING) {
+                setInt(R.id.play_pause, "setBackgroundResource", R.drawable.ic_stop)
+            } else {
+                setInt(R.id.play_pause, "setBackgroundResource", R.drawable.ic_play)
+            }
         }
-        val playPendingIntent = PendingIntent.getService(service, PENDING_PLAY_REQ, playIntent,
-                PendingIntent.FLAG_UPDATE_CURRENT)
-        val stopIntent = Intent(service, PlayerService::class.java).apply {
-            action = ACTION_STOP
-        }
-        val stopPendingIntent = PendingIntent.getService(service, PENDING_STOP_REQ, stopIntent,
-                PendingIntent.FLAG_UPDATE_CURRENT)
-        val pauseIntent = Intent(service, PlayerService::class.java).apply {
-            action = ACTION_PAUSE
-        }
-        val pausePendingIntent = PendingIntent.getService(service, PENDING_PAUSE_REQ, pauseIntent,
-                PendingIntent.FLAG_UPDATE_CURRENT)
-        val openIntent = Intent(service, RootActivity::class.java)
-        val openPendingIntent = PendingIntent.getService(service, PENDING_OPEN_REQ, openIntent,
-                PendingIntent.FLAG_UPDATE_CURRENT)
 
         val style = android.support.v4.media.app.NotificationCompat.MediaStyle()
                 .setMediaSession(mediaSession.sessionToken)
-                .setShowActionsInCompactView(0)
                 .setShowCancelButton(true)
-                .setCancelButtonIntent(stopPendingIntent)
+                .setCancelButtonIntent(stopIntent)
 
-
-        val builder = NotificationCompat.Builder(service, CHANNEL_ID)
+        return NotificationCompat.Builder(service, CHANNEL_ID)
                 .setShowWhen(false)
-                .setContentIntent(openPendingIntent)
-                .setDeleteIntent(stopPendingIntent)
                 .setVisibility(NotificationCompat.VISIBILITY_PUBLIC)
-                .setPriority(NotificationCompat.PRIORITY_HIGH)
+                .setPriority(NotificationCompat.PRIORITY_MAX)
                 .setSmallIcon(R.drawable.ic_radius)
-                .setLargeIcon(service.getBitmap(R.drawable.ic_radius))
-                .setContentInfo(metadata?.getString(MediaMetadataCompat.METADATA_KEY_ALBUM) ?: "")
-                .setContentTitle(metadata?.getString(MediaMetadataCompat.METADATA_KEY_TITLE) ?: "")
-                .setContentText(metadata?.getString(MediaMetadataCompat.METADATA_KEY_ARTIST) ?: "")
+                .setContentIntent(mediaSession.controller.sessionActivity)
+                .setDeleteIntent(stopIntent)
                 .setStyle(style)
-
-        if (playbackState.actions == PlaybackStateCompat.ACTION_PLAY) {
-            builder.addAction(R.drawable.ic_play, "PLAY", playPendingIntent)
-        } else {
-            builder.addAction(R.drawable.ic_stop, "STOP", pausePendingIntent)
-        }
-        return builder.build()
+                .setCustomContentView(notificationView)
+                .setCustomBigContentView(notificationView)
+                .build()
     }
 }

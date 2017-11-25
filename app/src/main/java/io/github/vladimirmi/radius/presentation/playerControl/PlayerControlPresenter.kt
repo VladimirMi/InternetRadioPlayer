@@ -1,5 +1,6 @@
 package io.github.vladimirmi.radius.presentation.playerControl
 
+import android.graphics.Bitmap
 import android.support.v4.media.MediaMetadataCompat
 import android.support.v4.media.session.PlaybackStateCompat
 import android.support.v4.media.session.PlaybackStateCompat.*
@@ -37,7 +38,7 @@ class PlayerControlPresenter
                 .subscribeBy {
                     viewState.setMedia(it)
                     if (browserController.playbackState.value?.state == PlaybackStateCompat.STATE_PLAYING) {
-                        browserController.play(it.uri)
+                        browserController.play(it)
                     }
                 }
     }
@@ -60,11 +61,11 @@ class PlayerControlPresenter
     }
 
     fun playPause() {
-        val uri = repository.selected.value?.uri ?: return
-        if (browserController.isPlaying(uri)) {
+        val station = repository.selected.value ?: return
+        if (browserController.isPlaying(station)) {
             browserController.stop()
         } else {
-            browserController.play(uri)
+            browserController.play(station)
         }
     }
 
@@ -77,5 +78,9 @@ class PlayerControlPresenter
 
     fun showStation() {
         router.navigateTo(Screens.STATION_SCREEN, repository.selected.value)
+    }
+
+    fun saveBitmap(drawingCache: Bitmap) {
+        repository.iconBitmap = drawingCache
     }
 }

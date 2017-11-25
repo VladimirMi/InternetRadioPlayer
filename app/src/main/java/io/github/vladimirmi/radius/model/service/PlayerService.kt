@@ -10,11 +10,9 @@ import android.support.v4.media.MediaBrowserServiceCompat
 import android.support.v4.media.MediaMetadataCompat
 import android.support.v4.media.session.MediaSessionCompat
 import android.support.v4.media.session.PlaybackStateCompat
-import android.support.v4.media.session.PlaybackStateCompat.*
 import com.google.android.exoplayer2.ExoPlaybackException
 import com.google.android.exoplayer2.ExoPlaybackException.*
 import com.google.android.exoplayer2.Player
-import io.github.vladimirmi.radius.BuildConfig
 import io.github.vladimirmi.radius.R
 import io.github.vladimirmi.radius.di.Scopes
 import io.github.vladimirmi.radius.model.entity.Station
@@ -31,12 +29,6 @@ import javax.inject.Inject
 class PlayerService : MediaBrowserServiceCompat() {
 
     companion object {
-        const val ACTION_PLAY = BuildConfig.APPLICATION_ID + ".ACTION_PLAY"
-        const val ACTION_PAUSE = BuildConfig.APPLICATION_ID + ".ACTION_PAUSE"
-        const val ACTION_STOP = BuildConfig.APPLICATION_ID + ".ACTION_STOP"
-        const val ACTION_SKIP_TO_NEXT = BuildConfig.APPLICATION_ID + ".ACTION_SKIP_TO_NEXT"
-        const val ACTION_SKIP_TO_PREVIOUS = BuildConfig.APPLICATION_ID + ".ACTION_SKIP_TO_PREVIOUS"
-
         const val EXTRA_STATION_ID = "EXTRA_STATION_ID"
     }
 
@@ -47,6 +39,13 @@ class PlayerService : MediaBrowserServiceCompat() {
     private lateinit var notification: MediaNotification
     private var serviceStarted: Boolean = false
     private var currentStation: Station? = null
+
+    private val playbackState = PlaybackStateCompat.Builder()
+            .setActions(PlaybackStateCompat.ACTION_PLAY_PAUSE or
+                    PlaybackStateCompat.ACTION_STOP or
+                    PlaybackStateCompat.ACTION_SKIP_TO_NEXT or
+                    PlaybackStateCompat.ACTION_SKIP_TO_PREVIOUS)
+            .build()
 
     override fun onCreate() {
         super.onCreate()
@@ -59,6 +58,7 @@ class PlayerService : MediaBrowserServiceCompat() {
         sessionToken = session.sessionToken
         session.setCallback(SessionCallback())
         session.setFlags(MediaSessionCompat.FLAG_HANDLES_MEDIA_BUTTONS or MediaSessionCompat.FLAG_HANDLES_TRANSPORT_CONTROLS)
+        session.setPlaybackState(playbackState)
         val activityIntent = Intent(applicationContext, RootActivity::class.java)
         session.setSessionActivity(PendingIntent.getActivity(applicationContext, 0, activityIntent, 0))
 
@@ -70,23 +70,6 @@ class PlayerService : MediaBrowserServiceCompat() {
         if (intent == null) {
             Timber.d("onStartCommand: Stop self")
             stopSelf()
-            return Service.START_STICKY
-        }
-        when (intent.action) {
-            null -> Timber.e("onStartCommand: actions null")
-            ACTION_PLAY -> {
-                if (intent.hasExtra(EXTRA_STATION_ID)) {
-                    val stationId = intent.getStringExtra(EXTRA_STATION_ID)
-                    currentStation = repository.getStation(stationId)
-                    currentStation?.uri?.let { handlePlayRequest(it) }
-                } else {
-                    handleResumeRequest()
-                }
-            }
-            ACTION_PAUSE -> handlePauseRequest()
-            ACTION_STOP -> handleStopRequest()
-            ACTION_SKIP_TO_NEXT -> handleSkipToNextRequest()
-            ACTION_SKIP_TO_PREVIOUS -> handleSkipToPreviousRequest()
         }
         return Service.START_STICKY
     }
@@ -108,11 +91,11 @@ class PlayerService : MediaBrowserServiceCompat() {
 
         override fun onPlayerStateChanged(playWhenReady: Boolean, playbackState: Int) {
             val state = when (playbackState) {
-                Player.STATE_IDLE -> STATE_STOPPED
-                Player.STATE_BUFFERING -> STATE_BUFFERING
-                Player.STATE_READY -> if (playWhenReady) STATE_PLAYING else STATE_PAUSED
-                Player.STATE_ENDED -> STATE_PAUSED
-                else -> STATE_NONE
+                Player.STATE_IDLE -> PlaybackStateCompat.STATE_STOPPED
+                Player.STATE_BUFFERING -> PlaybackStateCompat.STATE_BUFFERING
+                Player.STATE_READY -> if (playWhenReady) PlaybackStateCompat.STATE_PLAYING else PlaybackStateCompat.STATE_PAUSED
+                Player.STATE_ENDED -> PlaybackStateCompat.STATE_PAUSED
+                else -> PlaybackStateCompat.STATE_NONE
             }
 
             session.setPlaybackState(createPlaybackState(state))
@@ -134,12 +117,7 @@ class PlayerService : MediaBrowserServiceCompat() {
         }
 
         private fun createPlaybackState(state: Int): PlaybackStateCompat {
-            val availableActions = if (state == STATE_PLAYING) {
-                PlaybackStateCompat.ACTION_STOP or PlaybackStateCompat.ACTION_PAUSE
-            } else {
-                PlaybackStateCompat.ACTION_PLAY
-            }
-            return Builder().setActions(availableActions)
+            return PlaybackStateCompat.Builder(playbackState)
                     .setState(state, 0, 1F)
                     .build()
         }

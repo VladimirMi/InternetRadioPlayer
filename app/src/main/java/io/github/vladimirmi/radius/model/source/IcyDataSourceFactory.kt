@@ -10,7 +10,6 @@ import io.github.vladimirmi.radius.model.service.PlayerCallback
 
 class IcyDataSourceFactory(private val playerCallback: PlayerCallback) : DataSource.Factory {
 
-    override fun createDataSource(): DataSource {
-        return IcyDataSource(BuildConfig.APPLICATION_ID, null, playerCallback)
-    }
+    override fun createDataSource(): DataSource =
+            IcyDataSource(BuildConfig.APPLICATION_ID, null, playerCallback)
 }

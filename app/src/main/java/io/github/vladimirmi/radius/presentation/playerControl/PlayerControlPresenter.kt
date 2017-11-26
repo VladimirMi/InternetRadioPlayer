@@ -71,7 +71,7 @@ class PlayerControlPresenter
 
     fun switchFavorite() {
         val selected = repository.selected.value ?: return
-        val copy = selected.copy(fav = !selected.fav)
+        val copy = selected.copy(favorite = !selected.favorite)
         repository.update(copy)
         viewState.setMedia(copy)
     }

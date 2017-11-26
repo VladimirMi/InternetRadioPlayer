@@ -2,32 +2,39 @@ package io.github.vladimirmi.radius.extensions
 
 import android.app.DownloadManager
 import android.net.Uri
-import timber.log.Timber
 import java.io.IOException
-import java.net.HttpURLConnection
-import java.net.MalformedURLException
-import java.net.URI
-import java.net.URL
+import java.net.*
 import java.util.*
 
 /**
  * Created by Vladimir Mikhalev 09.11.2017.
  */
 
-fun Uri.toUrl(): URL? {
+fun String.toURL(): URL? {
     return try {
-        URL(this.toString().trim())
+        URL(this.trim())
     } catch (e: MalformedURLException) {
         e.printStackTrace()
         null
     }
 }
 
-fun Uri.toURI(): URI = URI.create(this.toString())
+fun Uri.toURL(): URL? = this.toString().toURL()
 
-fun Uri.getContentType(): String = this.toUrl()?.getContentType() ?: ""
+fun String.toURI(): URI? {
+    return try {
+        URI(this.trim())
+    } catch (e: URISyntaxException) {
+        e.printStackTrace()
+        null
+    }
+}
 
-fun URI.toUri(): Uri = Uri.parse(this.toString())
+fun Uri.toURI(): URI? = this.toString().toURI()
+
+fun String.toUri(): Uri? = this.toURI()?.toString()?.let { Uri.parse(it) }
+
+fun Uri.getContentType(): String = this.toURL()?.getContentType() ?: ""
 
 fun <T> URL.useConnection(runnable: HttpURLConnection.() -> T?): T? {
     return try {
@@ -45,13 +52,11 @@ fun <T> URL.useConnection(runnable: HttpURLConnection.() -> T?): T? {
 
 fun URL.getContentType(): String =
         useConnection {
-            Timber.d("getContentType: $headerFields")
             contentType.trim().toLowerCase(Locale.ENGLISH)
         } ?: ""
 
 fun URL.getRedirected(): URL {
     return useConnection {
-        Timber.d("getRedirected: $headerFields")
         if (responseCode == HttpURLConnection.HTTP_MOVED_PERM ||
                 responseCode == HttpURLConnection.HTTP_MOVED_TEMP) {
             URL(headerFields["Location"].toString().trim('[', ']'))

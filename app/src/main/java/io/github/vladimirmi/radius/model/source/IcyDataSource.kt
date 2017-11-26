@@ -21,19 +21,13 @@ class IcyDataSource(userAgent: String,
     }
 
     override fun getInputStream(connection: HttpURLConnection): InputStream {
-        val metaWindow = connection.getHeaderField("icy-metaint")
-        if (metaWindow.isNullOrEmpty()) {
-            Timber.e("stream does not support icy metadata")
+        val metaWindow = connection.getHeaderFieldInt("icy-metaint", 0)
+
+        return if (metaWindow > 0) {
+            IcyInputStream(connection.inputStream, metaWindow, playerCallback)
         } else {
-            val window = try {
-                metaWindow.toInt()
-            } catch (e: NumberFormatException) {
-                Timber.e(e, "$metaWindow cannot be parsed"); 0
-            }
-            if (window > 0) {
-                return IcyInputStream(connection.inputStream, window, playerCallback)
-            }
+            Timber.e("stream does not support icy metadata")
+            super.getInputStream(connection)
         }
-        return super.getInputStream(connection)
     }
 }

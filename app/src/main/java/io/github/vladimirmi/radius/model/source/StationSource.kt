@@ -6,9 +6,8 @@ import android.os.Environment
 import io.github.vladimirmi.radius.extensions.clear
 import io.github.vladimirmi.radius.model.entity.Station
 import io.github.vladimirmi.radius.model.manager.Preferences
-import timber.log.Timber
+import io.github.vladimirmi.radius.model.manager.parsePls
 import java.io.File
-import java.io.FileOutputStream
 import javax.inject.Inject
 
 
@@ -20,15 +19,24 @@ class StationSource
 @Inject constructor(private val context: Context,
                     private val preferences: Preferences) {
 
-    private val appDir: File by lazy { initAppDir() }
+    private val appDir: File = run {
+        val dir = Environment.getExternalStoragePublicDirectory("Radius")
+        if (!dir.mkdirs() && (!dir.exists() || !dir.isDirectory)) {
+            throw IllegalStateException("Can not create playlist folder")
+        }
+        preferences.appDirPath = dir.path
+        dir
+    }
 
     fun getStationList(): ArrayList<Station> {
-        copyFilesFromAssets()
+        copyPlaylistsFromAssets()
         val stationList = ArrayList<Station>()
-        val treeWalk = initAppDir().walkTopDown()
+        val treeWalk = appDir.walkTopDown()
         treeWalk.forEach { file ->
             if (!file.isDirectory) {
-                Station.fromFile(file)?.let { stationList.add(it) }
+                Station.fromFile(file)?.let {
+                    stationList.add(it)
+                }
             }
         }
         return stationList
@@ -36,7 +44,7 @@ class StationSource
 
     fun save(station: Station) {
         with(File(station.path)) {
-            if (exists() || parentFile.mkdirs()) {
+            if (exists() || parentFile.mkdirs() || createNewFile()) {
                 clear()
                 writeText(station.toContent())
             }
@@ -51,30 +59,14 @@ class StationSource
 
     fun parseStation(uri: Uri): Station? = Station.fromUri(uri)
 
-    private fun copyFilesFromAssets() {
+    private fun copyPlaylistsFromAssets() {
         if (preferences.firstRun) {
             context.assets.list("")
                     .filter { it.endsWith(".pls") }
-                    .forEach { copyFile(it, appDir.path) }
-            preferences.firstRun = false
+                    .forEach { filePath ->
+                        context.assets.open(filePath).parsePls()?.let { save(it) }
+                    }
         }
-    }
-
-    private fun initAppDir(): File {
-        val appDir = Environment.getExternalStoragePublicDirectory("Radius")
-        if (!appDir.mkdirs() && (!appDir.exists() || !appDir.isDirectory)) {
-            throw IllegalStateException("Can not create playlist folder")
-        }
-        preferences.appDirPath = appDir.path
-        return appDir
-    }
-
-    private fun copyFile(filePath: String, destination: String) {
-        Timber.e("copyFile: $filePath")
-        context.assets.open(filePath).use { inS ->
-            FileOutputStream(File(destination, filePath)).use { outS ->
-                inS.copyTo(outS)
-            }
-        }
+        preferences.firstRun = false
     }
 }

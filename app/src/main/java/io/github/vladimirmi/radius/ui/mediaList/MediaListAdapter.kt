@@ -82,7 +82,7 @@ class MediaGroupTitleVH(itemView: View) : RecyclerView.ViewHolder(itemView) {
 class MediaGroupItemVH(itemView: View) : RecyclerView.ViewHolder(itemView) {
     fun bind(station: Station) {
         itemView.name.text = station.title
-        itemView.favorite.visibility = if (station.fav) View.VISIBLE else View.INVISIBLE
+        itemView.favorite.visibility = if (station.favorite) View.VISIBLE else View.INVISIBLE
 
         val colors = itemView.context.getIconTextColors(station.title[0])
         itemView.icon.text = station.title.first().toString().toUpperCase()

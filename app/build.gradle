@@ -81,4 +81,6 @@ dependencies {
     //ExoPlayer
     compile 'com.google.android.exoplayer:exoplayer-core:r' + EXO_PLAYER_VERSION
     compile 'com.google.android.exoplayer:extension-mediasession:r' + EXO_PLAYER_VERSION
+
+    compile 'com.google.code.gson:gson:2.8.2'
 }

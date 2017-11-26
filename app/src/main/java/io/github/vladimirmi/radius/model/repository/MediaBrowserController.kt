@@ -9,6 +9,7 @@ import android.support.v4.media.MediaMetadataCompat
 import android.support.v4.media.session.MediaControllerCompat
 import android.support.v4.media.session.PlaybackStateCompat
 import com.jakewharton.rxrelay2.BehaviorRelay
+import io.github.vladimirmi.radius.extensions.toUri
 import io.github.vladimirmi.radius.model.entity.Station
 import io.github.vladimirmi.radius.model.service.PlayerService
 import io.github.vladimirmi.radius.model.service.PlayerService.Companion.EXTRA_STATION_ID
@@ -92,7 +93,7 @@ class MediaBrowserController
         currentStation = station
         if (isPlaying(station)) return
         val bundle = Bundle().apply { putString(EXTRA_STATION_ID, station.id) }
-        controller?.transportControls?.playFromUri(station.uri, bundle)
+        controller?.transportControls?.playFromUri(station.uri.toUri(), bundle)
     }
 
     fun pause() {

@@ -61,7 +61,7 @@ class PlayerControlFragment : BaseFragment(), PlayerControlView {
     }
 
     override fun setMedia(station: Station) {
-        favorite.setImageResource(if (station.fav) R.drawable.ic_star else R.drawable.ic_empty_star)
+        favorite.setImageResource(if (station.favorite) R.drawable.ic_star else R.drawable.ic_empty_star)
         val colors = context.getIconTextColors(station.title[0])
         icon_text.text = station.title[0].toString().toUpperCase()
         icon_text.setTextColor(colors.first)

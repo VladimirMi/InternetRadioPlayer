@@ -28,17 +28,17 @@
 
         <TextView
             android:id="@+id/content_title"
+            style="@style/TextAppearance.AppCompat.Notification.Title.Media"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:textAppearance="@style/TextAppearance.AppCompat.Notification.Title"
             tools:text="Current playing"
             />
 
         <TextView
             android:id="@+id/content_text"
+            style="@style/TextAppearance.AppCompat.Notification.Media"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:textAppearance="@style/TextAppearance.AppCompat.Notification"
             tools:text="artist"
             />
     </LinearLayout>

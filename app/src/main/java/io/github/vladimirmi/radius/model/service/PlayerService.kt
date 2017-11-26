@@ -15,6 +15,7 @@ import com.google.android.exoplayer2.ExoPlaybackException.*
 import com.google.android.exoplayer2.Player
 import io.github.vladimirmi.radius.R
 import io.github.vladimirmi.radius.di.Scopes
+import io.github.vladimirmi.radius.extensions.toUri
 import io.github.vladimirmi.radius.model.entity.Station
 import io.github.vladimirmi.radius.model.repository.StationRepository
 import io.github.vladimirmi.radius.ui.root.RootActivity
@@ -172,13 +173,13 @@ class PlayerService : MediaBrowserServiceCompat() {
     private fun handleSkipToNextRequest() {
         Timber.d("handleSkipToNextRequest")
         currentStation = repository.next()
-        currentStation?.uri?.let { handlePlayRequest(it) }
+        currentStation?.uri?.toUri()?.let { handlePlayRequest(it) }
     }
 
     private fun handleSkipToPreviousRequest() {
         Timber.d("handleSkipToPreviousRequest")
         currentStation = repository.previous()
-        currentStation?.uri?.let { handlePlayRequest(it) }
+        currentStation?.uri?.toUri()?.let { handlePlayRequest(it) }
     }
 
 

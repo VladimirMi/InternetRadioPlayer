@@ -1,6 +1,8 @@
 package io.github.vladimirmi.radius.ui.station
 
 import android.os.Bundle
+import android.support.design.widget.TextInputLayout
+import android.view.View
 import com.arellomobile.mvp.presenter.InjectPresenter
 import com.arellomobile.mvp.presenter.ProvidePresenter
 import io.github.vladimirmi.radius.R
@@ -10,6 +12,7 @@ import io.github.vladimirmi.radius.presentation.station.StationPresenter
 import io.github.vladimirmi.radius.presentation.station.StationView
 import io.github.vladimirmi.radius.ui.base.BaseFragment
 import kotlinx.android.synthetic.main.fragment_station.*
+import kotlinx.android.synthetic.main.part_station_info.*
 import toothpick.Toothpick
 
 /**
@@ -43,7 +46,21 @@ class StationFragment : BaseFragment(), StationView {
     }
 
     override fun setStation(station: Station) {
-        title.text = station.title
-        group.text = station.group
+        title.setTextWithoutAnimation(station.title)
+        group.setTextWithoutAnimation(station.group)
+        station.url?.let { url.setTextWithoutAnimation(it) } ?: url.remove()
+        station.bitrate?.toString()?.let { bitrate.setTextWithoutAnimation(it) } ?: bitrate.remove()
+        station.source?.toString()?.let { sample.setTextWithoutAnimation(it) } ?: sample.remove()
     }
+}
+
+private fun TextInputLayout.setTextWithoutAnimation(string: String?) {
+    if (string == null) return
+    isHintAnimationEnabled = false
+    editText?.setText(string)
+    isHintAnimationEnabled = true
+}
+
+fun View.remove() {
+    visibility = View.GONE
 }

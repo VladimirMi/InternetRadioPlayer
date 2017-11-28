@@ -11,7 +11,7 @@
         android:id="@+id/url"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:hint="Station url:"
+        android:hint="@string/station_hint_url"
         >
 
         <android.support.design.widget.TextInputEditText
@@ -19,6 +19,8 @@
             android:layout_height="wrap_content"
             android:inputType="textUri"
             android:textSize="14sp"
+            android:autoLink="web"
+            android:textColorLink="@color/blue_500"
             tools:text="http://www.stationstream.com"
             />
 
@@ -28,6 +30,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="horizontal"
+        android:baselineAligned="false"
         >
 
         <android.support.design.widget.TextInputLayout
@@ -35,7 +38,7 @@
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_weight="1"
-            android:hint="Stream bitrate:"
+            android:hint="@string/station_hint_bitrate"
             >
 
             <android.support.design.widget.TextInputEditText
@@ -44,6 +47,7 @@
                 android:textSize="14sp"
                 tools:text="128kB"
                 android:layout_marginRight="16dp"
+                android:layout_marginEnd="16dp"
                 />
 
         </android.support.design.widget.TextInputLayout>
@@ -54,7 +58,7 @@
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_weight="1"
-            android:hint="Sample rate:"
+            android:hint="@string/station_hint_rate"
             >
 
             <android.support.design.widget.TextInputEditText

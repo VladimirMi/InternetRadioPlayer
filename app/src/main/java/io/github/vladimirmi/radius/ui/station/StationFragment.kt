@@ -49,8 +49,10 @@ class StationFragment : BaseFragment(), StationView {
         title.setTextWithoutAnimation(station.title)
         group.setTextWithoutAnimation(station.group)
         station.url?.let { url.setTextWithoutAnimation(it) } ?: url.remove()
-        station.bitrate?.toString()?.let { bitrate.setTextWithoutAnimation(it) } ?: bitrate.remove()
-        station.source?.toString()?.let { sample.setTextWithoutAnimation(it) } ?: sample.remove()
+        station.bitrate?.toString()?.let { bitrate.setTextWithoutAnimation(it + "kbps") }
+                ?: bitrate.setTextWithoutAnimation("n/a")
+        station.source?.toString()?.let { sample.setTextWithoutAnimation(it + "Hz") }
+                ?: sample.setTextWithoutAnimation("n/a")
     }
 }
 
@@ -64,3 +66,5 @@ private fun TextInputLayout.setTextWithoutAnimation(string: String?) {
 fun View.remove() {
     visibility = View.GONE
 }
+
+

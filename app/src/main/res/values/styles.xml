@@ -3,7 +3,7 @@
     <style name="AppTheme" parent="Theme.AppCompat.Light.NoActionBar">
         <item name="colorPrimary">@color/primaryColor</item>
         <item name="colorPrimaryDark">@color/primaryDarkColor</item>
-        <item name="colorAccent">@color/secondaryColor</item>
+        <item name="colorAccent">@color/accentColor</item>
         <item name="android:textColor">@color/grey_800</item>
     </style>
 
@@ -45,12 +45,12 @@
     </style>
 
     <style name="CustomButton" parent="Base.Widget.AppCompat.Button">
-        <item name="colorButtonNormal">@color/secondaryDarkColor</item>
+        <item name="colorButtonNormal">@color/accentColor</item>
         <item name="android:textColor">@color/sel_button_text</item>
     </style>
 
     <style name="AccentButton" parent="CustomButton">
-        <item name="colorButtonNormal">@color/secondaryDarkColor</item>
+        <item name="colorButtonNormal">@color/accentColor</item>
     </style>
 
     <style name="CancelButton" parent="CustomButton">

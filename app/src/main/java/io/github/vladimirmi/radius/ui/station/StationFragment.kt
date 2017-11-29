@@ -10,9 +10,11 @@ import io.github.vladimirmi.radius.di.Scopes
 import io.github.vladimirmi.radius.model.entity.Station
 import io.github.vladimirmi.radius.presentation.station.StationPresenter
 import io.github.vladimirmi.radius.presentation.station.StationView
+import io.github.vladimirmi.radius.ui.TagView
 import io.github.vladimirmi.radius.ui.base.BaseFragment
 import kotlinx.android.synthetic.main.fragment_station.*
 import kotlinx.android.synthetic.main.part_station_info.*
+import timber.log.Timber
 import toothpick.Toothpick
 
 /**
@@ -46,6 +48,7 @@ class StationFragment : BaseFragment(), StationView {
     }
 
     override fun setStation(station: Station) {
+        Timber.e("setStation: $station")
         title.setTextWithoutAnimation(station.title)
         group.setTextWithoutAnimation(station.group)
         station.url?.let { url.setTextWithoutAnimation(it) } ?: url.remove()
@@ -53,6 +56,8 @@ class StationFragment : BaseFragment(), StationView {
                 ?: bitrate.setTextWithoutAnimation("n/a")
         station.source?.toString()?.let { sample.setTextWithoutAnimation(it + "Hz") }
                 ?: sample.setTextWithoutAnimation("n/a")
+
+        station.genre.forEach { flex_box.addView(TagView(context, it, null)) }
     }
 }
 

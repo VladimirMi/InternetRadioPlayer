@@ -7,7 +7,7 @@ Title1=Box UK Radio danceradiouk
   "bitrate": 64,
   "favorite": false,
   "genre": [
-    "Top 40, Pop, 80s, 90s, Rock, Easy Listening"
+    "Top 40", "Pop", "80s", "90s", "Rock", "Easy Listening"
   ],
   "group": "",
   "id": "87fb00ce-f0ff-41dd-a6a7-3032d8aa69d0",

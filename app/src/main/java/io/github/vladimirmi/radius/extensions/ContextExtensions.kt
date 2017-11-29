@@ -43,6 +43,7 @@ fun Context.getIconTextColors(char: Char): Pair<Int, Int> {
     return Pair(textColors[colorIdx], bgColors[colorIdx])
 }
 
+//todo int.dp
 val Context.dp get() = getDisplayMetrics().density.toInt()
 
 val Context.sp get() = getDisplayMetrics().scaledDensity.toInt()

@@ -7,7 +7,7 @@ Title1=Rock Florida
   "bitrate": 160,
   "favorite": false,
   "genre": [
-    "Classic Rock 60s 70s 80s 90s Oldies Miami South Florida"
+    "Classic Rock", "60s", "70s", "80s", "90s", "Oldies", "Miami", "South Florida"
   ],
   "group": "",
   "id": "d3e88097-6475-4f97-a733-c2529faaa39b",

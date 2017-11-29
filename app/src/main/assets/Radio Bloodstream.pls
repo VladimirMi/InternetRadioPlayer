@@ -7,7 +7,7 @@ Title1=Radio Bloodstream
   "bitrate": 128,
   "favorite": false,
   "genre": [
-    "Rock Hard Rock Metal Heavy Metal"
+    "Rock", "Hard Rock", "Metal", "Heavy Metal"
   ],
   "group": "",
   "id": "f55900f1-a922-4c35-b7d0-c3c217c8808e",

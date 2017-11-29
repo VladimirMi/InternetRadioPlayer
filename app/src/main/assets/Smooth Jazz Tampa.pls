@@ -7,7 +7,7 @@ Title1=Smooth Jazz Tampa
   "bitrate": 128,
   "favorite": false,
   "genre": [
-    "Smooth Jazz, Jazz, Acid Jazz, Easy Listening"
+    "Smooth Jazz", "Jazz", "Acid Jazz", "Easy Listening"
   ],
   "group": "",
   "id": "b20c8931-b042-4379-8dac-62ec4b0c9ed6",

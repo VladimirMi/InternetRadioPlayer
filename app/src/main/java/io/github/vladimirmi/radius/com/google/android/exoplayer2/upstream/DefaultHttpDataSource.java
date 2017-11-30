@@ -304,7 +304,7 @@ public class DefaultHttpDataSource implements HttpDataSource {
     }
 
     /**
-     * Returns the current connection, or null if the source is not currently opened.
+     * Returns the current connection, or null if the sample is not currently opened.
      *
      * @return The current open connection, or null.
      */
@@ -564,7 +564,7 @@ public class DefaultHttpDataSource implements HttpDataSource {
      * @param readLength The maximum number of bytes to read.
      * @return The number of bytes read, or {@link C#RESULT_END_OF_INPUT} if the end of the opened
      * range is reached.
-     * @throws IOException If an error occurs reading from the source.
+     * @throws IOException If an error occurs reading from the sample.
      */
     private int readInternal(byte[] buffer, int offset, int readLength) throws IOException {
         if (readLength == 0) {

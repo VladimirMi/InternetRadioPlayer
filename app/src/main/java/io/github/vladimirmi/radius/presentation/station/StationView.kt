@@ -14,5 +14,9 @@ interface StationView : MvpView {
 
     fun buildToolbar(builder: ToolbarBuilder)
 
-    fun setEditable(enable: Boolean)
+    fun setEditable(editable: Boolean)
+
+    fun openSubmitEditDialog()
+
+    fun closeSubmitEditDialog()
 }

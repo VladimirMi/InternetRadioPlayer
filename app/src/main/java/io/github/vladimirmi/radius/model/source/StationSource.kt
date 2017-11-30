@@ -7,6 +7,7 @@ import io.github.vladimirmi.radius.extensions.clear
 import io.github.vladimirmi.radius.model.entity.Station
 import io.github.vladimirmi.radius.model.manager.Preferences
 import io.github.vladimirmi.radius.model.manager.parsePls
+import timber.log.Timber
 import java.io.File
 import javax.inject.Inject
 
@@ -52,8 +53,10 @@ class StationSource
     }
 
     fun remove(station: Station) {
+        Timber.e("remove: ${station.path}")
         val file = File(station.path)
-        file.delete()
+        val delete = file.delete()
+        Timber.e("remove: $delete")
         file.parentFile.delete()
     }
 

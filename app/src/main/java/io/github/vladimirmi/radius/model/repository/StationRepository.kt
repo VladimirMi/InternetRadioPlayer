@@ -50,7 +50,8 @@ class StationRepository
     }
 
     fun update(station: Station) {
-        if (station.id == selected.value.id) selected.accept(station)
+        //todo check
+//        if (station.id == selected.value.id) selected.accept(station)
         stationList[stationList.indexOfFirst { it.id == station.id }] = station
         stationSource.save(station)
     }
@@ -64,8 +65,12 @@ class StationRepository
 
     fun remove(station: Station) {
         if (stationList.remove(station)) {
-            stationSource.remove(station)
+            removeFromDisk(station)
         }
+    }
+
+    fun removeFromDisk(station: Station) {
+        stationSource.remove(station)
     }
 
     fun next(): Station {

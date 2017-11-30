@@ -34,7 +34,7 @@ class NewStationDialog(viewGroup: ViewGroup, submit: (Station) -> Unit)
 
     override fun listenFields(): Disposable {
         val nameObs = name.validate(NAME_PATTERN, dialogView.name_error,
-                dialogView.context.getString(R.string.message_err_name))
+                dialogView.context.getString(R.string.dialog_add_name_err))
 
         return validateForm(listOf(nameObs))
                 .subscribe { ok.isEnabled = it }

@@ -24,9 +24,9 @@ data class Station(val uri: String,
                    val title: String,
                    val group: String,
                    val genre: List<String> = emptyList(),
-                   val url: String? = null,
-                   val bitrate: Int? = null,
-                   val source: Int? = null,
+                   val url: String = "",
+                   val bitrate: Int = 0,
+                   val sample: Int = 0,
                    val favorite: Boolean = false,
                    val id: String = UUID.randomUUID().toString()) {
 
@@ -88,7 +88,7 @@ data class Station(val uri: String,
                     genre = headers["icy-genre"] ?: station.genre,
                     url = headers["icy-url"]?.get(0) ?: station.url,
                     bitrate = headers["icy-br"]?.get(0)?.toInt() ?: station.bitrate,
-                    source = headers["icy-sr"]?.get(0)?.toInt() ?: station.source)
+                    sample = headers["icy-sr"]?.get(0)?.toInt() ?: station.sample)
 
         }
     }

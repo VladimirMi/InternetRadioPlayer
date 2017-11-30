@@ -4,16 +4,19 @@ import android.os.Bundle
 import android.support.design.widget.TextInputLayout
 import android.util.TypedValue
 import android.view.View
-import android.widget.EditText
+import android.view.ViewGroup
 import com.arellomobile.mvp.presenter.InjectPresenter
 import com.arellomobile.mvp.presenter.ProvidePresenter
 import io.github.vladimirmi.radius.R
 import io.github.vladimirmi.radius.di.Scopes
+import io.github.vladimirmi.radius.extensions.remove
+import io.github.vladimirmi.radius.extensions.show
 import io.github.vladimirmi.radius.model.entity.Station
 import io.github.vladimirmi.radius.presentation.root.RootActivity
 import io.github.vladimirmi.radius.presentation.root.ToolbarBuilder
 import io.github.vladimirmi.radius.ui.TagView
 import io.github.vladimirmi.radius.ui.base.BaseFragment
+import io.github.vladimirmi.radius.ui.base.SimpleDialog
 import kotlinx.android.synthetic.main.fragment_station.*
 import kotlinx.android.synthetic.main.part_station_info.*
 import toothpick.Toothpick
@@ -35,8 +38,13 @@ class StationFragment : BaseFragment(), StationView {
         }
     }
 
-    @InjectPresenter lateinit var presenter: StationPresenter
     private var editTextBg: Int = 0
+    private val dialogSubmitEdit: SimpleDialog by lazy {
+        SimpleDialog(view as ViewGroup)
+                .setMessage(getString(R.string.dialog_submit_message))
+    }
+
+    @InjectPresenter lateinit var presenter: StationPresenter
 
     @ProvidePresenter
     fun providePresenter(): StationPresenter {
@@ -60,29 +68,68 @@ class StationFragment : BaseFragment(), StationView {
 
     override fun setStation(station: Station) {
         title.setTextWithoutAnimation(station.title)
-        if (station.group.isEmpty()) group.remove()
-        else group.setTextWithoutAnimation(station.group)
-        station.url?.let { url.setTextWithoutAnimation(it) } ?: url.remove()
-        station.bitrate?.toString()?.let { bitrate.setTextWithoutAnimation(it + "kbps") }
-                ?: bitrate.setTextWithoutAnimation("n/a")
-        station.source?.toString()?.let { sample.setTextWithoutAnimation(it + "Hz") }
-                ?: sample.setTextWithoutAnimation("n/a")
-
+        group.setTextWithoutAnimation(station.group)
+        uri.setTextWithoutAnimation(station.uri)
+        url.setTextWithoutAnimation(station.url)
+        bitrate.setTextWithoutAnimation(station.bitrate.toString())
+        sample.setTextWithoutAnimation(station.sample.toString())
         station.genre.forEach { flex_box.addView(TagView(context, it, null)) }
     }
-
 
     override fun buildToolbar(builder: ToolbarBuilder) {
         builder.build(activity as RootActivity)
     }
 
-    override fun setEditable(enable: Boolean) {
-        title.editText?.setEditable(enable)
-        group.editText?.setEditable(enable)
-        url.editText?.setEditable(enable)
-        bitrate.editText?.setEditable(enable)
-        sample.editText?.setEditable(enable)
-        if (enable) group.show() else group.remove()
+    override fun setEditable(editable: Boolean) {
+        title.setEditable(editable)
+
+        group.setEditable(editable)
+        if (editable) {
+            group.show()
+        } else if (group.isBlank()) group.remove()
+
+        uri.setEditable(editable)
+
+        url.setEditable(editable)
+        if (editable) {
+            url.show()
+        } else if (url.isBlank()) url.remove()
+
+        bitrate.setEditable(editable)
+        //todo strings from res(units)
+        bitrate.cutOff(editable, "kbps")
+
+        sample.setEditable(editable)
+        sample.cutOff(editable, "Hz")
+    }
+
+    override fun openSubmitEditDialog() {
+        dialogSubmitEdit.setPositiveAction { presenter.submitEdit(constructStation()) }
+                .setNegativeAction { presenter.cancelEdit() }
+                .show()
+    }
+
+    override fun closeSubmitEditDialog() {
+        dialogSubmitEdit.dismiss()
+    }
+
+    private fun constructStation(): Station {
+        val genres = ArrayList<String>()
+        (0 until flex_box.childCount)
+                .forEach {
+                    val tagView = flex_box.getChildAt(it) as TagView
+                    genres.add(tagView.text.toString())
+                }
+        return Station(
+                id = presenter.id,
+                uri = uri.editText!!.text.toString(),
+                title = title.editText!!.text.toString(),
+                group = group.editText!!.text.toString(),
+                genre = genres,
+                url = url.editText!!.text.toString(),
+                sample = sample.editText!!.text.toString().toInt(),
+                bitrate = bitrate.editText!!.text.toString().toInt()
+        )
     }
 
     private fun TextInputLayout.setTextWithoutAnimation(string: String) {
@@ -91,24 +138,29 @@ class StationFragment : BaseFragment(), StationView {
         isHintAnimationEnabled = true
     }
 
-    private fun EditText.setEditable(enable: Boolean) {
-        isFocusable = enable
-        isClickable = enable
-        isFocusableInTouchMode = enable
-        isCursorVisible = enable
+    private fun TextInputLayout.setEditable(enable: Boolean) {
+        editText?.isFocusable = enable
+        editText?.isClickable = enable
+        editText?.isFocusableInTouchMode = enable
+        editText?.isCursorVisible = enable
 
-        if (enable) setBackgroundResource(editTextBg)
-        else setBackgroundResource(0)
+        if (enable) editText?.setBackgroundResource(editTextBg)
+        else editText?.setBackgroundResource(0)
     }
-}
 
-//todo extract
-fun View.remove() {
-    visibility = View.GONE
-}
+    private fun TextInputLayout.cutOff(editable: Boolean, suffix: String) {
+        val s = editText?.text.toString()
+        val new = if (editable) {
+            val value = s.substringBeforeLast(suffix)
+            //todo strings to res
+            if (value == "n/a") "0" else value
+        } else {
+            if (s == "0" || s.isBlank()) "n/a" else s + suffix
+        }
+        setTextWithoutAnimation(new)
+    }
 
-fun View.show() {
-    visibility = View.VISIBLE
+    private fun TextInputLayout.isBlank() = editText?.text?.isBlank() ?: true
 }
 
 

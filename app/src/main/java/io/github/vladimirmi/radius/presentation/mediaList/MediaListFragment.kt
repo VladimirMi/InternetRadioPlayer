@@ -33,11 +33,9 @@ class MediaListFragment : BaseFragment(), MediaListView, MediaItemCallback {
     private val addAction: (Station) -> Unit = { presenter.addStation(it) }
     private val addMediaDialog: NewStationDialog by lazy { NewStationDialog(view as ViewGroup, addAction) }
 
-    private val dialogRemoveStation: SimpleDialog<Station> by lazy {
-        SimpleDialog<Station>(view as ViewGroup)
-                .setMessage(getString(R.string.remove_message))
-                .setPositiveAction { presenter.submitRemove(it) }
-                .setNegativeAction { presenter.cancelRemove() }
+    private val dialogRemoveStation: SimpleDialog by lazy {
+        SimpleDialog(view as ViewGroup)
+                .setMessage(getString(R.string.dialog_remove_message))
                 .setCancelable(false)
     }
 
@@ -112,7 +110,10 @@ class MediaListFragment : BaseFragment(), MediaListView, MediaItemCallback {
     }
 
     override fun openRemoveDialog(station: Station) {
-        dialogRemoveStation.setObject(station).show()
+        dialogRemoveStation
+                .setPositiveAction { presenter.submitRemove(station) }
+                .setNegativeAction { presenter.cancelRemove() }
+                .show()
     }
 
     override fun closeRemoveDialog() {

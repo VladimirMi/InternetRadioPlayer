@@ -86,8 +86,18 @@ class MediaListPresenter
         }
     }
 
-    fun removeStation(station: Station, submit: Boolean = false) {
+    fun removeStation(station: Station) {
         viewState.openRemoveDialog(station)
+    }
+
+    fun submitRemove(station: Station) {
+        repository.remove(station)
+        viewState.closeRemoveDialog()
+    }
+
+    fun cancelRemove() {
+        repository.groupedStationList.notifyObservers()
+        viewState.closeRemoveDialog()
     }
 
     fun showStation(station: Station) {

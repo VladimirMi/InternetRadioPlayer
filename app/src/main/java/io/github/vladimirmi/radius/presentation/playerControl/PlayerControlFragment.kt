@@ -1,4 +1,4 @@
-package io.github.vladimirmi.radius.ui.playerControl
+package io.github.vladimirmi.radius.presentation.playerControl
 
 import android.graphics.Bitmap
 import android.graphics.Canvas
@@ -11,8 +11,6 @@ import io.github.vladimirmi.radius.di.Scopes
 import io.github.vladimirmi.radius.extensions.getIconTextColors
 import io.github.vladimirmi.radius.extensions.waitForMeasure
 import io.github.vladimirmi.radius.model.entity.Station
-import io.github.vladimirmi.radius.presentation.playerControl.PlayerControlPresenter
-import io.github.vladimirmi.radius.presentation.playerControl.PlayerControlView
 import io.github.vladimirmi.radius.ui.base.BaseFragment
 import kotlinx.android.synthetic.main.fragment_player_controls.*
 import toothpick.Toothpick

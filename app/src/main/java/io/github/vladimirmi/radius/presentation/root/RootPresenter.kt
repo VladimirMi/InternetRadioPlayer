@@ -10,7 +10,6 @@ import io.github.vladimirmi.radius.Screens
 import io.github.vladimirmi.radius.model.repository.MediaBrowserController
 import io.github.vladimirmi.radius.model.repository.StationRepository
 import io.github.vladimirmi.radius.ui.base.BasePresenter
-import io.github.vladimirmi.radius.ui.root.RootActivity
 import ru.terrakok.cicerone.Router
 import javax.inject.Inject
 

@@ -1,4 +1,4 @@
-package io.github.vladimirmi.radius.ui.mediaList
+package io.github.vladimirmi.radius.presentation.mediaList
 
 import android.os.Bundle
 import android.support.v7.widget.LinearLayoutManager
@@ -13,13 +13,11 @@ import io.github.vladimirmi.radius.R
 import io.github.vladimirmi.radius.di.Scopes
 import io.github.vladimirmi.radius.model.entity.GroupedList
 import io.github.vladimirmi.radius.model.entity.Station
-import io.github.vladimirmi.radius.presentation.mediaList.MediaListPresenter
-import io.github.vladimirmi.radius.presentation.mediaList.MediaListView
+import io.github.vladimirmi.radius.presentation.root.RootActivity
 import io.github.vladimirmi.radius.presentation.root.ToolbarBuilder
 import io.github.vladimirmi.radius.ui.base.BaseFragment
+import io.github.vladimirmi.radius.ui.base.SimpleDialog
 import io.github.vladimirmi.radius.ui.dialogs.NewStationDialog
-import io.github.vladimirmi.radius.ui.dialogs.RemoveStationDialog
-import io.github.vladimirmi.radius.ui.root.RootActivity
 import kotlinx.android.synthetic.main.fragment_media_list.*
 import toothpick.Toothpick
 
@@ -34,6 +32,15 @@ class MediaListFragment : BaseFragment(), MediaListView, MediaItemCallback {
 
     private val addAction: (Station) -> Unit = { presenter.addStation(it) }
     private val addMediaDialog: NewStationDialog by lazy { NewStationDialog(view as ViewGroup, addAction) }
+
+    private val dialogRemoveStation: SimpleDialog<Station> by lazy {
+        SimpleDialog<Station>(view as ViewGroup)
+                .setMessage(getString(R.string.remove_message))
+                .setPositiveAction { presenter.submitRemove(it) }
+                .setNegativeAction { presenter.cancelRemove() }
+                .setCancelable(false)
+    }
+
 
     private val itemTouchHelper = ItemTouchHelper(object : ItemSwipeCallback(Scopes.context,
             0,
@@ -93,11 +100,11 @@ class MediaListFragment : BaseFragment(), MediaListView, MediaItemCallback {
 
     override fun openAddDialog(station: Station) {
         addMediaDialog.setupDialog(station)
-        addMediaDialog.open()
+        addMediaDialog.show()
     }
 
     override fun closeAddDialog() {
-        addMediaDialog.close()
+        addMediaDialog.dismiss()
     }
 
     override fun showToast(resId: Int) {
@@ -105,7 +112,11 @@ class MediaListFragment : BaseFragment(), MediaListView, MediaItemCallback {
     }
 
     override fun openRemoveDialog(station: Station) {
-        RemoveStationDialog.newInstance(station).show(fragmentManager, "remove dialog")
+        dialogRemoveStation.setObject(station).show()
+    }
+
+    override fun closeRemoveDialog() {
+        dialogRemoveStation.dismiss()
     }
 
     override fun buildToolbar(builder: ToolbarBuilder) {

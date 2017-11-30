@@ -1,4 +1,4 @@
-package io.github.vladimirmi.radius.ui.mediaList
+package io.github.vladimirmi.radius.presentation.mediaList
 
 import android.content.Context
 import android.graphics.Canvas

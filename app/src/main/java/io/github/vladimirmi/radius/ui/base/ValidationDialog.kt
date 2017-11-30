@@ -50,13 +50,13 @@ abstract class ValidationDialog(layoutId: Int, viewGroup: ViewGroup)
     protected fun validateForm(observables: List<Observable<Boolean>>): Observable<Boolean> =
             Observable.combineLatest(observables, { it.all { it as Boolean } })
 
-    override fun open() {
-        super.open()
+    override fun show() {
+        super.show()
         if (compDisp.size() == 0) compDisp.add(listenFields())
     }
 
-    override fun close() {
-        super.close()
+    override fun dismiss() {
+        super.dismiss()
         clearDialog()
         compDisp.clear()
     }

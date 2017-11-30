@@ -23,7 +23,7 @@ class NewStationDialog(viewGroup: ViewGroup, submit: (Station) -> Unit)
 
     init {
         dialog.setCanceledOnTouchOutside(false)
-        cancel.setOnClickListener { close() }
+        cancel.setOnClickListener { dismiss() }
         ok.setOnClickListener {
             val request = station.copy(
                     title = name.text.toString(),

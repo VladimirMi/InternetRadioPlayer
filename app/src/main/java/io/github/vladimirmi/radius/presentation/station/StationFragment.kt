@@ -1,4 +1,4 @@
-package io.github.vladimirmi.radius.ui.station
+package io.github.vladimirmi.radius.presentation.station
 
 import android.os.Bundle
 import android.support.design.widget.TextInputLayout
@@ -10,12 +10,10 @@ import com.arellomobile.mvp.presenter.ProvidePresenter
 import io.github.vladimirmi.radius.R
 import io.github.vladimirmi.radius.di.Scopes
 import io.github.vladimirmi.radius.model.entity.Station
+import io.github.vladimirmi.radius.presentation.root.RootActivity
 import io.github.vladimirmi.radius.presentation.root.ToolbarBuilder
-import io.github.vladimirmi.radius.presentation.station.StationPresenter
-import io.github.vladimirmi.radius.presentation.station.StationView
 import io.github.vladimirmi.radius.ui.TagView
 import io.github.vladimirmi.radius.ui.base.BaseFragment
-import io.github.vladimirmi.radius.ui.root.RootActivity
 import kotlinx.android.synthetic.main.fragment_station.*
 import kotlinx.android.synthetic.main.part_station_info.*
 import toothpick.Toothpick

@@ -1,4 +1,4 @@
-package io.github.vladimirmi.radius.ui.root
+package io.github.vladimirmi.radius.presentation.root
 
 import android.annotation.SuppressLint
 import android.content.Intent
@@ -21,12 +21,8 @@ import io.github.vladimirmi.radius.Screens
 import io.github.vladimirmi.radius.di.Scopes
 import io.github.vladimirmi.radius.di.module.RootActivityModule
 import io.github.vladimirmi.radius.model.entity.Station
-import io.github.vladimirmi.radius.presentation.root.MenuItemHolder
-import io.github.vladimirmi.radius.presentation.root.RootPresenter
-import io.github.vladimirmi.radius.presentation.root.RootView
-import io.github.vladimirmi.radius.presentation.root.ToolbarView
-import io.github.vladimirmi.radius.ui.mediaList.MediaListFragment
-import io.github.vladimirmi.radius.ui.station.StationFragment
+import io.github.vladimirmi.radius.presentation.mediaList.MediaListFragment
+import io.github.vladimirmi.radius.presentation.station.StationFragment
 import kotlinx.android.synthetic.main.activity_root.*
 import kotlinx.android.synthetic.main.view_menu_item.view.*
 import ru.terrakok.cicerone.NavigatorHolder

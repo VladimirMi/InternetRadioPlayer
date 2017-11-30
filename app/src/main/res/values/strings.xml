@@ -14,7 +14,7 @@
 
     <string name="message_err_name">Необходимо задать имя</string>
     <string name="remove">Удалить</string>
-    <string name="remove_message">Вы дейстаительно хотие удалить станцию</string>
+    <string name="remove_message">Вы дейстаительно хотите удалить станцию?</string>
     <string name="edit">Редактировать</string>
     <string name="show">Подробнее</string>
 
@@ -25,8 +25,9 @@
 
     <string name="station_hint_url">Station url:</string>
     <string name="station_hint_bitrate">Stream bitrate:</string>
-    <string name="station_hint_rate">Sample rate:</string>
+    <string name="station_hint_rate">Source sample rate:</string>
     <string name="station_hint_title">Title</string>
     <string name="station_hint_folder">Folder</string>
     <string name="station_title_information">Information</string>
+    <string name="station_title_genre">Genres:</string>
 </resources>

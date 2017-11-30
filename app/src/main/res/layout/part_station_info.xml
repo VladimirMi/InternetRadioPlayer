@@ -6,6 +6,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
+    app:cardElevation="3dp"
     app:cardUseCompatPadding="true"
     app:contentPadding="8dp"
     >
@@ -33,16 +34,17 @@
             android:id="@+id/url"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:layout_marginBottom="8dp"
             android:hint="@string/station_hint_url"
             >
 
             <android.support.design.widget.TextInputEditText
-                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:layout_width="match_parent"
+                android:textSize="14sp"
                 android:autoLink="web"
                 android:inputType="textUri"
                 android:textColorLink="@color/blue_500"
-                android:textSize="14sp"
                 tools:text="http://www.stationstream.com"
                 />
 
@@ -64,10 +66,10 @@
                 >
 
                 <android.support.design.widget.TextInputEditText
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
                     android:layout_marginEnd="16dp"
                     android:layout_marginRight="16dp"
+                    android:layout_height="wrap_content"
+                    android:layout_width="match_parent"
                     android:textSize="14sp"
                     tools:text="128kB"
                     />
@@ -84,10 +86,10 @@
                 >
 
                 <android.support.design.widget.TextInputEditText
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:textSize="14sp"
                     tools:text="44100Hz"
+                    android:layout_height="wrap_content"
+                    android:layout_width="match_parent"
+                    android:textSize="14sp"
                     />
 
             </android.support.design.widget.TextInputLayout>
@@ -98,9 +100,9 @@
             style="@style/TextAppearance.AppCompat.Caption"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:padding="6dp"
             android:text="Genres:"
             android:textColor="@color/grey_500"
-            android:padding="6dp"
             />
 
         <com.google.android.flexbox.FlexboxLayout

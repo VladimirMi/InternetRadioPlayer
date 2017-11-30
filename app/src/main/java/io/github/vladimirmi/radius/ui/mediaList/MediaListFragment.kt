@@ -15,9 +15,11 @@ import io.github.vladimirmi.radius.model.entity.GroupedList
 import io.github.vladimirmi.radius.model.entity.Station
 import io.github.vladimirmi.radius.presentation.mediaList.MediaListPresenter
 import io.github.vladimirmi.radius.presentation.mediaList.MediaListView
+import io.github.vladimirmi.radius.presentation.root.ToolbarBuilder
 import io.github.vladimirmi.radius.ui.base.BaseFragment
 import io.github.vladimirmi.radius.ui.dialogs.NewStationDialog
 import io.github.vladimirmi.radius.ui.dialogs.RemoveStationDialog
+import io.github.vladimirmi.radius.ui.root.RootActivity
 import kotlinx.android.synthetic.main.fragment_media_list.*
 import toothpick.Toothpick
 
@@ -104,5 +106,9 @@ class MediaListFragment : BaseFragment(), MediaListView, MediaItemCallback {
 
     override fun openRemoveDialog(station: Station) {
         RemoveStationDialog.newInstance(station).show(fragmentManager, "remove dialog")
+    }
+
+    override fun buildToolbar(builder: ToolbarBuilder) {
+        builder.build(activity as RootActivity)
     }
 }

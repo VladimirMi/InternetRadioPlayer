@@ -8,6 +8,7 @@ import io.github.vladimirmi.radius.Screens
 import io.github.vladimirmi.radius.model.entity.Station
 import io.github.vladimirmi.radius.model.repository.MediaBrowserController
 import io.github.vladimirmi.radius.model.repository.StationRepository
+import io.github.vladimirmi.radius.presentation.root.ToolbarBuilder
 import io.github.vladimirmi.radius.ui.base.BasePresenter
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.rxkotlin.addTo
@@ -45,6 +46,13 @@ class MediaListPresenter
                         viewState.select(station, playing = false)
                     }
                 }.addTo(compDisp)
+        initToolbar()
+    }
+
+    private fun initToolbar() {
+        val builder = ToolbarBuilder()
+                .setToolbarTitleId(R.string.app_name)
+        viewState.buildToolbar(builder)
     }
 
     fun select(station: Station) {

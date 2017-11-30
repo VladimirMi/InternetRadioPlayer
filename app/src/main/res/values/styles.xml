@@ -4,7 +4,7 @@
         <item name="colorPrimary">@color/primaryColor</item>
         <item name="colorPrimaryDark">@color/primaryDarkColor</item>
         <item name="colorAccent">@color/accentColor</item>
-        <item name="android:textColor">@color/grey_800</item>
+        <item name="android:windowSoftInputMode">adjustPan|stateAlwaysHidden</item>
     </style>
 
     <style name="AppTheme.AppBarOverlay" parent="ThemeOverlay.AppCompat.Dark.ActionBar">
@@ -38,7 +38,7 @@
     <style name="InputField">
         <item name="android:layout_width">match_parent</item>
         <item name="android:layout_height">wrap_content</item>
-        <item name="android:background">@drawable/input_field</item>
+        <item name="android:background">@drawable/bg_input_field</item>
         <item name="android:fontFamily">sans-serif-light</item>
         <item name="android:textColor">@color/black</item>
         <item name="android:textSize">14sp</item>

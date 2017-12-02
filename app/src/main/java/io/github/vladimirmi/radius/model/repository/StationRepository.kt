@@ -65,12 +65,8 @@ class StationRepository
 
     fun remove(station: Station) {
         if (stationList.remove(station)) {
-            removeFromDisk(station)
+            stationSource.remove(station)
         }
-    }
-
-    fun removeFromDisk(station: Station) {
-        stationSource.remove(station)
     }
 
     fun next(): Station {

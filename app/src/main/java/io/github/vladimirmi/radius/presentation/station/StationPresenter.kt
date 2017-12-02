@@ -7,6 +7,7 @@ import io.github.vladimirmi.radius.model.repository.StationRepository
 import io.github.vladimirmi.radius.presentation.root.MenuItemHolder
 import io.github.vladimirmi.radius.presentation.root.ToolbarBuilder
 import io.github.vladimirmi.radius.ui.base.BasePresenter
+import ru.terrakok.cicerone.Router
 import javax.inject.Inject
 
 /**
@@ -15,10 +16,18 @@ import javax.inject.Inject
 
 @InjectViewState
 class StationPresenter
-@Inject constructor(private val repository: StationRepository)
+@Inject constructor(private val repository: StationRepository,
+                    private val router: Router)
     : BasePresenter<StationView>() {
 
     lateinit var id: String
+    private val toolbarBuilder
+        get() = ToolbarBuilder()
+                //todo rename to allow without arg
+                .setBackNavigationEnabled(true)
+                .addAction(MenuItemHolder(itemTitle = "delete",
+                        iconResId = R.drawable.ic_delete,
+                        actions = { viewState.openDeleteDialog() }))
 
     override fun onFirstViewAttach() {
         val station = repository.getStation(id)
@@ -27,26 +36,35 @@ class StationPresenter
     }
 
     private fun viewMode() {
-        val builder = ToolbarBuilder()
-                .addAction(MenuItemHolder(itemTitle = "editMode",
-                        iconResId = R.drawable.ic_edit,
-                        actions = { editMode() }))
+        val toolbar = toolbarBuilder.addAction(MenuItemHolder(itemTitle = "editMode",
+                iconResId = R.drawable.ic_edit,
+                actions = { editMode() }))
 
-        viewState.buildToolbar(builder)
+        viewState.buildToolbar(toolbar)
         viewState.setEditable(false)
     }
 
     private fun editMode() {
-        val builder = ToolbarBuilder().addAction(
+        val toolbar = toolbarBuilder.addAction(
                 MenuItemHolder(itemTitle = "submit",
                         iconResId = R.drawable.ic_submit,
-                        actions = { viewState.openSubmitEditDialog() }))
+                        actions = { viewState.openEditDialog() }))
 
-        viewState.buildToolbar(builder)
+        viewState.buildToolbar(toolbar)
         viewState.setEditable(true)
     }
 
-    fun submitEdit(station: Station) {
+    fun delete() {
+        repository.remove(repository.getStation(id))
+        viewState.closeDeleteDialog()
+        router.exit()
+    }
+
+    fun cancelDelete() {
+        viewState.closeDeleteDialog()
+    }
+
+    fun edit(station: Station) {
         val old = repository.getStation(id)
         if (old.path != station.path) {
             repository.remove(old)
@@ -55,11 +73,11 @@ class StationPresenter
             repository.update(station)
         }
 
-        viewState.closeSubmitEditDialog()
+        viewState.closeEditDialog()
         viewMode()
     }
 
     fun cancelEdit() {
-        viewState.closeSubmitEditDialog()
+        viewState.closeEditDialog()
     }
 }

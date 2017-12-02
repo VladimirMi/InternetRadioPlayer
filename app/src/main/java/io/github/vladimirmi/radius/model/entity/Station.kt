@@ -76,20 +76,26 @@ data class Station(val uri: String,
                 null -> null
                 else -> newUrl.openStream().parseM3u()
             }
-            val new = parseHeaders(station)
-            Timber.d("fromNet: $new")
-            return new
+            return parseHeaders(station)
         }
 
         private fun parseHeaders(station: Station?): Station? {
             val headers = station?.uri?.toURL()?.openConnection()?.headerFields ?: return station
-            return station.copy(
+            val genresSt = headers["icy-genre"]?.get(0)
+            val genres = if (genresSt?.contains(',') == true) {
+                genresSt.split(',').map { it.trim() }
+            } else {
+                genresSt?.split(' ')?.map { it.trim() }
+            }
+            Timber.e("parseHeaders: $genres")
+            val copy = station.copy(
                     title = headers["icy-name"]?.get(0) ?: station.title,
-                    genre = headers["icy-genre"] ?: station.genre,
+                    genre = genres ?: station.genre,
                     url = headers["icy-url"]?.get(0) ?: station.url,
                     bitrate = headers["icy-br"]?.get(0)?.toInt() ?: station.bitrate,
                     sample = headers["icy-sr"]?.get(0)?.toInt() ?: station.sample)
-
+            Timber.e("parseHeaders: $copy")
+            return copy
         }
     }
 }

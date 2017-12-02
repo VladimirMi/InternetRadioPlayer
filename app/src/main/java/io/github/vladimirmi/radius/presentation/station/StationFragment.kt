@@ -3,6 +3,7 @@ package io.github.vladimirmi.radius.presentation.station
 import android.os.Bundle
 import android.support.design.widget.TextInputLayout
 import android.util.TypedValue
+import android.view.MenuItem
 import android.view.View
 import android.view.ViewGroup
 import com.arellomobile.mvp.presenter.InjectPresenter
@@ -39,9 +40,13 @@ class StationFragment : BaseFragment(), StationView {
     }
 
     private var editTextBg: Int = 0
-    private val dialogSubmitEdit: SimpleDialog by lazy {
+    private val dialogEdit: SimpleDialog by lazy {
         SimpleDialog(view as ViewGroup)
                 .setMessage(getString(R.string.dialog_submit_message))
+    }
+    private val dialogDelete: SimpleDialog by lazy {
+        SimpleDialog(view as ViewGroup)
+                .setMessage(getString(R.string.dialog_remove_message))
     }
 
     @InjectPresenter lateinit var presenter: StationPresenter
@@ -56,14 +61,29 @@ class StationFragment : BaseFragment(), StationView {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        setHasOptionsMenu(true)
         presenter.id = arguments.getString("id")
     }
 
     override fun onViewCreated(view: View?, savedInstanceState: Bundle?) {
         val typedValue = TypedValue()
-
         activity.theme.resolveAttribute(android.R.attr.editTextBackground, typedValue, true)
         editTextBg = typedValue.resourceId
+    }
+
+    override fun onOptionsItemSelected(item: MenuItem?): Boolean {
+        //todo move to base class and setHasOptionsMenu()
+        if (item?.itemId == android.R.id.home) {
+            activity.onBackPressed()
+            return true
+        }
+        return super.onOptionsItemSelected(item)
+    }
+
+//region =============== StationView ==============
+
+    override fun buildToolbar(builder: ToolbarBuilder) {
+        builder.build(activity as RootActivity)
     }
 
     override fun setStation(station: Station) {
@@ -74,10 +94,6 @@ class StationFragment : BaseFragment(), StationView {
         bitrate.setTextWithoutAnimation(station.bitrate.toString())
         sample.setTextWithoutAnimation(station.sample.toString())
         station.genre.forEach { flex_box.addView(TagView(context, it, null)) }
-    }
-
-    override fun buildToolbar(builder: ToolbarBuilder) {
-        builder.build(activity as RootActivity)
     }
 
     override fun setEditable(editable: Boolean) {
@@ -103,15 +119,27 @@ class StationFragment : BaseFragment(), StationView {
         sample.cutOff(editable, "Hz")
     }
 
-    override fun openSubmitEditDialog() {
-        dialogSubmitEdit.setPositiveAction { presenter.submitEdit(constructStation()) }
+    override fun openEditDialog() {
+        dialogEdit.setPositiveAction { presenter.edit(constructStation()) }
                 .setNegativeAction { presenter.cancelEdit() }
                 .show()
     }
 
-    override fun closeSubmitEditDialog() {
-        dialogSubmitEdit.dismiss()
+    override fun closeEditDialog() {
+        dialogEdit.dismiss()
     }
+
+    override fun openDeleteDialog() {
+        dialogDelete.setPositiveAction { presenter.delete() }
+                .setNegativeAction { presenter.cancelDelete() }
+                .show()
+    }
+
+    override fun closeDeleteDialog() {
+        dialogDelete.dismiss()
+    }
+
+    //endregion
 
     private fun constructStation(): Station {
         val genres = ArrayList<String>()

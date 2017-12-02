@@ -16,7 +16,11 @@ interface StationView : MvpView {
 
     fun setEditable(editable: Boolean)
 
-    fun openSubmitEditDialog()
+    fun openEditDialog()
 
-    fun closeSubmitEditDialog()
+    fun closeEditDialog()
+
+    fun openDeleteDialog()
+
+    fun closeDeleteDialog()
 }

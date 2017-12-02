@@ -55,8 +55,7 @@ class StationSource
     fun remove(station: Station) {
         Timber.e("remove: ${station.path}")
         val file = File(station.path)
-        val delete = file.delete()
-        Timber.e("remove: $delete")
+        file.delete()
         file.parentFile.delete()
     }
 

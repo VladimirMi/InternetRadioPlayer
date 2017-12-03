@@ -8,6 +8,7 @@
     <string name="dialog_remove_message">Вы действительно хотите удалить станцию?</string>
     <string name="dialog_submit_message">Сохранить изменения?</string>
     <string name="dialog_discard_message">Отменить изменения?</string>
+    <string name="dialog_goto_message">Перейти по ссылке?</string>
     <string name="dialog_add_message">Добавить станцию</string>
     <string name="dialog_add_name">Название</string>
     <string name="dialog_add_name_err">Необходимо задать имя</string>

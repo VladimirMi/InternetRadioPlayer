@@ -50,8 +50,7 @@ class StationRepository
     }
 
     fun update(station: Station) {
-        //todo check
-//        if (station.id == selected.value.id) selected.accept(station)
+        if (station.id == selected.value.id) selected.accept(station)
         stationList[stationList.indexOfFirst { it.id == station.id }] = station
         stationSource.save(station)
     }

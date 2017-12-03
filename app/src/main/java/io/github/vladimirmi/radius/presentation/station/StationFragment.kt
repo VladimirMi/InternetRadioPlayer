@@ -1,11 +1,19 @@
 package io.github.vladimirmi.radius.presentation.station
 
+import android.content.Intent
+import android.net.Uri
 import android.os.Bundle
 import android.support.design.widget.TextInputLayout
+import android.support.v4.content.ContextCompat
+import android.text.Spannable
+import android.text.SpannableString
+import android.text.style.ForegroundColorSpan
+import android.text.style.URLSpan
 import android.util.TypedValue
 import android.view.MenuItem
 import android.view.View
 import android.view.ViewGroup
+import android.widget.EditText
 import com.arellomobile.mvp.presenter.InjectPresenter
 import com.arellomobile.mvp.presenter.ProvidePresenter
 import io.github.vladimirmi.radius.R
@@ -16,6 +24,7 @@ import io.github.vladimirmi.radius.model.entity.Station
 import io.github.vladimirmi.radius.presentation.root.RootActivity
 import io.github.vladimirmi.radius.presentation.root.ToolbarBuilder
 import io.github.vladimirmi.radius.ui.TagView
+import io.github.vladimirmi.radius.ui.base.BackPressListener
 import io.github.vladimirmi.radius.ui.base.BaseFragment
 import io.github.vladimirmi.radius.ui.base.SimpleDialog
 import kotlinx.android.synthetic.main.fragment_station.*
@@ -27,7 +36,7 @@ import toothpick.Toothpick
  * Created by Vladimir Mikhalev 18.11.2017.
  */
 
-class StationFragment : BaseFragment(), StationView {
+class StationFragment : BaseFragment(), StationView, BackPressListener {
     override val layoutRes = R.layout.fragment_station
 
     companion object {
@@ -48,6 +57,10 @@ class StationFragment : BaseFragment(), StationView {
         SimpleDialog(view as ViewGroup)
                 .setMessage(getString(R.string.dialog_remove_message))
     }
+    private val dialogLink: SimpleDialog by lazy {
+        SimpleDialog(view as ViewGroup)
+                .setMessage(getString(R.string.dialog_goto_message))
+    }
 
     @InjectPresenter lateinit var presenter: StationPresenter
 
@@ -65,10 +78,23 @@ class StationFragment : BaseFragment(), StationView {
         presenter.id = arguments.getString("id")
     }
 
+    override fun onStop() {
+        super.onStop()
+        closeDeleteDialog()
+        closeEditDialog()
+        closeLinkDialog()
+    }
+
     override fun onViewCreated(view: View?, savedInstanceState: Bundle?) {
         val typedValue = TypedValue()
         activity.theme.resolveAttribute(android.R.attr.editTextBackground, typedValue, true)
         editTextBg = typedValue.resourceId
+        val listener: (View) -> Unit = {
+            val url = (it as EditText).text.toString()
+            presenter.openLink(url)
+        }
+        url.editText?.setOnClickListener(listener)
+        uri.editText?.setOnClickListener(listener)
     }
 
     override fun onOptionsItemSelected(item: MenuItem?): Boolean {
@@ -80,7 +106,9 @@ class StationFragment : BaseFragment(), StationView {
         return super.onOptionsItemSelected(item)
     }
 
-//region =============== StationView ==============
+    override fun onBackPressed() = presenter.onBackPressed()
+
+    //region =============== StationView ==============
 
     override fun buildToolbar(builder: ToolbarBuilder) {
         builder.build(activity as RootActivity)
@@ -117,12 +145,20 @@ class StationFragment : BaseFragment(), StationView {
 
         sample.setEditable(editable)
         sample.cutOff(editable, "Hz")
+
+        uri.linkStyle(!editable)
+        url.linkStyle(!editable)
     }
 
     override fun openEditDialog() {
-        dialogEdit.setPositiveAction { presenter.edit(constructStation()) }
-                .setNegativeAction { presenter.cancelEdit() }
-                .show()
+        val station = constructStation()
+        if (presenter.isChanged(station)) {
+            dialogEdit.setPositiveAction { presenter.edit(station) }
+                    .setNegativeAction { presenter.cancelEdit() }
+                    .show()
+        } else {
+            presenter.cancelEdit()
+        }
     }
 
     override fun closeEditDialog() {
@@ -137,6 +173,16 @@ class StationFragment : BaseFragment(), StationView {
 
     override fun closeDeleteDialog() {
         dialogDelete.dismiss()
+    }
+
+    override fun openLinkDialog(url: String) {
+        dialogLink.setPositiveAction { startActivity(Intent(Intent.ACTION_VIEW, Uri.parse(url))) }
+                .setNegativeAction { presenter.cancelLink() }
+                .show()
+    }
+
+    override fun closeLinkDialog() {
+        dialogLink.dismiss()
     }
 
     //endregion
@@ -167,13 +213,15 @@ class StationFragment : BaseFragment(), StationView {
     }
 
     private fun TextInputLayout.setEditable(enable: Boolean) {
-        editText?.isFocusable = enable
-        editText?.isClickable = enable
-        editText?.isFocusableInTouchMode = enable
-        editText?.isCursorVisible = enable
+        editText?.apply {
+            isFocusable = enable
+            isClickable = enable
+            isFocusableInTouchMode = enable
+            isCursorVisible = enable
 
-        if (enable) editText?.setBackgroundResource(editTextBg)
-        else editText?.setBackgroundResource(0)
+            if (enable) setBackgroundResource(editTextBg)
+            else setBackgroundResource(0)
+        }
     }
 
     private fun TextInputLayout.cutOff(editable: Boolean, suffix: String) {
@@ -189,6 +237,21 @@ class StationFragment : BaseFragment(), StationView {
     }
 
     private fun TextInputLayout.isBlank() = editText?.text?.isBlank() ?: true
+
+    private fun TextInputLayout.linkStyle(enable: Boolean) {
+        editText?.apply {
+            val string = text.toString()
+            val color = ContextCompat.getColor(context, R.color.blue_500)
+            if (enable) {
+                val spannable = SpannableString(string)
+                spannable.setSpan(URLSpan(string), 0, spannable.length, Spannable.SPAN_EXCLUSIVE_EXCLUSIVE)
+                spannable.setSpan(ForegroundColorSpan(color), 0, spannable.length, Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
+                setText(spannable)
+            } else {
+                setText(string)
+            }
+        }
+    }
 }
 
 

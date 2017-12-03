@@ -18,60 +18,47 @@ class GroupingList(private val stationList: ArrayList<Station>)
         initMappings()
     }
 
-    override fun isGroupTitle(position: Int): Boolean = getGroupMapping(position).isGroupTitle
+    override fun isGroupTitle(position: Int): Boolean = mappings[position].isGroupTitle
 
-    override fun getGroupTitle(position: Int): String = getGroupMapping(position).group
+    override fun getGroupTitle(position: Int): String = mappings[position].group
 
     override fun getGroupItem(position: Int): Station {
-        val groupMapping = getGroupMapping(position)
+        val groupMapping = mappings[position]
         if (groupMapping.index == null) throw IllegalStateException("Should call getGroupTitle()")
         val group = groups[groupMapping.group] ?: throw IllegalStateException("Can not find group")
         return get(group[groupMapping.index])
     }
 
     override fun hideGroup(group: String) {
-        setGroupVisible(group, false)
+        mappings.removeAll { !it.isGroupTitle && it.group == group }
     }
 
     override fun showGroup(group: String) {
-        setGroupVisible(group, true)
-    }
-
-    override fun isGroupVisible(group: String): Boolean =
-            mappings.find { it.group == group && !it.isGroupTitle }?.visible ?: false
-
-    override fun groupedSize(): Int = mappings.count { it.visible }
-
-    private fun initMappings() {
-        stationList.forEachIndexed { index, media ->
-            addToMappings(media, index)
-        }
+        mappings.addAll(groups[group]!!.mapIndexed { index, _ -> GroupMapping(group, index) })
         sortMappings()
     }
 
-    private fun addToMappings(station: Station, index: Int) {
-        val group = station.group
-        val list = groups.getOrPut(group) { ArrayList() }
-        if (list.isEmpty()) mappings.add(GroupMapping(group))
-        mappings.add(GroupMapping(group, list.size))
-        list.add(index)
-    }
+    override fun isGroupVisible(group: String): Boolean =
+            mappings.find { it.group == group && !it.isGroupTitle } != null
+
+    override fun groupedSize(): Int = mappings.size
 
     private fun sortMappings() {
         mappings.sortBy { it.group }
     }
 
-    private fun getGroupMapping(position: Int): GroupMapping {
-        val hided = (0..position).count { !mappings[it].visible }
-        return mappings[position + hided]
-    }
-
-    private fun setGroupVisible(group: String, visible: Boolean) {
-        mappings.forEach {
-            if (it.group == group && !it.isGroupTitle) {
-                it.visible = visible
+    private fun initMappings() {
+        groups.clear()
+        mappings.clear()
+        stationList.forEachIndexed { index, station ->
+            val list = groups.getOrPut(station.group) { ArrayList() }
+            if (list.isEmpty() && station.group.isNotBlank()) {
+                mappings.add(GroupMapping(station.group))
             }
+            mappings.add(GroupMapping(station.group, list.size))
+            list.add(index)
         }
+        sortMappings()
     }
 
     private val obs: BehaviorRelay<GroupedList<Station>> = BehaviorRelay.createDefault(this)
@@ -83,9 +70,8 @@ class GroupingList(private val stationList: ArrayList<Station>)
     }
 
     override fun add(element: Station): Boolean {
-        addToMappings(element, stationList.size)
-        sortMappings()
         val tru = stationList.add(element)
+        initMappings()
         obs.accept(this)
         return tru
     }
@@ -99,8 +85,6 @@ class GroupingList(private val stationList: ArrayList<Station>)
     override fun remove(element: Station): Boolean {
         val removed = stationList.remove(element)
         if (removed) {
-            groups.clear()
-            mappings.clear()
             initMappings()
             obs.accept(this)
         }

@@ -39,12 +39,11 @@
             >
 
             <android.support.design.widget.TextInputEditText
+                android:id="@+id/uri_et"
                 android:layout_height="wrap_content"
                 android:layout_width="match_parent"
                 android:textSize="14sp"
-                android:autoLink="web"
                 android:inputType="textUri"
-                android:textColorLink="@color/blue_500"
                 tools:text="http://www.stationstream.com"
                 />
 
@@ -62,9 +61,7 @@
                 android:layout_height="wrap_content"
                 android:layout_width="match_parent"
                 android:textSize="14sp"
-                android:autoLink="web"
                 android:inputType="textUri"
-                android:textColorLink="@color/blue_500"
                 tools:text="http://www.stationstream.com"
                 />
 

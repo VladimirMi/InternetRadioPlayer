@@ -21,6 +21,8 @@ class StationPresenter
     : BasePresenter<StationView>() {
 
     lateinit var id: String
+    private var editMode = false
+
     private val toolbarBuilder
         get() = ToolbarBuilder()
                 //todo rename to allow without arg
@@ -42,6 +44,7 @@ class StationPresenter
 
         viewState.buildToolbar(toolbar)
         viewState.setEditable(false)
+        editMode = false
     }
 
     private fun editMode() {
@@ -52,10 +55,12 @@ class StationPresenter
 
         viewState.buildToolbar(toolbar)
         viewState.setEditable(true)
+        editMode = true
     }
 
     fun delete() {
         repository.remove(repository.getStation(id))
+        repository.next()
         viewState.closeDeleteDialog()
         router.exit()
     }
@@ -78,6 +83,24 @@ class StationPresenter
     }
 
     fun cancelEdit() {
+        viewMode()
         viewState.closeEditDialog()
+    }
+
+    fun onBackPressed(): Boolean {
+        return if (editMode) {
+            viewState.openEditDialog()
+            true
+        } else false
+    }
+
+    fun isChanged(station: Station) = station != repository.getStation(id)
+
+    fun openLink(url: String) {
+        if (!editMode) viewState.openLinkDialog(url)
+    }
+
+    fun cancelLink() {
+        viewState.closeLinkDialog()
     }
 }

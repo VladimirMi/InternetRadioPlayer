@@ -17,8 +17,6 @@ interface GroupedList<E> {
     fun notifyObservers()
 }
 
-class GroupMapping(val group: String, val index: Int? = null) {
+data class GroupMapping(val group: String, val index: Int? = null) {
     val isGroupTitle get() = index == null
-
-    var visible = !(isGroupTitle && group.isBlank())
 }

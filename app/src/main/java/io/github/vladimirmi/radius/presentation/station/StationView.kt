@@ -23,4 +23,8 @@ interface StationView : MvpView {
     fun openDeleteDialog()
 
     fun closeDeleteDialog()
+
+    fun openLinkDialog(url: String)
+
+    fun closeLinkDialog()
 }

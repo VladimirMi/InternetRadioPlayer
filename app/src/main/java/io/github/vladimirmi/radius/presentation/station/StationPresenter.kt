@@ -25,11 +25,11 @@ class StationPresenter
 
     private val toolbarBuilder
         get() = ToolbarBuilder()
-                //todo rename to allow without arg
-                .setBackNavigationEnabled(true)
+                .enableBackNavigation()
                 .addAction(MenuItemHolder(itemTitle = "delete",
                         iconResId = R.drawable.ic_delete,
                         actions = { viewState.openDeleteDialog() }))
+                .setToolbarTitle(repository.getStation(id).title)
 
     override fun onFirstViewAttach() {
         val station = repository.getStation(id)

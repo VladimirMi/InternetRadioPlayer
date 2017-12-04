@@ -12,6 +12,8 @@ interface ToolbarView {
 
     fun setToolbarTitle(@StringRes titleId: Int)
 
+    fun setToolbarTitle(title: String)
+
     fun enableBackNavigation(backNavEnabled: Boolean)
 
     fun setMenuItems(menuItems: List<MenuItemHolder>)

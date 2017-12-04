@@ -11,6 +11,7 @@ import android.support.graphics.drawable.VectorDrawableCompat
 import android.support.v4.content.ContextCompat
 import android.util.DisplayMetrics
 import android.view.WindowManager
+import android.view.inputmethod.InputMethodManager
 import io.github.vladimirmi.radius.R
 
 
@@ -56,3 +57,6 @@ fun Context.getDisplayMetrics(): DisplayMetrics {
 
 val Context.downloadManager: DownloadManager
     get() = getSystemService(Context.DOWNLOAD_SERVICE) as DownloadManager
+
+val Context.inputMethotManager: InputMethodManager
+    get() = getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager

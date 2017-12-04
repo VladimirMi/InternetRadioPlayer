@@ -18,6 +18,7 @@ import com.arellomobile.mvp.presenter.InjectPresenter
 import com.arellomobile.mvp.presenter.ProvidePresenter
 import io.github.vladimirmi.radius.R
 import io.github.vladimirmi.radius.di.Scopes
+import io.github.vladimirmi.radius.extensions.inputMethotManager
 import io.github.vladimirmi.radius.extensions.remove
 import io.github.vladimirmi.radius.extensions.show
 import io.github.vladimirmi.radius.model.entity.Station
@@ -148,6 +149,9 @@ class StationFragment : BaseFragment(), StationView, BackPressListener {
 
         uri.linkStyle(!editable)
         url.linkStyle(!editable)
+        if (!editable) {
+            context.inputMethotManager.hideSoftInputFromWindow(view?.windowToken, 0)
+        }
     }
 
     override fun openEditDialog() {
@@ -163,6 +167,7 @@ class StationFragment : BaseFragment(), StationView, BackPressListener {
 
     override fun closeEditDialog() {
         dialogEdit.dismiss()
+
     }
 
     override fun openDeleteDialog() {

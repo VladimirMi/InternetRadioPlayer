@@ -100,7 +100,11 @@ class RootActivity : MvpAppCompatActivity(), RootView, ToolbarView {
     }
 
     override fun setToolbarTitle(@StringRes titleId: Int) {
-        supportActionBar?.setTitle(titleId)
+        setToolbarTitle(getString(titleId))
+    }
+
+    override fun setToolbarTitle(title: String) {
+        supportActionBar?.title = title
     }
 
     override fun enableBackNavigation(backNavEnabled: Boolean) {

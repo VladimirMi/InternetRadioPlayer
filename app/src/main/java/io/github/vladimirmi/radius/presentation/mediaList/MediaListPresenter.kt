@@ -26,14 +26,21 @@ class MediaListPresenter
                     private val router: Router)
     : BasePresenter<MediaListView>() {
 
+    val builder get() = ToolbarBuilder()
 
     override fun onFirstViewAttach() {
+        builder.setToolbarTitleId(R.string.app_name)
+        viewState.buildToolbar(builder)
+
         repository.groupedStationList.observe()
                 .subscribeBy { viewState.setMediaList(it) }
                 .addTo(compDisp)
 
         repository.selected
-                .subscribeBy { viewState.select(it, mediaBrowserController.isPlaying(it)) }
+                .subscribeBy {
+                    viewState.select(it, mediaBrowserController.isPlaying(it))
+                    viewState.buildToolbar(builder.setToolbarTitle(it.title))
+                }
                 .addTo(compDisp)
 
         mediaBrowserController.playbackState
@@ -45,13 +52,6 @@ class MediaListPresenter
                         viewState.select(station, playing = false)
                     }
                 }.addTo(compDisp)
-        initToolbar()
-    }
-
-    private fun initToolbar() {
-        val builder = ToolbarBuilder()
-                .setToolbarTitleId(R.string.app_name)
-        viewState.buildToolbar(builder)
     }
 
     fun select(station: Station) {

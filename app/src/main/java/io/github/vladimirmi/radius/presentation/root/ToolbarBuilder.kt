@@ -7,22 +7,28 @@ import java.util.*
 
 class ToolbarBuilder {
     private var isToolbarVisible = true
-    @StringRes private var toolbarTitleId = R.string.app_name
+    @StringRes private var titleId = R.string.app_name
+    private var title = ""
     private var backNavEnabled = false
     private val menuItems = ArrayList<MenuItemHolder>()
 
-    fun setToolbarVisible(toolbarVisible: Boolean): ToolbarBuilder {
+    fun setToolbarVisible(toolbarVisible: Boolean = true): ToolbarBuilder {
         isToolbarVisible = toolbarVisible
         return this
     }
 
     fun setToolbarTitleId(@StringRes titleId: Int): ToolbarBuilder {
-        toolbarTitleId = titleId
+        this.titleId = titleId
         return this
     }
 
-    fun setBackNavigationEnabled(backEnabled: Boolean): ToolbarBuilder {
-        backNavEnabled = backEnabled
+    fun setToolbarTitle(title: String): ToolbarBuilder {
+        this.title = title
+        return this
+    }
+
+    fun enableBackNavigation(enable: Boolean = true): ToolbarBuilder {
+        backNavEnabled = enable
         return this
     }
 
@@ -33,7 +39,11 @@ class ToolbarBuilder {
 
     fun build(toolbarView: ToolbarView) {
         toolbarView.setToolbarVisible(isToolbarVisible)
-        toolbarView.setToolbarTitle(toolbarTitleId)
+        if (title.isNotBlank()) {
+            toolbarView.setToolbarTitle(title)
+        } else {
+            toolbarView.setToolbarTitle(titleId)
+        }
         toolbarView.enableBackNavigation(backNavEnabled)
         toolbarView.setMenuItems(menuItems)
     }

@@ -10,7 +10,6 @@ import android.text.SpannableString
 import android.text.style.ForegroundColorSpan
 import android.text.style.URLSpan
 import android.util.TypedValue
-import android.view.MenuItem
 import android.view.View
 import android.view.ViewGroup
 import android.widget.EditText
@@ -50,7 +49,7 @@ class StationFragment : BaseFragment(), StationView, BackPressListener {
     }
 
     private var editTextBg: Int = 0
-    private val dialogEdit: SimpleDialog by lazy {
+    private val dialogSave: SimpleDialog by lazy {
         SimpleDialog(view as ViewGroup)
                 .setMessage(getString(R.string.dialog_submit_message))
     }
@@ -75,14 +74,13 @@ class StationFragment : BaseFragment(), StationView, BackPressListener {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setHasOptionsMenu(true)
         presenter.id = arguments.getString("id")
     }
 
     override fun onStop() {
         super.onStop()
         closeDeleteDialog()
-        closeEditDialog()
+        closeSaveDialog()
         closeLinkDialog()
     }
 
@@ -90,21 +88,10 @@ class StationFragment : BaseFragment(), StationView, BackPressListener {
         val typedValue = TypedValue()
         activity.theme.resolveAttribute(android.R.attr.editTextBackground, typedValue, true)
         editTextBg = typedValue.resourceId
-        val listener: (View) -> Unit = {
-            val url = (it as EditText).text.toString()
-            presenter.openLink(url)
-        }
-        url.editText?.setOnClickListener(listener)
-        uri.editText?.setOnClickListener(listener)
-    }
 
-    override fun onOptionsItemSelected(item: MenuItem?): Boolean {
-        //todo move to base class and setHasOptionsMenu()
-        if (item?.itemId == android.R.id.home) {
-            activity.onBackPressed()
-            return true
-        }
-        return super.onOptionsItemSelected(item)
+        urlTil.editText?.setOnClickListener { presenter.openLink((it as EditText).text.toString()) }
+        uriTil.editText?.setOnClickListener { presenter.openLink((it as EditText).text.toString()) }
+        fab.setOnClickListener { presenter.changeMode() }
     }
 
     override fun onBackPressed() = presenter.onBackPressed()
@@ -116,57 +103,53 @@ class StationFragment : BaseFragment(), StationView, BackPressListener {
     }
 
     override fun setStation(station: Station) {
-        title.setTextWithoutAnimation(station.title)
-        group.setTextWithoutAnimation(station.group)
-        uri.setTextWithoutAnimation(station.uri)
-        url.setTextWithoutAnimation(station.url)
-        bitrate.setTextWithoutAnimation(station.bitrate.toString())
-        sample.setTextWithoutAnimation(station.sample.toString())
-        station.genre.forEach { flex_box.addView(TagView(context, it, null)) }
+        titleTil.setTextWithoutAnimation(station.title)
+        folderTil.setTextWithoutAnimation(station.group)
+        uriTil.setTextWithoutAnimation(station.uri)
+        urlTil.setTextWithoutAnimation(station.url)
+        bitrateTil.setTextWithoutAnimation(station.bitrate.toString())
+        sampleTil.setTextWithoutAnimation(station.sample.toString())
+        station.genre.forEach { genresFl.addView(TagView(context, it, null)) }
     }
 
-    override fun setEditable(editable: Boolean) {
-        title.setEditable(editable)
+    override fun setEditMode(editMode: Boolean) {
+        titleTil.setEditable(editMode)
+        folderTil.setEditable(editMode)
+        uriTil.setEditable(editMode)
+        urlTil.setEditable(editMode)
+        bitrateTil.setEditable(editMode)
+        bitrateTil.cutOff(editMode, getString(R.string.unit_bitrate))
+        sampleTil.setEditable(editMode)
+        sampleTil.cutOff(editMode, getString(R.string.unit_sample_rate))
+        uriTil.linkStyle(!editMode)
+        urlTil.linkStyle(!editMode)
 
-        group.setEditable(editable)
-        if (editable) {
-            group.show()
-        } else if (group.isBlank()) group.remove()
-
-        uri.setEditable(editable)
-
-        url.setEditable(editable)
-        if (editable) {
-            url.show()
-        } else if (url.isBlank()) url.remove()
-
-        bitrate.setEditable(editable)
-        //todo strings from res(units)
-        bitrate.cutOff(editable, "kbps")
-
-        sample.setEditable(editable)
-        sample.cutOff(editable, "Hz")
-
-        uri.linkStyle(!editable)
-        url.linkStyle(!editable)
-        if (!editable) {
+        if (editMode) {
+            fab.setImageResource(R.drawable.ic_submit)
+            folderTil.show()
+            urlTil.show()
+        } else {
+            fab.setImageResource(R.drawable.ic_edit)
+            if (folderTil.isBlank()) folderTil.remove()
+            if (urlTil.isBlank()) urlTil.remove()
+            view?.clearFocus()
             context.inputMethotManager.hideSoftInputFromWindow(view?.windowToken, 0)
         }
     }
 
-    override fun openEditDialog() {
+    override fun openSaveDialog() {
         val station = constructStation()
         if (presenter.isChanged(station)) {
-            dialogEdit.setPositiveAction { presenter.edit(station) }
+            dialogSave.setPositiveAction { presenter.edit(station) }
                     .setNegativeAction { presenter.cancelEdit() }
                     .show()
         } else {
-            presenter.cancelEdit()
+            presenter.viewMode()
         }
     }
 
-    override fun closeEditDialog() {
-        dialogEdit.dismiss()
+    override fun closeSaveDialog() {
+        dialogSave.dismiss()
 
     }
 
@@ -194,20 +177,20 @@ class StationFragment : BaseFragment(), StationView, BackPressListener {
 
     private fun constructStation(): Station {
         val genres = ArrayList<String>()
-        (0 until flex_box.childCount)
+        (0 until genresFl.childCount)
                 .forEach {
-                    val tagView = flex_box.getChildAt(it) as TagView
+                    val tagView = genresFl.getChildAt(it) as TagView
                     genres.add(tagView.text.toString())
                 }
         return Station(
                 id = presenter.id,
-                uri = uri.editText!!.text.toString(),
-                title = title.editText!!.text.toString(),
-                group = group.editText!!.text.toString(),
+                uri = uriTil.editText!!.text.toString(),
+                title = titleTil.editText!!.text.toString(),
+                group = folderTil.editText!!.text.toString(),
                 genre = genres,
-                url = url.editText!!.text.toString(),
-                sample = sample.editText!!.text.toString().toInt(),
-                bitrate = bitrate.editText!!.text.toString().toInt()
+                url = urlTil.editText!!.text.toString(),
+                sample = sampleTil.editText!!.text.toString().toInt(),
+                bitrate = bitrateTil.editText!!.text.toString().toInt()
         )
     }
 
@@ -250,7 +233,7 @@ class StationFragment : BaseFragment(), StationView, BackPressListener {
             if (enable) {
                 val spannable = SpannableString(string)
                 spannable.setSpan(URLSpan(string), 0, spannable.length, Spannable.SPAN_EXCLUSIVE_EXCLUSIVE)
-                spannable.setSpan(ForegroundColorSpan(color), 0, spannable.length, Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
+                spannable.setSpan(ForegroundColorSpan(color), 0, spannable.length, Spannable.SPAN_EXCLUSIVE_EXCLUSIVE)
                 setText(spannable)
             } else {
                 setText(string)

@@ -15,7 +15,7 @@ class NewStationDialog(viewGroup: ViewGroup, submit: (Station) -> Unit)
     : ValidationDialog(R.layout.dialog_new_station, viewGroup) {
 
     private val name = dialogView.name
-    private val group = dialogView.group
+    private val group = dialogView.folder
     private val ok = dialogView.ok
     private val cancel = dialogView.cancel
 

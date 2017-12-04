@@ -42,7 +42,7 @@
             />
 
         <EditText
-            android:id="@+id/group"
+            android:id="@+id/folder"
             style="@style/InputField"
             android:inputType="text"
             />

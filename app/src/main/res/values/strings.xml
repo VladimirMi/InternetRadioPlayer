@@ -16,8 +16,9 @@
     <string name="dialog_ok">OK</string>
     <string name="dialog_cancel">Отмена</string>
 
-    <string name="remove">Удалить</string>
-    <string name="editMode">Редактировать</string>
+    <string name="menu_station_edit">Редактировать</string>
+    <string name="menu_station_delete">Удалить</string>
+
     <string name="show">Подробнее</string>
 
     <string name="desc_favorite">add to favorite</string>
@@ -37,4 +38,5 @@
     <string name="station_title_genre">Genres:</string>
     <string name="unit_sample_rate">Hz</string>
     <string name="unit_bitrate">kbps</string>
+    <string name="menu_station_save">Сохранить</string>
 </resources>

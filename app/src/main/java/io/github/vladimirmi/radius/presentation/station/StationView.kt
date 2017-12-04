@@ -14,11 +14,11 @@ interface StationView : MvpView {
 
     fun buildToolbar(builder: ToolbarBuilder)
 
-    fun setEditable(editable: Boolean)
+    fun setEditMode(editMode: Boolean)
 
-    fun openEditDialog()
+    fun openSaveDialog()
 
-    fun closeEditDialog()
+    fun closeSaveDialog()
 
     fun openDeleteDialog()
 

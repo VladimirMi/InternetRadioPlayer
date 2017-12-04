@@ -1,5 +1,6 @@
 package io.github.vladimirmi.radius.presentation.station
 
+import android.view.MenuItem
 import com.arellomobile.mvp.InjectViewState
 import io.github.vladimirmi.radius.R
 import io.github.vladimirmi.radius.model.entity.Station
@@ -23,39 +24,54 @@ class StationPresenter
     lateinit var id: String
     private var editMode = false
 
+    private val menuActions: (MenuItem) -> Unit = {
+        when (it.itemId) {
+            R.id.menu_station_edit -> editMode()
+            R.id.menu_station_delete -> viewState.openDeleteDialog()
+            R.id.menu_station_save -> viewState.openSaveDialog()
+        }
+    }
+
     private val toolbarBuilder
-        get() = ToolbarBuilder()
-                .enableBackNavigation()
-                .addAction(MenuItemHolder(itemTitle = "delete",
-                        iconResId = R.drawable.ic_delete,
-                        actions = { viewState.openDeleteDialog() }))
-                .setToolbarTitle(repository.getStation(id).title)
+        get() = ToolbarBuilder().setToolbarTitle(repository.getStation(id).title)
 
     override fun onFirstViewAttach() {
-        val station = repository.getStation(id)
-        viewState.setStation(station)
+        viewState.setStation(repository.getStation(id))
         viewMode()
     }
 
-    private fun viewMode() {
-        val toolbar = toolbarBuilder.addAction(MenuItemHolder(itemTitle = "editMode",
-                iconResId = R.drawable.ic_edit,
-                actions = { editMode() }))
+    fun viewMode() {
+        val toolbar = toolbarBuilder.addAction(MenuItemHolder(
+                itemTitle = "more",
+                iconResId = R.drawable.ic_more,
+                actions = menuActions,
+                popupMenu = R.menu.menu_station
+        ))
 
         viewState.buildToolbar(toolbar)
-        viewState.setEditable(false)
+        viewState.setEditMode(false)
         editMode = false
     }
 
     private fun editMode() {
-        val toolbar = toolbarBuilder.addAction(
-                MenuItemHolder(itemTitle = "submit",
-                        iconResId = R.drawable.ic_submit,
-                        actions = { viewState.openEditDialog() }))
+        val toolbar = toolbarBuilder.addAction(MenuItemHolder(
+                itemTitle = "more",
+                iconResId = R.drawable.ic_more,
+                actions = menuActions,
+                popupMenu = R.menu.menu_station_edit
+        ))
 
         viewState.buildToolbar(toolbar)
-        viewState.setEditable(true)
+        viewState.setEditMode(true)
         editMode = true
+    }
+
+    fun changeMode() {
+        if (editMode) {
+            viewState.openSaveDialog()
+        } else {
+            editMode()
+        }
     }
 
     fun delete() {
@@ -67,6 +83,7 @@ class StationPresenter
 
     fun cancelDelete() {
         viewState.closeDeleteDialog()
+
     }
 
     fun edit(station: Station) {
@@ -77,19 +94,19 @@ class StationPresenter
         } else if (old != station) {
             repository.update(station)
         }
-
-        viewState.closeEditDialog()
+        viewState.closeSaveDialog()
         viewMode()
     }
 
     fun cancelEdit() {
+        viewState.closeSaveDialog()
+        viewState.setStation(repository.getStation(id))
         viewMode()
-        viewState.closeEditDialog()
     }
 
     fun onBackPressed(): Boolean {
         if (editMode) {
-            viewState.openEditDialog()
+            viewState.openSaveDialog()
         } else {
             router.backTo(Router.MEDIA_LIST_SCREEN)
         }

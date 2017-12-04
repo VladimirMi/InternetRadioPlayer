@@ -40,10 +40,10 @@ class StationFragment : BaseFragment(), StationView, BackPressListener {
     override val layoutRes = R.layout.fragment_station
 
     companion object {
-        fun newInstance(station: Station): StationFragment {
+        fun newInstance(stationId: String): StationFragment {
             return StationFragment().apply {
                 //todo "id" to constant
-                arguments = Bundle().apply { putString("id", station.id) }
+                arguments = Bundle().apply { putString("id", stationId) }
             }
         }
     }

@@ -1,9 +1,9 @@
 package io.github.vladimirmi.radius.di.module
 
 import io.github.vladimirmi.radius.model.repository.MediaBrowserController
+import io.github.vladimirmi.radius.navigation.Router
 import ru.terrakok.cicerone.Cicerone
 import ru.terrakok.cicerone.NavigatorHolder
-import ru.terrakok.cicerone.Router
 import toothpick.config.Module
 
 /**
@@ -12,7 +12,7 @@ import toothpick.config.Module
 
 class RootActivityModule : Module() {
     init {
-        val cicerone = Cicerone.create()
+        val cicerone = Cicerone.create(Router())
         bind(Router::class.java).toInstance(cicerone.router)
         bind(NavigatorHolder::class.java).toInstance(cicerone.navigatorHolder)
         bind(MediaBrowserController::class.java).singletonInScope()

@@ -1,17 +1,15 @@
 package io.github.vladimirmi.radius.presentation.playerControl
 
 import android.graphics.Bitmap
-import android.support.v4.media.MediaMetadataCompat
 import android.support.v4.media.session.PlaybackStateCompat
 import android.support.v4.media.session.PlaybackStateCompat.*
 import com.arellomobile.mvp.InjectViewState
-import io.github.vladimirmi.radius.Screens
 import io.github.vladimirmi.radius.model.repository.MediaBrowserController
 import io.github.vladimirmi.radius.model.repository.StationRepository
+import io.github.vladimirmi.radius.navigation.Router
 import io.github.vladimirmi.radius.ui.base.BasePresenter
 import io.reactivex.rxkotlin.addTo
 import io.reactivex.rxkotlin.subscribeBy
-import ru.terrakok.cicerone.Router
 import javax.inject.Inject
 
 /**
@@ -30,10 +28,6 @@ class PlayerControlPresenter
                 .subscribeBy { this.handleState(it) }
                 .addTo(compDisp)
 
-        browserController.playbackMetaData
-                .subscribeBy { this.handleMetadata(it) }
-                .addTo(compDisp)
-
         repository.selected
                 .subscribeBy {
                     viewState.setMedia(it)
@@ -43,18 +37,8 @@ class PlayerControlPresenter
                 }
     }
 
-    private fun handleMetadata(metadata: MediaMetadataCompat?) {
-        val artist = metadata?.getString(MediaMetadataCompat.METADATA_KEY_ARTIST)
-        val title = metadata?.getString(MediaMetadataCompat.METADATA_KEY_TITLE)
-        val info = if (artist.isNullOrEmpty()) "" else artist +
-                if (title.isNullOrEmpty()) "" else " - $title"
-
-        if (!info.isEmpty()) viewState.setMediaInfo(info)
-    }
-
     private fun handleState(state: PlaybackStateCompat?) {
         when (state?.state) {
-            STATE_BUFFERING -> viewState.showBuffering()
             STATE_PAUSED, STATE_STOPPED -> viewState.showStopped()
             STATE_PLAYING -> viewState.showPlaying()
         }
@@ -77,10 +61,20 @@ class PlayerControlPresenter
     }
 
     fun showStation() {
-        router.navigateTo(Screens.STATION_SCREEN, repository.selected.value)
+        router.showStation(repository.selected.value)
     }
 
     fun saveBitmap(drawingCache: Bitmap) {
         repository.iconBitmap = drawingCache
+    }
+
+    fun skipPrevious() {
+        val previous = repository.previous()
+        router.skipPrevious(previous)
+    }
+
+    fun skipNext() {
+        val next = repository.next()
+        router.skipNext(next)
     }
 }

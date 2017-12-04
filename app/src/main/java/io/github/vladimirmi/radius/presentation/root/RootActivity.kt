@@ -18,6 +18,7 @@ import com.arellomobile.mvp.presenter.ProvidePresenter
 import io.github.vladimirmi.radius.R
 import io.github.vladimirmi.radius.di.Scopes
 import io.github.vladimirmi.radius.di.module.RootActivityModule
+import io.github.vladimirmi.radius.navigation.Navigator
 import io.github.vladimirmi.radius.ui.base.BackPressListener
 import kotlinx.android.synthetic.main.activity_root.*
 import kotlinx.android.synthetic.main.view_menu_item.view.*
@@ -78,7 +79,7 @@ class RootActivity : MvpAppCompatActivity(), RootView, ToolbarView {
         val handled = supportFragmentManager?.fragments?.any {
             (it as? BackPressListener)?.onBackPressed() ?: false
         } ?: false
-        if (!handled) super.onBackPressed()
+        if (!handled) presenter.onBackPressed()
     }
 
     //region =============== RootView ==============

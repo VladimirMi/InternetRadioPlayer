@@ -35,31 +35,23 @@ class PlayerControlFragment : BaseFragment(), PlayerControlView {
     }
 
     override fun onViewCreated(view: View?, savedInstanceState: Bundle?) {
-        media_info.isSelected = true
         play_pause.setOnClickListener { presenter.playPause() }
         favorite.setOnClickListener { presenter.switchFavorite() }
         media_icon.setOnClickListener { presenter.showStation() }
-    }
-
-    override fun showBuffering() {
-        media_info.text = "Загрузка..."
+        previous.setOnClickListener { presenter.skipPrevious() }
+        next.setOnClickListener { presenter.skipNext() }
     }
 
     override fun showStopped() {
-        play_pause.setImageResource(R.drawable.ic_play)
-        media_info.text = ""
+        play_pause.setBackgroundResource(R.drawable.ic_play)
     }
 
     override fun showPlaying() {
-        play_pause.setImageResource(R.drawable.ic_stop)
-    }
-
-    override fun setMediaInfo(info: String) {
-        media_info.text = info
+        play_pause.setBackgroundResource(R.drawable.ic_stop)
     }
 
     override fun setMedia(station: Station) {
-        favorite.setImageResource(if (station.favorite) R.drawable.ic_star else R.drawable.ic_empty_star)
+        favorite.setBackgroundResource(if (station.favorite) R.drawable.ic_star else R.drawable.ic_empty_star)
         val colors = context.getIconTextColors(station.title[0])
         icon_text.text = station.title[0].toString().toUpperCase()
         icon_text.setTextColor(colors.first)

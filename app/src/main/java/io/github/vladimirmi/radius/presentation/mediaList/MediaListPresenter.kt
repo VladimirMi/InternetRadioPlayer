@@ -4,16 +4,15 @@ import android.net.Uri
 import android.support.v4.media.session.PlaybackStateCompat
 import com.arellomobile.mvp.InjectViewState
 import io.github.vladimirmi.radius.R
-import io.github.vladimirmi.radius.Screens
 import io.github.vladimirmi.radius.model.entity.Station
 import io.github.vladimirmi.radius.model.repository.MediaBrowserController
 import io.github.vladimirmi.radius.model.repository.StationRepository
+import io.github.vladimirmi.radius.navigation.Router
 import io.github.vladimirmi.radius.presentation.root.ToolbarBuilder
 import io.github.vladimirmi.radius.ui.base.BasePresenter
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.rxkotlin.addTo
 import io.reactivex.rxkotlin.subscribeBy
-import ru.terrakok.cicerone.Router
 import javax.inject.Inject
 
 /**
@@ -101,7 +100,7 @@ class MediaListPresenter
     }
 
     fun showStation(station: Station) {
-        router.navigateTo(Screens.STATION_SCREEN, station)
+        router.showStation(station)
     }
 }
 

@@ -6,11 +6,10 @@ import android.os.Build
 import android.support.v4.app.ActivityCompat
 import android.support.v4.content.ContextCompat
 import com.arellomobile.mvp.InjectViewState
-import io.github.vladimirmi.radius.Screens
 import io.github.vladimirmi.radius.model.repository.MediaBrowserController
 import io.github.vladimirmi.radius.model.repository.StationRepository
+import io.github.vladimirmi.radius.navigation.Router
 import io.github.vladimirmi.radius.ui.base.BasePresenter
-import ru.terrakok.cicerone.Router
 import javax.inject.Inject
 
 /**
@@ -67,6 +66,10 @@ class RootPresenter
 
     private fun nextScreen() {
         repository.initStations()
-        router.newRootScreen(Screens.MEDIA_LIST_SCREEN)
+        router.newRootScreen(Router.MEDIA_LIST_SCREEN)
+    }
+
+    fun onBackPressed() {
+        router.exit()
     }
 }

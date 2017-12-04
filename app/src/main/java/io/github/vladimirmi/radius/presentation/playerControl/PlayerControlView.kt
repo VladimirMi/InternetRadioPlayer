@@ -8,9 +8,10 @@ import io.github.vladimirmi.radius.model.entity.Station
  */
 
 interface PlayerControlView : MvpView {
-    fun showBuffering()
+
     fun showStopped()
+
     fun showPlaying()
-    fun setMediaInfo(info: String)
+
     fun setMedia(station: Station)
 }

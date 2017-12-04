@@ -4,10 +4,10 @@ import com.arellomobile.mvp.InjectViewState
 import io.github.vladimirmi.radius.R
 import io.github.vladimirmi.radius.model.entity.Station
 import io.github.vladimirmi.radius.model.repository.StationRepository
+import io.github.vladimirmi.radius.navigation.Router
 import io.github.vladimirmi.radius.presentation.root.MenuItemHolder
 import io.github.vladimirmi.radius.presentation.root.ToolbarBuilder
 import io.github.vladimirmi.radius.ui.base.BasePresenter
-import ru.terrakok.cicerone.Router
 import javax.inject.Inject
 
 /**
@@ -88,10 +88,12 @@ class StationPresenter
     }
 
     fun onBackPressed(): Boolean {
-        return if (editMode) {
+        if (editMode) {
             viewState.openEditDialog()
-            true
-        } else false
+        } else {
+            router.backTo(Router.MEDIA_LIST_SCREEN)
+        }
+        return true
     }
 
     fun isChanged(station: Station) = station != repository.getStation(id)

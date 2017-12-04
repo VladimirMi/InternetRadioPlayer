@@ -13,37 +13,19 @@
         android:id="@+id/shadow"
         android:layout_width="0dp"
         android:layout_height="3dp"
-        app:layout_constraintEnd_toEndOf="@+id/media_info"
+        app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
         app:srcCompat="@drawable/shadow_controls"
         tools:ignore="ContentDescription"
         />
 
-    <TextView
-        android:id="@+id/media_info"
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        android:ellipsize="marquee"
-        android:marqueeRepeatLimit="marquee_forever"
-        android:paddingLeft="8dp"
-        android:paddingRight="8dp"
-        android:singleLine="true"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.0"
-        app:layout_constraintStart_toEndOf="@+id/media_icon"
-        app:layout_constraintTop_toBottomOf="@+id/shadow"
-        tools:text=" Hercle, decor regius!, gemna!"
-        />
-
     <FrameLayout
         android:id="@+id/media_icon"
-        android:layout_width="0dp"
-        android:layout_height="0dp"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintDimensionRatio="h,1:1"
+        android:layout_width="72dp"
+        android:layout_height="72dp"
+        app:layout_constraintTop_toBottomOf="@id/shadow"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
         >
 
         <ImageView
@@ -65,39 +47,61 @@
             android:fontFamily="@font/audiowide"
             android:gravity="center"
             app:autoSizeTextType="uniform"
-            tools:text="S"
             tools:ignore="MissingPrefix"
+            tools:text="S"
             />
     </FrameLayout>
 
+    <Button
+        android:id="@+id/previous"
+        android:layout_width="48dp"
+        android:layout_height="48dp"
+        android:layout_marginEnd="8dp"
+        android:layout_marginRight="8dp"
+        android:background="@drawable/ic_skip_previous"
+        android:contentDescription="@string/desc_skip_previous_button"
+        app:layout_constraintBottom_toBottomOf="@+id/play_pause"
+        app:layout_constraintEnd_toStartOf="@+id/play_pause"
+        app:layout_constraintTop_toTopOf="@+id/play_pause"
+        />
 
-    <ImageView
+    <Button
         android:id="@+id/play_pause"
-        android:layout_width="72dp"
-        android:layout_height="72dp"
+        android:layout_width="56dp"
+        android:layout_height="56dp"
+        android:background="@drawable/ic_play"
         android:contentDescription="@string/desc_play_pause_button"
-        android:paddingTop="10dp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        app:srcCompat="@drawable/ic_play"
+        app:layout_constraintTop_toBottomOf="@id/shadow"
         />
 
-    <ImageView
-        android:id="@+id/favorite"
-        android:layout_width="0dp"
-        android:layout_height="0dp"
-        android:contentDescription="@string/desc_favorite"
-        android:paddingLeft="12dp"
-        android:paddingRight="12dp"
-        android:paddingBottom="12dp"
-        android:paddingTop="20dp"
+    <Button
+        android:id="@+id/next"
+        android:layout_width="48dp"
+        android:layout_height="48dp"
+        android:layout_marginLeft="8dp"
+        android:layout_marginStart="8dp"
+        android:background="@drawable/ic_skip_next"
+        android:contentDescription="@string/desc_skip_next_button"
         app:layout_constraintBottom_toBottomOf="@+id/play_pause"
-        app:layout_constraintDimensionRatio="h,1:1"
+        app:layout_constraintStart_toEndOf="@+id/play_pause"
+        app:layout_constraintTop_toTopOf="@+id/play_pause"
+        />
+
+    <Button
+        android:id="@+id/favorite"
+        android:layout_width="48dp"
+        android:layout_height="45dp"
+        android:layout_marginEnd="8dp"
+        android:layout_marginRight="8dp"
+        android:background="@drawable/ic_star"
+        android:contentDescription="@string/desc_favorite"
+        android:padding="8dp"
+        app:layout_constraintBottom_toBottomOf="@+id/play_pause"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        app:srcCompat="@drawable/ic_star"
+        app:layout_constraintTop_toTopOf="@+id/play_pause"
         />
 
 </android.support.constraint.ConstraintLayout>

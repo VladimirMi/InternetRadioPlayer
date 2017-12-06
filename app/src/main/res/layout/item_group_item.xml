@@ -57,7 +57,7 @@
             android:padding="12dp"
             android:visibility="invisible"
             tools:visibility="visible"
-            app:srcCompat="@drawable/ic_star"
+            android:src="@drawable/ic_star"
             android:contentDescription="@string/desc_favorite"
             />
 

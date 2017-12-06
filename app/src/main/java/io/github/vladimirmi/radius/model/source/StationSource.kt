@@ -22,6 +22,7 @@ class StationSource
 
     private val appDir: File = run {
         val dir = Environment.getExternalStoragePublicDirectory("Radius")
+        Timber.e(dir.path)
         if (!dir.mkdirs() && (!dir.exists() || !dir.isDirectory)) {
             throw IllegalStateException("Can not create playlist folder")
         }
@@ -44,6 +45,7 @@ class StationSource
     }
 
     fun save(station: Station) {
+        Timber.e("save: ${station.path}")
         with(File(station.path)) {
             if (exists() || parentFile.mkdirs() || createNewFile()) {
                 clear()

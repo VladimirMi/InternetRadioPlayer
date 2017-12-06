@@ -74,39 +74,41 @@ class StationPresenter
         }
     }
 
-    fun delete() {
-        repository.remove(repository.getStation(id))
-        repository.next()
+    fun delete(delete: Boolean) {
         viewState.closeDeleteDialog()
-        router.exit()
-    }
-
-    fun cancelDelete() {
-        viewState.closeDeleteDialog()
-
-    }
-
-    fun edit(station: Station) {
-        val old = repository.getStation(id)
-        if (old.path != station.path) {
-            repository.remove(old)
-            repository.add(station)
-        } else if (old != station) {
-            repository.update(station)
+        if (delete) {
+            repository.remove(repository.getStation(id))
+            repository.next()
+            router.exit()
         }
-        viewState.closeSaveDialog()
-        viewMode()
     }
 
-    fun cancelEdit() {
+
+    fun edit(station: Station?) {
         viewState.closeSaveDialog()
-        viewState.setStation(repository.getStation(id))
-        viewMode()
+        if (station != null) {
+            val old = repository.getStation(id)
+            if (old.path != station.path) {
+                repository.remove(old)
+                repository.add(station)
+            } else if (old != station) {
+                repository.update(station)
+            }
+            viewMode()
+        }
+    }
+
+    fun cancelEdit(cancel: Boolean) {
+        viewState.closeCancelEditDialog()
+        if (cancel) {
+            viewState.setStation(repository.getStation(id))
+            viewMode()
+        }
     }
 
     fun onBackPressed(): Boolean {
         if (editMode) {
-            viewState.openSaveDialog()
+            viewState.openCancelEditDialog()
         } else {
             router.backTo(Router.MEDIA_LIST_SCREEN)
         }

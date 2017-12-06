@@ -18,6 +18,24 @@ class GroupingList(private val stationList: ArrayList<Station>)
         initMappings()
     }
 
+    private fun initMappings() {
+        groups.clear()
+        mappings.clear()
+        stationList.forEachIndexed { index, station ->
+            val list = groups.getOrPut(station.group) { ArrayList() }
+            if (list.isEmpty() && station.group.isNotBlank()) {
+                mappings.add(GroupMapping(station.group))
+            }
+            mappings.add(GroupMapping(station.group, list.size))
+            list.add(index)
+        }
+        sortMappings()
+    }
+
+    private fun sortMappings() {
+        mappings.sortBy { it.group }
+    }
+
     override fun isGroupTitle(position: Int): Boolean = mappings[position].isGroupTitle
 
     override fun getGroupTitle(position: Int): String = mappings[position].group
@@ -42,24 +60,6 @@ class GroupingList(private val stationList: ArrayList<Station>)
             mappings.find { it.group == group && !it.isGroupTitle } != null
 
     override fun groupedSize(): Int = mappings.size
-
-    private fun sortMappings() {
-        mappings.sortBy { it.group }
-    }
-
-    private fun initMappings() {
-        groups.clear()
-        mappings.clear()
-        stationList.forEachIndexed { index, station ->
-            val list = groups.getOrPut(station.group) { ArrayList() }
-            if (list.isEmpty() && station.group.isNotBlank()) {
-                mappings.add(GroupMapping(station.group))
-            }
-            mappings.add(GroupMapping(station.group, list.size))
-            list.add(index)
-        }
-        sortMappings()
-    }
 
     private val obs: BehaviorRelay<GroupedList<Station>> = BehaviorRelay.createDefault(this)
 

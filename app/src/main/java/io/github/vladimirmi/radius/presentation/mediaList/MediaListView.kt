@@ -26,9 +26,9 @@ interface MediaListView : MvpView {
     fun closeAddDialog()
 
     @StateStrategyType(OneExecutionStateStrategy::class)
-
     fun openRemoveDialog(station: Station)
 
     fun buildToolbar(builder: ToolbarBuilder)
+
     fun closeRemoveDialog()
 }

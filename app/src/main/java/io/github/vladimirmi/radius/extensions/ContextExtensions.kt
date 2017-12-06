@@ -58,5 +58,5 @@ fun Context.getDisplayMetrics(): DisplayMetrics {
 val Context.downloadManager: DownloadManager
     get() = getSystemService(Context.DOWNLOAD_SERVICE) as DownloadManager
 
-val Context.inputMethotManager: InputMethodManager
+val Context.inputMethodManager: InputMethodManager
     get() = getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager

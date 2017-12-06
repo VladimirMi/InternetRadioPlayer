@@ -1,6 +1,8 @@
 package io.github.vladimirmi.radius.presentation.station
 
 import com.arellomobile.mvp.MvpView
+import com.arellomobile.mvp.viewstate.strategy.OneExecutionStateStrategy
+import com.arellomobile.mvp.viewstate.strategy.StateStrategyType
 import io.github.vladimirmi.radius.model.entity.Station
 import io.github.vladimirmi.radius.presentation.root.ToolbarBuilder
 
@@ -16,6 +18,7 @@ interface StationView : MvpView {
 
     fun setEditMode(editMode: Boolean)
 
+    @StateStrategyType(OneExecutionStateStrategy::class)
     fun openSaveDialog()
 
     fun closeSaveDialog()
@@ -27,4 +30,8 @@ interface StationView : MvpView {
     fun openLinkDialog(url: String)
 
     fun closeLinkDialog()
+
+    fun openCancelEditDialog()
+
+    fun closeCancelEditDialog()
 }

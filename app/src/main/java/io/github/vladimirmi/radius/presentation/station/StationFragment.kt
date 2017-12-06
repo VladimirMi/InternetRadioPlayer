@@ -17,7 +17,7 @@ import com.arellomobile.mvp.presenter.InjectPresenter
 import com.arellomobile.mvp.presenter.ProvidePresenter
 import io.github.vladimirmi.radius.R
 import io.github.vladimirmi.radius.di.Scopes
-import io.github.vladimirmi.radius.extensions.inputMethotManager
+import io.github.vladimirmi.radius.extensions.inputMethodManager
 import io.github.vladimirmi.radius.extensions.remove
 import io.github.vladimirmi.radius.extensions.show
 import io.github.vladimirmi.radius.model.entity.Station
@@ -60,6 +60,10 @@ class StationFragment : BaseFragment(), StationView, BackPressListener {
     private val dialogLink: SimpleDialog by lazy {
         SimpleDialog(view as ViewGroup)
                 .setMessage(getString(R.string.dialog_goto_message))
+    }
+    private val dialogCancelEdit: SimpleDialog by lazy {
+        SimpleDialog(view as ViewGroup)
+                .setMessage(getString(R.string.dialog_cancel_edit_message))
     }
 
     @InjectPresenter lateinit var presenter: StationPresenter
@@ -133,7 +137,7 @@ class StationFragment : BaseFragment(), StationView, BackPressListener {
             if (folderTil.isBlank()) folderTil.remove()
             if (urlTil.isBlank()) urlTil.remove()
             view?.clearFocus()
-            context.inputMethotManager.hideSoftInputFromWindow(view?.windowToken, 0)
+            context.inputMethodManager.hideSoftInputFromWindow(view?.windowToken, 0)
         }
     }
 
@@ -141,7 +145,7 @@ class StationFragment : BaseFragment(), StationView, BackPressListener {
         val station = constructStation()
         if (presenter.isChanged(station)) {
             dialogSave.setPositiveAction { presenter.edit(station) }
-                    .setNegativeAction { presenter.cancelEdit() }
+                    .setNegativeAction { presenter.edit(null) }
                     .show()
         } else {
             presenter.viewMode()
@@ -154,8 +158,8 @@ class StationFragment : BaseFragment(), StationView, BackPressListener {
     }
 
     override fun openDeleteDialog() {
-        dialogDelete.setPositiveAction { presenter.delete() }
-                .setNegativeAction { presenter.cancelDelete() }
+        dialogDelete.setPositiveAction { presenter.delete(true) }
+                .setNegativeAction { presenter.delete(false) }
                 .show()
     }
 
@@ -171,6 +175,16 @@ class StationFragment : BaseFragment(), StationView, BackPressListener {
 
     override fun closeLinkDialog() {
         dialogLink.dismiss()
+    }
+
+    override fun openCancelEditDialog() {
+        dialogCancelEdit.setPositiveAction { presenter.cancelEdit(true) }
+                .setNegativeAction { presenter.cancelEdit(false) }
+                .show()
+    }
+
+    override fun closeCancelEditDialog() {
+        dialogCancelEdit.dismiss()
     }
 
     //endregion

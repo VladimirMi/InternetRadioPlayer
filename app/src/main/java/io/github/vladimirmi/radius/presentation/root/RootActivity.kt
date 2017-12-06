@@ -4,6 +4,8 @@ import android.annotation.SuppressLint
 import android.content.Intent
 import android.os.Bundle
 import android.support.annotation.StringRes
+import android.support.v4.content.ContextCompat
+import android.support.v4.graphics.drawable.DrawableCompat
 import android.support.v7.view.menu.MenuBuilder
 import android.support.v7.view.menu.MenuPopupHelper
 import android.support.v7.widget.PopupMenu
@@ -23,6 +25,7 @@ import io.github.vladimirmi.radius.ui.base.BackPressListener
 import kotlinx.android.synthetic.main.activity_root.*
 import kotlinx.android.synthetic.main.view_menu_item.view.*
 import ru.terrakok.cicerone.NavigatorHolder
+import timber.log.Timber
 import toothpick.Toothpick
 import javax.inject.Inject
 
@@ -37,6 +40,7 @@ class RootActivity : MvpAppCompatActivity(), RootView, ToolbarView {
 
     private val navigator = Navigator(this, R.id.fragment_container)
     private val toolBarMenuItems = ArrayList<MenuItemHolder>()
+    private var popupHelper: MenuPopupHelper? = null
 
     @ProvidePresenter
     fun providePresenter(): RootPresenter = Scopes.rootActivity.getInstance(RootPresenter::class.java)
@@ -67,6 +71,8 @@ class RootActivity : MvpAppCompatActivity(), RootView, ToolbarView {
     }
 
     override fun onDestroy() {
+        popupHelper?.dismiss()
+        popupHelper = null
         if (isFinishing) Toothpick.closeScope(Scopes.ROOT_ACTIVITY)
         super.onDestroy()
     }
@@ -142,20 +148,27 @@ class RootActivity : MvpAppCompatActivity(), RootView, ToolbarView {
         actionView.icon.setImageResource(menuItemHolder.iconResId)
         item.actionView = actionView
 
+
         val popup = PopupMenu(this, actionView)
         popup.inflate(menuItemHolder.popupMenu!!)
         popup.setOnMenuItemClickListener {
-            menuItemHolder.actions(it)
+            menuItemHolder.actions.invoke(it)
             true
         }
-        val menuHelper = MenuPopupHelper(this, popup.menu as MenuBuilder, actionView)
+
+        popupHelper = MenuPopupHelper(this, popup.menu as MenuBuilder, actionView)
         (0 until popup.menu.size())
-                .filter { popup.menu.getItem(it).icon != null }
-                .forEach { menuHelper.setForceShowIcon(true); return@forEach }
+                .map { popup.menu.getItem(it) }
+                .forEach {
+                    val drawable = DrawableCompat.wrap(it.icon).mutate()
+                    DrawableCompat.setTint(drawable, ContextCompat.getColor(this, R.color.black))
+                    popupHelper?.setForceShowIcon(true)
+                }
+
         actionView.setOnClickListener {
-            if (!menuHelper.isShowing) menuHelper.show(0, -actionView.height)
+            Timber.e("configurePopupFor: click")
+            popupHelper?.show(0, -actionView.height)
         }
     }
-
     //endregion
 }

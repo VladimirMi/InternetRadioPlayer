@@ -87,7 +87,6 @@ data class Station(val uri: String,
             } else {
                 genresSt?.split(' ')?.map { it.trim() }
             }
-            Timber.e("parseHeaders: $genres")
             val copy = station.copy(
                     title = headers["icy-name"]?.get(0) ?: station.title,
                     genre = genres ?: station.genre,

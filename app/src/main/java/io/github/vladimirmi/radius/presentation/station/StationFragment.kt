@@ -13,6 +13,7 @@ import android.util.TypedValue
 import android.view.View
 import android.view.ViewGroup
 import android.widget.EditText
+import android.widget.Toast
 import com.arellomobile.mvp.presenter.InjectPresenter
 import com.arellomobile.mvp.presenter.ProvidePresenter
 import io.github.vladimirmi.radius.R
@@ -64,6 +65,14 @@ class StationFragment : BaseFragment(), StationView, BackPressListener {
     private val dialogCancelEdit: SimpleDialog by lazy {
         SimpleDialog(view as ViewGroup)
                 .setMessage(getString(R.string.dialog_cancel_edit_message))
+    }
+    private val dialogCreate: SimpleDialog by lazy {
+        SimpleDialog(view as ViewGroup)
+                .setMessage(getString(R.string.dialog_create_message))
+    }
+    private val dialogCancelCreate: SimpleDialog by lazy {
+        SimpleDialog(view as ViewGroup)
+                .setMessage(getString(R.string.dialog_cancel_create_message))
     }
 
     @InjectPresenter lateinit var presenter: StationPresenter
@@ -185,6 +194,30 @@ class StationFragment : BaseFragment(), StationView, BackPressListener {
 
     override fun closeCancelEditDialog() {
         dialogCancelEdit.dismiss()
+    }
+
+    override fun openCreateDialog() {
+        dialogCreate.setPositiveAction { presenter.create(constructStation()) }
+                .setNegativeAction { presenter.create(null) }
+                .show()
+    }
+
+    override fun closeCreateDialog() {
+        dialogCreate.dismiss()
+    }
+
+    override fun openCancelCreateDialog() {
+        dialogCancelCreate.setPositiveAction { presenter.cancelCreate(true) }
+                .setNegativeAction { presenter.cancelCreate(false) }
+                .show()
+    }
+
+    override fun closeCancelCreateDialog() {
+        dialogCancelCreate.dismiss()
+    }
+
+    override fun showToast(resId: Int) {
+        Toast.makeText(context, resId, Toast.LENGTH_SHORT).show()
     }
 
     //endregion

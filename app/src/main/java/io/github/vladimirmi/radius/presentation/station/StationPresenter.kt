@@ -23,6 +23,7 @@ class StationPresenter
 
     lateinit var id: String
     private var editMode = false
+    private var createMode = false
 
     private val menuActions: (MenuItem) -> Unit = {
         when (it.itemId) {
@@ -32,15 +33,21 @@ class StationPresenter
         }
     }
 
-    private val toolbarBuilder
-        get() = ToolbarBuilder().setToolbarTitle(repository.getStation(id).title)
+    private val toolbarBuilder: ToolbarBuilder
+        get() {
+            val station = if (createMode) repository.newStation else repository.getStation(id)
+            return ToolbarBuilder().setToolbarTitle(station!!.title)
+        }
+
 
     override fun onFirstViewAttach() {
-        viewState.setStation(repository.getStation(id))
-        viewMode()
+        viewState.setStation(repository.newStation ?: repository.getStation(id))
+        if (repository.newStation != null) createMode() else viewMode()
     }
 
     fun viewMode() {
+        editMode = false
+        createMode = false
         val toolbar = toolbarBuilder.addAction(MenuItemHolder(
                 itemTitle = "more",
                 iconResId = R.drawable.ic_more,
@@ -50,10 +57,15 @@ class StationPresenter
 
         viewState.buildToolbar(toolbar)
         viewState.setEditMode(false)
-        editMode = false
+    }
+
+    private fun createMode() {
+        createMode = true
+        editMode()
     }
 
     private fun editMode() {
+        editMode = true
         val toolbar = toolbarBuilder.addAction(MenuItemHolder(
                 itemTitle = "more",
                 iconResId = R.drawable.ic_more,
@@ -63,14 +75,13 @@ class StationPresenter
 
         viewState.buildToolbar(toolbar)
         viewState.setEditMode(true)
-        editMode = true
     }
 
     fun changeMode() {
-        if (editMode) {
-            viewState.openSaveDialog()
-        } else {
-            editMode()
+        when {
+            createMode -> viewState.openCreateDialog()
+            editMode -> viewState.openSaveDialog()
+            else -> editMode()
         }
     }
 
@@ -106,11 +117,30 @@ class StationPresenter
         }
     }
 
-    fun onBackPressed(): Boolean {
-        if (editMode) {
-            viewState.openCancelEditDialog()
-        } else {
+    fun create(station: Station?) {
+        viewState.closeCreateDialog()
+        if (station != null) {
+            if (repository.add(station)) {
+                viewState.showToast(R.string.toast_add_success)
+            } else {
+                viewState.showToast(R.string.toast_add_force)
+            }
+        }
+    }
+
+    fun cancelCreate(cancel: Boolean) {
+        viewState.closeCancelCreateDialog()
+        if (cancel) {
             router.backTo(Router.MEDIA_LIST_SCREEN)
+        }
+    }
+
+
+    fun onBackPressed(): Boolean {
+        when {
+            createMode -> viewState.openCancelCreateDialog()
+            editMode -> viewState.openCancelEditDialog()
+            else -> router.backTo(Router.MEDIA_LIST_SCREEN)
         }
         return true
     }

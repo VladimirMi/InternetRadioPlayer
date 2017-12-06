@@ -67,6 +67,7 @@ class MediaListPresenter
         viewState.notifyList()
     }
 
+    //todo remove
     fun addStation(uri: Uri) {
         repository.parseStation(uri)
                 .observeOn(AndroidSchedulers.mainThread())

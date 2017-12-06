@@ -10,6 +10,8 @@
     <string name="dialog_discard_message">Отменить изменения?</string>
     <string name="dialog_goto_message">Перейти по ссылке?</string>
     <string name="dialog_cancel_edit_message">Отменить изменения?</string>
+    <string name="dialog_create_message">Добавить новую станцию?</string>
+    <string name="dialog_cancel_create_message">Отменить добавление новой станции?</string>
     <string name="dialog_add_message">Добавить станцию</string>
     <string name="dialog_add_name">Название</string>
     <string name="dialog_add_name_err">Необходимо задать имя</string>
@@ -19,6 +21,7 @@
 
     <string name="menu_station_edit">Редактировать</string>
     <string name="menu_station_delete">Удалить</string>
+    <string name="menu_station_save">Сохранить</string>
 
     <string name="show">Подробнее</string>
 
@@ -37,7 +40,7 @@
     <string name="station_hint_folder">Folder</string>
     <string name="station_title_information">Information</string>
     <string name="station_title_genre">Genres:</string>
+
     <string name="unit_sample_rate">Hz</string>
     <string name="unit_bitrate">kbps</string>
-    <string name="menu_station_save">Сохранить</string>
 </resources>

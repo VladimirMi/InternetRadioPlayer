@@ -34,4 +34,14 @@ interface StationView : MvpView {
     fun openCancelEditDialog()
 
     fun closeCancelEditDialog()
+
+    fun openCreateDialog()
+
+    fun closeCreateDialog()
+
+    fun openCancelCreateDialog()
+
+    fun closeCancelCreateDialog()
+
+    fun showToast(resId: Int)
 }

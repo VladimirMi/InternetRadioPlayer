@@ -58,11 +58,15 @@ class RootActivity : MvpAppCompatActivity(), RootView, ToolbarView {
     override fun onResumeFragments() {
         super.onResumeFragments()
         navigatorHolder.setNavigator(navigator)
+        intent?.data?.let {
+            presenter.addStation(it)
+            intent = null
+        }
     }
 
     override fun onNewIntent(intent: Intent?) {
         super.onNewIntent(intent)
-        setIntent(intent)
+        this.intent = intent
     }
 
     override fun onPause() {
@@ -70,6 +74,7 @@ class RootActivity : MvpAppCompatActivity(), RootView, ToolbarView {
         super.onPause()
     }
 
+    @SuppressLint("RestrictedApi")
     override fun onDestroy() {
         popupHelper?.dismiss()
         popupHelper = null

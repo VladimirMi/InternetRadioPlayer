@@ -48,7 +48,6 @@ data class Station(val uri: String,
 
     companion object {
         fun fromUri(uri: Uri): Station? {
-            Timber.e("fromUri: $uri")
             return when {
                 uri.scheme.startsWith("http") -> fromNet(uri.toURL() ?: return null)
                 uri.scheme.startsWith("file") -> fromFile(File(uri.toURI()), true)

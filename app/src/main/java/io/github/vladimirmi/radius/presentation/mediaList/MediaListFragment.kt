@@ -70,12 +70,6 @@ class MediaListFragment : BaseFragment(), MediaListView, MediaItemCallback {
         itemTouchHelper.attachToRecyclerView(media_recycler)
     }
 
-    override fun onResume() {
-        super.onResume()
-        activity?.intent?.data?.let { presenter.addStation(it) }
-        activity?.intent = null
-    }
-
     override fun setMediaList(stationList: GroupedList<Station>) {
         adapter.setData(stationList)
     }

@@ -17,7 +17,7 @@
         android:theme="@style/AppTheme">
 
         <activity
-            android:name=".ui.root.RootActivity"
+            android:name=".presentation.root.RootActivity"
             android:launchMode="singleTop">
 
             <intent-filter>

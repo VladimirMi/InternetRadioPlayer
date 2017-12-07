@@ -2,16 +2,20 @@ package io.github.vladimirmi.radius.presentation.root
 
 import android.Manifest
 import android.content.pm.PackageManager
+import android.net.Uri
 import android.os.Build
 import android.support.v4.app.ActivityCompat
 import android.support.v4.content.ContextCompat
 import com.arellomobile.mvp.InjectViewState
-import io.github.vladimirmi.radius.Screens
+import io.github.vladimirmi.radius.R
 import io.github.vladimirmi.radius.model.repository.MediaBrowserController
 import io.github.vladimirmi.radius.model.repository.StationRepository
+import io.github.vladimirmi.radius.navigation.Router
 import io.github.vladimirmi.radius.ui.base.BasePresenter
-import io.github.vladimirmi.radius.ui.root.RootActivity
-import ru.terrakok.cicerone.Router
+import io.reactivex.android.schedulers.AndroidSchedulers
+import io.reactivex.rxkotlin.addTo
+import io.reactivex.rxkotlin.subscribeBy
+import timber.log.Timber
 import javax.inject.Inject
 
 /**
@@ -68,6 +72,19 @@ class RootPresenter
 
     private fun nextScreen() {
         repository.initStations()
-        router.newRootScreen(Screens.MEDIA_LIST_SCREEN)
+        router.newRootScreen(Router.MEDIA_LIST_SCREEN)
+    }
+
+    fun onBackPressed() {
+        router.exit()
+    }
+
+    fun addStation(uri: Uri) {
+        Timber.e("addStation: $uri")
+        repository.parseStation(uri)
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribeBy(onSuccess = { router.showStation(it) },
+                        onComplete = { viewState.showToast(R.string.toast_add_error) })
+                .addTo(compDisp)
     }
 }

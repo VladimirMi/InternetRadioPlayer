@@ -15,9 +15,10 @@ import com.google.android.exoplayer2.ExoPlaybackException.*
 import com.google.android.exoplayer2.Player
 import io.github.vladimirmi.radius.R
 import io.github.vladimirmi.radius.di.Scopes
+import io.github.vladimirmi.radius.extensions.toUri
 import io.github.vladimirmi.radius.model.entity.Station
 import io.github.vladimirmi.radius.model.repository.StationRepository
-import io.github.vladimirmi.radius.ui.root.RootActivity
+import io.github.vladimirmi.radius.presentation.root.RootActivity
 import timber.log.Timber
 import toothpick.Toothpick
 import javax.inject.Inject
@@ -172,19 +173,19 @@ class PlayerService : MediaBrowserServiceCompat() {
     private fun handleSkipToNextRequest() {
         Timber.d("handleSkipToNextRequest")
         currentStation = repository.next()
-        currentStation?.uri?.let { handlePlayRequest(it) }
+        currentStation?.uri?.toUri()?.let { handlePlayRequest(it) }
     }
 
     private fun handleSkipToPreviousRequest() {
         Timber.d("handleSkipToPreviousRequest")
         currentStation = repository.previous()
-        currentStation?.uri?.let { handlePlayRequest(it) }
+        currentStation?.uri?.toUri()?.let { handlePlayRequest(it) }
     }
 
 
     private fun handleExtras(extras: Bundle) {
         val id = extras.getString(EXTRA_STATION_ID)
-        currentStation = repository.getStation(id)
+        currentStation = repository.newStation ?: repository.getStation(id)
     }
 
     inner class SessionCallback : MediaSessionCompat.Callback() {

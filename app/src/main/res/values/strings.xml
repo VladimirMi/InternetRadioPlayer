@@ -1,20 +1,46 @@
 <resources>
     <string name="app_name">Radius</string>
+
     <string name="toast_add_success">Станция добавлена</string>
     <string name="toast_add_error">Не удалось добавить станцию</string>
     <string name="toast_add_force">Станция с заданным именем уже есть</string>
-    <string name="button_ok">OK</string>
-    <string name="button_cancel">Отмена</string>
-    <string name="dialog_new_station">Добавить станцию</string>
-    <string name="dialog_name">Название</string>
-    <string name="dialog_group">Группа</string>
-    <string name="message_err_name">Необходимо задать имя</string>
-    <string name="remove">Удалить</string>
-    <string name="remove_message">Вы дейстаительно хотие удалить станцию</string>
-    <string name="edit">Редактировать</string>
+
+    <string name="dialog_remove_message">Вы действительно хотите удалить станцию?</string>
+    <string name="dialog_submit_message">Сохранить изменения?</string>
+    <string name="dialog_discard_message">Отменить изменения?</string>
+    <string name="dialog_goto_message">Перейти по ссылке?</string>
+    <string name="dialog_cancel_edit_message">Отменить изменения?</string>
+    <string name="dialog_create_message">Добавить новую станцию?</string>
+    <string name="dialog_cancel_create_message">Отменить добавление новой станции?</string>
+    <string name="dialog_add_message">Добавить станцию</string>
+    <string name="dialog_add_name">Название</string>
+    <string name="dialog_add_name_err">Необходимо задать имя</string>
+    <string name="dialog_add_group">Группа</string>
+    <string name="dialog_ok">OK</string>
+    <string name="dialog_cancel">Отмена</string>
+
+    <string name="menu_station_edit">Редактировать</string>
+    <string name="menu_station_delete">Удалить</string>
+    <string name="menu_station_save">Сохранить</string>
+
     <string name="show">Подробнее</string>
+
     <string name="desc_favorite">add to favorite</string>
     <string name="desc_expand_collapse">expand/collapse</string>
     <string name="desc_media_icon">media icon</string>
     <string name="desc_play_pause_button">play/pause button</string>
+    <string name="desc_skip_previous_button">skip previous button</string>
+    <string name="desc_skip_next_button">skip next button</string>
+
+    <string name="station_hint_uri">Stream uri:</string>
+    <string name="station_hint_url">Station url:</string>
+    <string name="station_hint_bitrate">Stream bitrate:</string>
+    <string name="station_hint_rate">Source sample rate:</string>
+    <string name="station_hint_title">Title</string>
+    <string name="station_hint_folder">Folder</string>
+    <string name="station_title_information">Information</string>
+    <string name="station_title_genre">Genres:</string>
+
+    <string name="unit_sample_rate">Hz</string>
+    <string name="unit_bitrate">kbps</string>
 </resources>

@@ -25,6 +25,7 @@ class StationRepository
     val groupedStationList: GroupedList<Station> get() = stationList
     val selected: BehaviorRelay<Station> = BehaviorRelay.create<Station>()
     lateinit var iconBitmap: Bitmap
+    var newStation: Station? = null
 
     fun initStations() {
         stationList = GroupingList(stationSource.getStationList())
@@ -43,10 +44,10 @@ class StationRepository
             stationList.find { it.id == id } ?: throw IllegalStateException()
 
     fun parseStation(uri: Uri): Maybe<Station> {
-        Maybe.fromCallable { }
         return { stationSource.parseStation(uri) }
                 .toMaybe()
                 .subscribeOn(Schedulers.io())
+                .doOnSuccess { newStation = it }
     }
 
     fun update(station: Station) {
@@ -69,15 +70,23 @@ class StationRepository
     }
 
     fun next(): Station {
-        val index = stationList.indexOf(selected.value) + 1
-        val station = stationList[index % stationList.size]
+        var pos = groupedStationList.getPosition(selected.value)
+        do {
+            pos = (pos + 1) % groupedStationList.groupedSize()
+        } while (groupedStationList.isGroupTitle(pos))
+
+        val station = groupedStationList.getGroupItem(pos)
         setSelected(station)
         return station
     }
 
     fun previous(): Station {
-        val index = stationList.indexOf(selected.value) - 1 + stationList.size
-        val station = stationList[index % stationList.size]
+        var pos = groupedStationList.getPosition(selected.value)
+        do {
+            pos = (pos - 1 + groupedStationList.groupedSize()) % groupedStationList.groupedSize()
+        } while (groupedStationList.isGroupTitle(pos))
+
+        val station = groupedStationList.getGroupItem(pos)
         setSelected(station)
         return station
     }

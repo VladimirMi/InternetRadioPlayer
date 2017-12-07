@@ -21,9 +21,9 @@ open class BaseDialog(layoutId: Int, viewGroup: ViewGroup) {
                 .create()
     }
 
-    open fun open() = dialog.show()
+    open fun show() = dialog.show()
 
     open fun hide() = dialog.hide()
 
-    open fun close() = dialog.dismiss()
+    open fun dismiss() = dialog.dismiss()
 }

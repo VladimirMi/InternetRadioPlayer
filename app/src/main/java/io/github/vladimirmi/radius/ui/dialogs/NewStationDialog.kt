@@ -15,7 +15,7 @@ class NewStationDialog(viewGroup: ViewGroup, submit: (Station) -> Unit)
     : ValidationDialog(R.layout.dialog_new_station, viewGroup) {
 
     private val name = dialogView.name
-    private val group = dialogView.group
+    private val group = dialogView.folder
     private val ok = dialogView.ok
     private val cancel = dialogView.cancel
 
@@ -23,7 +23,7 @@ class NewStationDialog(viewGroup: ViewGroup, submit: (Station) -> Unit)
 
     init {
         dialog.setCanceledOnTouchOutside(false)
-        cancel.setOnClickListener { close() }
+        cancel.setOnClickListener { dismiss() }
         ok.setOnClickListener {
             val request = station.copy(
                     title = name.text.toString(),
@@ -34,7 +34,7 @@ class NewStationDialog(viewGroup: ViewGroup, submit: (Station) -> Unit)
 
     override fun listenFields(): Disposable {
         val nameObs = name.validate(NAME_PATTERN, dialogView.name_error,
-                dialogView.context.getString(R.string.message_err_name))
+                dialogView.context.getString(R.string.dialog_add_name_err))
 
         return validateForm(listOf(nameObs))
                 .subscribe { ok.isEnabled = it }

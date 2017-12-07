@@ -10,7 +10,7 @@
 
     <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
+        android:layout_height="match_parent"
         android:orientation="vertical"
         >
 
@@ -18,7 +18,7 @@
             android:id="@+id/dialog_title"
             style="@style/CustomText.Black"
             android:layout_gravity="center_horizontal"
-            android:text="@string/dialog_new_station"
+            android:text="@string/dialog_add_message"
             android:textSize="16sp"
             android:layout_marginBottom="8dp"
             />
@@ -26,7 +26,7 @@
         <TextView
             android:id="@+id/name_error"
             style="@style/CustomText.Black.Title"
-            android:text="@string/dialog_name"
+            android:text="@string/dialog_add_name"
             />
 
         <EditText
@@ -38,11 +38,11 @@
         <TextView
             android:id="@+id/group_error"
             style="@style/CustomText.Black.Title"
-            android:text="@string/dialog_group"
+            android:text="@string/dialog_add_group"
             />
 
         <EditText
-            android:id="@+id/group"
+            android:id="@+id/folder"
             style="@style/InputField"
             android:inputType="text"
             />
@@ -59,7 +59,7 @@
                 android:layout_width="0dp"
                 android:layout_height="match_parent"
                 android:layout_weight="1"
-                android:text="@string/button_ok"
+                android:text="@string/dialog_ok"
                 android:theme="@style/AccentButton"
                 />
 
@@ -68,7 +68,7 @@
                 android:layout_width="0dp"
                 android:layout_height="match_parent"
                 android:layout_weight="1"
-                android:text="@string/button_cancel"
+                android:text="@string/dialog_cancel"
                 android:theme="@style/CancelButton"
                 />
         </LinearLayout>

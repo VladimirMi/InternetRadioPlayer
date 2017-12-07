@@ -1,4 +1,4 @@
-package io.github.vladimirmi.radius.ui.playerControl
+package io.github.vladimirmi.radius.presentation.playerControl
 
 import android.graphics.Bitmap
 import android.graphics.Canvas
@@ -9,10 +9,9 @@ import com.arellomobile.mvp.presenter.ProvidePresenter
 import io.github.vladimirmi.radius.R
 import io.github.vladimirmi.radius.di.Scopes
 import io.github.vladimirmi.radius.extensions.getIconTextColors
+import io.github.vladimirmi.radius.extensions.setTint
 import io.github.vladimirmi.radius.extensions.waitForMeasure
 import io.github.vladimirmi.radius.model.entity.Station
-import io.github.vladimirmi.radius.presentation.playerControl.PlayerControlPresenter
-import io.github.vladimirmi.radius.presentation.playerControl.PlayerControlView
 import io.github.vladimirmi.radius.ui.base.BaseFragment
 import kotlinx.android.synthetic.main.fragment_player_controls.*
 import toothpick.Toothpick
@@ -37,31 +36,23 @@ class PlayerControlFragment : BaseFragment(), PlayerControlView {
     }
 
     override fun onViewCreated(view: View?, savedInstanceState: Bundle?) {
-        media_info.isSelected = true
         play_pause.setOnClickListener { presenter.playPause() }
         favorite.setOnClickListener { presenter.switchFavorite() }
         media_icon.setOnClickListener { presenter.showStation() }
-    }
-
-    override fun showBuffering() {
-        media_info.text = "Загрузка..."
+        previous.setOnClickListener { presenter.skipPrevious() }
+        next.setOnClickListener { presenter.skipNext() }
     }
 
     override fun showStopped() {
-        play_pause.setImageResource(R.drawable.ic_play)
-        media_info.text = ""
+        play_pause.setBackgroundResource(R.drawable.ic_play)
     }
 
     override fun showPlaying() {
-        play_pause.setImageResource(R.drawable.ic_stop)
-    }
-
-    override fun setMediaInfo(info: String) {
-        media_info.text = info
+        play_pause.setBackgroundResource(R.drawable.ic_stop)
     }
 
     override fun setMedia(station: Station) {
-        favorite.setImageResource(if (station.fav) R.drawable.ic_star else R.drawable.ic_empty_star)
+        favorite.setBackgroundResource(if (station.favorite) R.drawable.ic_star else R.drawable.ic_empty_star)
         val colors = context.getIconTextColors(station.title[0])
         icon_text.text = station.title[0].toString().toUpperCase()
         icon_text.setTextColor(colors.first)
@@ -74,5 +65,12 @@ class PlayerControlFragment : BaseFragment(), PlayerControlView {
         val b = Bitmap.createBitmap(v.width, v.height, Bitmap.Config.ARGB_8888)
         v.draw(Canvas(b))
         return b
+    }
+
+    override fun createMode(createMode: Boolean) {
+        previous.setTint(if (createMode) R.color.grey_400 else R.color.grey_700)
+        next.setTint(if (createMode) R.color.grey_400 else R.color.grey_700)
+        previous.isEnabled = !createMode
+        next.isEnabled = !createMode
     }
 }

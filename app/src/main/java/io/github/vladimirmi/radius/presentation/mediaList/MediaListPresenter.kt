@@ -4,15 +4,15 @@ import android.net.Uri
 import android.support.v4.media.session.PlaybackStateCompat
 import com.arellomobile.mvp.InjectViewState
 import io.github.vladimirmi.radius.R
-import io.github.vladimirmi.radius.Screens
 import io.github.vladimirmi.radius.model.entity.Station
 import io.github.vladimirmi.radius.model.repository.MediaBrowserController
 import io.github.vladimirmi.radius.model.repository.StationRepository
+import io.github.vladimirmi.radius.navigation.Router
+import io.github.vladimirmi.radius.presentation.root.ToolbarBuilder
 import io.github.vladimirmi.radius.ui.base.BasePresenter
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.rxkotlin.addTo
 import io.reactivex.rxkotlin.subscribeBy
-import ru.terrakok.cicerone.Router
 import javax.inject.Inject
 
 /**
@@ -26,14 +26,21 @@ class MediaListPresenter
                     private val router: Router)
     : BasePresenter<MediaListView>() {
 
+    val builder get() = ToolbarBuilder()
 
     override fun onFirstViewAttach() {
+        builder.setToolbarTitleId(R.string.app_name)
+        viewState.buildToolbar(builder)
+
         repository.groupedStationList.observe()
                 .subscribeBy { viewState.setMediaList(it) }
                 .addTo(compDisp)
 
         repository.selected
-                .subscribeBy { viewState.select(it, mediaBrowserController.isPlaying(it)) }
+                .subscribeBy {
+                    viewState.select(it, mediaBrowserController.isPlaying(it))
+                    viewState.buildToolbar(builder.setToolbarTitle(it.title))
+                }
                 .addTo(compDisp)
 
         mediaBrowserController.playbackState
@@ -60,6 +67,7 @@ class MediaListPresenter
         viewState.notifyList()
     }
 
+    //todo remove
     fun addStation(uri: Uri) {
         repository.parseStation(uri)
                 .observeOn(AndroidSchedulers.mainThread())
@@ -78,12 +86,22 @@ class MediaListPresenter
         }
     }
 
-    fun removeStation(station: Station, submit: Boolean = false) {
+    fun removeStation(station: Station) {
         viewState.openRemoveDialog(station)
     }
 
+    fun submitRemove(station: Station) {
+        repository.remove(station)
+        viewState.closeRemoveDialog()
+    }
+
+    fun cancelRemove() {
+        repository.groupedStationList.notifyObservers()
+        viewState.closeRemoveDialog()
+    }
+
     fun showStation(station: Station) {
-        router.navigateTo(Screens.STATION_SCREEN, station)
+        router.showStation(station)
     }
 }
 

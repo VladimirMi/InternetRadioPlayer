@@ -4,45 +4,50 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="wrap_content"
     android:layout_height="wrap_content"
+    xmlns:tools="http://schemas.android.com/tools"
     app:cardCornerRadius="4dp"
     app:contentPadding="24dp"
     >
 
     <LinearLayout
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
         android:orientation="vertical"
         >
 
         <TextView
             android:id="@+id/dialog_message"
             style="@style/CustomText.Black"
+            android:layout_gravity="center_horizontal"
             android:layout_marginBottom="20dp"
             android:textAlignment="center"
-            android:layout_gravity="center_horizontal"
             android:textSize="16sp"
+            tools:text="Accelerare solite ducunt ad emeritis secula. Pol, a bene fluctui, fides!"
             />
 
         <LinearLayout
-            android:layout_width="wrap_content"
-            android:layout_height="58dp"
+            android:layout_width="250dp"
+            android:layout_height="56dp"
             android:orientation="horizontal"
+            android:layout_gravity="center"
             >
 
             <Button
-                android:id="@+id/ok"
-                android:layout_width="120dp"
+                android:id="@+id/cancel"
+                android:layout_width="0dp"
+                android:layout_weight="1"
                 android:layout_height="match_parent"
-                android:text="@string/button_ok"
-                android:theme="@style/AccentButton"
+                android:text="@string/dialog_cancel"
+                android:theme="@style/CancelButton"
                 />
 
             <Button
-                android:id="@+id/cancel"
-                android:layout_width="120dp"
+                android:id="@+id/ok"
+                android:layout_width="0dp"
+                android:layout_weight="1"
                 android:layout_height="match_parent"
-                android:text="@string/button_cancel"
-                android:theme="@style/CancelButton"
+                android:text="@string/dialog_ok"
+                android:theme="@style/AccentButton"
                 />
         </LinearLayout>
 

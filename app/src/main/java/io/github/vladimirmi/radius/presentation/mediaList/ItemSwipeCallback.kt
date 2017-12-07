@@ -1,4 +1,4 @@
-package io.github.vladimirmi.radius.ui.mediaList
+package io.github.vladimirmi.radius.presentation.mediaList
 
 import android.content.Context
 import android.graphics.Canvas
@@ -26,8 +26,8 @@ abstract class ItemSwipeCallback(context: Context,
     private val rightIcon = ContextCompat.getDrawable(context, R.drawable.ic_delete)
     private val leftIcon = ContextCompat.getDrawable(context, R.drawable.ic_edit)
     private val rightColor = ContextCompat.getColor(context, R.color.deep_orange_500)
-    private val leftColor = ContextCompat.getColor(context, R.color.secondaryDarkColor)
-    private val rightText = context.getString(R.string.remove).toUpperCase()
+    private val leftColor = ContextCompat.getColor(context, R.color.accentColor)
+    private val rightText = context.getString(R.string.menu_station_delete).toUpperCase()
     private val leftText = context.getString(R.string.show).toUpperCase()
     private val rightShadow = ContextCompat.getDrawable(context, R.drawable.shadow_swipe)
     private val leftShadow = ContextCompat.getDrawable(context, R.drawable.shadow_swipe_reverse)

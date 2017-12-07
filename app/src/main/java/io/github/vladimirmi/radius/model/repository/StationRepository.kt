@@ -70,15 +70,23 @@ class StationRepository
     }
 
     fun next(): Station {
-        val index = stationList.indexOf(selected.value) + 1
-        val station = stationList[index % stationList.size]
+        var pos = groupedStationList.getPosition(selected.value)
+        do {
+            pos = (pos + 1) % groupedStationList.groupedSize()
+        } while (groupedStationList.isGroupTitle(pos))
+
+        val station = groupedStationList.getGroupItem(pos)
         setSelected(station)
         return station
     }
 
     fun previous(): Station {
-        val index = stationList.indexOf(selected.value) - 1 + stationList.size
-        val station = stationList[index % stationList.size]
+        var pos = groupedStationList.getPosition(selected.value)
+        do {
+            pos = (pos - 1 + groupedStationList.groupedSize()) % groupedStationList.groupedSize()
+        } while (groupedStationList.isGroupTitle(pos))
+
+        val station = groupedStationList.getGroupItem(pos)
         setSelected(station)
         return station
     }

@@ -31,6 +31,7 @@ class PlayerControlPresenter
         repository.selected
                 .subscribeBy {
                     viewState.setMedia(it)
+                    viewState.createMode(repository.newStation == it)
                     if (browserController.playbackState.value?.state == PlaybackStateCompat.STATE_PLAYING) {
                         browserController.play(it)
                     }

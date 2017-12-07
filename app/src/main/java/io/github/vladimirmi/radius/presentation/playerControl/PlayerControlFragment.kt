@@ -9,6 +9,7 @@ import com.arellomobile.mvp.presenter.ProvidePresenter
 import io.github.vladimirmi.radius.R
 import io.github.vladimirmi.radius.di.Scopes
 import io.github.vladimirmi.radius.extensions.getIconTextColors
+import io.github.vladimirmi.radius.extensions.setTint
 import io.github.vladimirmi.radius.extensions.waitForMeasure
 import io.github.vladimirmi.radius.model.entity.Station
 import io.github.vladimirmi.radius.ui.base.BaseFragment
@@ -64,5 +65,12 @@ class PlayerControlFragment : BaseFragment(), PlayerControlView {
         val b = Bitmap.createBitmap(v.width, v.height, Bitmap.Config.ARGB_8888)
         v.draw(Canvas(b))
         return b
+    }
+
+    override fun createMode(createMode: Boolean) {
+        previous.setTint(if (createMode) R.color.grey_400 else R.color.grey_700)
+        next.setTint(if (createMode) R.color.grey_400 else R.color.grey_700)
+        previous.isEnabled = !createMode
+        next.isEnabled = !createMode
     }
 }

@@ -26,7 +26,7 @@ class GroupingList(private val stationList: ArrayList<Station>)
             if (list.isEmpty() && station.group.isNotBlank()) {
                 mappings.add(GroupMapping(station.group))
             }
-            mappings.add(GroupMapping(station.group, list.size))
+            mappings.add(GroupMapping(station.group, list.size, station.id))
             list.add(index)
         }
         sortMappings()
@@ -60,6 +60,8 @@ class GroupingList(private val stationList: ArrayList<Station>)
             mappings.find { it.group == group && !it.isGroupTitle } != null
 
     override fun groupedSize(): Int = mappings.size
+
+    override fun getPosition(station: Station): Int = mappings.indexOfFirst { it.id == station.id }
 
     private val obs: BehaviorRelay<GroupedList<Station>> = BehaviorRelay.createDefault(this)
 

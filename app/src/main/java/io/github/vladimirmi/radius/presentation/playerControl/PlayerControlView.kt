@@ -14,4 +14,6 @@ interface PlayerControlView : MvpView {
     fun showPlaying()
 
     fun setMedia(station: Station)
+
+    fun createMode(createMode: Boolean)
 }

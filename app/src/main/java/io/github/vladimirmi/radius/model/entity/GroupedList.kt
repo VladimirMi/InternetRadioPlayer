@@ -15,8 +15,11 @@ interface GroupedList<E> {
     fun groupedSize(): Int
     fun observe(): Observable<GroupedList<E>>
     fun notifyObservers()
+    fun getPosition(station: Station): Int
 }
 
-data class GroupMapping(val group: String, val index: Int? = null) {
+data class GroupMapping(val group: String,
+                        val index: Int? = null,
+                        val id: String? = null) {
     val isGroupTitle get() = index == null
 }

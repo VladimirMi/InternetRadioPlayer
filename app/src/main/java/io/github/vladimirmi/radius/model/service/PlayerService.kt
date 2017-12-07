@@ -185,7 +185,7 @@ class PlayerService : MediaBrowserServiceCompat() {
 
     private fun handleExtras(extras: Bundle) {
         val id = extras.getString(EXTRA_STATION_ID)
-        currentStation = repository.getStation(id)
+        currentStation = repository.newStation ?: repository.getStation(id)
     }
 
     inner class SessionCallback : MediaSessionCompat.Callback() {

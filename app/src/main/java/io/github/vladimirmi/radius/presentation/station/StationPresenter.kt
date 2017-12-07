@@ -24,6 +24,7 @@ class StationPresenter
     lateinit var id: String
     private var editMode = false
     private var createMode = false
+    private lateinit var prevSelectedStation: Station
 
     private val menuActions: (MenuItem) -> Unit = {
         when (it.itemId) {
@@ -61,6 +62,8 @@ class StationPresenter
 
     private fun createMode() {
         createMode = true
+        prevSelectedStation = repository.selected.value
+        repository.selected.accept(repository.newStation)
         editMode()
     }
 
@@ -122,6 +125,7 @@ class StationPresenter
         if (station != null) {
             if (repository.add(station)) {
                 viewState.showToast(R.string.toast_add_success)
+                repository.newStation = null
             } else {
                 viewState.showToast(R.string.toast_add_force)
             }
@@ -131,6 +135,8 @@ class StationPresenter
     fun cancelCreate(cancel: Boolean) {
         viewState.closeCancelCreateDialog()
         if (cancel) {
+            repository.newStation = null
+            repository.setSelected(prevSelectedStation)
             router.backTo(Router.MEDIA_LIST_SCREEN)
         }
     }

@@ -69,8 +69,8 @@ abstract class ItemSwipeCallback(context: Context,
 
                 //drawing splash_background
                 val splashL = itemView.left.toFloat()
-                val splashT = itemView.top.toFloat() + 2 * dp
-                val splashB = itemView.bottom.toFloat() - 2 * dp
+                val splashT = itemView.top.toFloat()
+                val splashB = itemView.bottom.toFloat()
                 val clipShape = RectF(splashL, splashT, dX, splashB)
                 c.save()
                 c.clipRect(clipShape)
@@ -105,9 +105,9 @@ abstract class ItemSwipeCallback(context: Context,
 
                 //drawing splash_background
                 val splashL = itemView.right.toFloat() + dX
-                val splashT = itemView.top.toFloat() + 2 * dp
+                val splashT = itemView.top.toFloat()
                 val splashR = itemView.right.toFloat()
-                val splashB = itemView.bottom.toFloat() - 2 * dp
+                val splashB = itemView.bottom.toFloat()
                 val clipShape = RectF(splashL, splashT, splashR, splashB)
                 c.save()
                 c.clipRect(clipShape)

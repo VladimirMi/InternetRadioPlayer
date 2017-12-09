@@ -22,6 +22,7 @@ import io.github.vladimirmi.radius.extensions.inputMethodManager
 import io.github.vladimirmi.radius.extensions.remove
 import io.github.vladimirmi.radius.extensions.show
 import io.github.vladimirmi.radius.model.entity.Station
+import io.github.vladimirmi.radius.model.source.StationIconSource
 import io.github.vladimirmi.radius.presentation.root.RootActivity
 import io.github.vladimirmi.radius.presentation.root.ToolbarBuilder
 import io.github.vladimirmi.radius.ui.TagView
@@ -75,7 +76,8 @@ class StationFragment : BaseFragment(), StationView, BackPressListener {
                 .setMessage(getString(R.string.dialog_cancel_create_message))
     }
 
-    @InjectPresenter lateinit var presenter: StationPresenter
+    @InjectPresenter
+    lateinit var presenter: StationPresenter
 
     @ProvidePresenter
     fun providePresenter(): StationPresenter {
@@ -116,6 +118,7 @@ class StationFragment : BaseFragment(), StationView, BackPressListener {
     }
 
     override fun setStation(station: Station) {
+        iconIv.setImageBitmap(StationIconSource(context).getBitmap(station))
         titleTil.setTextWithoutAnimation(station.title)
         folderTil.setTextWithoutAnimation(station.group)
         uriTil.setTextWithoutAnimation(station.uri)

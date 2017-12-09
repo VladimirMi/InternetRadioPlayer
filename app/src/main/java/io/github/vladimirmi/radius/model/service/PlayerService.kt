@@ -100,7 +100,7 @@ class PlayerService : MediaBrowserServiceCompat() {
             }
 
             session.setPlaybackState(createPlaybackState(state))
-            notification.update()
+            notification.update(currentStation!!)
         }
 
         override fun onPlayerError(error: ExoPlaybackException?) {
@@ -114,7 +114,7 @@ class PlayerService : MediaBrowserServiceCompat() {
 
         override fun onMetadata(key: String, value: String) {
             session.setMetadata(createMetadata(key, value))
-            notification.update()
+            notification.update(currentStation!!)
         }
 
         private fun createPlaybackState(state: Int): PlaybackStateCompat {
@@ -124,6 +124,7 @@ class PlayerService : MediaBrowserServiceCompat() {
         }
 
         private fun createMetadata(key: String = "", value: String = ""): MediaMetadataCompat {
+            Timber.d("createMetadata: $value")
             val (artist, title) = if (value.isEmpty()) {
                 listOf("", "")
             } else {

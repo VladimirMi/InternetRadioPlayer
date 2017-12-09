@@ -21,9 +21,9 @@
             android:layout_height="72dp"
             android:layout_marginEnd="16dp"
             android:layout_marginRight="16dp"
-            android:background="@drawable/bg_rounded"
             android:contentDescription="@string/desc_media_icon"
-            android:src="@drawable/ic_radius"
+            tools:background="@drawable/bg_rounded"
+            tools:src="@drawable/ic_radius"
             />
 
         <android.support.design.widget.TextInputLayout
@@ -37,8 +37,8 @@
             <android.support.design.widget.TextInputEditText
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:textSize="14sp"
                 android:inputType="textCapSentences|textNoSuggestions"
+                android:textSize="14sp"
                 tools:text="Title"
                 />
 

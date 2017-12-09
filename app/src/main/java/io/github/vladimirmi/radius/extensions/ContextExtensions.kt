@@ -13,7 +13,6 @@ import android.support.v4.content.ContextCompat
 import android.util.DisplayMetrics
 import android.view.WindowManager
 import android.view.inputmethod.InputMethodManager
-import io.github.vladimirmi.radius.R
 
 
 /**
@@ -39,15 +38,6 @@ fun Context.getBitmap(@DrawableRes id: Int): Bitmap {
     return ContextCompat.getDrawable(this, id).getBitmapExt()
 }
 
-//todo wtf
-fun Context.getIconTextColors(char: Char): Pair<Int, Int> {
-    val textColors = resources.getIntArray(R.array.icon_text_color_set)
-    val bgColors = resources.getIntArray(R.array.icon_bg_color_set)
-    val colorIdx = char.toInt() % textColors.size
-    return Pair(textColors[colorIdx], bgColors[colorIdx])
-}
-
-//todo int.dp
 val Context.dp get() = getDisplayMetrics().density.toInt()
 
 val Context.sp get() = getDisplayMetrics().scaledDensity.toInt()

@@ -9,8 +9,8 @@ import android.support.v4.media.session.MediaSessionCompat
 import android.support.v4.media.session.PlaybackStateCompat
 import android.widget.RemoteViews
 import io.github.vladimirmi.radius.R
-import io.github.vladimirmi.radius.di.Scopes
-import io.github.vladimirmi.radius.model.repository.StationRepository
+import io.github.vladimirmi.radius.model.entity.Station
+import io.github.vladimirmi.radius.model.source.StationIconSource
 
 
 /**
@@ -33,15 +33,15 @@ class MediaNotification(private val service: PlayerService,
     private val previousIntent = MediaButtonReceiver
             .buildMediaButtonPendingIntent(service, PlaybackStateCompat.ACTION_SKIP_TO_PREVIOUS)
 
-    fun update() {
+    fun update(currentStation: Station) {
         when (mediaSession.controller.playbackState.state) {
             PlaybackStateCompat.STATE_PLAYING -> {
-                service.startForeground(PLAYER_NOTIFICATION_ID, getNotification())
+                service.startForeground(PLAYER_NOTIFICATION_ID, getNotification(currentStation))
             }
             PlaybackStateCompat.STATE_PAUSED -> {
                 service.stopForeground(false)
                 NotificationManagerCompat.from(service)
-                        .notify(PLAYER_NOTIFICATION_ID, getNotification())
+                        .notify(PLAYER_NOTIFICATION_ID, getNotification(currentStation))
             }
             PlaybackStateCompat.STATE_STOPPED -> {
                 service.stopForeground(true)
@@ -50,12 +50,11 @@ class MediaNotification(private val service: PlayerService,
         }
     }
 
-    private fun getNotification(): Notification {
+    private fun getNotification(currentStation: Station): Notification {
         val playbackState = mediaSession.controller.playbackState
         val description: MediaDescriptionCompat? = mediaSession.controller.metadata?.description
 
-        val bitmap = Scopes.app.getInstance(StationRepository::class.java).iconBitmap
-
+        val bitmap = StationIconSource(service).getBitmap(currentStation)
         MediaButtonReceiver.buildMediaButtonPendingIntent(service, PlaybackStateCompat.ACTION_STOP)
 
         val notificationView = RemoteViews(service.packageName, R.layout.notification)

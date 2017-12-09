@@ -24,16 +24,25 @@
 
     </android.support.design.widget.AppBarLayout>
 
+    <fragment
+        android:id="@+id/info"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/appbar"
+        android:name="io.github.vladimirmi.radius.presentation.metadata.MetadataFragment"
+        tools:layout="@layout/fragment_metadata"
+        />
+
     <FrameLayout
-        android:id="@+id/fragment_container"
+        android:id="@+id/fragmentContainer"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_above="@id/player_controls"
-        android:layout_below="@id/appbar"
+        android:layout_above="@id/playerControls"
+        android:layout_below="@id/info"
         />
 
     <fragment
-        android:id="@+id/player_controls"
+        android:id="@+id/playerControls"
         android:name="io.github.vladimirmi.radius.presentation.playerControl.PlayerControlFragment"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"

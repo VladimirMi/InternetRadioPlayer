@@ -1,23 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
 
 <FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
-             xmlns:app="http://schemas.android.com/apk/res-auto"
              xmlns:tools="http://schemas.android.com/tools"
              android:layout_width="match_parent"
-             android:layout_height="52dp"
+             android:layout_height="48dp"
              android:orientation="vertical"
     >
-
-    <ImageView
-        android:layout_width="match_parent"
-        android:layout_height="2dp"
-        app:layout_constraintEnd_toEndOf="@+id/media_info"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        app:srcCompat="@drawable/shadow_reverse"
-        tools:ignore="ContentDescription"
-        android:layout_gravity="top"
-        />
 
     <LinearLayout
         android:layout_width="match_parent"
@@ -26,18 +14,13 @@
         android:gravity="center_vertical"
         >
 
-        <TextView
-            android:id="@+id/icon"
+        <FrameLayout
+            android:id="@+id/iconContainer"
             android:layout_width="48dp"
             android:layout_height="48dp"
-            android:layout_marginEnd="8dp"
             android:layout_marginRight="8dp"
-            app:autoSizeTextType="uniform"
-            android:fontFamily="@font/audiowide"
-            android:gravity="center"
-            tools:text="S"
-            tools:background="@color/green_500"
-            tools:ignore="MissingPrefix"
+            android:layout_marginLeft="8dp"
+            tools:background="@drawable/bg_rounded"
             />
 
         <TextView
@@ -63,14 +46,11 @@
 
     </LinearLayout>
 
-    <ImageView
+    <View
         android:layout_width="match_parent"
-        android:layout_height="2dp"
-        app:layout_constraintEnd_toEndOf="@+id/media_info"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        app:srcCompat="@drawable/shadow"
+        android:layout_height="1dp"
         tools:ignore="ContentDescription"
+        android:background="@color/grey_500"
         android:layout_gravity="bottom"
         />
 

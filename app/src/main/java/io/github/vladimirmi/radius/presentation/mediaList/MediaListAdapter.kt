@@ -5,10 +5,10 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import io.github.vladimirmi.radius.R
-import io.github.vladimirmi.radius.extensions.getIconTextColors
 import io.github.vladimirmi.radius.extensions.setBackgroundColorExt
 import io.github.vladimirmi.radius.model.entity.GroupedList
 import io.github.vladimirmi.radius.model.entity.Station
+import io.github.vladimirmi.radius.model.source.StationIconSource
 import kotlinx.android.synthetic.main.item_group_item.view.*
 import kotlinx.android.synthetic.main.item_group_title.view.*
 
@@ -41,13 +41,17 @@ class MediaListAdapter(private val callback: MediaItemCallback)
         return when (viewType) {
             GROUP_TITLE -> MediaGroupTitleVH(inflater.inflate(R.layout.item_group_title, parent, false))
             GROUP_ITEM -> MediaGroupItemVH(inflater.inflate(R.layout.item_group_item, parent, false))
-            else -> throw IllegalStateException("Unknown view type")
+            else -> throw IllegalStateException("Unknown v type")
         }
     }
 
     override fun onBindViewHolder(holder: RecyclerView.ViewHolder, position: Int) {
         when (holder) {
-            is MediaGroupTitleVH -> holder.bind(stationList.getGroupTitle(position), callback)
+            is MediaGroupTitleVH -> {
+                val title = stationList.getGroupTitle(position)
+                holder.bind(title, callback)
+                holder.expanded(stationList.isGroupVisible(title))
+            }
             is MediaGroupItemVH -> {
                 val media = stationList.getGroupItem(position)
                 holder.setCallback(callback, media)
@@ -77,17 +81,23 @@ class MediaGroupTitleVH(itemView: View) : RecyclerView.ViewHolder(itemView) {
         itemView.title.text = title
         itemView.setOnClickListener { callback.onGroupSelected(title) }
     }
+
+    fun expanded(expanded: Boolean) {
+        itemView.ic_expanded.setImageResource(if (expanded) R.drawable.ic_collapse else R.drawable.ic_expand)
+    }
 }
 
 class MediaGroupItemVH(itemView: View) : RecyclerView.ViewHolder(itemView) {
     fun bind(station: Station) {
-        itemView.name.text = station.title
-        itemView.favorite.visibility = if (station.favorite) View.VISIBLE else View.INVISIBLE
-
-        val colors = itemView.context.getIconTextColors(station.title[0])
-        itemView.icon.text = station.title.first().toString().toUpperCase()
-        itemView.icon.setTextColor(colors.first)
-        itemView.icon.setBackgroundColor(colors.second)
+        with(itemView) {
+            name.text = station.title
+            favorite.visibility = if (station.favorite) View.VISIBLE else View.INVISIBLE
+            iconContainer.addView(StationIconSource(itemView.context).getIconView(station))
+        }
+//        val colors = StationIconSource(itemView.context).getIconTextColors(station.title[0])
+//        itemView.icon.text = station.title.first().toString().toUpperCase()
+//        itemView.icon.setTextColor(colors.first)
+//        itemView.icon.setBackgroundColor(colors.second)
     }
 
     fun setCallback(callback: MediaItemCallback, station: Station) {

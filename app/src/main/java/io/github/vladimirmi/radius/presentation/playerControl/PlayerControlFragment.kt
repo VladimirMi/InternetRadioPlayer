@@ -1,17 +1,15 @@
 package io.github.vladimirmi.radius.presentation.playerControl
 
-import android.graphics.Bitmap
-import android.graphics.Canvas
 import android.os.Bundle
+import android.support.v4.content.ContextCompat
 import android.view.View
 import com.arellomobile.mvp.presenter.InjectPresenter
 import com.arellomobile.mvp.presenter.ProvidePresenter
 import io.github.vladimirmi.radius.R
 import io.github.vladimirmi.radius.di.Scopes
-import io.github.vladimirmi.radius.extensions.getIconTextColors
 import io.github.vladimirmi.radius.extensions.setTint
-import io.github.vladimirmi.radius.extensions.waitForMeasure
 import io.github.vladimirmi.radius.model.entity.Station
+import io.github.vladimirmi.radius.model.source.StationIconSource
 import io.github.vladimirmi.radius.ui.base.BaseFragment
 import kotlinx.android.synthetic.main.fragment_player_controls.*
 import toothpick.Toothpick
@@ -38,7 +36,7 @@ class PlayerControlFragment : BaseFragment(), PlayerControlView {
     override fun onViewCreated(view: View?, savedInstanceState: Bundle?) {
         play_pause.setOnClickListener { presenter.playPause() }
         favorite.setOnClickListener { presenter.switchFavorite() }
-        media_icon.setOnClickListener { presenter.showStation() }
+        iconIv.setOnClickListener { presenter.showStation() }
         previous.setOnClickListener { presenter.skipPrevious() }
         next.setOnClickListener { presenter.skipNext() }
     }
@@ -53,18 +51,13 @@ class PlayerControlFragment : BaseFragment(), PlayerControlView {
 
     override fun setMedia(station: Station) {
         favorite.setBackgroundResource(if (station.favorite) R.drawable.ic_star else R.drawable.ic_empty_star)
-        val colors = context.getIconTextColors(station.title[0])
-        icon_text.text = station.title[0].toString().toUpperCase()
-        icon_text.setTextColor(colors.first)
-        icon_text.waitForMeasure {
-            presenter.saveBitmap(loadBitmapFromView(icon_text))
-        }
-    }
 
-    private fun loadBitmapFromView(v: View): Bitmap {
-        val b = Bitmap.createBitmap(v.width, v.height, Bitmap.Config.ARGB_8888)
-        v.draw(Canvas(b))
-        return b
+        val iconSource = StationIconSource(context)
+        val colors = iconSource.getIconTextColors(station)
+
+        iconIv.setImageBitmap(iconSource.getBitmap(station,
+                colors.copy(second = ContextCompat.getColor(context, R.color.transparent))))
+        presenter.saveBitmap(iconSource.getBitmap(station))
     }
 
     override fun createMode(createMode: Boolean) {

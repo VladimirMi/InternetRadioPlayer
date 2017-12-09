@@ -9,48 +9,25 @@
     android:orientation="vertical"
     >
 
-    <ImageView
+    <View
         android:id="@+id/shadow"
         android:layout_width="0dp"
         android:layout_height="3dp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        app:srcCompat="@drawable/shadow_controls"
-        tools:ignore="ContentDescription"
+        android:background="@drawable/shadow_reverse"
         />
 
-    <FrameLayout
-        android:id="@+id/media_icon"
+    <ImageView
+        android:id="@+id/iconIv"
         android:layout_width="72dp"
         android:layout_height="72dp"
-        app:layout_constraintTop_toBottomOf="@id/shadow"
+        android:contentDescription="@string/desc_media_icon"
         app:layout_constraintStart_toStartOf="parent"
-        >
-
-        <ImageView
-            android:id="@+id/icon_img"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:contentDescription="@string/desc_media_icon"
-            android:visibility="gone"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintDimensionRatio="h,1:1"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent"
-            />
-
-        <TextView
-            android:id="@+id/icon_text"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:fontFamily="@font/audiowide"
-            android:gravity="center"
-            app:autoSizeTextType="uniform"
-            tools:ignore="MissingPrefix"
-            tools:text="S"
-            />
-    </FrameLayout>
+        app:layout_constraintTop_toBottomOf="@id/shadow"
+        tools:src="@drawable/bg_rounded"
+        />
 
     <Button
         android:id="@+id/previous"

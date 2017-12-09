@@ -36,6 +36,7 @@ class PlayerControlPresenter
                         browserController.play(it)
                     }
                 }
+                .addTo(compDisp)
     }
 
     private fun handleState(state: PlaybackStateCompat?) {

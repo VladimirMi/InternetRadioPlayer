@@ -28,6 +28,7 @@ class StationRepository
     var newStation: Station? = null
 
     fun initStations() {
+        //todo sort before adding
         stationList = GroupingList(stationSource.getStationList())
         if (stationList.size > preferences.selectedPos) {
             selected.accept(stationList[preferences.selectedPos])
@@ -70,23 +71,24 @@ class StationRepository
     }
 
     fun next(): Station {
-        var pos = groupedStationList.getPosition(selected.value)
+        //todo fix bug when all stations hided
+        var pos = stationList.getItemPosition(selected.value)
         do {
-            pos = (pos + 1) % groupedStationList.groupedSize()
-        } while (groupedStationList.isGroupTitle(pos))
+            pos = (pos + 1) % stationList.groupedSize()
+        } while (stationList.isGroupTitle(pos))
 
-        val station = groupedStationList.getGroupItem(pos)
+        val station = stationList.getGroupItem(pos)
         setSelected(station)
         return station
     }
 
     fun previous(): Station {
-        var pos = groupedStationList.getPosition(selected.value)
+        var pos = stationList.getItemPosition(selected.value)
         do {
-            pos = (pos - 1 + groupedStationList.groupedSize()) % groupedStationList.groupedSize()
-        } while (groupedStationList.isGroupTitle(pos))
+            pos = (pos - 1 + stationList.groupedSize()) % stationList.groupedSize()
+        } while (stationList.isGroupTitle(pos))
 
-        val station = groupedStationList.getGroupItem(pos)
+        val station = stationList.getGroupItem(pos)
         setSelected(station)
         return station
     }

@@ -15,7 +15,7 @@ interface MediaListView : MvpView {
 
     fun setMediaList(stationList: GroupedList<Station>)
 
-    fun select(station: Station, playing: Boolean)
+    fun selectItem(station: Station, playing: Boolean)
 
     fun notifyList()
 

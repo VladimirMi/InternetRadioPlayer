@@ -11,6 +11,7 @@ import android.widget.ImageView
  * Created by Vladimir Mikhalev 17.11.2017.
  */
 
+//todo remove, keep only getColor ext
 fun View.setBackgroundColorExt(id: Int) {
     setBackgroundColor(ContextCompat.getColor(context, id))
 }

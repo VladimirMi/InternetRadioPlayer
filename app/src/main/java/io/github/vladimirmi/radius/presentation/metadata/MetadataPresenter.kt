@@ -14,9 +14,9 @@ import javax.inject.Inject
  */
 
 @InjectViewState
-class MetadataPresenter @Inject constructor(
-        private val browserController: MediaBrowserController
-) : BasePresenter<MetadataView>() {
+class MetadataPresenter
+@Inject constructor(private val browserController: MediaBrowserController)
+    : BasePresenter<MetadataView>() {
 
     override fun onFirstViewAttach() {
         browserController.playbackMetaData
@@ -29,7 +29,7 @@ class MetadataPresenter @Inject constructor(
     }
 
     private fun handleMeta(meta: MediaMetadataCompat) {
-        val s = with(meta.description) { "$title - $subtitle" }
+        val s = with(meta.description) { "$subtitle - $title" }
         viewState.setInfo(s)
     }
 

@@ -44,7 +44,7 @@ class MediaListFragment : BaseFragment(), MediaListView, MediaItemCallback {
             0,
             ItemTouchHelper.LEFT or ItemTouchHelper.RIGHT) {
         override fun onSwiped(viewHolder: RecyclerView.ViewHolder, direction: Int) {
-            val station = adapter.getData(viewHolder.adapterPosition) ?: return
+            val station = adapter.getStation(viewHolder.adapterPosition) ?: return
             if (direction == ItemTouchHelper.LEFT) {
                 presenter.removeStation(station)
             } else {
@@ -82,8 +82,8 @@ class MediaListFragment : BaseFragment(), MediaListView, MediaItemCallback {
         presenter.select(station)
     }
 
-    override fun select(station: Station, playing: Boolean) {
-        adapter.select(station, playing)
+    override fun selectItem(station: Station, playing: Boolean) {
+        adapter.selectItem(station, playing)
     }
 
     override fun notifyList() {

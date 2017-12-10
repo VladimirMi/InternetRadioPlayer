@@ -41,7 +41,7 @@ class MediaListAdapter(private val callback: MediaItemCallback)
         return when (viewType) {
             GROUP_TITLE -> MediaGroupTitleVH(inflater.inflate(R.layout.item_group_title, parent, false))
             GROUP_ITEM -> MediaGroupItemVH(inflater.inflate(R.layout.item_group_item, parent, false))
-            else -> throw IllegalStateException("Unknown v type")
+            else -> throw IllegalStateException("Unknown view type")
         }
     }
 
@@ -51,26 +51,34 @@ class MediaListAdapter(private val callback: MediaItemCallback)
                 val title = stationList.getGroupTitle(position)
                 holder.bind(title, callback)
                 holder.expanded(stationList.isGroupVisible(title))
+                if (!stationList.isGroupVisible(title) && selected?.group == title) {
+                    holder.select(playing)
+                } else {
+                    holder.unselect()
+                }
             }
             is MediaGroupItemVH -> {
                 val media = stationList.getGroupItem(position)
                 holder.setCallback(callback, media)
                 holder.bind(media)
-                if (media.uri == selected?.uri) holder.select(playing)
-                else holder.unselect()
+                if (media.uri == selected?.uri) {
+                    holder.select(playing)
+                } else {
+                    holder.unselect()
+                }
             }
         }
     }
 
     override fun getItemCount(): Int = stationList.groupedSize()
 
-    fun select(station: Station, playing: Boolean) {
+    fun selectItem(station: Station, playing: Boolean) {
         selected = station
         this.playing = playing
         notifyDataSetChanged()
     }
 
-    fun getData(position: Int): Station? {
+    fun getStation(position: Int): Station? {
         return if (stationList.isGroupTitle(position)) null
         else stationList.getGroupItem(position)
     }
@@ -85,6 +93,15 @@ class MediaGroupTitleVH(itemView: View) : RecyclerView.ViewHolder(itemView) {
     fun expanded(expanded: Boolean) {
         itemView.ic_expanded.setImageResource(if (expanded) R.drawable.ic_collapse else R.drawable.ic_expand)
     }
+
+    fun select(playing: Boolean) {
+        if (playing) itemView.setBackgroundColorExt(R.color.green_100)
+        else itemView.setBackgroundColorExt(R.color.grey_300)
+    }
+
+    fun unselect() {
+        itemView.setBackgroundColorExt(R.color.grey_50)
+    }
 }
 
 class MediaGroupItemVH(itemView: View) : RecyclerView.ViewHolder(itemView) {
@@ -94,10 +111,6 @@ class MediaGroupItemVH(itemView: View) : RecyclerView.ViewHolder(itemView) {
             favorite.visibility = if (station.favorite) View.VISIBLE else View.INVISIBLE
             iconContainer.addView(StationIconSource(itemView.context).getIconView(station))
         }
-//        val colors = StationIconSource(itemView.context).getIconTextColors(station.title[0])
-//        itemView.icon.text = station.title.first().toString().toUpperCase()
-//        itemView.icon.setTextColor(colors.first)
-//        itemView.icon.setBackgroundColor(colors.second)
     }
 
     fun setCallback(callback: MediaItemCallback, station: Station) {

@@ -38,7 +38,7 @@ class MediaListPresenter
 
         repository.selected
                 .subscribeBy {
-                    viewState.select(it, mediaBrowserController.isPlaying(it))
+                    viewState.selectItem(it, mediaBrowserController.isPlaying(it))
                     viewState.buildToolbar(builder.setToolbarTitle(it.title))
                 }
                 .addTo(compDisp)
@@ -47,9 +47,9 @@ class MediaListPresenter
                 .subscribeBy {
                     val station = repository.selected.value ?: return@subscribeBy
                     if (it.state == PlaybackStateCompat.STATE_PLAYING) {
-                        viewState.select(station, playing = true)
+                        viewState.selectItem(station, playing = true)
                     } else {
-                        viewState.select(station, playing = false)
+                        viewState.selectItem(station, playing = false)
                     }
                 }.addTo(compDisp)
     }

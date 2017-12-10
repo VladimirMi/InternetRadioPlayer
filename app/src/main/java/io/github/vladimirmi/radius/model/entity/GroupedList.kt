@@ -6,6 +6,7 @@ import io.reactivex.Observable
  * Created by Vladimir Mikhalev 02.11.2017.
  */
 interface GroupedList<E> {
+
     fun isGroupTitle(position: Int): Boolean
     fun getGroupTitle(position: Int): String
     fun getGroupItem(position: Int): E
@@ -15,11 +16,15 @@ interface GroupedList<E> {
     fun groupedSize(): Int
     fun observe(): Observable<GroupedList<E>>
     fun notifyObservers()
-    fun getPosition(station: Station): Int
+    fun getItemPosition(item: E): Int
 }
 
-data class GroupMapping(val group: String,
-                        val index: Int? = null,
-                        val id: String? = null) {
-    val isGroupTitle get() = index == null
+
+sealed class GroupMapping(val group: String)
+class Title(group: String) : GroupMapping(group) {
+    override fun toString(): String = "Title($group)"
+}
+
+class Item(group: String, val id: String, val index: Int) : GroupMapping(group) {
+    override fun toString(): String = "Item(index=$index)"
 }

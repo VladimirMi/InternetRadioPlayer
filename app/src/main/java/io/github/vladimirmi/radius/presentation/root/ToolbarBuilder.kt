@@ -53,6 +53,8 @@ class MenuItemHolder(val itemTitle: String,
                      val iconResId: Int,
                      val actions: (MenuItem) -> Unit,
                      val popupMenu: Int? = null) {
+
+    // todo leak canary
     //todo action to weak ref
     fun hasPopupMenu() = popupMenu != null
 }

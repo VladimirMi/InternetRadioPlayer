@@ -24,10 +24,4 @@
         android:singleLine="true"
         tools:text="Scutum, poeta, et habena - Ubi est camerarius xiphias?"
         />
-
-    <View
-        android:layout_width="match_parent"
-        android:layout_height="3dp"
-        android:background="@drawable/shadow"
-        />
 </LinearLayout>

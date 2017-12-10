@@ -4,7 +4,7 @@ import com.arellomobile.mvp.presenter.InjectPresenter
 import com.arellomobile.mvp.presenter.ProvidePresenter
 import io.github.vladimirmi.radius.R
 import io.github.vladimirmi.radius.di.Scopes
-import io.github.vladimirmi.radius.extensions.hide
+import io.github.vladimirmi.radius.extensions.remove
 import io.github.vladimirmi.radius.extensions.show
 import io.github.vladimirmi.radius.ui.base.BaseFragment
 import kotlinx.android.synthetic.main.fragment_metadata.*
@@ -37,7 +37,7 @@ class MetadataFragment : BaseFragment(), MetadataView {
     }
 
     override fun hide() {
-        view?.hide()
+        view?.remove()
     }
 
     //endregion

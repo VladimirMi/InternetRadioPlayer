@@ -1,12 +1,10 @@
 package io.github.vladimirmi.radius.model.source
 
-import android.content.Context
 import android.net.Uri
 import android.os.Environment
 import io.github.vladimirmi.radius.extensions.clear
 import io.github.vladimirmi.radius.model.entity.Station
 import io.github.vladimirmi.radius.model.manager.Preferences
-import io.github.vladimirmi.radius.model.manager.parsePls
 import timber.log.Timber
 import java.io.File
 import javax.inject.Inject
@@ -17,8 +15,7 @@ import javax.inject.Inject
  */
 
 class StationSource
-@Inject constructor(private val context: Context,
-                    private val preferences: Preferences) {
+@Inject constructor(private val preferences: Preferences) {
 
     private val appDir: File = run {
         val dir = Environment.getExternalStoragePublicDirectory("Radius")
@@ -31,7 +28,6 @@ class StationSource
     }
 
     fun getStationList(): ArrayList<Station> {
-        copyPlaylistsFromAssets()
         val stationList = ArrayList<Station>()
         val treeWalk = appDir.walkTopDown()
         treeWalk.forEach { file ->
@@ -62,15 +58,4 @@ class StationSource
     }
 
     fun parseStation(uri: Uri): Station? = Station.fromUri(uri)
-
-    private fun copyPlaylistsFromAssets() {
-        if (preferences.firstRun) {
-            context.assets.list("")
-                    .filter { it.endsWith(".pls") }
-                    .forEach { filePath ->
-                        context.assets.open(filePath).parsePls()?.let { save(it) }
-                    }
-        }
-        preferences.firstRun = false
-    }
 }

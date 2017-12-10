@@ -57,10 +57,15 @@ class Navigator(activity: FragmentActivity, containerId: Int)
         when (command) {
         // order matters because Next and Previous is subclasses of Forward
             is Next -> forwardTransition(fragmentTransaction)
-            is Previous -> backTransition(fragmentTransaction)
+            is Previous -> previuosTransition(fragmentTransaction)
             is Forward -> forwardTransition(fragmentTransaction)
             is Back, is BackTo -> backTransition(fragmentTransaction)
         }
+    }
+
+    private fun previuosTransition(fragmentTransaction: FragmentTransaction?) {
+        fragmentTransaction?.setCustomAnimations(R.anim.slide_in_left,
+                R.anim.slide_out_right, R.anim.slide_in_left, R.anim.slide_out_right)
     }
 
     private fun backTransition(fragmentTransaction: FragmentTransaction?) {

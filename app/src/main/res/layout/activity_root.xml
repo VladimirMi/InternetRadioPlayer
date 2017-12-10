@@ -25,7 +25,7 @@
     </android.support.design.widget.AppBarLayout>
 
     <fragment
-        android:id="@+id/info"
+        android:id="@+id/metadataFr"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_below="@id/appbar"
@@ -33,16 +33,30 @@
         tools:layout="@layout/fragment_metadata"
         />
 
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="4dp"
+        android:layout_below="@id/metadataFr"
+        android:background="@drawable/shadow"
+        />
+
     <FrameLayout
-        android:id="@+id/fragmentContainer"
+        android:id="@+id/mainFr"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_above="@id/playerControls"
-        android:layout_below="@id/info"
+        android:layout_above="@id/playerControlsFr"
+        android:layout_below="@id/metadataFr"
+        />
+
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="4dp"
+        android:layout_above="@+id/playerControlsFr"
+        android:background="@drawable/shadow_reverse"
         />
 
     <fragment
-        android:id="@+id/playerControls"
+        android:id="@+id/playerControlsFr"
         android:name="io.github.vladimirmi.radius.presentation.playerControl.PlayerControlFragment"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"

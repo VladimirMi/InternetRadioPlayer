@@ -38,7 +38,7 @@ class RootActivity : MvpAppCompatActivity(), RootView, ToolbarView {
     @Inject lateinit var navigatorHolder: NavigatorHolder
     @InjectPresenter lateinit var presenter: RootPresenter
 
-    private val navigator = Navigator(this, R.id.fragmentContainer)
+    private val navigator = Navigator(this, R.id.mainFr)
     private val toolBarMenuItems = ArrayList<MenuItemHolder>()
     private var popupHelper: MenuPopupHelper? = null
 

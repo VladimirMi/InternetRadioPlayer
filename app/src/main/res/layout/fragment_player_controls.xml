@@ -9,23 +9,13 @@
     android:orientation="vertical"
     >
 
-    <View
-        android:id="@+id/shadow"
-        android:layout_width="0dp"
-        android:layout_height="3dp"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        android:background="@drawable/shadow_reverse"
-        />
-
     <ImageView
         android:id="@+id/iconIv"
         android:layout_width="72dp"
         android:layout_height="72dp"
         android:contentDescription="@string/desc_media_icon"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/shadow"
+        app:layout_constraintTop_toTopOf="parent"
         tools:src="@drawable/bg_rounded"
         />
 
@@ -51,7 +41,7 @@
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/shadow"
+        app:layout_constraintTop_toTopOf="parent"
         />
 
     <Button

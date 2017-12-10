@@ -47,8 +47,7 @@
     <color name="primaryDarkColor">@color/grey_800</color>
     <color name="accentColor">@color/light_green_500</color>
 
-    <color name="shadow">#999E9E9E</color>
-    <color name="shadow_end">#99eeeeee</color>
+    <color name="shadow">#779e9e9e</color>
 
     <color name="player_controls">@color/blue_grey_100</color>
     <color name="list_delimiter">@color/green_500</color>

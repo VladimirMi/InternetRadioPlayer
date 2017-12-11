@@ -71,12 +71,14 @@ class PlayerControlPresenter
     }
 
     fun skipPrevious() {
-        val previous = repository.previous()
-        router.skipPrevious(previous)
+        if (repository.previous()) {
+            router.skipPrevious(repository.selected.value)
+        }
     }
 
     fun skipNext() {
-        val next = repository.next()
-        router.skipNext(next)
+        if (repository.next()) {
+            router.skipNext(repository.selected.value)
+        }
     }
 }

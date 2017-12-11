@@ -1,8 +1,8 @@
 package io.github.vladimirmi.radius.extensions
 
+import android.content.Context
 import android.util.Log
 import com.crashlytics.android.Crashlytics
-import io.github.vladimirmi.radius.model.manager.Preferences
 import timber.log.Timber
 import java.io.File
 import java.text.SimpleDateFormat
@@ -13,10 +13,10 @@ import java.util.*
  * Created by Vladimir Mikhalev 21.11.2017.
  */
 
-class FileLoggingTree(prefs: Preferences) : Timber.DebugTree() {
+class FileLoggingTree(context: Context) : Timber.DebugTree() {
 
     private val logsDir by lazy {
-        val dir = File(prefs.appDirPath, "Logs")
+        val dir = File(context.filesDir, "Logs")
         dir.mkdir()
         dir
     }

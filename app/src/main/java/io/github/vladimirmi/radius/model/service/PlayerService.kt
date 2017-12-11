@@ -173,14 +173,18 @@ class PlayerService : MediaBrowserServiceCompat() {
 
     private fun handleSkipToNextRequest() {
         Timber.d("handleSkipToNextRequest")
-        currentStation = repository.next()
-        currentStation?.uri?.toUri()?.let { handlePlayRequest(it) }
+        if (repository.next()) {
+            currentStation = repository.selected.value
+            currentStation?.uri?.toUri()?.let { handlePlayRequest(it) }
+        }
     }
 
     private fun handleSkipToPreviousRequest() {
         Timber.d("handleSkipToPreviousRequest")
-        currentStation = repository.previous()
-        currentStation?.uri?.toUri()?.let { handlePlayRequest(it) }
+        if (repository.previous()) {
+            currentStation = repository.selected.value
+            currentStation?.uri?.toUri()?.let { handlePlayRequest(it) }
+        }
     }
 
 

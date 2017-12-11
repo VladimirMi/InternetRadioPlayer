@@ -8,15 +8,29 @@ import io.reactivex.Observable
 interface GroupedList<E> {
 
     fun isGroupTitle(position: Int): Boolean
+
     fun getGroupTitle(position: Int): String
+
     fun getGroupItem(position: Int): E
+
     fun isGroupVisible(group: String): Boolean
+
     fun hideGroup(group: String)
+
     fun showGroup(group: String)
+
     fun groupedSize(): Int
+
     fun observe(): Observable<GroupedList<E>>
+
     fun notifyObservers()
+
     fun getItemPosition(item: E): Int
+
+    fun getPrevious(item: E): E?
+
+    fun getNext(item: E): E?
+
 }
 
 

@@ -49,6 +49,7 @@ class RootPresenter
         val requestCanceled = grantResults.contains(PackageManager.PERMISSION_DENIED) ||
                 grantResults.isEmpty() || permissions.isEmpty()
         if (requestCanceled) {
+            //todo implement
 //            showPermissionSnackBar()
         } else if (requestCode == REQUEST_WRITE) {
             nextScreen()

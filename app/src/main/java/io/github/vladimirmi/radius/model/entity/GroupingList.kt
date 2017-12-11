@@ -2,7 +2,6 @@ package io.github.vladimirmi.radius.model.entity
 
 import com.jakewharton.rxrelay2.BehaviorRelay
 import io.reactivex.Observable
-import timber.log.Timber
 import java.lang.IllegalStateException
 
 /**
@@ -22,16 +21,11 @@ class GroupingList(private val stationList: ArrayList<Station>)
     private fun initMappings() {
         mappings.clear()
         stationList.forEachIndexed { index, station ->
-            if (mappings.isEmpty() || mappings.last().group != station.group) {
+            if ((mappings.isEmpty() || mappings.last().group != station.group) && station.group.isNotBlank()) {
                 mappings.add(Title(station.group))
             }
             mappings.add(Item(station.group, station.id, index))
         }
-        sortMappings()
-    }
-
-    private fun sortMappings() {
-        mappings.sortBy { it.group }
     }
 
     override fun isGroupTitle(position: Int): Boolean = mappings[position] is Title
@@ -63,8 +57,32 @@ class GroupingList(private val stationList: ArrayList<Station>)
     override fun groupedSize(): Int = mappings.size
 
     override fun getItemPosition(item: Station): Int {
-        Timber.e("getPosition: $mappings")
         return mappings.indexOfFirst { it is Item && it.id == item.id }
+    }
+
+    override fun getPrevious(item: Station): Station? {
+        val items = (0 until groupedSize())
+                .map { mappings[it] }
+                .filterIsInstance<Item>()
+        val visible = isGroupVisible(item.group)
+        val skip = items.firstOrNull()?.id == item.id
+        return items
+                .takeWhile { skip || (if (visible) it.id != item.id else it.group != item.group) }
+                .lastOrNull()
+                ?.let { stationList[it.index] }
+    }
+
+    override fun getNext(item: Station): Station? {
+        val reverseItems = (groupedSize() - 1 downTo 0)
+                .map { mappings[it] }
+                .filterIsInstance<Item>()
+        val visible = isGroupVisible(item.group)
+        val skip = reverseItems.firstOrNull()?.id == item.id
+
+        return reverseItems
+                .takeWhile { skip || (if (visible) it.id != item.id else it.group != item.group) }
+                .lastOrNull()
+                ?.let { stationList[it.index] }
     }
 
     override fun observe(): Observable<GroupedList<Station>> = obs
@@ -98,4 +116,8 @@ class GroupingList(private val stationList: ArrayList<Station>)
     }
 
     //endregion
+
+    private fun sortMappings() {
+        mappings.sortBy { it.group }
+    }
 }

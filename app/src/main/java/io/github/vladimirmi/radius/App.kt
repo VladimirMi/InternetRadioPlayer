@@ -9,7 +9,6 @@ import io.github.vladimirmi.radius.di.Scopes
 import io.github.vladimirmi.radius.di.module.AppModule
 import io.github.vladimirmi.radius.extensions.CrashlyticsTree
 import io.github.vladimirmi.radius.extensions.FileLoggingTree
-import io.github.vladimirmi.radius.model.manager.Preferences
 import timber.log.Timber
 import toothpick.Toothpick
 import toothpick.configuration.Configuration
@@ -44,7 +43,7 @@ class App : Application() {
         Scopes.app.installModules(AppModule(this))
 
         if (BuildConfig.DEBUG) {
-            Timber.plant(FileLoggingTree(Scopes.app.getInstance(Preferences::class.java)))
+            Timber.plant(FileLoggingTree(Scopes.context))
         } else {
             Timber.plant(CrashlyticsTree())
         }

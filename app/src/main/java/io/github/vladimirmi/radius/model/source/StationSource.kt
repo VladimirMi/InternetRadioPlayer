@@ -1,11 +1,10 @@
 package io.github.vladimirmi.radius.model.source
 
+import android.content.Context
 import android.net.Uri
-import android.os.Environment
 import io.github.vladimirmi.radius.extensions.clear
 import io.github.vladimirmi.radius.model.entity.Station
-import io.github.vladimirmi.radius.model.manager.Preferences
-import timber.log.Timber
+import io.github.vladimirmi.radius.model.manager.StationParser
 import java.io.File
 import javax.inject.Inject
 
@@ -15,24 +14,20 @@ import javax.inject.Inject
  */
 
 class StationSource
-@Inject constructor(private val preferences: Preferences) {
-
-    private val appDir: File = run {
-        val dir = Environment.getExternalStoragePublicDirectory("Radius")
-        Timber.e(dir.path)
-        if (!dir.mkdirs() && (!dir.exists() || !dir.isDirectory)) {
-            throw IllegalStateException("Can not create playlist folder")
-        }
-        preferences.appDirPath = dir.path
-        dir
+@Inject constructor(context: Context,
+                    private val parser: StationParser) {
+    companion object {
+        const val extension = "json"
     }
+
+    private val appDir = context.getExternalFilesDir(null)
 
     fun getStationList(): ArrayList<Station> {
         val stationList = ArrayList<Station>()
         val treeWalk = appDir.walkTopDown()
         treeWalk.forEach { file ->
-            if (!file.isDirectory) {
-                Station.fromFile(file)?.let {
+            if (!file.isDirectory && file.extension == extension) {
+                parser.parseFromJsonFile(file)?.let {
                     stationList.add(it)
                 }
             }
@@ -41,21 +36,17 @@ class StationSource
     }
 
     fun save(station: Station) {
-        Timber.e("save: ${station.path}")
-        with(File(station.path)) {
-            if (exists() || parentFile.mkdirs() || createNewFile()) {
+        with(File(appDir, "${station.title}.$extension")) {
+            if (exists() || createNewFile()) {
                 clear()
-                writeText(station.toContent())
+                writeText(parser.toJson(station))
             }
         }
     }
 
     fun remove(station: Station) {
-        Timber.e("remove: ${station.path}")
-        val file = File(station.path)
-        file.delete()
-        file.parentFile.delete()
+        File(appDir, "${station.title}.$extension").delete()
     }
 
-    fun parseStation(uri: Uri): Station? = Station.fromUri(uri)
+    fun parseStation(uri: Uri): Station? = parser.parseFromUri(uri)
 }

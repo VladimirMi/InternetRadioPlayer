@@ -44,6 +44,8 @@ class StationRepository
     fun getStation(id: String): Station =
             stationList.find { it.id == id } ?: throw IllegalStateException()
 
+    fun hasStations(): Boolean = stationList.isNotEmpty()
+
     fun parseStation(uri: Uri): Maybe<Station> {
         return { stationSource.parseStation(uri) }
                 .toMaybe()
@@ -59,9 +61,10 @@ class StationRepository
 
     fun add(station: Station): Boolean {
         if (stationList.find { it.title == station.title } != null) return false
-        val added = stationList.add(station)
-        if (added) stationSource.save(station)
-        return added
+        stationList.add(station)
+        stationSource.save(station)
+        setSelected(station)
+        return true
     }
 
     fun remove(station: Station) {
@@ -70,26 +73,19 @@ class StationRepository
         }
     }
 
-    fun next(): Station {
-        //todo fix bug when all stations hided
-        var pos = stationList.getItemPosition(selected.value)
-        do {
-            pos = (pos + 1) % stationList.groupedSize()
-        } while (stationList.isGroupTitle(pos))
-
-        val station = stationList.getGroupItem(pos)
-        setSelected(station)
-        return station
+    fun next(): Boolean {
+        val next = stationList.getNext(selected.value)
+        return if (next != null) {
+            setSelected(next)
+            true
+        } else false
     }
 
-    fun previous(): Station {
-        var pos = stationList.getItemPosition(selected.value)
-        do {
-            pos = (pos - 1 + stationList.groupedSize()) % stationList.groupedSize()
-        } while (stationList.isGroupTitle(pos))
-
-        val station = stationList.getGroupItem(pos)
-        setSelected(station)
-        return station
+    fun previous(): Boolean {
+        val previous = stationList.getPrevious(selected.value)
+        return if (previous != null) {
+            setSelected(previous)
+            true
+        } else false
     }
 }

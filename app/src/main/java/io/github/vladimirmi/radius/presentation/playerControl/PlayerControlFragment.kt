@@ -7,7 +7,9 @@ import com.arellomobile.mvp.presenter.InjectPresenter
 import com.arellomobile.mvp.presenter.ProvidePresenter
 import io.github.vladimirmi.radius.R
 import io.github.vladimirmi.radius.di.Scopes
+import io.github.vladimirmi.radius.extensions.hide
 import io.github.vladimirmi.radius.extensions.setTint
+import io.github.vladimirmi.radius.extensions.show
 import io.github.vladimirmi.radius.model.entity.Station
 import io.github.vladimirmi.radius.model.source.StationIconSource
 import io.github.vladimirmi.radius.ui.base.BaseFragment
@@ -65,5 +67,6 @@ class PlayerControlFragment : BaseFragment(), PlayerControlView {
         next.setTint(if (createMode) R.color.grey_400 else R.color.grey_700)
         previous.isEnabled = !createMode
         next.isEnabled = !createMode
+        if (createMode) favorite.hide() else favorite.show()
     }
 }

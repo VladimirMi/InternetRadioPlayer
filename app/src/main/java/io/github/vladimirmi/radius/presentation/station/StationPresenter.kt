@@ -24,7 +24,7 @@ class StationPresenter
     lateinit var id: String
     private var editMode = false
     private var createMode = false
-    private lateinit var prevSelectedStation: Station
+    private var prevSelectedStation: Station? = null
 
     private val menuActions: (MenuItem) -> Unit = {
         when (it.itemId) {
@@ -62,7 +62,9 @@ class StationPresenter
 
     private fun createMode() {
         createMode = true
-        prevSelectedStation = repository.selected.value
+        if (repository.hasStations()) {
+            prevSelectedStation = repository.selected.value
+        }
         repository.selected.accept(repository.newStation)
         editMode()
     }
@@ -102,10 +104,7 @@ class StationPresenter
         viewState.closeSaveDialog()
         if (station != null) {
             val old = repository.getStation(id)
-            if (old.path != station.path) {
-                repository.remove(old)
-                repository.add(station)
-            } else if (old != station) {
+            if (old != station) {
                 repository.update(station)
             }
             viewMode()
@@ -126,6 +125,8 @@ class StationPresenter
             if (repository.add(station)) {
                 viewState.showToast(R.string.toast_add_success)
                 repository.newStation = null
+                repository.setSelected(station)
+                viewMode()
             } else {
                 viewState.showToast(R.string.toast_add_force)
             }
@@ -136,7 +137,7 @@ class StationPresenter
         viewState.closeCancelCreateDialog()
         if (cancel) {
             repository.newStation = null
-            repository.setSelected(prevSelectedStation)
+            prevSelectedStation?.let { repository.setSelected(it) }
             router.backTo(Router.MEDIA_LIST_SCREEN)
         }
     }

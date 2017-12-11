@@ -14,7 +14,9 @@ class RootActivityModule : Module() {
     init {
         val cicerone = Cicerone.create(Router())
         bind(Router::class.java).toInstance(cicerone.router)
+
         bind(NavigatorHolder::class.java).toInstance(cicerone.navigatorHolder)
+
         bind(MediaBrowserController::class.java).singletonInScope()
     }
 }

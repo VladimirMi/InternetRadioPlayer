@@ -5,6 +5,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import io.github.vladimirmi.radius.R
+import io.github.vladimirmi.radius.di.Scopes
 import io.github.vladimirmi.radius.extensions.setBackgroundColorExt
 import io.github.vladimirmi.radius.model.entity.GroupedList
 import io.github.vladimirmi.radius.model.entity.Station
@@ -24,6 +25,7 @@ class MediaListAdapter(private val callback: MediaItemCallback)
         const val GROUP_ITEM = 1
     }
 
+    private val iconSource = Scopes.app.getInstance(StationIconSource::class.java)
     private lateinit var stationList: GroupedList<Station>
     private var selected: Station? = null
     private var playing = false
@@ -58,10 +60,11 @@ class MediaListAdapter(private val callback: MediaItemCallback)
                 }
             }
             is MediaGroupItemVH -> {
-                val media = stationList.getGroupItem(position)
-                holder.setCallback(callback, media)
-                holder.bind(media)
-                if (media.uri == selected?.uri) {
+                val station = stationList.getGroupItem(position)
+                holder.bind(station)
+                holder.setIcon(iconSource.getIconView(station.title))
+                holder.setCallback(callback, station)
+                if (station.uri == selected?.uri) {
                     holder.select(playing)
                 } else {
                     holder.unselect()
@@ -109,8 +112,11 @@ class MediaGroupItemVH(itemView: View) : RecyclerView.ViewHolder(itemView) {
         with(itemView) {
             name.text = station.title
             favorite.visibility = if (station.favorite) View.VISIBLE else View.INVISIBLE
-            iconContainer.addView(StationIconSource(itemView.context).getIconView(station))
         }
+    }
+
+    fun setIcon(iconView: View) {
+        itemView.iconContainer.addView(iconView)
     }
 
     fun setCallback(callback: MediaItemCallback, station: Station) {

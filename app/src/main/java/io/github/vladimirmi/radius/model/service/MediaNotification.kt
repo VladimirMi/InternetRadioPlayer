@@ -9,8 +9,6 @@ import android.support.v4.media.session.MediaSessionCompat
 import android.support.v4.media.session.PlaybackStateCompat
 import android.widget.RemoteViews
 import io.github.vladimirmi.radius.R
-import io.github.vladimirmi.radius.model.entity.Station
-import io.github.vladimirmi.radius.model.source.StationIconSource
 
 
 /**
@@ -33,15 +31,15 @@ class MediaNotification(private val service: PlayerService,
     private val previousIntent = MediaButtonReceiver
             .buildMediaButtonPendingIntent(service, PlaybackStateCompat.ACTION_SKIP_TO_PREVIOUS)
 
-    fun update(currentStation: Station) {
+    fun update() {
         when (mediaSession.controller.playbackState.state) {
             PlaybackStateCompat.STATE_PLAYING -> {
-                service.startForeground(PLAYER_NOTIFICATION_ID, getNotification(currentStation))
+                service.startForeground(PLAYER_NOTIFICATION_ID, getNotification())
             }
             PlaybackStateCompat.STATE_PAUSED -> {
                 service.stopForeground(false)
                 NotificationManagerCompat.from(service)
-                        .notify(PLAYER_NOTIFICATION_ID, getNotification(currentStation))
+                        .notify(PLAYER_NOTIFICATION_ID, getNotification())
             }
             PlaybackStateCompat.STATE_STOPPED -> {
                 service.stopForeground(true)
@@ -50,17 +48,16 @@ class MediaNotification(private val service: PlayerService,
         }
     }
 
-    private fun getNotification(currentStation: Station): Notification {
+    private fun getNotification(): Notification {
         val playbackState = mediaSession.controller.playbackState
         val description: MediaDescriptionCompat? = mediaSession.controller.metadata?.description
 
-        val bitmap = StationIconSource(service).getBitmap(currentStation)
         MediaButtonReceiver.buildMediaButtonPendingIntent(service, PlaybackStateCompat.ACTION_STOP)
 
         val notificationView = RemoteViews(service.packageName, R.layout.notification)
         with(notificationView) {
 
-            setImageViewBitmap(R.id.icon, bitmap)
+            setImageViewBitmap(R.id.icon, description?.iconBitmap)
 
             setTextViewText(R.id.content_title, description?.title)
             setTextViewText(R.id.content_text, description?.subtitle)

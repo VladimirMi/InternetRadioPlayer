@@ -1,6 +1,5 @@
 package io.github.vladimirmi.radius.model.repository
 
-import android.graphics.Bitmap
 import android.net.Uri
 import com.jakewharton.rxrelay2.BehaviorRelay
 import io.github.vladimirmi.radius.extensions.toMaybe
@@ -23,21 +22,19 @@ class StationRepository
 
     private lateinit var stationList: GroupingList
     val groupedStationList: GroupedList<Station> get() = stationList
-    val selected: BehaviorRelay<Station> = BehaviorRelay.create<Station>()
-    lateinit var iconBitmap: Bitmap
+    val current: BehaviorRelay<Station> = BehaviorRelay.create<Station>()
     var newStation: Station? = null
 
     fun initStations() {
-        //todo sort before adding
         stationList = GroupingList(stationSource.getStationList())
         if (stationList.size > preferences.selectedPos) {
-            selected.accept(stationList[preferences.selectedPos])
+            current.accept(stationList[preferences.selectedPos])
         }
     }
 
-    fun setSelected(station: Station) {
+    fun setCurrent(station: Station) {
         val pos = stationList.indexOf(station)
-        selected.accept(stationList[pos])
+        current.accept(stationList[pos])
         preferences.selectedPos = pos
     }
 
@@ -54,7 +51,7 @@ class StationRepository
     }
 
     fun update(station: Station) {
-        if (station.id == selected.value.id) selected.accept(station)
+        if (station.id == current.value.id) current.accept(station)
         stationList[stationList.indexOfFirst { it.id == station.id }] = station
         stationSource.save(station)
     }
@@ -63,7 +60,7 @@ class StationRepository
         if (stationList.find { it.title == station.title } != null) return false
         stationList.add(station)
         stationSource.save(station)
-        setSelected(station)
+        setCurrent(station)
         return true
     }
 
@@ -74,17 +71,17 @@ class StationRepository
     }
 
     fun next(): Boolean {
-        val next = stationList.getNext(selected.value)
+        val next = stationList.getNext(current.value)
         return if (next != null) {
-            setSelected(next)
+            setCurrent(next)
             true
         } else false
     }
 
     fun previous(): Boolean {
-        val previous = stationList.getPrevious(selected.value)
+        val previous = stationList.getPrevious(current.value)
         return if (previous != null) {
-            setSelected(previous)
+            setCurrent(previous)
             true
         } else false
     }

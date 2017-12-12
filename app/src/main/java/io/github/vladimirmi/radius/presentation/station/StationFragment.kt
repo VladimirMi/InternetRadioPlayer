@@ -50,6 +50,8 @@ class StationFragment : BaseFragment(), StationView, BackPressListener {
         }
     }
 
+    private val iconSource = Scopes.app.getInstance(StationIconSource::class.java)
+
     private var editTextBg: Int = 0
     private val dialogSave: SimpleDialog by lazy {
         SimpleDialog(view as ViewGroup)
@@ -118,7 +120,7 @@ class StationFragment : BaseFragment(), StationView, BackPressListener {
     }
 
     override fun setStation(station: Station) {
-        iconIv.setImageBitmap(StationIconSource(context).getBitmap(station))
+        iconIv.setImageBitmap(iconSource.getBitmap(station.title))
         titleTil.setTextWithoutAnimation(station.title)
         folderTil.setTextWithoutAnimation(station.group)
         uriTil.setTextWithoutAnimation(station.uri)

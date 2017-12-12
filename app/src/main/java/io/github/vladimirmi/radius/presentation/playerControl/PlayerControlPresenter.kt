@@ -1,6 +1,5 @@
 package io.github.vladimirmi.radius.presentation.playerControl
 
-import android.graphics.Bitmap
 import android.support.v4.media.session.PlaybackStateCompat
 import android.support.v4.media.session.PlaybackStateCompat.*
 import com.arellomobile.mvp.InjectViewState
@@ -23,17 +22,25 @@ class PlayerControlPresenter
                     private val router: Router)
     : BasePresenter<PlayerControlView>() {
 
+    private var skipPrevious = false
+    private var skipNext = false
+
     override fun onFirstViewAttach() {
         browserController.playbackState
                 .subscribeBy { this.handleState(it) }
                 .addTo(compDisp)
 
-        repository.selected
+        repository.current
                 .subscribeBy {
                     viewState.setMedia(it)
                     viewState.createMode(repository.newStation == it)
-                    if (browserController.playbackState.value?.state == PlaybackStateCompat.STATE_PLAYING) {
-                        browserController.play(it)
+                    if (skipPrevious) {
+                        router.skipToPrevious(it)
+                        skipPrevious = false
+                    }
+                    if (skipNext) {
+                        skipNext = false
+                        router.skipToNext(it)
                     }
                 }
                 .addTo(compDisp)
@@ -47,38 +54,26 @@ class PlayerControlPresenter
     }
 
     fun playPause() {
-        val station = repository.selected.value ?: return
-        if (browserController.isPlaying(station)) {
-            browserController.stop()
-        } else {
-            browserController.play(station)
-        }
+        browserController.playPause()
     }
 
     fun switchFavorite() {
-        val selected = repository.selected.value ?: return
-        val copy = selected.copy(favorite = !selected.favorite)
+        val current = repository.current.value
+        val copy = current.copy(favorite = !current.favorite)
         repository.update(copy)
-        viewState.setMedia(copy)
     }
 
     fun showStation() {
-        router.showStation(repository.selected.value)
-    }
-
-    fun saveBitmap(drawingCache: Bitmap) {
-        repository.iconBitmap = drawingCache
+        router.showStation(repository.current.value)
     }
 
     fun skipPrevious() {
-        if (repository.previous()) {
-            router.skipPrevious(repository.selected.value)
-        }
+        browserController.skipToPrevious()
+        skipPrevious = true
     }
 
     fun skipNext() {
-        if (repository.next()) {
-            router.skipNext(repository.selected.value)
-        }
+        browserController.skipToNext()
+        skipNext = true
     }
 }

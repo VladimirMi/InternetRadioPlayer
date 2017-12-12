@@ -3,7 +3,6 @@ package io.github.vladimirmi.radius.model.service
 import android.app.PendingIntent
 import android.app.Service
 import android.content.Intent
-import android.net.Uri
 import android.os.Bundle
 import android.support.v4.media.MediaBrowserCompat
 import android.support.v4.media.MediaBrowserServiceCompat
@@ -16,68 +15,77 @@ import com.google.android.exoplayer2.Player
 import io.github.vladimirmi.radius.R
 import io.github.vladimirmi.radius.di.Scopes
 import io.github.vladimirmi.radius.extensions.toUri
-import io.github.vladimirmi.radius.model.entity.Station
 import io.github.vladimirmi.radius.model.repository.StationRepository
+import io.github.vladimirmi.radius.model.source.StationIconSource
 import io.github.vladimirmi.radius.presentation.root.RootActivity
+import io.reactivex.disposables.CompositeDisposable
+import io.reactivex.rxkotlin.addTo
+import io.reactivex.rxkotlin.subscribeBy
 import timber.log.Timber
 import toothpick.Toothpick
+import java.util.*
 import javax.inject.Inject
+import kotlin.concurrent.schedule
 
 /**
  * Developer Vladimir Mikhalev, 09.05.2017.
  */
 
-class PlayerService : MediaBrowserServiceCompat() {
+class PlayerService : MediaBrowserServiceCompat(), SessionCallback.Interface {
 
     companion object {
-        const val EXTRA_STATION_ID = "EXTRA_STATION_ID"
+        const val ACTION_CREATE_MODE = "SESSION_ACTION_CREATE_MODE"
+        const val ACTION_DEFAULT_MODE = "SESSION_ACTION_DEFAULT_MODE"
     }
 
     @Inject lateinit var repository: StationRepository
+    @Inject lateinit var iconSource: StationIconSource
 
+    private val compDisp = CompositeDisposable()
     private lateinit var session: MediaSessionCompat
     private lateinit var playback: Playback
     private lateinit var notification: MediaNotification
-    private var serviceStarted: Boolean = false
-    private var currentStation: Station? = null
-
-    private val playbackState = PlaybackStateCompat.Builder()
+    private lateinit var metadata: MediaMetadataCompat
+    private var playbackState = PlaybackStateCompat.Builder()
             .setActions(PlaybackStateCompat.ACTION_PLAY_PAUSE or
                     PlaybackStateCompat.ACTION_STOP or
                     PlaybackStateCompat.ACTION_SKIP_TO_NEXT or
                     PlaybackStateCompat.ACTION_SKIP_TO_PREVIOUS)
             .build()
+    private var serviceStarted = false
+    private var currentStationId: String? = null
+    private var playingStationId: String? = null
+    private var stopTask: TimerTask? = null
 
     override fun onCreate() {
         super.onCreate()
-        Scopes.app.apply {
-            Toothpick.inject(this@PlayerService, this)
-            Toothpick.closeScope(this)
-        }
+        Toothpick.inject(this, Scopes.app)
 
         session = MediaSessionCompat(this, javaClass.simpleName)
-        sessionToken = session.sessionToken
-        session.setCallback(SessionCallback())
+        session.setCallback(SessionCallback(this))
         session.setFlags(MediaSessionCompat.FLAG_HANDLES_MEDIA_BUTTONS or MediaSessionCompat.FLAG_HANDLES_TRANSPORT_CONTROLS)
         session.setPlaybackState(playbackState)
         val activityIntent = Intent(applicationContext, RootActivity::class.java)
         session.setSessionActivity(PendingIntent.getActivity(applicationContext, 0, activityIntent, 0))
+        sessionToken = session.sessionToken
 
         playback = Playback(this, playerCallback)
         notification = MediaNotification(this, session)
+
+        repository.current.subscribeBy {
+            currentStationId = it.id
+            if (isPlaying && currentStationId != playingStationId) playCurrent()
+        }.addTo(compDisp)
     }
 
     override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
-        if (intent == null) {
-            Timber.d("onStartCommand: Stop self")
-            stopSelf()
-        }
+        if (intent == null) stopSelf()
         return Service.START_STICKY
     }
 
     override fun onDestroy() {
-        Timber.e("onDestroy: ")
-        handleStopRequest()
+        compDisp.dispose()
+        onStop()
         playback.releasePlayer()
     }
 
@@ -87,6 +95,68 @@ class PlayerService : MediaBrowserServiceCompat() {
     override fun onLoadChildren(parentId: String, result: MediaBrowserServiceCompat.Result<List<MediaBrowserCompat.MediaItem>>) {
         result.sendResult(emptyList())
     }
+
+    private fun startService() {
+        if (!serviceStarted) {
+            startService(Intent(applicationContext, PlayerService::class.java))
+            serviceStarted = true
+            session.isActive = true
+        }
+    }
+
+    //region =============== SessionCallback ==============
+
+    override fun onPlay() {
+        stopTask?.cancel()
+        startService()
+        if (session.controller.playbackState.state == PlaybackStateCompat.STATE_PAUSED
+                && currentStationId == playingStationId) {
+            playback.resume()
+        } else {
+            playCurrent()
+        }
+    }
+
+    override fun onPause() {
+        playback.pause()
+        stopTask = Timer().schedule(60000) {
+            onStop()
+        }
+    }
+
+    override fun onStop() {
+        playback.stop()
+        stopSelf()
+        serviceStarted = false
+        session.isActive = false
+    }
+
+    override fun onSkipToPrevious() {
+        if (repository.previous() && isPlaying) playCurrent()
+    }
+
+    override fun onSkipToNext() {
+        if (repository.next() && isPlaying) playCurrent()
+    }
+
+    override fun onCustomAction(action: String?, extras: Bundle?) {
+        when (action) {
+            ACTION_CREATE_MODE -> {
+                playbackState = PlaybackStateCompat.Builder()
+                        .setActions(PlaybackStateCompat.ACTION_PLAY_PAUSE or
+                                PlaybackStateCompat.ACTION_STOP)
+                        .build()
+            }
+            ACTION_DEFAULT_MODE -> playbackState = PlaybackStateCompat.Builder()
+                    .setActions(PlaybackStateCompat.ACTION_PLAY_PAUSE or
+                            PlaybackStateCompat.ACTION_STOP or
+                            PlaybackStateCompat.ACTION_SKIP_TO_NEXT or
+                            PlaybackStateCompat.ACTION_SKIP_TO_PREVIOUS)
+                    .build()
+        }
+    }
+
+    //endregion
 
     private val playerCallback = object : PlayerCallback() {
 
@@ -100,7 +170,7 @@ class PlayerService : MediaBrowserServiceCompat() {
             }
 
             session.setPlaybackState(createPlaybackState(state))
-            notification.update(currentStation!!)
+            notification.update()
         }
 
         override fun onPlayerError(error: ExoPlaybackException?) {
@@ -109,116 +179,51 @@ class PlayerService : MediaBrowserServiceCompat() {
                 TYPE_SOURCE -> Timber.e("SOURCE error occurred: ${error.sourceException}")
                 TYPE_UNEXPECTED -> Timber.e("UNEXPECTED error occurred: ${error.unexpectedException}")
             }
-            handleStopRequest()
+            onStop()
         }
 
         override fun onMetadata(key: String, value: String) {
             session.setMetadata(createMetadata(key, value))
-            notification.update(currentStation!!)
+            notification.update()
         }
+    }
 
-        private fun createPlaybackState(state: Int): PlaybackStateCompat {
-            return PlaybackStateCompat.Builder(playbackState)
-                    .setState(state, 0, 1F)
-                    .build()
+    private fun createMetadata(key: String = "", value: String = ""): MediaMetadataCompat {
+        Timber.d("metadata $key: $value")
+        val (artist, title) = if (value.contains('-')) {
+            value.split("-").map { it.trim() }
+        } else {
+            listOf("", value)
         }
+        return MediaMetadataCompat.Builder(metadata)
+                .putString(MediaMetadataCompat.METADATA_KEY_ARTIST, artist)
+                .putString(MediaMetadataCompat.METADATA_KEY_TITLE, title)
+                .build()
+    }
 
-        private fun createMetadata(key: String = "", value: String = ""): MediaMetadataCompat {
-            Timber.d("createMetadata: $value")
-            //todo handle bad metadata
-            val (artist, title) = if (value.isEmpty()) {
-                listOf("", "")
-            } else {
-                value.split("-").map { it.trim() }
+    private fun createPlaybackState(state: Int): PlaybackStateCompat {
+        return PlaybackStateCompat.Builder(playbackState)
+                .setState(state, 0, 1F)
+                .build()
+    }
+
+    private val isPlaying: Boolean
+        get() {
+            return with(session.controller.playbackState) {
+                state == PlaybackStateCompat.STATE_PLAYING
+                        || state == PlaybackStateCompat.STATE_BUFFERING
             }
-            return MediaMetadataCompat.Builder()
-                    .putString(MediaMetadataCompat.METADATA_KEY_ARTIST, artist)
-                    .putString(MediaMetadataCompat.METADATA_KEY_TITLE, title)
-                    .putString(MediaMetadataCompat.METADATA_KEY_ALBUM, currentStation?.title)
-                    .build()
-        }
-    }
-
-    private fun startService() {
-        if (!serviceStarted) {
-            Timber.v("Starting service")
-            startService(Intent(applicationContext, PlayerService::class.java))
-            serviceStarted = true
-            session.isActive = true
-        }
-    }
-
-    private fun handlePlayRequest(uri: Uri) {
-        Timber.d("handlePlayRequest with url $uri")
-        startService()
-        playback.play(uri)
-    }
-
-    private fun handleResumeRequest() {
-        Timber.d("handleResumeRequest")
-        playback.resume()
-    }
-
-    private fun handlePauseRequest() {
-        Timber.d("handlePauseRequest")
-        playback.pause()
-    }
-
-    private fun handleStopRequest() {
-        Timber.d("handleStopRequest")
-        playback.stop()
-        stopSelf()
-        serviceStarted = false
-        session.isActive = false
-    }
-
-    private fun handleSkipToNextRequest() {
-        Timber.d("handleSkipToNextRequest")
-        if (repository.next()) {
-            currentStation = repository.selected.value
-            currentStation?.uri?.toUri()?.let { handlePlayRequest(it) }
-        }
-    }
-
-    private fun handleSkipToPreviousRequest() {
-        Timber.d("handleSkipToPreviousRequest")
-        if (repository.previous()) {
-            currentStation = repository.selected.value
-            currentStation?.uri?.toUri()?.let { handlePlayRequest(it) }
-        }
-    }
-
-
-    private fun handleExtras(extras: Bundle) {
-        val id = extras.getString(EXTRA_STATION_ID)
-        currentStation = repository.newStation ?: repository.getStation(id)
-    }
-
-    inner class SessionCallback : MediaSessionCompat.Callback() {
-
-        override fun onPlay() {
-            handleResumeRequest()
         }
 
-        override fun onPlayFromUri(uri: Uri, extras: Bundle?) {
-            if (extras != null) handleExtras(extras)
-            handlePlayRequest(uri)
-        }
+    private fun playCurrent() {
+        val station = repository.current.value
+        playingStationId = station.id
+        playback.play(station.uri.toUri()!!)
 
-        override fun onPause() {
-            handlePauseRequest()
-        }
-
-        override fun onStop() {
-            handleStopRequest()
-        }
-
-        override fun onSkipToPrevious() {
-            handleSkipToPreviousRequest()
-        }
-
-        override fun onSkipToNext() {
-            handleSkipToNextRequest()
-        }
+        val iconBitmap = iconSource.getBitmap(station.title)
+        metadata = MediaMetadataCompat.Builder()
+                .putString(MediaMetadataCompat.METADATA_KEY_ALBUM, station.title)
+                .putBitmap(MediaMetadataCompat.METADATA_KEY_DISPLAY_ICON, iconBitmap)
+                .build()
     }
 }

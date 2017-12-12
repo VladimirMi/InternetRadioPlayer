@@ -159,13 +159,12 @@ class Playback(private val service: PlayerService,
 
         @Suppress("DEPRECATION")
         override fun onReceive(context: Context, intent: Intent) {
+            //todo pause/resume through broadcast into service
             val action = intent.action
             if (action == AudioManager.ACTION_AUDIO_BECOMING_NOISY) {
                 pause()
-
             } else if (action == Intent.ACTION_HEADSET_PLUG && intent.getIntExtra("state", 0) == 1) {
                 resume()
-
             } else if (BluetoothDevice.ACTION_ACL_CONNECTED == action) {
                 var count = 0
                 while (!audioManager.isBluetoothA2dpOn && count < 10) {

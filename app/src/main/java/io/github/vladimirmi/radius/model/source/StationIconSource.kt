@@ -12,35 +12,37 @@ import android.view.View
 import android.widget.TextView
 import io.github.vladimirmi.radius.R
 import io.github.vladimirmi.radius.extensions.dp
-import io.github.vladimirmi.radius.model.entity.Station
+import javax.inject.Inject
 
 
 /**
  * Created by Vladimir Mikhalev 08.12.2017.
  */
 
-class StationIconSource(private val context: Context) {
+class StationIconSource
+@Inject constructor(private val context: Context) {
 
     private val sizeDp = 48
     private val size = sizeDp * context.dp
 
     /**
      * Returns pair of text and background colors accordingly
-     * @param station Station for which icon colors return
+     *
+     * @param stationTitle Station title for which icon colors return
      * @return Pair of colors in the form 0xAARRGGBB
      */
-    fun getIconTextColors(station: Station): Pair<Int, Int> {
+    fun getIconTextColors(stationTitle: String): Pair<Int, Int> {
         val textColors = context.resources.getIntArray(R.array.icon_text_color_set)
         val bgColors = context.resources.getIntArray(R.array.icon_bg_color_set)
-        val colorIdx = station.title.first().toInt() % textColors.size
+        val colorIdx = stationTitle.first().toInt() % textColors.size
         return Pair(textColors[colorIdx], bgColors[colorIdx])
     }
 
-    fun getIconView(station: Station,
-                    colors: Pair<Int, Int> = getIconTextColors(station)): TextView {
+    fun getIconView(stationTitle: String,
+                    colors: Pair<Int, Int> = getIconTextColors(stationTitle)): TextView {
         with(TextView(context)) {
             gravity = Gravity.CENTER
-            text = station.title.substring(0, 1)
+            text = stationTitle.substring(0, 1)
             setTextColor(colors.first)
             typeface = ResourcesCompat.getFont(context, R.font.audiowide)
             setTextSize(TypedValue.COMPLEX_UNIT_DIP, sizeDp * 3f / 4 / text.length)
@@ -56,10 +58,11 @@ class StationIconSource(private val context: Context) {
         }
     }
 
-    fun getBitmap(station: Station,
-                  colors: Pair<Int, Int> = getIconTextColors(station)): Bitmap {
+    fun getBitmap(stationTitle: String,
+                  colors: Pair<Int, Int> = getIconTextColors(stationTitle)): Bitmap {
         val b = Bitmap.createBitmap(size, size, Bitmap.Config.ARGB_8888)
-        getIconView(station, colors).draw(Canvas(b))
+        getIconView(stationTitle, colors).draw(Canvas(b))
         return b
     }
+
 }

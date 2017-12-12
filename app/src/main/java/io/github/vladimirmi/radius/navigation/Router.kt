@@ -15,11 +15,11 @@ class Router : ru.terrakok.cicerone.Router() {
         const val DELIMITER = '$'
     }
 
-    fun skipNext(station: Station) {
+    fun skipToNext(station: Station) {
         executeCommand(Next("$STATION_SCREEN$DELIMITER${station.id}"))
     }
 
-    fun skipPrevious(station: Station) {
+    fun skipToPrevious(station: Station) {
         executeCommand(Previous("$STATION_SCREEN$DELIMITER${station.id}"))
     }
 

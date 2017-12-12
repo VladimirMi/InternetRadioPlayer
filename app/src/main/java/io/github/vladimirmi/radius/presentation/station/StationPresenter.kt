@@ -63,9 +63,9 @@ class StationPresenter
     private fun createMode() {
         createMode = true
         if (repository.hasStations()) {
-            prevSelectedStation = repository.selected.value
+            prevSelectedStation = repository.current.value
         }
-        repository.selected.accept(repository.newStation)
+        repository.current.accept(repository.newStation)
         editMode()
     }
 
@@ -125,7 +125,7 @@ class StationPresenter
             if (repository.add(station)) {
                 viewState.showToast(R.string.toast_add_success)
                 repository.newStation = null
-                repository.setSelected(station)
+                repository.setCurrent(station)
                 viewMode()
             } else {
                 viewState.showToast(R.string.toast_add_force)
@@ -137,7 +137,7 @@ class StationPresenter
         viewState.closeCancelCreateDialog()
         if (cancel) {
             repository.newStation = null
-            prevSelectedStation?.let { repository.setSelected(it) }
+            prevSelectedStation?.let { repository.setCurrent(it) }
             router.backTo(Router.MEDIA_LIST_SCREEN)
         }
     }

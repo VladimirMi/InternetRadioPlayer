@@ -1,7 +1,6 @@
 package io.github.vladimirmi.radius.presentation.mediaList
 
 import android.net.Uri
-import android.support.v4.media.session.PlaybackStateCompat
 import com.arellomobile.mvp.InjectViewState
 import io.github.vladimirmi.radius.R
 import io.github.vladimirmi.radius.model.entity.Station
@@ -36,17 +35,17 @@ class MediaListPresenter
                 .subscribeBy { viewState.setMediaList(it) }
                 .addTo(compDisp)
 
-        repository.selected
+        repository.current
                 .subscribeBy {
-                    viewState.selectItem(it, mediaBrowserController.isPlaying(it))
+                    viewState.selectItem(it, mediaBrowserController.isPlaying)
                     viewState.buildToolbar(builder.setToolbarTitle(it.title))
                 }
                 .addTo(compDisp)
 
         mediaBrowserController.playbackState
                 .subscribeBy {
-                    val station = repository.selected.value ?: return@subscribeBy
-                    if (it.state == PlaybackStateCompat.STATE_PLAYING) {
+                    val station = repository.current.value
+                    if (mediaBrowserController.isPlaying) {
                         viewState.selectItem(station, playing = true)
                     } else {
                         viewState.selectItem(station, playing = false)
@@ -55,7 +54,7 @@ class MediaListPresenter
     }
 
     fun select(station: Station) {
-        repository.setSelected(station)
+        repository.setCurrent(station)
     }
 
     fun selectGroup(group: String) {

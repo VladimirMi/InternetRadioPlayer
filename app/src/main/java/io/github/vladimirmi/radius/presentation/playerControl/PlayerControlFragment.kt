@@ -25,6 +25,8 @@ class PlayerControlFragment : BaseFragment(), PlayerControlView {
 
     override val layoutRes = R.layout.fragment_player_controls
 
+    private val iconSource = Scopes.app.getInstance(StationIconSource::class.java)
+
     @InjectPresenter lateinit var presenter: PlayerControlPresenter
 
     @ProvidePresenter
@@ -54,12 +56,9 @@ class PlayerControlFragment : BaseFragment(), PlayerControlView {
     override fun setMedia(station: Station) {
         favorite.setBackgroundResource(if (station.favorite) R.drawable.ic_star else R.drawable.ic_empty_star)
 
-        val iconSource = StationIconSource(context)
-        val colors = iconSource.getIconTextColors(station)
-
-        iconIv.setImageBitmap(iconSource.getBitmap(station,
+        val colors = iconSource.getIconTextColors(station.title)
+        iconIv.setImageBitmap(iconSource.getBitmap(station.title,
                 colors.copy(second = ContextCompat.getColor(context, R.color.transparent))))
-        presenter.saveBitmap(iconSource.getBitmap(station))
     }
 
     override fun createMode(createMode: Boolean) {

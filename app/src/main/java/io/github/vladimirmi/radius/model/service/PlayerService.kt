@@ -125,6 +125,7 @@ class PlayerService : MediaBrowserServiceCompat() {
 
         private fun createMetadata(key: String = "", value: String = ""): MediaMetadataCompat {
             Timber.d("createMetadata: $value")
+            //todo handle bad metadata
             val (artist, title) = if (value.isEmpty()) {
                 listOf("", "")
             } else {

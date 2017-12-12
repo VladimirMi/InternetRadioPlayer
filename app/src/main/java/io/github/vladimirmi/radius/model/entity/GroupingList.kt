@@ -20,69 +20,73 @@ class GroupingList(private val stationList: ArrayList<Station>)
 
     private fun initMappings() {
         mappings.clear()
+        stationList.sortBy { it.group }
         stationList.forEachIndexed { index, station ->
             if ((mappings.isEmpty() || mappings.last().group != station.group) && station.group.isNotBlank()) {
-                mappings.add(Title(station.group))
+                mappings.add(GroupMapping.Title(station.group))
             }
-            mappings.add(Item(station.group, station.id, index))
+            mappings.add(GroupMapping.Item(station.group, station.id, index))
         }
     }
 
-    override fun isGroupTitle(position: Int): Boolean = mappings[position] is Title
+    override fun isGroupTitle(position: Int): Boolean = getVisibleMapping(position) is GroupMapping.Title
 
-    override fun getGroupTitle(position: Int): String = mappings[position].group
+    override fun getGroupTitle(position: Int): String = getVisibleMapping(position).group
 
     override fun getGroupItem(position: Int): Station {
-        val mapping = mappings[position]
+        val mapping = getVisibleMapping(position)
         return when (mapping) {
-            is Title -> throw IllegalStateException("Should call getGroupTitle()")
-            is Item -> stationList[mapping.index]
+            is GroupMapping.Title -> throw IllegalStateException("Should call getGroupTitle()")
+            is GroupMapping.Item -> stationList[mapping.index]
         }
     }
 
     override fun hideGroup(group: String) {
-        mappings.removeAll { it.group == group && it !is Title }
+        mappings.forEach {
+            if (it.group == group && it is GroupMapping.Item) it.visible = false
+        }
     }
 
     override fun showGroup(group: String) {
-        mappings.addAll(stationList.mapIndexedNotNull { index, station ->
-            if (station.group == group) Item(station.group, station.id, index) else null
-        })
-        sortMappings()
+        mappings.forEach {
+            if (it.group == group && it is GroupMapping.Item) it.visible = true
+        }
     }
 
-    override fun isGroupVisible(group: String): Boolean =
-            mappings.find { it.group == group && it !is Title } != null
-
-    override fun groupedSize(): Int = mappings.size
-
-    override fun getItemPosition(item: Station): Int {
-        return mappings.indexOfFirst { it is Item && it.id == item.id }
+    override fun isGroupVisible(group: String): Boolean {
+        return mappings.find { it.group == group && it is GroupMapping.Item }?.visible == true
     }
+
+    override fun groupedSize(): Int = mappings.count { it.visible }
 
     override fun getPrevious(item: Station): Station? {
-        val items = (0 until groupedSize())
-                .map { mappings[it] }
-                .filterIsInstance<Item>()
-        val visible = isGroupVisible(item.group)
-        val skip = items.firstOrNull()?.id == item.id
-        return items
-                .takeWhile { skip || (if (visible) it.id != item.id else it.group != item.group) }
-                .lastOrNull()
-                ?.let { stationList[it.index] }
+        var prev: GroupMapping.Item? = null
+        for (i in 0 until mappings.size) {
+            val mapping = getMapping(i)
+            if (mapping is GroupMapping.Item) {
+                if (mapping.id == item.id && prev != null) {
+                    return stationList[prev.index]
+                } else if (mapping.visible) {
+                    prev = mapping
+                }
+            }
+        }
+        return prev?.let { stationList[it.index] }
     }
 
     override fun getNext(item: Station): Station? {
-        val reverseItems = (groupedSize() - 1 downTo 0)
-                .map { mappings[it] }
-                .filterIsInstance<Item>()
-        val visible = isGroupVisible(item.group)
-        val skip = reverseItems.firstOrNull()?.id == item.id
-
-        return reverseItems
-                .takeWhile { skip || (if (visible) it.id != item.id else it.group != item.group) }
-                .lastOrNull()
-                ?.let { stationList[it.index] }
+        var next: GroupMapping.Item? = null
+        for (i in mappings.size - 1 downTo 0) {
+            val mapping = getMapping(i)
+            if (mapping is GroupMapping.Item) {
+                if (mapping.id == item.id && next != null) {
+                    return stationList[next.index]
+                } else if (mapping.visible) {
+                    next = mapping
+                }
+            }
+        }
+        return next?.let { stationList[it.index] }
     }
 
     override fun observe(): Observable<GroupedList<Station>> = obs
@@ -102,6 +106,7 @@ class GroupingList(private val stationList: ArrayList<Station>)
 
     override fun set(index: Int, element: Station): Station {
         val old = stationList.set(index, element)
+        initMappings()
         obs.accept(this)
         return old
     }
@@ -117,7 +122,16 @@ class GroupingList(private val stationList: ArrayList<Station>)
 
     //endregion
 
-    private fun sortMappings() {
-        mappings.sortBy { it.group }
+    private fun getMapping(position: Int): GroupMapping = mappings[position]
+
+    private fun getVisibleMapping(position: Int): GroupMapping {
+        var count = 0
+        mappings.forEach { groupMapping ->
+            if (groupMapping.visible) {
+                if (count == position) return groupMapping
+                count++
+            }
+        }
+        throw IllegalStateException()
     }
 }

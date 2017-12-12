@@ -25,8 +25,6 @@ interface GroupedList<E> {
 
     fun notifyObservers()
 
-    fun getItemPosition(item: E): Int
-
     fun getPrevious(item: E): E?
 
     fun getNext(item: E): E?
@@ -34,11 +32,13 @@ interface GroupedList<E> {
 }
 
 
-sealed class GroupMapping(val group: String)
-class Title(group: String) : GroupMapping(group) {
-    override fun toString(): String = "Title($group)"
-}
+sealed class GroupMapping(val group: String, var visible: Boolean) {
+    class Title(group: String, visible: Boolean = true) : GroupMapping(group, visible) {
+        override fun toString(): String = "Title($group)"
+    }
 
-class Item(group: String, val id: String, val index: Int) : GroupMapping(group) {
-    override fun toString(): String = "Item(index=$index)"
+    class Item(group: String, val id: String, val index: Int, visible: Boolean = true)
+        : GroupMapping(group, visible) {
+        override fun toString(): String = "Item(index=$index)"
+    }
 }

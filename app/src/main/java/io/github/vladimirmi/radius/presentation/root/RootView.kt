@@ -9,4 +9,6 @@ import com.arellomobile.mvp.MvpView
 interface RootView : MvpView {
 
     fun showToast(resId: Int)
+
+    fun showSnackbar(resId: Int)
 }

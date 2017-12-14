@@ -4,6 +4,7 @@ import android.annotation.SuppressLint
 import android.content.Intent
 import android.os.Bundle
 import android.support.annotation.StringRes
+import android.support.design.widget.Snackbar
 import android.support.v4.content.ContextCompat
 import android.support.v4.graphics.drawable.DrawableCompat
 import android.support.v7.view.menu.MenuBuilder
@@ -97,6 +98,10 @@ class RootActivity : MvpAppCompatActivity(), RootView, ToolbarView {
 
     override fun showToast(resId: Int) {
         Toast.makeText(this, resId, Toast.LENGTH_SHORT).show()
+    }
+
+    override fun showSnackbar(resId: Int) {
+        Snackbar.make(findViewById(android.R.id.content), resId, Snackbar.LENGTH_LONG).show()
     }
 
     //endregion

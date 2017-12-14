@@ -16,7 +16,9 @@ import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.rxkotlin.addTo
 import io.reactivex.rxkotlin.subscribeBy
 import timber.log.Timber
+import java.util.*
 import javax.inject.Inject
+import kotlin.concurrent.schedule
 
 /**
  * Created by Vladimir Mikhalev 01.10.2017.
@@ -76,8 +78,17 @@ class RootPresenter
         router.newRootScreen(Router.MEDIA_LIST_SCREEN)
     }
 
+    private var allowExit = false
+
     fun onBackPressed() {
-        router.exit()
+        viewState.showSnackbar(R.string.snackbar_exit)
+        Timer().schedule(3500) {
+            allowExit = false
+        }
+        if (allowExit) {
+            router.exit()
+        }
+        allowExit = true
     }
 
     fun addStation(uri: Uri) {
@@ -85,7 +96,7 @@ class RootPresenter
         repository.parseStation(uri)
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribeBy(onSuccess = { router.showStation(it) },
-                        onComplete = { viewState.showToast(R.string.toast_add_error) })
+                        onComplete = { viewState.showToast(R.string.toast_add_error) }) //todo more details
                 .addTo(compDisp)
     }
 }

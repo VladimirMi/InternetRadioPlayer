@@ -5,6 +5,8 @@
     <string name="toast_add_error">Не удалось добавить станцию</string>
     <string name="toast_add_force">Станция с заданным именем уже есть</string>
 
+    <string name="snackbar_exit">Нажмите еще раз для выхода</string>
+
     <string name="dialog_remove_message">Вы действительно хотите удалить станцию?</string>
     <string name="dialog_submit_message">Сохранить изменения?</string>
     <string name="dialog_discard_message">Отменить изменения?</string>

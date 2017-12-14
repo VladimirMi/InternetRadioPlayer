@@ -10,7 +10,7 @@ repositories {
 
 android {
     compileSdkVersion 26
-    buildToolsVersion "26.0.2"
+    buildToolsVersion "26.0.3"
     defaultConfig {
         applicationId "io.github.vladimirmi.radius"
         minSdkVersion 16
@@ -38,10 +38,6 @@ android {
 
 ext {
     SUPPORT_LIBRARY_VERSION = "26.0.2"
-    TOOTHPICK_VERSION = "1.0.8"
-    MOXY_VERSION = "1.4.6"
-    EXO_PLAYER_VERSION = '2.5.1'
-    RXJAVA_VERSION = '2.1.6'
 }
 
 dependencies {
@@ -60,16 +56,16 @@ dependencies {
     compile 'com.google.android:flexbox:0.3.1'
     //Rx
     compile 'io.reactivex.rxjava2:rxandroid:2.0.1'
-    compile 'io.reactivex.rxjava2:rxjava:' + RXJAVA_VERSION
+    compile 'io.reactivex.rxjava2:rxjava:2.1.6'
     compile 'io.reactivex.rxjava2:rxkotlin:2.1.0'
     compile 'com.jakewharton.rxrelay2:rxrelay:2.0.0'
     compile 'com.jakewharton.rxbinding2:rxbinding-kotlin:2.0.0'
     //DI
-    compile 'com.github.stephanenicolas.toothpick:toothpick-runtime:' + TOOTHPICK_VERSION
-    kapt 'com.github.stephanenicolas.toothpick:toothpick-compiler:' + TOOTHPICK_VERSION
+    compile 'com.github.stephanenicolas.toothpick:toothpick-runtime:1.0.8'
+    kapt 'com.github.stephanenicolas.toothpick:toothpick-compiler:1.0.8'
     //Moxy
-    kapt 'com.arello-mobile:moxy-compiler:' + MOXY_VERSION
-    compile 'com.arello-mobile:moxy-app-compat:' + MOXY_VERSION
+    kapt 'com.arello-mobile:moxy-compiler:1.4.6'
+    compile 'com.arello-mobile:moxy-app-compat:1.4.6'
     //Navigation
     compile "ru.terrakok.cicerone:cicerone:2.1.0"
     //Logging
@@ -79,8 +75,8 @@ dependencies {
         transitive = true
     }
     //ExoPlayer
-    compile 'com.google.android.exoplayer:exoplayer-core:r' + EXO_PLAYER_VERSION
-    compile 'com.google.android.exoplayer:extension-mediasession:r' + EXO_PLAYER_VERSION
+    compile 'com.google.android.exoplayer:exoplayer-core:r2.5.1'
+//    compile 'com.google.android.exoplayer:extension-mediasession:r2.5.1'
 
     compile 'com.google.code.gson:gson:2.8.2'
 }

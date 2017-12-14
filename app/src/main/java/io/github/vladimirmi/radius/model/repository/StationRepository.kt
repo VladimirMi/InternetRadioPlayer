@@ -27,15 +27,16 @@ class StationRepository
 
     fun initStations() {
         stationList = GroupingList(stationSource.getStationList())
-        if (stationList.size > preferences.selectedPos) {
-            current.accept(stationList[preferences.selectedPos])
+        if (stationList.size > preferences.currentPos) {
+            current.accept(stationList[preferences.currentPos])
         }
+        preferences.hidedGroups.forEach { stationList.hideGroup(it) }
     }
 
     fun setCurrent(station: Station) {
         val pos = stationList.indexOf(station)
         current.accept(stationList[pos])
-        preferences.selectedPos = pos
+        preferences.currentPos = pos
     }
 
     fun getStation(id: String): Station =
@@ -50,13 +51,23 @@ class StationRepository
                 .doOnSuccess { newStation = it }
     }
 
-    fun update(station: Station) {
+    fun showOrHideGroup(group: String) {
+        if (stationList.isGroupVisible(group)) {
+            stationList.hideGroup(group)
+            preferences.hidedGroups = preferences.hidedGroups.toMutableSet().apply { add(group) }
+        } else {
+            stationList.showGroup(group)
+            preferences.hidedGroups = preferences.hidedGroups.toMutableSet().apply { remove(group) }
+        }
+    }
+
+    fun updateStation(station: Station) {
         if (station.id == current.value.id) current.accept(station)
         stationList[stationList.indexOfFirst { it.id == station.id }] = station
         stationSource.save(station)
     }
 
-    fun add(station: Station): Boolean {
+    fun addStation(station: Station): Boolean {
         if (stationList.find { it.title == station.title } != null) return false
         stationList.add(station)
         stationSource.save(station)
@@ -64,13 +75,13 @@ class StationRepository
         return true
     }
 
-    fun remove(station: Station) {
+    fun removeStation(station: Station) {
         if (stationList.remove(station)) {
             stationSource.remove(station)
         }
     }
 
-    fun next(): Boolean {
+    fun nextStation(): Boolean {
         val next = stationList.getNext(current.value)
         return if (next != null) {
             setCurrent(next)
@@ -78,7 +89,7 @@ class StationRepository
         } else false
     }
 
-    fun previous(): Boolean {
+    fun previousStation(): Boolean {
         val previous = stationList.getPrevious(current.value)
         return if (previous != null) {
             setCurrent(previous)

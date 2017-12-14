@@ -93,8 +93,8 @@ class StationPresenter
     fun delete(delete: Boolean) {
         viewState.closeDeleteDialog()
         if (delete) {
-            repository.remove(repository.getStation(id))
-            repository.next()
+            repository.removeStation(repository.getStation(id))
+            repository.nextStation()
             router.exit()
         }
     }
@@ -105,7 +105,7 @@ class StationPresenter
         if (station != null) {
             val old = repository.getStation(id)
             if (old != station) {
-                repository.update(station)
+                repository.updateStation(station)
             }
             viewMode()
         }
@@ -122,7 +122,7 @@ class StationPresenter
     fun create(station: Station?) {
         viewState.closeCreateDialog()
         if (station != null) {
-            if (repository.add(station)) {
+            if (repository.addStation(station)) {
                 viewState.showToast(R.string.toast_add_success)
                 repository.newStation = null
                 repository.setCurrent(station)

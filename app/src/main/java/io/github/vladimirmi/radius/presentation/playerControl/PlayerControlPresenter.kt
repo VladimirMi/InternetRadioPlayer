@@ -60,7 +60,7 @@ class PlayerControlPresenter
     fun switchFavorite() {
         val current = repository.current.value
         val copy = current.copy(favorite = !current.favorite)
-        repository.update(copy)
+        repository.updateStation(copy)
     }
 
     fun showStation() {

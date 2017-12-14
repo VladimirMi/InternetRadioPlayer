@@ -132,11 +132,11 @@ class PlayerService : MediaBrowserServiceCompat(), SessionCallback.Interface {
     }
 
     override fun onSkipToPrevious() {
-        if (repository.previous() && isPlaying) playCurrent()
+        if (repository.previousStation() && isPlaying) playCurrent()
     }
 
     override fun onSkipToNext() {
-        if (repository.next() && isPlaying) playCurrent()
+        if (repository.nextStation() && isPlaying) playCurrent()
     }
 
     override fun onCustomAction(action: String?, extras: Bundle?) {

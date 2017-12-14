@@ -58,15 +58,11 @@ class MediaListPresenter
     }
 
     fun selectGroup(group: String) {
-        if (repository.groupedStationList.isGroupVisible(group)) {
-            repository.groupedStationList.hideGroup(group)
-        } else {
-            repository.groupedStationList.showGroup(group)
-        }
+        repository.showOrHideGroup(group)
         viewState.notifyList()
     }
 
-    //todo remove
+    //todo removeStation
     fun addStation(uri: Uri) {
         repository.parseStation(uri)
                 .observeOn(AndroidSchedulers.mainThread())
@@ -76,7 +72,7 @@ class MediaListPresenter
     }
 
     fun addStation(station: Station) {
-        if (repository.add(station)) {
+        if (repository.addStation(station)) {
             viewState.closeAddDialog()
             viewState.showToast(R.string.toast_add_success)
             select(station)
@@ -90,7 +86,7 @@ class MediaListPresenter
     }
 
     fun submitRemove(station: Station) {
-        repository.remove(station)
+        repository.removeStation(station)
         viewState.closeRemoveDialog()
     }
 

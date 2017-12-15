@@ -21,10 +21,6 @@ interface MediaListView : MvpView {
 
     fun showToast(resId: Int)
 
-    fun openAddDialog(station: Station)
-
-    fun closeAddDialog()
-
     @StateStrategyType(OneExecutionStateStrategy::class)
     fun openRemoveDialog(station: Station)
 

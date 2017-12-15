@@ -109,6 +109,8 @@ class StationFragment : BaseFragment(), StationView, BackPressListener {
         urlTil.editText?.setOnClickListener { presenter.openLink((it as EditText).text.toString()) }
         uriTil.editText?.setOnClickListener { presenter.openLink((it as EditText).text.toString()) }
         fab.setOnClickListener { presenter.changeMode() }
+        changeIconBt.setOnClickListener { presenter.changeIcon() }
+        changeIconBt.background.alpha = 128
     }
 
     override fun onBackPressed() = presenter.onBackPressed()
@@ -143,10 +145,12 @@ class StationFragment : BaseFragment(), StationView, BackPressListener {
         urlTil.linkStyle(!editMode)
 
         if (editMode) {
+            changeIconBt.show()
             fab.setImageResource(R.drawable.ic_submit)
             folderTil.show()
             urlTil.show()
         } else {
+            changeIconBt.remove()
             fab.setImageResource(R.drawable.ic_edit)
             if (folderTil.isBlank()) folderTil.remove()
             if (urlTil.isBlank()) urlTil.remove()

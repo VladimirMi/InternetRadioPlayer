@@ -1,0 +1,160 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<android.support.constraint.ConstraintLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:padding="16dp"
+    >
+
+    <ImageView
+        android:id="@+id/iconIv"
+        android:layout_width="100dp"
+        android:layout_height="100dp"
+        android:layout_gravity="center_horizontal"
+        android:contentDescription="@string/desc_media_icon"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        tools:background="@drawable/bg_rounded"
+        tools:src="@drawable/ic_radius"
+        />
+
+
+    <RadioGroup
+        android:id="@+id/presetsRg"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="24dp"
+        android:checkedButton="@id/stationUrlBt"
+        android:orientation="horizontal"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/iconIv"
+        >
+
+        <RadioButton
+            android:id="@+id/stationUrlBt"
+            style="@style/HorizontalRadioButton"
+            android:text="@string/icon_favicon_station"
+            />
+
+        <RadioButton
+            android:id="@+id/serverUrlBt"
+            style="@style/HorizontalRadioButton"
+            android:text="@string/icon_favicon_server"
+            />
+
+        <RadioButton
+            android:id="@+id/nameBt"
+            style="@style/HorizontalRadioButton"
+            android:text="@string/icon_text"
+            />
+
+        <RadioButton
+            android:id="@+id/addBt"
+            style="@style/HorizontalRadioButton"
+            android:text="@string/icon_add"
+            />
+    </RadioGroup>
+
+    <Button
+        android:id="@+id/selectBt"
+        android:layout_width="48dp"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="24dp"
+        android:foreground="@drawable/ic_add"
+        android:theme="@style/AccentButton"
+        android:visibility="gone"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/presetsRg"
+        />
+
+    <RadioGroup
+        android:id="@+id/optionsRg"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="24dp"
+        android:checkedButton="@id/backgroundBt"
+        android:orientation="horizontal"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/presetsRg"
+        >
+
+        <RadioButton
+            android:id="@+id/backgroundBt"
+            style="@style/HorizontalRadioButton"
+            android:text="@string/icon_background"
+            />
+
+        <RadioButton
+            android:id="@+id/textBt"
+            style="@style/HorizontalRadioButton"
+            android:text="@string/icon_text"
+            />
+    </RadioGroup>
+
+    <EditText
+        android:id="@+id/iconTextEt"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="8dp"
+        android:maxLength="3"
+        android:textSize="24sp"
+        android:visibility="gone"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/optionsRg"
+        tools:text="X"
+        android:inputType="text"
+        />
+
+    <android.support.v7.widget.ButtonBarLayout
+        android:id="@+id/linearLayout"
+        android:layout_width="250dp"
+        android:layout_height="56dp"
+        android:layout_gravity="center"
+        android:orientation="horizontal"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        >
+
+        <Button
+            android:id="@+id/cancelBt"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:text="@string/dialog_cancel"
+            android:theme="@style/CancelButton"
+            />
+
+        <Button
+            android:id="@+id/okBt"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:text="@string/dialog_ok"
+            android:theme="@style/AccentButton"
+            />
+    </android.support.v7.widget.ButtonBarLayout>
+
+    <com.thebluealliance.spectrum.SpectrumPalette
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="24dp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/iconTextEt"
+        app:spectrum_autoPadding="false"
+        app:spectrum_colors="@array/icon_text_color_set"
+        >
+
+    </com.thebluealliance.spectrum.SpectrumPalette>
+
+</android.support.constraint.ConstraintLayout>
+

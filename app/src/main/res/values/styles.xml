@@ -57,4 +57,15 @@
         <item name="colorButtonNormal">@color/grey_700</item>
     </style>
 
+    <style name="HorizontalRadioButton">
+        <item name="android:layout_width">0dp</item>
+        <item name="android:layout_height">match_parent</item>
+        <item name="android:layout_weight">1</item>
+        <item name="android:background">@drawable/sel_radio_btn</item>
+        <item name="android:button">@null</item>
+        <item name="android:gravity">center</item>
+        <item name="android:lines">2</item>
+        <item name="android:padding">4dp</item>
+    </style>
+
 </resources>

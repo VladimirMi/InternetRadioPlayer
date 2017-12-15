@@ -15,16 +15,32 @@
         android:padding="16dp"
         >
 
-        <ImageView
-            android:id="@+id/iconIv"
+        <FrameLayout
             android:layout_width="72dp"
             android:layout_height="72dp"
             android:layout_marginEnd="16dp"
             android:layout_marginRight="16dp"
-            android:contentDescription="@string/desc_media_icon"
-            tools:background="@drawable/bg_rounded"
-            tools:src="@drawable/ic_radius"
-            />
+            >
+
+            <ImageView
+                android:id="@+id/iconIv"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:contentDescription="@string/desc_media_icon"
+                tools:background="@drawable/bg_rounded"
+                tools:src="@drawable/ic_radius"
+                />
+
+            <Button
+                android:id="@+id/changeIconBt"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:background="@drawable/bg_rounded"
+                android:foreground="@drawable/ic_add"
+                android:visibility="gone"
+                />
+        </FrameLayout>
+
 
         <android.support.design.widget.TextInputLayout
             android:id="@+id/titleTil"

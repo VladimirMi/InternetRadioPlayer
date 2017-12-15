@@ -53,22 +53,24 @@
     <color name="list_delimiter">@color/green_500</color>
 
     <array name="icon_text_color_set">
-        <item>@color/green_500</item>
-        <item>@color/grey_700</item>
+        <item>@color/red_500</item>
+        <item>@color/red_800</item>
+        <item>@color/pink_500</item>
+        <item>@color/purple_500</item>
         <item>@color/deep_purple_500</item>
         <item>@color/indigo_500</item>
+        <item>@color/blue_500</item>
+        <item>@color/cyan_500</item>
+        <item>@color/teal_500</item>
+        <item>@color/green_500</item>
         <item>@color/lime_500</item>
+        <item>@color/yellow_500</item>
+        <item>@color/amber_500</item>
+        <item>@color/orange_500</item>
         <item>@color/deep_orange_500</item>
+        <item>@color/brown_500</item>
+        <item>@color/grey_500</item>
         <item>@color/blue_grey_500</item>
     </array>
 
-    <array name="icon_bg_color_set">
-        <item>@color/pink_200</item>
-        <item>@color/purple_200</item>
-        <item>@color/yellow_200</item>
-        <item>@color/green_300</item>
-        <item>@color/lime_500</item>
-        <item>@color/blue_200</item>
-        <item>@color/brown_200</item>
-    </array>
 </resources>

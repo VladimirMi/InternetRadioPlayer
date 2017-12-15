@@ -9,6 +9,7 @@ import io.github.vladimirmi.radius.navigation.Router
 import io.github.vladimirmi.radius.presentation.root.MenuItemHolder
 import io.github.vladimirmi.radius.presentation.root.ToolbarBuilder
 import io.github.vladimirmi.radius.ui.base.BasePresenter
+import timber.log.Timber
 import javax.inject.Inject
 
 /**
@@ -160,5 +161,9 @@ class StationPresenter
 
     fun cancelLink() {
         viewState.closeLinkDialog()
+    }
+
+    fun changeIcon() {
+        Timber.d("changeIcon: ")
     }
 }

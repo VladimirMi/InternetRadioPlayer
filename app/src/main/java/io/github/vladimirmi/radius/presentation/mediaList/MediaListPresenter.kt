@@ -1,6 +1,5 @@
 package io.github.vladimirmi.radius.presentation.mediaList
 
-import android.net.Uri
 import com.arellomobile.mvp.InjectViewState
 import io.github.vladimirmi.radius.R
 import io.github.vladimirmi.radius.model.entity.Station
@@ -9,7 +8,6 @@ import io.github.vladimirmi.radius.model.repository.StationRepository
 import io.github.vladimirmi.radius.navigation.Router
 import io.github.vladimirmi.radius.presentation.root.ToolbarBuilder
 import io.github.vladimirmi.radius.ui.base.BasePresenter
-import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.rxkotlin.addTo
 import io.reactivex.rxkotlin.subscribeBy
 import javax.inject.Inject
@@ -64,25 +62,6 @@ class MediaListPresenter
             repository.groupedStationList.showGroup(group)
         }
         viewState.notifyList()
-    }
-
-    //todo remove
-    fun addStation(uri: Uri) {
-        repository.parseStation(uri)
-                .observeOn(AndroidSchedulers.mainThread())
-                .subscribeBy(onSuccess = { viewState.openAddDialog(it) },
-                        onComplete = { viewState.showToast(R.string.toast_add_error) })
-                .addTo(compDisp)
-    }
-
-    fun addStation(station: Station) {
-        if (repository.add(station)) {
-            viewState.closeAddDialog()
-            viewState.showToast(R.string.toast_add_success)
-            select(station)
-        } else {
-            viewState.showToast(R.string.toast_add_force)
-        }
     }
 
     fun removeStation(station: Station) {

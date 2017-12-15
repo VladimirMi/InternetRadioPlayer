@@ -17,7 +17,6 @@ import io.github.vladimirmi.radius.presentation.root.RootActivity
 import io.github.vladimirmi.radius.presentation.root.ToolbarBuilder
 import io.github.vladimirmi.radius.ui.base.BaseFragment
 import io.github.vladimirmi.radius.ui.base.SimpleDialog
-import io.github.vladimirmi.radius.ui.dialogs.NewStationDialog
 import kotlinx.android.synthetic.main.fragment_media_list.*
 import toothpick.Toothpick
 
@@ -29,9 +28,6 @@ class MediaListFragment : BaseFragment(), MediaListView, MediaItemCallback {
 
     override val layoutRes = R.layout.fragment_media_list
     private val adapter = MediaListAdapter(this)
-
-    private val addAction: (Station) -> Unit = { presenter.addStation(it) }
-    private val addMediaDialog: NewStationDialog by lazy { NewStationDialog(view as ViewGroup, addAction) }
 
     private val dialogRemoveStation: SimpleDialog by lazy {
         SimpleDialog(view as ViewGroup)
@@ -88,15 +84,6 @@ class MediaListFragment : BaseFragment(), MediaListView, MediaItemCallback {
 
     override fun notifyList() {
         adapter.notifyDataSetChanged()
-    }
-
-    override fun openAddDialog(station: Station) {
-        addMediaDialog.setupDialog(station)
-        addMediaDialog.show()
-    }
-
-    override fun closeAddDialog() {
-        addMediaDialog.dismiss()
     }
 
     override fun showToast(resId: Int) {

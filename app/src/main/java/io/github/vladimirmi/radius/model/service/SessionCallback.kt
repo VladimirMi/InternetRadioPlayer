@@ -15,7 +15,7 @@ class SessionCallback(private val callback: Interface)
     }
 
     override fun onPause() {
-        callback.onPause()
+        callback.onPause(stopDelay = 60000) // 1 min
     }
 
     override fun onStop() {
@@ -37,7 +37,7 @@ class SessionCallback(private val callback: Interface)
     interface Interface {
         fun onPlay()
 
-        fun onPause()
+        fun onPause(stopDelay: Long)
 
         fun onStop()
 

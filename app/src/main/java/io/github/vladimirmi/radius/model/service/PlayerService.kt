@@ -106,6 +106,7 @@ class PlayerService : MediaBrowserServiceCompat(), SessionCallback.Interface {
 
     //region =============== SessionCallback ==============
 
+
     override fun onPlay() {
         stopTask?.cancel()
         startService()
@@ -117,9 +118,9 @@ class PlayerService : MediaBrowserServiceCompat(), SessionCallback.Interface {
         }
     }
 
-    override fun onPause() {
+    override fun onPause(stopDelay: Long) { // default is 1 min
         playback.pause()
-        stopTask = Timer().schedule(60000) {
+        stopTask = Timer().schedule(stopDelay) {
             onStop()
         }
     }

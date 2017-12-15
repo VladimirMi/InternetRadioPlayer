@@ -25,8 +25,10 @@ class Playback(private val service: PlayerService,
     : AudioManager.OnAudioFocusChangeListener {
 
     companion object {
-        private val VOLUME_DUCK = 0.2f
-        private val VOLUME_NORMAL = 1.0f
+        const val HEADSET_REQUEST_CODE = 72
+
+        private const val VOLUME_DUCK = 0.2f
+        private const val VOLUME_NORMAL = 1.0f
     }
 
     enum class AudioFocus {
@@ -37,6 +39,7 @@ class Playback(private val service: PlayerService,
 
     private var audioFocus = NO_FOCUSED_NO_DUCK
     private var playAgainOnFocus = false
+    private var playAgainOnHeadset = false
     private var player: SimpleExoPlayer? = null
 
     private val wifiLock = (service.applicationContext.getSystemService(Context.WIFI_SERVICE) as WifiManager)
@@ -60,6 +63,7 @@ class Playback(private val service: PlayerService,
     fun pause() {
         Timber.d("pause")
         playAgainOnFocus = false
+        playAgainOnHeadset = false
         player?.playWhenReady = false
     }
 
@@ -67,6 +71,7 @@ class Playback(private val service: PlayerService,
         Timber.d("stop")
         releaseResources()
         playAgainOnFocus = false
+        playAgainOnHeadset = false
         player?.stop()
     }
 
@@ -82,7 +87,7 @@ class Playback(private val service: PlayerService,
             AUDIOFOCUS_GAIN -> FOCUSED
             AUDIOFOCUS_LOSS_TRANSIENT_CAN_DUCK -> NO_FOCUSED_CAN_DUCK
             AUDIOFOCUS_LOSS, AUDIOFOCUS_LOSS_TRANSIENT -> {
-                playAgainOnFocus = player!!.playWhenReady
+                playAgainOnFocus = player?.playWhenReady ?: false
                 NO_FOCUSED_NO_DUCK
             }
             else -> NO_FOCUSED_NO_DUCK
@@ -126,7 +131,7 @@ class Playback(private val service: PlayerService,
         Timber.d("createPlayer")
         val renderersFactory = DefaultRenderersFactory(service)
         val trackSelector = DefaultTrackSelector()
-        val loadControl = DefaultLoadControl(DefaultAllocator(true, C.DEFAULT_BUFFER_SEGMENT_SIZE * 2))
+        val loadControl = DefaultLoadControl(DefaultAllocator(true, C.DEFAULT_AUDIO_BUFFER_SIZE))
         player = ExoPlayerFactory.newSimpleInstance(renderersFactory, trackSelector, loadControl)
         player?.addListener(playerCallback)
     }
@@ -159,20 +164,25 @@ class Playback(private val service: PlayerService,
 
         @Suppress("DEPRECATION")
         override fun onReceive(context: Context, intent: Intent) {
-            //todo pause/resume through broadcast into service
             val action = intent.action
             if (action == AudioManager.ACTION_AUDIO_BECOMING_NOISY) {
-                pause()
-            } else if (action == Intent.ACTION_HEADSET_PLUG && intent.getIntExtra("state", 0) == 1) {
-                resume()
-            } else if (BluetoothDevice.ACTION_ACL_CONNECTED == action) {
+                val playing = player?.playWhenReady ?: false
+                service.onPause(stopDelay = 600000) // 10 min
+                playAgainOnHeadset = playing
+                Timber.e("onReceive: $playAgainOnHeadset")
+
+            } else if (playAgainOnHeadset && action == Intent.ACTION_HEADSET_PLUG
+                    && intent.getIntExtra("state", 0) == 1) {
+                service.onPlay()
+
+            } else if (playAgainOnHeadset && BluetoothDevice.ACTION_ACL_CONNECTED == action) {
                 var count = 0
                 while (!audioManager.isBluetoothA2dpOn && count < 10) {
                     Thread.sleep(1000)
                     count++
                 }
                 if (audioManager.isBluetoothA2dpOn) {
-                    resume()
+                    service.onPlay()
                 }
             }
         }

@@ -4,6 +4,7 @@ import android.support.v4.app.Fragment
 import android.support.v4.app.FragmentActivity
 import android.support.v4.app.FragmentTransaction
 import io.github.vladimirmi.radius.R
+import io.github.vladimirmi.radius.presentation.iconpicker.IconPickerFragment
 import io.github.vladimirmi.radius.presentation.mediaList.MediaListFragment
 import io.github.vladimirmi.radius.presentation.station.StationFragment
 import ru.terrakok.cicerone.android.SupportAppNavigator
@@ -16,7 +17,7 @@ import ru.terrakok.cicerone.commands.Forward
  * Created by Vladimir Mikhalev 03.12.2017.
  */
 
-class Navigator(private val activity: FragmentActivity, containerId: Int)
+class Navigator(activity: FragmentActivity, containerId: Int)
     : SupportAppNavigator(activity, containerId) {
 
     private var currentKey = ""
@@ -41,7 +42,9 @@ class Navigator(private val activity: FragmentActivity, containerId: Int)
         val screen = screenKey.substringBefore(Router.DELIMITER)
         return when (screen) {
             Router.MEDIA_LIST_SCREEN -> MediaListFragment()
+        //todo remove new instance
             Router.STATION_SCREEN -> StationFragment.newInstance(id)
+            Router.ICON_PICKER_SCREEN -> IconPickerFragment()
             else -> null
         }
     }

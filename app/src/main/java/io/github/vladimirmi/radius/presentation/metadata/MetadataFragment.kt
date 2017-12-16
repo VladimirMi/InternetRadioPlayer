@@ -4,8 +4,7 @@ import com.arellomobile.mvp.presenter.InjectPresenter
 import com.arellomobile.mvp.presenter.ProvidePresenter
 import io.github.vladimirmi.radius.R
 import io.github.vladimirmi.radius.di.Scopes
-import io.github.vladimirmi.radius.extensions.remove
-import io.github.vladimirmi.radius.extensions.show
+import io.github.vladimirmi.radius.extensions.visible
 import io.github.vladimirmi.radius.ui.base.BaseFragment
 import kotlinx.android.synthetic.main.fragment_metadata.*
 import toothpick.Toothpick
@@ -31,13 +30,13 @@ class MetadataFragment : BaseFragment(), MetadataView {
     //region =============== MetadataView ==============
 
     override fun setInfo(string: String) {
-        view?.show()
+        view?.visible(true)
         metadataTv.isSelected = true
         metadataTv.text = string
     }
 
     override fun hide() {
-        view?.remove()
+        view?.visible(false)
     }
 
     //endregion

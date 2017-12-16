@@ -1,7 +1,6 @@
 package io.github.vladimirmi.radius.extensions
 
-import android.support.annotation.ColorRes
-import android.support.v4.content.ContextCompat
+import android.support.annotation.ColorInt
 import android.support.v4.graphics.drawable.DrawableCompat
 import android.view.View
 import android.view.ViewTreeObserver
@@ -10,11 +9,6 @@ import android.widget.ImageView
 /**
  * Created by Vladimir Mikhalev 17.11.2017.
  */
-
-//todo remove, keep only getColor ext
-fun View.setBackgroundColorExt(id: Int) {
-    setBackgroundColor(ContextCompat.getColor(context, id))
-}
 
 inline fun View.waitForMeasure(crossinline block: () -> Unit) {
     if (width > 0 && height > 0) {
@@ -33,24 +27,16 @@ inline fun View.waitForMeasure(crossinline block: () -> Unit) {
     })
 }
 
-fun View.remove() {
-    visibility = View.GONE
+fun View.visible(visible: Boolean) {
+    visibility = if (visible) View.VISIBLE else View.GONE
 }
 
-fun View.show() {
-    visibility = View.VISIBLE
-}
-
-fun View.hide() {
-    visibility = View.INVISIBLE
-}
-
-fun ImageView.setTint(@ColorRes tint: Int) {
-    val wrapped = DrawableCompat.wrap(drawable).mutate()
-    DrawableCompat.setTint(wrapped, ContextCompat.getColor(context, tint))
-}
-
-fun View.setTint(@ColorRes tint: Int) {
+fun ImageView.setTint(@ColorInt colorInt: Int) {
     val wrapped = DrawableCompat.wrap(background).mutate()
-    DrawableCompat.setTint(wrapped, ContextCompat.getColor(context, tint))
+    DrawableCompat.setTint(wrapped, colorInt)
+}
+
+fun View.setTint(@ColorInt colorInt: Int) {
+    val wrapped = DrawableCompat.wrap(background).mutate()
+    DrawableCompat.setTint(wrapped, colorInt)
 }

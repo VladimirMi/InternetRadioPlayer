@@ -7,9 +7,8 @@ import com.arellomobile.mvp.presenter.InjectPresenter
 import com.arellomobile.mvp.presenter.ProvidePresenter
 import io.github.vladimirmi.radius.R
 import io.github.vladimirmi.radius.di.Scopes
-import io.github.vladimirmi.radius.extensions.hide
 import io.github.vladimirmi.radius.extensions.setTint
-import io.github.vladimirmi.radius.extensions.show
+import io.github.vladimirmi.radius.extensions.visible
 import io.github.vladimirmi.radius.model.entity.Station
 import io.github.vladimirmi.radius.model.source.StationIconSource
 import io.github.vladimirmi.radius.ui.base.BaseFragment
@@ -40,7 +39,7 @@ class PlayerControlFragment : BaseFragment(), PlayerControlView {
     override fun onViewCreated(view: View?, savedInstanceState: Bundle?) {
         play_pause.setOnClickListener { presenter.playPause() }
         favorite.setOnClickListener { presenter.switchFavorite() }
-        iconIv.setOnClickListener { presenter.showStation() }
+        iconFr.setOnClickListener { presenter.showStation() }
         previous.setOnClickListener { presenter.skipPrevious() }
         next.setOnClickListener { presenter.skipNext() }
     }
@@ -57,7 +56,7 @@ class PlayerControlFragment : BaseFragment(), PlayerControlView {
         favorite.setBackgroundResource(if (station.favorite) R.drawable.ic_star else R.drawable.ic_empty_star)
 
         val colors = iconSource.getIconTextColors(station.title)
-        iconIv.setImageBitmap(iconSource.getBitmap(station.title,
+        iconFr.setImageBitmap(iconSource.getBitmap(station.title,
                 colors.copy(second = ContextCompat.getColor(context, R.color.transparent))))
     }
 
@@ -66,6 +65,6 @@ class PlayerControlFragment : BaseFragment(), PlayerControlView {
         next.setTint(if (createMode) R.color.grey_400 else R.color.grey_700)
         previous.isEnabled = !createMode
         next.isEnabled = !createMode
-        if (createMode) favorite.hide() else favorite.show()
+        favorite.visible(!createMode)
     }
 }

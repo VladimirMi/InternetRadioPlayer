@@ -64,7 +64,7 @@ class PlayerControlPresenter
     }
 
     fun showStation() {
-        router.showStation(repository.current.value)
+        router.navigateTo(Router.ICON_PICKER_SCREEN)
     }
 
     fun skipPrevious() {

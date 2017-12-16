@@ -64,7 +64,6 @@
         <item name="android:background">@drawable/sel_radio_btn</item>
         <item name="android:button">@null</item>
         <item name="android:gravity">center</item>
-        <item name="android:lines">2</item>
         <item name="android:padding">4dp</item>
     </style>
 

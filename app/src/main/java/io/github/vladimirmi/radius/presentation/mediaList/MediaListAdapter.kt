@@ -6,7 +6,7 @@ import android.view.View
 import android.view.ViewGroup
 import io.github.vladimirmi.radius.R
 import io.github.vladimirmi.radius.di.Scopes
-import io.github.vladimirmi.radius.extensions.setBackgroundColorExt
+import io.github.vladimirmi.radius.extensions.color
 import io.github.vladimirmi.radius.model.entity.GroupedList
 import io.github.vladimirmi.radius.model.entity.Station
 import io.github.vladimirmi.radius.model.source.StationIconSource
@@ -98,12 +98,12 @@ class MediaGroupTitleVH(itemView: View) : RecyclerView.ViewHolder(itemView) {
     }
 
     fun select(playing: Boolean) {
-        if (playing) itemView.setBackgroundColorExt(R.color.green_100)
-        else itemView.setBackgroundColorExt(R.color.grey_300)
+        if (playing) itemView.setBackgroundColor(itemView.context.color(R.color.green_100))
+        else itemView.setBackgroundColor(itemView.context.color(R.color.grey_300))
     }
 
     fun unselect() {
-        itemView.setBackgroundColorExt(R.color.grey_50)
+        itemView.setBackgroundColor(itemView.context.color(R.color.grey_50))
     }
 }
 
@@ -124,12 +124,12 @@ class MediaGroupItemVH(itemView: View) : RecyclerView.ViewHolder(itemView) {
     }
 
     fun select(playing: Boolean) {
-        if (playing) itemView.setBackgroundColorExt(R.color.green_100)
-        else itemView.setBackgroundColorExt(R.color.grey_300)
+        if (playing) itemView.setBackgroundColor(itemView.context.color(R.color.green_100))
+        else itemView.setBackgroundColor(itemView.context.color(R.color.grey_300))
     }
 
     fun unselect() {
-        itemView.setBackgroundColorExt(R.color.grey_50)
+        itemView.setBackgroundColor(itemView.context.color(R.color.grey_50))
     }
 }
 

@@ -33,7 +33,7 @@ class StationIconSource
      */
     fun getIconTextColors(stationTitle: String): Pair<Int, Int> {
         val textColors = context.resources.getIntArray(R.array.icon_text_color_set)
-        val bgColors = context.resources.getIntArray(R.array.icon_bg_color_set)
+        val bgColors = context.resources.getIntArray(R.array.icon_text_color_set)
         val colorIdx = stationTitle.first().toInt() % textColors.size
         return Pair(textColors[colorIdx], bgColors[colorIdx])
     }
@@ -64,5 +64,6 @@ class StationIconSource
         getIconView(stationTitle, colors).draw(Canvas(b))
         return b
     }
+
 
 }

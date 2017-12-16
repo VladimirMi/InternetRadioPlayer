@@ -1,5 +1,6 @@
 package io.github.vladimirmi.radius.model.repository
 
+import android.graphics.Bitmap
 import android.net.Uri
 import com.jakewharton.rxrelay2.BehaviorRelay
 import io.github.vladimirmi.radius.extensions.toMaybe
@@ -84,5 +85,9 @@ class StationRepository
             setCurrent(previous)
             true
         } else false
+    }
+
+    fun getStationIcon(url: String): Bitmap {
+        TODO("not implemented")
     }
 }

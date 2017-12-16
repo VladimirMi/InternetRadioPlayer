@@ -7,7 +7,7 @@ import android.graphics.Canvas
 import android.graphics.drawable.BitmapDrawable
 import android.graphics.drawable.Drawable
 import android.graphics.drawable.VectorDrawable
-import android.support.annotation.DrawableRes
+import android.support.annotation.ColorRes
 import android.support.graphics.drawable.VectorDrawableCompat
 import android.support.v4.content.ContextCompat
 import android.util.DisplayMetrics
@@ -19,7 +19,7 @@ import android.view.inputmethod.InputMethodManager
  * Created by Vladimir Mikhalev 21.10.2017.
  */
 
-fun Drawable.getBitmapExt(): Bitmap {
+fun Drawable.getBitmap(): Bitmap {
     return if (this is BitmapDrawable) {
         this.bitmap
     } else if (this is VectorDrawableCompat || this is VectorDrawable) {
@@ -34,9 +34,11 @@ fun Drawable.getBitmapExt(): Bitmap {
     }
 }
 
-fun Context.getBitmap(@DrawableRes id: Int): Bitmap {
-    return ContextCompat.getDrawable(this, id).getBitmapExt()
-}
+//fun Context.getBitmap(@DrawableRes id: Int): Bitmap {
+//    return ContextCompat.getDrawable(this, id).getBitmapExt()
+//}
+
+fun Context.color(@ColorRes colorRes: Int) = ContextCompat.getColor(this, colorRes)
 
 val Context.dp get() = getDisplayMetrics().density.toInt()
 

@@ -19,8 +19,7 @@ import com.arellomobile.mvp.presenter.ProvidePresenter
 import io.github.vladimirmi.radius.R
 import io.github.vladimirmi.radius.di.Scopes
 import io.github.vladimirmi.radius.extensions.inputMethodManager
-import io.github.vladimirmi.radius.extensions.remove
-import io.github.vladimirmi.radius.extensions.show
+import io.github.vladimirmi.radius.extensions.visible
 import io.github.vladimirmi.radius.model.entity.Station
 import io.github.vladimirmi.radius.model.source.StationIconSource
 import io.github.vladimirmi.radius.presentation.root.RootActivity
@@ -44,7 +43,7 @@ class StationFragment : BaseFragment(), StationView, BackPressListener {
     companion object {
         fun newInstance(stationId: String): StationFragment {
             return StationFragment().apply {
-                //todo "id" to constant
+                //todo "id" from repository and this remove
                 arguments = Bundle().apply { putString("id", stationId) }
             }
         }
@@ -122,7 +121,7 @@ class StationFragment : BaseFragment(), StationView, BackPressListener {
     }
 
     override fun setStation(station: Station) {
-        iconIv.setImageBitmap(iconSource.getBitmap(station.title))
+        iconFr.setImageBitmap(iconSource.getBitmap(station.title))
         titleTil.setTextWithoutAnimation(station.title)
         folderTil.setTextWithoutAnimation(station.group)
         uriTil.setTextWithoutAnimation(station.uri)
@@ -145,15 +144,15 @@ class StationFragment : BaseFragment(), StationView, BackPressListener {
         urlTil.linkStyle(!editMode)
 
         if (editMode) {
-            changeIconBt.show()
+            changeIconBt.visible(true)
             fab.setImageResource(R.drawable.ic_submit)
-            folderTil.show()
-            urlTil.show()
+            folderTil.visible(true)
+            urlTil.visible(true)
         } else {
-            changeIconBt.remove()
+            changeIconBt.visible(false)
             fab.setImageResource(R.drawable.ic_edit)
-            if (folderTil.isBlank()) folderTil.remove()
-            if (urlTil.isBlank()) urlTil.remove()
+            if (folderTil.isBlank()) folderTil.visible(false)
+            if (urlTil.isBlank()) urlTil.visible(false)
             view?.clearFocus()
             context.inputMethodManager.hideSoftInputFromWindow(view?.windowToken, 0)
         }

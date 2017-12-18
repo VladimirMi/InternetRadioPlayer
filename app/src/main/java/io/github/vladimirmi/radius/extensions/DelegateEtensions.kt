@@ -24,6 +24,7 @@ class Preference<T>(
         putPreference(name, value)
     }
 
+    @Suppress("UNCHECKED_CAST")
     private fun <T> findPreference(name: String, default: T): T = with(prefs) {
         val res: Any = when (default) {
             is Long -> getLong(name, default)
@@ -31,13 +32,14 @@ class Preference<T>(
             is Int -> getInt(name, default)
             is Boolean -> getBoolean(name, default)
             is Float -> getFloat(name, default)
+            is Set<*> -> getStringSet(name, default as Set<String>)
             else -> throw IllegalArgumentException("This type can't be saved into Preferences")
         }
-        @Suppress("UNCHECKED_CAST")
         res as T
     }
 
     @SuppressLint("CommitPrefEdits")
+    @Suppress("UNCHECKED_CAST")
     private fun putPreference(name: String, value: T) = with(prefs.edit()) {
         when (value) {
             is Long -> putLong(name, value)
@@ -45,6 +47,7 @@ class Preference<T>(
             is Int -> putInt(name, value)
             is Boolean -> putBoolean(name, value)
             is Float -> putFloat(name, value)
+            is Set<*> -> putStringSet(name, value as Set<String>)
             else -> throw IllegalArgumentException("This type can't be saved into Preferences")
         }.apply()
     }

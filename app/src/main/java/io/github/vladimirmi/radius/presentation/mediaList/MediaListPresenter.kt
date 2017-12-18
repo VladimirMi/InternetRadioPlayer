@@ -56,11 +56,7 @@ class MediaListPresenter
     }
 
     fun selectGroup(group: String) {
-        if (repository.groupedStationList.isGroupVisible(group)) {
-            repository.groupedStationList.hideGroup(group)
-        } else {
-            repository.groupedStationList.showGroup(group)
-        }
+        repository.showOrHideGroup(group)
         viewState.notifyList()
     }
 

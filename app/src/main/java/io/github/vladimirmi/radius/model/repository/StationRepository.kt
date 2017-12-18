@@ -35,12 +35,13 @@ class StationRepository
         if (stationList.size > preferences.selectedPos) {
             currentStation.accept(stationList[preferences.selectedPos])
         }
+        preferences.hidedGroups.forEach { stationList.hideGroup(it) }
     }
 
     fun setCurrent(station: Station) {
         val pos = stationList.indexOf(station)
         currentStation.accept(stationList[pos])
-        preferences.selectedPos = pos
+        preferences.currentPos = pos
     }
 
     fun getStation(id: String): Station =
@@ -53,6 +54,16 @@ class StationRepository
                 .toMaybe()
                 .subscribeOn(Schedulers.io())
                 .doOnSuccess { newStation = it }
+    }
+
+    fun showOrHideGroup(group: String) {
+        if (stationList.isGroupVisible(group)) {
+            stationList.hideGroup(group)
+            preferences.hidedGroups = preferences.hidedGroups.toMutableSet().apply { add(group) }
+        } else {
+            stationList.showGroup(group)
+            preferences.hidedGroups = preferences.hidedGroups.toMutableSet().apply { remove(group) }
+        }
     }
 
     fun updateStation(newStation: Station) {

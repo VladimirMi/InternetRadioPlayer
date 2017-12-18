@@ -35,7 +35,7 @@ class StationSource
         return stationList
     }
 
-    fun save(station: Station) {
+    fun saveStation(station: Station) {
         with(File(appDir, "${station.title}.$extension")) {
             if (exists() || createNewFile()) {
                 clear()
@@ -44,7 +44,7 @@ class StationSource
         }
     }
 
-    fun remove(station: Station) {
+    fun removeStation(station: Station) {
         File(appDir, "${station.title}.$extension").delete()
     }
 

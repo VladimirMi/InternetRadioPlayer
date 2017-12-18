@@ -2,16 +2,15 @@ package io.github.vladimirmi.radius.model.source
 
 import android.content.Context
 import android.graphics.Bitmap
-import android.graphics.Canvas
-import android.support.v4.content.ContextCompat
-import android.support.v4.content.res.ResourcesCompat
-import android.support.v4.graphics.drawable.DrawableCompat
-import android.util.TypedValue
-import android.view.Gravity
-import android.view.View
-import android.widget.TextView
-import io.github.vladimirmi.radius.R
-import io.github.vladimirmi.radius.extensions.dp
+import android.graphics.BitmapFactory
+import android.net.Uri
+import android.util.LruCache
+import io.github.vladimirmi.radius.extensions.toURL
+import io.github.vladimirmi.radius.model.entity.Station
+import timber.log.Timber
+import java.io.File
+import java.io.FileInputStream
+import java.io.FileOutputStream
 import javax.inject.Inject
 
 
@@ -22,48 +21,47 @@ import javax.inject.Inject
 class StationIconSource
 @Inject constructor(private val context: Context) {
 
-    private val sizeDp = 48
-    private val size = sizeDp * context.dp
+    @Suppress("PrivatePropertyName")
+    private val FAVICON_BASE_URI = Uri.Builder().scheme("http")
+            .authority("www.google.com")
+            .path("s2/favicons").build()
 
-    /**
-     * Returns pair of text and background colors accordingly
-     *
-     * @param stationTitle Station title for which icon colors return
-     * @return Pair of colors in the form 0xAARRGGBB
-     */
-    fun getIconTextColors(stationTitle: String): Pair<Int, Int> {
-        val textColors = context.resources.getIntArray(R.array.icon_text_color_set)
-        val bgColors = context.resources.getIntArray(R.array.icon_text_color_set)
-        val colorIdx = stationTitle.first().toInt() % textColors.size
-        return Pair(textColors[colorIdx], bgColors[colorIdx])
-    }
 
-    fun getIconView(stationTitle: String,
-                    colors: Pair<Int, Int> = getIconTextColors(stationTitle)): TextView {
-        with(TextView(context)) {
-            gravity = Gravity.CENTER
-            text = stationTitle.substring(0, 1)
-            setTextColor(colors.first)
-            typeface = ResourcesCompat.getFont(context, R.font.audiowide)
-            setTextSize(TypedValue.COMPLEX_UNIT_DIP, sizeDp * 3f / 4 / text.length)
-
-            val spec = View.MeasureSpec.makeMeasureSpec(size, View.MeasureSpec.EXACTLY)
-            measure(spec, spec)
-            layout(0, 0, size, size)
-
-            val bg = DrawableCompat.wrap(ContextCompat.getDrawable(context, R.drawable.bg_rounded))
-            DrawableCompat.setTint(bg, colors.second)
-            background = bg
-            return this
+    private val maxSize = (Runtime.getRuntime().maxMemory() / 1024 / 10).toInt()
+    private val bitmapCache = object : LruCache<String, Bitmap>(maxSize) {
+        override fun sizeOf(key: String, value: Bitmap): Int {
+            return value.byteCount / 1024
         }
     }
 
-    fun getBitmap(stationTitle: String,
-                  colors: Pair<Int, Int> = getIconTextColors(stationTitle)): Bitmap {
-        val b = Bitmap.createBitmap(size, size, Bitmap.Config.ARGB_8888)
-        getIconView(stationTitle, colors).draw(Canvas(b))
-        return b
+    fun getIcon(path: String): Bitmap {
+        val bitmap = if (path.contains("http")) loadFromNet(path) else loadFromFile(path)
+        bitmapCache.put(path, bitmap)
+        return bitmap
     }
 
+    fun saveIcon(station: Station, bitmap: Bitmap) {
+        bitmapCache.put(station.title, bitmap)
+        FileOutputStream(File(context.filesDir, "${station.title}.png")).use {
+            bitmap.compress(Bitmap.CompressFormat.PNG, 100, it)
+        }
+    }
 
+    fun removeIcon(station: Station) {
+        bitmapCache.remove(station.title)
+        File(context.filesDir, "${station.title}.png").delete()
+    }
+
+    private fun loadFromNet(url: String): Bitmap {
+        val faviconUri = FAVICON_BASE_URI.buildUpon()
+                .appendQueryParameter("domain_url", url).build()
+        Timber.e("loadFromNet: $faviconUri")
+        val inputStream = faviconUri.toURL()?.openStream()
+        return BitmapFactory.decodeStream(inputStream)
+    }
+
+    private fun loadFromFile(path: String): Bitmap {
+        val inputStream = FileInputStream(File(context.filesDir, "$path.png"))
+        return BitmapFactory.decodeStream(inputStream)
+    }
 }

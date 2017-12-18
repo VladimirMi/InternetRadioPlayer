@@ -11,6 +11,10 @@ interface IconPickerView : MvpView {
 
     fun setIconImage(icon: Bitmap)
 
+    fun setIconText(text: String)
+
+    fun setIconTextColor(colorInt: Int)
+
     fun setBackgroundColor(colorInt: Int)
 
     fun hideStationUrlOption()

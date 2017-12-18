@@ -1,7 +1,7 @@
 package io.github.vladimirmi.radius.presentation.playerControl
 
+import android.graphics.Bitmap
 import android.os.Bundle
-import android.support.v4.content.ContextCompat
 import android.view.View
 import com.arellomobile.mvp.presenter.InjectPresenter
 import com.arellomobile.mvp.presenter.ProvidePresenter
@@ -10,7 +10,6 @@ import io.github.vladimirmi.radius.di.Scopes
 import io.github.vladimirmi.radius.extensions.setTint
 import io.github.vladimirmi.radius.extensions.visible
 import io.github.vladimirmi.radius.model.entity.Station
-import io.github.vladimirmi.radius.model.source.StationIconSource
 import io.github.vladimirmi.radius.ui.base.BaseFragment
 import kotlinx.android.synthetic.main.fragment_player_controls.*
 import toothpick.Toothpick
@@ -23,8 +22,6 @@ import toothpick.Toothpick
 class PlayerControlFragment : BaseFragment(), PlayerControlView {
 
     override val layoutRes = R.layout.fragment_player_controls
-
-    private val iconSource = Scopes.app.getInstance(StationIconSource::class.java)
 
     @InjectPresenter lateinit var presenter: PlayerControlPresenter
 
@@ -39,7 +36,7 @@ class PlayerControlFragment : BaseFragment(), PlayerControlView {
     override fun onViewCreated(view: View?, savedInstanceState: Bundle?) {
         play_pause.setOnClickListener { presenter.playPause() }
         favorite.setOnClickListener { presenter.switchFavorite() }
-        iconFr.setOnClickListener { presenter.showStation() }
+        iconIv.setOnClickListener { presenter.showStation() }
         previous.setOnClickListener { presenter.skipPrevious() }
         next.setOnClickListener { presenter.skipNext() }
     }
@@ -52,12 +49,12 @@ class PlayerControlFragment : BaseFragment(), PlayerControlView {
         play_pause.setBackgroundResource(R.drawable.ic_stop)
     }
 
-    override fun setMedia(station: Station) {
+    override fun setStation(station: Station) {
         favorite.setBackgroundResource(if (station.favorite) R.drawable.ic_star else R.drawable.ic_empty_star)
+    }
 
-        val colors = iconSource.getIconTextColors(station.title)
-        iconFr.setImageBitmap(iconSource.getBitmap(station.title,
-                colors.copy(second = ContextCompat.getColor(context, R.color.transparent))))
+    override fun setStationIcon(stationIcon: Bitmap) {
+        iconIv.setImageBitmap(stationIcon)
     }
 
     override fun createMode(createMode: Boolean) {

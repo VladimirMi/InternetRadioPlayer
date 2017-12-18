@@ -9,7 +9,6 @@ import android.view.View
 import android.widget.FrameLayout
 import android.widget.SeekBar
 import io.github.vladimirmi.radius.R
-import io.github.vladimirmi.radius.extensions.color
 import kotlinx.android.synthetic.main.view_color_picker.view.*
 
 /**
@@ -38,25 +37,33 @@ class ColorPicker : FrameLayout, SeekBar.OnSeekBarChangeListener {
         blueBar.setOnSeekBarChangeListener(this)
     }
 
-    @ColorInt private var color: Int = context.color(R.color.accentColor)
+    @ColorInt private var color: Int = Color.LTGRAY
     private var listener: ((Int) -> Unit)? = null
 
     fun setOnColorChangedListener(listener: (Int) -> Unit) {
         this.listener = listener
     }
 
-    fun initColor(@ColorInt colorInt: Int) {
-        redBar.progress = Color.red(colorInt)
-        greenBar.progress = Color.green(colorInt)
-        blueBar.progress = Color.blue(colorInt)
-        color = colorInt
+    fun setColor(@ColorInt colorInt: Int) {
+        Color.red(colorInt).let {
+            redBar.progress = it
+            redValue.text = it.toString()
+        }
+        Color.green(colorInt).let {
+            greenBar.progress = it
+            greenValue.text = it.toString()
+        }
+        Color.blue(colorInt).let {
+            blueBar.progress = it
+            blueValue.text = it.toString()
+        }
     }
 
     override fun onProgressChanged(seekBar: SeekBar, progress: Int, fromUser: Boolean) {
         when (seekBar.id) {
-            R.id.redBar -> setRed(progress)
-            R.id.greenBar -> setGreen(progress)
-            R.id.blueBar -> setBlue(progress)
+            R.id.redBar -> if (fromUser) setRed(progress)
+            R.id.greenBar -> if (fromUser) setGreen(progress)
+            R.id.blueBar -> if (fromUser) setBlue(progress)
         }
     }
 

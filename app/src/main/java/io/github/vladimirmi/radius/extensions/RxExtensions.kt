@@ -10,3 +10,4 @@ fun <T : Any> (() -> T?).toMaybe(): Maybe<T> = Maybe.create { s ->
     val result = this()
     if (result != null) s.onSuccess(result); s.onComplete()
 }
+

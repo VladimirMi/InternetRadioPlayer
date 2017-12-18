@@ -1,5 +1,6 @@
 package io.github.vladimirmi.radius.presentation.station
 
+import android.graphics.Bitmap
 import com.arellomobile.mvp.MvpView
 import com.arellomobile.mvp.viewstate.strategy.OneExecutionStateStrategy
 import com.arellomobile.mvp.viewstate.strategy.StateStrategyType
@@ -13,6 +14,8 @@ import io.github.vladimirmi.radius.presentation.root.ToolbarBuilder
 interface StationView : MvpView {
 
     fun setStation(station: Station)
+
+    fun setIcon(icon: Bitmap)
 
     fun buildToolbar(builder: ToolbarBuilder)
 

@@ -16,7 +16,6 @@ import io.github.vladimirmi.radius.R
 import io.github.vladimirmi.radius.di.Scopes
 import io.github.vladimirmi.radius.extensions.toUri
 import io.github.vladimirmi.radius.model.repository.StationRepository
-import io.github.vladimirmi.radius.model.source.StationIconSource
 import io.github.vladimirmi.radius.presentation.root.RootActivity
 import io.reactivex.disposables.CompositeDisposable
 import io.reactivex.rxkotlin.addTo
@@ -39,7 +38,6 @@ class PlayerService : MediaBrowserServiceCompat(), SessionCallback.Interface {
     }
 
     @Inject lateinit var repository: StationRepository
-    @Inject lateinit var iconSource: StationIconSource
 
     private val compDisp = CompositeDisposable()
     private lateinit var session: MediaSessionCompat
@@ -72,7 +70,7 @@ class PlayerService : MediaBrowserServiceCompat(), SessionCallback.Interface {
         playback = Playback(this, playerCallback)
         notification = MediaNotification(this, session)
 
-        repository.current.subscribeBy {
+        repository.currentStation.subscribeBy {
             currentStationId = it.id
             if (isPlaying && currentStationId != playingStationId) playCurrent()
         }.addTo(compDisp)
@@ -133,11 +131,11 @@ class PlayerService : MediaBrowserServiceCompat(), SessionCallback.Interface {
     }
 
     override fun onSkipToPrevious() {
-        if (repository.previous() && isPlaying) playCurrent()
+        if (repository.previousStation() && isPlaying) playCurrent()
     }
 
     override fun onSkipToNext() {
-        if (repository.next() && isPlaying) playCurrent()
+        if (repository.nextStation() && isPlaying) playCurrent()
     }
 
     override fun onCustomAction(action: String?, extras: Bundle?) {
@@ -217,11 +215,11 @@ class PlayerService : MediaBrowserServiceCompat(), SessionCallback.Interface {
         }
 
     private fun playCurrent() {
-        val station = repository.current.value
+        val station = repository.currentStation.value
         playingStationId = station.id
         playback.play(station.uri.toUri()!!)
 
-        val iconBitmap = iconSource.getBitmap(station.title)
+        val iconBitmap = repository.getStationIcon(station.title).blockingGet()
         metadata = MediaMetadataCompat.Builder()
                 .putString(MediaMetadataCompat.METADATA_KEY_ALBUM, station.title)
                 .putBitmap(MediaMetadataCompat.METADATA_KEY_DISPLAY_ICON, iconBitmap)

@@ -30,10 +30,16 @@ class PlayerControlPresenter
                 .subscribeBy { this.handleState(it) }
                 .addTo(compDisp)
 
-        repository.current
+        repository.currentStation
                 .subscribeBy {
-                    viewState.setMedia(it)
-                    viewState.createMode(repository.newStation == it)
+                    viewState.setStation(it)
+                    if (repository.newStation == it) {
+                        viewState.createMode(true)
+                        viewState.setStationIcon(repository.getStationIcon(it.uri).blockingGet())
+                    } else {
+                        viewState.createMode(false)
+                        viewState.setStationIcon(repository.getStationIcon(it.title).blockingGet())
+                    }
                     if (skipPrevious) {
                         router.skipToPrevious(it)
                         skipPrevious = false
@@ -58,9 +64,9 @@ class PlayerControlPresenter
     }
 
     fun switchFavorite() {
-        val current = repository.current.value
+        val current = repository.currentStation.value
         val copy = current.copy(favorite = !current.favorite)
-        repository.update(copy)
+        repository.updateStation(copy)
     }
 
     fun showStation() {

@@ -14,10 +14,10 @@
         android:id="@+id/iconFr"
         android:layout_width="72dp"
         android:layout_height="72dp"
+        android:background="@drawable/bg_rounded"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        android:background="@drawable/bg_rounded"
         >
 
         <ImageView
@@ -34,6 +34,7 @@
             android:layout_height="match_parent"
             android:fontFamily="@font/audiowide"
             android:gravity="center"
+            android:padding="4dp"
             app:autoSizeTextType="uniform"
             tools:ignore="MissingPrefix"
             tools:text="S"
@@ -46,7 +47,7 @@
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_marginTop="16dp"
-        tools:checkedButton="@id/optionStationUrlBt"
+        android:checkedButton="@id/optionServerUrlBt"
         android:orientation="horizontal"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
@@ -54,15 +55,15 @@
         >
 
         <RadioButton
-            android:id="@+id/optionStationUrlBt"
-            style="@style/HorizontalRadioButton"
-            android:text="@string/icon_favicon_station"
-            />
-
-        <RadioButton
             android:id="@+id/optionServerUrlBt"
             style="@style/HorizontalRadioButton"
             android:text="@string/icon_favicon_server"
+            />
+
+        <RadioButton
+            android:id="@+id/optionStationUrlBt"
+            style="@style/HorizontalRadioButton"
+            android:text="@string/icon_favicon_station"
             />
 
         <RadioButton
@@ -75,6 +76,7 @@
             android:id="@+id/optionAddBt"
             style="@style/HorizontalRadioButton"
             android:text="@string/icon_add"
+            android:visibility="gone"
             />
     </RadioGroup>
 
@@ -88,20 +90,23 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/optionsRg"
+        tools:visibility="gone"
         />
 
     <EditText
         android:id="@+id/iconTextEt"
-        android:layout_width="wrap_content"
+        android:layout_width="72sp"
         android:layout_height="wrap_content"
         android:layout_marginTop="8dp"
+        android:background="@drawable/bg_rounded"
+        android:gravity="center"
+        android:inputType="textCapSentences"
         android:maxLength="3"
         android:textSize="24sp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/optionsRg"
         tools:text="X"
-        android:inputType="textCapCharacters"
         />
 
     <RadioGroup
@@ -110,10 +115,10 @@
         android:layout_height="wrap_content"
         android:layout_marginBottom="16dp"
         android:orientation="horizontal"
-        tools:checkedButton="@id/configBackgroundBt"
         app:layout_constraintBottom_toTopOf="@+id/colorPicker"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
+        tools:checkedButton="@id/configBackgroundBt"
         >
 
         <RadioButton
@@ -129,8 +134,18 @@
             />
     </RadioGroup>
 
-    <android.support.v7.widget.ButtonBarLayout
-        android:id="@+id/linearLayout"
+    <io.github.vladimirmi.radius.ui.ColorPicker
+        android:id="@+id/colorPicker"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="24dp"
+        app:layout_constraintBottom_toTopOf="@id/buttonBar"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        />
+
+    <LinearLayout
+        android:id="@+id/buttonBar"
         android:layout_width="250dp"
         android:layout_height="56dp"
         android:layout_gravity="center"
@@ -138,7 +153,6 @@
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        android:visibility="gone"
         >
 
         <Button
@@ -158,16 +172,7 @@
             android:text="@string/dialog_ok"
             android:theme="@style/AccentButton"
             />
-    </android.support.v7.widget.ButtonBarLayout>
-
-    <io.github.vladimirmi.radius.ui.ColorPicker
-        android:id="@+id/colorPicker"
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        />
+    </LinearLayout>
 
 </android.support.constraint.ConstraintLayout>
 

@@ -33,7 +33,7 @@ class MediaListPresenter
                 .subscribeBy { viewState.setMediaList(it) }
                 .addTo(compDisp)
 
-        repository.current
+        repository.currentStation
                 .subscribeBy {
                     viewState.selectItem(it, mediaBrowserController.isPlaying)
                     viewState.buildToolbar(builder.setToolbarTitle(it.title))
@@ -42,7 +42,7 @@ class MediaListPresenter
 
         mediaBrowserController.playbackState
                 .subscribeBy {
-                    val station = repository.current.value
+                    val station = repository.currentStation.value
                     if (mediaBrowserController.isPlaying) {
                         viewState.selectItem(station, playing = true)
                     } else {
@@ -69,7 +69,7 @@ class MediaListPresenter
     }
 
     fun submitRemove(station: Station) {
-        repository.remove(station)
+        repository.removeStation(station)
         viewState.closeRemoveDialog()
     }
 

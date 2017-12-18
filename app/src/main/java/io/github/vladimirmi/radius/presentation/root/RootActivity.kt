@@ -21,6 +21,7 @@ import com.arellomobile.mvp.presenter.ProvidePresenter
 import io.github.vladimirmi.radius.R
 import io.github.vladimirmi.radius.di.Scopes
 import io.github.vladimirmi.radius.di.module.RootActivityModule
+import io.github.vladimirmi.radius.extensions.visible
 import io.github.vladimirmi.radius.navigation.Navigator
 import io.github.vladimirmi.radius.ui.base.BackPressListener
 import kotlinx.android.synthetic.main.activity_root.*
@@ -102,6 +103,10 @@ class RootActivity : MvpAppCompatActivity(), RootView, ToolbarView {
 
     override fun showSnackbar(resId: Int) {
         Snackbar.make(findViewById(android.R.id.content), resId, Snackbar.LENGTH_LONG).show()
+    }
+
+    override fun showControls(visible: Boolean) {
+        playerControlsFr.view?.visible(visible)
     }
 
     //endregion

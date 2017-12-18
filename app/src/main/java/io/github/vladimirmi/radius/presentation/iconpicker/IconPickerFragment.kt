@@ -1,15 +1,17 @@
 package io.github.vladimirmi.radius.presentation.iconpicker
 
 import android.graphics.Bitmap
+import android.graphics.Canvas
 import android.os.Bundle
 import android.view.View
 import com.arellomobile.mvp.presenter.InjectPresenter
 import com.arellomobile.mvp.presenter.ProvidePresenter
 import io.github.vladimirmi.radius.R
 import io.github.vladimirmi.radius.di.Scopes
-import io.github.vladimirmi.radius.extensions.color
+import io.github.vladimirmi.radius.extensions.onTextChanges
 import io.github.vladimirmi.radius.extensions.setTint
 import io.github.vladimirmi.radius.extensions.visible
+import io.github.vladimirmi.radius.ui.base.BackPressListener
 import io.github.vladimirmi.radius.ui.base.BaseFragment
 import kotlinx.android.synthetic.main.fragment_icon_picker.*
 import toothpick.Toothpick
@@ -18,7 +20,7 @@ import toothpick.Toothpick
  * Created by Vladimir Mikhalev 15.12.2017.
  */
 
-class IconPickerFragment : BaseFragment(), IconPickerView {
+class IconPickerFragment : BaseFragment(), IconPickerView, BackPressListener {
 
     override val layoutRes = R.layout.fragment_icon_picker
 
@@ -27,8 +29,8 @@ class IconPickerFragment : BaseFragment(), IconPickerView {
 
     @ProvidePresenter
     fun providePresenter(): IconPickerPresenter {
-        return Toothpick.openScopes(Scopes.ROOT_ACTIVITY, this)
-                .getInstance(IconPickerPresenter::class.java).also {
+        val scope = Toothpick.openScopes(Scopes.ROOT_ACTIVITY, this)
+        return scope.getInstance(IconPickerPresenter::class.java).also {
             Toothpick.closeScope(this)
         }
     }
@@ -43,19 +45,26 @@ class IconPickerFragment : BaseFragment(), IconPickerView {
             }
         }
 
-        colorPicker.initColor(context.color(R.color.accentColor))
         configurationsRg.setOnCheckedChangeListener { group, checkedId ->
             if (checkedId == R.id.configBackgroundBt) {
+                colorPicker.setColor(presenter.backgroundColor)
                 colorPicker.setOnColorChangedListener {
-                    presenter.setBackgroundColor(it)
+                    presenter.backgroundColor = it
                 }
             } else if (checkedId == R.id.configTextBt) {
+                colorPicker.setColor(presenter.textColor)
                 colorPicker.setOnColorChangedListener {
-                    presenter.setTextColor(it)
+                    presenter.textColor = it
                 }
             }
         }
+
+        iconTextEt.onTextChanges { presenter.setText(it) }
+        okBt.setOnClickListener { presenter.saveIcon(createIcon()) }
+        cancelBt.setOnClickListener { presenter.exit() }
     }
+
+    override fun onBackPressed() = presenter.onBackPressed()
 
     //region =============== IconPickerView ==============
 
@@ -63,8 +72,19 @@ class IconPickerFragment : BaseFragment(), IconPickerView {
         iconIv.setImageBitmap(icon)
     }
 
+    override fun setIconText(text: String) {
+        iconTv.text = text
+        if (iconTextEt.text.toString() != text) iconTextEt.setText(text)
+    }
+
+    override fun setIconTextColor(colorInt: Int) {
+        iconTv.setTextColor(colorInt)
+        colorPicker.setColor(colorInt)
+    }
+
     override fun setBackgroundColor(colorInt: Int) {
         iconFr.setTint(colorInt)
+        colorPicker.setColor(colorInt)
     }
 
     override fun hideStationUrlOption() {
@@ -85,4 +105,10 @@ class IconPickerFragment : BaseFragment(), IconPickerView {
     }
 
     //endregion
+
+    private fun createIcon(): Bitmap {
+        val bitmap = Bitmap.createBitmap(iconFr.width, iconFr.height, Bitmap.Config.ARGB_8888)
+        iconFr.draw(Canvas(bitmap))
+        return bitmap
+    }
 }

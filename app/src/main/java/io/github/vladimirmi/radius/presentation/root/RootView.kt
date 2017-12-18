@@ -11,4 +11,6 @@ interface RootView : MvpView {
     fun showToast(resId: Int)
 
     fun showSnackbar(resId: Int)
+
+    fun showControls(visible: Boolean)
 }

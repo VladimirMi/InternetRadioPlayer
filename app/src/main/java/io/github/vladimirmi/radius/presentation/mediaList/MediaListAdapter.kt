@@ -1,5 +1,6 @@
 package io.github.vladimirmi.radius.presentation.mediaList
 
+import android.graphics.Bitmap
 import android.support.v7.widget.RecyclerView
 import android.view.LayoutInflater
 import android.view.View
@@ -9,7 +10,7 @@ import io.github.vladimirmi.radius.di.Scopes
 import io.github.vladimirmi.radius.extensions.color
 import io.github.vladimirmi.radius.model.entity.GroupedList
 import io.github.vladimirmi.radius.model.entity.Station
-import io.github.vladimirmi.radius.model.source.StationIconSource
+import io.github.vladimirmi.radius.model.repository.StationRepository
 import kotlinx.android.synthetic.main.item_group_item.view.*
 import kotlinx.android.synthetic.main.item_group_title.view.*
 
@@ -25,7 +26,7 @@ class MediaListAdapter(private val callback: MediaItemCallback)
         const val GROUP_ITEM = 1
     }
 
-    private val iconSource = Scopes.app.getInstance(StationIconSource::class.java)
+    private val repository = Scopes.app.getInstance(StationRepository::class.java)
     private lateinit var stationList: GroupedList<Station>
     private var selected: Station? = null
     private var playing = false
@@ -62,7 +63,7 @@ class MediaListAdapter(private val callback: MediaItemCallback)
             is MediaGroupItemVH -> {
                 val station = stationList.getGroupItem(position)
                 holder.bind(station)
-                holder.setIcon(iconSource.getIconView(station.title))
+                holder.setIcon(repository.getStationIcon(station.title).blockingGet())
                 holder.setCallback(callback, station)
                 if (station.uri == selected?.uri) {
                     holder.select(playing)
@@ -115,8 +116,8 @@ class MediaGroupItemVH(itemView: View) : RecyclerView.ViewHolder(itemView) {
         }
     }
 
-    fun setIcon(iconView: View) {
-        itemView.iconContainer.addView(iconView)
+    fun setIcon(bitmap: Bitmap) {
+        itemView.iconIv.setImageBitmap(bitmap)
     }
 
     fun setCallback(callback: MediaItemCallback, station: Station) {

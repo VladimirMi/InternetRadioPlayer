@@ -79,5 +79,4 @@ dependencies {
 //    compile 'com.google.android.exoplayer:extension-mediasession:r2.5.1'
 
     compile 'com.google.code.gson:gson:2.8.2'
-    compile 'com.thebluealliance:spectrum:0.7.1'
 }

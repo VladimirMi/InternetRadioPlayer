@@ -1,6 +1,7 @@
 package io.github.vladimirmi.radius.presentation.station
 
 import android.content.Intent
+import android.graphics.Bitmap
 import android.net.Uri
 import android.os.Bundle
 import android.support.design.widget.TextInputLayout
@@ -21,9 +22,8 @@ import io.github.vladimirmi.radius.di.Scopes
 import io.github.vladimirmi.radius.extensions.inputMethodManager
 import io.github.vladimirmi.radius.extensions.visible
 import io.github.vladimirmi.radius.model.entity.Station
-import io.github.vladimirmi.radius.model.source.StationIconSource
-import io.github.vladimirmi.radius.presentation.root.RootActivity
 import io.github.vladimirmi.radius.presentation.root.ToolbarBuilder
+import io.github.vladimirmi.radius.presentation.root.ToolbarView
 import io.github.vladimirmi.radius.ui.TagView
 import io.github.vladimirmi.radius.ui.base.BackPressListener
 import io.github.vladimirmi.radius.ui.base.BaseFragment
@@ -48,8 +48,6 @@ class StationFragment : BaseFragment(), StationView, BackPressListener {
             }
         }
     }
-
-    private val iconSource = Scopes.app.getInstance(StationIconSource::class.java)
 
     private var editTextBg: Int = 0
     private val dialogSave: SimpleDialog by lazy {
@@ -117,11 +115,10 @@ class StationFragment : BaseFragment(), StationView, BackPressListener {
     //region =============== StationView ==============
 
     override fun buildToolbar(builder: ToolbarBuilder) {
-        builder.build(activity as RootActivity)
+        builder.build(activity as ToolbarView)
     }
 
     override fun setStation(station: Station) {
-        iconFr.setImageBitmap(iconSource.getBitmap(station.title))
         titleTil.setTextWithoutAnimation(station.title)
         folderTil.setTextWithoutAnimation(station.group)
         uriTil.setTextWithoutAnimation(station.uri)
@@ -129,6 +126,10 @@ class StationFragment : BaseFragment(), StationView, BackPressListener {
         bitrateTil.setTextWithoutAnimation(station.bitrate.toString())
         sampleTil.setTextWithoutAnimation(station.sample.toString())
         station.genre.forEach { genresFl.addView(TagView(context, it, null)) }
+    }
+
+    override fun setIcon(icon: Bitmap) {
+        iconIv.setImageBitmap(icon)
     }
 
     override fun setEditMode(editMode: Boolean) {

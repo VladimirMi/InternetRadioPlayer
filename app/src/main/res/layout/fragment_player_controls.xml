@@ -10,7 +10,7 @@
     >
 
     <ImageView
-        android:id="@+id/iconFr"
+        android:id="@+id/iconIv"
         android:layout_width="72dp"
         android:layout_height="72dp"
         android:contentDescription="@string/desc_media_icon"

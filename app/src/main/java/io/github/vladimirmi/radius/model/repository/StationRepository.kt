@@ -8,8 +8,11 @@ import io.github.vladimirmi.radius.model.entity.GroupedList
 import io.github.vladimirmi.radius.model.entity.GroupingList
 import io.github.vladimirmi.radius.model.entity.Station
 import io.github.vladimirmi.radius.model.manager.Preferences
+import io.github.vladimirmi.radius.model.source.StationIconSource
 import io.github.vladimirmi.radius.model.source.StationSource
 import io.reactivex.Maybe
+import io.reactivex.Single
+import io.reactivex.rxkotlin.toSingle
 import io.reactivex.schedulers.Schedulers
 import javax.inject.Inject
 
@@ -19,23 +22,24 @@ import javax.inject.Inject
 
 class StationRepository
 @Inject constructor(private val stationSource: StationSource,
+                    private val stationIconSource: StationIconSource,
                     private val preferences: Preferences) {
 
     private lateinit var stationList: GroupingList
     val groupedStationList: GroupedList<Station> get() = stationList
-    val current: BehaviorRelay<Station> = BehaviorRelay.create<Station>()
+    val currentStation: BehaviorRelay<Station> = BehaviorRelay.create<Station>()
     var newStation: Station? = null
 
     fun initStations() {
         stationList = GroupingList(stationSource.getStationList())
         if (stationList.size > preferences.selectedPos) {
-            current.accept(stationList[preferences.selectedPos])
+            currentStation.accept(stationList[preferences.selectedPos])
         }
     }
 
     fun setCurrent(station: Station) {
         val pos = stationList.indexOf(station)
-        current.accept(stationList[pos])
+        currentStation.accept(stationList[pos])
         preferences.selectedPos = pos
     }
 
@@ -51,43 +55,57 @@ class StationRepository
                 .doOnSuccess { newStation = it }
     }
 
-    fun update(station: Station) {
-        if (station.id == current.value.id) current.accept(station)
-        stationList[stationList.indexOfFirst { it.id == station.id }] = station
-        stationSource.save(station)
+    fun updateStation(newStation: Station) {
+        val oldStation = currentStation.value
+        if (oldStation != newStation) {
+            stationList[stationList.indexOfFirst { it.id == newStation.id }] = newStation
+            stationSource.saveStation(newStation)
+            stationIconSource.saveIcon(newStation, getStationIcon(oldStation.title).blockingGet())
+            if (oldStation.title != newStation.title) {
+                stationSource.removeStation(oldStation)
+                stationIconSource.removeIcon(oldStation)
+            }
+            currentStation.accept(newStation)
+        }
     }
 
-    fun add(station: Station): Boolean {
+    fun saveStationIcon(bitmap: Bitmap) {
+        stationIconSource.saveIcon(currentStation.value, bitmap)
+    }
+
+    fun addStation(station: Station): Boolean {
         if (stationList.find { it.title == station.title } != null) return false
         stationList.add(station)
-        stationSource.save(station)
+        stationSource.saveStation(station)
         setCurrent(station)
         return true
     }
 
-    fun remove(station: Station) {
+    fun removeStation(station: Station) {
         if (stationList.remove(station)) {
-            stationSource.remove(station)
+            stationSource.removeStation(station)
         }
     }
 
-    fun next(): Boolean {
-        val next = stationList.getNext(current.value)
+    fun nextStation(): Boolean {
+        val next = stationList.getNext(currentStation.value)
         return if (next != null) {
             setCurrent(next)
             true
         } else false
     }
 
-    fun previous(): Boolean {
-        val previous = stationList.getPrevious(current.value)
+    fun previousStation(): Boolean {
+        val previous = stationList.getPrevious(currentStation.value)
         return if (previous != null) {
             setCurrent(previous)
             true
         } else false
     }
 
-    fun getStationIcon(url: String): Bitmap {
-        TODO("not implemented")
+    fun getStationIcon(path: String): Single<Bitmap> {
+        return { stationIconSource.getIcon(path) }
+                .toSingle()
+                .subscribeOn(Schedulers.io())
     }
 }

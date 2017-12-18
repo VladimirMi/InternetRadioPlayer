@@ -32,8 +32,8 @@ class StationRepository
 
     fun initStations() {
         stationList = GroupingList(stationSource.getStationList())
-        if (stationList.size > preferences.selectedPos) {
-            currentStation.accept(stationList[preferences.selectedPos])
+        if (stationList.size > preferences.currentPos) {
+            currentStation.accept(stationList[preferences.currentPos])
         }
         preferences.hidedGroups.forEach { stationList.hideGroup(it) }
     }

@@ -3,14 +3,14 @@ package io.github.vladimirmi.radius.model.repository
 import android.graphics.Bitmap
 import android.net.Uri
 import com.jakewharton.rxrelay2.BehaviorRelay
-import io.github.vladimirmi.radius.extensions.toMaybe
+import io.github.vladimirmi.radius.extensions.toSingle
 import io.github.vladimirmi.radius.model.entity.GroupedList
 import io.github.vladimirmi.radius.model.entity.GroupingList
 import io.github.vladimirmi.radius.model.entity.Station
 import io.github.vladimirmi.radius.model.manager.Preferences
 import io.github.vladimirmi.radius.model.source.StationIconSource
 import io.github.vladimirmi.radius.model.source.StationSource
-import io.reactivex.Maybe
+import io.reactivex.Completable
 import io.reactivex.Single
 import io.reactivex.rxkotlin.toSingle
 import io.reactivex.schedulers.Schedulers
@@ -44,16 +44,14 @@ class StationRepository
         preferences.currentPos = pos
     }
 
-    fun getStation(id: String): Station =
-            stationList.find { it.id == id } ?: throw IllegalStateException()
-
-    fun hasStations(): Boolean = stationList.isNotEmpty()
-
-    fun parseStation(uri: Uri): Maybe<Station> {
+    fun parseStation(uri: Uri): Completable {
         return { stationSource.parseStation(uri) }
-                .toMaybe()
+                .toSingle()
                 .subscribeOn(Schedulers.io())
                 .doOnSuccess { newStation = it }
+                .flatMapCompletable {
+                    Completable.fromCallable { stationIconSource.getIcon(it.uri, it.title) }
+                }
     }
 
     fun showOrHideGroup(group: String) {
@@ -71,7 +69,7 @@ class StationRepository
         if (oldStation != newStation) {
             stationList[stationList.indexOfFirst { it.id == newStation.id }] = newStation
             stationSource.saveStation(newStation)
-            stationIconSource.saveIcon(newStation, getStationIcon(oldStation.title).blockingGet())
+            stationIconSource.saveIcon(newStation.title, getStationIcon(oldStation.title).blockingGet())
             if (oldStation.title != newStation.title) {
                 stationSource.removeStation(oldStation)
                 stationIconSource.removeIcon(oldStation)
@@ -80,14 +78,15 @@ class StationRepository
         }
     }
 
-    fun saveStationIcon(bitmap: Bitmap) {
-        stationIconSource.saveIcon(currentStation.value, bitmap)
+    fun cacheStationIcon(bitmap: Bitmap) {
+        stationIconSource.cacheIcon(currentStation.value.title, bitmap)
     }
 
     fun addStation(station: Station): Boolean {
         if (stationList.find { it.title == station.title } != null) return false
         stationList.add(station)
         stationSource.saveStation(station)
+        stationIconSource.saveIcon(station.title, stationIconSource.getIcon(station.title))
         setCurrent(station)
         return true
     }
@@ -114,7 +113,7 @@ class StationRepository
         } else false
     }
 
-    fun getStationIcon(path: String): Single<Bitmap> {
+    fun getStationIcon(path: String = currentStation.value.title): Single<Bitmap> {
         return { stationIconSource.getIcon(path) }
                 .toSingle()
                 .subscribeOn(Schedulers.io())

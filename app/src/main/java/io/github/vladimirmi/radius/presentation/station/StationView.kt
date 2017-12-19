@@ -15,7 +15,7 @@ interface StationView : MvpView {
 
     fun setStation(station: Station)
 
-    fun setIcon(icon: Bitmap)
+    fun setStationIcon(icon: Bitmap)
 
     fun buildToolbar(builder: ToolbarBuilder)
 

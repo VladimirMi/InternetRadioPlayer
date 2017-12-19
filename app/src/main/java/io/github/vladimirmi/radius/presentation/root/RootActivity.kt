@@ -92,7 +92,7 @@ class RootActivity : MvpAppCompatActivity(), RootView, ToolbarView {
         val handled = supportFragmentManager?.fragments?.any {
             (it as? BackPressListener)?.onBackPressed() ?: false
         } ?: false
-        if (!handled) presenter.onBackPressed()
+        if (!handled) super.onBackPressed()
     }
 
     //region =============== RootView ==============

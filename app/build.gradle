@@ -59,7 +59,6 @@ dependencies {
     compile 'io.reactivex.rxjava2:rxjava:2.1.6'
     compile 'io.reactivex.rxjava2:rxkotlin:2.1.0'
     compile 'com.jakewharton.rxrelay2:rxrelay:2.0.0'
-    compile 'com.jakewharton.rxbinding2:rxbinding-kotlin:2.0.0'
     //DI
     compile 'com.github.stephanenicolas.toothpick:toothpick-runtime:1.0.8'
     kapt 'com.github.stephanenicolas.toothpick:toothpick-compiler:1.0.8'

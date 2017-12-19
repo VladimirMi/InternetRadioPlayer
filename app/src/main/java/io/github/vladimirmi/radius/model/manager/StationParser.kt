@@ -66,6 +66,7 @@ class StationParser
     private fun parseHeaders(station: Station?): Station? {
         val headers = station?.uri?.toURL()?.openConnection()?.headerFields ?: return station
         val genresSt = headers["icy-genre"]?.get(0)
+        Timber.e("parseHeaders: $genresSt")
         val genres = if (genresSt?.contains(',') == true) {
             genresSt.split(',').map { it.trim() }
         } else {

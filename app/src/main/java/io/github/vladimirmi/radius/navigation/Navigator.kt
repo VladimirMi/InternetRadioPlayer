@@ -38,19 +38,17 @@ class Navigator(activity: RootActivity, containerId: Int)
 
     override fun createFragment(screenKey: String, data: Any?): Fragment? {
         if (currentKey == screenKey) return null
-        val id = screenKey.substringAfter(Router.DELIMITER)
-        val screen = screenKey.substringBefore(Router.DELIMITER)
-        return when (screen) {
+        return when (screenKey) {
             Router.MEDIA_LIST_SCREEN -> MediaListFragment()
-        //todo remove new instance
-            Router.STATION_SCREEN -> StationFragment.newInstance(id)
+            Router.STATION_SCREEN -> StationFragment()
             Router.ICON_PICKER_SCREEN -> IconPickerFragment()
             else -> null
         }
     }
 
     override fun applyCommand(command: Command?) {
-        if ((command is Next || command is Previous) && !currentKey.contains(Router.STATION_SCREEN)) {
+        if ((command is NextStation || command is PreviousStation)
+                && !currentKey.contains(Router.STATION_SCREEN)) {
             return
         }
         super.applyCommand(command)
@@ -59,8 +57,8 @@ class Navigator(activity: RootActivity, containerId: Int)
     override fun setupFragmentTransactionAnimation(command: Command?, currentFragment: Fragment?, nextFragment: Fragment?, fragmentTransaction: FragmentTransaction?) {
         when (command) {
         // order matters because Next and Previous is subclasses of Forward
-            is Next -> forwardTransition(fragmentTransaction)
-            is Previous -> previousTransition(fragmentTransaction)
+            is NextStation -> forwardTransition(fragmentTransaction)
+            is PreviousStation -> previousTransition(fragmentTransaction)
             is Forward -> forwardTransition(fragmentTransaction)
             is Back, is BackTo -> backTransition(fragmentTransaction)
         }
@@ -83,10 +81,5 @@ class Navigator(activity: RootActivity, containerId: Int)
 
     override fun unknownScreen(command: Command?) {
         //do nothing
-    }
-
-    override fun exit() {
-        super.exit()
-        System.exit(0)
     }
 }

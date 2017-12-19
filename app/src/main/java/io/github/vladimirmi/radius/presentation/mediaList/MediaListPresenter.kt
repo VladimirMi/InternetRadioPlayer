@@ -74,8 +74,8 @@ class MediaListPresenter
         viewState.closeRemoveDialog()
     }
 
-    fun showStation(station: Station) {
-        router.showStation(station)
+    fun showStation() {
+        router.navigateTo(Router.STATION_SCREEN)
     }
 }
 

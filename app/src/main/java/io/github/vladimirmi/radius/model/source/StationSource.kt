@@ -16,6 +16,7 @@ import javax.inject.Inject
 class StationSource
 @Inject constructor(context: Context,
                     private val parser: StationParser) {
+
     companion object {
         const val extension = "json"
     }
@@ -36,12 +37,10 @@ class StationSource
     }
 
     fun saveStation(station: Station) {
-        with(File(appDir, "${station.title}.$extension")) {
-            if (exists() || createNewFile()) {
-                clear()
-                writeText(parser.toJson(station))
-            }
-        }
+        val file = File(appDir, "${station.title}.$extension")
+        if (file.exists()) file.clear()
+
+        file.writeText(parser.toJson(station))
     }
 
     fun removeStation(station: Station) {

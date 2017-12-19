@@ -21,10 +21,10 @@ class StationPresenter
                     private val router: Router)
     : BasePresenter<StationView>() {
 
-    lateinit var id: String
+    val stationId get() = repository.currentStation.value.id
+    private var previousStation: Station? = null
     private var editMode = false
     private var createMode = false
-    private var prevSelectedStation: Station? = null
 
     private val menuActions: (MenuItem) -> Unit = {
         when (it.itemId) {
@@ -35,27 +35,27 @@ class StationPresenter
     }
 
     private val toolbarBuilder: ToolbarBuilder
-        get() {
-            val station = if (createMode) repository.newStation else repository.getStation(id)
-            return ToolbarBuilder().setToolbarTitle(station!!.title)
-        }
-
+        get() = ToolbarBuilder().setToolbarTitle(repository.currentStation.value.title)
 
     override fun onFirstViewAttach() {
-        val station = repository.newStation ?: repository.getStation(id)
-        viewState.setStation(station)
         if (repository.newStation != null) {
-            createMode()
-            viewState.setIcon(repository.getStationIcon(station.uri).blockingGet())
-        } else {
-            viewMode()
-            viewState.setIcon(repository.getStationIcon(station.title).blockingGet())
+            createMode = true
+            if (repository.currentStation.hasValue()) {
+                previousStation = repository.currentStation.value
+            }
+            repository.currentStation.accept(repository.newStation)
         }
+        viewState.setStation(repository.currentStation.value)
+        if (createMode) editMode() else viewMode()
+    }
+
+    override fun attachView(view: StationView?) {
+        super.attachView(view)
+        viewState.setStationIcon(repository.getStationIcon().blockingGet())
     }
 
     fun viewMode() {
         editMode = false
-        createMode = false
         val toolbar = toolbarBuilder.addAction(MenuItemHolder(
                 itemTitle = "more",
                 iconResId = R.drawable.ic_more,
@@ -65,16 +65,6 @@ class StationPresenter
 
         viewState.buildToolbar(toolbar)
         viewState.setEditMode(false)
-    }
-
-    private fun createMode() {
-        //todo turn off next/prev also on the edit mode
-        createMode = true
-        if (repository.hasStations()) {
-            prevSelectedStation = repository.currentStation.value
-        }
-        repository.currentStation.accept(repository.newStation)
-        editMode()
     }
 
     private fun editMode() {
@@ -101,7 +91,7 @@ class StationPresenter
     fun delete(delete: Boolean) {
         viewState.closeDeleteDialog()
         if (delete) {
-            repository.removeStation(repository.getStation(id))
+            repository.removeStation(repository.currentStation.value)
             repository.nextStation()
             router.exit()
         }
@@ -119,7 +109,7 @@ class StationPresenter
     fun cancelEdit(cancel: Boolean) {
         viewState.closeCancelEditDialog()
         if (cancel) {
-            viewState.setStation(repository.getStation(id))
+            viewState.setStation(repository.currentStation.value)
             viewMode()
         }
     }
@@ -130,7 +120,6 @@ class StationPresenter
             if (repository.addStation(station)) {
                 viewState.showToast(R.string.toast_add_success)
                 repository.newStation = null
-                repository.setCurrent(station)
                 viewMode()
             } else {
                 viewState.showToast(R.string.toast_add_force)
@@ -142,7 +131,7 @@ class StationPresenter
         viewState.closeCancelCreateDialog()
         if (cancel) {
             repository.newStation = null
-            prevSelectedStation?.let { repository.setCurrent(it) }
+            previousStation?.let { repository.setCurrent(it) }
             router.backTo(Router.MEDIA_LIST_SCREEN)
         }
     }
@@ -157,7 +146,7 @@ class StationPresenter
         return true
     }
 
-    fun isChanged(station: Station) = station != repository.getStation(id)
+    fun isChanged(station: Station) = station != repository.currentStation.value
 
     fun openLink(url: String) {
         if (!editMode) viewState.openLinkDialog(url)

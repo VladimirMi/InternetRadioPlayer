@@ -40,15 +40,6 @@ import toothpick.Toothpick
 class StationFragment : BaseFragment(), StationView, BackPressListener {
     override val layoutRes = R.layout.fragment_station
 
-    companion object {
-        fun newInstance(stationId: String): StationFragment {
-            return StationFragment().apply {
-                //todo "id" from repository and this remove
-                arguments = Bundle().apply { putString("id", stationId) }
-            }
-        }
-    }
-
     private var editTextBg: Int = 0
     private val dialogSave: SimpleDialog by lazy {
         SimpleDialog(view as ViewGroup)
@@ -84,11 +75,6 @@ class StationFragment : BaseFragment(), StationView, BackPressListener {
                 .getInstance(StationPresenter::class.java).also {
             Toothpick.closeScope(this)
         }
-    }
-
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-        presenter.id = arguments.getString("id")
     }
 
     override fun onStop() {
@@ -128,7 +114,7 @@ class StationFragment : BaseFragment(), StationView, BackPressListener {
         station.genre.forEach { genresFl.addView(TagView(context, it, null)) }
     }
 
-    override fun setIcon(icon: Bitmap) {
+    override fun setStationIcon(icon: Bitmap) {
         iconIv.setImageBitmap(icon)
     }
 
@@ -239,7 +225,7 @@ class StationFragment : BaseFragment(), StationView, BackPressListener {
                     genres.add(tagView.text.toString())
                 }
         return Station(
-                id = presenter.id,
+                id = presenter.stationId,
                 uri = uriTil.editText!!.text.toString(),
                 title = titleTil.editText!!.text.toString(),
                 group = folderTil.editText!!.text.toString(),

@@ -45,7 +45,7 @@ class MediaListFragment : BaseFragment(), MediaListView, MediaItemCallback {
                 presenter.removeStation(station)
             } else {
                 presenter.select(station)
-                presenter.showStation(station)
+                presenter.showStation()
             }
         }
     })

@@ -3,6 +3,7 @@ package io.github.vladimirmi.radius.presentation.playerControl
 import android.support.v4.media.session.PlaybackStateCompat
 import android.support.v4.media.session.PlaybackStateCompat.*
 import com.arellomobile.mvp.InjectViewState
+import io.github.vladimirmi.radius.model.entity.Station
 import io.github.vladimirmi.radius.model.repository.MediaBrowserController
 import io.github.vladimirmi.radius.model.repository.StationRepository
 import io.github.vladimirmi.radius.navigation.Router
@@ -26,30 +27,33 @@ class PlayerControlPresenter
     private var skipNext = false
 
     override fun onFirstViewAttach() {
+        //todo turn off next/prev also on the edit mode
+
         browserController.playbackState
                 .subscribeBy { this.handleState(it) }
                 .addTo(compDisp)
 
         repository.currentStation
-                .subscribeBy {
-                    viewState.setStation(it)
-                    if (repository.newStation == it) {
-                        viewState.createMode(true)
-                        viewState.setStationIcon(repository.getStationIcon(it.uri).blockingGet())
-                    } else {
-                        viewState.createMode(false)
-                        viewState.setStationIcon(repository.getStationIcon(it.title).blockingGet())
-                    }
-                    if (skipPrevious) {
-                        router.skipToPrevious(it)
-                        skipPrevious = false
-                    }
-                    if (skipNext) {
-                        skipNext = false
-                        router.skipToNext(it)
-                    }
-                }
+                .subscribeBy { onStationUpdate(it) }
                 .addTo(compDisp)
+    }
+
+    private fun onStationUpdate(it: Station) {
+        viewState.setStation(it)
+        viewState.setStationIcon(repository.getStationIcon().blockingGet())
+        if (repository.newStation == it) {
+            viewState.createMode(true)
+        } else {
+            viewState.createMode(false)
+        }
+        if (skipPrevious) {
+            router.skipToPrevious()
+            skipPrevious = false
+        }
+        if (skipNext) {
+            skipNext = false
+            router.skipToNext()
+        }
     }
 
     private fun handleState(state: PlaybackStateCompat?) {
@@ -70,7 +74,7 @@ class PlayerControlPresenter
     }
 
     fun showStation() {
-        router.navigateTo(Router.ICON_PICKER_SCREEN)
+        router.navigateTo(Router.STATION_SCREEN)
     }
 
     fun skipPrevious() {

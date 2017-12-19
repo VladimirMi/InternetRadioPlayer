@@ -36,11 +36,13 @@ fun String.toUri(): Uri? = this.toURI()?.toString()?.let { Uri.parse(it) }
 
 fun Uri.getContentType(): String = this.toURL()?.getContentType() ?: ""
 
-fun <T> URL.useConnection(runnable: HttpURLConnection.() -> T?): T? {
+fun <T> URL.useConnection(connectTimeout: Int = 5000,
+                          readTimeout: Int = 5000,
+                          runnable: HttpURLConnection.() -> T?): T? {
     return try {
         val connection = openConnection() as HttpURLConnection
-        connection.connectTimeout = 5000
-        connection.readTimeout = 5000
+        connection.connectTimeout = connectTimeout
+        connection.readTimeout = readTimeout
         val result = connection.runnable()
         connection.disconnect()
         result
@@ -50,10 +52,9 @@ fun <T> URL.useConnection(runnable: HttpURLConnection.() -> T?): T? {
     }
 }
 
-fun URL.getContentType(): String =
-        useConnection {
-            contentType.trim().toLowerCase(Locale.ENGLISH)
-        } ?: ""
+fun URL.getContentType(): String {
+    return useConnection { contentType.trim().toLowerCase(Locale.ENGLISH) } ?: ""
+}
 
 fun URL.getRedirected(): URL {
     return useConnection {

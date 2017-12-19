@@ -16,7 +16,7 @@ import java.util.*
 class FileLoggingTree(context: Context) : Timber.DebugTree() {
 
     private val logsDir by lazy {
-        val dir = File(context.filesDir, "Logs")
+        val dir = File(context.getExternalFilesDir(null), "Logs")
         dir.mkdir()
         dir
     }

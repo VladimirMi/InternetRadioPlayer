@@ -38,6 +38,7 @@ class IconPickerFragment : BaseFragment(), IconPickerView, BackPressListener {
     override fun onViewCreated(view: View?, savedInstanceState: Bundle?) {
         iconTextEt.isSelected = true
         optionsRg.setOnCheckedChangeListener { group, checkedId ->
+            presenter.optionId(checkedId)
             when (checkedId) {
                 R.id.optionStationUrlBt, R.id.optionServerUrlBt -> presenter.option(true, false, false)
                 R.id.optionNameBt -> presenter.option(false, true, false)

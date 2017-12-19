@@ -20,17 +20,17 @@ import android.view.inputmethod.InputMethodManager
  */
 
 fun Drawable.getBitmap(): Bitmap {
-    return if (this is BitmapDrawable) {
-        this.bitmap
-    } else if (this is VectorDrawableCompat || this is VectorDrawable) {
-        val bitmap = Bitmap.createBitmap(intrinsicWidth, intrinsicHeight, Bitmap.Config.ARGB_8888)
-        val canvas = Canvas(bitmap)
-        setBounds(0, 0, canvas.width, canvas.height)
-        draw(canvas)
+    return when (this) {
+        is BitmapDrawable -> this.bitmap
+        is VectorDrawableCompat, is VectorDrawable -> {
+            val bitmap = Bitmap.createBitmap(intrinsicWidth, intrinsicHeight, Bitmap.Config.ARGB_8888)
+            val canvas = Canvas(bitmap)
+            setBounds(0, 0, canvas.width, canvas.height)
+            draw(canvas)
 
-        bitmap
-    } else {
-        throw IllegalArgumentException("unsupported drawable type")
+            bitmap
+        }
+        else -> throw IllegalArgumentException("unsupported drawable type")
     }
 }
 

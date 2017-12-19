@@ -27,7 +27,6 @@
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:contentDescription="@string/desc_media_icon"
-                tools:background="@drawable/bg_rounded"
                 tools:src="@drawable/ic_radius"
                 />
 
@@ -35,9 +34,10 @@
                 android:id="@+id/changeIconBt"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
-                android:background="@drawable/bg_rounded"
                 android:foreground="@drawable/ic_add"
+                android:background="#77222222"
                 android:visibility="gone"
+                tools:visibility="visible"
                 />
         </FrameLayout>
 

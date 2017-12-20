@@ -1,6 +1,6 @@
 package io.github.vladimirmi.radius.di.module
 
-import io.github.vladimirmi.radius.model.repository.MediaBrowserController
+import io.github.vladimirmi.radius.model.repository.MediaController
 import io.github.vladimirmi.radius.navigation.Router
 import io.github.vladimirmi.radius.presentation.root.RootPresenter
 import ru.terrakok.cicerone.Cicerone
@@ -18,7 +18,7 @@ class RootActivityModule : Module() {
 
         bind(NavigatorHolder::class.java).toInstance(cicerone.navigatorHolder)
 
-        bind(MediaBrowserController::class.java).singletonInScope()
+        bind(MediaController::class.java).singletonInScope()
 
         bind(RootPresenter::class.java).singletonInScope()
     }

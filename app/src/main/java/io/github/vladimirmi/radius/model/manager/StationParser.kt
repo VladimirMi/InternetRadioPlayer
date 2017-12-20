@@ -6,7 +6,7 @@ import io.github.vladimirmi.radius.extensions.getContentType
 import io.github.vladimirmi.radius.extensions.getRedirected
 import io.github.vladimirmi.radius.extensions.toURI
 import io.github.vladimirmi.radius.extensions.toURL
-import io.github.vladimirmi.radius.model.entity.ContentTypes
+import io.github.vladimirmi.radius.model.entity.ContentType
 import io.github.vladimirmi.radius.model.entity.Station
 import timber.log.Timber
 import java.io.File
@@ -55,8 +55,8 @@ class StationParser
         val newUrl = url.getRedirected().getRedirected()
 
         val type = newUrl.getContentType()
-        val station = when (ContentTypes.fromString(type)) {
-            ContentTypes.PLS -> newUrl.openStream().parsePls()
+        val station = when (ContentType.fromString(type)) {
+            ContentType.PLS -> newUrl.openStream().parsePls()
             null -> null
             else -> newUrl.openStream().parseM3u()
         }

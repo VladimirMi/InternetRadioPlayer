@@ -7,11 +7,12 @@ import com.arellomobile.mvp.presenter.InjectPresenter
 import com.arellomobile.mvp.presenter.ProvidePresenter
 import io.github.vladimirmi.radius.R
 import io.github.vladimirmi.radius.di.Scopes
+import io.github.vladimirmi.radius.extensions.color
 import io.github.vladimirmi.radius.extensions.setTint
-import io.github.vladimirmi.radius.extensions.visible
 import io.github.vladimirmi.radius.model.entity.Station
 import io.github.vladimirmi.radius.ui.base.BaseFragment
 import kotlinx.android.synthetic.main.fragment_player_controls.*
+import timber.log.Timber
 import toothpick.Toothpick
 
 
@@ -57,11 +58,12 @@ class PlayerControlFragment : BaseFragment(), PlayerControlView {
         iconIv.setImageBitmap(stationIcon)
     }
 
-    override fun createMode(createMode: Boolean) {
-        previous.setTint(if (createMode) R.color.grey_400 else R.color.grey_700)
-        next.setTint(if (createMode) R.color.grey_400 else R.color.grey_700)
-        previous.isEnabled = !createMode
-        next.isEnabled = !createMode
-        favorite.visible(!createMode)
+    override fun enableNextPrevious(enable: Boolean) {
+        Timber.e("enableNextPrevious: $enable")
+        val tint = context.color(if (enable) R.color.grey_700 else R.color.grey_400)
+        previous.setTint(tint)
+        next.setTint(tint)
+        previous.isEnabled = enable
+        next.isEnabled = enable
     }
 }

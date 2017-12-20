@@ -25,8 +25,6 @@ class Playback(private val service: PlayerService,
     : AudioManager.OnAudioFocusChangeListener {
 
     companion object {
-        const val HEADSET_REQUEST_CODE = 72
-
         private const val VOLUME_DUCK = 0.2f
         private const val VOLUME_NORMAL = 1.0f
     }
@@ -129,10 +127,10 @@ class Playback(private val service: PlayerService,
 
     private fun createPlayer() {
         Timber.d("createPlayer")
-        val renderersFactory = DefaultRenderersFactory(service)
+        val rendererFactory = DefaultRenderersFactory(service)
         val trackSelector = DefaultTrackSelector()
         val loadControl = DefaultLoadControl(DefaultAllocator(true, C.DEFAULT_AUDIO_BUFFER_SIZE))
-        player = ExoPlayerFactory.newSimpleInstance(renderersFactory, trackSelector, loadControl)
+        player = ExoPlayerFactory.newSimpleInstance(rendererFactory, trackSelector, loadControl)
         player?.addListener(playerCallback)
     }
 
@@ -167,13 +165,13 @@ class Playback(private val service: PlayerService,
             val action = intent.action
             if (action == AudioManager.ACTION_AUDIO_BECOMING_NOISY) {
                 val playing = player?.playWhenReady ?: false
-                service.onPause(stopDelay = 600000) // 10 min
+                service.onPauseCommand(stopDelay = 600000) // 10 min
                 playAgainOnHeadset = playing
                 Timber.e("onReceive: $playAgainOnHeadset")
 
             } else if (playAgainOnHeadset && action == Intent.ACTION_HEADSET_PLUG
                     && intent.getIntExtra("state", 0) == 1) {
-                service.onPlay()
+                service.onPlayCommand()
 
             } else if (playAgainOnHeadset && BluetoothDevice.ACTION_ACL_CONNECTED == action) {
                 var count = 0
@@ -182,7 +180,7 @@ class Playback(private val service: PlayerService,
                     count++
                 }
                 if (audioManager.isBluetoothA2dpOn) {
-                    service.onPlay()
+                    service.onPlayCommand()
                 }
             }
         }

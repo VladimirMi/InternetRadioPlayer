@@ -3,7 +3,7 @@ package io.github.vladimirmi.radius.presentation.mediaList
 import com.arellomobile.mvp.InjectViewState
 import io.github.vladimirmi.radius.R
 import io.github.vladimirmi.radius.model.entity.Station
-import io.github.vladimirmi.radius.model.repository.MediaBrowserController
+import io.github.vladimirmi.radius.model.repository.MediaController
 import io.github.vladimirmi.radius.model.repository.StationRepository
 import io.github.vladimirmi.radius.navigation.Router
 import io.github.vladimirmi.radius.presentation.root.ToolbarBuilder
@@ -19,7 +19,7 @@ import javax.inject.Inject
 @InjectViewState
 class MediaListPresenter
 @Inject constructor(private val repository: StationRepository,
-                    private val mediaBrowserController: MediaBrowserController,
+                    private val mediaController: MediaController,
                     private val router: Router)
     : BasePresenter<MediaListView>() {
 
@@ -35,15 +35,15 @@ class MediaListPresenter
 
         repository.currentStation
                 .subscribeBy {
-                    viewState.selectItem(it, mediaBrowserController.isPlaying)
+                    viewState.selectItem(it, mediaController.isPlaying)
                     viewState.buildToolbar(builder.setToolbarTitle(it.title))
                 }
                 .addTo(compDisp)
 
-        mediaBrowserController.playbackState
+        mediaController.playbackState
                 .subscribeBy {
                     val station = repository.currentStation.value
-                    if (mediaBrowserController.isPlaying) {
+                    if (mediaController.isPlaying) {
                         viewState.selectItem(station, playing = true)
                     } else {
                         viewState.selectItem(station, playing = false)
@@ -52,7 +52,7 @@ class MediaListPresenter
     }
 
     fun select(station: Station) {
-        repository.setCurrent(station)
+        repository.setCurrentStation(station)
     }
 
     fun selectGroup(group: String) {

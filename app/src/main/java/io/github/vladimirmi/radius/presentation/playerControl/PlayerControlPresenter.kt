@@ -4,12 +4,13 @@ import android.support.v4.media.session.PlaybackStateCompat
 import android.support.v4.media.session.PlaybackStateCompat.*
 import com.arellomobile.mvp.InjectViewState
 import io.github.vladimirmi.radius.model.entity.Station
-import io.github.vladimirmi.radius.model.repository.MediaBrowserController
+import io.github.vladimirmi.radius.model.repository.MediaController
 import io.github.vladimirmi.radius.model.repository.StationRepository
+import io.github.vladimirmi.radius.model.service.PlayerService
 import io.github.vladimirmi.radius.navigation.Router
 import io.github.vladimirmi.radius.ui.base.BasePresenter
 import io.reactivex.rxkotlin.addTo
-import io.reactivex.rxkotlin.subscribeBy
+import timber.log.Timber
 import javax.inject.Inject
 
 /**
@@ -18,53 +19,52 @@ import javax.inject.Inject
 
 @InjectViewState
 class PlayerControlPresenter
-@Inject constructor(private val browserController: MediaBrowserController,
+@Inject constructor(private val mediaController: MediaController,
                     private val repository: StationRepository,
                     private val router: Router)
     : BasePresenter<PlayerControlView>() {
 
-    private var skipPrevious = false
-    private var skipNext = false
-
     override fun onFirstViewAttach() {
-        //todo turn off next/prev also on the edit mode
-
-        browserController.playbackState
-                .subscribeBy { this.handleState(it) }
+        mediaController.playbackState
+                .subscribe { handleState(it) }
                 .addTo(compDisp)
 
         repository.currentStation
-                .subscribeBy { onStationUpdate(it) }
+                .subscribe { handleStation(it) }
+                .addTo(compDisp)
+
+        mediaController.sessionEvent
+                .subscribe { handleSessionEvent(it) }
                 .addTo(compDisp)
     }
 
-    private fun onStationUpdate(it: Station) {
-        viewState.setStation(it)
-        viewState.setStationIcon(repository.getStationIcon().blockingGet())
-        if (repository.newStation == it) {
-            viewState.createMode(true)
+    private fun handleState(state: PlaybackStateCompat) {
+        Timber.e("handleState: ")
+        when (state.state) {
+            STATE_PAUSED, STATE_STOPPED -> viewState.showStopped()
+            STATE_PLAYING -> viewState.showPlaying()
+        }
+        if (state.actions and ACTION_SKIP_TO_NEXT == ACTION_SKIP_TO_NEXT) {
+            viewState.enableNextPrevious(true)
         } else {
-            viewState.createMode(false)
-        }
-        if (skipPrevious) {
-            router.skipToPrevious()
-            skipPrevious = false
-        }
-        if (skipNext) {
-            skipNext = false
-            router.skipToNext()
+            viewState.enableNextPrevious(false)
         }
     }
 
-    private fun handleState(state: PlaybackStateCompat?) {
-        when (state?.state) {
-            STATE_PAUSED, STATE_STOPPED -> viewState.showStopped()
-            STATE_PLAYING -> viewState.showPlaying()
+    private fun handleStation(it: Station) {
+        viewState.setStation(it)
+        viewState.setStationIcon(repository.getStationIcon().blockingGet())
+    }
+
+    private fun handleSessionEvent(event: String) {
+        when (event) {
+            PlayerService.EVENT_SESSION_PREVIOUS -> router.skipToPrevious()
+            PlayerService.EVENT_SESSION_NEXT -> router.skipToNext()
         }
     }
 
     fun playPause() {
-        browserController.playPause()
+        mediaController.playPause()
     }
 
     fun switchFavorite() {
@@ -78,12 +78,10 @@ class PlayerControlPresenter
     }
 
     fun skipPrevious() {
-        browserController.skipToPrevious()
-        skipPrevious = true
+        mediaController.skipToPrevious()
     }
 
     fun skipNext() {
-        browserController.skipToNext()
-        skipNext = true
+        mediaController.skipToNext()
     }
 }

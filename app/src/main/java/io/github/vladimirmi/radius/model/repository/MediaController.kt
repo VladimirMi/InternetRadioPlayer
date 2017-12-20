@@ -2,6 +2,7 @@ package io.github.vladimirmi.radius.model.repository
 
 import android.content.ComponentName
 import android.content.Context
+import android.os.Bundle
 import android.os.RemoteException
 import android.support.v4.media.MediaBrowserCompat
 import android.support.v4.media.MediaMetadataCompat
@@ -17,7 +18,7 @@ import javax.inject.Inject
  */
 
 
-class MediaBrowserController
+class MediaController
 @Inject constructor(context: Context, private val repository: StationRepository) {
 
     private lateinit var mediaBrowser: MediaBrowserCompat
@@ -25,6 +26,7 @@ class MediaBrowserController
 
     val playbackState: BehaviorRelay<PlaybackStateCompat> = BehaviorRelay.create()
     val playbackMetaData: BehaviorRelay<MediaMetadataCompat> = BehaviorRelay.create()
+    val sessionEvent: BehaviorRelay<String> = BehaviorRelay.create()
 
     private val connectionCallbacks = object : MediaBrowserCompat.ConnectionCallback() {
         override fun onConnected() {
@@ -55,6 +57,10 @@ class MediaBrowserController
 
         override fun onMetadataChanged(metadata: MediaMetadataCompat) {
             playbackMetaData.accept(metadata)
+        }
+
+        override fun onSessionEvent(event: String, extras: Bundle?) {
+            sessionEvent.accept(event)
         }
     }
 

@@ -57,7 +57,9 @@ class GroupingList(private val stationList: ArrayList<Station>)
         return mappings.find { it.group == group && it is GroupMapping.Item }?.visible == true
     }
 
-    override fun groupedSize(): Int = mappings.count { it.visible }
+    override fun overallSize(): Int = mappings.count { it.visible }
+
+    override fun itemSize(): Int = mappings.count { it.visible && it is GroupMapping.Item }
 
     override fun getPrevious(item: Station): Station? {
         var prev: GroupMapping.Item? = null

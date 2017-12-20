@@ -16,7 +16,7 @@ interface PlayerControlView : MvpView {
 
     fun setStation(station: Station)
 
-    fun createMode(createMode: Boolean)
+    fun enableNextPrevious(enable: Boolean)
 
     fun setStationIcon(stationIcon: Bitmap)
 }

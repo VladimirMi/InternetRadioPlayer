@@ -74,7 +74,7 @@ class MediaListAdapter(private val callback: MediaItemCallback)
         }
     }
 
-    override fun getItemCount(): Int = stationList.groupedSize()
+    override fun getItemCount(): Int = stationList.overallSize()
 
     fun selectItem(station: Station, playing: Boolean) {
         selected = station

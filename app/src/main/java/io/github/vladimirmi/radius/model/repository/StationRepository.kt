@@ -6,6 +6,7 @@ import com.jakewharton.rxrelay2.BehaviorRelay
 import io.github.vladimirmi.radius.extensions.toSingle
 import io.github.vladimirmi.radius.model.entity.GroupedList
 import io.github.vladimirmi.radius.model.entity.GroupingList
+import io.github.vladimirmi.radius.model.entity.PlayerMode
 import io.github.vladimirmi.radius.model.entity.Station
 import io.github.vladimirmi.radius.model.manager.Preferences
 import io.github.vladimirmi.radius.model.source.StationIconSource
@@ -27,7 +28,8 @@ class StationRepository
 
     private lateinit var stationList: GroupingList
     val groupedStationList: GroupedList<Station> get() = stationList
-    val currentStation: BehaviorRelay<Station> = BehaviorRelay.create<Station>()
+    val currentStation: BehaviorRelay<Station> = BehaviorRelay.create()
+    val playerMode: BehaviorRelay<PlayerMode> = BehaviorRelay.create()
     var newStation: Station? = null
 
     fun initStations() {
@@ -36,9 +38,10 @@ class StationRepository
             currentStation.accept(stationList[preferences.currentPos])
         }
         preferences.hidedGroups.forEach { stationList.hideGroup(it) }
+        updatePlayerMode()
     }
 
-    fun setCurrent(station: Station) {
+    fun setCurrentStation(station: Station) {
         val pos = stationList.indexOf(station)
         currentStation.accept(stationList[pos])
         preferences.currentPos = pos
@@ -48,7 +51,10 @@ class StationRepository
         return { stationSource.parseStation(uri) }
                 .toSingle()
                 .subscribeOn(Schedulers.io())
-                .doOnSuccess { newStation = it }
+                .doOnSuccess {
+                    newStation = it
+                    playerMode.accept(PlayerMode.NEXT_PREVIOUS_DISABLED)
+                }
                 .flatMapCompletable {
                     Completable.fromCallable { stationIconSource.getIcon(it.uri, it.title) }
                 }
@@ -62,6 +68,7 @@ class StationRepository
             stationList.showGroup(group)
             preferences.hidedGroups = preferences.hidedGroups.toMutableSet().apply { remove(group) }
         }
+        updatePlayerMode()
     }
 
     fun updateStation(newStation: Station) {
@@ -69,10 +76,10 @@ class StationRepository
         if (oldStation != newStation) {
             stationList[stationList.indexOfFirst { it.id == newStation.id }] = newStation
             stationSource.saveStation(newStation)
-            stationIconSource.saveIcon(newStation.title, getStationIcon(oldStation.title).blockingGet())
+//            stationIconSource.saveIcon(newStation.title, getStationIcon(oldStation.title).blockingGet())
             if (oldStation.title != newStation.title) {
                 stationSource.removeStation(oldStation)
-                stationIconSource.removeIcon(oldStation)
+//                stationIconSource.removeIcon(oldStation)
             }
             currentStation.accept(newStation)
         }
@@ -87,20 +94,22 @@ class StationRepository
         stationList.add(station)
         stationSource.saveStation(station)
         stationIconSource.saveIcon(station.title, stationIconSource.getIcon(station.title))
-        setCurrent(station)
+        setCurrentStation(station)
+        updatePlayerMode()
         return true
     }
 
     fun removeStation(station: Station) {
         if (stationList.remove(station)) {
             stationSource.removeStation(station)
+            updatePlayerMode()
         }
     }
 
     fun nextStation(): Boolean {
         val next = stationList.getNext(currentStation.value)
         return if (next != null) {
-            setCurrent(next)
+            setCurrentStation(next)
             true
         } else false
     }
@@ -108,7 +117,7 @@ class StationRepository
     fun previousStation(): Boolean {
         val previous = stationList.getPrevious(currentStation.value)
         return if (previous != null) {
-            setCurrent(previous)
+            setCurrentStation(previous)
             true
         } else false
     }
@@ -117,5 +126,13 @@ class StationRepository
         return { stationIconSource.getIcon(path) }
                 .toSingle()
                 .subscribeOn(Schedulers.io())
+    }
+
+    private fun updatePlayerMode() {
+        if (stationList.itemSize() > 1) {
+            playerMode.accept(PlayerMode.NEXT_PREVIOUS_ENABLED)
+        } else {
+            playerMode.accept(PlayerMode.NEXT_PREVIOUS_DISABLED)
+        }
     }
 }

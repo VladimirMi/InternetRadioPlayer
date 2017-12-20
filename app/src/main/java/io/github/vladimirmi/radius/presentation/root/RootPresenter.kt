@@ -8,7 +8,7 @@ import android.support.v4.app.ActivityCompat
 import android.support.v4.content.ContextCompat
 import com.arellomobile.mvp.InjectViewState
 import io.github.vladimirmi.radius.R
-import io.github.vladimirmi.radius.model.repository.MediaBrowserController
+import io.github.vladimirmi.radius.model.repository.MediaController
 import io.github.vladimirmi.radius.model.repository.StationRepository
 import io.github.vladimirmi.radius.navigation.Router
 import io.github.vladimirmi.radius.ui.base.BasePresenter
@@ -25,7 +25,7 @@ import javax.inject.Inject
 @InjectViewState
 class RootPresenter
 @Inject constructor(private val router: Router,
-                    private val mediaBrowserController: MediaBrowserController,
+                    private val mediaController: MediaController,
                     private val repository: StationRepository)
     : BasePresenter<RootView>() {
 
@@ -38,11 +38,11 @@ class RootPresenter
         if (checkAndRequestPermissions(permissions, REQUEST_WRITE)) {
             nextScreen()
         }
-        mediaBrowserController.connect()
+        mediaController.connect()
     }
 
     override fun onDestroy() {
-        mediaBrowserController.disconnect()
+        mediaController.disconnect()
     }
 
     fun onRequestPermissionsResult(requestCode: Int, permissions: Array<out String>, grantResults: IntArray) {

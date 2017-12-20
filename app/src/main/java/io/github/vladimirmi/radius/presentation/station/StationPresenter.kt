@@ -131,7 +131,7 @@ class StationPresenter
         viewState.closeCancelCreateDialog()
         if (cancel) {
             repository.newStation = null
-            previousStation?.let { repository.setCurrent(it) }
+            previousStation?.let { repository.setCurrentStation(it) }
             router.backTo(Router.MEDIA_LIST_SCREEN)
         }
     }

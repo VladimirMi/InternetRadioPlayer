@@ -1,6 +1,5 @@
 package io.github.vladimirmi.radius.model.service
 
-import android.os.Bundle
 import android.support.v4.media.session.MediaSessionCompat
 
 /**
@@ -11,40 +10,34 @@ class SessionCallback(private val callback: Interface)
     : MediaSessionCompat.Callback() {
 
     override fun onPlay() {
-        callback.onPlay()
+        callback.onPlayCommand()
     }
 
     override fun onPause() {
-        callback.onPause(stopDelay = 60000) // 1 min
+        callback.onPauseCommand(stopDelay = 60000) // 1 min
     }
 
     override fun onStop() {
-        callback.onStop()
+        callback.onStopCommand()
     }
 
     override fun onSkipToPrevious() {
-        callback.onSkipToPrevious()
+        callback.onSkipToPreviousCommand()
     }
 
     override fun onSkipToNext() {
-        callback.onSkipToNext()
-    }
-
-    override fun onCustomAction(action: String?, extras: Bundle?) {
-        callback.onCustomAction(action, extras)
+        callback.onSkipToNextCommand()
     }
 
     interface Interface {
-        fun onPlay()
+        fun onPlayCommand()
 
-        fun onPause(stopDelay: Long)
+        fun onPauseCommand(stopDelay: Long)
 
-        fun onStop()
+        fun onStopCommand()
 
-        fun onSkipToPrevious()
+        fun onSkipToPreviousCommand()
 
-        fun onSkipToNext()
-
-        fun onCustomAction(action: String?, extras: Bundle?)
+        fun onSkipToNextCommand()
     }
 }

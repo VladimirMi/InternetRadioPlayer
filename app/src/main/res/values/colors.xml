@@ -52,22 +52,4 @@
     <color name="player_controls">@color/blue_grey_100</color>
     <color name="list_delimiter">@color/green_500</color>
 
-    <array name="icon_text_color_set">
-        <item>@color/red_500</item>
-        <item>@color/red_800</item>
-        <item>@color/pink_500</item>
-        <item>@color/purple_500</item>
-        <item>@color/deep_purple_500</item>
-        <item>@color/indigo_500</item>
-        <item>@color/blue_500</item>
-        <item>@color/cyan_500</item>
-        <item>@color/teal_500</item>
-        <item>@color/green_500</item>
-        <item>@color/lime_500</item>
-        <item>@color/yellow_500</item>
-        <item>@color/amber_500</item>
-        <item>@color/orange_500</item>
-        <item>@color/deep_orange_500</item>
-    </array>
-
 </resources>

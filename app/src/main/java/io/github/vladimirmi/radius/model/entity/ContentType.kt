@@ -4,7 +4,7 @@ package io.github.vladimirmi.radius.model.entity
  * Created by Vladimir Mikhalev 10.11.2017.
  */
 
-enum class ContentTypes(val types: Array<String>) {
+enum class ContentType(val types: Array<String>) {
     MPEG(arrayOf("audio/mpeg")),
     OGG(arrayOf("audio/ogg", "application/ogg", "audio/opus")),
     ACC(arrayOf("audio/aac", "audio/aacp")),
@@ -28,8 +28,8 @@ enum class ContentTypes(val types: Array<String>) {
 
         fun isSupported(type: String) = isPlaylist(type) || isAudio(type)
 
-        private val map: Map<String, ContentTypes> by lazy {
-            val map = HashMap<String, ContentTypes>()
+        private val MAP: Map<String, ContentType> by lazy {
+            val map = HashMap<String, ContentType>()
             values().forEach { contentTypes ->
                 contentTypes.types.forEach {
                     map.put(it, contentTypes)
@@ -38,6 +38,6 @@ enum class ContentTypes(val types: Array<String>) {
             map
         }
 
-        fun fromString(type: String): ContentTypes? = map[type]
+        fun fromString(type: String): ContentType? = MAP[type]
     }
 }

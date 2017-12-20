@@ -3,7 +3,7 @@ package io.github.vladimirmi.radius.presentation.metadata
 import android.support.v4.media.MediaMetadataCompat
 import android.support.v4.media.session.PlaybackStateCompat
 import com.arellomobile.mvp.InjectViewState
-import io.github.vladimirmi.radius.model.repository.MediaBrowserController
+import io.github.vladimirmi.radius.model.repository.MediaController
 import io.github.vladimirmi.radius.ui.base.BasePresenter
 import io.reactivex.rxkotlin.addTo
 import io.reactivex.rxkotlin.subscribeBy
@@ -15,15 +15,15 @@ import javax.inject.Inject
 
 @InjectViewState
 class MetadataPresenter
-@Inject constructor(private val browserController: MediaBrowserController)
+@Inject constructor(private val mediaController: MediaController)
     : BasePresenter<MetadataView>() {
 
     override fun onFirstViewAttach() {
-        browserController.playbackMetaData
+        mediaController.playbackMetaData
                 .subscribeBy { handleMeta(it) }
                 .addTo(compDisp)
 
-        browserController.playbackState
+        mediaController.playbackState
                 .subscribeBy { handleState(it) }
                 .addTo(compDisp)
     }

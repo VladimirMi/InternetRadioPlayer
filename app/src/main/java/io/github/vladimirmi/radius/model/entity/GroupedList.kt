@@ -19,7 +19,9 @@ interface GroupedList<E> {
 
     fun showGroup(group: String)
 
-    fun groupedSize(): Int
+    fun overallSize(): Int
+
+    fun itemSize(): Int
 
     fun observe(): Observable<GroupedList<E>>
 

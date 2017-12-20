@@ -16,7 +16,7 @@
         android:contentDescription="@string/desc_media_icon"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        tools:src="@drawable/bg_rounded"
+        tools:src="@color/grey_500"
         />
 
     <Button

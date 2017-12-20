@@ -15,14 +15,15 @@ import com.google.android.exoplayer2.Player
 import io.github.vladimirmi.radius.R
 import io.github.vladimirmi.radius.di.Scopes
 import io.github.vladimirmi.radius.extensions.toUri
+import io.github.vladimirmi.radius.model.entity.PlayerMode
 import io.github.vladimirmi.radius.model.repository.StationRepository
 import io.github.vladimirmi.radius.presentation.root.RootActivity
 import io.reactivex.disposables.CompositeDisposable
 import io.reactivex.rxkotlin.addTo
-import io.reactivex.rxkotlin.subscribeBy
 import timber.log.Timber
 import toothpick.Toothpick
 import java.util.*
+import java.util.concurrent.TimeUnit
 import javax.inject.Inject
 import kotlin.concurrent.schedule
 
@@ -33,8 +34,8 @@ import kotlin.concurrent.schedule
 class PlayerService : MediaBrowserServiceCompat(), SessionCallback.Interface {
 
     companion object {
-        const val ACTION_CREATE_MODE = "SESSION_ACTION_CREATE_MODE"
-        const val ACTION_DEFAULT_MODE = "SESSION_ACTION_DEFAULT_MODE"
+        const val EVENT_SESSION_NEXT = "EVENT_SESSION_NEXT"
+        const val EVENT_SESSION_PREVIOUS = "EVENT_SESSION_PREVIOUS"
     }
 
     @Inject lateinit var repository: StationRepository
@@ -44,18 +45,14 @@ class PlayerService : MediaBrowserServiceCompat(), SessionCallback.Interface {
     private lateinit var playback: Playback
     private lateinit var notification: MediaNotification
     private lateinit var metadata: MediaMetadataCompat
-    private var playbackState = PlaybackStateCompat.Builder()
-            .setActions(PlaybackStateCompat.ACTION_PLAY_PAUSE or
-                    PlaybackStateCompat.ACTION_STOP or
-                    PlaybackStateCompat.ACTION_SKIP_TO_NEXT or
-                    PlaybackStateCompat.ACTION_SKIP_TO_PREVIOUS)
-            .build()
+    private var playbackState = PlaybackStateCompat.Builder().build()
     private var serviceStarted = false
     private var currentStationId: String? = null
     private var playingStationId: String? = null
     private var stopTask: TimerTask? = null
 
     override fun onCreate() {
+        Timber.e("onCreate: ")
         super.onCreate()
         Toothpick.inject(this, Scopes.app)
 
@@ -70,20 +67,31 @@ class PlayerService : MediaBrowserServiceCompat(), SessionCallback.Interface {
         playback = Playback(this, playerCallback)
         notification = MediaNotification(this, session)
 
-        repository.currentStation.subscribeBy {
+        repository.currentStation.subscribe {
             currentStationId = it.id
             if (isPlaying && currentStationId != playingStationId) playCurrent()
         }.addTo(compDisp)
+
+        repository.playerMode.delaySubscription(500, TimeUnit.MILLISECONDS)
+                .subscribe {
+                    Timber.e("onCreate: $it")
+                    val actions = when (it!!) {
+                        PlayerMode.NEXT_PREVIOUS_ENABLED -> AvailiableActions.NEXT_PREVIOUS_ENABLED
+                        PlayerMode.NEXT_PREVIOUS_DISABLED -> AvailiableActions.NEXT_PREVIOUS_DISABLED
+                    }
+                    session.setPlaybackState(createPlaybackState(1, actions = actions))
+                }.addTo(compDisp)
     }
 
     override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
+        Timber.e("onStartCommand: ")
         if (intent == null) stopSelf()
         return Service.START_STICKY
     }
 
     override fun onDestroy() {
         compDisp.dispose()
-        onStop()
+        onStopCommand()
         playback.releasePlayer()
     }
 
@@ -104,8 +112,7 @@ class PlayerService : MediaBrowserServiceCompat(), SessionCallback.Interface {
 
     //region =============== SessionCallback ==============
 
-
-    override fun onPlay() {
+    override fun onPlayCommand() {
         stopTask?.cancel()
         startService()
         if (session.controller.playbackState.state == PlaybackStateCompat.STATE_PAUSED
@@ -116,42 +123,31 @@ class PlayerService : MediaBrowserServiceCompat(), SessionCallback.Interface {
         }
     }
 
-    override fun onPause(stopDelay: Long) { // default is 1 min
+    override fun onPauseCommand(stopDelay: Long) { // default is 1 min
         playback.pause()
         stopTask = Timer().schedule(stopDelay) {
-            onStop()
+            onStopCommand()
         }
     }
 
-    override fun onStop() {
+    override fun onStopCommand() {
         playback.stop()
         stopSelf()
         serviceStarted = false
         session.isActive = false
     }
 
-    override fun onSkipToPrevious() {
-        if (repository.previousStation() && isPlaying) playCurrent()
+    override fun onSkipToPreviousCommand() {
+        if (repository.previousStation()) {
+            session.sendSessionEvent(EVENT_SESSION_PREVIOUS, null)
+            if (isPlaying) playCurrent()
+        }
     }
 
-    override fun onSkipToNext() {
-        if (repository.nextStation() && isPlaying) playCurrent()
-    }
-
-    override fun onCustomAction(action: String?, extras: Bundle?) {
-        when (action) {
-            ACTION_CREATE_MODE -> {
-                playbackState = PlaybackStateCompat.Builder()
-                        .setActions(PlaybackStateCompat.ACTION_PLAY_PAUSE or
-                                PlaybackStateCompat.ACTION_STOP)
-                        .build()
-            }
-            ACTION_DEFAULT_MODE -> playbackState = PlaybackStateCompat.Builder()
-                    .setActions(PlaybackStateCompat.ACTION_PLAY_PAUSE or
-                            PlaybackStateCompat.ACTION_STOP or
-                            PlaybackStateCompat.ACTION_SKIP_TO_NEXT or
-                            PlaybackStateCompat.ACTION_SKIP_TO_PREVIOUS)
-                    .build()
+    override fun onSkipToNextCommand() {
+        if (repository.nextStation()) {
+            session.sendSessionEvent(EVENT_SESSION_NEXT, null)
+            if (isPlaying) playCurrent()
         }
     }
 
@@ -168,7 +164,7 @@ class PlayerService : MediaBrowserServiceCompat(), SessionCallback.Interface {
                 else -> PlaybackStateCompat.STATE_NONE
             }
 
-            session.setPlaybackState(createPlaybackState(state))
+            session.setPlaybackState(createPlaybackState(state = state))
             notification.update()
         }
 
@@ -178,7 +174,7 @@ class PlayerService : MediaBrowserServiceCompat(), SessionCallback.Interface {
                 TYPE_SOURCE -> Timber.e("SOURCE error occurred: ${error.sourceException}")
                 TYPE_UNEXPECTED -> Timber.e("UNEXPECTED error occurred: ${error.unexpectedException}")
             }
-            onStop()
+            onStopCommand()
         }
 
         override fun onMetadata(key: String, value: String) {
@@ -200,15 +196,17 @@ class PlayerService : MediaBrowserServiceCompat(), SessionCallback.Interface {
                 .build()
     }
 
-    private fun createPlaybackState(state: Int): PlaybackStateCompat {
-        return PlaybackStateCompat.Builder(playbackState)
-                .setState(state, 0, 1F)
-                .build()
+    private fun createPlaybackState(state: Int? = null, actions: Long? = null): PlaybackStateCompat {
+        playbackState = PlaybackStateCompat.Builder(playbackState).apply {
+            state?.let { setState(it, 0, 1F) }
+            actions?.let { setActions(it) }
+        }.build()
+        return playbackState
     }
 
     private val isPlaying: Boolean
         get() {
-            return with(session.controller.playbackState) {
+            return session.controller.playbackState?.state.let { state ->
                 state == PlaybackStateCompat.STATE_PLAYING
                         || state == PlaybackStateCompat.STATE_BUFFERING
             }

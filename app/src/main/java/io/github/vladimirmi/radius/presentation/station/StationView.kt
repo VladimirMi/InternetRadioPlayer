@@ -2,8 +2,6 @@ package io.github.vladimirmi.radius.presentation.station
 
 import android.graphics.Bitmap
 import com.arellomobile.mvp.MvpView
-import com.arellomobile.mvp.viewstate.strategy.OneExecutionStateStrategy
-import com.arellomobile.mvp.viewstate.strategy.StateStrategyType
 import io.github.vladimirmi.radius.model.entity.Station
 import io.github.vladimirmi.radius.presentation.root.ToolbarBuilder
 
@@ -21,10 +19,9 @@ interface StationView : MvpView {
 
     fun setEditMode(editMode: Boolean)
 
-    @StateStrategyType(OneExecutionStateStrategy::class)
-    fun openSaveDialog()
+    fun editStation()
 
-    fun closeSaveDialog()
+    fun createStation()
 
     fun openDeleteDialog()
 
@@ -37,10 +34,6 @@ interface StationView : MvpView {
     fun openCancelEditDialog()
 
     fun closeCancelEditDialog()
-
-    fun openCreateDialog()
-
-    fun closeCreateDialog()
 
     fun openCancelCreateDialog()
 

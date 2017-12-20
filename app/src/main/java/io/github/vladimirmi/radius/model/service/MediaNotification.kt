@@ -7,6 +7,7 @@ import android.support.v4.media.MediaDescriptionCompat
 import android.support.v4.media.session.MediaButtonReceiver
 import android.support.v4.media.session.MediaSessionCompat
 import android.support.v4.media.session.PlaybackStateCompat
+import android.view.View
 import android.widget.RemoteViews
 import io.github.vladimirmi.radius.R
 
@@ -31,21 +32,28 @@ class MediaNotification(private val service: PlayerService,
     private val previousIntent = MediaButtonReceiver
             .buildMediaButtonPendingIntent(service, PlaybackStateCompat.ACTION_SKIP_TO_PREVIOUS)
 
+    private val notificationView = RemoteViews(service.packageName, R.layout.notification).apply {
+        setOnClickPendingIntent(R.id.play_pause, playPauseIntent)
+        setOnClickPendingIntent(R.id.previous, previousIntent)
+        setOnClickPendingIntent(R.id.next, nextIntent)
+    }
+
     fun update() {
         when (mediaSession.controller.playbackState.state) {
             PlaybackStateCompat.STATE_PLAYING -> {
                 service.startForeground(PLAYER_NOTIFICATION_ID, getNotification())
-            }
-            PlaybackStateCompat.STATE_PAUSED -> {
-                service.stopForeground(false)
-                NotificationManagerCompat.from(service)
-                        .notify(PLAYER_NOTIFICATION_ID, getNotification())
+                return
             }
             PlaybackStateCompat.STATE_STOPPED -> {
                 service.stopForeground(true)
                 NotificationManagerCompat.from(service).cancelAll()
+                return
+            }
+            PlaybackStateCompat.STATE_PAUSED -> {
+                service.stopForeground(false)
             }
         }
+        NotificationManagerCompat.from(service).notify(PLAYER_NOTIFICATION_ID, getNotification())
     }
 
     private fun getNotification(): Notification {
@@ -54,22 +62,24 @@ class MediaNotification(private val service: PlayerService,
 
         MediaButtonReceiver.buildMediaButtonPendingIntent(service, PlaybackStateCompat.ACTION_STOP)
 
-        val notificationView = RemoteViews(service.packageName, R.layout.notification)
-        with(notificationView) {
-
+        notificationView.apply {
             setImageViewBitmap(R.id.icon, description?.iconBitmap)
-
             setTextViewText(R.id.content_title, description?.title)
             setTextViewText(R.id.content_text, description?.subtitle)
 
-            setOnClickPendingIntent(R.id.play_pause, playPauseIntent)
-            setOnClickPendingIntent(R.id.previous, previousIntent)
-            setOnClickPendingIntent(R.id.next, nextIntent)
-
-            if (playbackState.state == PlaybackStateCompat.STATE_PLAYING) {
-                setInt(R.id.play_pause, "setBackgroundResource", R.drawable.ic_stop)
+            if (AvailableActions.isNextPreviousEnabled(playbackState.actions)) {
+                setViewVisibility(R.id.previous, View.VISIBLE)
+                setViewVisibility(R.id.next, View.VISIBLE)
             } else {
+                setViewVisibility(R.id.previous, View.INVISIBLE)
+                setViewVisibility(R.id.next, View.INVISIBLE)
+            }
+
+            if (playbackState.state == PlaybackStateCompat.STATE_STOPPED
+                    || playbackState.state == PlaybackStateCompat.STATE_PAUSED) {
                 setInt(R.id.play_pause, "setBackgroundResource", R.drawable.ic_play)
+            } else {
+                setInt(R.id.play_pause, "setBackgroundResource", R.drawable.ic_stop)
             }
         }
 

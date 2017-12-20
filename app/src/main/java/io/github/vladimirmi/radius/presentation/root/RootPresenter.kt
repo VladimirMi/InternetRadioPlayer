@@ -81,7 +81,7 @@ class RootPresenter
         repository.parseStation(uri)
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribeBy(
-                        onComplete = { router.navigateTo(Router.STATION_SCREEN) },
+                        onComplete = { router.showStation(repository.newStation!!) },
                         onError = { viewState.showToast(R.string.toast_add_error) }
                 ) //todo more details
                 .addTo(compDisp)

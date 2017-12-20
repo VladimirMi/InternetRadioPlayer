@@ -38,7 +38,8 @@ class Navigator(activity: RootActivity, containerId: Int)
 
     override fun createFragment(screenKey: String, data: Any?): Fragment? {
         if (currentKey == screenKey) return null
-        return when (screenKey) {
+        val screen = screenKey.substringBefore(Router.DELIMITER)
+        return when (screen) {
             Router.MEDIA_LIST_SCREEN -> MediaListFragment()
             Router.STATION_SCREEN -> StationFragment()
             Router.ICON_PICKER_SCREEN -> IconPickerFragment()

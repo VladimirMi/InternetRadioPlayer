@@ -1,5 +1,6 @@
 package io.github.vladimirmi.radius.navigation
 
+import io.github.vladimirmi.radius.model.entity.Station
 import ru.terrakok.cicerone.commands.Forward
 
 /**
@@ -12,16 +13,21 @@ class Router : ru.terrakok.cicerone.Router() {
         const val MEDIA_LIST_SCREEN = "media_list_screen"
         const val STATION_SCREEN = "station_screen"
         const val ICON_PICKER_SCREEN = "icon_picker_screen"
+        const val DELIMITER = "$"
     }
 
-    fun skipToNext() {
-        executeCommand(NextStation())
+    fun skipToNext(station: Station) {
+        executeCommand(NextStation("$STATION_SCREEN$DELIMITER${station.id}"))
     }
 
-    fun skipToPrevious() {
-        executeCommand(PreviousStation())
+    fun skipToPrevious(station: Station) {
+        executeCommand(PreviousStation("$STATION_SCREEN$DELIMITER${station.id}"))
+    }
+
+    fun showStation(station: Station) {
+        navigateTo("$STATION_SCREEN$DELIMITER${station.id}")
     }
 }
 
-class NextStation : Forward(Router.STATION_SCREEN, null)
-class PreviousStation : Forward(Router.STATION_SCREEN, null)
+class NextStation(screenKey: String) : Forward(screenKey, null)
+class PreviousStation(screenKey: String) : Forward(screenKey, null)

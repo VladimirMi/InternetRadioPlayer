@@ -12,7 +12,6 @@ import io.github.vladimirmi.radius.extensions.setTint
 import io.github.vladimirmi.radius.model.entity.Station
 import io.github.vladimirmi.radius.ui.base.BaseFragment
 import kotlinx.android.synthetic.main.fragment_player_controls.*
-import timber.log.Timber
 import toothpick.Toothpick
 
 
@@ -59,7 +58,6 @@ class PlayerControlFragment : BaseFragment(), PlayerControlView {
     }
 
     override fun enableNextPrevious(enable: Boolean) {
-        Timber.e("enableNextPrevious: $enable")
         val tint = context.color(if (enable) R.color.grey_700 else R.color.grey_400)
         previous.setTint(tint)
         next.setTint(tint)

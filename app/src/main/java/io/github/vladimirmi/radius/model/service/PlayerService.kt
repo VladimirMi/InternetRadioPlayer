@@ -45,7 +45,8 @@ class PlayerService : MediaBrowserServiceCompat(), SessionCallback.Interface {
     private lateinit var playback: Playback
     private lateinit var notification: MediaNotification
     private lateinit var metadata: MediaMetadataCompat
-    private var playbackState = PlaybackStateCompat.Builder().build()
+    private var playbackState = PlaybackStateCompat.Builder()
+            .setState(PlaybackStateCompat.STATE_STOPPED, 0, 1F).build()
     private var serviceStarted = false
     private var currentStationId: String? = null
     private var playingStationId: String? = null
@@ -72,14 +73,14 @@ class PlayerService : MediaBrowserServiceCompat(), SessionCallback.Interface {
             if (isPlaying && currentStationId != playingStationId) playCurrent()
         }.addTo(compDisp)
 
-        repository.playerMode.delaySubscription(500, TimeUnit.MILLISECONDS)
+        repository.playerMode.delaySubscription(1000, TimeUnit.MILLISECONDS)
                 .subscribe {
-                    Timber.e("onCreate: $it")
                     val actions = when (it!!) {
-                        PlayerMode.NEXT_PREVIOUS_ENABLED -> AvailiableActions.NEXT_PREVIOUS_ENABLED
-                        PlayerMode.NEXT_PREVIOUS_DISABLED -> AvailiableActions.NEXT_PREVIOUS_DISABLED
+                        PlayerMode.NEXT_PREVIOUS_ENABLED -> AvailableActions.NEXT_PREVIOUS_ENABLED
+                        PlayerMode.NEXT_PREVIOUS_DISABLED -> AvailableActions.NEXT_PREVIOUS_DISABLED
                     }
-                    session.setPlaybackState(createPlaybackState(1, actions = actions))
+                    session.setPlaybackState(createPlaybackState(actions = actions))
+                    notification.update()
                 }.addTo(compDisp)
     }
 

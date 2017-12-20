@@ -3,6 +3,7 @@ package io.github.vladimirmi.radius.presentation.station
 import android.view.MenuItem
 import com.arellomobile.mvp.InjectViewState
 import io.github.vladimirmi.radius.R
+import io.github.vladimirmi.radius.model.entity.PlayerMode
 import io.github.vladimirmi.radius.model.entity.Station
 import io.github.vladimirmi.radius.model.repository.StationRepository
 import io.github.vladimirmi.radius.navigation.Router
@@ -30,7 +31,7 @@ class StationPresenter
         when (it.itemId) {
             R.id.menu_station_edit -> editMode()
             R.id.menu_station_delete -> viewState.openDeleteDialog()
-            R.id.menu_station_save -> viewState.openSaveDialog()
+            R.id.menu_station_save -> viewState.editStation()
         }
     }
 
@@ -54,7 +55,7 @@ class StationPresenter
         viewState.setStationIcon(repository.getStationIcon().blockingGet())
     }
 
-    fun viewMode() {
+    private fun viewMode() {
         editMode = false
         val toolbar = toolbarBuilder.addAction(MenuItemHolder(
                 itemTitle = "more",
@@ -65,6 +66,7 @@ class StationPresenter
 
         viewState.buildToolbar(toolbar)
         viewState.setEditMode(false)
+        repository.playerMode.accept(PlayerMode.NEXT_PREVIOUS_ENABLED)
     }
 
     private fun editMode() {
@@ -78,12 +80,13 @@ class StationPresenter
 
         viewState.buildToolbar(toolbar)
         viewState.setEditMode(true)
+        repository.playerMode.accept(PlayerMode.NEXT_PREVIOUS_DISABLED)
     }
 
     fun changeMode() {
         when {
-            createMode -> viewState.openCreateDialog()
-            editMode -> viewState.openSaveDialog()
+            createMode -> viewState.createStation()
+            editMode -> viewState.editStation()
             else -> editMode()
         }
     }
@@ -98,12 +101,9 @@ class StationPresenter
     }
 
 
-    fun edit(station: Station?) {
-        viewState.closeSaveDialog()
-        if (station != null) {
-            repository.updateStation(station)
-            viewMode()
-        }
+    fun edit(station: Station) {
+        repository.updateStation(station)
+        viewMode()
     }
 
     fun cancelEdit(cancel: Boolean) {
@@ -114,16 +114,13 @@ class StationPresenter
         }
     }
 
-    fun create(station: Station?) {
-        viewState.closeCreateDialog()
-        if (station != null) {
-            if (repository.addStation(station)) {
-                viewState.showToast(R.string.toast_add_success)
-                repository.newStation = null
-                viewMode()
-            } else {
-                viewState.showToast(R.string.toast_add_force)
-            }
+    fun create(station: Station) {
+        if (repository.addStation(station)) {
+            viewState.showToast(R.string.toast_add_success)
+            repository.newStation = null
+            viewMode()
+        } else {
+            viewState.showToast(R.string.toast_add_force)
         }
     }
 
@@ -145,8 +142,6 @@ class StationPresenter
         }
         return true
     }
-
-    fun isChanged(station: Station) = station != repository.currentStation.value
 
     fun openLink(url: String) {
         if (!editMode) viewState.openLinkDialog(url)

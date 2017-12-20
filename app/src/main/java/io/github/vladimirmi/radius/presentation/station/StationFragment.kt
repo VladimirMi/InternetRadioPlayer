@@ -41,10 +41,6 @@ class StationFragment : BaseFragment(), StationView, BackPressListener {
     override val layoutRes = R.layout.fragment_station
 
     private var editTextBg: Int = 0
-    private val dialogSave: SimpleDialog by lazy {
-        SimpleDialog(view as ViewGroup)
-                .setMessage(getString(R.string.dialog_submit_message))
-    }
     private val dialogDelete: SimpleDialog by lazy {
         SimpleDialog(view as ViewGroup)
                 .setMessage(getString(R.string.dialog_remove_message))
@@ -56,10 +52,6 @@ class StationFragment : BaseFragment(), StationView, BackPressListener {
     private val dialogCancelEdit: SimpleDialog by lazy {
         SimpleDialog(view as ViewGroup)
                 .setMessage(getString(R.string.dialog_cancel_edit_message))
-    }
-    private val dialogCreate: SimpleDialog by lazy {
-        SimpleDialog(view as ViewGroup)
-                .setMessage(getString(R.string.dialog_create_message))
     }
     private val dialogCancelCreate: SimpleDialog by lazy {
         SimpleDialog(view as ViewGroup)
@@ -80,8 +72,9 @@ class StationFragment : BaseFragment(), StationView, BackPressListener {
     override fun onStop() {
         super.onStop()
         closeDeleteDialog()
-        closeSaveDialog()
         closeLinkDialog()
+        closeCancelCreateDialog()
+        closeCancelEditDialog()
     }
 
     override fun onViewCreated(view: View?, savedInstanceState: Bundle?) {
@@ -145,20 +138,12 @@ class StationFragment : BaseFragment(), StationView, BackPressListener {
         }
     }
 
-    override fun openSaveDialog() {
-        val station = constructStation()
-        if (presenter.isChanged(station)) {
-            dialogSave.setPositiveAction { presenter.edit(station) }
-                    .setNegativeAction { presenter.edit(null) }
-                    .show()
-        } else {
-            presenter.viewMode()
-        }
+    override fun editStation() {
+        presenter.edit(constructStation())
     }
 
-    override fun closeSaveDialog() {
-        dialogSave.dismiss()
-
+    override fun createStation() {
+        presenter.create(constructStation())
     }
 
     override fun openDeleteDialog() {
@@ -189,16 +174,6 @@ class StationFragment : BaseFragment(), StationView, BackPressListener {
 
     override fun closeCancelEditDialog() {
         dialogCancelEdit.dismiss()
-    }
-
-    override fun openCreateDialog() {
-        dialogCreate.setPositiveAction { presenter.create(constructStation()) }
-                .setNegativeAction { presenter.create(null) }
-                .show()
-    }
-
-    override fun closeCreateDialog() {
-        dialogCreate.dismiss()
     }
 
     override fun openCancelCreateDialog() {

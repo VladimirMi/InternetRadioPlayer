@@ -75,7 +75,7 @@ class MediaListPresenter
     }
 
     fun showStation() {
-        router.navigateTo(Router.STATION_SCREEN)
+        router.showStation(repository.currentStation.value)
     }
 }
 

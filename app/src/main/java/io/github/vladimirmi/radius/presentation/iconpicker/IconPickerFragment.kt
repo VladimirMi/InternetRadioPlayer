@@ -37,16 +37,11 @@ class IconPickerFragment : BaseFragment(), IconPickerView, BackPressListener {
 
     override fun onViewCreated(view: View?, savedInstanceState: Bundle?) {
         iconTextEt.isSelected = true
-        optionsRg.setOnCheckedChangeListener { group, checkedId ->
-            presenter.optionId(checkedId)
-            when (checkedId) {
-                R.id.optionStationUrlBt, R.id.optionServerUrlBt -> presenter.option(true, false, false)
-                R.id.optionNameBt -> presenter.option(false, true, false)
-                R.id.optionAddBt -> presenter.option(false, false, true)
-            }
+        optionsRg.setOnCheckedChangeListener { _, checkedId ->
+            presenter.checkedOptionId = checkedId
         }
 
-        configurationsRg.setOnCheckedChangeListener { group, checkedId ->
+        configurationsRg.setOnCheckedChangeListener { _, checkedId ->
             if (checkedId == R.id.configBackgroundBt) {
                 colorPicker.setColor(presenter.backgroundColor)
                 colorPicker.setOnColorChangedListener {
@@ -60,7 +55,7 @@ class IconPickerFragment : BaseFragment(), IconPickerView, BackPressListener {
             }
         }
 
-        iconTextEt.onTextChanges { presenter.setText(it) }
+        iconTextEt.onTextChanges { presenter.text = it }
         okBt.setOnClickListener { presenter.saveIcon(createIcon()) }
         cancelBt.setOnClickListener { presenter.exit() }
     }
@@ -96,16 +91,23 @@ class IconPickerFragment : BaseFragment(), IconPickerView, BackPressListener {
         optionNameBt.visible(false)
     }
 
-    override fun option(url: Boolean, name: Boolean, add: Boolean) {
-        configBackgroundBt.isChecked = true
-        configSelectBt.visible(add)
-        configTextBt.visible(name)
-        iconTv.visible(name)
-        iconIv.visible(!name)
-        iconTextEt.visible(name)
+    override fun setOptionId(id: Int) {
+        optionsRg.check(id)
+        when (id) {
+            R.id.optionServerUrlBt, R.id.optionStationUrlBt -> setOption(false)
+            R.id.optionNameBt -> setOption(true)
+        }
     }
 
     //endregion
+
+    private fun setOption(text: Boolean) {
+        configBackgroundBt.isChecked = true
+        configTextBt.visible(text)
+        iconTv.visible(text)
+        iconIv.visible(!text)
+        iconTextEt.visible(text)
+    }
 
     private fun createIcon(): Bitmap {
         val bitmap = Bitmap.createBitmap(iconFr.width, iconFr.height, Bitmap.Config.ARGB_8888)

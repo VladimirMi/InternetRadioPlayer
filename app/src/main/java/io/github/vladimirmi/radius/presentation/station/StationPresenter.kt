@@ -5,6 +5,7 @@ import com.arellomobile.mvp.InjectViewState
 import io.github.vladimirmi.radius.R
 import io.github.vladimirmi.radius.model.entity.PlayerMode
 import io.github.vladimirmi.radius.model.entity.Station
+import io.github.vladimirmi.radius.model.interactor.IconInteractor
 import io.github.vladimirmi.radius.model.repository.StationRepository
 import io.github.vladimirmi.radius.navigation.Router
 import io.github.vladimirmi.radius.presentation.root.MenuItemHolder
@@ -19,6 +20,7 @@ import javax.inject.Inject
 @InjectViewState
 class StationPresenter
 @Inject constructor(private val repository: StationRepository,
+                    private val iconInteractor: IconInteractor,
                     private val router: Router)
     : BasePresenter<StationView>() {
 

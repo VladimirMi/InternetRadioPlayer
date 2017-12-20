@@ -22,6 +22,7 @@ import io.github.vladimirmi.radius.di.Scopes
 import io.github.vladimirmi.radius.extensions.inputMethodManager
 import io.github.vladimirmi.radius.extensions.visible
 import io.github.vladimirmi.radius.model.entity.Station
+import io.github.vladimirmi.radius.model.interactor.IconInteractor
 import io.github.vladimirmi.radius.presentation.root.ToolbarBuilder
 import io.github.vladimirmi.radius.presentation.root.ToolbarView
 import io.github.vladimirmi.radius.ui.TagView
@@ -30,7 +31,9 @@ import io.github.vladimirmi.radius.ui.base.BaseFragment
 import io.github.vladimirmi.radius.ui.base.SimpleDialog
 import kotlinx.android.synthetic.main.fragment_station.*
 import kotlinx.android.synthetic.main.part_station_info.*
+import timber.log.Timber
 import toothpick.Toothpick
+import toothpick.config.Module
 
 
 /**
@@ -38,6 +41,7 @@ import toothpick.Toothpick
  */
 
 class StationFragment : BaseFragment(), StationView, BackPressListener {
+
     override val layoutRes = R.layout.fragment_station
 
     private var editTextBg: Int = 0
@@ -63,13 +67,18 @@ class StationFragment : BaseFragment(), StationView, BackPressListener {
 
     @ProvidePresenter
     fun providePresenter(): StationPresenter {
-        return Toothpick.openScopes(Scopes.ROOT_ACTIVITY, this)
-                .getInstance(StationPresenter::class.java).also {
-            Toothpick.closeScope(this)
+        val module: Module = object : Module() {
+            init {
+                bind(IconInteractor::class.java).singletonInScope()
+            }
         }
+        return Toothpick.openScopes(Scopes.ROOT_ACTIVITY, this).apply {
+            installModules(module)
+        }.getInstance(StationPresenter::class.java)
     }
 
     override fun onStop() {
+        Timber.e("onStop: ")
         super.onStop()
         closeDeleteDialog()
         closeLinkDialog()

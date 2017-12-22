@@ -28,7 +28,7 @@ import io.github.vladimirmi.radius.presentation.root.ToolbarView
 import io.github.vladimirmi.radius.ui.TagView
 import io.github.vladimirmi.radius.ui.base.BackPressListener
 import io.github.vladimirmi.radius.ui.base.BaseFragment
-import io.github.vladimirmi.radius.ui.base.SimpleDialog
+import io.github.vladimirmi.radius.ui.dialogs.SimpleDialog
 import kotlinx.android.synthetic.main.fragment_station.*
 import kotlinx.android.synthetic.main.part_station_info.*
 import timber.log.Timber
@@ -156,8 +156,8 @@ class StationFragment : BaseFragment(), StationView, BackPressListener {
     }
 
     override fun openDeleteDialog() {
-        dialogDelete.setPositiveAction { presenter.delete(true) }
-                .setNegativeAction { presenter.delete(false) }
+        dialogDelete.onPositive { presenter.delete(true) }
+                .onNegative { presenter.delete(false) }
                 .show()
     }
 
@@ -166,8 +166,8 @@ class StationFragment : BaseFragment(), StationView, BackPressListener {
     }
 
     override fun openLinkDialog(url: String) {
-        dialogLink.setPositiveAction { startActivity(Intent(Intent.ACTION_VIEW, Uri.parse(url))) }
-                .setNegativeAction { presenter.cancelLink() }
+        dialogLink.onPositive { startActivity(Intent(Intent.ACTION_VIEW, Uri.parse(url))) }
+                .onNegative { presenter.cancelLink() }
                 .show()
     }
 
@@ -176,8 +176,8 @@ class StationFragment : BaseFragment(), StationView, BackPressListener {
     }
 
     override fun openCancelEditDialog() {
-        dialogCancelEdit.setPositiveAction { presenter.cancelEdit(true) }
-                .setNegativeAction { presenter.cancelEdit(false) }
+        dialogCancelEdit.onPositive { presenter.cancelEdit(true) }
+                .onNegative { presenter.cancelEdit(false) }
                 .show()
     }
 
@@ -186,8 +186,8 @@ class StationFragment : BaseFragment(), StationView, BackPressListener {
     }
 
     override fun openCancelCreateDialog() {
-        dialogCancelCreate.setPositiveAction { presenter.cancelCreate(true) }
-                .setNegativeAction { presenter.cancelCreate(false) }
+        dialogCancelCreate.onPositive { presenter.cancelCreate(true) }
+                .onNegative { presenter.cancelCreate(false) }
                 .show()
     }
 

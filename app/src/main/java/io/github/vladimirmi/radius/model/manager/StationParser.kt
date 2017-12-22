@@ -53,8 +53,8 @@ class StationParser
 
     private fun parseFromNet(url: URL): Station? {
         val newUrl = url.getRedirected().getRedirected()
-
         val type = newUrl.getContentType()
+        Timber.e("parseFromNet: $type")
         val station = when (ContentType.fromString(type)) {
             ContentType.PLS -> newUrl.openStream().parsePls()
             null -> null

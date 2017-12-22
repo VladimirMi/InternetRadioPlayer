@@ -1,5 +1,6 @@
 package io.github.vladimirmi.radius.ui.base
 
+import android.content.DialogInterface
 import android.support.v7.app.AlertDialog
 import android.view.LayoutInflater
 import android.view.View
@@ -21,9 +22,20 @@ open class BaseDialog(layoutId: Int, viewGroup: ViewGroup) {
                 .create()
     }
 
-    open fun show() = dialog.show()
+    protected fun setPositiveAction(listener: DialogInterface.OnClickListener): BaseDialog {
+        dialog.setButton(DialogInterface.BUTTON_POSITIVE, "OK", listener)
+        return this
+    }
 
-    open fun hide() = dialog.hide()
+    protected fun setNegativeAction(listener: () -> Unit): BaseDialog {
+        dialog.setOnCancelListener { listener.invoke() }
+        dialog.setButton(DialogInterface.BUTTON_NEGATIVE, "CANCEL", { _, _ -> listener.invoke() })
+        return this
+    }
 
-    open fun dismiss() = dialog.dismiss()
+    fun show() = dialog.show()
+
+    fun hide() = dialog.hide()
+
+    fun dismiss() = dialog.dismiss()
 }

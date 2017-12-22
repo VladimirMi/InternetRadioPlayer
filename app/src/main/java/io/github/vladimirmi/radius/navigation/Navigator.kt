@@ -9,10 +9,7 @@ import io.github.vladimirmi.radius.presentation.mediaList.MediaListFragment
 import io.github.vladimirmi.radius.presentation.root.RootActivity
 import io.github.vladimirmi.radius.presentation.station.StationFragment
 import ru.terrakok.cicerone.android.SupportAppNavigator
-import ru.terrakok.cicerone.commands.Back
-import ru.terrakok.cicerone.commands.BackTo
-import ru.terrakok.cicerone.commands.Command
-import ru.terrakok.cicerone.commands.Forward
+import ru.terrakok.cicerone.commands.*
 
 /**
  * Created by Vladimir Mikhalev 03.12.2017.
@@ -64,22 +61,28 @@ class Navigator(activity: RootActivity, containerId: Int)
             is PreviousStation -> previousTransition(fragmentTransaction)
             is Forward -> forwardTransition(fragmentTransaction)
             is Back, is BackTo -> backTransition(fragmentTransaction)
+            is Replace -> replaceTransition(fragmentTransaction)
         }
     }
 
     private fun previousTransition(fragmentTransaction: FragmentTransaction?) {
-        fragmentTransaction?.setCustomAnimations(R.anim.slide_in_left,
-                R.anim.slide_out_right, R.anim.slide_in_left, R.anim.slide_out_right)
+        fragmentTransaction?.setCustomAnimations(R.anim.slide_in_left, R.anim.slide_out_right,
+                R.anim.slide_in_left, R.anim.slide_out_right)
     }
 
     private fun backTransition(fragmentTransaction: FragmentTransaction?) {
-        fragmentTransaction?.setCustomAnimations(R.anim.slide_in_left,
-                R.anim.slide_out_right, R.anim.slide_in_right, R.anim.slide_out_left)
+        fragmentTransaction?.setCustomAnimations(R.anim.slide_in_left, R.anim.slide_out_right,
+                R.anim.slide_in_right, R.anim.slide_out_left)
     }
 
     private fun forwardTransition(fragmentTransaction: FragmentTransaction?) {
-        fragmentTransaction?.setCustomAnimations(R.anim.slide_in_right,
-                R.anim.slide_out_left, R.anim.slide_in_left, R.anim.slide_out_right)
+        fragmentTransaction?.setCustomAnimations(R.anim.slide_in_right, R.anim.slide_out_left,
+                R.anim.slide_in_left, R.anim.slide_out_right)
+    }
+
+    private fun replaceTransition(fragmentTransaction: FragmentTransaction?) {
+        fragmentTransaction?.setCustomAnimations(android.R.anim.fade_in, android.R.anim.fade_out,
+                android.R.anim.fade_in, android.R.anim.fade_out)
     }
 
     override fun unknownScreen(command: Command?) {

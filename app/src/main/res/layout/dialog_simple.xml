@@ -25,7 +25,7 @@
             tools:text="Accelerare solite ducunt ad emeritis secula. Pol, a bene fluctui, fides!"
             />
 
-        <LinearLayout
+        <android.support.v7.widget.ButtonBarLayout
             android:layout_width="250dp"
             android:layout_height="56dp"
             android:orientation="horizontal"
@@ -49,7 +49,7 @@
                 android:text="@string/dialog_ok"
                 android:theme="@style/AccentButton"
                 />
-        </LinearLayout>
+        </android.support.v7.widget.ButtonBarLayout>
 
     </LinearLayout>
 

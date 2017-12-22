@@ -1,4 +1,4 @@
-package io.github.vladimirmi.radius.ui.base;
+package io.github.vladimirmi.radius.ui;
 
 import android.content.Context;
 import android.content.res.TypedArray;

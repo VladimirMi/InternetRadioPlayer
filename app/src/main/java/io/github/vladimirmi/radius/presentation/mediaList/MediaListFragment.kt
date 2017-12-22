@@ -16,7 +16,7 @@ import io.github.vladimirmi.radius.model.entity.Station
 import io.github.vladimirmi.radius.presentation.root.RootActivity
 import io.github.vladimirmi.radius.presentation.root.ToolbarBuilder
 import io.github.vladimirmi.radius.ui.base.BaseFragment
-import io.github.vladimirmi.radius.ui.base.SimpleDialog
+import io.github.vladimirmi.radius.ui.dialogs.SimpleDialog
 import kotlinx.android.synthetic.main.fragment_media_list.*
 import toothpick.Toothpick
 
@@ -32,7 +32,6 @@ class MediaListFragment : BaseFragment(), MediaListView, MediaItemCallback {
     private val dialogRemoveStation: SimpleDialog by lazy {
         SimpleDialog(view as ViewGroup)
                 .setMessage(getString(R.string.dialog_remove_message))
-                .setCancelable(false)
     }
 
 
@@ -92,8 +91,8 @@ class MediaListFragment : BaseFragment(), MediaListView, MediaItemCallback {
 
     override fun openRemoveDialog(station: Station) {
         dialogRemoveStation
-                .setPositiveAction { presenter.submitRemove(station) }
-                .setNegativeAction { presenter.cancelRemove() }
+                .onPositive { presenter.submitRemove(station) }
+                .onNegative { presenter.cancelRemove() }
                 .show()
     }
 

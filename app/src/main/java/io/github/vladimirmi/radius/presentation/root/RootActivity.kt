@@ -2,6 +2,7 @@ package io.github.vladimirmi.radius.presentation.root
 
 import android.annotation.SuppressLint
 import android.content.Intent
+import android.net.Uri
 import android.os.Bundle
 import android.support.annotation.StringRes
 import android.support.design.widget.Snackbar
@@ -60,9 +61,13 @@ class RootActivity : MvpAppCompatActivity(), RootView, ToolbarView {
         super.onResumeFragments()
         navigatorHolder.setNavigator(navigator)
         intent?.data?.let {
-            presenter.addStation(it)
+            handleUri(it)
             intent = null
         }
+    }
+
+    fun handleUri(uri: Uri) {
+        presenter.addStation(uri)
     }
 
     override fun onNewIntent(intent: Intent?) {

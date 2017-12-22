@@ -74,6 +74,7 @@ class RootPresenter
 
     private fun nextScreen() {
         repository.initStations()
+        viewState.showControls(true)
         router.newRootScreen(Router.MEDIA_LIST_SCREEN)
     }
 

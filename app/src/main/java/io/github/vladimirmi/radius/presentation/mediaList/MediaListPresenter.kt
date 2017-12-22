@@ -42,11 +42,13 @@ class MediaListPresenter
 
         mediaController.playbackState
                 .subscribeBy {
-                    val station = repository.currentStation.value
-                    if (mediaController.isPlaying) {
-                        viewState.selectItem(station, playing = true)
-                    } else {
-                        viewState.selectItem(station, playing = false)
+                    if (repository.currentStation.hasValue()) {
+                        val station = repository.currentStation.value
+                        if (mediaController.isPlaying) {
+                            viewState.selectItem(station, playing = true)
+                        } else {
+                            viewState.selectItem(station, playing = false)
+                        }
                     }
                 }.addTo(compDisp)
     }

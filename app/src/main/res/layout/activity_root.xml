@@ -48,13 +48,6 @@
         android:layout_below="@id/metadataFr"
         />
 
-    <View
-        android:layout_width="match_parent"
-        android:layout_height="4dp"
-        android:layout_above="@+id/playerControlsFr"
-        android:background="@drawable/shadow_reverse"
-        />
-
     <fragment
         android:id="@+id/playerControlsFr"
         android:name="io.github.vladimirmi.radius.presentation.playerControl.PlayerControlFragment"

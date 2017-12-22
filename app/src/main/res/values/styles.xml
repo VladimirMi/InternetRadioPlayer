@@ -7,6 +7,10 @@
         <item name="android:windowSoftInputMode">adjustPan|stateAlwaysHidden</item>
     </style>
 
+    <style name="AppTheme.Splash">
+        <item name="android:windowBackground">@drawable/splash</item>
+    </style>
+
     <style name="AppTheme.AppBarOverlay" parent="ThemeOverlay.AppCompat.Dark.ActionBar">
         <item name="android:textColorPrimary">@color/primaryDarkColor</item>
         <item name="colorControlNormal">@color/white</item>
@@ -25,14 +29,6 @@
 
     <style name="CustomText.White">
         <item name="android:textColor">@color/white</item>
-    </style>
-
-    <style name="CustomText.Black.Title">
-        <item name="android:layout_width">match_parent</item>
-        <item name="android:layout_marginBottom">4dp</item>
-        <item name="android:layout_marginTop">16dp</item>
-        <item name="android:fontFamily">sans-serif-light</item>
-        <item name="android:textSize">14sp</item>
     </style>
 
     <style name="InputField">

@@ -35,9 +35,10 @@ class RootPresenter
 
     override fun onFirstViewAttach() {
         val permissions = arrayOf(Manifest.permission.WRITE_EXTERNAL_STORAGE)
-        if (checkAndRequestPermissions(permissions, REQUEST_WRITE)) {
-            nextScreen()
-        }
+//        if (checkAndRequestPermissions(permissions, REQUEST_WRITE)) {
+//            nextScreen()
+//        }
+        router.newRootScreen(Router.GET_STARTED_SCREEN)
         mediaController.connect()
     }
 

@@ -17,9 +17,8 @@ import javax.inject.Inject
  * Created by Vladimir Mikhalev 13.10.2017.
  */
 
-
 class MediaController
-@Inject constructor(context: Context, private val repository: StationRepository) {
+@Inject constructor(context: Context) {
 
     private lateinit var mediaBrowser: MediaBrowserCompat
     private var controller: MediaControllerCompat? = null
@@ -33,7 +32,7 @@ class MediaController
             try {
                 controller = MediaControllerCompat(context, mediaBrowser.sessionToken)
             } catch (e: RemoteException) {
-                Timber.e(e, e.localizedMessage)
+                Timber.e(e, e.message)
             }
             controller?.registerCallback(controllerCallback)
         }

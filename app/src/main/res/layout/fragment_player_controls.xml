@@ -6,8 +6,19 @@
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:background="@color/player_controls"
-    android:orientation="vertical"
+    android:visibility="gone"
+    tools:visibility="visible"
     >
+
+    <View
+        android:id="@+id/shadow"
+        android:layout_width="0dp"
+        android:layout_height="4dp"
+        android:background="@drawable/shadow_reverse"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        />
 
     <ImageView
         android:id="@+id/iconIv"
@@ -15,7 +26,7 @@
         android:layout_height="72dp"
         android:contentDescription="@string/desc_media_icon"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/shadow"
         tools:src="@color/grey_500"
         />
 

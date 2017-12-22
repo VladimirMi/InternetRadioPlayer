@@ -3,6 +3,7 @@ package io.github.vladimirmi.radius.navigation
 import android.support.v4.app.Fragment
 import android.support.v4.app.FragmentTransaction
 import io.github.vladimirmi.radius.R
+import io.github.vladimirmi.radius.presentation.getstarted.GetStartedFragment
 import io.github.vladimirmi.radius.presentation.iconpicker.IconPickerFragment
 import io.github.vladimirmi.radius.presentation.mediaList.MediaListFragment
 import io.github.vladimirmi.radius.presentation.root.RootActivity
@@ -40,6 +41,7 @@ class Navigator(activity: RootActivity, containerId: Int)
         if (currentKey == screenKey) return null
         val screen = screenKey.substringBefore(Router.DELIMITER)
         return when (screen) {
+            Router.GET_STARTED_SCREEN -> GetStartedFragment()
             Router.MEDIA_LIST_SCREEN -> MediaListFragment()
             Router.STATION_SCREEN -> StationFragment()
             Router.ICON_PICKER_SCREEN -> IconPickerFragment()

@@ -14,10 +14,6 @@ class GroupingList(private val stationList: ArrayList<Station>)
     private val mappings = ArrayList<GroupMapping>()
     private val obs: BehaviorRelay<GroupedList<Station>> = BehaviorRelay.createDefault(this)
 
-    init {
-        initMappings()
-    }
-
     private fun initMappings() {
         mappings.clear()
         stationList.sortBy { it.group }
@@ -45,12 +41,14 @@ class GroupingList(private val stationList: ArrayList<Station>)
         mappings.forEach {
             if (it.group == group && it is GroupMapping.Item) it.visible = false
         }
+        notifyObservers()
     }
 
     override fun showGroup(group: String) {
         mappings.forEach {
             if (it.group == group && it is GroupMapping.Item) it.visible = true
         }
+        notifyObservers()
     }
 
     override fun isGroupVisible(group: String): Boolean {
@@ -93,31 +91,38 @@ class GroupingList(private val stationList: ArrayList<Station>)
 
     override fun observe(): Observable<GroupedList<Station>> = obs
 
-    override fun notifyObservers() {
+    private fun notifyObservers() {
         obs.accept(this)
     }
 
     //region =============== MutableList ==============
 
+    override fun addAll(elements: Collection<Station>): Boolean {
+        return stationList.addAll(elements).also {
+            initMappings()
+            notifyObservers()
+        }
+    }
+
     override fun add(element: Station): Boolean {
-        val tru = stationList.add(element)
-        initMappings()
-        obs.accept(this)
-        return tru
+        return stationList.add(element).also {
+            initMappings()
+            notifyObservers()
+        }
     }
 
     override fun set(index: Int, element: Station): Station {
-        val old = stationList.set(index, element)
-        initMappings()
-        obs.accept(this)
-        return old
+        return stationList.set(index, element).also {
+            initMappings()
+            notifyObservers()
+        }
     }
 
     override fun remove(element: Station): Boolean {
         val removed = stationList.remove(element)
         if (removed) {
             initMappings()
-            obs.accept(this)
+            notifyObservers()
         }
         return removed
     }

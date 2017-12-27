@@ -24,9 +24,10 @@ class Navigator(activity: RootActivity, containerId: Int)
         with(activity.supportFragmentManager) {
             addOnBackStackChangedListener {
                 currentKey = if (backStackEntryCount > 0) {
-                    getBackStackEntryAt(backStackEntryCount - 1).name
+                    val name = getBackStackEntryAt(backStackEntryCount - 1).name
+                    name
                 } else {
-                    Router.MEDIA_LIST_SCREEN
+                    ""
                 }
             }
         }
@@ -87,5 +88,9 @@ class Navigator(activity: RootActivity, containerId: Int)
 
     override fun unknownScreen(command: Command?) {
         //do nothing
+    }
+
+    override fun backToUnexisting() {
+        applyCommand(Replace(Router.MEDIA_LIST_SCREEN, null))
     }
 }

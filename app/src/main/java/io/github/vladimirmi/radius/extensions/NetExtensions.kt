@@ -34,21 +34,23 @@ fun Uri.toURI(): URI? = this.toString().toURI()
 
 fun String.toUri(): Uri? = this.toURI()?.toString()?.let { Uri.parse(it) }
 
-fun Uri.getContentType(): String = this.toURL()?.getContentType() ?: ""
-
-fun <T> URL.useConnection(connectTimeout: Int = 5000,
-                          readTimeout: Int = 5000,
-                          runnable: HttpURLConnection.() -> T?): T? {
+fun <T> URL.useConnection(connectTimeout: Int = 3000,
+                          readTimeout: Int = 3000,
+                          function: HttpURLConnection.() -> T?): T? {
+    val connection = try {
+        openConnection() as HttpURLConnection
+    } catch (e: IOException) {
+        return null
+    }
     return try {
-        val connection = openConnection() as HttpURLConnection
         connection.connectTimeout = connectTimeout
         connection.readTimeout = readTimeout
-        val result = connection.runnable()
-        connection.disconnect()
-        result
+        connection.function()
     } catch (e: IOException) {
         e.printStackTrace()
         null
+    } finally {
+//        connection.disconnect()  //too costly
     }
 }
 
@@ -57,7 +59,7 @@ fun URL.getContentType(): String {
 }
 
 fun URL.getRedirected(): URL {
-    return useConnection {
+    val url = useConnection {
         if (responseCode == HttpURLConnection.HTTP_MOVED_PERM ||
                 responseCode == HttpURLConnection.HTTP_MOVED_TEMP) {
             URL(headerFields["Location"].toString().trim('[', ']'))
@@ -65,6 +67,8 @@ fun URL.getRedirected(): URL {
             this@getRedirected
         }
     } ?: this
+    return if (url == this) url
+    else url.getRedirected()
 }
 
 fun DownloadManager.download(from: Uri, to: Uri) {

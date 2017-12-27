@@ -26,8 +26,6 @@ enum class ContentType(val types: Array<String>) {
                     ACC.types.contains(type)
         }
 
-        fun isSupported(type: String) = isPlaylist(type) || isAudio(type)
-
         private val MAP: Map<String, ContentType> by lazy {
             val map = HashMap<String, ContentType>()
             values().forEach { contentTypes ->

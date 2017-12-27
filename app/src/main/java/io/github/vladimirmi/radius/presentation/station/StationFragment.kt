@@ -22,7 +22,6 @@ import io.github.vladimirmi.radius.di.Scopes
 import io.github.vladimirmi.radius.extensions.inputMethodManager
 import io.github.vladimirmi.radius.extensions.visible
 import io.github.vladimirmi.radius.model.entity.Station
-import io.github.vladimirmi.radius.model.interactor.IconInteractor
 import io.github.vladimirmi.radius.presentation.root.ToolbarBuilder
 import io.github.vladimirmi.radius.presentation.root.ToolbarView
 import io.github.vladimirmi.radius.ui.TagView
@@ -31,9 +30,7 @@ import io.github.vladimirmi.radius.ui.base.BaseFragment
 import io.github.vladimirmi.radius.ui.dialogs.SimpleDialog
 import kotlinx.android.synthetic.main.fragment_station.*
 import kotlinx.android.synthetic.main.part_station_info.*
-import timber.log.Timber
 import toothpick.Toothpick
-import toothpick.config.Module
 
 
 /**
@@ -61,24 +58,20 @@ class StationFragment : BaseFragment(), StationView, BackPressListener {
         SimpleDialog(view as ViewGroup)
                 .setMessage(getString(R.string.dialog_cancel_create_message))
     }
+    private lateinit var stationId: String
 
     @InjectPresenter
     lateinit var presenter: StationPresenter
 
     @ProvidePresenter
     fun providePresenter(): StationPresenter {
-        val module: Module = object : Module() {
-            init {
-                bind(IconInteractor::class.java).singletonInScope()
-            }
+        return Toothpick.openScopes(Scopes.ROOT_ACTIVITY, this)
+                .getInstance(StationPresenter::class.java).also {
+            Toothpick.closeScope(this)
         }
-        return Toothpick.openScopes(Scopes.ROOT_ACTIVITY, this).apply {
-            installModules(module)
-        }.getInstance(StationPresenter::class.java)
     }
 
     override fun onStop() {
-        Timber.e("onStop: ")
         super.onStop()
         closeDeleteDialog()
         closeLinkDialog()
@@ -107,6 +100,7 @@ class StationFragment : BaseFragment(), StationView, BackPressListener {
     }
 
     override fun setStation(station: Station) {
+        stationId = station.id
         titleTil.setTextWithoutAnimation(station.title)
         folderTil.setTextWithoutAnimation(station.group)
         uriTil.setTextWithoutAnimation(station.uri)
@@ -209,7 +203,7 @@ class StationFragment : BaseFragment(), StationView, BackPressListener {
                     genres.add(tagView.text.toString())
                 }
         return Station(
-                id = presenter.stationId,
+                id = stationId,
                 uri = uriTil.editText!!.text.toString(),
                 title = titleTil.editText!!.text.toString(),
                 group = folderTil.editText!!.text.toString(),
@@ -242,7 +236,6 @@ class StationFragment : BaseFragment(), StationView, BackPressListener {
         val s = editText?.text.toString()
         val new = if (editable) {
             val value = s.substringBeforeLast(suffix)
-            //todo strings to res
             if (value == "n/a") "0" else value
         } else {
             if (s == "0" || s.isBlank()) "n/a" else s + suffix

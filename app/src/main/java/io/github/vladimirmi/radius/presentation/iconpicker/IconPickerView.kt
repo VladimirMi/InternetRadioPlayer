@@ -21,5 +21,5 @@ interface IconPickerView : MvpView {
 
     fun hideTextOption()
 
-    fun setOptionId(id: Int)
+    fun setOption(iconOption: IconOption)
 }

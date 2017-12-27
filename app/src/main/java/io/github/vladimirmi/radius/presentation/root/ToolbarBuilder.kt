@@ -55,6 +55,5 @@ class MenuItemHolder(val itemTitle: String,
                      val popupMenu: Int? = null) {
 
     // todo leak canary
-    //todo action to weak ref
     fun hasPopupMenu() = popupMenu != null
 }

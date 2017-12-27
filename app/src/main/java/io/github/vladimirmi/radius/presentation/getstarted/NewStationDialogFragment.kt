@@ -22,7 +22,7 @@ class NewStationDialogFragment : BaseDialogFragment() {
     }
 
     override fun onPositive() {
-        (parentFragment as GetStartedFragment).parseUri(Uri.parse(dialogView!!.linkEt.text.toString()))
+        (parentFragment as GetStartedFragment).addStation(Uri.parse(dialogView!!.linkEt.text.toString()))
     }
 
     override fun onNegative() {

@@ -25,8 +25,6 @@ interface GroupedList<E> {
 
     fun observe(): Observable<GroupedList<E>>
 
-    fun notifyObservers()
-
     fun getPrevious(item: E): E?
 
     fun getNext(item: E): E?

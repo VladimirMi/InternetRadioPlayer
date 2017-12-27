@@ -3,8 +3,12 @@ package io.github.vladimirmi.radius.di.module
 import android.content.Context
 import com.google.gson.Gson
 import com.google.gson.GsonBuilder
+import io.github.vladimirmi.radius.model.interactor.IconInteractor
+import io.github.vladimirmi.radius.model.interactor.PlayerControlsInteractor
+import io.github.vladimirmi.radius.model.interactor.StationInteractor
 import io.github.vladimirmi.radius.model.manager.StationParser
-import io.github.vladimirmi.radius.model.repository.StationRepository
+import io.github.vladimirmi.radius.model.repository.StationIconRepository
+import io.github.vladimirmi.radius.model.repository.StationListRepository
 import io.github.vladimirmi.radius.model.source.StationIconSource
 import io.github.vladimirmi.radius.model.source.StationSource
 import toothpick.config.Module
@@ -26,6 +30,14 @@ class AppModule(context: Context) : Module() {
 
         bind(StationIconSource::class.java).singletonInScope()
 
-        bind(StationRepository::class.java).singletonInScope()
+        bind(StationListRepository::class.java).singletonInScope()
+
+        bind(StationIconRepository::class.java).singletonInScope()
+
+        bind(StationInteractor::class.java).singletonInScope()
+
+        bind(IconInteractor::class.java).singletonInScope()
+
+        bind(PlayerControlsInteractor::class.java).singletonInScope()
     }
 }

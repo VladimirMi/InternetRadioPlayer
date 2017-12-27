@@ -1,9 +1,12 @@
 package io.github.vladimirmi.radius.model.interactor
 
-import android.graphics.Bitmap
-import android.graphics.Color
-import io.github.vladimirmi.radius.R
-import io.github.vladimirmi.radius.model.repository.StationRepository
+import io.github.vladimirmi.radius.model.entity.Icon
+import io.github.vladimirmi.radius.model.repository.StationIconRepository
+import io.github.vladimirmi.radius.model.repository.StationListRepository
+import io.reactivex.Completable
+import io.reactivex.Observable
+import io.reactivex.Single
+import timber.log.Timber
 import javax.inject.Inject
 
 /**
@@ -11,23 +14,38 @@ import javax.inject.Inject
  */
 
 class IconInteractor
-@Inject constructor(private val stationRepository: StationRepository) {
+@Inject constructor(private val iconRepository: StationIconRepository,
+                    private val stationListRepository: StationListRepository) {
 
-    private var initialBackGroundColor = Color.LTGRAY
-    private var initialTextColor = Color.BLACK
-    private var initialText = stationRepository.currentStation.value.title.substring(0, 3)
 
-    var backGroundColor = initialBackGroundColor
-    var textColor = initialTextColor
-    var text = initialText
-    var optionId = R.id.optionServerUrlBt
+    fun getIcon(path: String): Single<Icon> {
+        return Single.fromCallable { iconRepository.getStationIcon(path) }
+    }
 
-    val isIconChanged
-        get() = backGroundColor != initialBackGroundColor
-                || textColor != initialTextColor
-                || text != initialText
+    fun getCurrentIcon(): Observable<Icon> {
+        return stationListRepository.currentStation
+                .map { iconRepository.getStationIcon(it.title).copy(text = it.title.first().toString()) }
+    }
 
-    fun cacheIcon(bitmap: Bitmap) {
-        stationRepository.cacheStationIcon(bitmap)
+    fun setCurrentIcon(name: String) {
+        iconRepository.setCurrentIcon(iconRepository.getStationIcon(name))
+    }
+
+    fun cacheIcon(icon: Icon): Completable {
+        return Completable.fromCallable { iconRepository.setCurrentIcon(icon) }
+    }
+
+    fun removeIcon(name: String): Completable {
+        return Completable.fromCallable { iconRepository.removeStationIcon(name) }
+    }
+
+    fun saveIcon(name: String): Completable {
+        Timber.e("saveCurrentIcon: ")
+        return getIcon(name).flatMapCompletable { icon ->
+            Completable.fromCallable {
+                val savedIcon = iconRepository.getSavedIcon(icon.name)
+                if (icon != savedIcon) iconRepository.saveStationIcon(icon)
+            }
+        }
     }
 }

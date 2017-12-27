@@ -5,6 +5,5 @@ package io.github.vladimirmi.radius.ui.base
  */
 
 interface BackPressListener {
-    //todo doc
     fun onBackPressed(): Boolean
 }

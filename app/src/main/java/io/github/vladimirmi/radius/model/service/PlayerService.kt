@@ -3,6 +3,7 @@ package io.github.vladimirmi.radius.model.service
 import android.app.PendingIntent
 import android.app.Service
 import android.content.Intent
+import android.graphics.Bitmap
 import android.os.Bundle
 import android.support.v4.media.MediaBrowserCompat
 import android.support.v4.media.MediaBrowserServiceCompat
@@ -14,9 +15,12 @@ import com.google.android.exoplayer2.ExoPlaybackException.*
 import com.google.android.exoplayer2.Player
 import io.github.vladimirmi.radius.R
 import io.github.vladimirmi.radius.di.Scopes
+import io.github.vladimirmi.radius.extensions.ioToMain
 import io.github.vladimirmi.radius.extensions.toUri
 import io.github.vladimirmi.radius.model.entity.PlayerMode
-import io.github.vladimirmi.radius.model.repository.StationRepository
+import io.github.vladimirmi.radius.model.interactor.IconInteractor
+import io.github.vladimirmi.radius.model.interactor.PlayerControlsInteractor
+import io.github.vladimirmi.radius.model.interactor.StationInteractor
 import io.github.vladimirmi.radius.presentation.root.RootActivity
 import io.reactivex.disposables.CompositeDisposable
 import io.reactivex.rxkotlin.addTo
@@ -38,13 +42,15 @@ class PlayerService : MediaBrowserServiceCompat(), SessionCallback.Interface {
         const val EVENT_SESSION_PREVIOUS = "EVENT_SESSION_PREVIOUS"
     }
 
-    @Inject lateinit var repository: StationRepository
+    @Inject lateinit var stationInteractor: StationInteractor
+    @Inject lateinit var iconInteractor: IconInteractor
+    @Inject lateinit var controlsInteractor: PlayerControlsInteractor
 
     private val compDisp = CompositeDisposable()
     private lateinit var session: MediaSessionCompat
     private lateinit var playback: Playback
     private lateinit var notification: MediaNotification
-    private lateinit var metadata: MediaMetadataCompat
+    private var metadata = MediaMetadataCompat.Builder().build()
     private var playbackState = PlaybackStateCompat.Builder()
             .setState(PlaybackStateCompat.STATE_STOPPED, 0, 1F).build()
     private var serviceStarted = false
@@ -68,12 +74,15 @@ class PlayerService : MediaBrowserServiceCompat(), SessionCallback.Interface {
         playback = Playback(this, playerCallback)
         notification = MediaNotification(this, session)
 
-        repository.currentStation.subscribe {
-            currentStationId = it.id
-            if (isPlaying && currentStationId != playingStationId) playCurrent()
-        }.addTo(compDisp)
+        stationInteractor.currentStationObs().subscribe {
+            //            currentStationId = it.id
+            if (isPlaying
+//                    && currentStationId != playingStationId
+                    ) playCurrent()
+        }
+                .addTo(compDisp)
 
-        repository.playerMode.delaySubscription(1000, TimeUnit.MILLISECONDS)
+        controlsInteractor.playerModeObs.delaySubscription(1000, TimeUnit.MILLISECONDS)
                 .subscribe {
                     val actions = when (it!!) {
                         PlayerMode.NEXT_PREVIOUS_ENABLED -> AvailableActions.NEXT_PREVIOUS_ENABLED
@@ -82,6 +91,11 @@ class PlayerService : MediaBrowserServiceCompat(), SessionCallback.Interface {
                     session.setPlaybackState(createPlaybackState(actions = actions))
                     notification.update()
                 }.addTo(compDisp)
+
+        iconInteractor.getCurrentIcon()
+                .ioToMain()
+                .subscribe { updateIcon(it.bitmap) }
+                .addTo(compDisp)
     }
 
     override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
@@ -117,7 +131,8 @@ class PlayerService : MediaBrowserServiceCompat(), SessionCallback.Interface {
         stopTask?.cancel()
         startService()
         if (session.controller.playbackState.state == PlaybackStateCompat.STATE_PAUSED
-                && currentStationId == playingStationId) {
+//                && currentStationId == playingStationId
+                ) {
             playback.resume()
         } else {
             playCurrent()
@@ -139,16 +154,14 @@ class PlayerService : MediaBrowserServiceCompat(), SessionCallback.Interface {
     }
 
     override fun onSkipToPreviousCommand() {
-        if (repository.previousStation()) {
+        if (controlsInteractor.previousStation()) {
             session.sendSessionEvent(EVENT_SESSION_PREVIOUS, null)
-            if (isPlaying) playCurrent()
         }
     }
 
     override fun onSkipToNextCommand() {
-        if (repository.nextStation()) {
+        if (controlsInteractor.nextStation()) {
             session.sendSessionEvent(EVENT_SESSION_NEXT, null)
-            if (isPlaying) playCurrent()
         }
     }
 
@@ -214,14 +227,19 @@ class PlayerService : MediaBrowserServiceCompat(), SessionCallback.Interface {
         }
 
     private fun playCurrent() {
-        val station = repository.currentStation.value
-        playingStationId = station.id
-        playback.play(station.uri.toUri()!!)
+        val station = stationInteractor.currentStation
+//        playingStationId = station.id
 
-        val iconBitmap = repository.getStationIcon(station.title).blockingGet()
-        metadata = MediaMetadataCompat.Builder()
+        metadata = MediaMetadataCompat.Builder(metadata)
                 .putString(MediaMetadataCompat.METADATA_KEY_ALBUM, station.title)
-                .putBitmap(MediaMetadataCompat.METADATA_KEY_DISPLAY_ICON, iconBitmap)
                 .build()
+        station.uri.toUri()?.let { playback.play(it) }
+    }
+
+    private fun updateIcon(bitmap: Bitmap) {
+        metadata = MediaMetadataCompat.Builder(metadata)
+                .putBitmap(MediaMetadataCompat.METADATA_KEY_DISPLAY_ICON, bitmap)
+                .build()
+        notification.update()
     }
 }

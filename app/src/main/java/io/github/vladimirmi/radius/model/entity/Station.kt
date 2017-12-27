@@ -15,7 +15,15 @@ data class Station(val uri: String,
                    val bitrate: Int = 0,
                    val sample: Int = 0,
                    val favorite: Boolean = false,
-                   val id: String = UUID.randomUUID().toString())
+                   val id: String = UUID.randomUUID().toString()) {
+
+    companion object {
+        fun nullObject() = Station("", "")
+
+        fun Station.isNull() = uri.isEmpty() && title.isEmpty()
+    }
+
+}
 
 
 

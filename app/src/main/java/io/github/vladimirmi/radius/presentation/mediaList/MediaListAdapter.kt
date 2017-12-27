@@ -1,16 +1,20 @@
 package io.github.vladimirmi.radius.presentation.mediaList
 
-import android.graphics.Bitmap
 import android.support.v7.widget.RecyclerView
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.ImageView
 import io.github.vladimirmi.radius.R
 import io.github.vladimirmi.radius.di.Scopes
 import io.github.vladimirmi.radius.extensions.color
+import io.github.vladimirmi.radius.extensions.ioToMain
 import io.github.vladimirmi.radius.model.entity.GroupedList
 import io.github.vladimirmi.radius.model.entity.Station
-import io.github.vladimirmi.radius.model.repository.StationRepository
+import io.github.vladimirmi.radius.model.interactor.IconInteractor
+import io.github.vladimirmi.radius.ui.base.DisposableVH
+import io.reactivex.rxkotlin.addTo
+import io.reactivex.rxkotlin.subscribeBy
 import kotlinx.android.synthetic.main.item_group_item.view.*
 import kotlinx.android.synthetic.main.item_group_title.view.*
 
@@ -26,7 +30,7 @@ class MediaListAdapter(private val callback: MediaItemCallback)
         const val GROUP_ITEM = 1
     }
 
-    private val repository = Scopes.app.getInstance(StationRepository::class.java)
+    private val iconInteractor = Scopes.app.getInstance(IconInteractor::class.java)
     private lateinit var stationList: GroupedList<Station>
     private var selected: Station? = null
     private var playing = false
@@ -63,15 +67,23 @@ class MediaListAdapter(private val callback: MediaItemCallback)
             is MediaGroupItemVH -> {
                 val station = stationList.getGroupItem(position)
                 holder.bind(station)
-                holder.setIcon(repository.getStationIcon(station.title).blockingGet())
                 holder.setCallback(callback, station)
                 if (station.uri == selected?.uri) {
                     holder.select(playing)
                 } else {
                     holder.unselect()
                 }
+
+                iconInteractor.getIcon(station.title)
+                        .ioToMain()
+                        .subscribeBy { holder.iconView.setImageBitmap(it.bitmap) }
+                        .addTo(holder.compDisp)
             }
         }
+    }
+
+    override fun onViewRecycled(holder: RecyclerView.ViewHolder?) {
+        (holder as? DisposableVH)?.dispose()
     }
 
     override fun getItemCount(): Int = stationList.overallSize()
@@ -108,16 +120,16 @@ class MediaGroupTitleVH(itemView: View) : RecyclerView.ViewHolder(itemView) {
     }
 }
 
-class MediaGroupItemVH(itemView: View) : RecyclerView.ViewHolder(itemView) {
+class MediaGroupItemVH(itemView: View)
+    : DisposableVH(itemView) {
+
+    val iconView: ImageView = itemView.iconIv
+
     fun bind(station: Station) {
         with(itemView) {
             name.text = station.title
             favorite.visibility = if (station.favorite) View.VISIBLE else View.INVISIBLE
         }
-    }
-
-    fun setIcon(bitmap: Bitmap) {
-        itemView.iconIv.setImageBitmap(bitmap)
     }
 
     fun setCallback(callback: MediaItemCallback, station: Station) {
@@ -138,3 +150,4 @@ interface MediaItemCallback {
     fun onItemSelected(station: Station)
     fun onGroupSelected(group: String)
 }
+

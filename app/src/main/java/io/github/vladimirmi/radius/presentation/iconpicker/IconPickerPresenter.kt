@@ -11,7 +11,6 @@ import io.github.vladimirmi.radius.presentation.root.RootPresenter
 import io.github.vladimirmi.radius.ui.base.BasePresenter
 import io.reactivex.Observable
 import io.reactivex.rxkotlin.addTo
-import io.reactivex.rxkotlin.subscribeBy
 import javax.inject.Inject
 
 /**
@@ -69,16 +68,13 @@ class IconPickerPresenter
         if (station.url.isBlank()) viewState.hideStationUrlOption()
         if (station.title.isBlank()) viewState.hideTextOption()
 
-        iconInteractor.getCurrentIcon()
-                .ioToMain()
-                .subscribeBy {
-                    viewState.setIconImage(it.bitmap)
-                    backgroundColor = it.backGroundColor
-                    textColor = it.textColor
-                    text = it.text
-                    checkedOption = it.option
-                }
-                .addTo(compDisp)
+        iconInteractor.currentIcon.let {
+            viewState.setIconImage(it.bitmap)
+            backgroundColor = it.backGroundColor
+            textColor = it.textColor
+            text = it.text
+            checkedOption = it.option
+        }
 
         rootPresenter.viewState.showControls(false)
     }
@@ -92,8 +88,8 @@ class IconPickerPresenter
                 text = text,
                 option = checkedOption
         )
-        iconInteractor.cacheIcon(icon)
-                .subscribe { exit() }
+        iconInteractor.currentIcon = icon
+        exit()
     }
 
     fun onBackPressed(): Boolean {

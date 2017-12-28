@@ -92,7 +92,7 @@ class PlayerService : MediaBrowserServiceCompat(), SessionCallback.Interface {
                     notification.update()
                 }.addTo(compDisp)
 
-        iconInteractor.getCurrentIcon()
+        iconInteractor.currentIconObs()
                 .ioToMain()
                 .subscribe { updateIcon(it.bitmap) }
                 .addTo(compDisp)

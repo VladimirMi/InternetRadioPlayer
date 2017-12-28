@@ -48,7 +48,7 @@ class StationPresenter
 
     override fun onFirstViewAttach() {
         viewState.setStation(stationInteractor.currentStation)
-        iconInteractor.getCurrentIcon()
+        iconInteractor.currentIconObs()
                 .ioToMain()
                 .subscribe { viewState.setStationIcon(it.bitmap) }
                 .addTo(compDisp)

@@ -3,6 +3,7 @@ package io.github.vladimirmi.radius.model.entity
 import com.jakewharton.rxrelay2.BehaviorRelay
 import io.reactivex.Observable
 import java.lang.IllegalStateException
+import java.util.*
 
 /**
  * Created by Vladimir Mikhalev 11.10.2017.
@@ -140,5 +141,9 @@ class GroupingList(private val stationList: ArrayList<Station>)
             }
         }
         throw IllegalStateException()
+    }
+
+    override fun toString(): String {
+        return stationList.toString()
     }
 }

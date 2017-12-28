@@ -2,10 +2,14 @@ package io.github.vladimirmi.radius.model.repository
 
 import android.net.Uri
 import com.jakewharton.rxrelay2.BehaviorRelay
+import io.github.vladimirmi.radius.extensions.toSingle
 import io.github.vladimirmi.radius.model.entity.GroupingList
 import io.github.vladimirmi.radius.model.entity.Station
 import io.github.vladimirmi.radius.model.manager.Preferences
 import io.github.vladimirmi.radius.model.source.StationSource
+import io.reactivex.Completable
+import io.reactivex.Single
+import timber.log.Timber
 import javax.inject.Inject
 
 /**
@@ -33,23 +37,31 @@ class StationListRepository
         preferences.currentPos = pos
     }
 
-    fun createStation(uri: Uri): Station? {
-        return stationSource.parseStation(uri)
+    fun createStation(uri: Uri): Single<Station> {
+        return { stationSource.parseStation(uri) }
+                .toSingle()
     }
 
-    fun updateStation(newStation: Station) {
-        stationList[stationList.indexOfFirst { it.id == newStation.id }] = newStation
-        stationSource.saveStation(newStation)
+    fun updateStation(newStation: Station): Completable {
+        return Completable.fromCallable {
+            Timber.e("updateStation: $stationList")
+            stationList[stationList.indexOfFirst { it.id == newStation.id }] = newStation
+            saveStation(newStation)
+        }
     }
 
-    fun addStation(station: Station) {
-        stationList.add(station)
-        stationSource.saveStation(station)
+    fun addStation(station: Station): Completable {
+        return Completable.fromCallable {
+            stationList.add(station)
+            saveStation(station)
+        }
     }
 
-    fun removeStation(station: Station) {
-        if (stationList.remove(station)) {
-            stationSource.removeStation(station)
+    fun removeStation(station: Station): Completable {
+        return Completable.fromCallable {
+            if (stationList.remove(station)) {
+                stationSource.removeStation(station)
+            }
         }
     }
 
@@ -63,4 +75,7 @@ class StationListRepository
         preferences.hidedGroups = preferences.hidedGroups.toMutableSet().apply { add(group) }
     }
 
+    private fun saveStation(station: Station) {
+        stationSource.saveStation(station)
+    }
 }

@@ -1,14 +1,13 @@
 package io.github.vladimirmi.radius.model.interactor
 
 import android.net.Uri
-import io.github.vladimirmi.radius.extensions.toSingle
 import io.github.vladimirmi.radius.model.entity.GroupedList
 import io.github.vladimirmi.radius.model.entity.Station
 import io.github.vladimirmi.radius.model.repository.StationListRepository
 import io.reactivex.Completable
 import io.reactivex.Observable
 import io.reactivex.Single
-import io.reactivex.schedulers.Schedulers
+import timber.log.Timber
 import javax.inject.Inject
 
 /**
@@ -39,55 +38,51 @@ class StationInteractor
 
     fun currentStationObs(): Observable<Station> {
         return stationRepository.currentStation
-                .doOnNext { iconInteractor.setCurrentIcon(it.title) }
     }
 
     var currentStation: Station
         get() = stationRepository.currentStation.value
         set(value) = stationRepository.setCurrentStation(value)
 
-    fun createStation(uri: Uri): Completable {
-        return { stationRepository.createStation(uri) }.toSingle()
-                .subscribeOn(Schedulers.io())
+    fun createStation(uri: Uri): Single<Station> {
+        return stationRepository.createStation(uri)
                 .doOnSuccess {
                     previousWhenCreate = currentStation
                     stationRepository.currentStation.accept(it)
 //                    playerModeObs.accept(PlayerMode.NEXT_PREVIOUS_DISABLED)
-                }.toCompletable()
-    }
-
-    fun addStation(station: Station): Single<Boolean> {
-        return Single.fromCallable {
-            if (stationList.find { it.title == station.title } == null) {
-                stationRepository.addStation(station)
-                //        currentStation = station
-                iconInteractor.saveIcon(station.title).blockingAwait()
-                true
-            } else false
-        }
-    }
-
-    fun updateCurrentStation(newStation: Station): Completable {
-        return currentStationObs().firstOrError()
-                .flatMapCompletable { station ->
-                    Completable.fromCallable {
-                        if (newStation.title != station.title) {
-                            removeStation(station).blockingAwait()
-                        }
-                        if (newStation != station) {
-                            stationRepository.updateStation(newStation)
-                            iconInteractor.saveIcon(station.title).blockingAwait()
-                            currentStation = newStation
-                        }
-                    }
                 }
     }
 
+    fun addStation(station: Station): Single<Boolean> {
+        return if (stationList.find { it.title == station.title } == null) {
+            stationRepository.addStation(station)
+                    .mergeWith(iconInteractor.saveCurrentIcon(station.title))
+                    .doOnComplete { currentStation = station }
+                    .toSingle { true }
+        } else Single.just(false)
+    }
+
+    fun updateCurrentStation(newStation: Station): Completable {
+        Timber.e("updateCurrentStation: $currentStation")
+        Timber.e("updateCurrentStation: new $newStation")
+        val updateStation = if (newStation != currentStation) {
+            stationRepository.updateStation(newStation)
+        } else Completable.complete()
+
+        val updateIcon = iconInteractor.saveCurrentIcon(newStation.title)
+
+        val remove = if (newStation.title != currentStation.title) {
+            removeStation(currentStation)
+        } else Completable.complete()
+
+        return updateStation.mergeWith(updateIcon)
+                .concatWith(remove)
+                .doOnComplete { currentStation = newStation }
+    }
+
     fun removeStation(station: Station): Completable {
-        return Completable.fromCallable {
-            stationRepository.removeStation(station)
-            iconInteractor.removeIcon(station.title)
-        }
+        return stationRepository.removeStation(station)
+                .mergeWith(iconInteractor.removeIcon(station.title))
     }
 
     fun showOrHideGroup(group: String) {

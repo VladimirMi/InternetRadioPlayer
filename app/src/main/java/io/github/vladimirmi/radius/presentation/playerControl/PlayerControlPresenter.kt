@@ -39,7 +39,7 @@ class PlayerControlPresenter
                 .subscribe { handleSessionEvent(it) }
                 .addTo(compDisp)
 
-        iconInteractor.getCurrentIcon()
+        iconInteractor.currentIconObs()
                 .ioToMain()
                 .subscribe {
                     viewState.setStationIcon(it.bitmap)

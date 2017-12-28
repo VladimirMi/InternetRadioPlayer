@@ -34,8 +34,9 @@ class StationIconSource
 
     private val appDir = context.getExternalFilesDir(null)
 
-    private val defaultIconBitmap: Bitmap
-        get() = ContextCompat.getDrawable(context, R.drawable.ic_radius).getBitmap()
+    val defaultIcon: Icon
+        get() = Icon("default",
+                ContextCompat.getDrawable(context, R.drawable.ic_radius).getBitmap())
 
     private val maxSize = (Runtime.getRuntime().maxMemory() / 1024 / 10).toInt()
     private val bitmapCache = object : LruCache<String, Icon>(maxSize) {
@@ -79,23 +80,23 @@ class StationIconSource
         val host = Uri.parse(url).host
         val faviconUrl = FAVICON_BASE_URI.buildUpon()
                 .appendQueryParameter("domain", host)
-                .build().toURL() ?: return Icon("default", defaultIconBitmap)
+                .build().toURL() ?: return defaultIcon
 
         Timber.e("loadFromNet: $faviconUrl")
         val bitmap = faviconUrl.useConnection {
             BitmapFactory.decodeStream(inputStream)
-        } ?: defaultIconBitmap
+        } ?: defaultIcon.bitmap
         return Icon(url, bitmap)
     }
 
     private fun loadFromFile(path: String): Icon {
         val file = File(appDir, "$path.png")
-        if (!file.exists()) return Icon("default", defaultIconBitmap)
+        if (!file.exists()) return defaultIcon
 
         Timber.e("loadFromFile: ${file.path}")
         val bitmap = FileInputStream(file).use {
             BitmapFactory.decodeStream(it)
-        } ?: defaultIconBitmap
+        } ?: defaultIcon.bitmap
         //todo decode meta
         return Icon(path, bitmap)
     }

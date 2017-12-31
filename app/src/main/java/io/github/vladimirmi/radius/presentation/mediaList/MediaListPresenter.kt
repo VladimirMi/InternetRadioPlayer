@@ -44,7 +44,7 @@ class MediaListPresenter
                 BiFunction { station: Station, _: PlaybackStateCompat -> station })
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe {
-                    viewState.buildToolbar(builder.setToolbarTitle(it.title))
+                    viewState.buildToolbar(builder.setToolbarTitle(it.name))
                     viewState.selectItem(it, mediaController.isPlaying)
                 }
                 .addTo(compDisp)
@@ -56,24 +56,18 @@ class MediaListPresenter
 
     fun selectGroup(group: String) {
         interactor.showOrHideGroup(group)
-        viewState.notifyList()
+//        viewState.notifyList()
     }
 
     fun removeStation(station: Station) {
-        viewState.openRemoveDialog(station)
-    }
-
-    fun submitRemove(station: Station) {
         interactor.removeStation(station)
-        viewState.closeRemoveDialog()
+                .subscribe()
+                .addTo(compDisp)
     }
 
-    fun cancelRemove() {
-        viewState.closeRemoveDialog()
-    }
-
-    fun showStation() {
-        router.showStation(interactor.currentStation)
+    fun showStation(station: Station) {
+        select(station)
+        router.showStation(station)
     }
 }
 

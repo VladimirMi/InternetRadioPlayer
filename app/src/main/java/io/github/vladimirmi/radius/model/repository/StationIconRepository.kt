@@ -19,7 +19,7 @@ class StationIconRepository
     fun getStationIcon(path: String): Single<Icon> {
         return Single.fromCallable {
             iconSource.getIcon(path).also {
-                setCurrentIcon(it)
+                iconSource.cacheIcon(it)
             }
         }
     }

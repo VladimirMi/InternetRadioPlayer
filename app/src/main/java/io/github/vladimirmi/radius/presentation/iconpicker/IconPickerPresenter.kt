@@ -4,7 +4,6 @@ import android.graphics.Bitmap
 import com.arellomobile.mvp.InjectViewState
 import io.github.vladimirmi.radius.extensions.ioToMain
 import io.github.vladimirmi.radius.model.entity.Icon
-import io.github.vladimirmi.radius.model.interactor.IconInteractor
 import io.github.vladimirmi.radius.model.interactor.StationInteractor
 import io.github.vladimirmi.radius.navigation.Router
 import io.github.vladimirmi.radius.presentation.root.RootPresenter
@@ -20,8 +19,7 @@ import javax.inject.Inject
 @InjectViewState
 class IconPickerPresenter
 @Inject constructor(private val rootPresenter: RootPresenter,
-                    private val iconInteractor: IconInteractor,
-                    stationInteractor: StationInteractor,
+                    private val stationInteractor: StationInteractor,
                     private val router: Router)
     : BasePresenter<IconPickerView>() {
 
@@ -51,14 +49,14 @@ class IconPickerPresenter
             Observable.create<String> { e ->
                 if (!e.isDisposed) {
                     val path = when (value) {
-                        IconOption.DEFAULT -> station.title
+                        IconOption.DEFAULT -> station.name
                         IconOption.SERVER -> station.uri
                         IconOption.STATION -> station.url
                         IconOption.TEXT -> text
                     }
                     e.onNext(path)
                 }
-            }.switchMapSingle { iconInteractor.getIcon(it) }
+            }.switchMapSingle { stationInteractor.getIcon(it) }
                     .ioToMain()
                     .subscribe { viewState.setIconImage(it.bitmap) }
                     .addTo(compDisp)
@@ -66,9 +64,9 @@ class IconPickerPresenter
 
     override fun onFirstViewAttach() {
         if (station.url.isBlank()) viewState.hideStationUrlOption()
-        if (station.title.isBlank()) viewState.hideTextOption()
+        if (station.name.isBlank()) viewState.hideTextOption()
 
-        iconInteractor.currentIcon.let {
+        stationInteractor.currentIcon.let {
             viewState.setIconImage(it.bitmap)
             backgroundColor = it.backGroundColor
             textColor = it.textColor
@@ -81,14 +79,14 @@ class IconPickerPresenter
 
     fun saveIcon(bitmap: Bitmap) {
         val icon = Icon(
-                name = station.title,
+                name = station.name,
                 bitmap = bitmap,
                 backGroundColor = backgroundColor,
                 textColor = textColor,
                 text = text,
                 option = checkedOption
         )
-        iconInteractor.currentIcon = icon
+        stationInteractor.currentIcon = icon
         exit()
     }
 

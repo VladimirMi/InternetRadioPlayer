@@ -5,7 +5,6 @@ import com.arellomobile.mvp.InjectViewState
 import io.github.vladimirmi.radius.R
 import io.github.vladimirmi.radius.extensions.ioToMain
 import io.github.vladimirmi.radius.model.entity.Station
-import io.github.vladimirmi.radius.model.interactor.IconInteractor
 import io.github.vladimirmi.radius.model.interactor.PlayerControlsInteractor
 import io.github.vladimirmi.radius.model.interactor.StationInteractor
 import io.github.vladimirmi.radius.navigation.Router
@@ -23,7 +22,6 @@ import javax.inject.Inject
 @InjectViewState
 class StationPresenter
 @Inject constructor(private val stationInteractor: StationInteractor,
-                    private val iconInteractor: IconInteractor,
                     private val controlsInteractor: PlayerControlsInteractor,
                     private val router: Router)
     : BasePresenter<StationView>() {
@@ -38,20 +36,17 @@ class StationPresenter
     private val menuActions: (MenuItem) -> Unit = {
         when (it.itemId) {
             R.id.menu_station_edit -> editMode()
-            R.id.menu_station_delete -> viewState.openDeleteDialog()
+            R.id.menu_station_delete -> viewState.openRemoveDialog()
             R.id.menu_station_save -> viewState.editStation()
         }
     }
 
     private val toolbarBuilder: ToolbarBuilder
-        get() = ToolbarBuilder().setToolbarTitle(stationInteractor.currentStation.title)
+        get() = ToolbarBuilder().setToolbarTitle(stationInteractor.currentStation.name)
 
     override fun onFirstViewAttach() {
         viewState.setStation(stationInteractor.currentStation)
-        iconInteractor.currentIconObs()
-                .ioToMain()
-                .subscribe { viewState.setStationIcon(it.bitmap) }
-                .addTo(compDisp)
+        viewState.setStationIcon(stationInteractor.currentIcon.bitmap)
 
         createMode = stationInteractor.isCreateMode
         if (createMode) editMode() else viewMode()
@@ -93,13 +88,13 @@ class StationPresenter
         }
     }
 
-    fun delete(delete: Boolean) {
-        viewState.closeDeleteDialog()
-        if (delete) {
-            stationInteractor.removeStation(stationInteractor.currentStation)
-            controlsInteractor.nextStation()
-            router.exit()
-        }
+    fun removeStation() {
+        stationInteractor.removeStation(stationInteractor.currentStation)
+                .subscribe {
+                    controlsInteractor.nextStation()
+                    router.exit()
+                }
+                .addTo(compDisp)
     }
 
 
@@ -109,12 +104,9 @@ class StationPresenter
                 .addTo(compDisp)
     }
 
-    fun cancelEdit(cancel: Boolean) {
-        viewState.closeCancelEditDialog()
-        if (cancel) {
-            viewState.setStation(stationInteractor.currentStation)
-            viewMode()
-        }
+    fun cancelEdit() {
+        viewState.setStation(stationInteractor.currentStation)
+        viewMode()
     }
 
     fun create(station: Station) {
@@ -132,13 +124,10 @@ class StationPresenter
                 .addTo(compDisp)
     }
 
-    fun cancelCreate(cancel: Boolean) {
-        viewState.closeCancelCreateDialog()
-        if (cancel) {
-            createMode = false
+    fun cancelCreate() {
+        createMode = false
 //            previousStation?.let { stationInteractor.currentStation = it }
-            router.exit()
-        }
+        router.exit()
     }
 
 
@@ -153,10 +142,6 @@ class StationPresenter
 
     fun openLink(url: String) {
         if (!editMode) viewState.openLinkDialog(url)
-    }
-
-    fun cancelLink() {
-        viewState.closeLinkDialog()
     }
 
     fun changeIcon() {

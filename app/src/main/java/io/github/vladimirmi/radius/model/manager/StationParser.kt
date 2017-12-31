@@ -61,7 +61,7 @@ class StationParser
         val type = newUrl.getContentType()
         Timber.e("parseFromNet: $type")
         val station = when {
-            ContentType.isAudio(type) -> Station(title = url.host, uri = url.toString())
+            ContentType.isAudio(type) -> Station(name = url.host, uri = url.toString())
             ContentType.isPlaylist(type) -> {
                 when (ContentType.fromString(type)) {
                     ContentType.PLS -> newUrl.openStream().parsePls()
@@ -82,7 +82,7 @@ class StationParser
             val sample = headerFields["icy-sr"]?.get(0)?.toInt()
 
             val copy = station.copy(
-                    title = title ?: station.title,
+                    name = title ?: station.name,
                     genre = genres ?: station.genre,
                     url = url ?: station.url,
                     bitrate = bitrate ?: station.bitrate,

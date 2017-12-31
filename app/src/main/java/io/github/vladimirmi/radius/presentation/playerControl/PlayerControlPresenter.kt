@@ -4,7 +4,6 @@ import android.support.v4.media.session.PlaybackStateCompat
 import android.support.v4.media.session.PlaybackStateCompat.*
 import com.arellomobile.mvp.InjectViewState
 import io.github.vladimirmi.radius.extensions.ioToMain
-import io.github.vladimirmi.radius.model.interactor.IconInteractor
 import io.github.vladimirmi.radius.model.interactor.StationInteractor
 import io.github.vladimirmi.radius.model.repository.MediaController
 import io.github.vladimirmi.radius.model.service.AvailableActions
@@ -22,7 +21,6 @@ import javax.inject.Inject
 class PlayerControlPresenter
 @Inject constructor(private val mediaController: MediaController,
                     private val stationInteractor: StationInteractor,
-                    private val iconInteractor: IconInteractor,
                     private val router: Router)
     : BasePresenter<PlayerControlView>() {
 
@@ -39,11 +37,9 @@ class PlayerControlPresenter
                 .subscribe { handleSessionEvent(it) }
                 .addTo(compDisp)
 
-        iconInteractor.currentIconObs()
+        stationInteractor.currentIconObs()
                 .ioToMain()
-                .subscribe {
-                    viewState.setStationIcon(it.bitmap)
-                }
+                .subscribe { viewState.setStationIcon(it.bitmap) }
                 .addTo(compDisp)
     }
 

@@ -2,7 +2,9 @@ package io.github.vladimirmi.radius.model.interactor
 
 import android.net.Uri
 import io.github.vladimirmi.radius.model.entity.GroupedList
+import io.github.vladimirmi.radius.model.entity.Icon
 import io.github.vladimirmi.radius.model.entity.Station
+import io.github.vladimirmi.radius.model.repository.StationIconRepository
 import io.github.vladimirmi.radius.model.repository.StationListRepository
 import io.reactivex.Completable
 import io.reactivex.Observable
@@ -16,7 +18,7 @@ import javax.inject.Inject
 
 class StationInteractor
 @Inject constructor(private val stationRepository: StationListRepository,
-                    private val iconInteractor: IconInteractor) {
+                    private val iconRepository: StationIconRepository) {
 
     private val stationList get() = stationRepository.stationList
 
@@ -38,6 +40,11 @@ class StationInteractor
 
     fun currentStationObs(): Observable<Station> {
         return stationRepository.currentStation
+                .flatMapSingle { station ->
+                    getIcon(station.name)
+                            .doOnSuccess { currentIcon = it }
+                            .map { station }
+                }
     }
 
     var currentStation: Station
@@ -54,9 +61,9 @@ class StationInteractor
     }
 
     fun addStation(station: Station): Single<Boolean> {
-        return if (stationList.find { it.title == station.title } == null) {
+        return if (stationList.find { it.name == station.name } == null) {
             stationRepository.addStation(station)
-                    .mergeWith(iconInteractor.saveCurrentIcon(station.title))
+                    .mergeWith(saveCurrentIcon(station.name))
                     .doOnComplete { currentStation = station }
                     .toSingle { true }
         } else Single.just(false)
@@ -69,9 +76,9 @@ class StationInteractor
             stationRepository.updateStation(newStation)
         } else Completable.complete()
 
-        val updateIcon = iconInteractor.saveCurrentIcon(newStation.title)
+        val updateIcon = saveCurrentIcon(newStation.name)
 
-        val remove = if (newStation.title != currentStation.title) {
+        val remove = if (newStation.name != currentStation.name) {
             removeStation(currentStation)
         } else Completable.complete()
 
@@ -82,7 +89,7 @@ class StationInteractor
 
     fun removeStation(station: Station): Completable {
         return stationRepository.removeStation(station)
-                .mergeWith(iconInteractor.removeIcon(station.title))
+                .mergeWith(removeIcon(station.name))
     }
 
     fun showOrHideGroup(group: String) {
@@ -92,4 +99,38 @@ class StationInteractor
             stationRepository.showGroup(group)
         }
     }
+
+    //region =============== Icon ==============
+
+    var currentIcon: Icon
+        get() = iconRepository.currentIcon.value
+        set(value) = iconRepository.setCurrentIcon(value)
+
+    fun currentIconObs(): Observable<Icon> {
+        return iconRepository.currentIcon
+    }
+
+    fun getIcon(path: String): Single<Icon> {
+        return iconRepository.getStationIcon(path)
+                .map { it.copy(text = currentStation.name.first().toString()) }
+    }
+
+    fun removeIcon(name: String): Completable {
+        return iconRepository.removeStationIcon(name)
+    }
+
+    fun saveCurrentIcon(newName: String): Completable {
+        val newIcon = currentIcon.copy(name = newName)
+        return iconRepository.getSavedIcon(currentIcon.name)
+                .flatMapCompletable { savedIcon ->
+                    Timber.e("saveCurrentIcon: $newIcon")
+                    Timber.e("saveCurrentIcon: saved $savedIcon")
+//                    if (currentIcon != savedIcon) {
+                    iconRepository.saveStationIcon(newIcon)
+//                    } else {
+//                    }
+                }
+    }
+
+    //endregion
 }

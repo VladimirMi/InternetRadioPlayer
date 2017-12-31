@@ -3,7 +3,6 @@ package io.github.vladimirmi.radius.di.module
 import android.content.Context
 import com.google.gson.Gson
 import com.google.gson.GsonBuilder
-import io.github.vladimirmi.radius.model.interactor.IconInteractor
 import io.github.vladimirmi.radius.model.interactor.PlayerControlsInteractor
 import io.github.vladimirmi.radius.model.interactor.StationInteractor
 import io.github.vladimirmi.radius.model.manager.StationParser
@@ -35,8 +34,6 @@ class AppModule(context: Context) : Module() {
         bind(StationIconRepository::class.java).singletonInScope()
 
         bind(StationInteractor::class.java).singletonInScope()
-
-        bind(IconInteractor::class.java).singletonInScope()
 
         bind(PlayerControlsInteractor::class.java).singletonInScope()
     }

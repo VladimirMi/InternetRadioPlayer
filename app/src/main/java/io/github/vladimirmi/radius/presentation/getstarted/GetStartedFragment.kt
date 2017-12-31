@@ -1,6 +1,5 @@
 package io.github.vladimirmi.radius.presentation.getstarted
 
-import android.net.Uri
 import android.os.Bundle
 import android.view.View
 import com.arellomobile.mvp.presenter.InjectPresenter
@@ -31,11 +30,7 @@ class GetStartedFragment : BaseFragment(), GetStartedView {
 
     override fun onViewCreated(view: View?, savedInstanceState: Bundle?) {
         addNewBt.setOnClickListener {
-            NewStationDialogFragment().show(childFragmentManager, "new_station_dialog")
+            NewStationDialog().show(childFragmentManager, "new_station_dialog")
         }
-    }
-
-    fun addStation(uri: Uri) {
-        presenter.addStation(uri)
     }
 }

@@ -1,8 +1,6 @@
 package io.github.vladimirmi.radius.presentation.station
 
-import android.content.Intent
 import android.graphics.Bitmap
-import android.net.Uri
 import android.os.Bundle
 import android.support.design.widget.TextInputLayout
 import android.support.v4.content.ContextCompat
@@ -12,7 +10,6 @@ import android.text.style.ForegroundColorSpan
 import android.text.style.URLSpan
 import android.util.TypedValue
 import android.view.View
-import android.view.ViewGroup
 import android.widget.EditText
 import android.widget.Toast
 import com.arellomobile.mvp.presenter.InjectPresenter
@@ -27,7 +24,6 @@ import io.github.vladimirmi.radius.presentation.root.ToolbarView
 import io.github.vladimirmi.radius.ui.TagView
 import io.github.vladimirmi.radius.ui.base.BackPressListener
 import io.github.vladimirmi.radius.ui.base.BaseFragment
-import io.github.vladimirmi.radius.ui.dialogs.SimpleDialog
 import kotlinx.android.synthetic.main.fragment_station.*
 import kotlinx.android.synthetic.main.part_station_info.*
 import toothpick.Toothpick
@@ -40,24 +36,7 @@ import toothpick.Toothpick
 class StationFragment : BaseFragment(), StationView, BackPressListener {
 
     override val layoutRes = R.layout.fragment_station
-
     private var editTextBg: Int = 0
-    private val dialogDelete: SimpleDialog by lazy {
-        SimpleDialog(view as ViewGroup)
-                .setMessage(getString(R.string.dialog_remove_message))
-    }
-    private val dialogLink: SimpleDialog by lazy {
-        SimpleDialog(view as ViewGroup)
-                .setMessage(getString(R.string.dialog_goto_message))
-    }
-    private val dialogCancelEdit: SimpleDialog by lazy {
-        SimpleDialog(view as ViewGroup)
-                .setMessage(getString(R.string.dialog_cancel_edit_message))
-    }
-    private val dialogCancelCreate: SimpleDialog by lazy {
-        SimpleDialog(view as ViewGroup)
-                .setMessage(getString(R.string.dialog_cancel_create_message))
-    }
     private lateinit var stationId: String
 
     @InjectPresenter
@@ -69,14 +48,6 @@ class StationFragment : BaseFragment(), StationView, BackPressListener {
                 .getInstance(StationPresenter::class.java).also {
             Toothpick.closeScope(this)
         }
-    }
-
-    override fun onStop() {
-        super.onStop()
-        closeDeleteDialog()
-        closeLinkDialog()
-        closeCancelCreateDialog()
-        closeCancelEditDialog()
     }
 
     override fun onViewCreated(view: View?, savedInstanceState: Bundle?) {
@@ -101,7 +72,7 @@ class StationFragment : BaseFragment(), StationView, BackPressListener {
 
     override fun setStation(station: Station) {
         stationId = station.id
-        titleTil.setTextWithoutAnimation(station.title)
+        titleTil.setTextWithoutAnimation(station.name)
         folderTil.setTextWithoutAnimation(station.group)
         uriTil.setTextWithoutAnimation(station.uri)
         urlTil.setTextWithoutAnimation(station.url)
@@ -149,44 +120,20 @@ class StationFragment : BaseFragment(), StationView, BackPressListener {
         presenter.create(constructStation())
     }
 
-    override fun openDeleteDialog() {
-        dialogDelete.onPositive { presenter.delete(true) }
-                .onNegative { presenter.delete(false) }
-                .show()
-    }
-
-    override fun closeDeleteDialog() {
-        dialogDelete.dismiss()
+    override fun openRemoveDialog() {
+        RemoveDialog().show(childFragmentManager, "remove_dialog")
     }
 
     override fun openLinkDialog(url: String) {
-        dialogLink.onPositive { startActivity(Intent(Intent.ACTION_VIEW, Uri.parse(url))) }
-                .onNegative { presenter.cancelLink() }
-                .show()
-    }
-
-    override fun closeLinkDialog() {
-        dialogLink.dismiss()
+        LinkDialog.newInstance(url).show(childFragmentManager, "link_dialog")
     }
 
     override fun openCancelEditDialog() {
-        dialogCancelEdit.onPositive { presenter.cancelEdit(true) }
-                .onNegative { presenter.cancelEdit(false) }
-                .show()
-    }
-
-    override fun closeCancelEditDialog() {
-        dialogCancelEdit.dismiss()
+        CancelEditDialog().show(childFragmentManager, "cancel_edit_dialog")
     }
 
     override fun openCancelCreateDialog() {
-        dialogCancelCreate.onPositive { presenter.cancelCreate(true) }
-                .onNegative { presenter.cancelCreate(false) }
-                .show()
-    }
-
-    override fun closeCancelCreateDialog() {
-        dialogCancelCreate.dismiss()
+        CancelCreateDialog().show(childFragmentManager, "cancel_create_dialog")
     }
 
     override fun showToast(resId: Int) {
@@ -205,7 +152,7 @@ class StationFragment : BaseFragment(), StationView, BackPressListener {
         return Station(
                 id = stationId,
                 uri = uriTil.editText!!.text.toString(),
-                title = titleTil.editText!!.text.toString(),
+                name = titleTil.editText!!.text.toString(),
                 group = folderTil.editText!!.text.toString(),
                 genre = genres,
                 url = urlTil.editText!!.text.toString(),
@@ -260,5 +207,3 @@ class StationFragment : BaseFragment(), StationView, BackPressListener {
         }
     }
 }
-
-

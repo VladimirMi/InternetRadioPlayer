@@ -5,7 +5,6 @@ import android.support.v7.widget.LinearLayoutManager
 import android.support.v7.widget.RecyclerView
 import android.support.v7.widget.helper.ItemTouchHelper
 import android.view.View
-import android.view.ViewGroup
 import android.widget.Toast
 import com.arellomobile.mvp.presenter.InjectPresenter
 import com.arellomobile.mvp.presenter.ProvidePresenter
@@ -16,7 +15,6 @@ import io.github.vladimirmi.radius.model.entity.Station
 import io.github.vladimirmi.radius.presentation.root.RootActivity
 import io.github.vladimirmi.radius.presentation.root.ToolbarBuilder
 import io.github.vladimirmi.radius.ui.base.BaseFragment
-import io.github.vladimirmi.radius.ui.dialogs.SimpleDialog
 import kotlinx.android.synthetic.main.fragment_media_list.*
 import toothpick.Toothpick
 
@@ -29,22 +27,15 @@ class MediaListFragment : BaseFragment(), MediaListView, MediaItemCallback {
     override val layoutRes = R.layout.fragment_media_list
     private val adapter = MediaListAdapter(this)
 
-    private val dialogRemoveStation: SimpleDialog by lazy {
-        SimpleDialog(view as ViewGroup)
-                .setMessage(getString(R.string.dialog_remove_message))
-    }
-
-
     private val itemTouchHelper = ItemTouchHelper(object : ItemSwipeCallback(Scopes.context,
             0,
             ItemTouchHelper.LEFT or ItemTouchHelper.RIGHT) {
         override fun onSwiped(viewHolder: RecyclerView.ViewHolder, direction: Int) {
             val station = adapter.getStation(viewHolder.adapterPosition) ?: return
             if (direction == ItemTouchHelper.LEFT) {
-                presenter.removeStation(station)
+                RemoveDialog.newInstance(station).show(childFragmentManager, "remove_dialog")
             } else {
-                presenter.select(station)
-                presenter.showStation()
+                presenter.showStation(station)
             }
         }
     })
@@ -57,6 +48,10 @@ class MediaListFragment : BaseFragment(), MediaListView, MediaItemCallback {
                 .getInstance(MediaListPresenter::class.java).also {
             Toothpick.closeScope(this)
         }
+    }
+
+    fun notifyList() {
+        adapter.notifyDataSetChanged()
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
@@ -81,23 +76,8 @@ class MediaListFragment : BaseFragment(), MediaListView, MediaItemCallback {
         adapter.selectItem(station, playing)
     }
 
-    override fun notifyList() {
-        adapter.notifyDataSetChanged()
-    }
-
     override fun showToast(resId: Int) {
         Toast.makeText(context, resId, Toast.LENGTH_SHORT).show()
-    }
-
-    override fun openRemoveDialog(station: Station) {
-        dialogRemoveStation
-                .onPositive { presenter.submitRemove(station) }
-                .onNegative { presenter.cancelRemove() }
-                .show()
-    }
-
-    override fun closeRemoveDialog() {
-        dialogRemoveStation.dismiss()
     }
 
     override fun buildToolbar(builder: ToolbarBuilder) {

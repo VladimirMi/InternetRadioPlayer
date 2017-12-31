@@ -18,7 +18,6 @@ import io.github.vladimirmi.radius.di.Scopes
 import io.github.vladimirmi.radius.extensions.ioToMain
 import io.github.vladimirmi.radius.extensions.toUri
 import io.github.vladimirmi.radius.model.entity.PlayerMode
-import io.github.vladimirmi.radius.model.interactor.IconInteractor
 import io.github.vladimirmi.radius.model.interactor.PlayerControlsInteractor
 import io.github.vladimirmi.radius.model.interactor.StationInteractor
 import io.github.vladimirmi.radius.presentation.root.RootActivity
@@ -43,7 +42,6 @@ class PlayerService : MediaBrowserServiceCompat(), SessionCallback.Interface {
     }
 
     @Inject lateinit var stationInteractor: StationInteractor
-    @Inject lateinit var iconInteractor: IconInteractor
     @Inject lateinit var controlsInteractor: PlayerControlsInteractor
 
     private val compDisp = CompositeDisposable()
@@ -92,7 +90,7 @@ class PlayerService : MediaBrowserServiceCompat(), SessionCallback.Interface {
                     notification.update()
                 }.addTo(compDisp)
 
-        iconInteractor.currentIconObs()
+        stationInteractor.currentIconObs()
                 .ioToMain()
                 .subscribe { updateIcon(it.bitmap) }
                 .addTo(compDisp)
@@ -231,7 +229,7 @@ class PlayerService : MediaBrowserServiceCompat(), SessionCallback.Interface {
 //        playingStationId = station.id
 
         metadata = MediaMetadataCompat.Builder(metadata)
-                .putString(MediaMetadataCompat.METADATA_KEY_ALBUM, station.title)
+                .putString(MediaMetadataCompat.METADATA_KEY_ALBUM, station.name)
                 .build()
         station.uri.toUri()?.let { playback.play(it) }
     }

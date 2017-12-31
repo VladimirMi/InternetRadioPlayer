@@ -37,14 +37,14 @@ class StationSource
     }
 
     fun saveStation(station: Station) {
-        val file = File(appDir, "${station.title}.$extension")
+        val file = File(appDir, "${station.name}.$extension")
         if (file.exists()) file.clear()
 
         file.writeText(parser.toJson(station))
     }
 
     fun removeStation(station: Station) {
-        File(appDir, "${station.title}.$extension").delete()
+        File(appDir, "${station.name}.$extension").delete()
     }
 
     fun parseStation(uri: Uri): Station? = parser.parseFromUri(uri)

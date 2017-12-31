@@ -35,8 +35,10 @@ class StationIconSource
     private val appDir = context.getExternalFilesDir(null)
 
     val defaultIcon: Icon
-        get() = Icon("default",
-                ContextCompat.getDrawable(context, R.drawable.ic_radius).getBitmap())
+        get() = Icon(
+                name = "default",
+                bitmap = ContextCompat.getDrawable(context, R.drawable.ic_radius).getBitmap()
+        )
 
     private val maxSize = (Runtime.getRuntime().maxMemory() / 1024 / 10).toInt()
     private val bitmapCache = object : LruCache<String, Icon>(maxSize) {

@@ -11,10 +11,10 @@ import kotlinx.android.synthetic.main.dialog_new_station.view.*
  * Created by Vladimir Mikhalev 22.12.2017.
  */
 
-class NewStationDialogFragment : BaseDialogFragment() {
+class NewStationDialog : BaseDialogFragment() {
 
-    override fun getTitle(): String? {
-        return context.getString(R.string.dialog_new_station)
+    override fun getTitle(): String {
+        return getString(R.string.dialog_new_station)
     }
 
     override fun getCustomDialogView(): View? {
@@ -22,7 +22,8 @@ class NewStationDialogFragment : BaseDialogFragment() {
     }
 
     override fun onPositive() {
-        (parentFragment as GetStartedFragment).addStation(Uri.parse(dialogView!!.linkEt.text.toString()))
+        (parentFragment as GetStartedFragment).presenter
+                .addStation(Uri.parse(dialogView!!.linkEt.text.toString()))
     }
 
     override fun onNegative() {

@@ -23,21 +23,13 @@ interface StationView : MvpView {
 
     fun createStation()
 
-    fun openDeleteDialog()
-
-    fun closeDeleteDialog()
+    fun openRemoveDialog()
 
     fun openLinkDialog(url: String)
 
-    fun closeLinkDialog()
-
     fun openCancelEditDialog()
 
-    fun closeCancelEditDialog()
-
     fun openCancelCreateDialog()
-
-    fun closeCancelCreateDialog()
 
     fun showToast(resId: Int)
 }

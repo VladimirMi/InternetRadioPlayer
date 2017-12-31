@@ -11,7 +11,7 @@ import io.github.vladimirmi.radius.extensions.color
 import io.github.vladimirmi.radius.extensions.ioToMain
 import io.github.vladimirmi.radius.model.entity.GroupedList
 import io.github.vladimirmi.radius.model.entity.Station
-import io.github.vladimirmi.radius.model.interactor.IconInteractor
+import io.github.vladimirmi.radius.model.interactor.StationInteractor
 import io.github.vladimirmi.radius.ui.base.DisposableVH
 import io.reactivex.rxkotlin.addTo
 import io.reactivex.rxkotlin.subscribeBy
@@ -30,7 +30,7 @@ class MediaListAdapter(private val callback: MediaItemCallback)
         const val GROUP_ITEM = 1
     }
 
-    private val iconInteractor = Scopes.app.getInstance(IconInteractor::class.java)
+    private val stationInteractor = Scopes.app.getInstance(StationInteractor::class.java)
     private lateinit var stationList: GroupedList<Station>
     private var selected: Station? = null
     private var playing = false
@@ -74,7 +74,7 @@ class MediaListAdapter(private val callback: MediaItemCallback)
                     holder.unselect()
                 }
 
-                iconInteractor.getIcon(station.title)
+                stationInteractor.getIcon(station.name)
                         .ioToMain()
                         .subscribeBy { holder.iconView.setImageBitmap(it.bitmap) }
                         .addTo(holder.compDisp)
@@ -127,7 +127,7 @@ class MediaGroupItemVH(itemView: View)
 
     fun bind(station: Station) {
         with(itemView) {
-            name.text = station.title
+            name.text = station.name
             favorite.visibility = if (station.favorite) View.VISIBLE else View.INVISIBLE
         }
     }

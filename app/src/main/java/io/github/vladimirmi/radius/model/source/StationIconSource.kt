@@ -1,7 +1,6 @@
 package io.github.vladimirmi.radius.model.source
 
 import android.content.Context
-import android.graphics.Bitmap
 import android.graphics.BitmapFactory
 import android.net.Uri
 import android.support.v4.content.ContextCompat
@@ -12,10 +11,10 @@ import io.github.vladimirmi.radius.extensions.getBitmap
 import io.github.vladimirmi.radius.extensions.toURL
 import io.github.vladimirmi.radius.extensions.useConnection
 import io.github.vladimirmi.radius.model.entity.Icon
+import io.github.vladimirmi.radius.model.manager.decode
+import io.github.vladimirmi.radius.model.manager.encode
 import timber.log.Timber
 import java.io.File
-import java.io.FileInputStream
-import java.io.FileOutputStream
 import java.io.IOException
 import javax.inject.Inject
 
@@ -61,9 +60,7 @@ class StationIconSource
         try {
             val file = File(appDir, "${icon.name}.png")
             if (file.exists()) file.clear()
-            FileOutputStream(file).use {
-                icon.bitmap.compress(Bitmap.CompressFormat.PNG, 100, it)
-            }
+            file.encode(icon)
         } catch (e: IOException) {
             Timber.e(e)
         }
@@ -96,10 +93,6 @@ class StationIconSource
         if (!file.exists()) return defaultIcon
 
         Timber.e("loadFromFile: ${file.path}")
-        val bitmap = FileInputStream(file).use {
-            BitmapFactory.decodeStream(it)
-        } ?: defaultIcon.bitmap
-        //todo decode meta
-        return Icon(path, bitmap)
+        return file.decode()
     }
 }

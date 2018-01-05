@@ -30,7 +30,8 @@ class PngTextChunk(val key: String, val value: String) {
         private const val SEPARATOR = '\u0000'
 
         fun create(chunkType: ByteArray, data: ByteArray, crc: Int): PngTextChunk? {
-            val calcCrc = CRC32().apply { update(chunkType + data) }
+            if (chunkType.toString(Charset.defaultCharset()) != CHUNK_TYPE) return null
+            val calcCrc = CRC32().apply { update(data) }
             if (calcCrc.value.toInt() != crc) return null
             val (key, value) = data.toString(Charset.defaultCharset()).split(SEPARATOR)
             return PngTextChunk(key, value)
@@ -92,13 +93,12 @@ fun File.decode(): Icon {
     }
 
     val bitmap = BitmapFactory.decodeByteArray(pngBytes, 0, pngBytes.size)
-    return Icon(path, bitmap, backGroundColor, textColor, text, option)
+    return Icon(nameWithoutExtension, bitmap, backGroundColor, textColor, text, option)
 }
 
 private fun nextChunkFromBuffer(buffer: ByteBuffer): PngTextChunk? {
     val length = buffer.int
     val chunkType = ByteArray(4).also { buffer.get(it) }
-    if (chunkType.toString(Charset.defaultCharset()) != PngTextChunk.CHUNK_TYPE) return null
     val body = ByteArray(length).also { buffer.get(it) }
     val crc = buffer.int
     return PngTextChunk.create(chunkType, body, crc)

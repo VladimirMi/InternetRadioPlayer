@@ -49,7 +49,10 @@ class StationIconSource
     fun getIcon(path: String): Icon {
         val cache = bitmapCache.get(path)
         if (cache != null) return cache
-        return if (path.contains("http")) loadFromNet(path) else loadFromFile(path)
+        Timber.e("getIcon: $path")
+        val icon = if (path.contains("http")) loadFromNet(path) else loadFromFile(path)
+        cacheIcon(icon)
+        return icon
     }
 
     fun getSavedIcon(path: String): Icon {
@@ -72,6 +75,7 @@ class StationIconSource
     }
 
     fun cacheIcon(icon: Icon) {
+        Timber.e("cacheIcon: ${icon.name}")
         bitmapCache.put(icon.name, icon)
     }
 
@@ -81,7 +85,6 @@ class StationIconSource
                 .appendQueryParameter("domain", host)
                 .build().toURL() ?: return defaultIcon
 
-        Timber.e("loadFromNet: $faviconUrl")
         val bitmap = faviconUrl.useConnection {
             BitmapFactory.decodeStream(inputStream)
         } ?: defaultIcon.bitmap
@@ -91,8 +94,6 @@ class StationIconSource
     private fun loadFromFile(path: String): Icon {
         val file = File(appDir, "$path.png")
         if (!file.exists()) return defaultIcon
-
-        Timber.e("loadFromFile: ${file.path}")
         return file.decode()
     }
 }

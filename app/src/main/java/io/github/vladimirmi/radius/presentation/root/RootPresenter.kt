@@ -42,10 +42,12 @@ class RootPresenter
         Timber.e("addStation: $uri")
         stationInteractor.createStation(uri)
                 .ioToMain()
+                .doOnSubscribe { viewState.showLoadingIndicator(true) }
+                .doFinally { viewState.showLoadingIndicator(false) }
                 .subscribeBy(
                         onSuccess = {
-                            router.showStation(stationInteractor.currentStation)
                             viewState.showControls(true)
+                            router.showStation(stationInteractor.currentStation)
                         },
                         onError = {
                             Timber.e(it)

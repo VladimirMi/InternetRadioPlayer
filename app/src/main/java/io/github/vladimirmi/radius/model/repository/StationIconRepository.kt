@@ -17,11 +17,7 @@ class StationIconRepository
     val currentIcon: BehaviorRelay<Icon> = BehaviorRelay.createDefault(iconSource.defaultIcon)
 
     fun getStationIcon(path: String): Single<Icon> {
-        return Single.fromCallable {
-            iconSource.getIcon(path).also {
-                iconSource.cacheIcon(it)
-            }
-        }
+        return Single.fromCallable { iconSource.getIcon(path) }
     }
 
     fun getSavedIcon(name: String): Single<Icon> {
@@ -29,13 +25,13 @@ class StationIconRepository
     }
 
     fun setCurrentIcon(icon: Icon) {
-        iconSource.cacheIcon(icon)
         currentIcon.accept(icon)
     }
 
     fun saveStationIcon(icon: Icon): Completable {
         return Completable.fromCallable {
             iconSource.saveIcon(icon)
+            iconSource.cacheIcon(icon)
             setCurrentIcon(icon)
         }
     }

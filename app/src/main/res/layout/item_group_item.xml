@@ -3,7 +3,7 @@
 <FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
              xmlns:tools="http://schemas.android.com/tools"
              android:layout_width="match_parent"
-             android:layout_height="48dp"
+             android:layout_height="56dp"
              android:orientation="vertical"
     >
 
@@ -16,11 +16,9 @@
 
         <ImageView
             android:id="@+id/iconIv"
-            android:layout_width="48dp"
-            android:layout_height="48dp"
-            android:layout_marginLeft="8dp"
-            android:layout_marginRight="8dp"
-            tools:background="@drawable/bg_rounded"
+            android:layout_width="56dp"
+            android:layout_height="56dp"
+            android:background="@color/accentColor"
             />
 
         <TextView
@@ -29,6 +27,7 @@
             android:layout_width="0dp"
             android:layout_height="48dp"
             android:layout_weight="1"
+            android:padding="8dp"
             android:gravity="center_vertical"
             tools:text="Item name"
             />

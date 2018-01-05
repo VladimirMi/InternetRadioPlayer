@@ -1,4 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
+
 <android.support.constraint.ConstraintLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
@@ -8,23 +9,13 @@
     android:background="@color/player_controls"
     >
 
-    <View
-        android:id="@+id/shadow"
-        android:layout_width="0dp"
-        android:layout_height="4dp"
-        android:background="@drawable/shadow_reverse"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        />
-
     <ImageView
         android:id="@+id/iconIv"
         android:layout_width="72dp"
         android:layout_height="72dp"
         android:contentDescription="@string/desc_media_icon"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/shadow"
+        app:layout_constraintTop_toTopOf="parent"
         tools:src="@color/grey_500"
         />
 

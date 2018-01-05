@@ -1,7 +1,6 @@
 package io.github.vladimirmi.radius.presentation.root
 
 import com.arellomobile.mvp.MvpView
-import com.arellomobile.mvp.viewstate.strategy.AddToEndSingleStrategy
 import com.arellomobile.mvp.viewstate.strategy.OneExecutionStateStrategy
 import com.arellomobile.mvp.viewstate.strategy.StateStrategyType
 
@@ -17,6 +16,9 @@ interface RootView : MvpView {
     @StateStrategyType(OneExecutionStateStrategy::class)
     fun showSnackbar(resId: Int)
 
-    @StateStrategyType(AddToEndSingleStrategy::class)
+    @StateStrategyType(OneExecutionStateStrategy::class)
     fun showControls(visible: Boolean)
+
+    @StateStrategyType(OneExecutionStateStrategy::class)
+    fun showLoadingIndicator(visible: Boolean)
 }

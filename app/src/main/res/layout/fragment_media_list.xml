@@ -3,7 +3,6 @@
               xmlns:tools="http://schemas.android.com/tools"
               android:layout_width="match_parent"
               android:layout_height="match_parent"
-              android:layout_marginTop="4dp"
               android:orientation="vertical"
     >
 
@@ -11,7 +10,6 @@
         android:id="@+id/media_recycler"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:paddingTop="2dp"
         tools:listitem="@layout/item_group_item"
         />
 

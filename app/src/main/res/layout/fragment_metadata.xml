@@ -4,7 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:orientation="horizontal"
+    android:orientation="vertical"
     android:visibility="gone"
     tools:visibility="visible"
     >
@@ -24,4 +24,5 @@
         android:singleLine="true"
         tools:text="Scutum, poeta, et habena - Ubi est camerarius xiphias?"
         />
+
 </LinearLayout>

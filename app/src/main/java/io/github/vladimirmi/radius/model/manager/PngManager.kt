@@ -5,6 +5,7 @@ import android.graphics.BitmapFactory
 import android.graphics.Color
 import io.github.vladimirmi.radius.model.entity.Icon
 import io.github.vladimirmi.radius.presentation.iconpicker.IconOption
+import io.github.vladimirmi.radius.presentation.iconpicker.IconRes
 import java.io.ByteArrayOutputStream
 import java.io.File
 import java.io.FileOutputStream
@@ -18,9 +19,10 @@ import java.util.zip.CRC32
 
 private const val SIGN_IHDR_LENGTH = 33 // bytes
 private const val KEY_BG_COLOR = "Background color"
-private const val KEY_TEXT_COLOR = "Text color"
+private const val KEY_FG_COLOR = "Foreground color"
 private const val KEY_TEXT = "Text"
 private const val KEY_OPTION = "Option"
+private const val KEY_ICON_RES = "Icon resource"
 
 
 class PngTextChunk(val key: String, val value: String) {
@@ -62,10 +64,17 @@ fun File.encode(icon: Icon) {
 
         FileOutputStream(this).use {
             it.write(pngBytes, 0, SIGN_IHDR_LENGTH)
-            it.write(PngTextChunk(KEY_BG_COLOR, icon.backGroundColor.toString()).getByteArray())
-            it.write(PngTextChunk(KEY_TEXT_COLOR, icon.textColor.toString()).getByteArray())
-            it.write(PngTextChunk(KEY_TEXT, icon.text).getByteArray())
             it.write(PngTextChunk(KEY_OPTION, icon.option.name).getByteArray())
+            if (icon.option == IconOption.ICON) {
+                it.write(PngTextChunk(KEY_ICON_RES, icon.iconRes.name).getByteArray())
+            }
+            it.write(PngTextChunk(KEY_BG_COLOR, icon.backgroundColor.toString()).getByteArray())
+            if (icon.option != IconOption.FAVICON) {
+                it.write(PngTextChunk(KEY_FG_COLOR, icon.foregroundColor.toString()).getByteArray())
+            }
+            if (icon.option == IconOption.TEXT) {
+                it.write(PngTextChunk(KEY_TEXT, icon.text).getByteArray())
+            }
             it.write(pngBytes, SIGN_IHDR_LENGTH, pngBytes.size - SIGN_IHDR_LENGTH)
         }
     }
@@ -76,24 +85,26 @@ fun File.decode(): Icon {
     val wrapped = ByteBuffer.wrap(pngBytes)
             .position(SIGN_IHDR_LENGTH) as ByteBuffer
 
+    var option = IconOption.ICON
+    var iconRes = IconRes.ICON_1
     var backGroundColor = Color.LTGRAY
-    var textColor = Color.BLACK
+    var foregroundColor = Color.BLACK
     var text = ""
-    var option = IconOption.DEFAULT
 
     var chunk = nextChunkFromBuffer(wrapped)
     while (chunk != null) {
         when (chunk.key) {
+            KEY_OPTION -> option = IconOption.fromName(chunk.value)
+            KEY_ICON_RES -> iconRes = IconRes.fromName(chunk.value)
             KEY_BG_COLOR -> backGroundColor = chunk.value.toInt()
-            KEY_TEXT_COLOR -> textColor = chunk.value.toInt()
+            KEY_FG_COLOR -> foregroundColor = chunk.value.toInt()
             KEY_TEXT -> text = chunk.value
-            KEY_OPTION -> option = IconOption.valueOf(chunk.value)
         }
         chunk = nextChunkFromBuffer(wrapped)
     }
 
     val bitmap = BitmapFactory.decodeByteArray(pngBytes, 0, pngBytes.size)
-    return Icon(nameWithoutExtension, bitmap, backGroundColor, textColor, text, option)
+    return Icon(nameWithoutExtension, bitmap, option, iconRes, backGroundColor, foregroundColor, text)
 }
 
 private fun nextChunkFromBuffer(buffer: ByteBuffer): PngTextChunk? {

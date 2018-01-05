@@ -18,17 +18,14 @@ interface IconPickerView : MvpView {
     fun setIconText(text: String)
 
     @StateStrategyType(AddToEndSingleStrategy::class)
-    fun setIconTextColor(colorInt: Int)
+    fun setForegroundColor(colorInt: Int)
 
     @StateStrategyType(AddToEndSingleStrategy::class)
     fun setBackgroundColor(colorInt: Int)
 
     @StateStrategyType(AddToEndSingleStrategy::class)
-    fun hideStationUrlOption()
-
-    @StateStrategyType(AddToEndSingleStrategy::class)
-    fun hideTextOption()
-
-    @StateStrategyType(AddToEndSingleStrategy::class)
     fun setOption(iconOption: IconOption)
+
+    @StateStrategyType(AddToEndSingleStrategy::class)
+    fun setIconRes(iconRes: IconRes)
 }

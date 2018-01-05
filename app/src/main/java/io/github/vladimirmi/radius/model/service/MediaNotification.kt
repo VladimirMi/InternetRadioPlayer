@@ -92,7 +92,7 @@ class MediaNotification(private val service: PlayerService,
                 .setShowWhen(false)
                 .setVisibility(NotificationCompat.VISIBILITY_PUBLIC)
                 .setPriority(NotificationCompat.PRIORITY_MAX)
-                .setSmallIcon(R.drawable.ic_radius)
+                .setSmallIcon(R.drawable.ic_station_1)
                 .setContentIntent(mediaSession.controller.sessionActivity)
                 .setDeleteIntent(stopIntent)
                 .setStyle(style)

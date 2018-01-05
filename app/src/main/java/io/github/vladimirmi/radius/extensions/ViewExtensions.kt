@@ -1,5 +1,6 @@
 package io.github.vladimirmi.radius.extensions
 
+import android.graphics.drawable.Drawable
 import android.support.annotation.ColorInt
 import android.support.v4.graphics.drawable.DrawableCompat
 import android.text.Editable
@@ -35,12 +36,15 @@ fun View.visible(visible: Boolean) {
 }
 
 fun ImageView.setTint(@ColorInt colorInt: Int) {
-    val wrapped = DrawableCompat.wrap(background).mutate()
-    DrawableCompat.setTint(wrapped, colorInt)
+    background?.setTintExt(colorInt)
 }
 
 fun View.setTint(@ColorInt colorInt: Int) {
-    val wrapped = DrawableCompat.wrap(background).mutate()
+    background?.setTintExt(colorInt)
+}
+
+fun Drawable.setTintExt(@ColorInt colorInt: Int) {
+    val wrapped = DrawableCompat.wrap(this).mutate()
     DrawableCompat.setTint(wrapped, colorInt)
 }
 

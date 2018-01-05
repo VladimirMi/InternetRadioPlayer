@@ -45,9 +45,10 @@
     <string name="unit_sample_rate">Hz</string>
     <string name="unit_bitrate">kbps</string>
 
-    <string name="icon_favicon_station">Favicon станции</string>
-    <string name="icon_favicon_server">Favicon сервера</string>
+    <string name="icon_icon">Иконка</string>
+    <string name="icon_favicon">Иконка сайта</string>
     <string name="icon_text">Текст</string>
     <string name="icon_add">Добавить</string>
-    <string name="icon_background">Задний фон</string>
+    <string name="icon_background_color">Цвет заднего фона</string>
+    <string name="icon_foreground_color">Цвет иконки</string>
 </resources>

@@ -18,7 +18,7 @@
             android:id="@+id/iconIv"
             android:layout_width="56dp"
             android:layout_height="56dp"
-            android:background="@color/accentColor"
+            tools:background="@color/accentColor"
             />
 
         <TextView

@@ -4,6 +4,7 @@ import android.content.Context
 import android.graphics.BitmapFactory
 import android.net.Uri
 import android.support.v4.content.ContextCompat
+import android.support.v4.graphics.drawable.DrawableCompat
 import android.util.LruCache
 import io.github.vladimirmi.radius.R
 import io.github.vladimirmi.radius.extensions.clear
@@ -33,11 +34,11 @@ class StationIconSource
 
     private val appDir = context.getExternalFilesDir(null)
 
-    val defaultIcon: Icon
-        get() = Icon(
-                name = "default",
-                bitmap = ContextCompat.getDrawable(context, R.drawable.ic_radius).getBitmap()
-        )
+    val defaultIcon: Icon by lazy {
+        val drawable = DrawableCompat.wrap(ContextCompat.getDrawable(context, R.drawable.ic_station_1)).mutate()
+        DrawableCompat.setTint(drawable, ContextCompat.getColor(context, R.color.accentColor))
+        Icon("default", drawable.getBitmap())
+    }
 
     private val maxSize = (Runtime.getRuntime().maxMemory() / 1024 / 10).toInt()
     private val bitmapCache = object : LruCache<String, Icon>(maxSize) {
@@ -49,9 +50,8 @@ class StationIconSource
     fun getIcon(path: String): Icon {
         val cache = bitmapCache.get(path)
         if (cache != null) return cache
-        Timber.e("getIcon: $path")
         val icon = if (path.contains("http")) loadFromNet(path) else loadFromFile(path)
-        cacheIcon(icon)
+        if (icon != defaultIcon) cacheIcon(icon)
         return icon
     }
 

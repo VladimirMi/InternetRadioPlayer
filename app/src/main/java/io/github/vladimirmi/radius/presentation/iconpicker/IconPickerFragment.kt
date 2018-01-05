@@ -10,7 +10,9 @@ import io.github.vladimirmi.radius.R
 import io.github.vladimirmi.radius.di.Scopes
 import io.github.vladimirmi.radius.extensions.onTextChanges
 import io.github.vladimirmi.radius.extensions.setTint
-import io.github.vladimirmi.radius.extensions.visible
+import io.github.vladimirmi.radius.extensions.setTintExt
+import io.github.vladimirmi.radius.presentation.root.ToolbarBuilder
+import io.github.vladimirmi.radius.presentation.root.ToolbarView
 import io.github.vladimirmi.radius.ui.base.BackPressListener
 import io.github.vladimirmi.radius.ui.base.BaseFragment
 import kotlinx.android.synthetic.main.fragment_icon_picker.*
@@ -35,15 +37,19 @@ class IconPickerFragment : BaseFragment(), IconPickerView, BackPressListener {
         }
     }
 
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        ToolbarBuilder().build(activity as ToolbarView)
+    }
+
     override fun onViewCreated(view: View?, savedInstanceState: Bundle?) {
         iconTextEt.isSelected = true
         optionsRg.setOnCheckedChangeListener { _, checkedId ->
-            presenter.checkedOption = when (checkedId) {
-                R.id.optionServerUrlBt -> IconOption.SERVER
-                R.id.optionStationUrlBt -> IconOption.STATION
-                R.id.optionTextBt -> IconOption.TEXT
-                else -> throw IllegalStateException()
-            }
+            presenter.iconOption = IconOption.fromId(checkedId)
+        }
+
+        iconsRg.setOnCheckedChangeListener { _, checkedId ->
+            presenter.iconRes = IconRes.fromId(checkedId)
         }
 
         configurationsRg.setOnCheckedChangeListener { _, checkedId ->
@@ -52,10 +58,10 @@ class IconPickerFragment : BaseFragment(), IconPickerView, BackPressListener {
                 colorPicker.setOnColorChangedListener {
                     presenter.backgroundColor = it
                 }
-            } else if (checkedId == R.id.configTextBt) {
-                colorPicker.setColor(presenter.textColor)
+            } else if (checkedId == R.id.configForegroundBt) {
+                colorPicker.setColor(presenter.foregroundColor)
                 colorPicker.setOnColorChangedListener {
-                    presenter.textColor = it
+                    presenter.foregroundColor = it
                 }
             }
         }
@@ -78,8 +84,9 @@ class IconPickerFragment : BaseFragment(), IconPickerView, BackPressListener {
         if (iconTextEt.text.toString() != text) iconTextEt.setText(text)
     }
 
-    override fun setIconTextColor(colorInt: Int) {
+    override fun setForegroundColor(colorInt: Int) {
         iconTv.setTextColor(colorInt)
+        iconIv.drawable.setTintExt(colorInt)
         colorPicker.setColor(colorInt)
     }
 
@@ -88,41 +95,18 @@ class IconPickerFragment : BaseFragment(), IconPickerView, BackPressListener {
         colorPicker.setColor(colorInt)
     }
 
-    override fun hideStationUrlOption() {
-        optionStationUrlBt.visible(false)
-    }
-
-    override fun hideTextOption() {
-        optionTextBt.visible(false)
-    }
-
     override fun setOption(iconOption: IconOption) {
-        when (iconOption) {
-            IconOption.SERVER -> {
-                optionsRg.check(R.id.optionServerUrlBt)
-                setupOption(false)
-            }
-            IconOption.STATION -> {
-                optionsRg.check(R.id.optionStationUrlBt)
-                setupOption(false)
-            }
-            IconOption.TEXT -> {
-                optionsRg.check(R.id.optionTextBt)
-                setupOption(true)
-            }
-            IconOption.DEFAULT -> setupOption(false)
-        }
+        optionsRg.check(iconOption.id)
+        configurationsRg.check(R.id.configForegroundBt)
+    }
+
+    override fun setIconRes(iconRes: IconRes) {
+        iconsRg.check(iconRes.id)
+        iconIv.setImageResource(iconRes.resId)
     }
 
     //endregion
 
-    private fun setupOption(isText: Boolean) {
-        configBackgroundBt.isChecked = true
-        configTextBt.visible(isText)
-        iconTv.visible(isText)
-        iconIv.visible(!isText)
-        iconTextEt.visible(isText)
-    }
 
     private fun createIconBitmap(): Bitmap {
         val bitmap = Bitmap.createBitmap(iconFr.width, iconFr.height, Bitmap.Config.ARGB_8888)

@@ -32,4 +32,5 @@ abstract class BaseFragment : MvpAppCompatFragment() {
         }
         return super.onOptionsItemSelected(item)
     }
+
 }

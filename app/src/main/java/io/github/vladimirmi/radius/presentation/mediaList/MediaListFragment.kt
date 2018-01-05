@@ -12,8 +12,8 @@ import io.github.vladimirmi.radius.R
 import io.github.vladimirmi.radius.di.Scopes
 import io.github.vladimirmi.radius.model.entity.GroupedList
 import io.github.vladimirmi.radius.model.entity.Station
-import io.github.vladimirmi.radius.presentation.root.RootActivity
 import io.github.vladimirmi.radius.presentation.root.ToolbarBuilder
+import io.github.vladimirmi.radius.presentation.root.ToolbarView
 import io.github.vladimirmi.radius.ui.base.BaseFragment
 import kotlinx.android.synthetic.main.fragment_media_list.*
 import toothpick.Toothpick
@@ -81,6 +81,6 @@ class MediaListFragment : BaseFragment(), MediaListView, MediaItemCallback {
     }
 
     override fun buildToolbar(builder: ToolbarBuilder) {
-        builder.build(activity as RootActivity)
+        builder.build(activity as ToolbarView)
     }
 }

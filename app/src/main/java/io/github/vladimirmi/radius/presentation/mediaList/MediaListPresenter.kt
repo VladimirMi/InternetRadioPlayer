@@ -1,6 +1,5 @@
 package io.github.vladimirmi.radius.presentation.mediaList
 
-import android.support.v4.media.session.PlaybackStateCompat
 import com.arellomobile.mvp.InjectViewState
 import io.github.vladimirmi.radius.R
 import io.github.vladimirmi.radius.model.entity.Station
@@ -10,9 +9,6 @@ import io.github.vladimirmi.radius.navigation.Router
 import io.github.vladimirmi.radius.presentation.root.RootPresenter
 import io.github.vladimirmi.radius.presentation.root.ToolbarBuilder
 import io.github.vladimirmi.radius.ui.base.BasePresenter
-import io.reactivex.Observable
-import io.reactivex.android.schedulers.AndroidSchedulers
-import io.reactivex.functions.BiFunction
 import io.reactivex.rxkotlin.addTo
 import io.reactivex.rxkotlin.subscribeBy
 import javax.inject.Inject
@@ -40,13 +36,14 @@ class MediaListPresenter
                 .subscribeBy { viewState.setMediaList(it) }
                 .addTo(compDisp)
 
-        Observable.combineLatest(interactor.currentStationObs(), mediaController.playbackState,
-                BiFunction { station: Station, _: PlaybackStateCompat -> station })
-                .observeOn(AndroidSchedulers.mainThread())
+        interactor.currentStationObs()
                 .subscribe {
                     viewState.buildToolbar(builder.setToolbarTitle(it.name))
                     viewState.selectItem(it, mediaController.isPlaying)
-                }
+                }.addTo(compDisp)
+
+        mediaController.playbackState
+                .subscribe { viewState.selectItem(interactor.currentStation, mediaController.isPlaying) }
                 .addTo(compDisp)
     }
 

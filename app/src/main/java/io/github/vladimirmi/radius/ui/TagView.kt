@@ -31,7 +31,7 @@ class TagView(context: Context, tag: String, action: ((TagView) -> Unit)?) :
 
     override fun setLayoutParams(params: ViewGroup.LayoutParams?) {
         if (params is FlexboxLayout.LayoutParams) {
-            val margin = (6 * context.dp)
+            val margin = (4 * context.dp)
             params.setMargins(margin, margin, margin, margin)
         }
         super.setLayoutParams(params)

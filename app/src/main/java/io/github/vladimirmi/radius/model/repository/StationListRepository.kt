@@ -9,7 +9,6 @@ import io.github.vladimirmi.radius.model.manager.Preferences
 import io.github.vladimirmi.radius.model.source.StationSource
 import io.reactivex.Completable
 import io.reactivex.Single
-import timber.log.Timber
 import javax.inject.Inject
 
 /**
@@ -44,7 +43,6 @@ class StationListRepository
 
     fun updateStation(newStation: Station): Completable {
         return Completable.fromCallable {
-            Timber.e("updateStation: $stationList")
             stationList[stationList.indexOfFirst { it.id == newStation.id }] = newStation
             saveStation(newStation)
         }
@@ -59,9 +57,8 @@ class StationListRepository
 
     fun removeStation(station: Station): Completable {
         return Completable.fromCallable {
-            if (stationList.remove(station)) {
-                stationSource.removeStation(station)
-            }
+            stationList.remove(station)
+            stationSource.removeStation(station)
         }
     }
 

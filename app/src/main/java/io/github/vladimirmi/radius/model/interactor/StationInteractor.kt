@@ -70,8 +70,6 @@ class StationInteractor
     }
 
     fun updateCurrentStation(newStation: Station): Completable {
-        Timber.e("updateCurrentStation: $currentStation")
-        Timber.e("updateCurrentStation: new $newStation")
         val updateStation = if (newStation != currentStation) {
             stationRepository.updateStation(newStation)
         } else Completable.complete()
@@ -102,6 +100,10 @@ class StationInteractor
 
     //region =============== Icon ==============
 
+    fun iconChanged(): Single<Boolean> =
+            iconRepository.getSavedIcon(currentIcon.name)
+                    .map { currentIcon != it }
+
     var currentIcon: Icon
         get() = iconRepository.currentIcon.value
         set(value) = iconRepository.setCurrentIcon(value)
@@ -112,23 +114,22 @@ class StationInteractor
 
     fun getIcon(path: String): Single<Icon> {
         return iconRepository.getStationIcon(path)
-                .map { it.copy(text = currentStation.name.first().toString()) }
     }
 
-    fun removeIcon(name: String): Completable {
+    private fun removeIcon(name: String): Completable {
         return iconRepository.removeStationIcon(name)
     }
 
-    fun saveCurrentIcon(newName: String): Completable {
+    private fun saveCurrentIcon(newName: String): Completable {
         val newIcon = currentIcon.copy(name = newName)
-        return iconRepository.getSavedIcon(currentIcon.name)
-                .flatMapCompletable { savedIcon ->
-                    Timber.e("saveCurrentIcon: $newIcon")
-                    Timber.e("saveCurrentIcon: saved $savedIcon")
-//                    if (currentIcon != savedIcon) {
-                    iconRepository.saveStationIcon(newIcon)
-//                    } else {
-//                    }
+        return iconChanged()
+                .flatMapCompletable { changed ->
+                    if (changed || currentIcon.name != newName) {
+                        Timber.e("saveCurrentIcon: ")
+                        iconRepository.saveStationIcon(newIcon)
+                    } else {
+                        Completable.complete()
+                    }
                 }
     }
 

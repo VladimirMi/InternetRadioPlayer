@@ -104,6 +104,10 @@ class RootActivity : MvpAppCompatActivity(), RootView, ToolbarView {
         playerControlsFr.view?.visible(visible)
     }
 
+    override fun showMetadata(visible: Boolean) {
+        metadataFr.view?.visible(visible)
+    }
+
     override fun showLoadingIndicator(visible: Boolean) {
         loadingPb.visible(visible)
     }

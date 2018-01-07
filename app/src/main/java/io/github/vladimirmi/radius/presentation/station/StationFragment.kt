@@ -54,9 +54,13 @@ class StationFragment : BaseFragment(), StationView, BackPressListener {
         val typedValue = TypedValue()
         activity.theme.resolveAttribute(android.R.attr.editTextBackground, typedValue, true)
         editTextBg = typedValue.resourceId
-
+        uriTil.setEditable(false)
+        urlTil.setEditable(false)
+        bitrateTil.setEditable(false)
+        sampleTil.setEditable(false)
         urlTil.editText?.setOnClickListener { presenter.openLink((it as EditText).text.toString()) }
         uriTil.editText?.setOnClickListener { presenter.openLink((it as EditText).text.toString()) }
+
         fab.setOnClickListener { presenter.changeMode() }
         changeIconBt.setOnClickListener { presenter.changeIcon() }
         changeIconBt.background.alpha = 128
@@ -73,11 +77,21 @@ class StationFragment : BaseFragment(), StationView, BackPressListener {
     override fun setStation(station: Station) {
         stationId = station.id
         titleTil.setTextWithoutAnimation(station.name)
-        folderTil.setTextWithoutAnimation(station.group)
+
         uriTil.setTextWithoutAnimation(station.uri)
+        uriTil.linkStyle(true)
+
         urlTil.setTextWithoutAnimation(station.url)
-        bitrateTil.setTextWithoutAnimation(station.bitrate.toString())
-        sampleTil.setTextWithoutAnimation(station.sample.toString())
+        urlTil.visible(station.url.isNotBlank())
+        urlTil.linkStyle(true)
+
+        bitrateTil.setTextWithoutAnimation("${station.bitrate}kbps")
+        bitrateTil.visible(station.bitrate != 0)
+
+        sampleTil.setTextWithoutAnimation("${station.sample}Hz")
+        sampleTil.visible(station.sample != 0)
+
+        genresFl.removeAllViews()
         station.genre.forEach { genresFl.addView(TagView(context, it, null)) }
     }
 
@@ -87,27 +101,14 @@ class StationFragment : BaseFragment(), StationView, BackPressListener {
 
     override fun setEditMode(editMode: Boolean) {
         titleTil.setEditable(editMode)
-        folderTil.setEditable(editMode)
-        uriTil.setEditable(editMode)
-        urlTil.setEditable(editMode)
-        bitrateTil.setEditable(editMode)
-        bitrateTil.cutOff(editMode, getString(R.string.unit_bitrate))
-        sampleTil.setEditable(editMode)
-        sampleTil.cutOff(editMode, getString(R.string.unit_sample_rate))
-        uriTil.linkStyle(!editMode)
-        urlTil.linkStyle(!editMode)
+        changeIconBt.visible(editMode)
 
         if (editMode) {
-            changeIconBt.visible(true)
             fab.setImageResource(R.drawable.ic_submit)
-            folderTil.visible(true)
-            urlTil.visible(true)
+            titleTil.editText!!.requestFocus()
+            titleTil.editText!!.setSelection(titleTil.text.length)
         } else {
-            changeIconBt.visible(false)
             fab.setImageResource(R.drawable.ic_edit)
-            if (folderTil.isBlank()) folderTil.visible(false)
-            if (urlTil.isBlank()) urlTil.visible(false)
-            view?.clearFocus()
             context.inputMethodManager.hideSoftInputFromWindow(view?.windowToken, 0)
         }
     }
@@ -128,8 +129,12 @@ class StationFragment : BaseFragment(), StationView, BackPressListener {
         LinkDialog.newInstance(url).show(childFragmentManager, "link_dialog")
     }
 
-    override fun openCancelEditDialog() {
-        CancelEditDialog().show(childFragmentManager, "cancel_edit_dialog")
+    override fun openCancelEditDialog(currentStation: Station, iconChanged: Boolean) {
+        if (currentStation != constructStation() || iconChanged) {
+            CancelEditDialog().show(childFragmentManager, "cancel_edit_dialog")
+        } else {
+            presenter.cancelEdit()
+        }
     }
 
     override fun openCancelCreateDialog() {
@@ -151,13 +156,13 @@ class StationFragment : BaseFragment(), StationView, BackPressListener {
                 }
         return Station(
                 id = stationId,
-                uri = uriTil.editText!!.text.toString(),
-                name = titleTil.editText!!.text.toString(),
-                group = folderTil.editText!!.text.toString(),
+                uri = uriTil.text,
+                name = titleTil.text,
+                group = folderTil.text,
                 genre = genres,
-                url = urlTil.editText!!.text.toString(),
-                sample = sampleTil.editText!!.text.toString().toInt(),
-                bitrate = bitrateTil.editText!!.text.toString().toInt()
+                url = urlTil.text,
+                sample = sampleTil.text.substringBefore("Hz").toInt(),
+                bitrate = bitrateTil.text.substringBefore("kbps").toInt()
         )
     }
 
@@ -166,6 +171,11 @@ class StationFragment : BaseFragment(), StationView, BackPressListener {
         editText?.setText(string)
         isHintAnimationEnabled = true
     }
+
+    private val TextInputLayout.text: String
+        get() {
+            return editText!!.text.toString()
+        }
 
     private fun TextInputLayout.setEditable(enable: Boolean) {
         editText?.apply {
@@ -178,19 +188,6 @@ class StationFragment : BaseFragment(), StationView, BackPressListener {
             else setBackgroundResource(0)
         }
     }
-
-    private fun TextInputLayout.cutOff(editable: Boolean, suffix: String) {
-        val s = editText?.text.toString()
-        val new = if (editable) {
-            val value = s.substringBeforeLast(suffix)
-            if (value == "n/a") "0" else value
-        } else {
-            if (s == "0" || s.isBlank()) "n/a" else s + suffix
-        }
-        setTextWithoutAnimation(new)
-    }
-
-    private fun TextInputLayout.isBlank() = editText?.text?.isBlank() ?: true
 
     private fun TextInputLayout.linkStyle(enable: Boolean) {
         editText?.apply {

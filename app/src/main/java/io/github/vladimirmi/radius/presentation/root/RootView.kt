@@ -20,5 +20,8 @@ interface RootView : MvpView {
     fun showControls(visible: Boolean)
 
     @StateStrategyType(OneExecutionStateStrategy::class)
+    fun showMetadata(visible: Boolean)
+
+    @StateStrategyType(OneExecutionStateStrategy::class)
     fun showLoadingIndicator(visible: Boolean)
 }

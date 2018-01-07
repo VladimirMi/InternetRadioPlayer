@@ -37,11 +37,6 @@ class IconPickerFragment : BaseFragment(), IconPickerView, BackPressListener {
         }
     }
 
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-        ToolbarBuilder().build(activity as ToolbarView)
-    }
-
     override fun onViewCreated(view: View?, savedInstanceState: Bundle?) {
         iconTextEt.isSelected = true
         optionsRg.setOnCheckedChangeListener { _, checkedId ->
@@ -74,6 +69,10 @@ class IconPickerFragment : BaseFragment(), IconPickerView, BackPressListener {
     override fun onBackPressed() = presenter.onBackPressed()
 
     //region =============== IconPickerView ==============
+
+    override fun buildToolbar(builder: ToolbarBuilder) {
+        builder.build(activity as ToolbarView)
+    }
 
     override fun setIconImage(icon: Bitmap) {
         iconIv.setImageBitmap(icon)

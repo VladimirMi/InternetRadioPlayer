@@ -46,7 +46,9 @@ class StationPresenter
 
     override fun onFirstViewAttach() {
         viewState.setStation(stationInteractor.currentStation)
-        viewState.setStationIcon(stationInteractor.currentIcon.bitmap)
+        stationInteractor.currentIconObs()
+                .subscribe { viewState.setStationIcon(it.bitmap) }
+                .addTo(compDisp)
 
         createMode = stationInteractor.isCreateMode
         if (createMode) editMode() else viewMode()
@@ -106,6 +108,7 @@ class StationPresenter
 
     fun cancelEdit() {
         viewState.setStation(stationInteractor.currentStation)
+        stationInteractor.currentStation = stationInteractor.currentStation
         viewMode()
     }
 
@@ -134,7 +137,11 @@ class StationPresenter
     fun onBackPressed(): Boolean {
         when {
             createMode -> viewState.openCancelCreateDialog()
-            editMode -> viewState.openCancelEditDialog()
+            editMode -> {
+                stationInteractor.iconChanged()
+                        .subscribeBy { viewState.openCancelEditDialog(stationInteractor.currentStation, it) }
+                        .addTo(compDisp)
+            }
             else -> router.backTo(Router.MEDIA_LIST_SCREEN)
         }
         return true

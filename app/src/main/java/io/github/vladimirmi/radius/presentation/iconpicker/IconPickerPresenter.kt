@@ -4,8 +4,10 @@ import android.graphics.Bitmap
 import com.arellomobile.mvp.InjectViewState
 import io.github.vladimirmi.radius.model.entity.Icon
 import io.github.vladimirmi.radius.model.interactor.StationInteractor
+import io.github.vladimirmi.radius.model.repository.MediaController
 import io.github.vladimirmi.radius.navigation.Router
 import io.github.vladimirmi.radius.presentation.root.RootPresenter
+import io.github.vladimirmi.radius.presentation.root.ToolbarBuilder
 import io.github.vladimirmi.radius.ui.base.BasePresenter
 import javax.inject.Inject
 
@@ -17,6 +19,7 @@ import javax.inject.Inject
 class IconPickerPresenter
 @Inject constructor(private val rootPresenter: RootPresenter,
                     private val stationInteractor: StationInteractor,
+                    private val mediaController: MediaController,
                     private val router: Router)
     : BasePresenter<IconPickerView>() {
 
@@ -54,6 +57,7 @@ class IconPickerPresenter
 
     override fun onFirstViewAttach() {
         stationInteractor.currentIcon.let {
+            viewState.buildToolbar(ToolbarBuilder().setToolbarTitle(it.name))
             viewState.setIconImage(it.bitmap)
             backgroundColor = it.backgroundColor
             foregroundColor = it.foregroundColor
@@ -63,6 +67,7 @@ class IconPickerPresenter
         }
 
         rootPresenter.viewState.showControls(false)
+        rootPresenter.viewState.showMetadata(false)
     }
 
     fun saveIcon(bitmap: Bitmap) {
@@ -86,6 +91,9 @@ class IconPickerPresenter
 
     fun exit() {
         rootPresenter.viewState.showControls(true)
+        if (!mediaController.isStopped) {
+            rootPresenter.viewState.showMetadata(true)
+        }
         router.exit()
     }
 

@@ -82,6 +82,9 @@ class MediaController
                 (playbackState.value.state == PlaybackStateCompat.STATE_PLAYING ||
                         playbackState.value.state == PlaybackStateCompat.STATE_BUFFERING)
 
+    val isStopped: Boolean
+        get() = playbackState.hasValue() &&
+                (playbackState.value.state == PlaybackStateCompat.STATE_STOPPED)
 
     fun playPause() {
         if (isPlaying) {

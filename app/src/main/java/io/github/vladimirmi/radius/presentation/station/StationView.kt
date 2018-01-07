@@ -26,10 +26,10 @@ interface StationView : MvpView {
     @StateStrategyType(AddToEndSingleStrategy::class)
     fun setEditMode(editMode: Boolean)
 
-    @StateStrategyType(AddToEndSingleStrategy::class)
+    @StateStrategyType(OneExecutionStateStrategy::class)
     fun editStation()
 
-    @StateStrategyType(AddToEndSingleStrategy::class)
+    @StateStrategyType(OneExecutionStateStrategy::class)
     fun createStation()
 
     @StateStrategyType(OneExecutionStateStrategy::class)
@@ -39,7 +39,7 @@ interface StationView : MvpView {
     fun openLinkDialog(url: String)
 
     @StateStrategyType(OneExecutionStateStrategy::class)
-    fun openCancelEditDialog()
+    fun openCancelEditDialog(currentStation: Station, iconChanged: Boolean)
 
     @StateStrategyType(OneExecutionStateStrategy::class)
     fun openCancelCreateDialog()

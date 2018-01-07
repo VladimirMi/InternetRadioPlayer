@@ -57,7 +57,6 @@ class PlayerService : MediaBrowserServiceCompat(), SessionCallback.Interface {
     private var stopTask: TimerTask? = null
 
     override fun onCreate() {
-        Timber.e("onCreate: ")
         super.onCreate()
         Toothpick.inject(this, Scopes.app)
 
@@ -73,12 +72,9 @@ class PlayerService : MediaBrowserServiceCompat(), SessionCallback.Interface {
         notification = MediaNotification(this, session)
 
         stationInteractor.currentStationObs().subscribe {
-            //            currentStationId = it.id
-            if (isPlaying
-//                    && currentStationId != playingStationId
-                    ) playCurrent()
-        }
-                .addTo(compDisp)
+            currentStationId = it.id
+            if (isPlaying && currentStationId != playingStationId) playCurrent()
+        }.addTo(compDisp)
 
         controlsInteractor.playerModeObs.delaySubscription(1000, TimeUnit.MILLISECONDS)
                 .subscribe {
@@ -126,11 +122,11 @@ class PlayerService : MediaBrowserServiceCompat(), SessionCallback.Interface {
     //region =============== SessionCallback ==============
 
     override fun onPlayCommand() {
+        Timber.e("onPlayCommand: ")
         stopTask?.cancel()
         startService()
         if (session.controller.playbackState.state == PlaybackStateCompat.STATE_PAUSED
-//                && currentStationId == playingStationId
-                ) {
+                && currentStationId == playingStationId) {
             playback.resume()
         } else {
             playCurrent()
@@ -197,11 +193,12 @@ class PlayerService : MediaBrowserServiceCompat(), SessionCallback.Interface {
 
     private fun createMetadata(key: String = "", value: String = ""): MediaMetadataCompat {
         Timber.d("metadata $key: $value")
-        val (artist, title) = if (value.contains('-')) {
+        var (artist, title) = if (value.contains('-')) {
             value.split("-").map { it.trim() }
         } else {
             listOf("", value)
         }
+        if (title.endsWith(']')) title = title.substringBeforeLast('[')
         return MediaMetadataCompat.Builder(metadata)
                 .putString(MediaMetadataCompat.METADATA_KEY_ARTIST, artist)
                 .putString(MediaMetadataCompat.METADATA_KEY_TITLE, title)
@@ -226,7 +223,7 @@ class PlayerService : MediaBrowserServiceCompat(), SessionCallback.Interface {
 
     private fun playCurrent() {
         val station = stationInteractor.currentStation
-//        playingStationId = station.id
+        playingStationId = station.id
 
         metadata = MediaMetadataCompat.Builder(metadata)
                 .putString(MediaMetadataCompat.METADATA_KEY_ALBUM, station.name)

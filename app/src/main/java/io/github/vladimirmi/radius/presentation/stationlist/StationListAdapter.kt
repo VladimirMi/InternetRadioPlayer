@@ -1,4 +1,4 @@
-package io.github.vladimirmi.radius.presentation.mediaList
+package io.github.vladimirmi.radius.presentation.stationlist
 
 import android.support.v7.widget.RecyclerView
 import android.view.LayoutInflater
@@ -22,7 +22,7 @@ import kotlinx.android.synthetic.main.item_group_title.view.*
  * Created by Vladimir Mikhalev 04.10.2017.
  */
 
-class MediaListAdapter(private val callback: MediaItemCallback)
+class MediaListAdapter(private val callback: StationItemCallback)
     : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
 
     private companion object {
@@ -40,6 +40,17 @@ class MediaListAdapter(private val callback: MediaItemCallback)
         notifyDataSetChanged()
     }
 
+    fun getStation(position: Int): Station? {
+        return if (stationList.isGroupTitle(position)) null
+        else stationList.getGroupItem(position)
+    }
+
+    fun selectItem(station: Station, playing: Boolean) {
+        selected = station
+        this.playing = playing
+        notifyDataSetChanged()
+    }
+
     override fun getItemViewType(position: Int): Int =
             if (stationList.isGroupTitle(position)) GROUP_TITLE else GROUP_ITEM
 
@@ -54,32 +65,35 @@ class MediaListAdapter(private val callback: MediaItemCallback)
 
     override fun onBindViewHolder(holder: RecyclerView.ViewHolder, position: Int) {
         when (holder) {
-            is MediaGroupTitleVH -> {
-                val title = stationList.getGroupTitle(position)
-                holder.bind(title, callback)
-                holder.expanded(stationList.isGroupVisible(title))
-                if (!stationList.isGroupVisible(title) && selected?.group == title) {
-                    holder.select(playing)
-                } else {
-                    holder.unselect()
-                }
-            }
-            is MediaGroupItemVH -> {
-                val station = stationList.getGroupItem(position)
-                holder.bind(station)
-                holder.setCallback(callback, station)
-                if (station.uri == selected?.uri) {
-                    holder.select(playing)
-                } else {
-                    holder.unselect()
-                }
-
-                stationInteractor.getIcon(station.name)
-                        .ioToMain()
-                        .subscribeBy { holder.iconView.setImageBitmap(it.bitmap) }
-                        .addTo(holder.compDisp)
-            }
+            is MediaGroupTitleVH -> setupGroupTitleVH(position, holder)
+            is MediaGroupItemVH -> setupGroupItemVH(position, holder)
         }
+    }
+
+    private fun setupGroupTitleVH(position: Int, holder: MediaGroupTitleVH) {
+        val title = stationList.getGroupTitle(position)
+        holder.bind(title, callback)
+        holder.expanded(stationList.isGroupVisible(title))
+        if (!stationList.isGroupVisible(title) && selected?.group == title) {
+            holder.select(playing)
+        } else {
+            holder.unselect()
+        }
+    }
+
+    private fun setupGroupItemVH(position: Int, holder: MediaGroupItemVH) {
+        val station = stationList.getGroupItem(position)
+        holder.bind(station)
+        holder.setCallback(callback, station)
+        if (station.uri == selected?.uri) {
+            holder.select(playing)
+        } else {
+            holder.unselect()
+        }
+        stationInteractor.getIcon(station.name)
+                .ioToMain()
+                .subscribeBy { holder.iconView.setImageBitmap(it.bitmap) }
+                .addTo(holder.compDisp)
     }
 
     override fun onViewRecycled(holder: RecyclerView.ViewHolder?) {
@@ -87,21 +101,10 @@ class MediaListAdapter(private val callback: MediaItemCallback)
     }
 
     override fun getItemCount(): Int = stationList.overallSize()
-
-    fun selectItem(station: Station, playing: Boolean) {
-        selected = station
-        this.playing = playing
-        notifyDataSetChanged()
-    }
-
-    fun getStation(position: Int): Station? {
-        return if (stationList.isGroupTitle(position)) null
-        else stationList.getGroupItem(position)
-    }
 }
 
 class MediaGroupTitleVH(itemView: View) : RecyclerView.ViewHolder(itemView) {
-    fun bind(title: String, callback: MediaItemCallback) {
+    fun bind(title: String, callback: StationItemCallback) {
         itemView.title.text = title
         itemView.setOnClickListener { callback.onGroupSelected(title) }
     }
@@ -120,8 +123,7 @@ class MediaGroupTitleVH(itemView: View) : RecyclerView.ViewHolder(itemView) {
     }
 }
 
-class MediaGroupItemVH(itemView: View)
-    : DisposableVH(itemView) {
+class MediaGroupItemVH(itemView: View) : DisposableVH(itemView) {
 
     val iconView: ImageView = itemView.iconIv
 
@@ -132,8 +134,12 @@ class MediaGroupItemVH(itemView: View)
         }
     }
 
-    fun setCallback(callback: MediaItemCallback, station: Station) {
+    fun setCallback(callback: StationItemCallback, station: Station) {
         itemView.setOnClickListener { callback.onItemSelected(station) }
+        itemView.setOnLongClickListener {
+            callback.onItemOpened(station)
+            true
+        }
     }
 
     fun select(playing: Boolean) {
@@ -146,8 +152,9 @@ class MediaGroupItemVH(itemView: View)
     }
 }
 
-interface MediaItemCallback {
+interface StationItemCallback {
     fun onItemSelected(station: Station)
     fun onGroupSelected(group: String)
+    fun onItemOpened(station: Station)
 }
 

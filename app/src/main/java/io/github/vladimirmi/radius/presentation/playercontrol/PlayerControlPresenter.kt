@@ -1,4 +1,4 @@
-package io.github.vladimirmi.radius.presentation.playerControl
+package io.github.vladimirmi.radius.presentation.playercontrol
 
 import android.support.v4.media.session.PlaybackStateCompat
 import android.support.v4.media.session.PlaybackStateCompat.*

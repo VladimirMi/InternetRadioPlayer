@@ -1,4 +1,4 @@
-package io.github.vladimirmi.radius.presentation.playerControl
+package io.github.vladimirmi.radius.presentation.playercontrol
 
 import android.graphics.Bitmap
 import com.arellomobile.mvp.MvpView

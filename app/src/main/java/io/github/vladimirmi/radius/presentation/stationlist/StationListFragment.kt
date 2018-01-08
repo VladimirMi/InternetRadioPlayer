@@ -1,4 +1,4 @@
-package io.github.vladimirmi.radius.presentation.mediaList
+package io.github.vladimirmi.radius.presentation.stationlist
 
 import android.os.Bundle
 import android.support.v7.widget.LinearLayoutManager
@@ -22,30 +22,26 @@ import toothpick.Toothpick
  * Created by Vladimir Mikhalev 30.09.2017.
  */
 
-class MediaListFragment : BaseFragment(), MediaListView, MediaItemCallback {
+class StationListFragment : BaseFragment(), StationListView, StationItemCallback {
 
     override val layoutRes = R.layout.fragment_media_list
     private val adapter = MediaListAdapter(this)
 
-    private val itemTouchHelper = ItemTouchHelper(object : ItemSwipeCallback(Scopes.context,
-            0,
-            ItemTouchHelper.LEFT or ItemTouchHelper.RIGHT) {
-        override fun onSwiped(viewHolder: RecyclerView.ViewHolder, direction: Int) {
-            val station = adapter.getStation(viewHolder.adapterPosition) ?: return
-            if (direction == ItemTouchHelper.LEFT) {
-                RemoveDialog.newInstance(station).show(childFragmentManager, "remove_dialog")
-            } else {
+    private val itemTouchHelper by lazy {
+        ItemTouchHelper(object : ItemSwipeCallback(context, 0, ItemTouchHelper.LEFT or ItemTouchHelper.RIGHT) {
+            override fun onSwiped(viewHolder: RecyclerView.ViewHolder, direction: Int) {
+                val station = adapter.getStation(viewHolder.adapterPosition) ?: return
                 presenter.showStation(station)
             }
-        }
-    })
+        })
+    }
 
-    @InjectPresenter lateinit var presenter: MediaListPresenter
+    @InjectPresenter lateinit var presenter: StationListPresenter
 
     @ProvidePresenter
-    fun providePresenter(): MediaListPresenter {
+    fun providePresenter(): StationListPresenter {
         return Toothpick.openScopes(Scopes.ROOT_ACTIVITY, this)
-                .getInstance(MediaListPresenter::class.java).also {
+                .getInstance(StationListPresenter::class.java).also {
             Toothpick.closeScope(this)
         }
     }
@@ -60,16 +56,10 @@ class MediaListFragment : BaseFragment(), MediaListView, MediaItemCallback {
         itemTouchHelper.attachToRecyclerView(media_recycler)
     }
 
+    //region =============== StationListView ==============
+
     override fun setMediaList(stationList: GroupedList<Station>) {
         adapter.setData(stationList)
-    }
-
-    override fun onGroupSelected(group: String) {
-        presenter.selectGroup(group)
-    }
-
-    override fun onItemSelected(station: Station) {
-        presenter.select(station)
     }
 
     override fun selectItem(station: Station, playing: Boolean) {
@@ -83,4 +73,22 @@ class MediaListFragment : BaseFragment(), MediaListView, MediaItemCallback {
     override fun buildToolbar(builder: ToolbarBuilder) {
         builder.build(activity as ToolbarView)
     }
+
+    //endregion
+
+    //region =============== StationItemCallback ==============
+
+    override fun onGroupSelected(group: String) {
+        presenter.selectGroup(group)
+    }
+
+    override fun onItemSelected(station: Station) {
+        presenter.select(station)
+    }
+
+    override fun onItemOpened(station: Station) {
+        presenter.showStation(station)
+    }
+
+    //endregion
 }

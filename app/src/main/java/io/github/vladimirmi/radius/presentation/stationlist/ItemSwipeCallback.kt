@@ -1,4 +1,4 @@
-package io.github.vladimirmi.radius.presentation.mediaList
+package io.github.vladimirmi.radius.presentation.stationlist
 
 import android.content.Context
 import android.graphics.Canvas
@@ -23,9 +23,9 @@ abstract class ItemSwipeCallback(context: Context,
 
     private val dp = context.dp
     private val sp = context.sp
-    private val rightIcon = ContextCompat.getDrawable(context, R.drawable.ic_delete)
+    //    private val rightIcon = ContextCompat.getDrawable(context, R.drawable.ic_delete)
     private val leftIcon = ContextCompat.getDrawable(context, R.drawable.ic_edit)
-    private val rightColor = ContextCompat.getColor(context, R.color.deep_orange_500)
+    //    private val rightColor = ContextCompat.getColor(context, R.color.deep_orange_500)
     private val leftColor = ContextCompat.getColor(context, R.color.accentColor)
     private val rightText = context.getString(R.string.menu_station_delete).toUpperCase()
     private val leftText = context.getString(R.string.show).toUpperCase()
@@ -111,7 +111,7 @@ abstract class ItemSwipeCallback(context: Context,
                 val clipShape = RectF(splashL, splashT, splashR, splashB)
                 c.save()
                 c.clipRect(clipShape)
-                c.drawColor(rightColor)
+                c.drawColor(leftColor)
                 c.restore()
 
                 //drawing text
@@ -125,8 +125,8 @@ abstract class ItemSwipeCallback(context: Context,
                 val iconT = itemView.top + itemHeight / 2 - iconSize / 2
                 val iconR = itemView.right - horizontalIconMargin
                 val iconB = itemView.bottom - itemHeight / 2 + iconSize / 2
-                rightIcon.setBounds(iconL, iconT, iconR, iconB)
-                rightIcon.draw(c)
+                leftIcon.setBounds(iconL, iconT, iconR, iconB)
+                leftIcon.draw(c)
 
                 //drawing shadow
                 val shadowL = itemView.right + dX.toInt()

@@ -1,4 +1,4 @@
-package io.github.vladimirmi.radius.presentation.mediaList
+package io.github.vladimirmi.radius.presentation.stationlist
 
 import com.arellomobile.mvp.InjectViewState
 import io.github.vladimirmi.radius.R
@@ -18,12 +18,12 @@ import javax.inject.Inject
  */
 
 @InjectViewState
-class MediaListPresenter
+class StationListPresenter
 @Inject constructor(private val rootPresenter: RootPresenter,
                     private val interactor: StationInteractor,
                     private val mediaController: MediaController,
                     private val router: Router)
-    : BasePresenter<MediaListView>() {
+    : BasePresenter<StationListView>() {
 
     val builder get() = ToolbarBuilder()
 

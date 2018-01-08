@@ -5,9 +5,9 @@ import android.support.v4.app.FragmentTransaction
 import io.github.vladimirmi.radius.R
 import io.github.vladimirmi.radius.presentation.getstarted.GetStartedFragment
 import io.github.vladimirmi.radius.presentation.iconpicker.IconPickerFragment
-import io.github.vladimirmi.radius.presentation.mediaList.MediaListFragment
 import io.github.vladimirmi.radius.presentation.root.RootActivity
 import io.github.vladimirmi.radius.presentation.station.StationFragment
+import io.github.vladimirmi.radius.presentation.stationlist.StationListFragment
 import ru.terrakok.cicerone.android.SupportAppNavigator
 import ru.terrakok.cicerone.commands.*
 
@@ -40,7 +40,7 @@ class Navigator(activity: RootActivity, containerId: Int)
         val screen = screenKey.substringBefore(Router.DELIMITER)
         return when (screen) {
             Router.GET_STARTED_SCREEN -> GetStartedFragment()
-            Router.MEDIA_LIST_SCREEN -> MediaListFragment()
+            Router.MEDIA_LIST_SCREEN -> StationListFragment()
             Router.STATION_SCREEN -> StationFragment()
             Router.ICON_PICKER_SCREEN -> IconPickerFragment()
             else -> null

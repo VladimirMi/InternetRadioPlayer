@@ -1,4 +1,4 @@
-package io.github.vladimirmi.radius.presentation.mediaList
+package io.github.vladimirmi.radius.presentation.stationlist
 
 import com.arellomobile.mvp.MvpView
 import com.arellomobile.mvp.viewstate.strategy.AddToEndSingleStrategy
@@ -12,7 +12,7 @@ import io.github.vladimirmi.radius.presentation.root.ToolbarBuilder
  * Created by Vladimir Mikhalev 30.09.2017.
  */
 
-interface MediaListView : MvpView {
+interface StationListView : MvpView {
 
     @StateStrategyType(AddToEndSingleStrategy::class)
     fun setMediaList(stationList: GroupedList<Station>)

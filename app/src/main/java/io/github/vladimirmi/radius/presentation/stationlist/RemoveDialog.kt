@@ -1,4 +1,4 @@
-package io.github.vladimirmi.radius.presentation.mediaList
+package io.github.vladimirmi.radius.presentation.stationlist
 
 import android.os.Bundle
 import io.github.vladimirmi.radius.R
@@ -26,11 +26,11 @@ open class RemoveDialog : BaseDialogFragment() {
 
     override fun onPositive() {
         val station = arguments.getParcelable<Station>(KEY_STATION)
-        (parentFragment as MediaListFragment).presenter
+        (parentFragment as StationListFragment).presenter
                 .removeStation(station)
     }
 
     override fun onNegative() {
-        (parentFragment as MediaListFragment).notifyList()
+        (parentFragment as StationListFragment).notifyList()
     }
 }

@@ -44,7 +44,7 @@ fun View.setTint(@ColorInt colorInt: Int) {
 }
 
 fun Drawable.setTintExt(@ColorInt colorInt: Int) {
-    val wrapped = DrawableCompat.wrap(this).mutate()
+    val wrapped = DrawableCompat.wrap(this)
     DrawableCompat.setTint(wrapped, colorInt)
 }
 

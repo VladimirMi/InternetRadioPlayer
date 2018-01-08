@@ -144,7 +144,7 @@ class RootActivity : MvpAppCompatActivity(), RootView, ToolbarView {
     override fun onPrepareOptionsMenu(menu: Menu): Boolean {
         if (toolBarMenuItems.isNotEmpty()) {
             for (menuItemHolder in toolBarMenuItems) {
-                val item = menu.add(menuItemHolder.itemTitle)
+                val item = menu.add(menuItemHolder.itemTitleResId)
                 if (menuItemHolder.hasPopupMenu()) {
                     configurePopupFor(item, menuItemHolder)
                 } else {
@@ -154,7 +154,7 @@ class RootActivity : MvpAppCompatActivity(), RootView, ToolbarView {
                         true
                     }
                 }
-                item.setShowAsActionFlags(MenuItem.SHOW_AS_ACTION_ALWAYS)
+                item.setShowAsActionFlags(MenuItem.SHOW_AS_ACTION_IF_ROOM)
             }
         }
         return super.onPrepareOptionsMenu(menu)

@@ -3,7 +3,8 @@ package io.github.vladimirmi.radius.model.repository
 import android.net.Uri
 import com.jakewharton.rxrelay2.BehaviorRelay
 import io.github.vladimirmi.radius.extensions.toSingle
-import io.github.vladimirmi.radius.model.entity.GroupingList
+import io.github.vladimirmi.radius.model.entity.Filter
+import io.github.vladimirmi.radius.model.entity.GroupedList.GroupingList
 import io.github.vladimirmi.radius.model.entity.Station
 import io.github.vladimirmi.radius.model.manager.Preferences
 import io.github.vladimirmi.radius.model.source.StationSource
@@ -19,15 +20,14 @@ class StationListRepository
 @Inject constructor(private val stationSource: StationSource,
                     private val preferences: Preferences) {
 
-    val stationList: GroupingList = GroupingList(ArrayList())
+    val stationList: GroupingList = GroupingList()
     val currentStation: BehaviorRelay<Station> = BehaviorRelay.createDefault(Station.nullObject())
 
     fun initStations() {
         stationList.addAll(stationSource.getStationList())
-        if (stationList.size > preferences.currentPos) {
-            currentStation.accept(stationList[preferences.currentPos])
-        }
+        currentStation.accept(stationList[preferences.currentPos])
         preferences.hidedGroups.forEach { stationList.hideGroup(it) }
+        stationList.filter(Filter.valueOf(preferences.filter))
     }
 
     fun setCurrentStation(station: Station) {
@@ -74,5 +74,10 @@ class StationListRepository
 
     private fun saveStation(station: Station) {
         stationSource.saveStation(station)
+    }
+
+    fun filterStations(filter: Filter) {
+        stationList.filter(filter)
+        preferences.filter = filter.name
     }
 }

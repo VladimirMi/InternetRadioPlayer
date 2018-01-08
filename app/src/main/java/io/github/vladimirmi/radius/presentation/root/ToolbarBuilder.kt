@@ -37,6 +37,16 @@ class ToolbarBuilder {
         return this
     }
 
+    fun removeAction(menuItemHolder: MenuItemHolder): ToolbarBuilder {
+        menuItems.remove(menuItemHolder)
+        return this
+    }
+
+    fun clearActions(): ToolbarBuilder {
+        menuItems.clear()
+        return this
+    }
+
     fun build(toolbarView: ToolbarView) {
         toolbarView.setToolbarVisible(isToolbarVisible)
         if (title.isNotBlank()) {
@@ -49,7 +59,7 @@ class ToolbarBuilder {
     }
 }
 
-class MenuItemHolder(val itemTitle: String,
+class MenuItemHolder(val itemTitleResId: Int,
                      val iconResId: Int,
                      val actions: (MenuItem) -> Unit,
                      val popupMenu: Int? = null) {

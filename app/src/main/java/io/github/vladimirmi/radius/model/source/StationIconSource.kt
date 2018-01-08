@@ -75,7 +75,6 @@ class StationIconSource
     }
 
     fun cacheIcon(icon: Icon) {
-        Timber.e("cacheIcon: ${icon.name}")
         bitmapCache.put(icon.name, icon)
     }
 

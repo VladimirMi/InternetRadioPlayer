@@ -1,7 +1,8 @@
 package io.github.vladimirmi.radius.model.interactor
 
 import android.net.Uri
-import io.github.vladimirmi.radius.model.entity.GroupedList
+import io.github.vladimirmi.radius.model.entity.Filter
+import io.github.vladimirmi.radius.model.entity.GroupedList.GroupedList
 import io.github.vladimirmi.radius.model.entity.Icon
 import io.github.vladimirmi.radius.model.entity.Station
 import io.github.vladimirmi.radius.model.repository.StationIconRepository
@@ -9,7 +10,6 @@ import io.github.vladimirmi.radius.model.repository.StationListRepository
 import io.reactivex.Completable
 import io.reactivex.Observable
 import io.reactivex.Single
-import timber.log.Timber
 import javax.inject.Inject
 
 /**
@@ -20,7 +20,7 @@ class StationInteractor
 @Inject constructor(private val stationRepository: StationListRepository,
                     private val iconRepository: StationIconRepository) {
 
-    private val stationList get() = stationRepository.stationList
+    private val stationList: GroupedList<Station> get() = stationRepository.stationList
 
     private var previousWhenCreate: Station? = null
 
@@ -30,8 +30,8 @@ class StationInteractor
             if (!value) previousWhenCreate = null
         }
 
-    fun hasStations(): Boolean {
-        return stationList.isNotEmpty()
+    fun hasStations(predicate: (Station) -> Boolean = { true }): Boolean {
+        return stationList.hasItems(predicate)
     }
 
     fun stationListObs(): Observable<GroupedList<Station>> {
@@ -61,7 +61,7 @@ class StationInteractor
     }
 
     fun addStation(station: Station): Single<Boolean> {
-        return if (stationList.find { it.name == station.name } == null) {
+        return if (stationList.indexOfFirst { it.name == station.name } == -1) {
             stationRepository.addStation(station)
                     .mergeWith(saveCurrentIcon(station.name))
                     .doOnComplete { currentStation = station }
@@ -82,7 +82,7 @@ class StationInteractor
 
         return updateStation.mergeWith(updateIcon)
                 .concatWith(remove)
-                .doOnComplete { currentStation = newStation }
+                .doOnComplete { if (stationList.contains(newStation)) currentStation = newStation }
     }
 
     fun removeStation(station: Station): Completable {
@@ -96,6 +96,10 @@ class StationInteractor
         } else {
             stationRepository.showGroup(group)
         }
+    }
+
+    fun filterStations(filter: Filter) {
+        stationRepository.filterStations(filter)
     }
 
     //region =============== Icon ==============
@@ -125,7 +129,6 @@ class StationInteractor
         return iconChanged()
                 .flatMapCompletable { changed ->
                     if (changed || currentIcon.name != newName) {
-                        Timber.e("saveCurrentIcon: ")
                         iconRepository.saveStationIcon(newIcon)
                     } else {
                         Completable.complete()

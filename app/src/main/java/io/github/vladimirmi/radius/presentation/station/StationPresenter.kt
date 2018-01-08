@@ -58,7 +58,7 @@ class StationPresenter
         editMode = false
         viewState.setEditMode(editMode)
         val toolbar = toolbarBuilder.addAction(MenuItemHolder(
-                itemTitle = "more",
+                itemTitleResId = R.string.menu_more,
                 iconResId = R.drawable.ic_more,
                 actions = menuActions,
                 popupMenu = R.menu.menu_station
@@ -72,7 +72,7 @@ class StationPresenter
         editMode = true
         viewState.setEditMode(editMode)
         val toolbar = toolbarBuilder.addAction(MenuItemHolder(
-                itemTitle = "more",
+                itemTitleResId = R.string.menu_more,
                 iconResId = R.drawable.ic_more,
                 actions = menuActions,
                 popupMenu = R.menu.menu_station_edit

@@ -10,12 +10,13 @@ import com.arellomobile.mvp.presenter.InjectPresenter
 import com.arellomobile.mvp.presenter.ProvidePresenter
 import io.github.vladimirmi.radius.R
 import io.github.vladimirmi.radius.di.Scopes
-import io.github.vladimirmi.radius.model.entity.GroupedList
+import io.github.vladimirmi.radius.model.entity.GroupedList.GroupedList
 import io.github.vladimirmi.radius.model.entity.Station
 import io.github.vladimirmi.radius.presentation.root.ToolbarBuilder
 import io.github.vladimirmi.radius.presentation.root.ToolbarView
 import io.github.vladimirmi.radius.ui.base.BaseFragment
 import kotlinx.android.synthetic.main.fragment_media_list.*
+import timber.log.Timber
 import toothpick.Toothpick
 
 /**
@@ -59,6 +60,7 @@ class StationListFragment : BaseFragment(), StationListView, StationItemCallback
     //region =============== StationListView ==============
 
     override fun setMediaList(stationList: GroupedList<Station>) {
+        Timber.e("setMediaList: ${stationList.itemSize}")
         adapter.setData(stationList)
     }
 

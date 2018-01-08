@@ -2,6 +2,7 @@ package io.github.vladimirmi.radius.presentation.playercontrol
 
 import android.graphics.Bitmap
 import android.os.Bundle
+import android.support.v4.content.ContextCompat
 import android.view.View
 import com.arellomobile.mvp.presenter.InjectPresenter
 import com.arellomobile.mvp.presenter.ProvidePresenter
@@ -9,6 +10,7 @@ import io.github.vladimirmi.radius.R
 import io.github.vladimirmi.radius.di.Scopes
 import io.github.vladimirmi.radius.extensions.color
 import io.github.vladimirmi.radius.extensions.setTint
+import io.github.vladimirmi.radius.extensions.setTintExt
 import io.github.vladimirmi.radius.model.entity.Station
 import io.github.vladimirmi.radius.ui.base.BaseFragment
 import kotlinx.android.synthetic.main.fragment_player_controls.*
@@ -50,7 +52,13 @@ class PlayerControlFragment : BaseFragment(), PlayerControlView {
     }
 
     override fun setStation(station: Station) {
-        favorite.setBackgroundResource(if (station.favorite) R.drawable.ic_star else R.drawable.ic_empty_star)
+        if (station.favorite) {
+            favorite.setBackgroundResource(R.drawable.ic_star)
+        } else {
+            favorite.background = ContextCompat.getDrawable(context, R.drawable.ic_empty_star).apply {
+                mutate().setTintExt(ContextCompat.getColor(context, R.color.grey_700))
+            }
+        }
     }
 
     override fun setStationIcon(stationIcon: Bitmap) {

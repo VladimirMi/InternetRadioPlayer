@@ -2,6 +2,7 @@ package io.github.vladimirmi.radius.model.manager
 
 import android.content.Context
 import io.github.vladimirmi.radius.extensions.Preference
+import io.github.vladimirmi.radius.model.entity.Filter
 import javax.inject.Inject
 
 /**
@@ -14,5 +15,7 @@ class Preferences
     var currentPos: Int by Preference(context, "CURRENT_POSITION", 0)
 
     var hidedGroups: Set<String> by Preference(context, "HIDED_GROUPS", emptySet())
+
+    var filter: String by Preference(context, "CURRENT_FILTER", Filter.DEFAULT.name)
 
 }

@@ -4,7 +4,7 @@ import com.arellomobile.mvp.MvpView
 import com.arellomobile.mvp.viewstate.strategy.AddToEndSingleStrategy
 import com.arellomobile.mvp.viewstate.strategy.OneExecutionStateStrategy
 import com.arellomobile.mvp.viewstate.strategy.StateStrategyType
-import io.github.vladimirmi.radius.model.entity.GroupedList
+import io.github.vladimirmi.radius.model.entity.GroupedList.GroupedList
 import io.github.vladimirmi.radius.model.entity.Station
 import io.github.vladimirmi.radius.presentation.root.ToolbarBuilder
 

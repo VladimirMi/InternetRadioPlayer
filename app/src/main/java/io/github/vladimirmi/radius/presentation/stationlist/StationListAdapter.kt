@@ -9,11 +9,9 @@ import io.github.vladimirmi.radius.R
 import io.github.vladimirmi.radius.di.Scopes
 import io.github.vladimirmi.radius.extensions.color
 import io.github.vladimirmi.radius.extensions.ioToMain
-import io.github.vladimirmi.radius.model.entity.GroupedList
+import io.github.vladimirmi.radius.model.entity.GroupedList.GroupedList
 import io.github.vladimirmi.radius.model.entity.Station
 import io.github.vladimirmi.radius.model.interactor.StationInteractor
-import io.github.vladimirmi.radius.ui.base.DisposableVH
-import io.reactivex.rxkotlin.addTo
 import io.reactivex.rxkotlin.subscribeBy
 import kotlinx.android.synthetic.main.item_group_item.view.*
 import kotlinx.android.synthetic.main.item_group_title.view.*
@@ -93,14 +91,10 @@ class MediaListAdapter(private val callback: StationItemCallback)
         stationInteractor.getIcon(station.name)
                 .ioToMain()
                 .subscribeBy { holder.iconView.setImageBitmap(it.bitmap) }
-                .addTo(holder.compDisp)
     }
 
-    override fun onViewRecycled(holder: RecyclerView.ViewHolder?) {
-        (holder as? DisposableVH)?.dispose()
-    }
 
-    override fun getItemCount(): Int = stationList.overallSize()
+    override fun getItemCount(): Int = stationList.overallSize
 }
 
 class MediaGroupTitleVH(itemView: View) : RecyclerView.ViewHolder(itemView) {
@@ -123,7 +117,7 @@ class MediaGroupTitleVH(itemView: View) : RecyclerView.ViewHolder(itemView) {
     }
 }
 
-class MediaGroupItemVH(itemView: View) : DisposableVH(itemView) {
+class MediaGroupItemVH(itemView: View) : RecyclerView.ViewHolder(itemView) {
 
     val iconView: ImageView = itemView.iconIv
 

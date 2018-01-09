@@ -14,6 +14,7 @@ import io.github.vladimirmi.radius.presentation.root.ToolbarBuilder
 import io.github.vladimirmi.radius.ui.base.BasePresenter
 import io.reactivex.rxkotlin.addTo
 import io.reactivex.rxkotlin.subscribeBy
+import timber.log.Timber
 import javax.inject.Inject
 
 /**
@@ -78,6 +79,7 @@ class StationListPresenter
                     viewState.buildToolbar(builder.clearActions()
                             .addAction(favoriteOn))
                 } else {
+                    Timber.e("handleStationList: clearall")
                     viewState.buildToolbar(builder.clearActions())
                 }
             }

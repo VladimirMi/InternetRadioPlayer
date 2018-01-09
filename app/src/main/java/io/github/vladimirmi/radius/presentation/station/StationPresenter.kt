@@ -46,11 +46,12 @@ class StationPresenter
 
     override fun onFirstViewAttach() {
         viewState.setStation(stationInteractor.currentStation)
-        stationInteractor.currentIconObs()
-                .subscribe { viewState.setStationIcon(it.bitmap) }
-                .addTo(compDisp)
-
         if (createMode) editMode() else viewMode()
+    }
+
+    override fun attachView(view: StationView?) {
+        super.attachView(view)
+        viewState.setStationIcon(stationInteractor.currentIcon.bitmap)
     }
 
     private fun viewMode() {
@@ -142,7 +143,7 @@ class StationPresenter
                         .subscribeBy { viewState.openCancelEditDialog(stationInteractor.currentStation, it) }
                         .addTo(compDisp)
             }
-            else -> router.backTo(Router.MEDIA_LIST_SCREEN)
+            else -> router.backTo(null)
         }
         return true
     }

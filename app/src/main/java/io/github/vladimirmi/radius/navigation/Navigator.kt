@@ -89,8 +89,4 @@ class Navigator(activity: RootActivity, containerId: Int)
     override fun unknownScreen(command: Command?) {
         //do nothing
     }
-
-    override fun backToUnexisting() {
-        applyCommand(Replace(Router.MEDIA_LIST_SCREEN, null))
-    }
 }

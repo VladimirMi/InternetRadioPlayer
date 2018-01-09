@@ -27,6 +27,7 @@ import io.github.vladimirmi.radius.ui.base.BackPressListener
 import kotlinx.android.synthetic.main.activity_root.*
 import kotlinx.android.synthetic.main.view_menu_item.view.*
 import ru.terrakok.cicerone.NavigatorHolder
+import timber.log.Timber
 import toothpick.Toothpick
 import javax.inject.Inject
 
@@ -87,6 +88,7 @@ class RootActivity : MvpAppCompatActivity(), RootView, ToolbarView {
         val handled = supportFragmentManager?.fragments?.any {
             (it as? BackPressListener)?.onBackPressed() ?: false
         } ?: false
+        Timber.e("onBackPressed: $handled")
         if (!handled) super.onBackPressed()
     }
 

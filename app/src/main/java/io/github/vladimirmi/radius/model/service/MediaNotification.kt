@@ -10,6 +10,7 @@ import android.support.v4.media.session.PlaybackStateCompat
 import android.view.View
 import android.widget.RemoteViews
 import io.github.vladimirmi.radius.R
+import io.github.vladimirmi.radius.model.interactor.StationInteractor
 
 
 /**
@@ -17,7 +18,8 @@ import io.github.vladimirmi.radius.R
  */
 
 class MediaNotification(private val service: PlayerService,
-                        private val mediaSession: MediaSessionCompat) {
+                        private val mediaSession: MediaSessionCompat,
+                        private val stationInteractor: StationInteractor) {
     companion object {
         const val CHANNEL_ID = "radius channel"
         const val PLAYER_NOTIFICATION_ID = 50
@@ -63,7 +65,7 @@ class MediaNotification(private val service: PlayerService,
         MediaButtonReceiver.buildMediaButtonPendingIntent(service, PlaybackStateCompat.ACTION_STOP)
 
         notificationView.apply {
-            setImageViewBitmap(R.id.icon, description?.iconBitmap)
+            setImageViewBitmap(R.id.icon, stationInteractor.currentIcon.bitmap)
             setTextViewText(R.id.content_title, description?.title)
             setTextViewText(R.id.content_text, description?.subtitle)
 

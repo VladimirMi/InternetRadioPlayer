@@ -3,6 +3,7 @@ package io.github.vladimirmi.radius.presentation.stationlist
 import com.arellomobile.mvp.InjectViewState
 import io.github.vladimirmi.radius.R
 import io.github.vladimirmi.radius.model.entity.Filter
+import io.github.vladimirmi.radius.model.entity.GroupedList.GroupedList
 import io.github.vladimirmi.radius.model.entity.Station
 import io.github.vladimirmi.radius.model.interactor.StationInteractor
 import io.github.vladimirmi.radius.model.repository.MediaController
@@ -45,30 +46,7 @@ class StationListPresenter
     override fun onFirstViewAttach() {
         rootPresenter.viewState.showControls(true)
         interactor.stationListObs()
-                .subscribeBy {
-                    when (it.filter) {
-                        Filter.FAVORITE -> {
-                            if (it.canFilter(Filter.DEFAULT)) {
-                                if (it.itemSize == 0) {
-                                    interactor.filterStations(Filter.DEFAULT)
-                                } else if (!it.contains(interactor.currentStation)) {
-                                    interactor.currentStation = it.firstOrNull()
-                                }
-                                viewState.buildToolbar(builder.clearActions()
-                                        .addAction(favoriteOff))
-                            }
-                        }
-                        Filter.DEFAULT -> {
-                            if (it.canFilter(Filter.FAVORITE)) {
-                                viewState.buildToolbar(builder.clearActions()
-                                        .addAction(favoriteOn))
-                            } else {
-                                viewState.buildToolbar(builder.clearActions())
-                            }
-                        }
-                    }
-                    viewState.setMediaList(it)
-                }
+                .subscribeBy { handleStationList(it) }
                 .addTo(compDisp)
 
         interactor.currentStationObs()
@@ -80,6 +58,31 @@ class StationListPresenter
         mediaController.playbackState
                 .subscribe { viewState.selectItem(interactor.currentStation, mediaController.isPlaying) }
                 .addTo(compDisp)
+    }
+
+    private fun handleStationList(it: GroupedList<Station>) {
+        when (it.filter) {
+            Filter.FAVORITE -> {
+                if (it.canFilter(Filter.DEFAULT)) {
+                    if (it.itemSize == 0) {
+                        interactor.filterStations(Filter.DEFAULT)
+                    } else if (!it.contains(interactor.currentStation)) {
+                        interactor.currentStation = it.firstOrNull()
+                    }
+                    viewState.buildToolbar(builder.clearActions()
+                            .addAction(favoriteOff))
+                }
+            }
+            Filter.DEFAULT -> {
+                if (it.canFilter(Filter.FAVORITE)) {
+                    viewState.buildToolbar(builder.clearActions()
+                            .addAction(favoriteOn))
+                } else {
+                    viewState.buildToolbar(builder.clearActions())
+                }
+            }
+        }
+        viewState.setMediaList(it)
     }
 
     fun select(station: Station) {

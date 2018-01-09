@@ -10,6 +10,8 @@ import io.github.vladimirmi.radius.model.repository.StationListRepository
 import io.reactivex.Completable
 import io.reactivex.Observable
 import io.reactivex.Single
+import io.reactivex.android.schedulers.AndroidSchedulers
+import io.reactivex.schedulers.Schedulers
 import javax.inject.Inject
 
 /**
@@ -22,7 +24,8 @@ class StationInteractor
 
     private val stationList: GroupedList<Station> get() = stationRepository.stationList
 
-    private var previousWhenCreate: Station? = null
+    var previousWhenCreate: Station? = null
+        private set
 
     var isCreateMode: Boolean
         get() = previousWhenCreate != null
@@ -53,18 +56,19 @@ class StationInteractor
 
     fun createStation(uri: Uri): Single<Station> {
         return stationRepository.createStation(uri)
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
                 .doOnSuccess {
                     previousWhenCreate = currentStation
                     stationRepository.currentStation.accept(it)
-//                    playerModeObs.accept(PlayerMode.NEXT_PREVIOUS_DISABLED)
                 }
     }
 
     fun addStation(station: Station): Single<Boolean> {
-        return if (stationList.indexOfFirst { it.name == station.name } == -1) {
+        return if (!stationList.hasItems { it.name == station.name }) {
             stationRepository.addStation(station)
                     .mergeWith(saveCurrentIcon(station.name))
-                    .doOnComplete { currentStation = station }
+//                    .doOnComplete { currentStation = station }
                     .toSingle { true }
         } else Single.just(false)
     }
@@ -80,7 +84,7 @@ class StationInteractor
             removeStation(currentStation)
         } else Completable.complete()
 
-        return updateStation.mergeWith(updateIcon)
+        return updateIcon.mergeWith(updateStation)
                 .concatWith(remove)
                 .doOnComplete { if (stationList.contains(newStation)) currentStation = newStation }
     }
@@ -126,14 +130,13 @@ class StationInteractor
 
     private fun saveCurrentIcon(newName: String): Completable {
         val newIcon = currentIcon.copy(name = newName)
-        return iconChanged()
-                .flatMapCompletable { changed ->
-                    if (changed || currentIcon.name != newName) {
-                        iconRepository.saveStationIcon(newIcon)
-                    } else {
-                        Completable.complete()
-                    }
-                }
+        return iconChanged().flatMapCompletable { changed ->
+            if (changed || currentIcon.name != newName) {
+                iconRepository.saveStationIcon(newIcon)
+            } else {
+                Completable.complete()
+            }
+        }
     }
 
     //endregion

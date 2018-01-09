@@ -50,7 +50,6 @@ class StationPresenter
                 .subscribe { viewState.setStationIcon(it.bitmap) }
                 .addTo(compDisp)
 
-        createMode = stationInteractor.isCreateMode
         if (createMode) editMode() else viewMode()
     }
 
@@ -101,7 +100,7 @@ class StationPresenter
 
 
     fun edit(station: Station) {
-        stationInteractor.updateCurrentStation(station)
+        stationInteractor.updateCurrentStation(station.copy(favorite = stationInteractor.currentStation.favorite))
                 .subscribe { viewMode() }
                 .addTo(compDisp)
     }
@@ -128,8 +127,9 @@ class StationPresenter
     }
 
     fun cancelCreate() {
+        stationInteractor.previousWhenCreate?.let { stationInteractor.currentStation = it }
+        controlsInteractor.tryEnableNextPrevious(true)
         createMode = false
-//            previousStation?.let { stationInteractor.currentStation = it }
         router.exit()
     }
 

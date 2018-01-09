@@ -3,7 +3,6 @@ package io.github.vladimirmi.radius.model.service
 import android.app.PendingIntent
 import android.app.Service
 import android.content.Intent
-import android.graphics.Bitmap
 import android.os.Bundle
 import android.support.v4.media.MediaBrowserCompat
 import android.support.v4.media.MediaBrowserServiceCompat
@@ -69,7 +68,7 @@ class PlayerService : MediaBrowserServiceCompat(), SessionCallback.Interface {
         sessionToken = session.sessionToken
 
         playback = Playback(this, playerCallback)
-        notification = MediaNotification(this, session)
+        notification = MediaNotification(this, session, stationInteractor)
 
         stationInteractor.currentStationObs().subscribe {
             currentStationId = it.id
@@ -88,7 +87,7 @@ class PlayerService : MediaBrowserServiceCompat(), SessionCallback.Interface {
 
         stationInteractor.currentIconObs()
                 .ioToMain()
-                .subscribe { updateIcon(it.bitmap) }
+                .subscribe { notification.update() }
                 .addTo(compDisp)
     }
 
@@ -229,12 +228,5 @@ class PlayerService : MediaBrowserServiceCompat(), SessionCallback.Interface {
                 .putString(MediaMetadataCompat.METADATA_KEY_ALBUM, station.name)
                 .build()
         station.uri.toUri()?.let { playback.play(it) }
-    }
-
-    private fun updateIcon(bitmap: Bitmap) {
-        metadata = MediaMetadataCompat.Builder(metadata)
-                .putBitmap(MediaMetadataCompat.METADATA_KEY_DISPLAY_ICON, bitmap)
-                .build()
-        notification.update()
     }
 }

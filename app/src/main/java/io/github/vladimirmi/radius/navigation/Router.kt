@@ -25,10 +25,15 @@ class Router : ru.terrakok.cicerone.Router() {
         executeCommand(PreviousStation("$STATION_SCREEN$DELIMITER${station.id}"))
     }
 
-    fun showStation(station: Station) {
+    fun showStationSlide(station: Station) {
         navigateTo("$STATION_SCREEN$DELIMITER${station.id}")
+    }
+
+    fun showStationReplace(station: Station) {
+        executeCommand(ForwardReplace("$STATION_SCREEN$DELIMITER${station.id}"))
     }
 }
 
 class NextStation(screenKey: String) : Forward(screenKey, null)
 class PreviousStation(screenKey: String) : Forward(screenKey, null)
+class ForwardReplace(screenKey: String) : Forward(screenKey, null)

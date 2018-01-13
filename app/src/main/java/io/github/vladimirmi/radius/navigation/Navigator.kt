@@ -60,6 +60,7 @@ class Navigator(activity: RootActivity, containerId: Int)
         // order matters because Next and Previous is subclasses of Forward
             is NextStation -> forwardTransition(fragmentTransaction)
             is PreviousStation -> previousTransition(fragmentTransaction)
+            is ForwardReplace -> forwardReplaceTransition(fragmentTransaction)
             is Forward -> forwardTransition(fragmentTransaction)
             is Back, is BackTo -> backTransition(fragmentTransaction)
             is Replace -> replaceTransition(fragmentTransaction)
@@ -84,6 +85,11 @@ class Navigator(activity: RootActivity, containerId: Int)
     private fun replaceTransition(fragmentTransaction: FragmentTransaction?) {
         fragmentTransaction?.setCustomAnimations(android.R.anim.fade_in, android.R.anim.fade_out,
                 android.R.anim.fade_in, android.R.anim.fade_out)
+    }
+
+    private fun forwardReplaceTransition(fragmentTransaction: FragmentTransaction?) {
+        fragmentTransaction?.setCustomAnimations(android.R.anim.fade_in, android.R.anim.fade_out,
+                R.anim.slide_in_left, R.anim.slide_out_right)
     }
 
     override fun unknownScreen(command: Command?) {

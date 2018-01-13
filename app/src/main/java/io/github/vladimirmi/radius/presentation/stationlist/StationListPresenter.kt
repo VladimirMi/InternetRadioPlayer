@@ -106,7 +106,7 @@ class StationListPresenter
 
     fun showStation(station: Station) {
         select(station)
-        router.showStation(station)
+        router.showStationSlide(station)
     }
 }
 

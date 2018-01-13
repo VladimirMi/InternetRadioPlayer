@@ -75,7 +75,7 @@ class PlayerControlPresenter
     }
 
     fun showStation() {
-        router.showStation(stationInteractor.currentStation)
+        router.showStationSlide(stationInteractor.currentStation)
     }
 
     fun skipPrevious() {

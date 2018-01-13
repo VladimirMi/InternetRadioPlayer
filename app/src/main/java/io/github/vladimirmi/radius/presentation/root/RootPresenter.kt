@@ -47,7 +47,7 @@ class RootPresenter
                 .subscribeBy(
                         onSuccess = {
                             viewState.showControls(true)
-                            router.showStation(stationInteractor.currentStation)
+                            router.showStationSlide(stationInteractor.currentStation)
                         },
                         onError = {
                             Timber.e(it)
@@ -59,6 +59,6 @@ class RootPresenter
     fun showStation(id: String) {
         val station = stationInteractor.stationList.firstOrNullStation { it.id == id }
         stationInteractor.currentStation = station
-        router.showStation(station)
+        router.showStationReplace(station)
     }
 }

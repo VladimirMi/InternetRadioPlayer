@@ -16,5 +16,5 @@ interface ToolbarView {
 
     fun enableBackNavigation(backNavEnabled: Boolean)
 
-    fun setMenuItems(menuItems: List<MenuItemHolder>)
+    fun setMenu(menuHolder: MenuHolder)
 }

@@ -20,11 +20,13 @@
     <string name="dialog_ok">OK</string>
     <string name="dialog_cancel">Отмена</string>
 
-    <string name="menu_favorite">Избранное</string>
+    <string name="menu_favorite_on">Избранное</string>
+    <string name="menu_favorite_off">Все</string>
     <string name="menu_more">Больше</string>
     <string name="menu_station_edit">Редактировать</string>
     <string name="menu_station_delete">Удалить</string>
     <string name="menu_station_save">Сохранить</string>
+    <string name="menu_station_shortcut">Добавить ярлык</string>
 
     <string name="show">Подробнее</string>
 

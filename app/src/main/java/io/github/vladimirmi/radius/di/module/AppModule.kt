@@ -5,6 +5,7 @@ import com.google.gson.Gson
 import com.google.gson.GsonBuilder
 import io.github.vladimirmi.radius.model.interactor.PlayerControlsInteractor
 import io.github.vladimirmi.radius.model.interactor.StationInteractor
+import io.github.vladimirmi.radius.model.manager.ShortcutManager
 import io.github.vladimirmi.radius.model.manager.StationParser
 import io.github.vladimirmi.radius.model.repository.StationIconRepository
 import io.github.vladimirmi.radius.model.repository.StationListRepository
@@ -24,6 +25,8 @@ class AppModule(context: Context) : Module() {
         bind(Gson::class.java).toInstance(gson)
 
         bind(StationParser::class.java).singletonInScope()
+
+        bind(ShortcutManager::class.java).singletonInScope()
 
         bind(StationSource::class.java).singletonInScope()
 

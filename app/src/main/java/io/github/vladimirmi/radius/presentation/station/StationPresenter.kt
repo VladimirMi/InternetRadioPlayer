@@ -35,14 +35,18 @@ class StationPresenter
 
     private val menuActions: (MenuItem) -> Unit = {
         when (it.itemId) {
-            R.id.menu_station_edit -> editMode()
-            R.id.menu_station_delete -> viewState.openRemoveDialog()
-            R.id.menu_station_save -> viewState.editStation()
+            R.string.menu_station_edit -> editMode()
+            R.string.menu_station_delete -> viewState.openRemoveDialog()
+            R.string.menu_station_save -> viewState.editStation()
+            R.string.menu_station_shortcut -> addShortcut()
         }
     }
 
-    private val toolbarBuilder: ToolbarBuilder
-        get() = ToolbarBuilder().setToolbarTitle(stationInteractor.currentStation.name)
+    private val toolbarBuilder = ToolbarBuilder().setToolbarTitle(stationInteractor.currentStation.name)
+            .addMenuItem(MenuItemHolder(R.string.menu_station_edit, R.drawable.ic_edit))
+            .addMenuItem(MenuItemHolder(R.string.menu_station_shortcut, R.drawable.ic_shortcut))
+            .addMenuItem(MenuItemHolder(R.string.menu_station_delete, R.drawable.ic_delete))
+            .setMenuActions(menuActions)
 
     override fun onFirstViewAttach() {
         viewState.setStation(stationInteractor.currentStation)
@@ -57,12 +61,8 @@ class StationPresenter
     private fun viewMode() {
         editMode = false
         viewState.setEditMode(editMode)
-        val toolbar = toolbarBuilder.addAction(MenuItemHolder(
-                itemTitleResId = R.string.menu_more,
-                iconResId = R.drawable.ic_more,
-                actions = menuActions,
-                popupMenu = R.menu.menu_station
-        ))
+        val toolbar = toolbarBuilder.replaceMenuItem(R.string.menu_station_save,
+                MenuItemHolder(R.string.menu_station_edit, R.drawable.ic_edit))
 
         viewState.buildToolbar(toolbar)
         controlsInteractor.tryEnableNextPrevious(true)
@@ -71,12 +71,8 @@ class StationPresenter
     private fun editMode() {
         editMode = true
         viewState.setEditMode(editMode)
-        val toolbar = toolbarBuilder.addAction(MenuItemHolder(
-                itemTitleResId = R.string.menu_more,
-                iconResId = R.drawable.ic_more,
-                actions = menuActions,
-                popupMenu = R.menu.menu_station_edit
-        ))
+        val toolbar = toolbarBuilder.replaceMenuItem(R.string.menu_station_edit,
+                MenuItemHolder(R.string.menu_station_save, R.drawable.ic_submit))
 
         viewState.buildToolbar(toolbar)
         controlsInteractor.tryEnableNextPrevious(false)
@@ -154,5 +150,11 @@ class StationPresenter
 
     fun changeIcon() {
         router.navigateTo(Router.ICON_PICKER_SCREEN)
+    }
+
+    private fun addShortcut() {
+        if (stationInteractor.addCurrentShortcut()) {
+            viewState.showToast(R.string.toast_add_success)
+        }
     }
 }

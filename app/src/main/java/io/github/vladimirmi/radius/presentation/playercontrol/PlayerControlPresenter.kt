@@ -29,7 +29,7 @@ class PlayerControlPresenter
                 .subscribe { handleState(it) }
                 .addTo(compDisp)
 
-        stationInteractor.currentStationObs()
+        stationInteractor.currentStationObs
                 .subscribe { viewState.setStation(it) }
                 .addTo(compDisp)
 
@@ -37,7 +37,7 @@ class PlayerControlPresenter
                 .subscribe { handleSessionEvent(it) }
                 .addTo(compDisp)
 
-        stationInteractor.currentIconObs()
+        stationInteractor.currentIconObs
                 .ioToMain()
                 .subscribe { viewState.setStationIcon(it.bitmap) }
                 .addTo(compDisp)

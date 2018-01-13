@@ -5,6 +5,7 @@ import io.github.vladimirmi.radius.model.entity.Filter
 import io.github.vladimirmi.radius.model.entity.GroupedList.GroupedList
 import io.github.vladimirmi.radius.model.entity.Icon
 import io.github.vladimirmi.radius.model.entity.Station
+import io.github.vladimirmi.radius.model.manager.ShortcutManager
 import io.github.vladimirmi.radius.model.repository.StationIconRepository
 import io.github.vladimirmi.radius.model.repository.StationListRepository
 import io.reactivex.Completable
@@ -14,15 +15,15 @@ import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.schedulers.Schedulers
 import javax.inject.Inject
 
+
 /**
  * Created by Vladimir Mikhalev 23.12.2017.
  */
 
 class StationInteractor
 @Inject constructor(private val stationRepository: StationListRepository,
-                    private val iconRepository: StationIconRepository) {
-
-    private val stationList: GroupedList<Station> get() = stationRepository.stationList
+                    private val iconRepository: StationIconRepository,
+                    private val shortcutManager: ShortcutManager) {
 
     var previousWhenCreate: Station? = null
         private set
@@ -33,26 +34,26 @@ class StationInteractor
             if (!value) previousWhenCreate = null
         }
 
-    fun hasStations(predicate: (Station) -> Boolean = { true }): Boolean {
-        return stationList.hasItems(predicate)
-    }
+    val stationList: GroupedList<Station> get() = stationRepository.stationList
 
-    fun stationListObs(): Observable<GroupedList<Station>> {
-        return stationList.observe()
-    }
+    val stationListObs: Observable<GroupedList<Station>> get() = stationList.observe()
 
-    fun currentStationObs(): Observable<Station> {
-        return stationRepository.currentStation
+    var currentStation: Station
+        get() = stationRepository.currentStation.value
+        set(value) = stationRepository.setCurrentStation(value)
+
+    val currentStationObs: Observable<Station>
+        get() = stationRepository.currentStation
                 .flatMapSingle { station ->
                     getIcon(station.name)
                             .doOnSuccess { currentIcon = it }
                             .map { station }
                 }
-    }
 
-    var currentStation: Station
-        get() = stationRepository.currentStation.value
-        set(value) = stationRepository.setCurrentStation(value)
+
+    fun haveStations(): Boolean {
+        return stationList.haveItems()
+    }
 
     fun createStation(uri: Uri): Single<Station> {
         return stationRepository.createStation(uri)
@@ -65,7 +66,7 @@ class StationInteractor
     }
 
     fun addStation(station: Station): Single<Boolean> {
-        return if (!stationList.hasItems { it.name == station.name }) {
+        return if (!stationList.haveItems { it.name == station.name }) {
             stationRepository.addStation(station)
                     .mergeWith(saveCurrentIcon(station.name))
 //                    .doOnComplete { currentStation = station }
@@ -106,6 +107,10 @@ class StationInteractor
         stationRepository.filterStations(filter)
     }
 
+    fun addCurrentShortcut(): Boolean {
+        return shortcutManager.pinShortcut(currentStation, currentIcon)
+    }
+
     //region =============== Icon ==============
 
     fun iconChanged(): Single<Boolean> =
@@ -116,9 +121,7 @@ class StationInteractor
         get() = iconRepository.currentIcon.value
         set(value) = iconRepository.setCurrentIcon(value)
 
-    fun currentIconObs(): Observable<Icon> {
-        return iconRepository.currentIcon
-    }
+    val currentIconObs: Observable<Icon> get() = iconRepository.currentIcon
 
     fun getIcon(path: String): Single<Icon> {
         return iconRepository.getStationIcon(path)

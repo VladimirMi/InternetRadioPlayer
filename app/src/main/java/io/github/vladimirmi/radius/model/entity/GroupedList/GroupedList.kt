@@ -35,13 +35,13 @@ interface GroupedList<E> {
 
     fun contains(element: Station): Boolean
 
-    fun firstOrNull(): Station
+    fun firstOrNullStation(predicate: (E) -> Boolean = { true }): Station
 
     fun indexOf(station: E): Int
 
     fun indexOfFirst(predicate: (E) -> Boolean): Int
 
-    fun hasItems(predicate: (E) -> Boolean): Boolean
+    fun haveItems(predicate: (E) -> Boolean = { true }): Boolean
 
     fun canFilter(filter: Filter): Boolean
 }

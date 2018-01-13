@@ -5,8 +5,11 @@
         android:icon="@drawable/ic_edit"
         android:title="@string/menu_station_edit"/>
     <item
+        android:id="@+id/menu_station_shortcut"
+        android:icon="@drawable/ic_shortcut"
+        android:title="@string/menu_station_shortcut"/>
+    <item
         android:id="@+id/menu_station_delete"
         android:icon="@drawable/ic_delete"
-        android:title="@string/menu_station_delete"
-        android:iconTint="@color/grey_200"/>
+        android:title="@string/menu_station_delete"/>
 </menu>

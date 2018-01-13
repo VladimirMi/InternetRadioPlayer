@@ -38,6 +38,8 @@ class PlayerService : MediaBrowserServiceCompat(), SessionCallback.Interface {
     companion object {
         const val EVENT_SESSION_NEXT = "EVENT_SESSION_NEXT"
         const val EVENT_SESSION_PREVIOUS = "EVENT_SESSION_PREVIOUS"
+
+        const val EXTRA_STATION_ID = "EXTRA_STATION_ID"
     }
 
     @Inject lateinit var stationInteractor: StationInteractor
@@ -70,7 +72,7 @@ class PlayerService : MediaBrowserServiceCompat(), SessionCallback.Interface {
         playback = Playback(this, playerCallback)
         notification = MediaNotification(this, session, stationInteractor)
 
-        stationInteractor.currentStationObs().subscribe {
+        stationInteractor.currentStationObs.subscribe {
             currentStationId = it.id
             if (isPlaying && currentStationId != playingStationId) playCurrent()
         }.addTo(compDisp)
@@ -85,7 +87,7 @@ class PlayerService : MediaBrowserServiceCompat(), SessionCallback.Interface {
                     notification.update()
                 }.addTo(compDisp)
 
-        stationInteractor.currentIconObs()
+        stationInteractor.currentIconObs
                 .ioToMain()
                 .subscribe { notification.update() }
                 .addTo(compDisp)

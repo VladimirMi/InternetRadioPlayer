@@ -3,14 +3,13 @@ package io.github.vladimirmi.radius.presentation.root
 import android.support.annotation.StringRes
 import android.view.MenuItem
 import io.github.vladimirmi.radius.R
-import java.util.*
 
 class ToolbarBuilder {
     private var isToolbarVisible = true
     @StringRes private var titleId = R.string.app_name
     private var title = ""
     private var backNavEnabled = false
-    private val menuItems = ArrayList<MenuItemHolder>()
+    private val menuHolder = MenuHolder()
 
     fun setToolbarVisible(toolbarVisible: Boolean = true): ToolbarBuilder {
         isToolbarVisible = toolbarVisible
@@ -32,18 +31,28 @@ class ToolbarBuilder {
         return this
     }
 
-    fun addAction(menuItemHolder: MenuItemHolder): ToolbarBuilder {
-        menuItems.add(menuItemHolder)
+    fun setMenuActions(actions: (MenuItem) -> Unit): ToolbarBuilder {
+        menuHolder.actions = actions
         return this
     }
 
-    fun removeAction(menuItemHolder: MenuItemHolder): ToolbarBuilder {
-        menuItems.remove(menuItemHolder)
+    fun addMenuItem(menuItem: MenuItemHolder, position: Int = -1): ToolbarBuilder {
+        menuHolder.addItem(menuItem, position)
         return this
     }
 
-    fun clearActions(): ToolbarBuilder {
-        menuItems.clear()
+    fun replaceMenuItem(itemTitleResId: Int, menuItem: MenuItemHolder): ToolbarBuilder {
+        menuHolder.replaceItem(itemTitleResId, menuItem)
+        return this
+    }
+
+    fun removeMenuItem(itemTitleResId: Int): ToolbarBuilder {
+        menuHolder.removeItem(itemTitleResId)
+        return this
+    }
+
+    fun clearMenu(): ToolbarBuilder {
+        menuHolder.clear()
         return this
     }
 
@@ -55,15 +64,41 @@ class ToolbarBuilder {
             toolbarView.setToolbarTitle(titleId)
         }
         toolbarView.enableBackNavigation(backNavEnabled)
-        toolbarView.setMenuItems(menuItems)
+        toolbarView.setMenu(menuHolder)
+    }
+}
+
+class MenuHolder {
+    private val items = ArrayList<MenuItemHolder>()
+    lateinit var actions: (MenuItem) -> Unit
+    val menu: List<MenuItemHolder> get() = items
+
+    fun addItem(item: MenuItemHolder, position: Int) {
+        if (position < 0 || position > items.size) {
+            items.add(item)
+        } else {
+            items.add(position, item)
+        }
+    }
+
+    fun replaceItem(itemTitleResId: Int, menuItem: MenuItemHolder) {
+        val idx = items.indexOfFirst { it.itemTitleResId == itemTitleResId }
+        if (idx == -1) return
+        items[idx] = menuItem
+    }
+
+    fun removeItem(itemTitleResId: Int) {
+        items.removeAll { it.itemTitleResId == itemTitleResId }
+    }
+
+    fun clear() {
+        items.clear()
     }
 }
 
 class MenuItemHolder(val itemTitleResId: Int,
                      val iconResId: Int,
-                     val actions: (MenuItem) -> Unit,
-                     val popupMenu: Int? = null) {
+                     val showAsAction: Boolean = false) {
 
-    // todo leak canary
-    fun hasPopupMenu() = popupMenu != null
+    val id = itemTitleResId
 }

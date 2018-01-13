@@ -83,9 +83,10 @@ class GroupingList : MutableGroupedList<Station> {
                 .any { it.id == element.id }
     }
 
-    override fun firstOrNull(): Station {
-        return if (itemSize == 0) Station.nullObject()
-        else stationList[(mappings.first() as GroupMapping.Item).index]
+    override fun firstOrNullStation(predicate: (Station) -> Boolean): Station {
+        return mappings.filterIsInstance(GroupMapping.Item::class.java)
+                .map { stationList[it.index] }
+                .find(predicate) ?: Station.nullObject()
     }
 
     override fun indexOf(station: Station): Int {
@@ -96,12 +97,12 @@ class GroupingList : MutableGroupedList<Station> {
         return stationList.indexOfFirst(predicate)
     }
 
-    override fun hasItems(predicate: (Station) -> Boolean): Boolean {
+    override fun haveItems(predicate: (Station) -> Boolean): Boolean {
         return stationList.any(predicate)
     }
 
     override fun canFilter(filter: Filter): Boolean {
-        return hasItems(filter.predicate)
+        return haveItems(filter.predicate)
     }
 
     //region =============== MutableGroupedList ==============

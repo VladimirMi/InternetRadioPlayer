@@ -1,5 +1,6 @@
 package io.github.vladimirmi.radius.presentation.stationlist
 
+import android.view.MenuItem
 import com.arellomobile.mvp.InjectViewState
 import io.github.vladimirmi.radius.R
 import io.github.vladimirmi.radius.model.entity.Filter
@@ -14,7 +15,6 @@ import io.github.vladimirmi.radius.presentation.root.ToolbarBuilder
 import io.github.vladimirmi.radius.ui.base.BasePresenter
 import io.reactivex.rxkotlin.addTo
 import io.reactivex.rxkotlin.subscribeBy
-import timber.log.Timber
 import javax.inject.Inject
 
 /**
@@ -29,28 +29,32 @@ class StationListPresenter
                     private val router: Router)
     : BasePresenter<StationListView>() {
 
+    private val actions: (MenuItem) -> Unit = {
+        when (it.itemId) {
+            R.string.menu_favorite_on -> interactor.filterStations(Filter.FAVORITE)
+            R.string.menu_favorite_off -> interactor.filterStations(Filter.DEFAULT)
+        }
+    }
+
     private val builder = ToolbarBuilder().setToolbarTitleId(R.string.app_name)
+            .setMenuActions(actions)
 
     private val favoriteOn: MenuItemHolder by lazy {
-        MenuItemHolder(R.string.menu_favorite, R.drawable.ic_empty_star, {
-            interactor.filterStations(Filter.FAVORITE)
-        })
+        MenuItemHolder(R.string.menu_favorite_on, R.drawable.ic_empty_star, true)
     }
 
     private val favoriteOff: MenuItemHolder by lazy {
-        MenuItemHolder(R.string.menu_favorite, R.drawable.ic_star, {
-            interactor.filterStations(Filter.DEFAULT)
-        })
+        MenuItemHolder(R.string.menu_favorite_off, R.drawable.ic_star, true)
     }
 
 
     override fun onFirstViewAttach() {
         rootPresenter.viewState.showControls(true)
-        interactor.stationListObs()
+        interactor.stationListObs
                 .subscribeBy { handleStationList(it) }
                 .addTo(compDisp)
 
-        interactor.currentStationObs()
+        interactor.currentStationObs
                 .subscribe {
                     viewState.buildToolbar(builder.setToolbarTitle(it.name))
                     viewState.selectItem(it, mediaController.isPlaying)
@@ -68,19 +72,18 @@ class StationListPresenter
                     if (it.itemSize == 0) {
                         interactor.filterStations(Filter.DEFAULT)
                     } else if (!it.contains(interactor.currentStation)) {
-                        interactor.currentStation = it.firstOrNull()
+                        interactor.currentStation = it.firstOrNullStation()
                     }
-                    viewState.buildToolbar(builder.clearActions()
-                            .addAction(favoriteOff))
+                    viewState.buildToolbar(builder.clearMenu()
+                            .addMenuItem(favoriteOff))
                 }
             }
             Filter.DEFAULT -> {
                 if (it.canFilter(Filter.FAVORITE)) {
-                    viewState.buildToolbar(builder.clearActions()
-                            .addAction(favoriteOn))
+                    viewState.buildToolbar(builder.clearMenu()
+                            .addMenuItem(favoriteOn))
                 } else {
-                    Timber.e("handleStationList: clearall")
-                    viewState.buildToolbar(builder.clearActions())
+                    viewState.buildToolbar(builder.clearMenu())
                 }
             }
         }

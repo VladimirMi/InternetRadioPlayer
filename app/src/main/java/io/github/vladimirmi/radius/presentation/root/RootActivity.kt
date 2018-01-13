@@ -22,6 +22,7 @@ import io.github.vladimirmi.radius.R
 import io.github.vladimirmi.radius.di.Scopes
 import io.github.vladimirmi.radius.di.module.RootActivityModule
 import io.github.vladimirmi.radius.extensions.visible
+import io.github.vladimirmi.radius.model.service.PlayerService
 import io.github.vladimirmi.radius.navigation.Navigator
 import io.github.vladimirmi.radius.ui.base.BackPressListener
 import kotlinx.android.synthetic.main.activity_root.*
@@ -41,7 +42,7 @@ class RootActivity : MvpAppCompatActivity(), RootView, ToolbarView {
     @InjectPresenter lateinit var presenter: RootPresenter
 
     private val navigator = Navigator(this, R.id.mainFr)
-    private val toolBarMenuItems = ArrayList<MenuItemHolder>()
+    private var menuHolder: MenuHolder? = null
     private var popupHelper: MenuPopupHelper? = null
 
     @ProvidePresenter
@@ -60,10 +61,11 @@ class RootActivity : MvpAppCompatActivity(), RootView, ToolbarView {
     override fun onResumeFragments() {
         super.onResumeFragments()
         navigatorHolder.setNavigator(navigator)
-        intent?.data?.let {
-            presenter.addStation(it)
-            intent = null
+        if (intent?.hasExtra(PlayerService.EXTRA_STATION_ID) == true) {
+            presenter.showStation(intent.getStringExtra(PlayerService.EXTRA_STATION_ID))
         }
+        intent?.data?.let { presenter.addStation(it) }
+        intent = null
     }
 
     override fun onNewIntent(intent: Intent?) {
@@ -78,8 +80,8 @@ class RootActivity : MvpAppCompatActivity(), RootView, ToolbarView {
 
     @SuppressLint("RestrictedApi")
     override fun onDestroy() {
-        popupHelper?.dismiss()
-        popupHelper = null
+//        popupHelper?.dismiss()
+//        popupHelper = null
         if (isFinishing) Toothpick.closeScope(Scopes.ROOT_ACTIVITY)
         super.onDestroy()
     }
@@ -137,46 +139,53 @@ class RootActivity : MvpAppCompatActivity(), RootView, ToolbarView {
         supportActionBar?.setDisplayHomeAsUpEnabled(backNavEnabled)
     }
 
-    override fun setMenuItems(menuItems: List<MenuItemHolder>) {
-        toolBarMenuItems.clear()
-        toolBarMenuItems.addAll(menuItems)
+    override fun setMenu(menuHolder: MenuHolder) {
+        this.menuHolder = menuHolder
         invalidateOptionsMenu()
     }
 
     override fun onPrepareOptionsMenu(menu: Menu): Boolean {
-        if (toolBarMenuItems.isNotEmpty()) {
-            for (menuItemHolder in toolBarMenuItems) {
-                val item = menu.add(menuItemHolder.itemTitleResId)
-                if (menuItemHolder.hasPopupMenu()) {
-                    configurePopupFor(item, menuItemHolder)
-                } else {
-                    item.setIcon(menuItemHolder.iconResId)
-                    item.setOnMenuItemClickListener {
-                        menuItemHolder.actions(it)
-                        true
+        menuHolder?.let { holder ->
+            holder.menu.filter { it.showAsAction }
+                    .forEachIndexed { index, item ->
+                        menu.add(0, item.itemTitleResId, index, item.itemTitleResId).apply {
+                            setIcon(item.iconResId)
+                            setShowAsActionFlags(MenuItem.SHOW_AS_ACTION_IF_ROOM)
+                            setOnMenuItemClickListener {
+                                holder.actions.invoke(it)
+                                true
+                            }
+                        }
                     }
-                }
-                item.setShowAsActionFlags(MenuItem.SHOW_AS_ACTION_IF_ROOM)
-            }
+            configurePopupFor(menu, holder)
         }
         return super.onPrepareOptionsMenu(menu)
     }
 
     @SuppressLint("RestrictedApi")
-    private fun configurePopupFor(item: MenuItem, menuItemHolder: MenuItemHolder) {
-        val actionView = LayoutInflater.from(this).inflate(R.layout.view_menu_item, toolbar, false)
-        actionView.icon.setImageResource(menuItemHolder.iconResId)
-        item.actionView = actionView
+    private fun configurePopupFor(menu: Menu, holder: MenuHolder) {
+        val popupItems = holder.menu.filter { !it.showAsAction }
+        if (popupItems.isEmpty()) return
 
+        val anchorItem = menu.add(R.string.menu_more).apply {
+            setShowAsAction(MenuItem.SHOW_AS_ACTION_ALWAYS)
+        }
+        val anchorView = LayoutInflater.from(this).inflate(R.layout.view_menu_item, toolbar, false)
+        anchorView.icon.setImageResource(R.drawable.ic_more)
+        anchorItem.actionView = anchorView
 
-        val popup = PopupMenu(this, actionView)
-        popup.inflate(menuItemHolder.popupMenu!!)
+        val popup = PopupMenu(this, anchorView)
+        popupItems.forEachIndexed { index, item ->
+            popup.menu.add(0, item.itemTitleResId, index, item.itemTitleResId).apply {
+                setIcon(item.iconResId)
+            }
+        }
         popup.setOnMenuItemClickListener {
-            menuItemHolder.actions.invoke(it)
+            holder.actions.invoke(it)
             true
         }
 
-        popupHelper = MenuPopupHelper(this, popup.menu as MenuBuilder, actionView)
+        popupHelper = MenuPopupHelper(this, popup.menu as MenuBuilder, anchorView)
         (0 until popup.menu.size())
                 .map { popup.menu.getItem(it) }
                 .forEach {
@@ -185,8 +194,8 @@ class RootActivity : MvpAppCompatActivity(), RootView, ToolbarView {
                     popupHelper?.setForceShowIcon(true)
                 }
 
-        actionView.setOnClickListener {
-            popupHelper?.show(0, -actionView.height)
+        anchorView.setOnClickListener {
+            popupHelper?.show(0, -anchorView.height)
         }
     }
     //endregion

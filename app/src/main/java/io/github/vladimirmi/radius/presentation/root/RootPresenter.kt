@@ -26,7 +26,7 @@ class RootPresenter
 
     override fun onFirstViewAttach() {
         mediaController.connect()
-        if (stationInteractor.hasStations()) {
+        if (stationInteractor.haveStations()) {
             router.newRootScreen(Router.MEDIA_LIST_SCREEN)
         } else {
             router.newRootScreen(Router.GET_STARTED_SCREEN)
@@ -54,5 +54,11 @@ class RootPresenter
                             viewState.showToast(R.string.toast_add_error)
                         }
                 ).addTo(compDisp)
+    }
+
+    fun showStation(id: String) {
+        val station = stationInteractor.stationList.firstOrNullStation { it.id == id }
+        stationInteractor.currentStation = station
+        router.showStation(station)
     }
 }

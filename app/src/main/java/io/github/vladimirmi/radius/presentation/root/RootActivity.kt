@@ -79,6 +79,7 @@ class RootActivity : MvpAppCompatActivity(), RootView, ToolbarView {
 
     @SuppressLint("RestrictedApi")
     override fun onDestroy() {
+        //todo check
 //        popupHelper?.dismiss()
 //        popupHelper = null
         if (isFinishing) Toothpick.closeScope(Scopes.ROOT_ACTIVITY)

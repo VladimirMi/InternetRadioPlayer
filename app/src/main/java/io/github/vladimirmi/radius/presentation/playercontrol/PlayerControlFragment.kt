@@ -4,6 +4,7 @@ import android.graphics.Bitmap
 import android.os.Bundle
 import android.support.v4.content.ContextCompat
 import android.view.View
+import android.widget.Toast
 import com.arellomobile.mvp.presenter.InjectPresenter
 import com.arellomobile.mvp.presenter.ProvidePresenter
 import io.github.vladimirmi.radius.R
@@ -71,5 +72,9 @@ class PlayerControlFragment : BaseFragment(), PlayerControlView {
         next.setTint(tint)
         previous.isEnabled = enable
         next.isEnabled = enable
+    }
+
+    override fun showToast(resId: Int) {
+        Toast.makeText(context, resId, Toast.LENGTH_SHORT).show()
     }
 }

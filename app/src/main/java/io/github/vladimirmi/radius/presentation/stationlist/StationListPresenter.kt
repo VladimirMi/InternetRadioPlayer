@@ -100,7 +100,7 @@ class StationListPresenter
 
     fun removeStation(station: Station) {
         interactor.removeStation(station)
-                .subscribe()
+                .subscribe { interactor.removeShortcut(station) }
                 .addTo(compDisp)
     }
 

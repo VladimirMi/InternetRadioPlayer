@@ -3,6 +3,7 @@ package io.github.vladimirmi.radius.presentation.playercontrol
 import android.graphics.Bitmap
 import com.arellomobile.mvp.MvpView
 import com.arellomobile.mvp.viewstate.strategy.AddToEndSingleStrategy
+import com.arellomobile.mvp.viewstate.strategy.OneExecutionStateStrategy
 import com.arellomobile.mvp.viewstate.strategy.StateStrategyType
 import io.github.vladimirmi.radius.model.entity.Station
 
@@ -26,4 +27,7 @@ interface PlayerControlView : MvpView {
 
     @StateStrategyType(AddToEndSingleStrategy::class)
     fun setStationIcon(stationIcon: Bitmap)
+
+    @StateStrategyType(OneExecutionStateStrategy::class)
+    fun showToast(resId: Int)
 }

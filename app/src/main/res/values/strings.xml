@@ -4,6 +4,7 @@
     <string name="toast_add_success">Станция добавлена</string>
     <string name="toast_add_error">Не удалось добавить станцию</string>
     <string name="toast_add_force">Станция с заданным именем уже есть</string>
+    <string name="toast_net_error">Нет сети</string>
 
     <string name="snackbar_exit">Нажмите еще раз для выхода</string>
 

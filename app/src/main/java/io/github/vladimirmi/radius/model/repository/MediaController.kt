@@ -9,6 +9,7 @@ import android.support.v4.media.MediaMetadataCompat
 import android.support.v4.media.session.MediaControllerCompat
 import android.support.v4.media.session.PlaybackStateCompat
 import com.jakewharton.rxrelay2.BehaviorRelay
+import io.github.vladimirmi.radius.model.manager.NetworkChecker
 import io.github.vladimirmi.radius.model.service.PlayerService
 import timber.log.Timber
 import javax.inject.Inject
@@ -18,7 +19,7 @@ import javax.inject.Inject
  */
 
 class MediaController
-@Inject constructor(context: Context) {
+@Inject constructor(context: Context, private val networkChecker: NetworkChecker) {
 
     private lateinit var mediaBrowser: MediaBrowserCompat
     private var controller: MediaControllerCompat? = null
@@ -50,6 +51,7 @@ class MediaController
 
     private val controllerCallback = object : MediaControllerCompat.Callback() {
         override fun onPlaybackStateChanged(state: PlaybackStateCompat) {
+            Timber.e("onPlaybackStateChanged: $state")
             playbackState.accept(state)
         }
 
@@ -85,6 +87,8 @@ class MediaController
     val isStopped: Boolean
         get() = playbackState.hasValue() &&
                 (playbackState.value.state == PlaybackStateCompat.STATE_STOPPED)
+
+    val isNetAvail: Boolean get() = networkChecker.isAvailable()
 
     fun playPause() {
         if (isPlaying) {

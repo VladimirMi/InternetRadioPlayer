@@ -5,7 +5,7 @@ import io.github.vladimirmi.radius.model.entity.Filter
 import io.github.vladimirmi.radius.model.entity.GroupedList.GroupedList
 import io.github.vladimirmi.radius.model.entity.Icon
 import io.github.vladimirmi.radius.model.entity.Station
-import io.github.vladimirmi.radius.model.manager.ShortcutManager
+import io.github.vladimirmi.radius.model.manager.ShortcutHelper
 import io.github.vladimirmi.radius.model.repository.StationIconRepository
 import io.github.vladimirmi.radius.model.repository.StationListRepository
 import io.reactivex.Completable
@@ -23,7 +23,7 @@ import javax.inject.Inject
 class StationInteractor
 @Inject constructor(private val stationRepository: StationListRepository,
                     private val iconRepository: StationIconRepository,
-                    private val shortcutManager: ShortcutManager) {
+                    private val shortcutHelper: ShortcutHelper) {
 
     var previousWhenCreate: Station? = null
         private set
@@ -69,7 +69,6 @@ class StationInteractor
         return if (!stationList.haveItems { it.name == station.name }) {
             stationRepository.addStation(station)
                     .mergeWith(saveCurrentIcon(station.name))
-//                    .doOnComplete { currentStation = station }
                     .toSingle { true }
         } else Single.just(false)
     }
@@ -108,7 +107,11 @@ class StationInteractor
     }
 
     fun addCurrentShortcut(): Boolean {
-        return shortcutManager.pinShortcut(currentStation, currentIcon)
+        return shortcutHelper.pinShortcut(currentStation, currentIcon)
+    }
+
+    fun removeShortcut(station: Station) {
+        shortcutHelper.removeShortcut(station)
     }
 
     //region =============== Icon ==============

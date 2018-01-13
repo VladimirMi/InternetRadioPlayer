@@ -3,6 +3,7 @@ package io.github.vladimirmi.radius.presentation.playercontrol
 import android.support.v4.media.session.PlaybackStateCompat
 import android.support.v4.media.session.PlaybackStateCompat.*
 import com.arellomobile.mvp.InjectViewState
+import io.github.vladimirmi.radius.R
 import io.github.vladimirmi.radius.extensions.ioToMain
 import io.github.vladimirmi.radius.model.interactor.StationInteractor
 import io.github.vladimirmi.radius.model.repository.MediaController
@@ -63,7 +64,13 @@ class PlayerControlPresenter
     }
 
     fun playPause() {
-        mediaController.playPause()
+        with(mediaController) {
+            if (!isPlaying && !isNetAvail) {
+                viewState.showToast(R.string.toast_net_error)
+            } else {
+                playPause()
+            }
+        }
     }
 
     fun switchFavorite() {

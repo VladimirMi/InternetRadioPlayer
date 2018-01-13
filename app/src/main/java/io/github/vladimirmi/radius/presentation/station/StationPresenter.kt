@@ -87,8 +87,10 @@ class StationPresenter
     }
 
     fun removeStation() {
-        stationInteractor.removeStation(stationInteractor.currentStation)
+        val station = stationInteractor.currentStation
+        stationInteractor.removeStation(station)
                 .subscribe {
+                    stationInteractor.removeShortcut(station)
                     controlsInteractor.nextStation()
                     router.exit()
                 }

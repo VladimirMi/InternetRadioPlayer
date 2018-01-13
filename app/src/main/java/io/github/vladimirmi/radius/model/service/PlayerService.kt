@@ -165,10 +165,17 @@ class PlayerService : MediaBrowserServiceCompat(), SessionCallback.Interface {
     private val playerCallback = object : PlayerCallback() {
 
         override fun onPlayerStateChanged(playWhenReady: Boolean, playbackState: Int) {
+            Timber.e("onPlayerStateChanged: $playWhenReady $playbackState")
             val state = when (playbackState) {
                 Player.STATE_IDLE -> PlaybackStateCompat.STATE_STOPPED
-                Player.STATE_BUFFERING -> PlaybackStateCompat.STATE_BUFFERING
-                Player.STATE_READY -> if (playWhenReady) PlaybackStateCompat.STATE_PLAYING else PlaybackStateCompat.STATE_PAUSED
+                Player.STATE_BUFFERING -> {
+                    if (playWhenReady) PlaybackStateCompat.STATE_BUFFERING
+                    else PlaybackStateCompat.STATE_PAUSED
+                }
+                Player.STATE_READY -> {
+                    if (playWhenReady) PlaybackStateCompat.STATE_PLAYING
+                    else PlaybackStateCompat.STATE_PAUSED
+                }
                 Player.STATE_ENDED -> PlaybackStateCompat.STATE_PAUSED
                 else -> PlaybackStateCompat.STATE_NONE
             }

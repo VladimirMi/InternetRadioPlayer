@@ -29,10 +29,20 @@ class MetadataFragment : BaseFragment(), MetadataView {
 
     //region =============== MetadataView ==============
 
-    override fun setInfo(string: String) {
-        view?.visible(true)
-        metadataTv.isSelected = true
+    override fun setMetadata(string: String) {
+        show()
         metadataTv.text = string
+    }
+
+    override fun setMetadata(resId: Int) {
+        show()
+        metadataTv.text = context.getString(resId)
+    }
+
+    override fun tryHide() {
+        if (metadataTv.text == context.getString(R.string.metadata_buffering)) {
+            hide()
+        }
     }
 
     override fun hide() {
@@ -40,4 +50,9 @@ class MetadataFragment : BaseFragment(), MetadataView {
     }
 
     //endregion
+
+    private fun show() {
+        view?.visible(true)
+        metadataTv.isSelected = true
+    }
 }

@@ -3,6 +3,7 @@ package io.github.vladimirmi.radius.presentation.metadata
 import android.support.v4.media.MediaMetadataCompat
 import android.support.v4.media.session.PlaybackStateCompat
 import com.arellomobile.mvp.InjectViewState
+import io.github.vladimirmi.radius.R
 import io.github.vladimirmi.radius.model.repository.MediaController
 import io.github.vladimirmi.radius.ui.base.BasePresenter
 import io.reactivex.rxkotlin.addTo
@@ -29,13 +30,14 @@ class MetadataPresenter
     }
 
     private fun handleMeta(meta: MediaMetadataCompat) {
-        val s = with(meta.description) { "$subtitle - $title" }
-        viewState.setInfo(s)
+        val metadata = with(meta.description) { "$subtitle - $title" }
+        viewState.setMetadata(metadata)
     }
 
     private fun handleState(state: PlaybackStateCompat) {
         when (state.state) {
-            PlaybackStateCompat.STATE_BUFFERING -> viewState.setInfo("Загрузка...")
+            PlaybackStateCompat.STATE_BUFFERING -> viewState.setMetadata(R.string.metadata_buffering)
+            PlaybackStateCompat.STATE_PAUSED -> viewState.tryHide()
             PlaybackStateCompat.STATE_STOPPED -> viewState.hide()
         }
     }

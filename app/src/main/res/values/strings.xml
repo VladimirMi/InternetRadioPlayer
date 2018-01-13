@@ -31,6 +31,9 @@
 
     <string name="show">Подробнее</string>
 
+
+    <string name="metadata_buffering">Загрузка…</string>
+
     <string name="desc_favorite">add to favorite</string>
     <string name="desc_expand_collapse">expand/collapse</string>
     <string name="desc_media_icon">media icon</string>

@@ -11,8 +11,14 @@ import com.arellomobile.mvp.viewstate.strategy.StateStrategyType
 interface MetadataView : MvpView {
 
     @StateStrategyType(AddToEndSingleStrategy::class)
-    fun setInfo(string: String)
+    fun setMetadata(string: String)
+
+    @StateStrategyType(AddToEndSingleStrategy::class)
+    fun setMetadata(resId: Int)
 
     @StateStrategyType(AddToEndSingleStrategy::class)
     fun hide()
+
+    @StateStrategyType(AddToEndSingleStrategy::class)
+    fun tryHide()
 }

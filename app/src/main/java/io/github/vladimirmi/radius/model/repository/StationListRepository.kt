@@ -4,7 +4,7 @@ import android.net.Uri
 import com.jakewharton.rxrelay2.BehaviorRelay
 import io.github.vladimirmi.radius.extensions.toSingle
 import io.github.vladimirmi.radius.model.entity.Filter
-import io.github.vladimirmi.radius.model.entity.GroupedList.GroupingList
+import io.github.vladimirmi.radius.model.entity.groupedlist.GroupingList
 import io.github.vladimirmi.radius.model.entity.Station
 import io.github.vladimirmi.radius.model.manager.Preferences
 import io.github.vladimirmi.radius.model.source.StationSource

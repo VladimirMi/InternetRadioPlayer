@@ -11,6 +11,11 @@ import android.view.View
 import android.widget.RemoteViews
 import io.github.vladimirmi.radius.R
 import io.github.vladimirmi.radius.model.interactor.StationInteractor
+import android.app.NotificationManager
+import android.app.NotificationChannel
+import android.content.Context
+import android.graphics.Color
+import android.os.Build
 
 
 /**
@@ -20,6 +25,7 @@ import io.github.vladimirmi.radius.model.interactor.StationInteractor
 class MediaNotification(private val service: PlayerService,
                         private val mediaSession: MediaSessionCompat,
                         private val stationInteractor: StationInteractor) {
+
     companion object {
         const val CHANNEL_ID = "radius channel"
         const val PLAYER_NOTIFICATION_ID = 50
@@ -38,6 +44,21 @@ class MediaNotification(private val service: PlayerService,
         setOnClickPendingIntent(R.id.play_pause, playPauseIntent)
         setOnClickPendingIntent(R.id.previous, previousIntent)
         setOnClickPendingIntent(R.id.next, nextIntent)
+    }
+
+    init {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            val channelName = service.getString(R.string.menu_more)
+            val notificationChannel = NotificationChannel(CHANNEL_ID, channelName, NotificationManager.IMPORTANCE_DEFAULT)
+
+            // Configure the notification channel.
+            notificationChannel.description = service.getString(R.string.menu_more)
+            notificationChannel.enableLights(true)
+            notificationChannel.lightColor = Color.RED
+            NotificationManagerCompat.from(service)
+            (service.getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager)
+                    .createNotificationChannel(notificationChannel)
+        }
     }
 
     fun update() {

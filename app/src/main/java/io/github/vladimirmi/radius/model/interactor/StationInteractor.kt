@@ -2,7 +2,7 @@ package io.github.vladimirmi.radius.model.interactor
 
 import android.net.Uri
 import io.github.vladimirmi.radius.model.entity.Filter
-import io.github.vladimirmi.radius.model.entity.GroupedList.GroupedList
+import io.github.vladimirmi.radius.model.entity.groupedlist.GroupedList
 import io.github.vladimirmi.radius.model.entity.Icon
 import io.github.vladimirmi.radius.model.entity.Station
 import io.github.vladimirmi.radius.model.manager.ShortcutHelper

@@ -1,4 +1,4 @@
-package io.github.vladimirmi.radius.model.entity.GroupedList
+package io.github.vladimirmi.radius.model.entity.groupedlist
 
 import io.github.vladimirmi.radius.model.entity.Filter
 import io.github.vladimirmi.radius.model.entity.Station

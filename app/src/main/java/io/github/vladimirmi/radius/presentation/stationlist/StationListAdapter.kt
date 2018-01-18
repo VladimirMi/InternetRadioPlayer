@@ -9,7 +9,7 @@ import io.github.vladimirmi.radius.R
 import io.github.vladimirmi.radius.di.Scopes
 import io.github.vladimirmi.radius.extensions.color
 import io.github.vladimirmi.radius.extensions.ioToMain
-import io.github.vladimirmi.radius.model.entity.GroupedList.GroupedList
+import io.github.vladimirmi.radius.model.entity.groupedlist.GroupedList
 import io.github.vladimirmi.radius.model.entity.Station
 import io.github.vladimirmi.radius.model.interactor.StationInteractor
 import io.reactivex.rxkotlin.subscribeBy

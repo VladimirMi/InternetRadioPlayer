@@ -1,4 +1,4 @@
-package io.github.vladimirmi.radius.model.entity.GroupedList
+package io.github.vladimirmi.radius.model.entity.groupedlist
 
 import com.jakewharton.rxrelay2.BehaviorRelay
 import io.github.vladimirmi.radius.model.entity.Filter
@@ -32,7 +32,7 @@ class GroupingList : MutableGroupedList<Station> {
     }
 
     override fun get(position: Int): Station {
-        return if (position < 0 || position > size) Station.nullObject()
+        return if (position < 0 || position >= size) Station.nullObject()
         else stationList[position]
     }
 

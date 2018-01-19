@@ -12,6 +12,7 @@ import io.github.vladimirmi.radius.R
 import io.github.vladimirmi.radius.di.Scopes
 import io.github.vladimirmi.radius.model.entity.groupedlist.GroupedList
 import io.github.vladimirmi.radius.model.entity.Station
+import io.github.vladimirmi.radius.presentation.getstarted.NewStationDialog
 import io.github.vladimirmi.radius.presentation.root.ToolbarBuilder
 import io.github.vladimirmi.radius.presentation.root.ToolbarView
 import io.github.vladimirmi.radius.ui.base.BaseFragment
@@ -64,6 +65,10 @@ class StationListFragment : BaseFragment(), StationListView, StationItemCallback
 
     override fun selectItem(station: Station, playing: Boolean) {
         adapter.selectItem(station, playing)
+    }
+
+    override fun openAddStationDialog() {
+        NewStationDialog().show(childFragmentManager, "new_station_dialog")
     }
 
     override fun showToast(resId: Int) {

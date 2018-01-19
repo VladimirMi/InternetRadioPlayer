@@ -83,8 +83,11 @@ class MenuHolder {
 
     fun replaceItem(itemTitleResId: Int, menuItem: MenuItemHolder) {
         val idx = items.indexOfFirst { it.itemTitleResId == itemTitleResId }
-        if (idx == -1) return
-        items[idx] = menuItem
+        if (idx == -1) {
+            items.add(menuItem)
+        } else {
+            items[idx] = menuItem
+        }
     }
 
     fun removeItem(itemTitleResId: Int) {

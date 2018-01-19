@@ -33,19 +33,13 @@ class StationListPresenter
         when (it.itemId) {
             R.string.menu_favorite_on -> interactor.filterStations(Filter.FAVORITE)
             R.string.menu_favorite_off -> interactor.filterStations(Filter.DEFAULT)
+            R.string.menu_add_station -> viewState.openAddStationDialog()
         }
     }
 
     private val builder = ToolbarBuilder().setToolbarTitleId(R.string.app_name)
             .setMenuActions(actions)
-
-    private val favoriteOn: MenuItemHolder by lazy {
-        MenuItemHolder(R.string.menu_favorite_on, R.drawable.ic_empty_star, true)
-    }
-
-    private val favoriteOff: MenuItemHolder by lazy {
-        MenuItemHolder(R.string.menu_favorite_off, R.drawable.ic_star, true)
-    }
+            .addMenuItem(MenuItemHolder(R.string.menu_add_station, R.drawable.ic_add))
 
 
     override fun onFirstViewAttach() {
@@ -74,16 +68,17 @@ class StationListPresenter
                     } else if (!it.contains(interactor.currentStation)) {
                         interactor.currentStation = it.firstOrNullStation()
                     }
-                    viewState.buildToolbar(builder.clearMenu()
-                            .addMenuItem(favoriteOff))
+                    viewState.buildToolbar(builder.replaceMenuItem(R.string.menu_favorite_on,
+                            MenuItemHolder(R.string.menu_favorite_off, R.drawable.ic_star)))
                 }
             }
             Filter.DEFAULT -> {
                 if (it.canFilter(Filter.FAVORITE)) {
-                    viewState.buildToolbar(builder.clearMenu()
-                            .addMenuItem(favoriteOn))
+                    viewState.buildToolbar(builder.replaceMenuItem(R.string.menu_favorite_off,
+                            MenuItemHolder(R.string.menu_favorite_on, R.drawable.ic_empty_star)))
                 } else {
-                    viewState.buildToolbar(builder.clearMenu())
+                    viewState.buildToolbar(builder.removeMenuItem(R.string.menu_favorite_on)
+                            .removeMenuItem(R.string.menu_favorite_off))
                 }
             }
         }

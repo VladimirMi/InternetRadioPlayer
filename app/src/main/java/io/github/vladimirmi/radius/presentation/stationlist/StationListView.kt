@@ -15,6 +15,9 @@ import io.github.vladimirmi.radius.presentation.root.ToolbarBuilder
 interface StationListView : MvpView {
 
     @StateStrategyType(AddToEndSingleStrategy::class)
+    fun buildToolbar(builder: ToolbarBuilder)
+
+    @StateStrategyType(AddToEndSingleStrategy::class)
     fun setMediaList(stationList: GroupedList<Station>)
 
     @StateStrategyType(AddToEndSingleStrategy::class)
@@ -23,6 +26,6 @@ interface StationListView : MvpView {
     @StateStrategyType(OneExecutionStateStrategy::class)
     fun showToast(resId: Int)
 
-    @StateStrategyType(AddToEndSingleStrategy::class)
-    fun buildToolbar(builder: ToolbarBuilder)
+    @StateStrategyType(OneExecutionStateStrategy::class)
+    fun openAddStationDialog()
 }

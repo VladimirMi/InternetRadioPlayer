@@ -4,6 +4,7 @@ import android.net.Uri
 import android.view.LayoutInflater
 import android.view.View
 import io.github.vladimirmi.radius.R
+import io.github.vladimirmi.radius.presentation.root.RootActivity
 import io.github.vladimirmi.radius.ui.base.BaseDialogFragment
 import kotlinx.android.synthetic.main.dialog_new_station.view.*
 
@@ -22,7 +23,7 @@ class NewStationDialog : BaseDialogFragment() {
     }
 
     override fun onPositive() {
-        (parentFragment as GetStartedFragment).presenter
+        (parentFragment.activity as RootActivity)
                 .addStation(Uri.parse(dialogView!!.linkEt.text.toString()))
     }
 

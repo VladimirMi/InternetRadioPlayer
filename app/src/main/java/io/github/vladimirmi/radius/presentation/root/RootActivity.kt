@@ -2,6 +2,7 @@ package io.github.vladimirmi.radius.presentation.root
 
 import android.annotation.SuppressLint
 import android.content.Intent
+import android.net.Uri
 import android.os.Bundle
 import android.support.annotation.StringRes
 import android.support.design.widget.Snackbar
@@ -29,6 +30,7 @@ import kotlinx.android.synthetic.main.activity_root.*
 import kotlinx.android.synthetic.main.view_menu_item.view.*
 import ru.terrakok.cicerone.NavigatorHolder
 import toothpick.Toothpick
+import java.net.URI
 import javax.inject.Inject
 
 /**
@@ -63,7 +65,7 @@ class RootActivity : MvpAppCompatActivity(), RootView, ToolbarView {
         if (intent?.hasExtra(PlayerService.EXTRA_STATION_ID) == true) {
             presenter.showStation(intent.getStringExtra(PlayerService.EXTRA_STATION_ID))
         }
-        intent?.data?.let { presenter.addStation(it) }
+        intent?.data?.let { addStation(it) }
         intent = null
     }
 
@@ -91,6 +93,10 @@ class RootActivity : MvpAppCompatActivity(), RootView, ToolbarView {
             (it as? BackPressListener)?.onBackPressed() ?: false
         } ?: false
         if (!handled) super.onBackPressed()
+    }
+
+    fun addStation(uri: Uri) {
+        presenter.addStation(uri)
     }
 
     //region =============== RootView ==============

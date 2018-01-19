@@ -14,7 +14,6 @@
     <string name="dialog_cancel_edit_message">Отменить изменения?</string>
     <string name="dialog_cancel_create_message">Отменить добавление новой станции?</string>
     <string name="dialog_new_station">Добавить новую станцию</string>
-    <string name="dialog_add_message">Добавить станцию</string>
     <string name="dialog_add_name">Название</string>
     <string name="dialog_add_name_err">Необходимо задать имя</string>
     <string name="dialog_add_group">Группа</string>
@@ -28,6 +27,8 @@
     <string name="menu_station_delete">Удалить</string>
     <string name="menu_station_save">Сохранить</string>
     <string name="menu_station_shortcut">Добавить ярлык</string>
+    <string name="menu_add_station">Добавить станцию</string>
+
 
     <string name="show">Подробнее</string>
 
@@ -59,4 +60,6 @@
     <string name="icon_add">Добавить</string>
     <string name="icon_background_color">Цвет заднего фона</string>
     <string name="icon_foreground_color">Цвет иконки</string>
+
+    <string name="notification_name">Уведомление Radio Player</string>
 </resources>

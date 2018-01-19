@@ -48,11 +48,11 @@ class MediaNotification(private val service: PlayerService,
 
     init {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-            val channelName = service.getString(R.string.menu_more)
+            val channelName = service.getString(R.string.notification_name)
             val notificationChannel = NotificationChannel(CHANNEL_ID, channelName, NotificationManager.IMPORTANCE_DEFAULT)
 
             // Configure the notification channel.
-            notificationChannel.description = service.getString(R.string.menu_more)
+            notificationChannel.description = service.getString(R.string.notification_name)
             notificationChannel.enableLights(true)
             notificationChannel.lightColor = Color.RED
             NotificationManagerCompat.from(service)

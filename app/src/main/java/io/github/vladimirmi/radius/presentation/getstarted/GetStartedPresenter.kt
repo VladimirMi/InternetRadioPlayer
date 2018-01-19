@@ -18,8 +18,4 @@ class GetStartedPresenter
         super.attachView(view)
         rootPresenter.viewState.showControls(false)
     }
-
-    fun addStation(uri: Uri) {
-        rootPresenter.addStation(uri)
-    }
 }

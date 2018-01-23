@@ -31,9 +31,9 @@ class GroupingList : MutableGroupedList<Station> {
         }
     }
 
-    override fun get(position: Int): Station {
-        return if (position < 0 || position >= size) Station.nullObject()
-        else stationList[position]
+    override fun get(index: Int): Station {
+        return if (index < 0 || index >= size) Station.nullObject()
+        else stationList[index]
     }
 
     override fun isGroupVisible(group: String): Boolean {
@@ -42,38 +42,38 @@ class GroupingList : MutableGroupedList<Station> {
 
     override val size: Int get() = stationList.size
 
-    override val itemSize: Int get() = mappings.count { it.visible && it is GroupMapping.Item }
+    override val itemsSize: Int get() = mappings.count { it.visible && it is GroupMapping.Item }
 
     override val overallSize: Int get() = mappings.count { it.visible }
 
-    override fun getPrevious(element: Station): Station? {
+    override fun getPrevious(element: Station, cycle: Boolean): Station? {
         var prev: GroupMapping.Item? = null
-        for (i in 0 until mappings.size) {
-            val mapping = getMapping(i)
-            if (mapping is GroupMapping.Item) {
-                if (mapping.id == element.id && prev != null) {
-                    return stationList[prev.index]
-                } else if (mapping.visible) {
-                    prev = mapping
+        mappings.asSequence()
+                .filter { it.visible && it is GroupMapping.Item }
+                .forEach {
+                    it as GroupMapping.Item
+                    if (it.id == element.id && prev != null) {
+                        return stationList[prev!!.index]
+                    }
+                    prev = it
                 }
-            }
-        }
-        return prev?.let { stationList[it.index] }
+        return if (cycle) prev?.let { stationList[it.index] }
+        else element
     }
 
-    override fun getNext(element: Station): Station? {
+    override fun getNext(element: Station, cycle: Boolean): Station? {
         var next: GroupMapping.Item? = null
-        for (i in mappings.size - 1 downTo 0) {
-            val mapping = getMapping(i)
-            if (mapping is GroupMapping.Item) {
-                if (mapping.id == element.id && next != null) {
-                    return stationList[next.index]
-                } else if (mapping.visible) {
-                    next = mapping
+        mappings.reversed().asSequence()
+                .filter { it.visible && it is GroupMapping.Item }
+                .forEach {
+                    it as GroupMapping.Item
+                    if (it.id == element.id && next != null) {
+                        return stationList[next!!.index]
+                    }
+                    next = it
                 }
-            }
-        }
-        return next?.let { stationList[it.index] }
+        return if (cycle) next?.let { stationList[it.index] }
+        else element
     }
 
     override fun observe(): Observable<GroupedList<Station>> = obs
@@ -83,26 +83,30 @@ class GroupingList : MutableGroupedList<Station> {
                 .any { it.id == element.id }
     }
 
-    override fun firstOrNullStation(predicate: (Station) -> Boolean): Station {
+    override fun firstOrNull(predicate: (Station) -> Boolean): Station? {
         return mappings.filterIsInstance(GroupMapping.Item::class.java)
                 .map { stationList[it.index] }
-                .find(predicate) ?: Station.nullObject()
-    }
-
-    override fun indexOf(station: Station): Int {
-        return stationList.indexOf(station)
-    }
-
-    override fun indexOfFirst(predicate: (Station) -> Boolean): Int {
-        return stationList.indexOfFirst(predicate)
+                .find(predicate)
     }
 
     override fun haveItems(predicate: (Station) -> Boolean): Boolean {
         return stationList.any(predicate)
     }
 
+    override fun positionOfFirst(predicate: (Station) -> Boolean): Int {
+        val station = firstOrNull(predicate) ?: return -1
+        return mappings.filter { it.visible && it is GroupMapping.Item }
+                .indexOfFirst { (it as GroupMapping.Item).id == station.id }
+    }
+
     override fun canFilter(filter: Filter): Boolean {
-        return haveItems(filter.predicate)
+        if (this.filter == filter) return false
+        val count = stationList.count(filter.predicate)
+        return count > 0 && count != itemsSize
+    }
+
+    override fun indexOfFirst(predicate: (Station) -> Boolean): Int {
+        return stationList.indexOfFirst(predicate)
     }
 
     //region =============== MutableGroupedList ==============
@@ -156,9 +160,15 @@ class GroupingList : MutableGroupedList<Station> {
     //endregion
 
     private fun initMappings() {
-        mappings.clear()
         stationList.sortBy { it.name }
         stationList.sortBy { it.group }
+        createMappings()
+        if (stationList.isNotEmpty() && itemsSize == 0) filter(Filter.DEFAULT)
+        notifyObservers()
+    }
+
+    private fun createMappings() {
+        mappings.clear()
         stationList.forEachIndexed { index, station ->
             if (!filter.predicate.invoke(station)) return@forEachIndexed
             if ((mappings.isEmpty() || mappings.last().group != station.group) && station.group.isNotBlank()) {
@@ -166,14 +176,11 @@ class GroupingList : MutableGroupedList<Station> {
             }
             mappings.add(GroupMapping.Item(station.group, station.id, index))
         }
-        notifyObservers()
     }
 
     private fun notifyObservers() {
         obs.accept(this)
     }
-
-    private fun getMapping(position: Int): GroupMapping = mappings[position]
 
     private fun getVisibleMapping(position: Int): GroupMapping {
         var count = 0

@@ -5,6 +5,7 @@
     <string name="toast_add_error">Не удалось добавить станцию</string>
     <string name="toast_add_force">Станция с заданным именем уже есть</string>
     <string name="toast_net_error">Нет сети</string>
+    <string name="toast_remove_success">Станция удалена</string>
 
     <string name="snackbar_exit">Нажмите еще раз для выхода</string>
 
@@ -29,11 +30,7 @@
     <string name="menu_station_shortcut">Добавить ярлык</string>
     <string name="menu_add_station">Добавить станцию</string>
 
-
-    <string name="show">Подробнее</string>
-
-
-    <string name="metadata_buffering">Загрузка…</string>
+    <string name="metadata_buffering">Loading…</string>
 
     <string name="desc_favorite">add to favorite</string>
     <string name="desc_expand_collapse">expand/collapse</string>
@@ -41,6 +38,8 @@
     <string name="desc_play_pause_button">play/pause button</string>
     <string name="desc_skip_previous_button">skip previous button</string>
     <string name="desc_skip_next_button">skip next button</string>
+
+    <string name="station_list_details">Details</string>
 
     <string name="station_hint_uri">Stream uri:</string>
     <string name="station_hint_url">Station url:</string>

@@ -15,35 +15,35 @@ interface GroupedList<E> {
 
     fun getGroupItem(position: Int): E
 
-    operator fun get(position: Int): E
+    operator fun get(index: Int): E
 
     fun isGroupVisible(group: String): Boolean
 
     fun observe(): Observable<GroupedList<E>>
 
-    fun getPrevious(element: E): E?
+    fun getPrevious(element: E, cycle: Boolean = true): E?
 
-    fun getNext(element: E): E?
+    fun getNext(element: E, cycle: Boolean = true): E?
 
     val size: Int
 
-    val itemSize: Int
+    val itemsSize: Int
 
     val overallSize: Int
 
     val filter: Filter
 
-    fun contains(element: Station): Boolean
-
-    fun firstOrNullStation(predicate: (E) -> Boolean = { true }): Station
-
-    fun indexOf(station: E): Int
+    fun contains(element: E): Boolean
 
     fun indexOfFirst(predicate: (E) -> Boolean): Int
+
+    fun firstOrNull(predicate: (E) -> Boolean = { true }): E?
 
     fun haveItems(predicate: (E) -> Boolean = { true }): Boolean
 
     fun canFilter(filter: Filter): Boolean
+
+    fun positionOfFirst(predicate: (Station) -> Boolean): Int
 }
 
 

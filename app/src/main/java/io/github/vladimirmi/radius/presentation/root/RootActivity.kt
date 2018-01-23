@@ -30,7 +30,6 @@ import kotlinx.android.synthetic.main.activity_root.*
 import kotlinx.android.synthetic.main.view_menu_item.view.*
 import ru.terrakok.cicerone.NavigatorHolder
 import toothpick.Toothpick
-import java.net.URI
 import javax.inject.Inject
 
 /**

@@ -30,6 +30,7 @@ class IconPickerPresenter
             field = value
             viewState.setBackgroundColor(value)
         }
+
     var foregroundColor: Int = 0
         set(value) {
             field = value
@@ -58,12 +59,14 @@ class IconPickerPresenter
     override fun onFirstViewAttach() {
         stationInteractor.currentIcon.let {
             viewState.buildToolbar(ToolbarBuilder().setToolbarTitle(it.name))
-            viewState.setIconImage(it.bitmap)
+            when (iconOption) {
+                IconOption.ICON -> iconRes = it.iconRes
+                IconOption.FAVICON -> viewState.setIconImage(it.bitmap)
+            }
             backgroundColor = it.backgroundColor
             foregroundColor = it.foregroundColor
             text = it.text
             iconOption = it.option
-            iconRes = it.iconRes
         }
 
         rootPresenter.viewState.showControls(false)

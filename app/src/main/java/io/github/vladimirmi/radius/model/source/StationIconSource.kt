@@ -36,8 +36,9 @@ class StationIconSource
 
     val defaultIcon: Icon by lazy {
         val drawable = DrawableCompat.wrap(ContextCompat.getDrawable(context, R.drawable.ic_station_1)).mutate()
-        DrawableCompat.setTint(drawable, ContextCompat.getColor(context, R.color.accentColor))
-        Icon("default", drawable.getBitmap())
+        val accentColor = ContextCompat.getColor(context, R.color.accentColor)
+        DrawableCompat.setTint(drawable, accentColor)
+        Icon("default", drawable.getBitmap(), foregroundColor = accentColor)
     }
 
     private val maxSize = (Runtime.getRuntime().maxMemory() / 1024 / 10).toInt()

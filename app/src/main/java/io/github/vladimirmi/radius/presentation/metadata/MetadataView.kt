@@ -21,4 +21,7 @@ interface MetadataView : MvpView {
 
     @StateStrategyType(AddToEndSingleStrategy::class)
     fun tryHide()
+
+    @StateStrategyType(AddToEndSingleStrategy::class)
+    fun show()
 }

@@ -2,17 +2,15 @@ package io.github.vladimirmi.radius.model.interactor
 
 import android.net.Uri
 import io.github.vladimirmi.radius.model.entity.Filter
-import io.github.vladimirmi.radius.model.entity.groupedlist.GroupedList
 import io.github.vladimirmi.radius.model.entity.Icon
 import io.github.vladimirmi.radius.model.entity.Station
+import io.github.vladimirmi.radius.model.entity.groupedlist.GroupedList
 import io.github.vladimirmi.radius.model.manager.ShortcutHelper
 import io.github.vladimirmi.radius.model.repository.StationIconRepository
 import io.github.vladimirmi.radius.model.repository.StationListRepository
 import io.reactivex.Completable
 import io.reactivex.Observable
 import io.reactivex.Single
-import io.reactivex.android.schedulers.AndroidSchedulers
-import io.reactivex.schedulers.Schedulers
 import javax.inject.Inject
 
 
@@ -50,6 +48,13 @@ class StationInteractor
                             .map { station }
                 }
 
+    fun initStations(): Completable {
+        return Completable.fromCallable(stationRepository::initStations)
+    }
+
+    fun getStation(id: String): Station? {
+        return stationList.firstOrNull { it.id == id }
+    }
 
     fun haveStations(): Boolean {
         return stationList.haveItems()
@@ -57,8 +62,6 @@ class StationInteractor
 
     fun createStation(uri: Uri): Single<Station> {
         return stationRepository.createStation(uri)
-                .subscribeOn(Schedulers.io())
-                .observeOn(AndroidSchedulers.mainThread())
                 .doOnSuccess {
                     previousWhenCreate = currentStation
                     stationRepository.currentStation.accept(it)
@@ -74,6 +77,8 @@ class StationInteractor
     }
 
     fun updateCurrentStation(newStation: Station): Completable {
+        val currentPosition = stationList.positionOfFirst { it.id == currentStation.id }
+
         val updateStation = if (newStation != currentStation) {
             stationRepository.updateStation(newStation)
         } else Completable.complete()
@@ -86,7 +91,14 @@ class StationInteractor
 
         return updateIcon.mergeWith(updateStation)
                 .concatWith(remove)
-                .doOnComplete { if (stationList.contains(newStation)) currentStation = newStation }
+                .doOnComplete {
+                    currentStation = if (stationList.contains(newStation)) {
+                        newStation
+                    } else {
+                        val newPos = (stationList.itemsSize + currentPosition - 1) % stationList.itemsSize
+                        stationList.getGroupItem(newPos)
+                    }
+                }
     }
 
     fun removeStation(station: Station): Completable {

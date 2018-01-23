@@ -6,6 +6,8 @@ import com.arellomobile.mvp.presenter.InjectPresenter
 import com.arellomobile.mvp.presenter.ProvidePresenter
 import io.github.vladimirmi.radius.R
 import io.github.vladimirmi.radius.di.Scopes
+import io.github.vladimirmi.radius.presentation.root.ToolbarBuilder
+import io.github.vladimirmi.radius.presentation.root.ToolbarView
 import io.github.vladimirmi.radius.ui.base.BaseFragment
 import kotlinx.android.synthetic.main.fragment_getstarted.*
 import toothpick.Toothpick
@@ -29,8 +31,14 @@ class GetStartedFragment : BaseFragment(), GetStartedView {
     }
 
     override fun onViewCreated(view: View?, savedInstanceState: Bundle?) {
-        addNewBt.setOnClickListener {
-            NewStationDialog().show(childFragmentManager, "new_station_dialog")
-        }
+        addNewBt.setOnClickListener { openAddStationDialog() }
+    }
+
+    override fun buildToolbar(builder: ToolbarBuilder) {
+        builder.build(activity as ToolbarView)
+    }
+
+    override fun openAddStationDialog() {
+        NewStationDialog().show(childFragmentManager, "new_station_dialog")
     }
 }

@@ -4,8 +4,8 @@ import android.net.Uri
 import com.jakewharton.rxrelay2.BehaviorRelay
 import io.github.vladimirmi.radius.extensions.toSingle
 import io.github.vladimirmi.radius.model.entity.Filter
-import io.github.vladimirmi.radius.model.entity.groupedlist.GroupingList
 import io.github.vladimirmi.radius.model.entity.Station
+import io.github.vladimirmi.radius.model.entity.groupedlist.GroupingList
 import io.github.vladimirmi.radius.model.manager.Preferences
 import io.github.vladimirmi.radius.model.source.StationSource
 import io.reactivex.Completable
@@ -31,7 +31,7 @@ class StationListRepository
     }
 
     fun setCurrentStation(station: Station) {
-        val pos = stationList.indexOf(station)
+        val pos = stationList.indexOfFirst { it.id == station.id }
         currentStation.accept(stationList[pos])
         preferences.currentPos = pos
     }

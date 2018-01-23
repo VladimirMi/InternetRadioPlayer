@@ -11,6 +11,7 @@ import io.github.vladimirmi.radius.model.service.AvailableActions
 import io.github.vladimirmi.radius.model.service.PlayerService
 import io.github.vladimirmi.radius.navigation.Router
 import io.github.vladimirmi.radius.ui.base.BasePresenter
+import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.rxkotlin.addTo
 import javax.inject.Inject
 
@@ -31,6 +32,7 @@ class PlayerControlPresenter
                 .addTo(compDisp)
 
         stationInteractor.currentStationObs
+                .observeOn(AndroidSchedulers.mainThread())
                 .subscribe { viewState.setStation(it) }
                 .addTo(compDisp)
 

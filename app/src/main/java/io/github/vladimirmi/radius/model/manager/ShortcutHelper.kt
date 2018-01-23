@@ -11,7 +11,7 @@ import android.support.v4.graphics.drawable.IconCompat
 import io.github.vladimirmi.radius.model.entity.Icon
 import io.github.vladimirmi.radius.model.entity.Station
 import io.github.vladimirmi.radius.model.service.PlayerService
-import io.github.vladimirmi.radius.ui.SplashActivity
+import io.github.vladimirmi.radius.presentation.root.RootActivity
 import javax.inject.Inject
 
 /**
@@ -53,7 +53,7 @@ class ShortcutHelper
     }
 
     private fun createShortcutIntent(station: Station): Intent {
-        return Intent(context, SplashActivity::class.java).apply {
+        return Intent(context, RootActivity::class.java).apply {
             putExtra(PlayerService.EXTRA_STATION_ID, station.id)
         }
     }

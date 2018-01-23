@@ -41,13 +41,13 @@ class ToolbarBuilder {
         return this
     }
 
-    fun replaceMenuItem(itemTitleResId: Int, menuItem: MenuItemHolder): ToolbarBuilder {
-        menuHolder.replaceItem(itemTitleResId, menuItem)
+    fun replaceMenuItem(id: Int, menuItem: MenuItemHolder, add: Boolean = false): ToolbarBuilder {
+        menuHolder.replaceItem(id, menuItem, add)
         return this
     }
 
-    fun removeMenuItem(itemTitleResId: Int): ToolbarBuilder {
-        menuHolder.removeItem(itemTitleResId)
+    fun removeMenuItem(id: Int): ToolbarBuilder {
+        menuHolder.removeItem(id)
         return this
     }
 
@@ -81,17 +81,14 @@ class MenuHolder {
         }
     }
 
-    fun replaceItem(itemTitleResId: Int, menuItem: MenuItemHolder) {
-        val idx = items.indexOfFirst { it.itemTitleResId == itemTitleResId }
-        if (idx == -1) {
-            items.add(menuItem)
-        } else {
-            items[idx] = menuItem
-        }
+    fun replaceItem(id: Int, menuItem: MenuItemHolder, add: Boolean) {
+        val idx = items.indexOfFirst { it.id == id }
+        if (idx != -1) items[idx] = menuItem
+        else if (add && !items.contains(menuItem)) items.add(menuItem)
     }
 
-    fun removeItem(itemTitleResId: Int) {
-        items.removeAll { it.itemTitleResId == itemTitleResId }
+    fun removeItem(id: Int) {
+        items.removeAll { it.id == id }
     }
 
     fun clear() {
@@ -104,4 +101,18 @@ class MenuItemHolder(val itemTitleResId: Int,
                      val showAsAction: Boolean = false) {
 
     val id = itemTitleResId
+    override fun equals(other: Any?): Boolean {
+        if (this === other) return true
+        if (javaClass != other?.javaClass) return false
+
+        other as MenuItemHolder
+
+        if (id != other.id) return false
+
+        return true
+    }
+
+    override fun hashCode(): Int {
+        return id
+    }
 }

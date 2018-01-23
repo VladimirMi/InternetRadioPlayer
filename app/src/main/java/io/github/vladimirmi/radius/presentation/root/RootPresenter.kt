@@ -37,7 +37,6 @@ class RootPresenter
         mediaController.disconnect()
     }
 
-
     fun addStation(uri: Uri) {
         Timber.e("addStation: $uri")
         stationInteractor.createStation(uri)
@@ -57,8 +56,10 @@ class RootPresenter
     }
 
     fun showStation(id: String) {
-        val station = stationInteractor.stationList.firstOrNullStation { it.id == id }
-        stationInteractor.currentStation = station
-        router.showStationReplace(station)
+        val station = stationInteractor.getStation(id)
+        if (station != null) {
+            stationInteractor.currentStation = station
+            router.showStationReplace(station)
+        } else viewState.showToast(R.string.toast_remove_success)
     }
 }

@@ -8,11 +8,10 @@ import android.widget.ImageView
 import io.github.vladimirmi.radius.R
 import io.github.vladimirmi.radius.di.Scopes
 import io.github.vladimirmi.radius.extensions.color
-import io.github.vladimirmi.radius.extensions.ioToMain
-import io.github.vladimirmi.radius.model.entity.groupedlist.GroupedList
 import io.github.vladimirmi.radius.model.entity.Station
+import io.github.vladimirmi.radius.model.entity.groupedlist.GroupedList
+import io.github.vladimirmi.radius.model.entity.groupedlist.GroupingList
 import io.github.vladimirmi.radius.model.interactor.StationInteractor
-import io.reactivex.rxkotlin.subscribeBy
 import kotlinx.android.synthetic.main.item_group_item.view.*
 import kotlinx.android.synthetic.main.item_group_title.view.*
 
@@ -29,7 +28,7 @@ class MediaListAdapter(private val callback: StationItemCallback)
     }
 
     private val stationInteractor = Scopes.app.getInstance(StationInteractor::class.java)
-    private lateinit var stationList: GroupedList<Station>
+    private var stationList: GroupedList<Station> = GroupingList()
     private var selected: Station? = null
     private var playing = false
 
@@ -88,9 +87,8 @@ class MediaListAdapter(private val callback: StationItemCallback)
         } else {
             holder.unselect()
         }
-        stationInteractor.getIcon(station.name)
-                .ioToMain()
-                .subscribeBy { holder.iconView.setImageBitmap(it.bitmap) }
+        val icon = stationInteractor.getIcon(station.name).blockingGet()
+        holder.iconView.setImageBitmap(icon.bitmap)
     }
 
 

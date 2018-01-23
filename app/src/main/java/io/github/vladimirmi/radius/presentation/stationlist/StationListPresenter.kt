@@ -4,8 +4,8 @@ import android.view.MenuItem
 import com.arellomobile.mvp.InjectViewState
 import io.github.vladimirmi.radius.R
 import io.github.vladimirmi.radius.model.entity.Filter
-import io.github.vladimirmi.radius.model.entity.groupedlist.GroupedList
 import io.github.vladimirmi.radius.model.entity.Station
+import io.github.vladimirmi.radius.model.entity.groupedlist.GroupedList
 import io.github.vladimirmi.radius.model.interactor.StationInteractor
 import io.github.vladimirmi.radius.model.repository.MediaController
 import io.github.vladimirmi.radius.navigation.Router
@@ -13,6 +13,7 @@ import io.github.vladimirmi.radius.presentation.root.MenuItemHolder
 import io.github.vladimirmi.radius.presentation.root.RootPresenter
 import io.github.vladimirmi.radius.presentation.root.ToolbarBuilder
 import io.github.vladimirmi.radius.ui.base.BasePresenter
+import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.rxkotlin.addTo
 import io.reactivex.rxkotlin.subscribeBy
 import javax.inject.Inject
@@ -29,6 +30,10 @@ class StationListPresenter
                     private val router: Router)
     : BasePresenter<StationListView>() {
 
+    private val addStationItem = MenuItemHolder(R.string.menu_add_station, R.drawable.ic_add)
+    private val favoriteOnItem = MenuItemHolder(R.string.menu_favorite_on, R.drawable.ic_empty_star)
+    private val favoriteOffItem = MenuItemHolder(R.string.menu_favorite_off, R.drawable.ic_star)
+
     private val actions: (MenuItem) -> Unit = {
         when (it.itemId) {
             R.string.menu_favorite_on -> interactor.filterStations(Filter.FAVORITE)
@@ -39,16 +44,18 @@ class StationListPresenter
 
     private val builder = ToolbarBuilder().setToolbarTitleId(R.string.app_name)
             .setMenuActions(actions)
-            .addMenuItem(MenuItemHolder(R.string.menu_add_station, R.drawable.ic_add))
+            .addMenuItem(addStationItem)
 
 
     override fun onFirstViewAttach() {
         rootPresenter.viewState.showControls(true)
         interactor.stationListObs
+                .observeOn(AndroidSchedulers.mainThread())
                 .subscribeBy { handleStationList(it) }
                 .addTo(compDisp)
 
         interactor.currentStationObs
+                .observeOn(AndroidSchedulers.mainThread())
                 .subscribe {
                     viewState.buildToolbar(builder.setToolbarTitle(it.name))
                     viewState.selectItem(it, mediaController.isPlaying)
@@ -60,28 +67,28 @@ class StationListPresenter
     }
 
     private fun handleStationList(it: GroupedList<Station>) {
-        when (it.filter) {
+        val newBuilder = when (it.filter) {
             Filter.FAVORITE -> {
                 if (it.canFilter(Filter.DEFAULT)) {
-                    if (it.itemSize == 0) {
-                        interactor.filterStations(Filter.DEFAULT)
-                    } else if (!it.contains(interactor.currentStation)) {
-                        interactor.currentStation = it.firstOrNullStation()
-                    }
-                    viewState.buildToolbar(builder.replaceMenuItem(R.string.menu_favorite_on,
-                            MenuItemHolder(R.string.menu_favorite_off, R.drawable.ic_star)))
+                    builder.replaceMenuItem(R.string.menu_favorite_on, favoriteOffItem, add = true)
+                } else {
+                    builder.removeMenuItem(R.string.menu_favorite_off)
                 }
             }
             Filter.DEFAULT -> {
+                if (it.size == 0) {
+                    router.newRootScreen(Router.GET_STARTED_SCREEN)
+                    return
+                }
+
                 if (it.canFilter(Filter.FAVORITE)) {
-                    viewState.buildToolbar(builder.replaceMenuItem(R.string.menu_favorite_off,
-                            MenuItemHolder(R.string.menu_favorite_on, R.drawable.ic_empty_star)))
+                    builder.replaceMenuItem(R.string.menu_favorite_off, favoriteOnItem, add = true)
                 } else {
-                    viewState.buildToolbar(builder.removeMenuItem(R.string.menu_favorite_on)
-                            .removeMenuItem(R.string.menu_favorite_off))
+                    builder.removeMenuItem(R.string.menu_favorite_on)
                 }
             }
         }
+        viewState.buildToolbar(newBuilder)
         viewState.setMediaList(it)
     }
 

@@ -27,7 +27,7 @@ class PlayerControlsInteractor
 
     val playerModeObs: Observable<PlayerMode> = repository.stationList.observe()
             .map {
-                if (it.itemSize > 1) {
+                if (it.itemsSize > 1) {
                     PlayerMode.NEXT_PREVIOUS_ENABLED
                 } else {
                     PlayerMode.NEXT_PREVIOUS_DISABLED
@@ -35,19 +35,19 @@ class PlayerControlsInteractor
             }.mergeWith(enableNextPreviousObs)
 
     fun tryEnableNextPrevious(enable: Boolean) {
-        enableNextPreviousListener?.invoke(enable && repository.stationList.itemSize > 1)
+        enableNextPreviousListener?.invoke(enable && repository.stationList.itemsSize > 1)
     }
 
-    fun nextStation(): Boolean {
-        val next = repository.stationList.getNext(repository.currentStation.value)
+    fun nextStation(cycle: Boolean = true): Boolean {
+        val next = repository.stationList.getNext(repository.currentStation.value, cycle)
         return if (next != null) {
             repository.setCurrentStation(next)
             true
         } else false
     }
 
-    fun previousStation(): Boolean {
-        val previous = repository.stationList.getPrevious(repository.currentStation.value)
+    fun previousStation(cycle: Boolean = true): Boolean {
+        val previous = repository.stationList.getPrevious(repository.currentStation.value, cycle)
         return if (previous != null) {
             repository.setCurrentStation(previous)
             true

@@ -3,7 +3,7 @@
 
     <item android:color="@color/accentColor"
           android:state_checked="true"/>
-    <item android:color="@color/black"
+    <item android:color="@color/grey_700"
           android:state_checked="false"/>
 
 </selector>

@@ -1,7 +1,11 @@
 package io.github.vladimirmi.radius.presentation.getstarted
 
-import android.net.Uri
+import android.view.MenuItem
+import com.arellomobile.mvp.InjectViewState
+import io.github.vladimirmi.radius.R
+import io.github.vladimirmi.radius.presentation.root.MenuItemHolder
 import io.github.vladimirmi.radius.presentation.root.RootPresenter
+import io.github.vladimirmi.radius.presentation.root.ToolbarBuilder
 import io.github.vladimirmi.radius.ui.base.BasePresenter
 import javax.inject.Inject
 
@@ -10,9 +14,23 @@ import javax.inject.Inject
  */
 
 
+@InjectViewState
 class GetStartedPresenter
 @Inject constructor(private val rootPresenter: RootPresenter)
     : BasePresenter<GetStartedView>() {
+
+    private val actions: (MenuItem) -> Unit = {
+        when (it.itemId) {
+            R.string.menu_add_station -> viewState.openAddStationDialog()
+        }
+    }
+
+    private val builder = ToolbarBuilder().addMenuItem(MenuItemHolder(R.string.menu_add_station, R.drawable.ic_add))
+            .setMenuActions(actions)
+
+    override fun onFirstViewAttach() {
+        viewState.buildToolbar(builder)
+    }
 
     override fun attachView(view: GetStartedView?) {
         super.attachView(view)

@@ -91,6 +91,7 @@ class StationFragment : BaseFragment(), StationView, BackPressListener {
         sampleTil.setTextWithoutAnimation("${station.sample}Hz")
         sampleTil.visible(station.sample != 0)
 
+        genresTv.visible(station.genre.isNotEmpty())
         genresFl.removeAllViews()
         station.genre.forEach { genresFl.addView(TagView(context, it, null)) }
     }

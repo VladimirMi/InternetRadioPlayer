@@ -13,7 +13,7 @@
         android:layout_height="56dp"
         android:layout_gravity="center_vertical|start"
         android:layout_margin="8dp"
-        android:contentDescription="@string/desc_media_icon"
+        android:contentDescription="@string/desc_station_icon"
         tools:src="@drawable/ic_station_1"
         />
 
@@ -47,6 +47,7 @@
         android:layout_height="match_parent"
         android:layout_weight="4"
         android:gravity="center"
+        tools:ignore="ButtonStyle"
         >
 
         <Button

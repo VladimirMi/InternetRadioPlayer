@@ -23,7 +23,7 @@
             android:id="@+id/iconIv"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:contentDescription="@string/desc_media_icon"
+            android:contentDescription="@string/desc_station_icon"
             tools:src="@drawable/ic_station_1"
             />
 
@@ -232,7 +232,7 @@
         app:layout_constraintStart_toStartOf="parent"
         />
 
-    <android.support.v7.widget.ButtonBarLayout
+    <LinearLayout
         android:id="@+id/buttonBar"
         android:layout_width="250dp"
         android:layout_height="56dp"
@@ -241,6 +241,7 @@
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
+        tools:ignore="ButtonStyle"
         >
 
         <Button
@@ -260,7 +261,7 @@
             android:text="@string/dialog_ok"
             android:theme="@style/AccentButton"
             />
-    </android.support.v7.widget.ButtonBarLayout>
+    </LinearLayout>
 
 </android.support.constraint.ConstraintLayout>
 

@@ -31,7 +31,7 @@ class StationListPresenter
     : BasePresenter<StationListView>() {
 
     private val addStationItem = MenuItemHolder(R.string.menu_add_station, R.drawable.ic_add)
-    private val favoriteOnItem = MenuItemHolder(R.string.menu_favorite_on, R.drawable.ic_empty_star)
+    private val favoriteOnItem = MenuItemHolder(R.string.menu_favorite_on, R.drawable.ic_star_empty)
     private val favoriteOffItem = MenuItemHolder(R.string.menu_favorite_off, R.drawable.ic_star)
 
     private val actions: (MenuItem) -> Unit = {

@@ -10,7 +10,7 @@
         android:id="@+id/linkEt"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:hint="Вставить ссылку"
+        android:hint="@string/dialog_new_station_hint"
         />
 
 </FrameLayout>

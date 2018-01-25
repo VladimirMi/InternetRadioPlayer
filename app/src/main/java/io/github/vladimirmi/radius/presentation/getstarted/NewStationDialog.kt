@@ -1,5 +1,6 @@
 package io.github.vladimirmi.radius.presentation.getstarted
 
+import android.annotation.SuppressLint
 import android.net.Uri
 import android.view.LayoutInflater
 import android.view.View
@@ -18,6 +19,7 @@ class NewStationDialog : BaseDialogFragment() {
         return getString(R.string.dialog_new_station)
     }
 
+    @SuppressLint("InflateParams")
     override fun getCustomDialogView(): View? {
         return LayoutInflater.from(context).inflate(R.layout.dialog_new_station, null)
     }

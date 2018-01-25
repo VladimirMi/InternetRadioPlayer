@@ -57,7 +57,7 @@ class StationInteractor
     }
 
     fun haveStations(): Boolean {
-        return stationList.haveItems()
+        return stationRepository.isInitialized && stationList.haveItems()
     }
 
     fun createStation(uri: Uri): Single<Station> {

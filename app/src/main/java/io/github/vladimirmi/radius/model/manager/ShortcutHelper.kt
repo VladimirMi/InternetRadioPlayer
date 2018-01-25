@@ -8,6 +8,7 @@ import android.os.Build
 import android.support.v4.content.pm.ShortcutInfoCompat
 import android.support.v4.content.pm.ShortcutManagerCompat
 import android.support.v4.graphics.drawable.IconCompat
+import io.github.vladimirmi.radius.R
 import io.github.vladimirmi.radius.model.entity.Icon
 import io.github.vladimirmi.radius.model.entity.Station
 import io.github.vladimirmi.radius.model.service.PlayerService
@@ -28,6 +29,7 @@ class ShortcutHelper
                 .setLongLabel(station.name)
                 .setIcon(IconCompat.createWithBitmap(icon.bitmap))
                 .setIntent(createShortcutIntent(station))
+                .setDisabledMessage(context.getString(R.string.toast_shortcut_remove))
                 .build()
 
         return ShortcutManagerCompat.requestPinShortcut(context, info, null)
@@ -38,14 +40,11 @@ class ShortcutHelper
     fun removeShortcut(station: Station) {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
             val shortcutManager = context.getSystemService(ShortcutManager::class.java)
-            shortcutManager.disableShortcuts(listOf(station.id), "Станция была удалена")
+            shortcutManager.disableShortcuts(listOf(station.id), context.getString(R.string.toast_shortcut_remove))
         } else {
-            val shortcutIntent = createShortcutIntent(station).apply {
-                action = Intent.ACTION_MAIN
-            }
             val removeIntent = Intent().apply {
+                putExtra(Intent.EXTRA_SHORTCUT_INTENT, createShortcutIntent(station))
                 putExtra(Intent.EXTRA_SHORTCUT_NAME, station.name)
-                putExtra(Intent.EXTRA_SHORTCUT_INTENT, shortcutIntent)
                 action = "com.android.launcher.action.UNINSTALL_SHORTCUT"
             }
             context.sendBroadcast(removeIntent)
@@ -55,7 +54,8 @@ class ShortcutHelper
     private fun createShortcutIntent(station: Station): Intent {
         return Intent(context, RootActivity::class.java).apply {
             putExtra(PlayerService.EXTRA_STATION_ID, station.id)
+            putExtra("duplicate", false)
+            action = Intent.ACTION_MAIN
         }
     }
-
 }

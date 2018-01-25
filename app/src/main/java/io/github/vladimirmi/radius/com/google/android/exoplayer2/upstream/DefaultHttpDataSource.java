@@ -15,6 +15,7 @@
  */
 package io.github.vladimirmi.radius.com.google.android.exoplayer2.upstream;
 
+import android.annotation.SuppressLint;
 import android.net.Uri;
 import android.text.TextUtils;
 import android.util.Log;
@@ -52,6 +53,8 @@ import java.util.regex.Pattern;
  * {@link #DefaultHttpDataSource(String, Predicate, TransferListener, int, int, boolean,
  * RequestProperties)} constructor and passing {@code true} as the second last argument.
  */
+@SuppressWarnings({"WeakerAccess", "unused"})
+@SuppressLint("LogNotTimber")
 public class DefaultHttpDataSource implements HttpDataSource {
 
     /**

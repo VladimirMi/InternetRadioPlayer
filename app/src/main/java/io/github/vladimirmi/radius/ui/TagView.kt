@@ -1,16 +1,19 @@
 package io.github.vladimirmi.radius.ui
 
+import android.annotation.SuppressLint
 import android.content.Context
 import android.support.v4.content.ContextCompat
+import android.support.v7.widget.AppCompatTextView
 import android.util.TypedValue
 import android.view.ViewGroup
-import android.widget.TextView
 import com.google.android.flexbox.FlexboxLayout
 import io.github.vladimirmi.radius.R
 import io.github.vladimirmi.radius.extensions.dp
 
-class TagView(context: Context, tag: String, action: ((TagView) -> Unit)?) :
-        TextView(context) {
+@SuppressLint("ViewConstructor")
+class TagView(context: Context, tag: String, action: ((TagView) -> Unit)?)
+    : AppCompatTextView(context) {
+
     var picked = false
         private set
 

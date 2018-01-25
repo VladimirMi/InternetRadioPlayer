@@ -14,6 +14,7 @@ android {
     defaultConfig {
         applicationId "io.github.vladimirmi.radius"
         minSdkVersion 16
+        //noinspection OldTargetApi
         targetSdkVersion 26
         versionCode 1
         versionName "1.0"
@@ -47,7 +48,7 @@ dependencies {
     })
     testCompile 'junit:junit:4.12'
     //Kotlin
-    compile 'org.jetbrains.kotlin:kotlin-stdlib-jre7:' + kotlin_version
+    compile 'org.jetbrains.kotlin:kotlin-stdlib-jdk7:' + kotlin_version
     //Support
     compile 'com.android.support:appcompat-v7:' + SUPPORT_LIBRARY_VERSION
     compile 'com.android.support:design:' + SUPPORT_LIBRARY_VERSION

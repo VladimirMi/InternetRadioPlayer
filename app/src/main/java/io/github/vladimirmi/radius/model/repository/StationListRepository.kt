@@ -20,14 +20,17 @@ class StationListRepository
 @Inject constructor(private val stationSource: StationSource,
                     private val preferences: Preferences) {
 
+    @Volatile var isInitialized = false
     val stationList: GroupingList = GroupingList()
     val currentStation: BehaviorRelay<Station> = BehaviorRelay.createDefault(Station.nullObject())
 
     fun initStations() {
+        if (isInitialized) return
         stationList.addAll(stationSource.getStationList())
         currentStation.accept(stationList[preferences.currentPos])
         preferences.hidedGroups.forEach { stationList.hideGroup(it) }
         stationList.filter(Filter.valueOf(preferences.filter))
+        isInitialized = true
     }
 
     fun setCurrentStation(station: Station) {

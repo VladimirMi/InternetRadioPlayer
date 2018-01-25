@@ -19,6 +19,7 @@
             android:layout_width="56dp"
             android:layout_height="56dp"
             tools:background="@color/accentColor"
+            android:contentDescription="@string/desc_station_icon"
             />
 
         <TextView

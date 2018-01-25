@@ -26,7 +26,7 @@
                 android:id="@+id/iconIv"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
-                android:contentDescription="@string/desc_media_icon"
+                android:contentDescription="@string/desc_station_icon"
                 tools:src="@drawable/ic_station_1"
                 />
 

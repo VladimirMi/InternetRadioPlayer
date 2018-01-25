@@ -36,8 +36,10 @@ class MetadataPresenter
 
     private fun handleState(state: PlaybackStateCompat) {
         when (state.state) {
-            PlaybackStateCompat.STATE_PLAYING -> viewState.show()
-            PlaybackStateCompat.STATE_BUFFERING -> viewState.setMetadata(R.string.metadata_buffering)
+            PlaybackStateCompat.STATE_BUFFERING -> {
+                viewState.show()
+                viewState.setMetadata(R.string.metadata_buffering)
+            }
             PlaybackStateCompat.STATE_PAUSED -> viewState.tryHide()
             PlaybackStateCompat.STATE_STOPPED -> viewState.hide()
         }

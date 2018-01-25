@@ -26,11 +26,7 @@ class RootPresenter
 
     override fun onFirstViewAttach() {
         mediaController.connect()
-        if (stationInteractor.haveStations()) {
-            router.newRootScreen(Router.MEDIA_LIST_SCREEN)
-        } else {
-            router.newRootScreen(Router.GET_STARTED_SCREEN)
-        }
+        setRootScreen()
     }
 
     override fun onDestroy() {
@@ -38,8 +34,9 @@ class RootPresenter
     }
 
     fun addStation(uri: Uri) {
-        Timber.e("addStation: $uri")
-        stationInteractor.createStation(uri)
+        stationInteractor.initStations()
+                .doOnComplete { setRootScreen() }
+                .andThen(stationInteractor.createStation(uri))
                 .ioToMain()
                 .doOnSubscribe { viewState.showLoadingIndicator(true) }
                 .doFinally { viewState.showLoadingIndicator(false) }
@@ -56,10 +53,23 @@ class RootPresenter
     }
 
     fun showStation(id: String) {
-        val station = stationInteractor.getStation(id)
-        if (station != null) {
-            stationInteractor.currentStation = station
-            router.showStationReplace(station)
-        } else viewState.showToast(R.string.toast_remove_success)
+        stationInteractor.initStations()
+                .ioToMain()
+                .subscribe {
+                    val station = stationInteractor.getStation(id)
+                    if (station != null) {
+                        stationInteractor.currentStation = station
+                        router.showStationReplace(station)
+                    } else viewState.showToast(R.string.toast_shortcut_remove)
+                }
+                .addTo(compDisp)
+    }
+
+    private fun setRootScreen() {
+        if (stationInteractor.haveStations()) {
+            router.newRootScreen(Router.MEDIA_LIST_SCREEN)
+        } else {
+            router.newRootScreen(Router.GET_STARTED_SCREEN)
+        }
     }
 }

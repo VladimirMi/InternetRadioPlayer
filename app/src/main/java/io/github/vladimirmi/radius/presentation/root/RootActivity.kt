@@ -43,7 +43,6 @@ class RootActivity : MvpAppCompatActivity(), RootView, ToolbarView {
 
     private val navigator = Navigator(this, R.id.mainFr)
     private var menuHolder: MenuHolder? = null
-    private var popupHelper: MenuPopupHelper? = null
 
     @ProvidePresenter
     fun providePresenter(): RootPresenter = Scopes.rootActivity.getInstance(RootPresenter::class.java)
@@ -56,21 +55,12 @@ class RootActivity : MvpAppCompatActivity(), RootView, ToolbarView {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_root)
         setSupportActionBar(toolbar)
+        handleIntent()
     }
 
     override fun onResumeFragments() {
         super.onResumeFragments()
         navigatorHolder.setNavigator(navigator)
-        if (intent?.hasExtra(PlayerService.EXTRA_STATION_ID) == true) {
-            presenter.showStation(intent.getStringExtra(PlayerService.EXTRA_STATION_ID))
-        }
-        intent?.data?.let { addStation(it) }
-        intent = null
-    }
-
-    override fun onNewIntent(intent: Intent?) {
-        super.onNewIntent(intent)
-        this.intent = intent
     }
 
     override fun onPause() {
@@ -78,11 +68,14 @@ class RootActivity : MvpAppCompatActivity(), RootView, ToolbarView {
         super.onPause()
     }
 
+    override fun onNewIntent(intent: Intent?) {
+        super.onNewIntent(intent)
+        this.intent = intent
+        handleIntent()
+    }
+
     @SuppressLint("RestrictedApi")
     override fun onDestroy() {
-        //todo check
-//        popupHelper?.dismiss()
-//        popupHelper = null
         if (isFinishing) Toothpick.closeScope(Scopes.ROOT_ACTIVITY)
         super.onDestroy()
     }
@@ -92,6 +85,16 @@ class RootActivity : MvpAppCompatActivity(), RootView, ToolbarView {
             (it as? BackPressListener)?.onBackPressed() ?: false
         } ?: false
         if (!handled) super.onBackPressed()
+    }
+
+    private fun handleIntent() {
+        if (intent != null) {
+            if (intent.hasExtra(PlayerService.EXTRA_STATION_ID)) {
+                presenter.showStation(intent.getStringExtra(PlayerService.EXTRA_STATION_ID))
+            }
+            intent.data?.let { addStation(it) }
+            intent = null
+        }
     }
 
     fun addStation(uri: Uri) {
@@ -189,17 +192,17 @@ class RootActivity : MvpAppCompatActivity(), RootView, ToolbarView {
             true
         }
 
-        popupHelper = MenuPopupHelper(this, popup.menu as MenuBuilder, anchorView)
+        val popupHelper = MenuPopupHelper(this, popup.menu as MenuBuilder, anchorView)
         (0 until popup.menu.size())
                 .map { popup.menu.getItem(it) }
                 .forEach {
                     val drawable = DrawableCompat.wrap(it.icon).mutate()
                     DrawableCompat.setTint(drawable, ContextCompat.getColor(this, R.color.black))
-                    popupHelper?.setForceShowIcon(true)
+                    popupHelper.setForceShowIcon(true)
                 }
 
         anchorView.setOnClickListener {
-            popupHelper?.show(0, -anchorView.height)
+            popupHelper.show(0, -anchorView.height)
         }
     }
     //endregion

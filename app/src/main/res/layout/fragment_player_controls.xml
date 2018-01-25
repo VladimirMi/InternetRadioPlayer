@@ -13,7 +13,7 @@
         android:id="@+id/iconIv"
         android:layout_width="72dp"
         android:layout_height="72dp"
-        android:contentDescription="@string/desc_media_icon"
+        android:contentDescription="@string/desc_station_icon"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
         tools:src="@color/grey_500"

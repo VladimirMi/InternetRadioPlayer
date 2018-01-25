@@ -1,6 +1,12 @@
 package io.github.vladimirmi.radius.model.service
 
 import android.app.Notification
+import android.app.NotificationChannel
+import android.app.NotificationManager
+import android.content.Context
+import android.graphics.Color
+import android.os.Build
+import android.support.annotation.RequiresApi
 import android.support.v4.app.NotificationCompat
 import android.support.v4.app.NotificationManagerCompat
 import android.support.v4.media.MediaDescriptionCompat
@@ -11,12 +17,6 @@ import android.view.View
 import android.widget.RemoteViews
 import io.github.vladimirmi.radius.R
 import io.github.vladimirmi.radius.model.interactor.StationInteractor
-import android.app.NotificationManager
-import android.app.NotificationChannel
-import android.content.Context
-import android.graphics.Color
-import android.os.Build
-
 
 /**
  * Created by Vladimir Mikhalev 20.10.2017.
@@ -48,16 +48,7 @@ class MediaNotification(private val service: PlayerService,
 
     init {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-            val channelName = service.getString(R.string.notification_name)
-            val notificationChannel = NotificationChannel(CHANNEL_ID, channelName, NotificationManager.IMPORTANCE_DEFAULT)
-
-            // Configure the notification channel.
-            notificationChannel.description = service.getString(R.string.notification_name)
-            notificationChannel.enableLights(true)
-            notificationChannel.lightColor = Color.RED
-            NotificationManagerCompat.from(service)
-            (service.getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager)
-                    .createNotificationChannel(notificationChannel)
+            createNotificationChannel()
         }
     }
 
@@ -122,5 +113,19 @@ class MediaNotification(private val service: PlayerService,
                 .setCustomContentView(notificationView)
                 .setCustomBigContentView(notificationView)
                 .build()
+    }
+
+    @RequiresApi(Build.VERSION_CODES.O)
+    private fun createNotificationChannel() {
+        val channelName = service.getString(R.string.notification_name)
+        val notificationChannel = NotificationChannel(CHANNEL_ID, channelName, NotificationManager.IMPORTANCE_DEFAULT)
+
+        // Configure the notification channel.
+        notificationChannel.description = service.getString(R.string.notification_name)
+        notificationChannel.enableLights(true)
+        notificationChannel.lightColor = Color.RED
+        NotificationManagerCompat.from(service)
+        (service.getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager)
+                .createNotificationChannel(notificationChannel)
     }
 }

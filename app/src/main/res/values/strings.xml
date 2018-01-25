@@ -1,40 +1,39 @@
 <resources>
-    <string name="app_name">Radius</string>
+    <string name="app_name">Internet Radio Player</string>
 
-    <string name="toast_add_success">Станция добавлена</string>
-    <string name="toast_add_error">Не удалось добавить станцию</string>
-    <string name="toast_add_force">Станция с заданным именем уже есть</string>
-    <string name="toast_net_error">Нет сети</string>
-    <string name="toast_remove_success">Станция удалена</string>
+    <string name="toast_add_success">Station added</string>
+    <string name="toast_add_error">Could not add station</string>
+    <string name="toast_add_force">Station with the given name already exists</string>
+    <string name="toast_net_error">No connection</string>
+    <string name="toast_remove_success">Station deleted</string>
+    <string name="toast_add_shortcut_success">Station shortcut added</string>
+    <string name="toast_shortcut_remove">Station was removed. Remove the shortcut manually</string>
 
-    <string name="snackbar_exit">Нажмите еще раз для выхода</string>
-
-    <string name="dialog_remove_message">Вы действительно хотите удалить станцию?</string>
-    <string name="dialog_discard_message">Отменить изменения?</string>
-    <string name="dialog_goto_message">Перейти по ссылке?</string>
-    <string name="dialog_cancel_edit_message">Отменить изменения?</string>
-    <string name="dialog_cancel_create_message">Отменить добавление новой станции?</string>
-    <string name="dialog_new_station">Добавить новую станцию</string>
-    <string name="dialog_add_name">Название</string>
-    <string name="dialog_add_name_err">Необходимо задать имя</string>
-    <string name="dialog_add_group">Группа</string>
+    <string name="dialog_remove_message">Are you sure you want to delete the station?</string>
+    <string name="dialog_goto_message">Go to the link?</string>
+    <string name="dialog_cancel_edit_message">Cancel changes?</string>
+    <string name="dialog_cancel_create_message">Cancel adding a new station?</string>
+    <string name="dialog_new_station">Add new station</string>
+    <string name="dialog_new_station_hint">Paste streaming link</string>
+    <string name="dialog_add_name">Title</string>
+    <string name="dialog_add_name_err">Specify a name</string>
     <string name="dialog_ok">OK</string>
-    <string name="dialog_cancel">Отмена</string>
+    <string name="dialog_cancel">Cancel</string>
 
-    <string name="menu_favorite_on">Избранное</string>
-    <string name="menu_favorite_off">Все</string>
-    <string name="menu_more">Больше</string>
-    <string name="menu_station_edit">Редактировать</string>
-    <string name="menu_station_delete">Удалить</string>
-    <string name="menu_station_save">Сохранить</string>
-    <string name="menu_station_shortcut">Добавить ярлык</string>
-    <string name="menu_add_station">Добавить станцию</string>
+    <string name="menu_favorite_on">Favorite</string>
+    <string name="menu_favorite_off">All</string>
+    <string name="menu_more">More</string>
+    <string name="menu_station_edit">Edit</string>
+    <string name="menu_station_delete">Delete</string>
+    <string name="menu_station_save">Save</string>
+    <string name="menu_station_shortcut">Add station shortcut</string>
+    <string name="menu_add_station">Add station</string>
 
     <string name="metadata_buffering">Loading…</string>
 
     <string name="desc_favorite">add to favorite</string>
     <string name="desc_expand_collapse">expand/collapse</string>
-    <string name="desc_media_icon">media icon</string>
+    <string name="desc_station_icon">media icon</string>
     <string name="desc_play_pause_button">play/pause button</string>
     <string name="desc_skip_previous_button">skip previous button</string>
     <string name="desc_skip_next_button">skip next button</string>
@@ -50,15 +49,18 @@
     <string name="station_title_information">Information</string>
     <string name="station_title_genre">Genres:</string>
 
-    <string name="unit_sample_rate">Hz</string>
-    <string name="unit_bitrate">kbps</string>
+    <string name="unit_sample_rate" translatable="false">Hz</string>
+    <string name="unit_bitrate" translatable="false">kbps</string>
 
-    <string name="icon_icon">Иконка</string>
-    <string name="icon_favicon">Иконка сайта</string>
-    <string name="icon_text">Текст</string>
-    <string name="icon_add">Добавить</string>
-    <string name="icon_background_color">Цвет заднего фона</string>
-    <string name="icon_foreground_color">Цвет иконки</string>
+    <string name="icon_icon">Icon</string>
+    <string name="icon_favicon">Web site icon</string>
+    <string name="icon_text">Text</string>
+    <string name="icon_add">Add</string>
+    <string name="icon_background_color">Background color</string>
+    <string name="icon_foreground_color">Icon color</string>
 
-    <string name="notification_name">Уведомление Radio Player</string>
+    <string name="notification_name">Radio Player notification</string>
+
+    <string name="getstarted_title">Get started</string>
+    <string name="getstarted_description">You can create a new station by clicking on the playlist link in your web browser or the playlist itself in the file manager. The supported extensions are pls, m3u, m3u8 or ram. Also, you can create a station by adding a direct link to the audio stream.</string>
 </resources>

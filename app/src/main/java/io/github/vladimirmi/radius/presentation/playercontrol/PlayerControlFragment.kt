@@ -56,8 +56,8 @@ class PlayerControlFragment : BaseFragment(), PlayerControlView {
         if (station.favorite) {
             favorite.setBackgroundResource(R.drawable.ic_star)
         } else {
-            favorite.background = ContextCompat.getDrawable(context, R.drawable.ic_empty_star).apply {
-                mutate().setTintExt(ContextCompat.getColor(context, R.color.grey_700))
+            favorite.background = ContextCompat.getDrawable(context, R.drawable.ic_star_empty).apply {
+                mutate().setTintExt(ContextCompat.getColor(context, R.color.grey_600))
             }
         }
     }

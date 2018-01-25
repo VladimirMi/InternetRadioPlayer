@@ -161,7 +161,7 @@ class StationPresenter
 
     private fun addShortcut() {
         if (stationInteractor.addCurrentShortcut()) {
-            viewState.showToast(R.string.toast_add_success)
+            viewState.showToast(R.string.toast_add_shortcut_success)
         }
     }
 }

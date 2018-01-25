@@ -11,6 +11,7 @@
         android:layout_height="match_parent"
         android:orientation="horizontal"
         android:paddingTop="8dp"
+        tools:ignore="UseCompoundDrawables"
         >
 
         <ImageView

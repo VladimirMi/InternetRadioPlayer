@@ -28,8 +28,9 @@
     <string name="menu_station_save">Сохранить</string>
     <string name="menu_station_shortcut">Добавить ярлык</string>
     <string name="menu_add_station">Добавить станцию</string>
+    <string name="menu_exit">Выход</string>
 
-    <string name="metadata_buffering">Занрузка…</string>
+    <string name="metadata_buffering">Загрузка…</string>
 
     <string name="desc_favorite">добавить в избранное</string>
     <string name="desc_expand_collapse">развернуть/свернуть</string>

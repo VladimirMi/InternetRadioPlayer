@@ -28,6 +28,7 @@
     <string name="menu_station_save">Save</string>
     <string name="menu_station_shortcut">Add station shortcut</string>
     <string name="menu_add_station">Add station</string>
+    <string name="menu_exit">Exit</string>
 
     <string name="metadata_buffering">Loading…</string>
 

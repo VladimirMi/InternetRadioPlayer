@@ -42,10 +42,12 @@ class StationPresenter
         }
     }
 
+    private val editItem = MenuItemHolder(R.string.menu_station_edit, R.drawable.ic_edit, order = 0)
+    private val saveItem = MenuItemHolder(R.string.menu_station_save, R.drawable.ic_submit, order = 0)
+
     private val toolbarBuilder = ToolbarBuilder().setToolbarTitle(stationInteractor.currentStation.name)
-            .addMenuItem(MenuItemHolder(R.string.menu_station_edit, R.drawable.ic_edit))
-            .addMenuItem(MenuItemHolder(R.string.menu_station_shortcut, R.drawable.ic_shortcut))
-            .addMenuItem(MenuItemHolder(R.string.menu_station_delete, R.drawable.ic_delete))
+            .addMenuItem(MenuItemHolder(R.string.menu_station_shortcut, R.drawable.ic_shortcut, order = 1))
+            .addMenuItem(MenuItemHolder(R.string.menu_station_delete, R.drawable.ic_delete, order = 2))
             .setMenuActions(menuActions)
 
     override fun onFirstViewAttach() {
@@ -61,8 +63,8 @@ class StationPresenter
     private fun viewMode() {
         editMode = false
         viewState.setEditMode(editMode)
-        val toolbar = toolbarBuilder.replaceMenuItem(R.string.menu_station_save,
-                MenuItemHolder(R.string.menu_station_edit, R.drawable.ic_edit))
+        val toolbar = toolbarBuilder.removeMenuItem(saveItem)
+                .addMenuItem(editItem)
 
         viewState.buildToolbar(toolbar)
         controlsInteractor.tryEnableNextPrevious(true)
@@ -71,8 +73,8 @@ class StationPresenter
     private fun editMode() {
         editMode = true
         viewState.setEditMode(editMode)
-        val toolbar = toolbarBuilder.replaceMenuItem(R.string.menu_station_edit,
-                MenuItemHolder(R.string.menu_station_save, R.drawable.ic_submit))
+        val toolbar = toolbarBuilder.removeMenuItem(editItem)
+                .addMenuItem(saveItem)
 
         viewState.buildToolbar(toolbar)
         controlsInteractor.tryEnableNextPrevious(false)

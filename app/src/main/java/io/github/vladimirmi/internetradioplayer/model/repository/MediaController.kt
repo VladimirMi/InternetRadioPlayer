@@ -97,6 +97,10 @@ class MediaController
         }
     }
 
+    fun stop() {
+        controller?.transportControls?.stop()
+    }
+
     fun skipToPrevious() {
         controller?.transportControls?.skipToPrevious()
     }

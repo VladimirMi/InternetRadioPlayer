@@ -30,21 +30,24 @@ class StationListPresenter
                     private val router: Router)
     : BasePresenter<StationListView>() {
 
-    private val addStationItem = MenuItemHolder(R.string.menu_add_station, R.drawable.ic_add)
-    private val favoriteOnItem = MenuItemHolder(R.string.menu_favorite_on, R.drawable.ic_star_empty)
-    private val favoriteOffItem = MenuItemHolder(R.string.menu_favorite_off, R.drawable.ic_star)
+    private val addStationItem = MenuItemHolder(R.string.menu_add_station, R.drawable.ic_add, order = 0)
+    private val favoriteOnItem = MenuItemHolder(R.string.menu_favorite_on, R.drawable.ic_star_empty, order = 1)
+    private val favoriteOffItem = MenuItemHolder(R.string.menu_favorite_off, R.drawable.ic_star, order = 1)
+    private val exitItem = MenuItemHolder(R.string.menu_exit, R.drawable.ic_exit, order = 2)
 
     private val actions: (MenuItem) -> Unit = {
         when (it.itemId) {
             R.string.menu_favorite_on -> interactor.filterStations(Filter.FAVORITE)
             R.string.menu_favorite_off -> interactor.filterStations(Filter.DEFAULT)
             R.string.menu_add_station -> viewState.openAddStationDialog()
+            R.string.menu_exit -> exit()
         }
     }
 
     private val builder = ToolbarBuilder().setToolbarTitleId(R.string.app_name)
             .setMenuActions(actions)
             .addMenuItem(addStationItem)
+            .addMenuItem(exitItem)
 
 
     override fun onFirstViewAttach() {
@@ -68,26 +71,28 @@ class StationListPresenter
 
     private fun handleStationList(it: GroupedList<Station>) {
         val newBuilder = when (it.filter) {
-            Filter.FAVORITE -> {
-                if (it.canFilter(Filter.DEFAULT)) {
-                    builder.replaceMenuItem(R.string.menu_favorite_on, favoriteOffItem, add = true)
-                } else {
-                    builder.removeMenuItem(R.string.menu_favorite_off)
-                }
-            }
             Filter.DEFAULT -> {
                 if (it.size == 0) {
                     router.newRootScreen(Router.GET_STARTED_SCREEN)
                     return
                 }
-
                 if (it.canFilter(Filter.FAVORITE)) {
-                    builder.replaceMenuItem(R.string.menu_favorite_off, favoriteOnItem, add = true)
+                    builder.removeMenuItem(favoriteOffItem)
+                            .addMenuItem(favoriteOnItem)
                 } else {
                     builder.removeMenuItem(R.string.menu_favorite_on)
                 }
             }
+            Filter.FAVORITE -> {
+                if (it.canFilter(Filter.DEFAULT)) {
+                    builder.removeMenuItem(favoriteOnItem)
+                            .addMenuItem(favoriteOffItem)
+                } else {
+                    builder.removeMenuItem(R.string.menu_favorite_off)
+                }
+            }
         }
+
         viewState.buildToolbar(newBuilder)
         viewState.setMediaList(it)
     }
@@ -109,6 +114,11 @@ class StationListPresenter
     fun showStation(station: Station) {
         select(station)
         router.showStationSlide(station)
+    }
+
+    private fun exit() {
+        mediaController.stop()
+        router.exit()
     }
 }
 

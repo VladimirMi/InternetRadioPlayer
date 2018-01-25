@@ -36,18 +36,18 @@ class ToolbarBuilder {
         return this
     }
 
-    fun addMenuItem(menuItem: MenuItemHolder, position: Int = -1): ToolbarBuilder {
-        menuHolder.addItem(menuItem, position)
-        return this
-    }
-
-    fun replaceMenuItem(id: Int, menuItem: MenuItemHolder, add: Boolean = false): ToolbarBuilder {
-        menuHolder.replaceItem(id, menuItem, add)
+    fun addMenuItem(menuItem: MenuItemHolder): ToolbarBuilder {
+        menuHolder.addItem(menuItem)
         return this
     }
 
     fun removeMenuItem(id: Int): ToolbarBuilder {
         menuHolder.removeItem(id)
+        return this
+    }
+
+    fun removeMenuItem(menuItem: MenuItemHolder): ToolbarBuilder {
+        menuHolder.removeItem(menuItem.id)
         return this
     }
 
@@ -64,7 +64,7 @@ class ToolbarBuilder {
             toolbarView.setToolbarTitle(titleId)
         }
         toolbarView.enableBackNavigation(backNavEnabled)
-        toolbarView.setMenu(menuHolder)
+        toolbarView.setMenu(menuHolder.sorted())
     }
 }
 
@@ -73,18 +73,9 @@ class MenuHolder {
     lateinit var actions: (MenuItem) -> Unit
     val menu: List<MenuItemHolder> get() = items
 
-    fun addItem(item: MenuItemHolder, position: Int) {
-        if (position < 0 || position > items.size) {
-            items.add(item)
-        } else {
-            items.add(position, item)
-        }
-    }
 
-    fun replaceItem(id: Int, menuItem: MenuItemHolder, add: Boolean) {
-        val idx = items.indexOfFirst { it.id == id }
-        if (idx != -1) items[idx] = menuItem
-        else if (add && !items.contains(menuItem)) items.add(menuItem)
+    fun addItem(item: MenuItemHolder) {
+        items.add(item)
     }
 
     fun removeItem(id: Int) {
@@ -94,11 +85,16 @@ class MenuHolder {
     fun clear() {
         items.clear()
     }
+
+    fun sorted(): MenuHolder {
+        return this.apply { items.sortBy(MenuItemHolder::order) }
+    }
 }
 
 class MenuItemHolder(val itemTitleResId: Int,
                      val iconResId: Int,
-                     val showAsAction: Boolean = false) {
+                     val showAsAction: Boolean = false,
+                     val order: Int = 0) {
 
     val id = itemTitleResId
     override fun equals(other: Any?): Boolean {

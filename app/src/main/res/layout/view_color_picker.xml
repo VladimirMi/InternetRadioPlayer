@@ -7,7 +7,7 @@
     android:layout_height="wrap_content"
     >
 
-    <io.github.vladimirmi.radius.ui.ColorSeekBar
+    <io.github.vladimirmi.internetradioplayer.ui.ColorSeekBar
         android:id="@+id/redBar"
         android:layout_width="0dp"
         android:layout_height="0dp"
@@ -20,7 +20,7 @@
         tools:progress="150"
         />
 
-    <io.github.vladimirmi.radius.ui.ColorSeekBar
+    <io.github.vladimirmi.internetradioplayer.ui.ColorSeekBar
         android:id="@+id/greenBar"
         android:layout_width="0dp"
         android:layout_height="0dp"
@@ -33,7 +33,7 @@
         tools:progress="150"
         />
 
-    <io.github.vladimirmi.radius.ui.ColorSeekBar
+    <io.github.vladimirmi.internetradioplayer.ui.ColorSeekBar
         android:id="@+id/blueBar"
         android:layout_width="0dp"
         android:layout_height="0dp"

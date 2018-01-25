@@ -29,7 +29,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_below="@id/appbar"
-        android:name="io.github.vladimirmi.radius.presentation.metadata.MetadataFragment"
+        android:name="io.github.vladimirmi.internetradioplayer.presentation.metadata.MetadataFragment"
         tools:layout="@layout/fragment_metadata"
         />
 
@@ -43,7 +43,7 @@
 
     <fragment
         android:id="@+id/playerControlsFr"
-        android:name="io.github.vladimirmi.radius.presentation.playercontrol.PlayerControlFragment"
+        android:name="io.github.vladimirmi.internetradioplayer.presentation.playercontrol.PlayerControlFragment"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_alignParentBottom="true"

@@ -12,7 +12,7 @@ android {
     compileSdkVersion 26
     buildToolsVersion "26.0.3"
     defaultConfig {
-        applicationId "io.github.vladimirmi.radius"
+        applicationId "io.github.vladimirmi.internetradioplayer"
         minSdkVersion 16
         //noinspection OldTargetApi
         targetSdkVersion 26
@@ -22,7 +22,7 @@ android {
 
         javaCompileOptions {
             annotationProcessorOptions {
-                arguments = [ toothpick_registry_package_name : 'io.github.vladimirmi.radius' ]
+                arguments = [ toothpick_registry_package_name : 'io.github.vladimirmi.internetradioplayer' ]
             }
         }
     }

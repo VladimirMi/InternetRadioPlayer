@@ -123,7 +123,7 @@
         >
 
 
-        <io.github.vladimirmi.radius.ui.RadioContainer
+        <io.github.vladimirmi.internetradioplayer.ui.RadioContainer
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_weight="1"
@@ -139,9 +139,9 @@
                 android:clickable="false"
                 android:background="@drawable/ic_station_1"
                 />
-        </io.github.vladimirmi.radius.ui.RadioContainer>
+        </io.github.vladimirmi.internetradioplayer.ui.RadioContainer>
 
-        <io.github.vladimirmi.radius.ui.RadioContainer
+        <io.github.vladimirmi.internetradioplayer.ui.RadioContainer
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_weight="1"
@@ -157,9 +157,9 @@
                 android:backgroundTint="@color/sel_radio_btn"
                 android:background="@drawable/ic_station_2"
                 />
-        </io.github.vladimirmi.radius.ui.RadioContainer>
+        </io.github.vladimirmi.internetradioplayer.ui.RadioContainer>
 
-        <io.github.vladimirmi.radius.ui.RadioContainer
+        <io.github.vladimirmi.internetradioplayer.ui.RadioContainer
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_weight="1"
@@ -175,9 +175,9 @@
                 android:backgroundTint="@color/sel_radio_btn"
                 android:background="@drawable/ic_station_3"
                 />
-        </io.github.vladimirmi.radius.ui.RadioContainer>
+        </io.github.vladimirmi.internetradioplayer.ui.RadioContainer>
 
-        <io.github.vladimirmi.radius.ui.RadioContainer
+        <io.github.vladimirmi.internetradioplayer.ui.RadioContainer
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_weight="1"
@@ -193,7 +193,7 @@
                 android:backgroundTint="@color/sel_radio_btn"
                 android:background="@drawable/ic_station_4"
                 />
-        </io.github.vladimirmi.radius.ui.RadioContainer>
+        </io.github.vladimirmi.internetradioplayer.ui.RadioContainer>
     </RadioGroup>
 
     <RadioGroup
@@ -222,7 +222,7 @@
             />
     </RadioGroup>
 
-    <io.github.vladimirmi.radius.ui.ColorPicker
+    <io.github.vladimirmi.internetradioplayer.ui.ColorPicker
         android:id="@+id/colorPicker"
         android:layout_width="0dp"
         android:layout_height="wrap_content"

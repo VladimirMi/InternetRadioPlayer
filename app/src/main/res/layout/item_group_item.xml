@@ -1,52 +1,35 @@
 <?xml version="1.0" encoding="utf-8"?>
 
 <FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
-             xmlns:app="http://schemas.android.com/apk/res-auto"
              xmlns:tools="http://schemas.android.com/tools"
              android:layout_width="match_parent"
-             android:layout_height="52dp"
+             android:layout_height="56dp"
              android:orientation="vertical"
     >
-
-    <ImageView
-        android:layout_width="match_parent"
-        android:layout_height="2dp"
-        app:layout_constraintEnd_toEndOf="@+id/media_info"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        app:srcCompat="@drawable/shadow_reverse"
-        tools:ignore="ContentDescription"
-        android:layout_gravity="top"
-        />
 
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:orientation="horizontal"
         android:gravity="center_vertical"
+        android:orientation="horizontal"
         >
 
-        <TextView
-            android:id="@+id/icon"
-            android:layout_width="48dp"
-            android:layout_height="48dp"
-            android:layout_marginEnd="8dp"
-            android:layout_marginRight="8dp"
-            app:autoSizeTextType="uniform"
-            android:fontFamily="@font/audiowide"
-            android:gravity="center"
-            tools:text="S"
-            tools:background="@color/green_500"
-            tools:ignore="MissingPrefix"
+        <ImageView
+            android:id="@+id/iconIv"
+            android:layout_width="56dp"
+            android:layout_height="56dp"
+            tools:background="@color/accentColor"
+            android:contentDescription="@string/desc_station_icon"
             />
 
         <TextView
             android:id="@+id/name"
+            style="@style/TextAppearance.AppCompat.Body1"
             android:layout_width="0dp"
             android:layout_height="48dp"
             android:layout_weight="1"
+            android:padding="8dp"
             android:gravity="center_vertical"
-            android:textSize="16sp"
             tools:text="Item name"
             />
 
@@ -54,23 +37,20 @@
             android:id="@+id/favorite"
             android:layout_width="48dp"
             android:layout_height="48dp"
+            android:contentDescription="@string/desc_favorite"
             android:padding="12dp"
+            android:src="@drawable/ic_star"
             android:visibility="invisible"
             tools:visibility="visible"
-            app:srcCompat="@drawable/ic_star"
-            android:contentDescription="@string/desc_favorite"
             />
 
     </LinearLayout>
 
-    <ImageView
+    <View
         android:layout_width="match_parent"
-        android:layout_height="2dp"
-        app:layout_constraintEnd_toEndOf="@+id/media_info"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        app:srcCompat="@drawable/shadow"
+        android:layout_height="1dp"
         tools:ignore="ContentDescription"
+        android:background="@color/grey_500"
         android:layout_gravity="bottom"
         />
 

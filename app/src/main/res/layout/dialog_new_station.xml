@@ -1,78 +1,16 @@
 <?xml version="1.0" encoding="utf-8"?>
-<android.support.v7.widget.CardView
+<FrameLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    app:cardCornerRadius="4dp"
-    app:contentPadding="24dp"
+    android:padding="24dp"
     >
 
-    <LinearLayout
+    <EditText
+        android:id="@+id/linkEt"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:orientation="vertical"
-        >
+        android:hint="@string/dialog_new_station_hint"
+        />
 
-        <TextView
-            android:id="@+id/dialog_title"
-            style="@style/CustomText.Black"
-            android:layout_gravity="center_horizontal"
-            android:text="@string/dialog_new_station"
-            android:textSize="16sp"
-            android:layout_marginBottom="8dp"
-            />
-
-        <TextView
-            android:id="@+id/name_error"
-            style="@style/CustomText.Black.Title"
-            android:text="@string/dialog_name"
-            />
-
-        <EditText
-            android:id="@+id/name"
-            style="@style/InputField"
-            android:inputType="text"
-            />
-
-        <TextView
-            android:id="@+id/group_error"
-            style="@style/CustomText.Black.Title"
-            android:text="@string/dialog_group"
-            />
-
-        <EditText
-            android:id="@+id/group"
-            style="@style/InputField"
-            android:inputType="text"
-            />
-
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="58dp"
-            android:orientation="horizontal"
-            android:layout_marginTop="24dp"
-            >
-
-            <Button
-                android:id="@+id/ok"
-                android:layout_width="0dp"
-                android:layout_height="match_parent"
-                android:layout_weight="1"
-                android:text="@string/button_ok"
-                android:theme="@style/AccentButton"
-                />
-
-            <Button
-                android:id="@+id/cancel"
-                android:layout_width="0dp"
-                android:layout_height="match_parent"
-                android:layout_weight="1"
-                android:text="@string/button_cancel"
-                android:theme="@style/CancelButton"
-                />
-        </LinearLayout>
-
-    </LinearLayout>
-
-</android.support.v7.widget.CardView>
+</FrameLayout>

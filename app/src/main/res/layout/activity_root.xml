@@ -19,35 +19,61 @@
             android:layout_height="?attr/actionBarSize"
             android:background="?attr/colorPrimary"
             app:popupTheme="@style/AppTheme.PopupOverlay"
-            app:titleTextColor="@color/black"
-            >
-
-            <ImageView
-                android:layout_width="40dp"
-                android:layout_height="40dp"
-                android:src="@mipmap/ic_launcher_round"
-                tools:ignore="ContentDescription"
-                />
-
-        </android.support.v7.widget.Toolbar>
+            app:titleTextColor="@color/white"
+            />
 
     </android.support.design.widget.AppBarLayout>
 
+    <fragment
+        android:id="@+id/metadataFr"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/appbar"
+        android:name="io.github.vladimirmi.internetradioplayer.presentation.metadata.MetadataFragment"
+        tools:layout="@layout/fragment_metadata"
+        />
+
     <FrameLayout
-        android:id="@+id/fragment_container"
+        android:id="@+id/mainFr"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_above="@id/player_controls"
-        android:layout_below="@id/appbar"
+        android:layout_above="@id/playerControlsFr"
+        android:layout_below="@id/metadataFr"
         />
 
     <fragment
-        android:id="@+id/player_controls"
-        android:name="io.github.vladimirmi.radius.ui.playerControl.PlayerControlFragment"
+        android:id="@+id/playerControlsFr"
+        android:name="io.github.vladimirmi.internetradioplayer.presentation.playercontrol.PlayerControlFragment"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_alignParentBottom="true"
         tools:layout="@layout/fragment_player_controls"
+        />
+
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="4dp"
+        android:layout_below="@id/metadataFr"
+        android:background="@drawable/shadow"
+        />
+
+    <ProgressBar
+        android:id="@+id/loadingPb"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/metadataFr"
+        android:indeterminate="true"
+        style="@style/Widget.AppCompat.ProgressBar.Horizontal"
+        android:layout_marginTop="-6dp"
+        android:visibility="gone"
+        tools:visibility="visible"
+        />
+
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="4dp"
+        android:layout_above="@id/playerControlsFr"
+        android:background="@drawable/shadow_reverse"
         />
 
 </RelativeLayout>

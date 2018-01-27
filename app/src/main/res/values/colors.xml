@@ -1,14 +1,5 @@
 <!--?xml version="1.0" encoding="UTF-8"?-->
 <resources>
-    <color name="primaryColor">#757575</color>
-    <color name="primaryLightColor">#a4a4a4</color>
-    <color name="primaryDarkColor">#494949</color>
-    <color name="secondaryColor">#aed581</color>
-    <color name="secondaryLightColor">#e1ffb1</color>
-    <color name="secondaryDarkColor">#7da453</color>
-    <color name="primaryTextColor">#ffffff</color>
-    <color name="secondaryTextColor">#616161</color>
-
     <color name="red_500">#F44336</color>
     <color name="red_800">#c62828</color>
     <color name="pink_200">#f48fb1</color>
@@ -24,7 +15,7 @@
     <color name="teal_500">#009688</color>
     <color name="green_100">#c8e6c9</color>
     <color name="green_300">#81c784</color>
-    <color name="green_500">#4CAF50</color>
+    <color name="green_500">#4caf50</color>
     <color name="light_green_500">#8BC34A</color>
     <color name="lime_500">#CDDC39</color>
     <color name="yellow_200">#fff59d</color>
@@ -40,36 +31,24 @@
     <color name="grey_300">#e0e0e0</color>
     <color name="grey_400">#bdbdbd</color>
     <color name="grey_500">#9E9E9E</color>
+    <color name="grey_600">#757575</color>
     <color name="grey_700">#616161</color>
-    <color name="grey_800">#616161</color>
+    <color name="grey_800">#424242</color>
     <color name="grey_900">#212121</color>
+    <color name="blue_grey_100">#cfd8dc</color>
     <color name="blue_grey_500">#607D8B</color>
 
     <color name="black">#000000</color>
     <color name="white">#ffffff</color>
     <color name="transparent">#0fff</color>
-    <color name="shadow">#99bdbdbd</color>
-    <color name="shadow_end">#99eeeeee</color>
 
-    <color name="player_controls">#cfd8dc</color>
 
-    <array name="icon_text_color_set">
-        <item>@color/green_500</item>
-        <item>@color/grey_700</item>
-        <item>@color/deep_purple_500</item>
-        <item>@color/indigo_500</item>
-        <item>@color/lime_500</item>
-        <item>@color/deep_orange_500</item>
-        <item>@color/blue_grey_500</item>
-    </array>
+    <color name="primaryColor">@color/grey_600</color>
+    <color name="primaryDarkColor">@color/grey_800</color>
+    <color name="primaryLightColor">@color/blue_grey_100</color>
+    <color name="primaryText">@color/grey_900</color>
+    <color name="secondaryText">@color/grey_600</color>
+    <color name="accentColor">@color/light_green_500</color>
 
-    <array name="icon_bg_color_set">
-        <item>@color/pink_200</item>
-        <item>@color/purple_200</item>
-        <item>@color/yellow_200</item>
-        <item>@color/green_300</item>
-        <item>@color/lime_500</item>
-        <item>@color/blue_200</item>
-        <item>@color/brown_200</item>
-    </array>
+    <color name="shadow">#779e9e9e</color>
 </resources>

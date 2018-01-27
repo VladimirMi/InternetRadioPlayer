@@ -50,16 +50,16 @@ class MediaController
     }
 
     private val controllerCallback = object : MediaControllerCompat.Callback() {
-        override fun onPlaybackStateChanged(state: PlaybackStateCompat) {
-            playbackState.accept(state)
+        override fun onPlaybackStateChanged(state: PlaybackStateCompat?) {
+            state?.let { playbackState.accept(it) }
         }
 
-        override fun onMetadataChanged(metadata: MediaMetadataCompat) {
-            playbackMetaData.accept(metadata)
+        override fun onMetadataChanged(metadata: MediaMetadataCompat?) {
+            metadata?.let { playbackMetaData.accept(it) }
         }
 
-        override fun onSessionEvent(event: String, extras: Bundle?) {
-            sessionEvent.accept(event)
+        override fun onSessionEvent(event: String?, extras: Bundle?) {
+            event?.let { sessionEvent.accept(it) }
         }
     }
 

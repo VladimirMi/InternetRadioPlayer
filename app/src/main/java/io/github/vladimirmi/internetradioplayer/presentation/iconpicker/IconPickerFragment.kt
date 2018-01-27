@@ -16,6 +16,7 @@ import io.github.vladimirmi.internetradioplayer.presentation.root.ToolbarView
 import io.github.vladimirmi.internetradioplayer.ui.base.BackPressListener
 import io.github.vladimirmi.internetradioplayer.ui.base.BaseFragment
 import kotlinx.android.synthetic.main.fragment_icon_picker.*
+import kotlinx.android.synthetic.main.view_station_icons.*
 import toothpick.Toothpick
 
 /**
@@ -85,7 +86,10 @@ class IconPickerFragment : BaseFragment(), IconPickerView, BackPressListener {
 
     override fun setForegroundColor(colorInt: Int) {
         iconTv.setTextColor(colorInt)
-        iconIv.drawable.setTintExt(colorInt)
+        //todo on api27 that works
+//        iconIv.setTint(colorInt)
+        iconIv.background.mutate().setTintExt(colorInt)
+        iconIv.invalidate()
         colorPicker.setColor(colorInt)
     }
 
@@ -101,7 +105,7 @@ class IconPickerFragment : BaseFragment(), IconPickerView, BackPressListener {
 
     override fun setIconRes(iconRes: IconRes) {
         iconsRg.check(iconRes.id)
-        iconIv.setImageResource(iconRes.resId)
+        iconIv.setBackgroundResource(iconRes.resId)
     }
 
     //endregion

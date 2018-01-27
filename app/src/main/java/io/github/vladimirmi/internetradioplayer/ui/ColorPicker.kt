@@ -32,9 +32,9 @@ class ColorPicker : FrameLayout, SeekBar.OnSeekBarChangeListener {
     private fun init() {
         val view = View.inflate(context, R.layout.view_color_picker, null)
         addView(view)
-        redBar.setOnSeekBarChangeListener(this)
-        greenBar.setOnSeekBarChangeListener(this)
-        blueBar.setOnSeekBarChangeListener(this)
+        view.redBar.setOnSeekBarChangeListener(this)
+        view.greenBar.setOnSeekBarChangeListener(this)
+        view.blueBar.setOnSeekBarChangeListener(this)
     }
 
     @ColorInt private var color: Int = Color.LTGRAY

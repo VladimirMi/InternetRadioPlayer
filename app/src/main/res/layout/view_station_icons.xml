@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RadioGroup
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/iconsRg"
+    android:layout_width="0dp"
+    android:layout_height="wrap_content"
+    android:layout_marginTop="32dp"
+    android:gravity="center"
+    android:orientation="horizontal"
+    app:layout_constraintEnd_toEndOf="parent"
+    app:layout_constraintStart_toStartOf="parent"
+    app:layout_constraintTop_toBottomOf="@+id/optionsRg"
+    android:checkedButton="@id/ic_station_1"
+    tools:showIn="@layout/fragment_icon_picker"
+    >
+
+    <RadioButton
+        android:id="@+id/ic_station_1"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:drawableRight="@drawable/ic_station_1"
+        android:drawableEnd="@drawable/ic_station_1"
+        />
+
+    <RadioButton
+        android:id="@+id/ic_station_2"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:drawableRight="@drawable/ic_station_2"
+        android:drawableEnd="@drawable/ic_station_2"
+        />
+
+
+    <RadioButton
+        android:id="@+id/ic_station_3"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:drawableRight="@drawable/ic_station_3"
+        android:drawableEnd="@drawable/ic_station_3"
+        />
+
+
+    <RadioButton
+        android:id="@+id/ic_station_4"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:drawableRight="@drawable/ic_station_4"
+        android:drawableEnd="@drawable/ic_station_4"
+        />
+</RadioGroup>

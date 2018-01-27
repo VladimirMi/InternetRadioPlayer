@@ -63,7 +63,6 @@ class StationFragment : BaseFragment(), StationView, BackPressListener {
 
         fab.setOnClickListener { presenter.changeMode() }
         changeIconBt.setOnClickListener { presenter.changeIcon() }
-        changeIconBt.background.alpha = 128
     }
 
     override fun onBackPressed() = presenter.onBackPressed()

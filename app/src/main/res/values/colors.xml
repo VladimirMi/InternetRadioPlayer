@@ -51,4 +51,5 @@
     <color name="accentColor">@color/light_green_500</color>
 
     <color name="shadow">#779e9e9e</color>
+    <color name="transparent_grey">#55222222</color>
 </resources>

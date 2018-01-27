@@ -27,6 +27,7 @@ class MediaNotification(private val service: PlayerService,
                         private val stationInteractor: StationInteractor) {
 
     companion object {
+        //todo fix notification view on api 16
         const val CHANNEL_ID = "radius channel"
         const val PLAYER_NOTIFICATION_ID = 50
     }

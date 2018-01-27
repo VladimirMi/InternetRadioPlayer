@@ -35,9 +35,8 @@ class StationPresenter
 
     private val menuActions: (MenuItem) -> Unit = {
         when (it.itemId) {
-            R.string.menu_station_edit -> editMode()
+            R.string.menu_station_edit, R.string.menu_station_save -> changeMode()
             R.string.menu_station_delete -> viewState.openRemoveDialog()
-            R.string.menu_station_save -> viewState.editStation()
             R.string.menu_station_shortcut -> addShortcut()
         }
     }

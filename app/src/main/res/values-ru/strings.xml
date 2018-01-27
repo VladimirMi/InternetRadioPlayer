@@ -60,5 +60,10 @@
     <string name="notification_name">Уведомление Radio Player</string>
 
     <string name="getstarted_title">Начало работы</string>
-    <string name="getstarted_description">Вы можете создать новую станцию, нажав на ссылку плейлиста в вашем веб браузере или сам плейлист в менеджере файлов. Поддерживаемые расширения - pls, m3u, m3u8 или ram. Также вы можете создать станцию, добавив прямую ссылку на аудиопоток</string>
+    <string name="help_create">Вы можете создать новую станцию:</string>
+    <string name="help_create_1"> - нажав на ссылку плейлиста в вашем веб браузере.\n
+        К примеру, здесь https://www.internet-radio.com</string>
+    <string name="help_create_2"> - нажав на файл плейлиста в менеджере файлов.\n
+        Поддерживаемые расширения - pls, m3u or ram.</string>
+    <string name="help_create_3"> - добавив прямую ссылку на аудиопоток.</string>
 </resources>

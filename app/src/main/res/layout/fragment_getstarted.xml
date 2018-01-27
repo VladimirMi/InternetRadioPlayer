@@ -11,11 +11,24 @@
         android:id="@+id/textView2"
         style="@style/CustomText.Black"
         android:layout_marginTop="32dp"
-        android:textSize="24sp"
+        android:textAppearance="@style/Base.TextAppearance.AppCompat.Title"
         android:text="@string/getstarted_title"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
+        />
+
+    <include
+        layout="@layout/view_help_create"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginEnd="16dp"
+        android:layout_marginStart="16dp"
+        android:layout_marginTop="16dp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.0"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/textView2"
         />
 
     <Button
@@ -24,24 +37,9 @@
         android:layout_height="wrap_content"
         android:layout_marginBottom="32dp"
         android:text="@string/menu_add_station"
+        android:theme="@style/AccentButton"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        android:theme="@style/AccentButton"
-        />
-
-    <TextView
-        android:id="@+id/textView"
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        android:layout_marginEnd="16dp"
-        android:layout_marginStart="16dp"
-        android:layout_marginTop="16dp"
-
-        android:text="@string/getstarted_description"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.0"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/textView2"
         />
 </android.support.constraint.ConstraintLayout>

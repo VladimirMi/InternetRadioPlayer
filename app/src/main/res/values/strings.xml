@@ -63,5 +63,10 @@
     <string name="notification_name">Radio Player notification</string>
 
     <string name="getstarted_title">Get started</string>
-    <string name="getstarted_description">You can create a new station by clicking on the playlist link in your web browser or the playlist itself in the file manager. The supported extensions are pls, m3u, m3u8 or ram. Also, you can create a station by adding a direct link to the audio stream.</string>
+    <string name="help_create">You can create a new station by:</string>
+    <string name="help_create_1"> - clicking on the playlist link in your web browser.\n
+        For example here https://www.internet-radio.com</string>
+    <string name="help_create_2"> - clicking on the playlist file in the file manager.\n
+        The supported extensions are pls, m3u or ram.</string>
+    <string name="help_create_3"> - adding a direct link to the audio stream.</string>
 </resources>

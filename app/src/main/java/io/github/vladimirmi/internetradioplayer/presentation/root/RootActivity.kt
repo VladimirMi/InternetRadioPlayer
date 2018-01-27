@@ -43,6 +43,7 @@ class RootActivity : MvpAppCompatActivity(), RootView, ToolbarView {
 
     private val navigator = Navigator(this, R.id.mainFr)
     private var menuHolder: MenuHolder? = null
+    private var popupHelper: MenuPopupHelper? = null
 
     @ProvidePresenter
     fun providePresenter(): RootPresenter = Scopes.rootActivity.getInstance(RootPresenter::class.java)
@@ -63,8 +64,11 @@ class RootActivity : MvpAppCompatActivity(), RootView, ToolbarView {
         navigatorHolder.setNavigator(navigator)
     }
 
+    @SuppressLint("RestrictedApi")
     override fun onPause() {
         navigatorHolder.removeNavigator()
+        popupHelper?.dismiss()
+        popupHelper = null
         super.onPause()
     }
 
@@ -74,7 +78,6 @@ class RootActivity : MvpAppCompatActivity(), RootView, ToolbarView {
         handleIntent()
     }
 
-    @SuppressLint("RestrictedApi")
     override fun onDestroy() {
         if (isFinishing) Toothpick.closeScope(Scopes.ROOT_ACTIVITY)
         super.onDestroy()
@@ -192,17 +195,17 @@ class RootActivity : MvpAppCompatActivity(), RootView, ToolbarView {
             true
         }
 
-        val popupHelper = MenuPopupHelper(this, popup.menu as MenuBuilder, anchorView)
+        popupHelper = MenuPopupHelper(this, popup.menu as MenuBuilder, anchorView)
         (0 until popup.menu.size())
                 .map { popup.menu.getItem(it) }
                 .forEach {
                     val drawable = DrawableCompat.wrap(it.icon).mutate()
                     DrawableCompat.setTint(drawable, ContextCompat.getColor(this, R.color.black))
-                    popupHelper.setForceShowIcon(true)
+                    popupHelper?.setForceShowIcon(true)
                 }
 
         anchorView.setOnClickListener {
-            popupHelper.show(0, -anchorView.height)
+            popupHelper?.show(0, -anchorView.height)
         }
     }
     //endregion

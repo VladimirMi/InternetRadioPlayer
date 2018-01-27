@@ -25,7 +25,7 @@ import io.github.vladimirmi.internetradioplayer.ui.TagView
 import io.github.vladimirmi.internetradioplayer.ui.base.BackPressListener
 import io.github.vladimirmi.internetradioplayer.ui.base.BaseFragment
 import kotlinx.android.synthetic.main.fragment_station.*
-import kotlinx.android.synthetic.main.part_station_info.*
+import kotlinx.android.synthetic.main.view_station_info.*
 import toothpick.Toothpick
 
 

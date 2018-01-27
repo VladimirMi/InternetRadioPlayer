@@ -40,7 +40,7 @@ class MediaNotification(private val service: PlayerService,
     private val previousIntent = MediaButtonReceiver
             .buildMediaButtonPendingIntent(service, PlaybackStateCompat.ACTION_SKIP_TO_PREVIOUS)
 
-    private val notificationView = RemoteViews(service.packageName, R.layout.notification).apply {
+    private val notificationView = RemoteViews(service.packageName, R.layout.view_notification).apply {
         setOnClickPendingIntent(R.id.play_pause, playPauseIntent)
         setOnClickPendingIntent(R.id.previous, previousIntent)
         setOnClickPendingIntent(R.id.next, nextIntent)

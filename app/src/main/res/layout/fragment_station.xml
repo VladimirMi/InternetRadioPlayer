@@ -81,7 +81,7 @@
         android:overScrollMode="ifContentScrolls"
         >
 
-        <include layout="@layout/part_station_info"/>
+        <include layout="@layout/view_station_info"/>
     </ScrollView>
 </RelativeLayout>
 

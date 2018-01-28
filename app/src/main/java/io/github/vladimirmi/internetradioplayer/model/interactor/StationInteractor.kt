@@ -104,6 +104,7 @@ class StationInteractor
     fun removeStation(station: Station): Completable {
         return stationRepository.removeStation(station)
                 .mergeWith(removeIcon(station.name))
+                .doOnComplete { shortcutHelper.removeShortcut(station) }
     }
 
     fun showOrHideGroup(group: String) {
@@ -120,10 +121,6 @@ class StationInteractor
 
     fun addCurrentShortcut(): Boolean {
         return shortcutHelper.pinShortcut(currentStation, currentIcon)
-    }
-
-    fun removeShortcut(station: Station) {
-        shortcutHelper.removeShortcut(station)
     }
 
     //region =============== Icon ==============

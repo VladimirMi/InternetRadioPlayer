@@ -3,8 +3,8 @@ package io.github.vladimirmi.internetradioplayer.presentation.iconpicker
 import android.graphics.Bitmap
 import com.arellomobile.mvp.InjectViewState
 import io.github.vladimirmi.internetradioplayer.model.entity.Icon
+import io.github.vladimirmi.internetradioplayer.model.interactor.PlayerControlsInteractor
 import io.github.vladimirmi.internetradioplayer.model.interactor.StationInteractor
-import io.github.vladimirmi.internetradioplayer.model.repository.MediaController
 import io.github.vladimirmi.internetradioplayer.navigation.Router
 import io.github.vladimirmi.internetradioplayer.presentation.root.RootPresenter
 import io.github.vladimirmi.internetradioplayer.presentation.root.ToolbarBuilder
@@ -19,7 +19,7 @@ import javax.inject.Inject
 class IconPickerPresenter
 @Inject constructor(private val rootPresenter: RootPresenter,
                     private val stationInteractor: StationInteractor,
-                    private val mediaController: MediaController,
+                    private val controlsInteractor: PlayerControlsInteractor,
                     private val router: Router)
     : BasePresenter<IconPickerView>() {
 
@@ -96,7 +96,7 @@ class IconPickerPresenter
 
     fun exit() {
         rootPresenter.viewState.showControls(true)
-        if (!mediaController.isStopped) {
+        if (!controlsInteractor.isStopped) {
             rootPresenter.viewState.showMetadata(true)
         }
         router.exit()

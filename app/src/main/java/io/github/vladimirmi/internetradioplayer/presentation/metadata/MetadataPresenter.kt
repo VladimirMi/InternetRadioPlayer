@@ -4,7 +4,7 @@ import android.support.v4.media.MediaMetadataCompat
 import android.support.v4.media.session.PlaybackStateCompat
 import com.arellomobile.mvp.InjectViewState
 import io.github.vladimirmi.internetradioplayer.R
-import io.github.vladimirmi.internetradioplayer.model.repository.MediaController
+import io.github.vladimirmi.internetradioplayer.model.interactor.PlayerControlsInteractor
 import io.github.vladimirmi.internetradioplayer.ui.base.BasePresenter
 import io.reactivex.rxkotlin.addTo
 import io.reactivex.rxkotlin.subscribeBy
@@ -16,15 +16,15 @@ import javax.inject.Inject
 
 @InjectViewState
 class MetadataPresenter
-@Inject constructor(private val mediaController: MediaController)
+@Inject constructor(private val controlsInteractor: PlayerControlsInteractor)
     : BasePresenter<MetadataView>() {
 
     override fun onFirstViewAttach() {
-        mediaController.playbackMetaData
+        controlsInteractor.playbackMetaData
                 .subscribeBy { handleMeta(it) }
                 .addTo(compDisp)
 
-        mediaController.playbackState
+        controlsInteractor.playbackState
                 .subscribeBy { handleState(it) }
                 .addTo(compDisp)
     }

@@ -6,8 +6,8 @@ import io.github.vladimirmi.internetradioplayer.R
 import io.github.vladimirmi.internetradioplayer.model.entity.Filter
 import io.github.vladimirmi.internetradioplayer.model.entity.Station
 import io.github.vladimirmi.internetradioplayer.model.entity.groupedlist.GroupedList
+import io.github.vladimirmi.internetradioplayer.model.interactor.PlayerControlsInteractor
 import io.github.vladimirmi.internetradioplayer.model.interactor.StationInteractor
-import io.github.vladimirmi.internetradioplayer.model.repository.MediaController
 import io.github.vladimirmi.internetradioplayer.navigation.Router
 import io.github.vladimirmi.internetradioplayer.presentation.root.MenuItemHolder
 import io.github.vladimirmi.internetradioplayer.presentation.root.RootPresenter
@@ -26,7 +26,7 @@ import javax.inject.Inject
 class StationListPresenter
 @Inject constructor(private val rootPresenter: RootPresenter,
                     private val interactor: StationInteractor,
-                    private val mediaController: MediaController,
+                    private val controlsInteractor: PlayerControlsInteractor,
                     private val router: Router)
     : BasePresenter<StationListView>() {
 
@@ -61,11 +61,11 @@ class StationListPresenter
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe {
                     viewState.buildToolbar(builder.setToolbarTitle(it.name))
-                    viewState.selectItem(it, mediaController.isPlaying)
+                    viewState.selectItem(it, controlsInteractor.isPlaying)
                 }.addTo(compDisp)
 
-        mediaController.playbackState
-                .subscribe { viewState.selectItem(interactor.currentStation, mediaController.isPlaying) }
+        controlsInteractor.playbackState
+                .subscribe { viewState.selectItem(interactor.currentStation, controlsInteractor.isPlaying) }
                 .addTo(compDisp)
     }
 
@@ -107,7 +107,7 @@ class StationListPresenter
 
     fun removeStation(station: Station) {
         interactor.removeStation(station)
-                .subscribe { interactor.removeShortcut(station) }
+                .subscribe()
                 .addTo(compDisp)
     }
 
@@ -117,7 +117,7 @@ class StationListPresenter
     }
 
     private fun exit() {
-        mediaController.stop()
+        controlsInteractor.stop()
         router.exit()
     }
 }

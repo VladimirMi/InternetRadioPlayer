@@ -5,8 +5,8 @@ import android.support.v4.media.session.PlaybackStateCompat.*
 import com.arellomobile.mvp.InjectViewState
 import io.github.vladimirmi.internetradioplayer.R
 import io.github.vladimirmi.internetradioplayer.extensions.ioToMain
+import io.github.vladimirmi.internetradioplayer.model.interactor.PlayerControlsInteractor
 import io.github.vladimirmi.internetradioplayer.model.interactor.StationInteractor
-import io.github.vladimirmi.internetradioplayer.model.repository.MediaController
 import io.github.vladimirmi.internetradioplayer.model.service.AvailableActions
 import io.github.vladimirmi.internetradioplayer.model.service.PlayerService
 import io.github.vladimirmi.internetradioplayer.navigation.Router
@@ -21,13 +21,13 @@ import javax.inject.Inject
 
 @InjectViewState
 class PlayerControlPresenter
-@Inject constructor(private val mediaController: MediaController,
+@Inject constructor(private val controlsInteractor: PlayerControlsInteractor,
                     private val stationInteractor: StationInteractor,
                     private val router: Router)
     : BasePresenter<PlayerControlView>() {
 
     override fun onFirstViewAttach() {
-        mediaController.playbackState
+        controlsInteractor.playbackState
                 .subscribe { handleState(it) }
                 .addTo(compDisp)
 
@@ -36,7 +36,7 @@ class PlayerControlPresenter
                 .subscribe { viewState.setStation(it) }
                 .addTo(compDisp)
 
-        mediaController.sessionEvent
+        controlsInteractor.sessionEvent
                 .subscribe { handleSessionEvent(it) }
                 .addTo(compDisp)
 
@@ -66,7 +66,7 @@ class PlayerControlPresenter
     }
 
     fun playPause() {
-        with(mediaController) {
+        with(controlsInteractor) {
             if (!isPlaying && !isNetAvail) {
                 viewState.showToast(R.string.toast_net_error)
             } else {
@@ -88,10 +88,10 @@ class PlayerControlPresenter
     }
 
     fun skipPrevious() {
-        mediaController.skipToPrevious()
+        controlsInteractor.skipToPrevious()
     }
 
     fun skipNext() {
-        mediaController.skipToNext()
+        controlsInteractor.skipToNext()
     }
 }

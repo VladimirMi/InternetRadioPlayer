@@ -89,15 +89,14 @@ class StationPresenter
 
     fun removeStation() {
         val station = stationInteractor.currentStation
-        val pos = stationInteractor.stationList.positionOfFirst { it.id == station.id }
-        if (pos == 0) {
+        if (stationInteractor.stationList.positionOfFirst { it.id == station.id } == 0) {
             controlsInteractor.nextStation()
         } else {
             controlsInteractor.previousStation()
         }
         stationInteractor.removeStation(station)
                 .subscribe {
-                    stationInteractor.removeShortcut(station)
+                    controlsInteractor.stop()
                     router.exit()
                 }
                 .addTo(compDisp)

@@ -1,6 +1,10 @@
 package io.github.vladimirmi.internetradioplayer.model.interactor
 
+import android.support.v4.media.MediaMetadataCompat
+import android.support.v4.media.session.PlaybackStateCompat
 import io.github.vladimirmi.internetradioplayer.model.entity.PlayerMode
+import io.github.vladimirmi.internetradioplayer.model.manager.NetworkChecker
+import io.github.vladimirmi.internetradioplayer.model.repository.MediaController
 import io.github.vladimirmi.internetradioplayer.model.repository.StationListRepository
 import io.reactivex.Observable
 import io.reactivex.disposables.Disposables
@@ -11,7 +15,9 @@ import javax.inject.Inject
  */
 
 class PlayerControlsInteractor
-@Inject constructor(private val repository: StationListRepository) {
+@Inject constructor(private val repository: StationListRepository,
+                    private val controller: MediaController,
+                    private val networkChecker: NetworkChecker) {
 
     private var enableNextPreviousListener: ((Boolean) -> Unit)? = null
 
@@ -34,6 +40,10 @@ class PlayerControlsInteractor
                 }
             }.mergeWith(enableNextPreviousObs)
 
+    val playbackState: Observable<PlaybackStateCompat> = controller.playbackState
+    val playbackMetaData: Observable<MediaMetadataCompat> = controller.playbackMetaData
+    val sessionEvent: Observable<String> = controller.sessionEvent
+
     fun tryEnableNextPrevious(enable: Boolean) {
         enableNextPreviousListener?.invoke(enable && repository.stationList.itemsSize > 1)
     }
@@ -53,4 +63,35 @@ class PlayerControlsInteractor
             true
         } else false
     }
+
+    val isPlaying: Boolean
+        get() = with(controller.playbackState) {
+            hasValue() && (value.state == PlaybackStateCompat.STATE_PLAYING ||
+                    value.state == PlaybackStateCompat.STATE_BUFFERING)
+        }
+
+    val isStopped: Boolean
+        get() = with(controller.playbackState) {
+            hasValue() && (value.state == PlaybackStateCompat.STATE_STOPPED)
+        }
+
+    val isNetAvail: Boolean get() = networkChecker.isAvailable()
+
+    fun connect() = controller.connect()
+
+    fun disconnect() = controller.disconnect()
+
+    fun playPause() {
+        if (isPlaying) {
+            controller.pause()
+        } else {
+            controller.play()
+        }
+    }
+
+    fun stop() = controller.stop()
+
+    fun skipToPrevious() = controller.skipToPrevious()
+
+    fun skipToNext() = controller.skipToNext()
 }

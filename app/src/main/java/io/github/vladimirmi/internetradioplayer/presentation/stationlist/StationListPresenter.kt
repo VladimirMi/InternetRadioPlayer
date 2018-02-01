@@ -32,7 +32,7 @@ class StationListPresenter
 
     private val addStationItem = MenuItemHolder(R.string.menu_add_station, R.drawable.ic_add, order = 0)
     private val favoriteOnItem = MenuItemHolder(R.string.menu_favorite_on, R.drawable.ic_star_empty, order = 1)
-    private val favoriteOffItem = MenuItemHolder(R.string.menu_favorite_off, R.drawable.ic_star, order = 1)
+    private val favoriteOffItem = MenuItemHolder(R.string.menu_favorite_off, R.drawable.ic_star, true, order = 1)
     private val exitItem = MenuItemHolder(R.string.menu_exit, R.drawable.ic_exit, order = 2)
 
     private val actions: (MenuItem) -> Unit = {
@@ -77,19 +77,15 @@ class StationListPresenter
                     return
                 }
                 if (it.canFilter(Filter.FAVORITE)) {
-                    builder.removeMenuItem(favoriteOffItem)
-                            .addMenuItem(favoriteOnItem)
-                } else {
-                    builder.removeMenuItem(R.string.menu_favorite_on)
+                    builder.addMenuItem(favoriteOnItem)
                 }
+                builder.removeMenuItem(favoriteOffItem)
             }
             Filter.FAVORITE -> {
                 if (it.canFilter(Filter.DEFAULT)) {
-                    builder.removeMenuItem(favoriteOnItem)
-                            .addMenuItem(favoriteOffItem)
-                } else {
-                    builder.removeMenuItem(R.string.menu_favorite_off)
+                    builder.addMenuItem(favoriteOffItem)
                 }
+                builder.removeMenuItem(favoriteOnItem)
             }
         }
 

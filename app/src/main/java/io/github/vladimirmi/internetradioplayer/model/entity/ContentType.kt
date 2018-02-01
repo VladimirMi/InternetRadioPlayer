@@ -11,13 +11,15 @@ enum class ContentType(val types: Array<String>) {
 
     PLS(arrayOf("audio/x-scpls")),
     M3U(arrayOf("audio/mpegurl", "application/x-mpegurl", "application/x-mpegURL", "audio/x-mpegurl", "application/x-mpegurl")),
-    HLS(arrayOf("application/vnd.apple.mpegurl", "application/vnd.apple.mpegurl.audio"));
+    HLS(arrayOf("application/vnd.apple.mpegurl", "application/vnd.apple.mpegurl.audio")),
+    RAM(arrayOf("audio/x-pn-realaudio"));
 
     companion object {
         fun isPlaylist(type: String): Boolean {
             return PLS.types.contains(type) ||
                     M3U.types.contains(type) ||
-                    HLS.types.contains(type)
+                    HLS.types.contains(type) ||
+                    RAM.types.contains(type)
         }
 
         fun isAudio(type: String): Boolean {
@@ -30,7 +32,7 @@ enum class ContentType(val types: Array<String>) {
             val map = HashMap<String, ContentType>()
             values().forEach { contentTypes ->
                 contentTypes.types.forEach {
-                    map.put(it, contentTypes)
+                    map[it] = contentTypes
                 }
             }
             map

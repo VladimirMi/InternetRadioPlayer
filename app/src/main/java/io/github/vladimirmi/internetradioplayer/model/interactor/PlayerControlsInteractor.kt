@@ -8,6 +8,7 @@ import io.github.vladimirmi.internetradioplayer.model.repository.MediaController
 import io.github.vladimirmi.internetradioplayer.model.repository.StationListRepository
 import io.reactivex.Observable
 import io.reactivex.disposables.Disposables
+import io.reactivex.functions.BiFunction
 import javax.inject.Inject
 
 /**
@@ -19,33 +20,44 @@ class PlayerControlsInteractor
                     private val controller: MediaController,
                     private val networkChecker: NetworkChecker) {
 
-    private var enableNextPreviousListener: ((Boolean) -> Unit)? = null
+    private var enableNextPreviousManualListener: ((Boolean) -> Unit)? = null
 
-    private val enableNextPreviousObs = Observable.create<PlayerMode> { e ->
-        enableNextPreviousListener = { enabled ->
+    private val enableNextPreviousManualObs = Observable.create<PlayerMode> { e ->
+        enableNextPreviousManualListener = { enabled ->
             if (!e.isDisposed) {
                 if (enabled) e.onNext(PlayerMode.NEXT_PREVIOUS_ENABLED)
                 else e.onNext(PlayerMode.NEXT_PREVIOUS_DISABLED)
             }
         }
-        e.setDisposable(Disposables.fromRunnable { enableNextPreviousListener = null })
+        e.setDisposable(Disposables.fromRunnable { enableNextPreviousManualListener = null })
     }
 
-    val playerModeObs: Observable<PlayerMode> = repository.stationList.observe()
+    private val enableNextPreviousAutoObs = repository.stationList.observe()
             .map {
                 if (it.itemsSize > 1) {
                     PlayerMode.NEXT_PREVIOUS_ENABLED
                 } else {
                     PlayerMode.NEXT_PREVIOUS_DISABLED
                 }
-            }.mergeWith(enableNextPreviousObs)
+            }
 
-    val playbackState: Observable<PlaybackStateCompat> = controller.playbackState
-    val playbackMetaData: Observable<MediaMetadataCompat> = controller.playbackMetaData
-    val sessionEvent: Observable<String> = controller.sessionEvent
+    val playerModeObs: Observable<PlayerMode> = Observable.combineLatest(enableNextPreviousAutoObs,
+            enableNextPreviousManualObs,
+            BiFunction { manual: PlayerMode, auto: PlayerMode ->
+                if (manual == auto && auto == PlayerMode.NEXT_PREVIOUS_ENABLED) {
+                    PlayerMode.NEXT_PREVIOUS_ENABLED
+                } else {
+                    PlayerMode.NEXT_PREVIOUS_DISABLED
+                }
+            })
+            .startWith(enableNextPreviousAutoObs.firstOrError().toObservable())
 
-    fun tryEnableNextPrevious(enable: Boolean) {
-        enableNextPreviousListener?.invoke(enable && repository.stationList.itemsSize > 1)
+    val playbackState: Observable<PlaybackStateCompat> get() = controller.playbackState
+    val playbackMetaData: Observable<MediaMetadataCompat> get() = controller.playbackMetaData
+    val sessionEvent: Observable<String> get() = controller.sessionEvent
+
+    fun enableNextPrevious(enable: Boolean) {
+        enableNextPreviousManualListener?.invoke(enable)
     }
 
     fun nextStation(cycle: Boolean = true): Boolean {

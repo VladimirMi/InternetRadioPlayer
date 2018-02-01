@@ -26,7 +26,9 @@ class RootPresenter
 
     override fun onFirstViewAttach() {
         controlsInteractor.connect()
-        setRootScreen()
+        stationInteractor.initStations()
+                .subscribe { setRootScreen() }
+                .addTo(compDisp)
     }
 
     override fun onDestroy() {
@@ -35,7 +37,7 @@ class RootPresenter
 
     fun addStation(uri: Uri) {
         stationInteractor.initStations()
-                .doOnComplete { setRootScreen() }
+//                .doOnComplete { setRootScreen() }
                 .andThen(stationInteractor.createStation(uri))
                 .ioToMain()
                 .doOnSubscribe { viewState.showLoadingIndicator(true) }

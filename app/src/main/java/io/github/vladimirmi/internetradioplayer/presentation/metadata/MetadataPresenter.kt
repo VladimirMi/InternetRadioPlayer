@@ -1,9 +1,9 @@
 package io.github.vladimirmi.internetradioplayer.presentation.metadata
 
-import android.support.v4.media.MediaMetadataCompat
 import android.support.v4.media.session.PlaybackStateCompat
 import com.arellomobile.mvp.InjectViewState
 import io.github.vladimirmi.internetradioplayer.R
+import io.github.vladimirmi.internetradioplayer.model.entity.Metadata
 import io.github.vladimirmi.internetradioplayer.model.interactor.PlayerControlsInteractor
 import io.github.vladimirmi.internetradioplayer.ui.base.BasePresenter
 import io.reactivex.rxkotlin.addTo
@@ -21,6 +21,7 @@ class MetadataPresenter
 
     override fun onFirstViewAttach() {
         controlsInteractor.playbackMetaData
+                .map { Metadata.create(it) }
                 .subscribeBy { handleMeta(it) }
                 .addTo(compDisp)
 
@@ -29,9 +30,12 @@ class MetadataPresenter
                 .addTo(compDisp)
     }
 
-    private fun handleMeta(meta: MediaMetadataCompat) {
-        val metadata = with(meta.description) { "$subtitle - $title" }
-        viewState.setMetadata(metadata)
+    private fun handleMeta(metadata: Metadata) {
+        if (metadata.isUnsupported) {
+            viewState.hide()
+        } else {
+            viewState.setMetadata(metadata.toString())
+        }
     }
 
     private fun handleState(state: PlaybackStateCompat) {
@@ -40,7 +44,9 @@ class MetadataPresenter
                 viewState.show()
                 viewState.setMetadata(R.string.metadata_buffering)
             }
-            PlaybackStateCompat.STATE_PAUSED -> viewState.tryHide()
+            PlaybackStateCompat.STATE_PLAYING -> viewState.show()
+
+            PlaybackStateCompat.STATE_PAUSED,
             PlaybackStateCompat.STATE_STOPPED -> viewState.hide()
         }
     }

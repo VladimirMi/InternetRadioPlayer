@@ -2,9 +2,9 @@ package io.github.vladimirmi.internetradioplayer.model.interactor
 
 import android.net.Uri
 import io.github.vladimirmi.internetradioplayer.model.entity.Filter
-import io.github.vladimirmi.internetradioplayer.model.entity.Icon
 import io.github.vladimirmi.internetradioplayer.model.entity.Station
 import io.github.vladimirmi.internetradioplayer.model.entity.groupedlist.GroupedList
+import io.github.vladimirmi.internetradioplayer.model.entity.icon.Icon
 import io.github.vladimirmi.internetradioplayer.model.manager.ShortcutHelper
 import io.github.vladimirmi.internetradioplayer.model.repository.StationIconRepository
 import io.github.vladimirmi.internetradioplayer.model.repository.StationListRepository
@@ -131,23 +131,20 @@ class StationInteractor
 
     var currentIcon: Icon
         get() = iconRepository.currentIcon.value
-        set(value) = iconRepository.setCurrentIcon(value)
+        set(value) = iconRepository.currentIcon.accept(value)
 
     val currentIconObs: Observable<Icon> get() = iconRepository.currentIcon
 
-    fun getIcon(path: String): Single<Icon> {
-        return iconRepository.getStationIcon(path)
-    }
+    fun getIcon(path: String): Single<Icon> = iconRepository.getStationIcon(path)
 
     private fun removeIcon(name: String): Completable {
         return iconRepository.removeStationIcon(name)
     }
 
     private fun saveCurrentIcon(newName: String): Completable {
-        val newIcon = currentIcon.copy(name = newName)
         return iconChanged().flatMapCompletable { changed ->
             if (changed || currentIcon.name != newName) {
-                iconRepository.saveStationIcon(newIcon)
+                iconRepository.saveStationIcon(newName)
             } else {
                 Completable.complete()
             }

@@ -1,5 +1,6 @@
 package io.github.vladimirmi.internetradioplayer.model.source
 
+import io.github.vladimirmi.internetradioplayer.model.entity.Metadata
 import io.github.vladimirmi.internetradioplayer.model.service.PlayerCallback
 import java.io.FilterInputStream
 import java.io.InputStream
@@ -43,8 +44,9 @@ class IcyInputStream(inS: InputStream,
 
     private fun parseMetadata(meta: String) {
         meta.split(";")
-                .map { keyValue -> keyValue.split("=").map { it.trim(' ', '\'') } }
-                .filter { kv -> kv.size == 2 && kv.all { it.isNotEmpty() } }
-                .forEach { playerCallback.onMetadata(it[0], it[1]) }
+                .filter(String::isNotEmpty)
+                .forEach {
+                    playerCallback.onMetadata(Metadata.create(it))
+                }
     }
 }

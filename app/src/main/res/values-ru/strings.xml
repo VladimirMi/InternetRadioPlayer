@@ -66,4 +66,6 @@
     <string name="help_create_2"> - нажав на файл плейлиста в менеджере файлов.\n
         Поддерживаемые расширения - pls, m3u or ram.</string>
     <string name="help_create_3"> - добавив прямую ссылку на аудиопоток.</string>
+
+    <string name="metadata_not_available">Метаданные не доступны</string>
 </resources>

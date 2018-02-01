@@ -15,7 +15,7 @@ class GroupingList : MutableGroupedList<Station> {
 
     private val stationList = ArrayList<Station>()
     private val mappings = ArrayList<GroupMapping>()
-    private val obs: BehaviorRelay<GroupedList<Station>> = BehaviorRelay.createDefault(this)
+    private val obs: BehaviorRelay<GroupedList<Station>> = BehaviorRelay.create()
 
     override var filter: Filter = Filter.DEFAULT
 
@@ -76,7 +76,8 @@ class GroupingList : MutableGroupedList<Station> {
         else element
     }
 
-    override fun observe(): Observable<GroupedList<Station>> = obs
+    override fun observe(): Observable<GroupedList<Station>> =
+            obs.apply { accept(this@GroupingList) }
 
     override fun contains(element: Station): Boolean {
         return mappings.filterIsInstance(GroupMapping.Item::class.java)

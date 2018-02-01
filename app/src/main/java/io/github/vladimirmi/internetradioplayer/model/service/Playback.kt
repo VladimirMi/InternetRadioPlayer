@@ -45,7 +45,6 @@ class Playback(private val service: PlayerService,
     private val audioManager = service.getSystemService(Context.AUDIO_SERVICE) as AudioManager
 
     fun play(uri: Uri) {
-        Timber.d("play")
         holdResources()
         if (player == null) createPlayer()
         preparePlayer(uri)
@@ -136,8 +135,16 @@ class Playback(private val service: PlayerService,
 
     private fun preparePlayer(uri: Uri) {
         val dataSourceFactory = IcyDataSourceFactory(playerCallback)
-        val mediaSource = ExtractorMediaSource(uri, dataSourceFactory, DefaultExtractorsFactory(),
-                32, null, null, null, 1024 * 1024)
+        val mediaSource = ExtractorMediaSource(
+                uri,
+                dataSourceFactory,
+                DefaultExtractorsFactory(),
+                ExtractorMediaSource.DEFAULT_MIN_LOADABLE_RETRY_COUNT_LIVE,
+                null,
+                null,
+                null,
+                ExtractorMediaSource.DEFAULT_LOADING_CHECK_INTERVAL_BYTES
+        )
         player?.prepare(mediaSource)
     }
 
@@ -165,9 +172,9 @@ class Playback(private val service: PlayerService,
             val action = intent.action
             if (action == AudioManager.ACTION_AUDIO_BECOMING_NOISY) {
                 val playing = player?.playWhenReady ?: false
-                service.onPauseCommand(stopDelay = 600000) // 10 min
+                service.onPauseCommand(stopDelay = 300000) // 5 min
                 playAgainOnHeadset = playing
-                Timber.e("onReceive: $playAgainOnHeadset")
+                Timber.d("onReceive: $playAgainOnHeadset")
 
             } else if (playAgainOnHeadset && action == Intent.ACTION_HEADSET_PLUG
                     && intent.getIntExtra("state", 0) == 1) {

@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="utf-8"?>
+<FrameLayout
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/iconFr"
+    android:layout_width="72dp"
+    android:layout_height="72dp"
+    android:layout_marginTop="16dp"
+    android:layout_gravity="center"
+    tools:showIn="@layout/fragment_icon_picker"
+    >
+
+    <ImageView
+        android:id="@+id/iconIv"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:contentDescription="@string/desc_station_icon"
+        tools:src="@drawable/ic_station_1"
+        />
+
+    <TextView
+        android:id="@+id/iconTv"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:fontFamily="@font/audiowide"
+        android:gravity="center"
+        android:padding="4dp"
+        android:visibility="gone"
+        app:autoSizeTextType="uniform"
+        tools:ignore="MissingPrefix"
+        tools:text="S"
+        />
+</FrameLayout>

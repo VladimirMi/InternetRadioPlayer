@@ -41,7 +41,7 @@ class RootActivity : MvpAppCompatActivity(), RootView, ToolbarView {
     @Inject lateinit var navigatorHolder: NavigatorHolder
     @InjectPresenter lateinit var presenter: RootPresenter
 
-    private val navigator = Navigator(this, R.id.mainFr)
+    private val navigator by lazy { Navigator(this, R.id.mainFr) }
     private var menuHolder: MenuHolder? = null
     private var popupHelper: MenuPopupHelper? = null
 
@@ -49,11 +49,14 @@ class RootActivity : MvpAppCompatActivity(), RootView, ToolbarView {
     fun providePresenter(): RootPresenter = Scopes.rootActivity.getInstance(RootPresenter::class.java)
 
     override fun onCreate(savedInstanceState: Bundle?) {
+        setTheme(R.style.AppTheme)
+
         Scopes.rootActivity.apply {
             installModules(RootActivityModule())
             Toothpick.inject(this@RootActivity, this)
         }
         super.onCreate(savedInstanceState)
+
         setContentView(R.layout.activity_root)
         setSupportActionBar(toolbar)
         handleIntent()
@@ -68,7 +71,6 @@ class RootActivity : MvpAppCompatActivity(), RootView, ToolbarView {
     override fun onPause() {
         navigatorHolder.removeNavigator()
         popupHelper?.dismiss()
-        popupHelper = null
         super.onPause()
     }
 
@@ -160,7 +162,7 @@ class RootActivity : MvpAppCompatActivity(), RootView, ToolbarView {
                     .forEachIndexed { index, item ->
                         menu.add(0, item.itemTitleResId, index, item.itemTitleResId).apply {
                             setIcon(item.iconResId)
-                            setShowAsActionFlags(MenuItem.SHOW_AS_ACTION_IF_ROOM)
+                            setShowAsActionFlags(MenuItem.SHOW_AS_ACTION_ALWAYS)
                             setOnMenuItemClickListener {
                                 holder.actions.invoke(it)
                                 true

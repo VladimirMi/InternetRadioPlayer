@@ -3,9 +3,10 @@ package io.github.vladimirmi.internetradioplayer.model.manager
 import android.graphics.Bitmap
 import android.graphics.BitmapFactory
 import android.graphics.Color
-import io.github.vladimirmi.internetradioplayer.model.entity.Icon
-import io.github.vladimirmi.internetradioplayer.presentation.iconpicker.IconOption
-import io.github.vladimirmi.internetradioplayer.presentation.iconpicker.IconRes
+import io.github.vladimirmi.internetradioplayer.model.entity.icon.Icon
+import io.github.vladimirmi.internetradioplayer.model.entity.icon.IconOption
+import io.github.vladimirmi.internetradioplayer.model.entity.icon.IconRes
+import io.github.vladimirmi.internetradioplayer.model.entity.icon.IconResource
 import java.io.ByteArrayOutputStream
 import java.io.File
 import java.io.FileOutputStream
@@ -65,16 +66,16 @@ fun File.encode(icon: Icon) {
         FileOutputStream(this).use {
             it.write(pngBytes, 0, SIGN_IHDR_LENGTH)
             it.write(PngTextChunk(KEY_OPTION, icon.option.name).getByteArray())
-            if (icon.option == IconOption.ICON) {
-                it.write(PngTextChunk(KEY_ICON_RES, icon.iconRes.name).getByteArray())
+            when (icon) {
+                is IconRes -> {
+                    it.write(PngTextChunk(KEY_ICON_RES, icon.res.name).getByteArray())
+                    it.write(PngTextChunk(KEY_FG_COLOR, icon.foregroundColor.toString()).getByteArray())
+                }
             }
-            it.write(PngTextChunk(KEY_BG_COLOR, icon.backgroundColor.toString()).getByteArray())
-            if (icon.option != IconOption.FAVICON) {
-                it.write(PngTextChunk(KEY_FG_COLOR, icon.foregroundColor.toString()).getByteArray())
-            }
-            if (icon.option == IconOption.TEXT) {
-                it.write(PngTextChunk(KEY_TEXT, icon.text).getByteArray())
-            }
+//            it.write(PngTextChunk(KEY_BG_COLOR, icon.backgroundColor.toString()).getByteArray())
+//            if (icon.option == IconOption.TEXT) {
+//                it.write(PngTextChunk(KEY_TEXT, icon.text).getByteArray())
+//            }
             it.write(pngBytes, SIGN_IHDR_LENGTH, pngBytes.size - SIGN_IHDR_LENGTH)
         }
     }
@@ -86,7 +87,7 @@ fun File.decode(): Icon {
             .position(SIGN_IHDR_LENGTH) as ByteBuffer
 
     var option = IconOption.ICON
-    var iconRes = IconRes.ICON_1
+    var iconRes = IconResource.ICON_1
     var backGroundColor = Color.LTGRAY
     var foregroundColor = Color.BLACK
     var text = ""
@@ -95,7 +96,7 @@ fun File.decode(): Icon {
     while (chunk != null) {
         when (chunk.key) {
             KEY_OPTION -> option = IconOption.fromName(chunk.value)
-            KEY_ICON_RES -> iconRes = IconRes.fromName(chunk.value)
+            KEY_ICON_RES -> iconRes = IconResource.fromName(chunk.value)
             KEY_BG_COLOR -> backGroundColor = chunk.value.toInt()
             KEY_FG_COLOR -> foregroundColor = chunk.value.toInt()
             KEY_TEXT -> text = chunk.value
@@ -104,7 +105,11 @@ fun File.decode(): Icon {
     }
 
     val bitmap = BitmapFactory.decodeByteArray(pngBytes, 0, pngBytes.size)
-    return Icon(nameWithoutExtension, bitmap, option, iconRes, backGroundColor, foregroundColor, text)
+
+    @Suppress("WhenWithOnlyElse")
+    return when (option) {
+        else -> IconRes(nameWithoutExtension, foregroundColor, iconRes)
+    }
 }
 
 private fun nextChunkFromBuffer(buffer: ByteBuffer): PngTextChunk? {

@@ -75,7 +75,7 @@ class MenuHolder {
 
 
     fun addItem(item: MenuItemHolder) {
-        items.add(item)
+        if (!items.contains(item)) items.add(item)
     }
 
     fun removeItem(id: Int) {

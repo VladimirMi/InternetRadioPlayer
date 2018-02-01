@@ -9,8 +9,8 @@ import android.support.v4.content.pm.ShortcutInfoCompat
 import android.support.v4.content.pm.ShortcutManagerCompat
 import android.support.v4.graphics.drawable.IconCompat
 import io.github.vladimirmi.internetradioplayer.R
-import io.github.vladimirmi.internetradioplayer.model.entity.Icon
 import io.github.vladimirmi.internetradioplayer.model.entity.Station
+import io.github.vladimirmi.internetradioplayer.model.entity.icon.Icon
 import io.github.vladimirmi.internetradioplayer.model.service.PlayerService
 import io.github.vladimirmi.internetradioplayer.presentation.root.RootActivity
 import javax.inject.Inject

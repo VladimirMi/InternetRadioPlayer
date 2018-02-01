@@ -1,0 +1,160 @@
+<?xml version="1.0" encoding="utf-8"?>
+<android.support.constraint.ConstraintLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:padding="16dp"
+    tools:showIn="@layout/fragment_icon_picker"
+    >
+
+    <RadioGroup
+        android:id="@+id/optionsRg"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="16dp"
+        android:orientation="horizontal"
+        android:visibility="gone"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        >
+
+        <RadioButton
+            android:id="@+id/optionIconBt"
+            style="@style/HorizontalRadioButton"
+            android:text="@string/icon_icon"
+            />
+
+        <RadioButton
+            android:id="@+id/optionFaviconBt"
+            style="@style/HorizontalRadioButton"
+            android:text="@string/icon_favicon"
+            />
+
+        <RadioButton
+            android:id="@+id/optionTextBt"
+            style="@style/HorizontalRadioButton"
+            android:text="@string/icon_text"
+            />
+
+        <RadioButton
+            android:id="@+id/optionAddBt"
+            style="@style/HorizontalRadioButton"
+            android:text="@string/icon_add"
+            />
+    </RadioGroup>
+
+    <Button
+        android:id="@+id/configSelectBt"
+        android:layout_width="48dp"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="16dp"
+        android:foreground="@drawable/ic_add"
+        android:theme="@style/AccentButton"
+        android:visibility="gone"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/optionsRg"
+        />
+
+    <EditText
+        android:id="@+id/iconTextEt"
+        android:layout_width="72sp"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="8dp"
+        android:background="@color/grey_400"
+        android:gravity="center"
+        android:inputType="textCapSentences"
+        android:maxLength="3"
+        android:textSize="24sp"
+        android:visibility="gone"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/optionsRg"
+        tools:text="X"
+        />
+
+    <include
+        android:id="@+id/iconsRg"
+        layout="@layout/view_station_icons"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        />
+
+    <RadioGroup
+        android:id="@+id/configurationsRg"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="16dp"
+        android:orientation="horizontal"
+        android:visibility="gone"
+        app:layout_constraintBottom_toTopOf="@+id/colorPicker"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        tools:checkedButton="@id/configForegroundBt"
+        >
+
+        <RadioButton
+            android:id="@+id/configBackgroundBt"
+            style="@style/HorizontalRadioButton"
+            android:text="@string/icon_background_color"
+            android:visibility="gone"
+            />
+
+        <RadioButton
+            android:id="@+id/configForegroundBt"
+            style="@style/HorizontalRadioButton"
+            android:text="@string/icon_foreground_color"
+            />
+    </RadioGroup>
+
+    <io.github.vladimirmi.internetradioplayer.ui.ColorPicker
+        android:id="@+id/colorPicker"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="16dp"
+        android:layout_marginBottom="24dp"
+        app:layout_constraintBottom_toTopOf="@id/buttonBar"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/iconsRg"
+        app:layout_constraintVertical_bias="1.0"
+        />
+
+    <LinearLayout
+        android:id="@+id/buttonBar"
+        android:layout_width="250dp"
+        android:layout_height="56dp"
+        android:layout_gravity="center"
+        android:orientation="horizontal"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        tools:ignore="ButtonStyle"
+        >
+
+        <Button
+            android:id="@+id/cancelBt"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:text="@string/dialog_cancel"
+            android:theme="@style/CancelButton"
+            />
+
+        <Button
+            android:id="@+id/okBt"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:text="@string/dialog_ok"
+            android:theme="@style/AccentButton"
+            />
+    </LinearLayout>
+
+</android.support.constraint.ConstraintLayout>

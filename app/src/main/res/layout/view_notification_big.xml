@@ -3,28 +3,44 @@
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
+    android:layout_height="144dp"
     >
 
     <ImageView
         android:id="@+id/iconIv"
-        android:layout_width="56dp"
-        android:layout_height="56dp"
-        android:layout_margin="8dp"
+        android:layout_width="72dp"
+        android:layout_height="72dp"
+        android:layout_below="@id/stationTv"
+        android:layout_marginLeft="8dp"
+        android:layout_marginStart="8dp"
         android:contentDescription="@string/desc_station_icon"
-        android:layout_centerVertical="true"
         tools:src="@drawable/ic_station_1"
+        />
 
+    <TextView
+        android:id="@+id/stationTv"
+        style="@style/TextAppearance.AppCompat.Notification.Title"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="16dp"
+        android:layout_marginRight="16dp"
+        android:layout_marginTop="8dp"
+        android:ellipsize="end"
+        android:singleLine="true"
+        tools:text="Station genetrix accelerare, omnes fiscinaes."
         />
 
     <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
+        android:layout_height="72dp"
+        android:layout_below="@id/stationTv"
+        android:layout_marginEnd="16dp"
+        android:layout_marginLeft="8dp"
+        android:layout_marginRight="16dp"
+        android:layout_marginStart="8dp"
         android:layout_toEndOf="@id/iconIv"
-        android:layout_toLeftOf="@id/notification_controls"
         android:layout_toRightOf="@id/iconIv"
-        android:layout_toStartOf="@id/notification_controls"
-        android:gravity="center_vertical"
+        android:gravity="center"
         android:orientation="vertical"
         >
 
@@ -35,7 +51,7 @@
             android:layout_height="wrap_content"
             android:ellipsize="end"
             android:maxLines="2"
-            tools:text="Current playingCum genetrix accelerare, omnes fiscinaes locus albus, flavum agripetaes."
+            tools:text="Current playing Cum genetrix accelerare."
             />
 
         <TextView
@@ -45,38 +61,39 @@
             android:layout_height="wrap_content"
             android:ellipsize="end"
             android:maxLines="2"
-            tools:text="artist Brabeuta de brevis tus, contactus abnoba!"
+            tools:text="artist Brabeuta de brevis tusHercle, urbs fortis!, musa!!"
             />
     </LinearLayout>
 
     <LinearLayout
         android:id="@+id/notification_controls"
-        android:layout_width="144dp"
-        android:layout_height="match_parent"
-        android:layout_alignParentEnd="true"
-        android:layout_alignParentRight="true"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
         android:gravity="center"
         tools:ignore="ButtonStyle"
         >
 
         <Button
             android:id="@+id/previousBt"
-            android:layout_width="48dp"
-            android:layout_height="48dp"
+            android:layout_width="56dp"
+            android:layout_height="56dp"
             android:background="@drawable/ic_skip_previous"
             />
 
         <Button
             android:id="@+id/playPauseBt"
-            android:layout_width="48dp"
-            android:layout_height="48dp"
+            android:layout_width="56dp"
+            android:layout_height="56dp"
+            android:layout_marginLeft="8dp"
+            android:layout_marginRight="8dp"
             android:background="@drawable/ic_stop"
             />
 
         <Button
             android:id="@+id/nextBt"
-            android:layout_width="48dp"
-            android:layout_height="48dp"
+            android:layout_width="56dp"
+            android:layout_height="56dp"
             android:background="@drawable/ic_skip_next"
             />
     </LinearLayout>

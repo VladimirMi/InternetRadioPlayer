@@ -50,8 +50,8 @@ class StationPresenter
             .setMenuActions(menuActions)
 
     override fun onFirstViewAttach() {
-        viewState.setStation(stationInteractor.currentStation)
         if (createMode) editMode() else viewMode()
+        viewState.setStation(stationInteractor.currentStation)
     }
 
     override fun attachView(view: StationView?) {
@@ -66,7 +66,8 @@ class StationPresenter
                 .addMenuItem(editItem)
 
         viewState.buildToolbar(toolbar)
-        controlsInteractor.tryEnableNextPrevious(true)
+        controlsInteractor.enableNextPrevious(true)
+        viewState.setStationIcon(stationInteractor.currentIcon.bitmap)
     }
 
     private fun editMode() {
@@ -76,7 +77,7 @@ class StationPresenter
                 .addMenuItem(saveItem)
 
         viewState.buildToolbar(toolbar)
-        controlsInteractor.tryEnableNextPrevious(false)
+        controlsInteractor.enableNextPrevious(false)
     }
 
     fun changeMode() {
@@ -104,7 +105,8 @@ class StationPresenter
 
 
     fun edit(station: Station) {
-        stationInteractor.updateCurrentStation(station.copy(favorite = stationInteractor.currentStation.favorite))
+        val newStation = station.copy(favorite = stationInteractor.currentStation.favorite)
+        stationInteractor.updateCurrentStation(newStation)
                 .subscribe { viewMode() }
                 .addTo(compDisp)
     }
@@ -116,7 +118,8 @@ class StationPresenter
     }
 
     fun create(station: Station) {
-        stationInteractor.addStation(station)
+        val newStation = station.copy(favorite = stationInteractor.currentStation.favorite)
+        stationInteractor.addStation(newStation)
                 .ioToMain()
                 .subscribeBy { added ->
                     if (added) {
@@ -132,7 +135,7 @@ class StationPresenter
 
     fun cancelCreate() {
         stationInteractor.previousWhenCreate?.let { stationInteractor.currentStation = it }
-        controlsInteractor.tryEnableNextPrevious(true)
+        controlsInteractor.enableNextPrevious(true)
         createMode = false
         router.exit()
     }

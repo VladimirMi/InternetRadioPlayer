@@ -69,4 +69,6 @@
     <string name="help_create_2"> - clicking on the playlist file in the file manager.\n
         The supported extensions are pls, m3u or ram.</string>
     <string name="help_create_3"> - adding a direct link to the audio stream.</string>
+
+    <string name="metadata_not_available">Metadata is not available</string>
 </resources>

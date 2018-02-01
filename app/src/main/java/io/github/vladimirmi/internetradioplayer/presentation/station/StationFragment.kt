@@ -130,7 +130,7 @@ class StationFragment : BaseFragment(), StationView, BackPressListener {
     }
 
     override fun openCancelEditDialog(currentStation: Station, iconChanged: Boolean) {
-        if (currentStation != constructStation() || iconChanged) {
+        if (currentStation.copy(favorite = false) != constructStation() || iconChanged) {
             CancelEditDialog().show(childFragmentManager, "cancel_edit_dialog")
         } else {
             presenter.cancelEdit()

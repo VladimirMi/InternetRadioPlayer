@@ -2,7 +2,6 @@ package io.github.vladimirmi.internetradioplayer.model.repository
 
 import android.net.Uri
 import com.jakewharton.rxrelay2.BehaviorRelay
-import io.github.vladimirmi.internetradioplayer.extensions.toSingle
 import io.github.vladimirmi.internetradioplayer.model.entity.Filter
 import io.github.vladimirmi.internetradioplayer.model.entity.Station
 import io.github.vladimirmi.internetradioplayer.model.entity.groupedlist.GroupingList
@@ -22,14 +21,16 @@ class StationListRepository
 
     @Volatile var isInitialized = false
     val stationList: GroupingList = GroupingList()
-    val currentStation: BehaviorRelay<Station> = BehaviorRelay.createDefault(Station.nullObject())
+    val currentStation: BehaviorRelay<Station> = BehaviorRelay.create()
+
 
     fun initStations() {
         if (isInitialized) return
         stationList.addAll(stationSource.getStationList())
-        currentStation.accept(stationList[preferences.currentPos])
-        preferences.hidedGroups.forEach { stationList.hideGroup(it) }
         stationList.filter(Filter.valueOf(preferences.filter))
+        preferences.hidedGroups.forEach { stationList.hideGroup(it) }
+
+        currentStation.accept(stationList[preferences.currentPos])
         isInitialized = true
     }
 
@@ -39,10 +40,8 @@ class StationListRepository
         preferences.currentPos = pos
     }
 
-    fun createStation(uri: Uri): Single<Station> {
-        return { stationSource.parseStation(uri) }
-                .toSingle()
-    }
+    fun createStation(uri: Uri): Single<Station> =
+            Single.fromCallable { stationSource.parseStation(uri) }
 
     fun updateStation(newStation: Station): Completable {
         return Completable.fromCallable {

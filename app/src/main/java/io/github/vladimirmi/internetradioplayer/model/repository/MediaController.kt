@@ -50,7 +50,13 @@ class MediaController
 
     private val controllerCallback = object : MediaControllerCompat.Callback() {
         override fun onPlaybackStateChanged(state: PlaybackStateCompat?) {
-            state?.let { playbackState.accept(it) }
+            state?.let {
+                playbackState.accept(it)
+                if (it.state == PlaybackStateCompat.STATE_PLAYING) {
+                    //todo remake
+                    playbackMetaData.accept(playbackMetaData.value ?: return)
+                }
+            }
         }
 
         override fun onMetadataChanged(metadata: MediaMetadataCompat?) {

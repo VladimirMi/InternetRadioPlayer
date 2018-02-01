@@ -9,6 +9,13 @@
 
     <include layout="@layout/view_icon"/>
 
-    <include layout="@layout/view_icon_picker_content"/>
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        >
+
+        <include layout="@layout/view_icon_picker_content"/>
+
+    </ScrollView>
 </LinearLayout>
 

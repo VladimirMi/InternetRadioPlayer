@@ -1,19 +1,18 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RadioGroup
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/iconsRg"
     android:layout_width="0dp"
     android:layout_height="wrap_content"
-    android:layout_marginTop="32dp"
+    android:checkedButton="@id/ic_station_1"
     android:gravity="center"
     android:orientation="horizontal"
     app:layout_constraintEnd_toEndOf="parent"
     app:layout_constraintStart_toStartOf="parent"
     app:layout_constraintTop_toBottomOf="@+id/optionsRg"
-    android:checkedButton="@id/ic_station_1"
-    xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
-    tools:showIn="@layout/fragment_icon_picker"
-    xmlns:tools="http://schemas.android.com/tools"
+    tools:showIn="@layout/view_icon_picker_content"
     >
 
 
@@ -28,10 +27,10 @@
             android:layout_width="48dp"
             android:layout_height="48dp"
             android:layout_gravity="center"
-            android:button="@null"
-            android:backgroundTint="@color/sel_radio_btn"
-            android:clickable="false"
             android:background="@drawable/ic_station_1"
+            android:backgroundTint="@color/sel_radio_btn"
+            android:button="@null"
+            android:clickable="false"
             />
     </io.github.vladimirmi.internetradioplayer.ui.RadioContainer>
 
@@ -46,10 +45,10 @@
             android:layout_width="48dp"
             android:layout_height="48dp"
             android:layout_gravity="center"
+            android:background="@drawable/ic_station_2"
+            android:backgroundTint="@color/sel_radio_btn"
             android:button="@null"
             android:clickable="false"
-            android:backgroundTint="@color/sel_radio_btn"
-            android:background="@drawable/ic_station_2"
             />
     </io.github.vladimirmi.internetradioplayer.ui.RadioContainer>
 
@@ -64,10 +63,10 @@
             android:layout_width="48dp"
             android:layout_height="48dp"
             android:layout_gravity="center"
+            android:background="@drawable/ic_station_3"
+            android:backgroundTint="@color/sel_radio_btn"
             android:button="@null"
             android:clickable="false"
-            android:backgroundTint="@color/sel_radio_btn"
-            android:background="@drawable/ic_station_3"
             />
     </io.github.vladimirmi.internetradioplayer.ui.RadioContainer>
 
@@ -82,10 +81,10 @@
             android:layout_width="48dp"
             android:layout_height="48dp"
             android:layout_gravity="center"
+            android:background="@drawable/ic_station_4"
+            android:backgroundTint="@color/sel_radio_btn"
             android:button="@null"
             android:clickable="false"
-            android:backgroundTint="@color/sel_radio_btn"
-            android:background="@drawable/ic_station_4"
             />
     </io.github.vladimirmi.internetradioplayer.ui.RadioContainer>
 </RadioGroup>

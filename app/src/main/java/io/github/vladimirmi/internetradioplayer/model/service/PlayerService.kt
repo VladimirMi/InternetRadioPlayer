@@ -10,22 +10,21 @@ import android.support.v4.media.MediaMetadataCompat
 import android.support.v4.media.session.MediaSessionCompat
 import android.support.v4.media.session.PlaybackStateCompat
 import com.google.android.exoplayer2.ExoPlaybackException
-import com.google.android.exoplayer2.ExoPlaybackException.*
 import com.google.android.exoplayer2.Player
 import io.github.vladimirmi.internetradioplayer.R
 import io.github.vladimirmi.internetradioplayer.di.Scopes
 import io.github.vladimirmi.internetradioplayer.extensions.ioToMain
 import io.github.vladimirmi.internetradioplayer.extensions.toUri
+import io.github.vladimirmi.internetradioplayer.model.entity.Metadata
 import io.github.vladimirmi.internetradioplayer.model.entity.PlayerMode
+import io.github.vladimirmi.internetradioplayer.model.entity.Station
 import io.github.vladimirmi.internetradioplayer.model.interactor.PlayerControlsInteractor
 import io.github.vladimirmi.internetradioplayer.model.interactor.StationInteractor
 import io.github.vladimirmi.internetradioplayer.presentation.root.RootActivity
 import io.reactivex.disposables.CompositeDisposable
 import io.reactivex.rxkotlin.addTo
-import timber.log.Timber
 import toothpick.Toothpick
 import java.util.*
-import java.util.concurrent.TimeUnit
 import javax.inject.Inject
 import kotlin.concurrent.schedule
 
@@ -72,20 +71,14 @@ class PlayerService : MediaBrowserServiceCompat(), SessionCallback.Interface {
         playback = Playback(this, playerCallback)
         notification = MediaNotification(this, session, stationInteractor)
 
-        stationInteractor.currentStationObs.subscribe {
-            currentStationId = it.id
-            if (isPlaying && currentStationId != playingStationId) playCurrent()
-        }.addTo(compDisp)
+        stationInteractor.currentStationObs
+                .subscribe { handleCurrentStation(it) }
+                .addTo(compDisp)
 
-        controlsInteractor.playerModeObs.delaySubscription(1000, TimeUnit.MILLISECONDS)
-                .subscribe {
-                    val actions = when (it!!) {
-                        PlayerMode.NEXT_PREVIOUS_ENABLED -> AvailableActions.NEXT_PREVIOUS_ENABLED
-                        PlayerMode.NEXT_PREVIOUS_DISABLED -> AvailableActions.NEXT_PREVIOUS_DISABLED
-                    }
-                    session.setPlaybackState(createPlaybackState(actions = actions))
-                    notification.update()
-                }.addTo(compDisp)
+        controlsInteractor.playerModeObs
+//                .delaySubscription(1000, TimeUnit.MILLISECONDS)
+                .subscribe { handlePlayerMode(it) }
+                .addTo(compDisp)
 
         stationInteractor.currentIconObs
                 .ioToMain()
@@ -94,7 +87,6 @@ class PlayerService : MediaBrowserServiceCompat(), SessionCallback.Interface {
     }
 
     override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
-        Timber.e("onStartCommand: ")
         if (intent == null) stopSelf()
         return Service.START_STICKY
     }
@@ -120,14 +112,49 @@ class PlayerService : MediaBrowserServiceCompat(), SessionCallback.Interface {
         }
     }
 
+    private fun handleCurrentStation(it: Station) {
+        metadata = MediaMetadataCompat.Builder(metadata)
+                .putString(MediaMetadataCompat.METADATA_KEY_ALBUM, it.name)
+                .build()
+        session.setMetadata(metadata)
+        notification.update()
+
+        currentStationId = it.id
+        if (isPlaying && currentStationId != playingStationId) playCurrent()
+    }
+
+    private fun handlePlayerMode(it: PlayerMode) {
+        val actions = when (it) {
+            PlayerMode.NEXT_PREVIOUS_ENABLED -> AvailableActions.NEXT_PREVIOUS_ENABLED
+            PlayerMode.NEXT_PREVIOUS_DISABLED -> AvailableActions.NEXT_PREVIOUS_DISABLED
+        }
+        session.setPlaybackState(createPlaybackState(actions = actions))
+        notification.update()
+    }
+
+    private val isPlaying: Boolean
+        get() {
+            return session.controller.playbackState?.state.let { state ->
+                state == PlaybackStateCompat.STATE_PLAYING
+                        || state == PlaybackStateCompat.STATE_BUFFERING
+            }
+        }
+    private val isPaused
+        get() = session.controller.playbackState.state == PlaybackStateCompat.STATE_PAUSED
+
+
+    private fun playCurrent() {
+        val station = stationInteractor.currentStation
+        playingStationId = station.id
+        playback.play(station.uri.toUri())
+    }
+
     //region =============== SessionCallback ==============
 
     override fun onPlayCommand() {
-        Timber.e("onPlayCommand: ")
         stopTask?.cancel()
         startService()
-        if (session.controller.playbackState.state == PlaybackStateCompat.STATE_PAUSED
-                && currentStationId == playingStationId) {
+        if (isPaused && currentStationId == playingStationId) {
             playback.resume()
         } else {
             playCurrent()
@@ -165,7 +192,7 @@ class PlayerService : MediaBrowserServiceCompat(), SessionCallback.Interface {
     private val playerCallback = object : PlayerCallback() {
 
         override fun onPlayerStateChanged(playWhenReady: Boolean, playbackState: Int) {
-            Timber.e("onPlayerStateChanged: $playWhenReady $playbackState")
+            super.onPlayerStateChanged(playWhenReady, playbackState)
             val state = when (playbackState) {
                 Player.STATE_IDLE -> PlaybackStateCompat.STATE_STOPPED
                 Player.STATE_BUFFERING -> {
@@ -184,58 +211,32 @@ class PlayerService : MediaBrowserServiceCompat(), SessionCallback.Interface {
             notification.update()
         }
 
-        override fun onPlayerError(error: ExoPlaybackException?) {
-            when (error?.type) {
-                TYPE_RENDERER -> Timber.e("RENDERER error occurred: ${error.rendererException}")
-                TYPE_SOURCE -> Timber.e("SOURCE error occurred: ${error.sourceException}")
-                TYPE_UNEXPECTED -> Timber.e("UNEXPECTED error occurred: ${error.unexpectedException}")
-            }
+        override fun onPlayerError(error: ExoPlaybackException) {
+            super.onPlayerError(error)
             onStopCommand()
         }
 
-        override fun onMetadata(key: String, value: String) {
-            session.setMetadata(createMetadata(key, value))
+        override fun onMetadata(metadata: Metadata) {
+            super.onMetadata(metadata)
+            session.setMetadata(createMetadata(metadata))
             notification.update()
         }
     }
 
-    private fun createMetadata(key: String = "", value: String = ""): MediaMetadataCompat {
-        Timber.d("metadata $key: $value")
-        var (artist, title) = if (value.contains('-')) {
-            value.split("-").map { it.trim() }
-        } else {
-            listOf("", value)
-        }
-        if (title.endsWith(']')) title = title.substringBeforeLast('[')
-        return MediaMetadataCompat.Builder(metadata)
-                .putString(MediaMetadataCompat.METADATA_KEY_ARTIST, artist)
-                .putString(MediaMetadataCompat.METADATA_KEY_TITLE, title)
+    private fun createMetadata(metadata: Metadata): MediaMetadataCompat {
+        return MediaMetadataCompat.Builder(this.metadata)
+                .putString(MediaMetadataCompat.METADATA_KEY_ARTIST, metadata.artist)
+                .putString(MediaMetadataCompat.METADATA_KEY_TITLE, metadata.title)
                 .build()
+                .also { this.metadata = it }
     }
 
     private fun createPlaybackState(state: Int? = null, actions: Long? = null): PlaybackStateCompat {
-        playbackState = PlaybackStateCompat.Builder(playbackState).apply {
-            state?.let { setState(it, 0, 1F) }
-            actions?.let { setActions(it) }
-        }.build()
-        return playbackState
-    }
-
-    private val isPlaying: Boolean
-        get() {
-            return session.controller.playbackState?.state.let { state ->
-                state == PlaybackStateCompat.STATE_PLAYING
-                        || state == PlaybackStateCompat.STATE_BUFFERING
-            }
-        }
-
-    private fun playCurrent() {
-        val station = stationInteractor.currentStation
-        playingStationId = station.id
-
-        metadata = MediaMetadataCompat.Builder(metadata)
-                .putString(MediaMetadataCompat.METADATA_KEY_ALBUM, station.name)
-                .build()
-        station.uri.toUri()?.let { playback.play(it) }
+        return PlaybackStateCompat.Builder(playbackState)
+                .apply {
+                    state?.let { setState(it, 0, 1F) }
+                    actions?.let { setActions(it) }
+                }.build()
+                .also { playbackState = it }
     }
 }

@@ -67,7 +67,7 @@ class PlayerControlFragment : BaseFragment(), PlayerControlView {
     }
 
     override fun enableNextPrevious(enable: Boolean) {
-        val tint = context.color(if (enable) R.color.grey_700 else R.color.grey_400)
+        val tint = context.color(if (enable) R.color.grey_600 else R.color.grey_400)
         previous.setTint(tint)
         next.setTint(tint)
         previous.isEnabled = enable

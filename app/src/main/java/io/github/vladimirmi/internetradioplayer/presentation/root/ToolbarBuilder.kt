@@ -94,7 +94,8 @@ class MenuHolder {
 class MenuItemHolder(val itemTitleResId: Int,
                      val iconResId: Int,
                      val showAsAction: Boolean = false,
-                     val order: Int = 0) {
+                     val order: Int = 0,
+                     val color: Int = 0xFF424242.toInt()) {
 
     val id = itemTitleResId
     override fun equals(other: Any?): Boolean {

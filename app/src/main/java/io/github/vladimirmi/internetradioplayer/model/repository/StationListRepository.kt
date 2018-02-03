@@ -9,7 +9,10 @@ import io.github.vladimirmi.internetradioplayer.model.manager.Preferences
 import io.github.vladimirmi.internetradioplayer.model.source.StationSource
 import io.reactivex.Completable
 import io.reactivex.Single
+import timber.log.Timber
+import java.util.concurrent.locks.ReentrantLock
 import javax.inject.Inject
+import kotlin.concurrent.withLock
 
 /**
  * Created by Vladimir Mikhalev 30.09.2017.
@@ -22,16 +25,18 @@ class StationListRepository
     @Volatile var isInitialized = false
     val stationList: GroupingList = GroupingList()
     val currentStation: BehaviorRelay<Station> = BehaviorRelay.create()
-
+    private val lock = ReentrantLock()
 
     fun initStations() {
-        if (isInitialized) return
-        stationList.addAll(stationSource.getStationList())
-        stationList.filter(Filter.valueOf(preferences.filter))
-        preferences.hidedGroups.forEach { stationList.hideGroup(it) }
-
-        currentStation.accept(stationList[preferences.currentPos])
-        isInitialized = true
+        lock.withLock {
+            if (isInitialized) return
+            Timber.e("initStations: ")
+            stationList.addAll(stationSource.getStationList())
+            stationList.filter(Filter.valueOf(preferences.filter))
+            preferences.hidedGroups.forEach { stationList.hideGroup(it) }
+            currentStation.accept(stationList[preferences.currentPos])
+            isInitialized = true
+        }
     }
 
     fun setCurrentStation(station: Station) {

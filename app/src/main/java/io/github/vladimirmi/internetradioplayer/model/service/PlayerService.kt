@@ -6,7 +6,6 @@ import android.content.Intent
 import android.os.Bundle
 import android.support.v4.media.MediaBrowserCompat
 import android.support.v4.media.MediaBrowserServiceCompat
-import android.support.v4.media.MediaMetadataCompat
 import android.support.v4.media.session.MediaSessionCompat
 import android.support.v4.media.session.PlaybackStateCompat
 import com.google.android.exoplayer2.ExoPlaybackException
@@ -48,9 +47,11 @@ class PlayerService : MediaBrowserServiceCompat(), SessionCallback.Interface {
     private lateinit var session: MediaSessionCompat
     private lateinit var playback: Playback
     private lateinit var notification: MediaNotification
-    private var metadata = MediaMetadataCompat.Builder().build()
+
     private var playbackState = PlaybackStateCompat.Builder()
-            .setState(PlaybackStateCompat.STATE_STOPPED, 0, 1F).build()
+            .setState(PlaybackStateCompat.STATE_STOPPED, 0, 1F)
+            .setActions(AvailableActions.NEXT_PREVIOUS_ENABLED).build()
+
     private var serviceStarted = false
     private var currentStationId: String? = null
     private var playingStationId: String? = null
@@ -76,7 +77,6 @@ class PlayerService : MediaBrowserServiceCompat(), SessionCallback.Interface {
                 .addTo(compDisp)
 
         controlsInteractor.playerModeObs
-//                .delaySubscription(1000, TimeUnit.MILLISECONDS)
                 .subscribe { handlePlayerMode(it) }
                 .addTo(compDisp)
 
@@ -113,12 +113,7 @@ class PlayerService : MediaBrowserServiceCompat(), SessionCallback.Interface {
     }
 
     private fun handleCurrentStation(it: Station) {
-        metadata = MediaMetadataCompat.Builder(metadata)
-                .putString(MediaMetadataCompat.METADATA_KEY_ALBUM, it.name)
-                .build()
-        session.setMetadata(metadata)
         notification.update()
-
         currentStationId = it.id
         if (isPlaying && currentStationId != playingStationId) playCurrent()
     }
@@ -128,7 +123,8 @@ class PlayerService : MediaBrowserServiceCompat(), SessionCallback.Interface {
             PlayerMode.NEXT_PREVIOUS_ENABLED -> AvailableActions.NEXT_PREVIOUS_ENABLED
             PlayerMode.NEXT_PREVIOUS_DISABLED -> AvailableActions.NEXT_PREVIOUS_DISABLED
         }
-        session.setPlaybackState(createPlaybackState(actions = actions))
+        val state = createPlaybackState(actions = actions)
+        session.setPlaybackState(state)
         notification.update()
     }
 
@@ -218,17 +214,9 @@ class PlayerService : MediaBrowserServiceCompat(), SessionCallback.Interface {
 
         override fun onMetadata(metadata: Metadata) {
             super.onMetadata(metadata)
-            session.setMetadata(createMetadata(metadata))
+            session.setMetadata(metadata.toMediaMetadata())
             notification.update()
         }
-    }
-
-    private fun createMetadata(metadata: Metadata): MediaMetadataCompat {
-        return MediaMetadataCompat.Builder(this.metadata)
-                .putString(MediaMetadataCompat.METADATA_KEY_ARTIST, metadata.artist)
-                .putString(MediaMetadataCompat.METADATA_KEY_TITLE, metadata.title)
-                .build()
-                .also { this.metadata = it }
     }
 
     private fun createPlaybackState(state: Int? = null, actions: Long? = null): PlaybackStateCompat {

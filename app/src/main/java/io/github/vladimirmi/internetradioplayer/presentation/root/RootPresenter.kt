@@ -27,7 +27,8 @@ class RootPresenter
     override fun onFirstViewAttach() {
         controlsInteractor.connect()
         stationInteractor.initStations()
-                .subscribe { setRootScreen() }
+                .ioToMain()
+                .subscribe { setupRootScreen() }
                 .addTo(compDisp)
     }
 
@@ -36,9 +37,7 @@ class RootPresenter
     }
 
     fun addStation(uri: Uri) {
-        stationInteractor.initStations()
-//                .doOnComplete { setRootScreen() }
-                .andThen(stationInteractor.createStation(uri))
+        stationInteractor.createStation(uri)
                 .ioToMain()
                 .doOnSubscribe { viewState.showLoadingIndicator(true) }
                 .doFinally { viewState.showLoadingIndicator(false) }
@@ -55,23 +54,20 @@ class RootPresenter
     }
 
     fun showStation(id: String) {
-        stationInteractor.initStations()
-                .ioToMain()
-                .subscribe {
-                    val station = stationInteractor.getStation(id)
-                    if (station != null) {
-                        stationInteractor.currentStation = station
-                        router.showStationReplace(station)
-                    } else viewState.showToast(R.string.toast_shortcut_remove)
-                }
-                .addTo(compDisp)
+        val station = stationInteractor.getStation(id)
+        if (station != null) {
+            stationInteractor.currentStation = station
+            router.showStationReplace(station)
+        } else viewState.showToast(R.string.toast_shortcut_remove)
     }
 
-    private fun setRootScreen() {
+
+    private fun setupRootScreen() {
         if (stationInteractor.haveStations()) {
             router.newRootScreen(Router.MEDIA_LIST_SCREEN)
         } else {
             router.newRootScreen(Router.GET_STARTED_SCREEN)
         }
+        viewState.checkIntent()
     }
 }

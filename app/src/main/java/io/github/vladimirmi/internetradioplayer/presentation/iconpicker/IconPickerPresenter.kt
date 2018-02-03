@@ -2,6 +2,7 @@ package io.github.vladimirmi.internetradioplayer.presentation.iconpicker
 
 import android.graphics.Bitmap
 import com.arellomobile.mvp.InjectViewState
+import io.github.vladimirmi.internetradioplayer.model.entity.Metadata
 import io.github.vladimirmi.internetradioplayer.model.entity.icon.IconOption
 import io.github.vladimirmi.internetradioplayer.model.entity.icon.IconRes
 import io.github.vladimirmi.internetradioplayer.model.entity.icon.IconResource
@@ -93,7 +94,8 @@ class IconPickerPresenter
 
     fun exit() {
         rootPresenter.viewState.showControls(true)
-        if (!controlsInteractor.isStopped) {
+        if (!controlsInteractor.isStopped &&
+                Metadata.create(controlsInteractor.playbackMetaData.blockingFirst()).isSupported) {
             rootPresenter.viewState.showMetadata(true)
         }
         router.exit()

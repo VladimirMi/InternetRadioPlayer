@@ -5,9 +5,9 @@ import android.support.v4.media.session.PlaybackStateCompat.*
 import com.arellomobile.mvp.InjectViewState
 import io.github.vladimirmi.internetradioplayer.R
 import io.github.vladimirmi.internetradioplayer.extensions.ioToMain
+import io.github.vladimirmi.internetradioplayer.model.entity.PlayerMode
 import io.github.vladimirmi.internetradioplayer.model.interactor.PlayerControlsInteractor
 import io.github.vladimirmi.internetradioplayer.model.interactor.StationInteractor
-import io.github.vladimirmi.internetradioplayer.model.service.AvailableActions
 import io.github.vladimirmi.internetradioplayer.model.service.PlayerService
 import io.github.vladimirmi.internetradioplayer.navigation.Router
 import io.github.vladimirmi.internetradioplayer.ui.base.BasePresenter
@@ -27,17 +27,22 @@ class PlayerControlPresenter
     : BasePresenter<PlayerControlView>() {
 
     override fun onFirstViewAttach() {
-        controlsInteractor.playbackState
+        controlsInteractor.playbackStateObs
                 .subscribe { handleState(it) }
+                .addTo(compDisp)
+
+        controlsInteractor.sessionEventObs
+                .subscribe { handleSessionEvent(it) }
+                .addTo(compDisp)
+
+        controlsInteractor.playerModeObs
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe { handlePlayerMode(it) }
                 .addTo(compDisp)
 
         stationInteractor.currentStationObs
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe { viewState.setStation(it) }
-                .addTo(compDisp)
-
-        controlsInteractor.sessionEvent
-                .subscribe { handleSessionEvent(it) }
                 .addTo(compDisp)
 
         stationInteractor.currentIconObs
@@ -51,17 +56,19 @@ class PlayerControlPresenter
             STATE_PAUSED, STATE_STOPPED -> viewState.showStopped()
             STATE_PLAYING -> viewState.showPlaying()
         }
-        if (AvailableActions.isNextPreviousEnabled(state.actions)) {
-            viewState.enableNextPrevious(true)
-        } else {
-            viewState.enableNextPrevious(false)
-        }
     }
 
     private fun handleSessionEvent(event: String) {
         when (event) {
             PlayerService.EVENT_SESSION_PREVIOUS -> router.skipToPrevious(stationInteractor.currentStation)
             PlayerService.EVENT_SESSION_NEXT -> router.skipToNext(stationInteractor.currentStation)
+        }
+    }
+
+    private fun handlePlayerMode(mode: PlayerMode) {
+        when (mode) {
+            PlayerMode.NEXT_PREVIOUS_DISABLED -> viewState.enableNextPrevious(false)
+            PlayerMode.NEXT_PREVIOUS_ENABLED -> viewState.enableNextPrevious(true)
         }
     }
 

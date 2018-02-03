@@ -9,6 +9,7 @@ import android.support.v4.media.MediaMetadataCompat
 import android.support.v4.media.session.MediaControllerCompat
 import android.support.v4.media.session.PlaybackStateCompat
 import com.jakewharton.rxrelay2.BehaviorRelay
+import io.github.vladimirmi.internetradioplayer.model.entity.Metadata
 import io.github.vladimirmi.internetradioplayer.model.service.PlayerService
 import timber.log.Timber
 import javax.inject.Inject
@@ -24,7 +25,8 @@ class MediaController
     private var controller: MediaControllerCompat? = null
 
     val playbackState: BehaviorRelay<PlaybackStateCompat> = BehaviorRelay.create()
-    val playbackMetaData: BehaviorRelay<MediaMetadataCompat> = BehaviorRelay.create()
+    val playbackMetaData: BehaviorRelay<MediaMetadataCompat> =
+            BehaviorRelay.createDefault(Metadata.UNSUPPORTED.toMediaMetadata())
     val sessionEvent: BehaviorRelay<String> = BehaviorRelay.create()
 
     private val connectionCallbacks = object : MediaBrowserCompat.ConnectionCallback() {

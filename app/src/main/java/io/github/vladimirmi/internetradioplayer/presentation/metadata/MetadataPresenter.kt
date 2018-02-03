@@ -25,16 +25,16 @@ class MetadataPresenter
                 .subscribeBy { handleMeta(it) }
                 .addTo(compDisp)
 
-        controlsInteractor.playbackState
+        controlsInteractor.playbackStateObs
                 .subscribeBy { handleState(it) }
                 .addTo(compDisp)
     }
 
     private fun handleMeta(metadata: Metadata) {
-        if (metadata.isUnsupported) {
-            viewState.hide()
-        } else {
+        if (metadata.isSupported) {
             viewState.setMetadata(metadata.toString())
+        } else {
+            viewState.hide()
         }
     }
 

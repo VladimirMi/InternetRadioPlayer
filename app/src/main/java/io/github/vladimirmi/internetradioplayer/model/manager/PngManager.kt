@@ -88,28 +88,25 @@ fun File.decode(): Icon {
 
     var option = IconOption.ICON
     var iconRes = IconResource.ICON_1
-    var backGroundColor = Color.LTGRAY
+//    var backGroundColor = Color.LTGRAY
     var foregroundColor = Color.BLACK
-    var text = ""
+//    var text = ""
 
     var chunk = nextChunkFromBuffer(wrapped)
     while (chunk != null) {
         when (chunk.key) {
-            KEY_OPTION -> option = IconOption.fromName(chunk.value)
+//            KEY_OPTION -> option = IconOption.fromName(chunk.value)
             KEY_ICON_RES -> iconRes = IconResource.fromName(chunk.value)
-            KEY_BG_COLOR -> backGroundColor = chunk.value.toInt()
+//            KEY_BG_COLOR -> backGroundColor = chunk.value.toInt()
             KEY_FG_COLOR -> foregroundColor = chunk.value.toInt()
-            KEY_TEXT -> text = chunk.value
+//            KEY_TEXT -> text = chunk.value
         }
         chunk = nextChunkFromBuffer(wrapped)
     }
 
     val bitmap = BitmapFactory.decodeByteArray(pngBytes, 0, pngBytes.size)
 
-    @Suppress("WhenWithOnlyElse")
-    return when (option) {
-        else -> IconRes(nameWithoutExtension, foregroundColor, iconRes)
-    }
+    return IconRes(nameWithoutExtension, foregroundColor, iconRes, bitmap)
 }
 
 private fun nextChunkFromBuffer(buffer: ByteBuffer): PngTextChunk? {

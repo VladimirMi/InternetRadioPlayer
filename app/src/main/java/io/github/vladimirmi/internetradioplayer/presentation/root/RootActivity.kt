@@ -6,8 +6,6 @@ import android.net.Uri
 import android.os.Bundle
 import android.support.annotation.StringRes
 import android.support.design.widget.Snackbar
-import android.support.v4.content.ContextCompat
-import android.support.v4.graphics.drawable.DrawableCompat
 import android.support.v7.view.menu.MenuBuilder
 import android.support.v7.view.menu.MenuPopupHelper
 import android.support.v7.widget.PopupMenu
@@ -22,6 +20,7 @@ import com.arellomobile.mvp.presenter.ProvidePresenter
 import io.github.vladimirmi.internetradioplayer.R
 import io.github.vladimirmi.internetradioplayer.di.Scopes
 import io.github.vladimirmi.internetradioplayer.di.module.RootActivityModule
+import io.github.vladimirmi.internetradioplayer.extensions.setTintExt
 import io.github.vladimirmi.internetradioplayer.extensions.visible
 import io.github.vladimirmi.internetradioplayer.model.service.PlayerService
 import io.github.vladimirmi.internetradioplayer.navigation.Navigator
@@ -59,7 +58,6 @@ class RootActivity : MvpAppCompatActivity(), RootView, ToolbarView {
 
         setContentView(R.layout.activity_root)
         setSupportActionBar(toolbar)
-        handleIntent()
     }
 
     override fun onResumeFragments() {
@@ -77,7 +75,6 @@ class RootActivity : MvpAppCompatActivity(), RootView, ToolbarView {
     override fun onNewIntent(intent: Intent?) {
         super.onNewIntent(intent)
         this.intent = intent
-        handleIntent()
     }
 
     override fun onDestroy() {
@@ -92,7 +89,9 @@ class RootActivity : MvpAppCompatActivity(), RootView, ToolbarView {
         if (!handled) super.onBackPressed()
     }
 
-    private fun handleIntent() {
+    //region =============== RootView ==============
+
+    override fun checkIntent() {
         if (intent != null) {
             if (intent.hasExtra(PlayerService.EXTRA_STATION_ID)) {
                 presenter.showStation(intent.getStringExtra(PlayerService.EXTRA_STATION_ID))
@@ -101,12 +100,6 @@ class RootActivity : MvpAppCompatActivity(), RootView, ToolbarView {
             intent = null
         }
     }
-
-    fun addStation(uri: Uri) {
-        presenter.addStation(uri)
-    }
-
-    //region =============== RootView ==============
 
     override fun showToast(resId: Int) {
         Toast.makeText(this, resId, Toast.LENGTH_SHORT).show()
@@ -126,6 +119,10 @@ class RootActivity : MvpAppCompatActivity(), RootView, ToolbarView {
 
     override fun showLoadingIndicator(visible: Boolean) {
         loadingPb.visible(visible)
+    }
+
+    fun addStation(uri: Uri) {
+        presenter.addStation(uri)
     }
 
     //endregion
@@ -186,10 +183,12 @@ class RootActivity : MvpAppCompatActivity(), RootView, ToolbarView {
         anchorView.icon.setImageResource(R.drawable.ic_more)
         anchorItem.actionView = anchorView
 
+        //todo expose popup instead od popupHelper
         val popup = PopupMenu(this, anchorView)
         popupItems.forEachIndexed { index, item ->
             popup.menu.add(0, item.itemTitleResId, index, item.itemTitleResId).apply {
                 setIcon(item.iconResId)
+                icon.mutate().setTintExt(item.color)
             }
         }
         popup.setOnMenuItemClickListener {
@@ -198,13 +197,7 @@ class RootActivity : MvpAppCompatActivity(), RootView, ToolbarView {
         }
 
         popupHelper = MenuPopupHelper(this, popup.menu as MenuBuilder, anchorView)
-        (0 until popup.menu.size())
-                .map { popup.menu.getItem(it) }
-                .forEach {
-                    val drawable = DrawableCompat.wrap(it.icon).mutate()
-                    DrawableCompat.setTint(drawable, ContextCompat.getColor(this, R.color.black))
-                    popupHelper?.setForceShowIcon(true)
-                }
+        popupHelper?.setForceShowIcon(true)
 
         anchorView.setOnClickListener {
             popupHelper?.show(0, -anchorView.height)

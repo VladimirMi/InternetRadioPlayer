@@ -31,30 +31,29 @@ class PlayerControlsInteractor
         }
         e.setDisposable(Disposables.fromRunnable { enableNextPreviousManualListener = null })
     }
+            .distinctUntilChanged()
+            .startWith(PlayerMode.NEXT_PREVIOUS_ENABLED)
 
     private val enableNextPreviousAutoObs = repository.stationList.observe()
             .map {
-                if (it.itemsSize > 1) {
-                    PlayerMode.NEXT_PREVIOUS_ENABLED
-                } else {
-                    PlayerMode.NEXT_PREVIOUS_DISABLED
-                }
-            }
+                if (it.itemsSize > 1) PlayerMode.NEXT_PREVIOUS_ENABLED
+                else PlayerMode.NEXT_PREVIOUS_DISABLED
+            }.distinctUntilChanged()
 
-    val playerModeObs: Observable<PlayerMode> = Observable.combineLatest(enableNextPreviousAutoObs,
+    val playerModeObs: Observable<PlayerMode> = Observable.combineLatest(
+            enableNextPreviousAutoObs,
             enableNextPreviousManualObs,
             BiFunction { manual: PlayerMode, auto: PlayerMode ->
-                if (manual == auto && auto == PlayerMode.NEXT_PREVIOUS_ENABLED) {
+                if (manual == PlayerMode.NEXT_PREVIOUS_ENABLED && auto == PlayerMode.NEXT_PREVIOUS_ENABLED) {
                     PlayerMode.NEXT_PREVIOUS_ENABLED
                 } else {
                     PlayerMode.NEXT_PREVIOUS_DISABLED
                 }
-            })
-            .startWith(enableNextPreviousAutoObs.firstOrError().toObservable())
+            }).share()
 
-    val playbackState: Observable<PlaybackStateCompat> get() = controller.playbackState
+    val playbackStateObs: Observable<PlaybackStateCompat> get() = controller.playbackState
     val playbackMetaData: Observable<MediaMetadataCompat> get() = controller.playbackMetaData
-    val sessionEvent: Observable<String> get() = controller.sessionEvent
+    val sessionEventObs: Observable<String> get() = controller.sessionEvent
 
     fun enableNextPrevious(enable: Boolean) {
         enableNextPreviousManualListener?.invoke(enable)

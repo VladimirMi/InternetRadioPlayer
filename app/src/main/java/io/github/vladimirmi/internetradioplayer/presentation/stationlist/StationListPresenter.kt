@@ -64,7 +64,7 @@ class StationListPresenter
                     viewState.selectItem(it, controlsInteractor.isPlaying)
                 }.addTo(compDisp)
 
-        controlsInteractor.playbackState
+        controlsInteractor.playbackStateObs
                 .subscribe { viewState.selectItem(interactor.currentStation, controlsInteractor.isPlaying) }
                 .addTo(compDisp)
     }

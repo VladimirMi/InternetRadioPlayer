@@ -108,21 +108,22 @@ class MediaNotification(private val service: PlayerService,
         mediaSession.controller.metadata?.let {
             val metadata = Metadata.create(it)
 
-            if (!metadata.isUnsupported) {
+            if (metadata.isSupported) {
                 setTextViewText(R.id.titleTv, metadata.title)
                 setTextViewText(R.id.artistTv, metadata.artist)
+                setViewVisibility(R.id.artistTv, View.VISIBLE)
             } else {
                 setTextViewText(R.id.titleTv, service.getString(R.string.metadata_not_available))
-                setTextViewText(R.id.artistTv, "")
+                setViewVisibility(R.id.artistTv, View.GONE)
             }
-            setTextViewText(R.id.stationTv, it.description.description)
         }
 
         if (playbackState.state == PlaybackStateCompat.STATE_BUFFERING) {
             setTextViewText(R.id.titleTv, service.getString(R.string.metadata_buffering))
-            setTextViewText(R.id.artistTv, "")
+            setViewVisibility(R.id.artistTv, View.GONE)
         }
 
+        setTextViewText(R.id.stationTv, stationInteractor.currentStation.name)
         setImageViewBitmap(R.id.iconIv, stationInteractor.currentIcon.bitmap)
 
         if (AvailableActions.isNextPreviousEnabled(playbackState.actions)) {

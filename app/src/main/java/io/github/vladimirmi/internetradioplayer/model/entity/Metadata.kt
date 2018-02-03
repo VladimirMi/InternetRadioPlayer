@@ -51,14 +51,21 @@ private constructor() {
         }
     }
 
-    val isUnsupported get() = artist == unsupported && title == unsupported
+    val isSupported get() = artist != unsupported && title != unsupported
 
     override fun toString(): String {
         return "$artist - $title"
     }
 
     fun toLogString(): String {
-        return if (isUnsupported) "Metadata(Unsupported)"
+        return if (!isSupported) "Metadata(Unsupported)"
         else "Metadata(artist='$artist', title='$title')"
+    }
+
+    fun toMediaMetadata(): MediaMetadataCompat {
+        return MediaMetadataCompat.Builder()
+                .putString(MediaMetadataCompat.METADATA_KEY_ARTIST, artist)
+                .putString(MediaMetadataCompat.METADATA_KEY_TITLE, title)
+                .build()
     }
 }

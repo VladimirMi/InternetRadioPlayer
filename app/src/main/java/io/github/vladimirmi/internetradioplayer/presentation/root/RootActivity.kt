@@ -58,6 +58,10 @@ class RootActivity : MvpAppCompatActivity(), RootView, ToolbarView {
 
         setContentView(R.layout.activity_root)
         setSupportActionBar(toolbar)
+
+        if (savedInstanceState != null || (intent.flags and Intent.FLAG_ACTIVITY_LAUNCHED_FROM_HISTORY) != 0) {
+            intent = null // stop redeliver old intent
+        }
     }
 
     override fun onResumeFragments() {

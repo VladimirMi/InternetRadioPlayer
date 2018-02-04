@@ -89,9 +89,8 @@ class IconPickerFragment : BaseFragment(), IconPickerView, BackPressListener {
 
     override fun setForegroundColor(colorInt: Int) {
         iconTv.setTextColor(colorInt)
-        //todo on api27 that works
-//        iconIv.setTint(colorInt)
         iconIv.background.mutate().setTintExt(colorInt)
+        // todo for api 16, check others
         iconIv.invalidate()
         colorPicker.setColor(colorInt)
     }

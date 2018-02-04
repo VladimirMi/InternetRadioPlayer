@@ -118,8 +118,8 @@ class PlayerService : MediaBrowserServiceCompat(), SessionCallback.Interface {
         if (isPlaying && currentStationId != playingStationId) playCurrent()
     }
 
-    private fun handlePlayerMode(it: PlayerMode) {
-        val actions = when (it) {
+    private fun handlePlayerMode(playerMode: PlayerMode) {
+        val actions = when (playerMode) {
             PlayerMode.NEXT_PREVIOUS_ENABLED -> AvailableActions.NEXT_PREVIOUS_ENABLED
             PlayerMode.NEXT_PREVIOUS_DISABLED -> AvailableActions.NEXT_PREVIOUS_DISABLED
         }

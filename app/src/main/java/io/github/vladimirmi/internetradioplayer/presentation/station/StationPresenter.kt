@@ -50,8 +50,8 @@ class StationPresenter
             .setMenuActions(menuActions)
 
     override fun onFirstViewAttach() {
-        if (createMode) editMode() else viewMode()
         viewState.setStation(stationInteractor.currentStation)
+        if (createMode) editMode() else viewMode()
     }
 
     override fun attachView(view: StationView?) {
@@ -124,6 +124,7 @@ class StationPresenter
                 .subscribeBy { added ->
                     if (added) {
                         viewState.showToast(R.string.toast_add_success)
+                        controlsInteractor.enableNextPrevious(true)
                         createMode = false
                         router.newRootScreen(Router.MEDIA_LIST_SCREEN)
                     } else {

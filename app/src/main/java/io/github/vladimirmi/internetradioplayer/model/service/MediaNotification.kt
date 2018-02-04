@@ -22,12 +22,12 @@ import io.github.vladimirmi.internetradioplayer.model.interactor.StationInteract
  * Created by Vladimir Mikhalev 20.10.2017.
  */
 
+// todo remake in MediaStyle
 class MediaNotification(private val service: PlayerService,
                         private val mediaSession: MediaSessionCompat,
                         private val stationInteractor: StationInteractor) {
 
     companion object {
-        //todo fix notification view on api 16
         const val CHANNEL_ID = "radius channel"
         const val PLAYER_NOTIFICATION_ID = 50
     }
@@ -43,6 +43,24 @@ class MediaNotification(private val service: PlayerService,
 
     private val notificationView = RemoteViews(service.packageName, R.layout.view_notification)
     private val notificationViewBig = RemoteViews(service.packageName, R.layout.view_notification_big)
+
+    private val builder = NotificationCompat.Builder(service, CHANNEL_ID)
+            .setShowWhen(false)
+            .setVisibility(NotificationCompat.VISIBILITY_PUBLIC)
+            .setSmallIcon(R.drawable.ic_station_1)
+            .setContentIntent(mediaSession.controller.sessionActivity)
+            .setDeleteIntent(stopIntent)
+            .setPriority(NotificationCompat.PRIORITY_HIGH)
+            .apply {
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+                    val style = android.support.v4.media.app.NotificationCompat.MediaStyle()
+                            .setMediaSession(mediaSession.sessionToken)
+                            .setShowCancelButton(true)
+                            .setCancelButtonIntent(stopIntent)
+
+                    setStyle(style)
+                }
+            }
 
     init {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
@@ -69,21 +87,7 @@ class MediaNotification(private val service: PlayerService,
     }
 
     private fun getNotification(): Notification {
-
-        val style = android.support.v4.media.app.NotificationCompat.MediaStyle()
-                .setMediaSession(mediaSession.sessionToken)
-                .setShowCancelButton(true)
-                .setCancelButtonIntent(stopIntent)
-
-        return NotificationCompat.Builder(service, CHANNEL_ID)
-                .setShowWhen(false)
-                .setVisibility(NotificationCompat.VISIBILITY_PUBLIC)
-                .setSmallIcon(R.drawable.ic_station_1)
-                .setContentIntent(mediaSession.controller.sessionActivity)
-                .setDeleteIntent(stopIntent)
-                .setPriority(NotificationCompat.PRIORITY_HIGH)
-                .setStyle(style)
-                .setCustomContentView(notificationView.setup())
+        return builder.setCustomContentView(notificationView.setup())
                 .setCustomBigContentView(notificationViewBig.setup())
                 .build()
     }
@@ -97,7 +101,6 @@ class MediaNotification(private val service: PlayerService,
         notificationChannel.description = service.getString(R.string.notification_name)
         notificationChannel.enableLights(true)
         notificationChannel.lightColor = Color.RED
-        NotificationManagerCompat.from(service)
         (service.getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager)
                 .createNotificationChannel(notificationChannel)
     }
@@ -130,8 +133,8 @@ class MediaNotification(private val service: PlayerService,
             setViewVisibility(R.id.previousBt, View.VISIBLE)
             setViewVisibility(R.id.nextBt, View.VISIBLE)
         } else {
-            setViewVisibility(R.id.previousBt, View.INVISIBLE)
-            setViewVisibility(R.id.nextBt, View.INVISIBLE)
+            setViewVisibility(R.id.previousBt, View.GONE)
+            setViewVisibility(R.id.nextBt, View.GONE)
         }
 
         if (playbackState.state == PlaybackStateCompat.STATE_STOPPED

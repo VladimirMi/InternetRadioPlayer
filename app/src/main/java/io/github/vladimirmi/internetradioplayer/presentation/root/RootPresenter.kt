@@ -32,6 +32,14 @@ class RootPresenter
                 .addTo(compDisp)
     }
 
+    override fun attachView(view: RootView?) {
+        super.attachView(view)
+        stationInteractor.initStations()
+                .ioToMain()
+                .subscribe { viewState.checkIntent() }
+                .addTo(compDisp)
+    }
+
     override fun onDestroy() {
         controlsInteractor.disconnect()
     }
@@ -68,6 +76,5 @@ class RootPresenter
         } else {
             router.newRootScreen(Router.GET_STARTED_SCREEN)
         }
-        viewState.checkIntent()
     }
 }

@@ -13,7 +13,7 @@ open class PlayerCallback : Player.EventListener {
 
     override fun onTracksChanged(trackGroups: TrackGroupArray, trackSelections: TrackSelectionArray) {
         if (trackGroups.length > 0) {
-            Timber.e("onTracksChanged: ${Format.toLogString(trackGroups.get(0).getFormat(0))}")
+            Timber.d("onTracksChanged: ${Format.toLogString(trackGroups.get(0).getFormat(0))}")
         }
     }
 
@@ -29,9 +29,7 @@ open class PlayerCallback : Player.EventListener {
         Timber.d("onPlayerStateChanged: $playWhenReady $playbackState")
     }
 
-    override fun onLoadingChanged(isLoading: Boolean) {
-        Timber.d("onLoadingChanged: $isLoading")
-    }
+    override fun onLoadingChanged(isLoading: Boolean) {}
 
     override fun onPositionDiscontinuity() {}
 

@@ -55,7 +55,7 @@ class MediaController
             state?.let {
                 playbackState.accept(it)
                 if (it.state == PlaybackStateCompat.STATE_PLAYING) {
-                    //todo remake
+                    //todo remake ? wtf
                     playbackMetaData.accept(playbackMetaData.value ?: return)
                 }
             }

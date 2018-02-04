@@ -49,7 +49,7 @@ class PlayerControlsInteractor
                 } else {
                     PlayerMode.NEXT_PREVIOUS_DISABLED
                 }
-            }).share()
+            }).replay(1).refCount()
 
     val playbackStateObs: Observable<PlaybackStateCompat> get() = controller.playbackState
     val playbackMetaData: Observable<MediaMetadataCompat> get() = controller.playbackMetaData

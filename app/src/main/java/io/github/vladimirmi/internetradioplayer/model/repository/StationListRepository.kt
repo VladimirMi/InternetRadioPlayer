@@ -9,7 +9,6 @@ import io.github.vladimirmi.internetradioplayer.model.manager.Preferences
 import io.github.vladimirmi.internetradioplayer.model.source.StationSource
 import io.reactivex.Completable
 import io.reactivex.Single
-import timber.log.Timber
 import java.util.concurrent.locks.ReentrantLock
 import javax.inject.Inject
 import kotlin.concurrent.withLock
@@ -30,7 +29,6 @@ class StationListRepository
     fun initStations() {
         lock.withLock {
             if (isInitialized) return
-            Timber.e("initStations: ")
             stationList.addAll(stationSource.getStationList())
             stationList.filter(Filter.valueOf(preferences.filter))
             preferences.hidedGroups.forEach { stationList.hideGroup(it) }

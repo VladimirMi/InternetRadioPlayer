@@ -14,26 +14,28 @@ class IcyInputStream(inS: InputStream,
                      private val playerCallback: PlayerCallback)
     : FilterInputStream(inS) {
 
-    private var remainingBytes = window
+    private var bytesBeforeMetadata = window
 
     override fun read(): Int {
+        if (bytesBeforeMetadata == 0) {
+            readMetadata()
+        }
         val byte = super.read()
-        if (--remainingBytes == 0) readMetadata()
+        bytesBeforeMetadata--
         return byte
     }
 
     override fun read(b: ByteArray, off: Int, len: Int): Int {
-        val bytes = super.read(b, off, if (remainingBytes < len) remainingBytes else len)
-        if (remainingBytes == bytes) {
+        if (bytesBeforeMetadata == 0) {
             readMetadata()
-        } else {
-            remainingBytes -= bytes
         }
+        val bytes = super.read(b, off, if (bytesBeforeMetadata < len) bytesBeforeMetadata else len)
+        bytesBeforeMetadata -= bytes
         return bytes
     }
 
     private fun readMetadata() {
-        remainingBytes = window
+        bytesBeforeMetadata = window
         val size = super.read() * 16
         if (size < 1) return
         val buffer = ByteArray(size)
@@ -45,8 +47,6 @@ class IcyInputStream(inS: InputStream,
     private fun parseMetadata(meta: String) {
         meta.split(";")
                 .filter(String::isNotEmpty)
-                .forEach {
-                    playerCallback.onMetadata(Metadata.create(it))
-                }
+                .forEach { playerCallback.onMetadata(Metadata.create(it)) }
     }
 }

@@ -78,6 +78,7 @@ class StationParser
     private fun parseHeaders(station: Station): Station {
         return station.uri.toURL().useConnection {
             Timber.d("parseHeaders: $headerFields")
+            if (headerFields == null) return@useConnection station
             val title = headerFields["icy-name"]?.get(0)
             val genres = parseGenres(headerFields["icy-genre"]?.get(0))
             val url = headerFields["icy-url"]?.get(0)

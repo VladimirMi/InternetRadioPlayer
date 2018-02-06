@@ -40,7 +40,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:inputType="textUri"
-            android:textSize="14sp"
+            android:textAppearance="@style/TextAppearance.AppCompat.Body2"
             tools:text="http://www.stationstream.com"
             />
 
@@ -58,7 +58,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:inputType="textUri"
-            android:textSize="14sp"
+            android:textAppearance="@style/TextAppearance.AppCompat.Body2"
             tools:text="http://www.stationstream.com"
             />
 
@@ -86,7 +86,7 @@
                 android:layout_marginRight="16dp"
                 android:hint="@string/unit_bitrate"
                 android:inputType="numberDecimal"
-                android:textSize="14sp"
+                android:textAppearance="@style/TextAppearance.AppCompat.Body2"
                 tools:text="128kB"
                 />
 
@@ -106,7 +106,7 @@
                 android:layout_height="wrap_content"
                 android:hint="@string/unit_sample_rate"
                 android:inputType="numberDecimal"
-                android:textSize="14sp"
+                android:textAppearance="@style/TextAppearance.AppCompat.Body2"
                 tools:text="44100Hz"
                 />
 

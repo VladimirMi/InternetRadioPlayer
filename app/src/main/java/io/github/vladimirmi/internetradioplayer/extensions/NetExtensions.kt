@@ -2,60 +2,40 @@ package io.github.vladimirmi.internetradioplayer.extensions
 
 import android.app.DownloadManager
 import android.net.Uri
-import java.io.IOException
-import java.net.*
+import java.net.HttpURLConnection
+import java.net.URI
+import java.net.URL
 import java.util.*
 
 /**
  * Created by Vladimir Mikhalev 09.11.2017.
  */
 
-fun String.toURL(): URL? {
-    return try {
-        URL(this.trim())
-    } catch (e: MalformedURLException) {
-        e.printStackTrace()
-        null
-    }
-}
+fun String.toURL(): URL = URL(this.trim())
 
-fun Uri.toURL(): URL? = this.toString().toURL()
+fun Uri.toURL(): URL = this.toString().toURL()
 
-fun String.toURI(): URI? {
-    return try {
-        URI(this.trim())
-    } catch (e: URISyntaxException) {
-        e.printStackTrace()
-        null
-    }
-}
+fun String.toURI(): URI = URI(this.trim())
 
-fun Uri.toURI(): URI? = this.toString().toURI()
-
-fun String.toUri(): Uri? = this.toURI()?.toString()?.let { Uri.parse(it) }
+fun String.toUri(): Uri = Uri.parse(this.toURI().toString())
 
 fun <T> URL.useConnection(connectTimeout: Int = 3000,
                           readTimeout: Int = 3000,
-                          function: HttpURLConnection.() -> T?): T? {
-    val connection = try {
-        openConnection() as HttpURLConnection
-    } catch (e: IOException) {
-        return null
-    }
+                          function: HttpURLConnection.() -> T): T {
+
+    val connection = openConnection() as HttpURLConnection
+
     return try {
         connection.connectTimeout = connectTimeout
         connection.readTimeout = readTimeout
         connection.function()
-    } catch (e: IOException) {
-        e.printStackTrace()
-        null
     } finally {
 //        connection.disconnect()  //too costly
     }
 }
 
 fun URL.getContentType(): String {
-    return useConnection { contentType.trim().toLowerCase(Locale.ENGLISH) } ?: ""
+    return useConnection { contentType.trim().toLowerCase(Locale.ENGLISH) }
 }
 
 fun URL.getRedirected(): URL {
@@ -66,7 +46,7 @@ fun URL.getRedirected(): URL {
         } else {
             this@getRedirected
         }
-    } ?: this
+    }
     return if (url == this) url
     else url.getRedirected()
 }

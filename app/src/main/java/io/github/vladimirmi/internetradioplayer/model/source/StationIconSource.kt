@@ -1,17 +1,11 @@
 package io.github.vladimirmi.internetradioplayer.model.source
 
 import android.content.Context
-import android.graphics.BitmapFactory
 import android.net.Uri
-import android.support.v4.content.ContextCompat
-import android.support.v4.graphics.drawable.DrawableCompat
 import android.util.LruCache
-import io.github.vladimirmi.internetradioplayer.R
 import io.github.vladimirmi.internetradioplayer.extensions.clear
-import io.github.vladimirmi.internetradioplayer.extensions.getBitmap
-import io.github.vladimirmi.internetradioplayer.extensions.toURL
-import io.github.vladimirmi.internetradioplayer.extensions.useConnection
-import io.github.vladimirmi.internetradioplayer.model.entity.Icon
+import io.github.vladimirmi.internetradioplayer.model.entity.icon.Icon
+import io.github.vladimirmi.internetradioplayer.model.entity.icon.IconRes
 import io.github.vladimirmi.internetradioplayer.model.manager.decode
 import io.github.vladimirmi.internetradioplayer.model.manager.encode
 import timber.log.Timber
@@ -25,21 +19,13 @@ import javax.inject.Inject
  */
 
 class StationIconSource
-@Inject constructor(private val context: Context) {
+@Inject constructor(context: Context) {
 
-    @Suppress("PrivatePropertyName")
     private val FAVICON_BASE_URI = Uri.Builder().scheme("http")
             .authority("www.google.com")
             .path("s2/favicons").build()
 
     private val appDir = context.getExternalFilesDir(null)
-
-    val defaultIcon: Icon by lazy {
-        val drawable = DrawableCompat.wrap(ContextCompat.getDrawable(context, R.drawable.ic_station_1)).mutate()
-        val accentColor = ContextCompat.getColor(context, R.color.accentColor)
-        DrawableCompat.setTint(drawable, accentColor)
-        Icon("default", drawable.getBitmap(), foregroundColor = accentColor)
-    }
 
     private val maxSize = (Runtime.getRuntime().maxMemory() / 1024 / 10).toInt()
     private val bitmapCache = object : LruCache<String, Icon>(maxSize) {
@@ -49,11 +35,14 @@ class StationIconSource
     }
 
     fun getIcon(path: String): Icon {
-        val cache = bitmapCache.get(path)
-        if (cache != null) return cache
-        val icon = if (path.contains("http")) loadFromNet(path) else loadFromFile(path)
-        if (icon != defaultIcon) cacheIcon(icon)
-        return icon
+        synchronized(bitmapCache) {
+            val cache = bitmapCache.get(path)
+            if (cache != null) return cache
+//        val icon = if (path.contains("http")) loadFromNet(path) else loadFromFile(path)
+            val icon = loadFromFile(path)
+            cache(icon)
+            return icon
+        }
     }
 
     fun getSavedIcon(path: String): Icon {
@@ -71,29 +60,33 @@ class StationIconSource
     }
 
     fun removeIcon(name: String) {
-        bitmapCache.remove(name)
+        removeFromCache(name)
         File(appDir, "$name.png").delete()
     }
 
-    fun cacheIcon(icon: Icon) {
+    fun cache(icon: Icon) {
         bitmapCache.put(icon.name, icon)
     }
 
-    private fun loadFromNet(url: String): Icon {
-        val host = Uri.parse(url).host
-        val faviconUrl = FAVICON_BASE_URI.buildUpon()
-                .appendQueryParameter("domain", host)
-                .build().toURL() ?: return defaultIcon
-
-        val bitmap = faviconUrl.useConnection {
-            BitmapFactory.decodeStream(inputStream)
-        } ?: defaultIcon.bitmap
-        return Icon(url, bitmap)
+    fun removeFromCache(name: String) {
+        bitmapCache.remove(name)
     }
+
+//    private fun loadFromNet(url: String): Icon {
+//        val host = Uri.parse(url).host
+//        val faviconUrl = FAVICON_BASE_URI.buildUpon()
+//                .appendQueryParameter("domain", host)
+//                .build().toURL() ?: return defaultIcon
+//
+//        val bitmap = faviconUrl.useConnection {
+//            BitmapFactory.decodeStream(inputStream)
+//        } ?: defaultIcon.bitmap
+//        return Icon(url, bitmap)
+//    }
 
     private fun loadFromFile(path: String): Icon {
         val file = File(appDir, "$path.png")
-        if (!file.exists()) return defaultIcon
+        if (!file.exists()) return IconRes(path)
         return file.decode()
     }
 }

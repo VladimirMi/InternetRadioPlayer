@@ -17,7 +17,7 @@
         app:layout_constraintEnd_toStartOf="@+id/redValue"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="@+id/redValue"
-        tools:progress="150"
+        tools:progress="100"
         />
 
     <io.github.vladimirmi.internetradioplayer.ui.ColorSeekBar
@@ -44,23 +44,24 @@
         app:layout_constraintHorizontal_bias="1.0"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="@+id/blueValue"
-        tools:progress="150"
+        tools:progress="200"
         />
 
     <TextView
         android:id="@+id/redValue"
         style="@style/CustomText.Black"
-        android:padding="4dp"
         android:minWidth="30sp"
+        android:padding="4dp"
         app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
         tools:text="255"
         />
 
     <TextView
         android:id="@+id/greenValue"
         style="@style/CustomText.Black"
-        android:minWidth="30sp"
         android:layout_marginTop="8dp"
+        android:minWidth="30sp"
         android:padding="4dp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/redValue"
@@ -70,10 +71,10 @@
     <TextView
         android:id="@+id/blueValue"
         style="@style/CustomText.Black"
-        android:minWidth="30sp"
         android:layout_alignParentEnd="true"
         android:layout_alignParentRight="true"
         android:layout_marginTop="8dp"
+        android:minWidth="30sp"
         android:padding="4dp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/greenValue"

@@ -2,6 +2,7 @@ package io.github.vladimirmi.internetradioplayer.model.entity
 
 import android.os.Parcel
 import android.os.Parcelable
+import android.support.annotation.Keep
 import java.util.*
 
 
@@ -9,6 +10,7 @@ import java.util.*
  * Created by Vladimir Mikhalev 04.10.2017.
  */
 
+@Keep
 data class Station(val uri: String,
                    val name: String,
                    val group: String = "",

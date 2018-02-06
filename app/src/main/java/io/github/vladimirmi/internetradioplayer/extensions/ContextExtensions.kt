@@ -6,9 +6,7 @@ import android.graphics.Bitmap
 import android.graphics.Canvas
 import android.graphics.drawable.BitmapDrawable
 import android.graphics.drawable.Drawable
-import android.graphics.drawable.VectorDrawable
 import android.support.annotation.ColorRes
-import android.support.graphics.drawable.VectorDrawableCompat
 import android.support.v4.content.ContextCompat
 import android.util.DisplayMetrics
 import android.view.WindowManager
@@ -22,7 +20,8 @@ import android.view.inputmethod.InputMethodManager
 fun Drawable.getBitmap(): Bitmap {
     return when (this) {
         is BitmapDrawable -> this.bitmap
-        is VectorDrawableCompat, is VectorDrawable -> {
+
+        else -> {
             val bitmap = Bitmap.createBitmap(intrinsicWidth, intrinsicHeight, Bitmap.Config.ARGB_8888)
             val canvas = Canvas(bitmap)
             setBounds(0, 0, canvas.width, canvas.height)
@@ -30,7 +29,6 @@ fun Drawable.getBitmap(): Bitmap {
 
             bitmap
         }
-        else -> throw IllegalArgumentException("unsupported drawable type")
     }
 }
 

@@ -6,8 +6,8 @@ import io.github.vladimirmi.internetradioplayer.R
 import io.github.vladimirmi.internetradioplayer.model.entity.Filter
 import io.github.vladimirmi.internetradioplayer.model.entity.Station
 import io.github.vladimirmi.internetradioplayer.model.entity.groupedlist.GroupedList
+import io.github.vladimirmi.internetradioplayer.model.interactor.PlayerControlsInteractor
 import io.github.vladimirmi.internetradioplayer.model.interactor.StationInteractor
-import io.github.vladimirmi.internetradioplayer.model.repository.MediaController
 import io.github.vladimirmi.internetradioplayer.navigation.Router
 import io.github.vladimirmi.internetradioplayer.presentation.root.MenuItemHolder
 import io.github.vladimirmi.internetradioplayer.presentation.root.RootPresenter
@@ -26,13 +26,13 @@ import javax.inject.Inject
 class StationListPresenter
 @Inject constructor(private val rootPresenter: RootPresenter,
                     private val interactor: StationInteractor,
-                    private val mediaController: MediaController,
+                    private val controlsInteractor: PlayerControlsInteractor,
                     private val router: Router)
     : BasePresenter<StationListView>() {
 
     private val addStationItem = MenuItemHolder(R.string.menu_add_station, R.drawable.ic_add, order = 0)
     private val favoriteOnItem = MenuItemHolder(R.string.menu_favorite_on, R.drawable.ic_star_empty, order = 1)
-    private val favoriteOffItem = MenuItemHolder(R.string.menu_favorite_off, R.drawable.ic_star, order = 1)
+    private val favoriteOffItem = MenuItemHolder(R.string.menu_favorite_off, R.drawable.ic_star, true, order = 1)
     private val exitItem = MenuItemHolder(R.string.menu_exit, R.drawable.ic_exit, order = 2)
 
     private val actions: (MenuItem) -> Unit = {
@@ -61,11 +61,11 @@ class StationListPresenter
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe {
                     viewState.buildToolbar(builder.setToolbarTitle(it.name))
-                    viewState.selectItem(it, mediaController.isPlaying)
+                    viewState.selectItem(it, controlsInteractor.isPlaying)
                 }.addTo(compDisp)
 
-        mediaController.playbackState
-                .subscribe { viewState.selectItem(interactor.currentStation, mediaController.isPlaying) }
+        controlsInteractor.playbackStateObs
+                .subscribe { viewState.selectItem(interactor.currentStation, controlsInteractor.isPlaying) }
                 .addTo(compDisp)
     }
 
@@ -77,19 +77,15 @@ class StationListPresenter
                     return
                 }
                 if (it.canFilter(Filter.FAVORITE)) {
-                    builder.removeMenuItem(favoriteOffItem)
-                            .addMenuItem(favoriteOnItem)
-                } else {
-                    builder.removeMenuItem(R.string.menu_favorite_on)
+                    builder.addMenuItem(favoriteOnItem)
                 }
+                builder.removeMenuItem(favoriteOffItem)
             }
             Filter.FAVORITE -> {
                 if (it.canFilter(Filter.DEFAULT)) {
-                    builder.removeMenuItem(favoriteOnItem)
-                            .addMenuItem(favoriteOffItem)
-                } else {
-                    builder.removeMenuItem(R.string.menu_favorite_off)
+                    builder.addMenuItem(favoriteOffItem)
                 }
+                builder.removeMenuItem(favoriteOnItem)
             }
         }
 
@@ -107,7 +103,7 @@ class StationListPresenter
 
     fun removeStation(station: Station) {
         interactor.removeStation(station)
-                .subscribe { interactor.removeShortcut(station) }
+                .subscribe()
                 .addTo(compDisp)
     }
 
@@ -117,7 +113,7 @@ class StationListPresenter
     }
 
     private fun exit() {
-        mediaController.stop()
+        controlsInteractor.stop()
         router.exit()
     }
 }

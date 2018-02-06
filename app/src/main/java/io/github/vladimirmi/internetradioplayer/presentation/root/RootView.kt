@@ -11,6 +11,9 @@ import com.arellomobile.mvp.viewstate.strategy.StateStrategyType
 interface RootView : MvpView {
 
     @StateStrategyType(OneExecutionStateStrategy::class)
+    fun checkIntent()
+
+    @StateStrategyType(OneExecutionStateStrategy::class)
     fun showToast(resId: Int)
 
     @StateStrategyType(OneExecutionStateStrategy::class)

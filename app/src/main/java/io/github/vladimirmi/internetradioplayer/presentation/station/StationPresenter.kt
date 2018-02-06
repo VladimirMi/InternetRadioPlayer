@@ -3,6 +3,7 @@ package io.github.vladimirmi.internetradioplayer.presentation.station
 import android.view.MenuItem
 import com.arellomobile.mvp.InjectViewState
 import io.github.vladimirmi.internetradioplayer.R
+import io.github.vladimirmi.internetradioplayer.extensions.ValidationException
 import io.github.vladimirmi.internetradioplayer.extensions.ioToMain
 import io.github.vladimirmi.internetradioplayer.model.entity.Station
 import io.github.vladimirmi.internetradioplayer.model.interactor.PlayerControlsInteractor
@@ -35,9 +36,8 @@ class StationPresenter
 
     private val menuActions: (MenuItem) -> Unit = {
         when (it.itemId) {
-            R.string.menu_station_edit -> editMode()
+            R.string.menu_station_edit, R.string.menu_station_save -> changeMode()
             R.string.menu_station_delete -> viewState.openRemoveDialog()
-            R.string.menu_station_save -> viewState.editStation()
             R.string.menu_station_shortcut -> addShortcut()
         }
     }
@@ -67,7 +67,8 @@ class StationPresenter
                 .addMenuItem(editItem)
 
         viewState.buildToolbar(toolbar)
-        controlsInteractor.tryEnableNextPrevious(true)
+        controlsInteractor.enableNextPrevious(true)
+        viewState.setStationIcon(stationInteractor.currentIcon.bitmap)
     }
 
     private fun editMode() {
@@ -77,7 +78,7 @@ class StationPresenter
                 .addMenuItem(saveItem)
 
         viewState.buildToolbar(toolbar)
-        controlsInteractor.tryEnableNextPrevious(false)
+        controlsInteractor.enableNextPrevious(false)
     }
 
     fun changeMode() {
@@ -90,15 +91,14 @@ class StationPresenter
 
     fun removeStation() {
         val station = stationInteractor.currentStation
-        val pos = stationInteractor.stationList.positionOfFirst { it.id == station.id }
-        if (pos == 0) {
+        if (stationInteractor.stationList.positionOfFirst { it.id == station.id } == 0) {
             controlsInteractor.nextStation()
         } else {
             controlsInteractor.previousStation()
         }
         stationInteractor.removeStation(station)
                 .subscribe {
-                    stationInteractor.removeShortcut(station)
+                    controlsInteractor.stop()
                     router.exit()
                 }
                 .addTo(compDisp)
@@ -106,8 +106,11 @@ class StationPresenter
 
 
     fun edit(station: Station) {
-        stationInteractor.updateCurrentStation(station.copy(favorite = stationInteractor.currentStation.favorite))
-                .subscribe { viewMode() }
+        val newStation = station.copy(favorite = stationInteractor.currentStation.favorite)
+        stationInteractor.updateCurrentStation(newStation)
+                .subscribeBy(
+                        onComplete = { viewMode() },
+                        onError = { if (it is ValidationException) viewState.showToast(it.resId) })
                 .addTo(compDisp)
     }
 
@@ -118,23 +121,23 @@ class StationPresenter
     }
 
     fun create(station: Station) {
-        stationInteractor.addStation(station)
+        val newStation = station.copy(favorite = stationInteractor.currentStation.favorite)
+        stationInteractor.addStation(newStation)
                 .ioToMain()
-                .subscribeBy { added ->
-                    if (added) {
-                        viewState.showToast(R.string.toast_add_success)
-                        createMode = false
-                        router.newRootScreen(Router.MEDIA_LIST_SCREEN)
-                    } else {
-                        viewState.showToast(R.string.toast_add_force)
-                    }
-                }
+                .subscribeBy(
+                        onComplete = {
+                            viewState.showToast(R.string.toast_add_success)
+                            controlsInteractor.enableNextPrevious(true)
+                            createMode = false
+                            router.newRootScreen(Router.MEDIA_LIST_SCREEN)
+                        },
+                        onError = { if (it is ValidationException) viewState.showToast(it.resId) })
                 .addTo(compDisp)
     }
 
     fun cancelCreate() {
         stationInteractor.previousWhenCreate?.let { stationInteractor.currentStation = it }
-        controlsInteractor.tryEnableNextPrevious(true)
+        controlsInteractor.enableNextPrevious(true)
         createMode = false
         router.exit()
     }

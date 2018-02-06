@@ -1,6 +1,7 @@
-package io.github.vladimirmi.internetradioplayer.presentation.iconpicker
+package io.github.vladimirmi.internetradioplayer.model.entity.icon
 
 import io.github.vladimirmi.internetradioplayer.R
+import java.util.*
 
 /**
  * Created by Vladimir Mikhalev 27.12.2017.
@@ -24,31 +25,36 @@ enum class IconOption(val id: Int) {
             return try {
                 IconOption.valueOf(name)
             } catch (e: IllegalArgumentException) {
-                IconOption.ICON
+                ICON
             }
         }
     }
 }
 
-enum class IconRes(val id: Int, val resId: Int) {
+enum class IconResource(val id: Int, val resId: Int) {
     ICON_1(R.id.ic_station_1, R.drawable.ic_station_1),
     ICON_2(R.id.ic_station_2, R.drawable.ic_station_2),
     ICON_3(R.id.ic_station_3, R.drawable.ic_station_3),
     ICON_4(R.id.ic_station_4, R.drawable.ic_station_4);
 
     companion object {
-        private val MAP: Map<Int, IconRes> by lazy {
-            IconRes.values().associateBy(IconRes::id)
+        private val MAP: Map<Int, IconResource> by lazy {
+            IconResource.values().associateBy(IconResource::id)
         }
 
-        fun fromId(id: Int): IconRes = MAP[id]!!
+        fun fromId(id: Int): IconResource = MAP[id]!!
 
-        fun fromName(name: String): IconRes {
+        fun fromName(name: String): IconResource {
             return try {
-                IconRes.valueOf(name)
+                IconResource.valueOf(name)
             } catch (e: IllegalArgumentException) {
-                IconRes.ICON_1
+                ICON_1
             }
+        }
+
+        fun random(): IconResource {
+            val idx = Random().nextInt(IconResource.values().size)
+            return IconResource.values()[idx]
         }
     }
 }

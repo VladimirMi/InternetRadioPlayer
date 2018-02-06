@@ -17,11 +17,8 @@ interface MetadataView : MvpView {
     fun setMetadata(resId: Int)
 
     @StateStrategyType(AddToEndSingleStrategy::class)
-    fun hide()
+    fun hideMetadata()
 
     @StateStrategyType(AddToEndSingleStrategy::class)
-    fun tryHide()
-
-    @StateStrategyType(AddToEndSingleStrategy::class)
-    fun show()
+    fun showMetadata()
 }

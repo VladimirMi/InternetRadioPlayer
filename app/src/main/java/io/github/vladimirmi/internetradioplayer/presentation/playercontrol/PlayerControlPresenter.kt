@@ -4,10 +4,9 @@ import android.support.v4.media.session.PlaybackStateCompat
 import android.support.v4.media.session.PlaybackStateCompat.*
 import com.arellomobile.mvp.InjectViewState
 import io.github.vladimirmi.internetradioplayer.R
-import io.github.vladimirmi.internetradioplayer.extensions.ioToMain
+import io.github.vladimirmi.internetradioplayer.model.entity.PlayerMode
+import io.github.vladimirmi.internetradioplayer.model.interactor.PlayerControlsInteractor
 import io.github.vladimirmi.internetradioplayer.model.interactor.StationInteractor
-import io.github.vladimirmi.internetradioplayer.model.repository.MediaController
-import io.github.vladimirmi.internetradioplayer.model.service.AvailableActions
 import io.github.vladimirmi.internetradioplayer.model.service.PlayerService
 import io.github.vladimirmi.internetradioplayer.navigation.Router
 import io.github.vladimirmi.internetradioplayer.ui.base.BasePresenter
@@ -21,14 +20,23 @@ import javax.inject.Inject
 
 @InjectViewState
 class PlayerControlPresenter
-@Inject constructor(private val mediaController: MediaController,
+@Inject constructor(private val controlsInteractor: PlayerControlsInteractor,
                     private val stationInteractor: StationInteractor,
                     private val router: Router)
     : BasePresenter<PlayerControlView>() {
 
     override fun onFirstViewAttach() {
-        mediaController.playbackState
+        controlsInteractor.playbackStateObs
                 .subscribe { handleState(it) }
+                .addTo(compDisp)
+
+        controlsInteractor.sessionEventObs
+                .subscribe { handleSessionEvent(it) }
+                .addTo(compDisp)
+
+        controlsInteractor.playerModeObs
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe { handlePlayerMode(it) }
                 .addTo(compDisp)
 
         stationInteractor.currentStationObs
@@ -36,12 +44,8 @@ class PlayerControlPresenter
                 .subscribe { viewState.setStation(it) }
                 .addTo(compDisp)
 
-        mediaController.sessionEvent
-                .subscribe { handleSessionEvent(it) }
-                .addTo(compDisp)
-
         stationInteractor.currentIconObs
-                .ioToMain()
+                .observeOn(AndroidSchedulers.mainThread())
                 .subscribe { viewState.setStationIcon(it.bitmap) }
                 .addTo(compDisp)
     }
@@ -50,11 +54,6 @@ class PlayerControlPresenter
         when (state.state) {
             STATE_PAUSED, STATE_STOPPED -> viewState.showStopped()
             STATE_PLAYING -> viewState.showPlaying()
-        }
-        if (AvailableActions.isNextPreviousEnabled(state.actions)) {
-            viewState.enableNextPrevious(true)
-        } else {
-            viewState.enableNextPrevious(false)
         }
     }
 
@@ -65,8 +64,15 @@ class PlayerControlPresenter
         }
     }
 
+    private fun handlePlayerMode(mode: PlayerMode) {
+        when (mode) {
+            PlayerMode.NEXT_PREVIOUS_DISABLED -> viewState.enableNextPrevious(false)
+            PlayerMode.NEXT_PREVIOUS_ENABLED -> viewState.enableNextPrevious(true)
+        }
+    }
+
     fun playPause() {
-        with(mediaController) {
+        with(controlsInteractor) {
             if (!isPlaying && !isNetAvail) {
                 viewState.showToast(R.string.toast_net_error)
             } else {
@@ -88,10 +94,10 @@ class PlayerControlPresenter
     }
 
     fun skipPrevious() {
-        mediaController.skipToPrevious()
+        controlsInteractor.skipToPrevious()
     }
 
     fun skipNext() {
-        mediaController.skipToNext()
+        controlsInteractor.skipToNext()
     }
 }

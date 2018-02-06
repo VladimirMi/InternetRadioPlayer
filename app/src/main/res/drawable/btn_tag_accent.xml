@@ -5,6 +5,7 @@
     <stroke
         android:width="2dp"
         android:color="@color/accentColor"/>
+    <solid android:color="@color/transparent"/>
     <corners android:radius="3dp"/>
 
 </shape>

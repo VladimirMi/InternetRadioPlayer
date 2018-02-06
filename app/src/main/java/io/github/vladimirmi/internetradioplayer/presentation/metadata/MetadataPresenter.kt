@@ -1,10 +1,10 @@
 package io.github.vladimirmi.internetradioplayer.presentation.metadata
 
-import android.support.v4.media.MediaMetadataCompat
 import android.support.v4.media.session.PlaybackStateCompat
 import com.arellomobile.mvp.InjectViewState
 import io.github.vladimirmi.internetradioplayer.R
-import io.github.vladimirmi.internetradioplayer.model.repository.MediaController
+import io.github.vladimirmi.internetradioplayer.model.interactor.PlayerControlsInteractor
+import io.github.vladimirmi.internetradioplayer.model.service.Metadata
 import io.github.vladimirmi.internetradioplayer.ui.base.BasePresenter
 import io.reactivex.rxkotlin.addTo
 import io.reactivex.rxkotlin.subscribeBy
@@ -16,32 +16,37 @@ import javax.inject.Inject
 
 @InjectViewState
 class MetadataPresenter
-@Inject constructor(private val mediaController: MediaController)
+@Inject constructor(private val controlsInteractor: PlayerControlsInteractor)
     : BasePresenter<MetadataView>() {
 
     override fun onFirstViewAttach() {
-        mediaController.playbackMetaData
+        controlsInteractor.playbackMetaData
+                .map { Metadata.create(it) }
                 .subscribeBy { handleMeta(it) }
                 .addTo(compDisp)
 
-        mediaController.playbackState
+        controlsInteractor.playbackStateObs
                 .subscribeBy { handleState(it) }
                 .addTo(compDisp)
     }
 
-    private fun handleMeta(meta: MediaMetadataCompat) {
-        val metadata = with(meta.description) { "$subtitle - $title" }
-        viewState.setMetadata(metadata)
+    private fun handleMeta(metadata: Metadata) {
+        if (metadata.isSupported) {
+            if (controlsInteractor.isPlaying) viewState.showMetadata()
+            viewState.setMetadata(metadata.toString())
+        } else {
+            viewState.hideMetadata()
+        }
     }
 
     private fun handleState(state: PlaybackStateCompat) {
         when (state.state) {
             PlaybackStateCompat.STATE_BUFFERING -> {
-                viewState.show()
+                viewState.showMetadata()
                 viewState.setMetadata(R.string.metadata_buffering)
             }
-            PlaybackStateCompat.STATE_PAUSED -> viewState.tryHide()
-            PlaybackStateCompat.STATE_STOPPED -> viewState.hide()
+            PlaybackStateCompat.STATE_PAUSED,
+            PlaybackStateCompat.STATE_STOPPED -> viewState.hideMetadata()
         }
     }
 }

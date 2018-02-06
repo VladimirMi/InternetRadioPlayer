@@ -47,5 +47,5 @@ class StationSource
         File(appDir, "${station.name}.$extension").delete()
     }
 
-    fun parseStation(uri: Uri): Station? = parser.parseFromUri(uri)
+    fun parseStation(uri: Uri): Station = parser.parseFromUri(uri)
 }

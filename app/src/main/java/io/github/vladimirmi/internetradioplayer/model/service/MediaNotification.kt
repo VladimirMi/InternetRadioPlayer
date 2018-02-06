@@ -9,7 +9,6 @@ import android.os.Build
 import android.support.annotation.RequiresApi
 import android.support.v4.app.NotificationCompat
 import android.support.v4.app.NotificationManagerCompat
-import android.support.v4.media.MediaDescriptionCompat
 import android.support.v4.media.session.MediaButtonReceiver
 import android.support.v4.media.session.MediaSessionCompat
 import android.support.v4.media.session.PlaybackStateCompat
@@ -22,6 +21,7 @@ import io.github.vladimirmi.internetradioplayer.model.interactor.StationInteract
  * Created by Vladimir Mikhalev 20.10.2017.
  */
 
+// todo remake in MediaStyle
 class MediaNotification(private val service: PlayerService,
                         private val mediaSession: MediaSessionCompat,
                         private val stationInteractor: StationInteractor) {
@@ -40,11 +40,26 @@ class MediaNotification(private val service: PlayerService,
     private val previousIntent = MediaButtonReceiver
             .buildMediaButtonPendingIntent(service, PlaybackStateCompat.ACTION_SKIP_TO_PREVIOUS)
 
-    private val notificationView = RemoteViews(service.packageName, R.layout.view_notification).apply {
-        setOnClickPendingIntent(R.id.play_pause, playPauseIntent)
-        setOnClickPendingIntent(R.id.previous, previousIntent)
-        setOnClickPendingIntent(R.id.next, nextIntent)
-    }
+    private val notificationView = RemoteViews(service.packageName, R.layout.view_notification)
+    private val notificationViewBig = RemoteViews(service.packageName, R.layout.view_notification_big)
+
+    private val builder = NotificationCompat.Builder(service, CHANNEL_ID)
+            .setShowWhen(false)
+            .setVisibility(NotificationCompat.VISIBILITY_PUBLIC)
+            .setSmallIcon(R.drawable.ic_station_1)
+            .setContentIntent(mediaSession.controller.sessionActivity)
+            .setDeleteIntent(stopIntent)
+            .setPriority(NotificationCompat.PRIORITY_HIGH)
+            .apply {
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+                    val style = android.support.v4.media.app.NotificationCompat.MediaStyle()
+                            .setMediaSession(mediaSession.sessionToken)
+                            .setShowCancelButton(true)
+                            .setCancelButtonIntent(stopIntent)
+
+                    setStyle(style)
+                }
+            }
 
     init {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
@@ -71,47 +86,8 @@ class MediaNotification(private val service: PlayerService,
     }
 
     private fun getNotification(): Notification {
-        val playbackState = mediaSession.controller.playbackState
-        val description: MediaDescriptionCompat? = mediaSession.controller.metadata?.description
-
-        MediaButtonReceiver.buildMediaButtonPendingIntent(service, PlaybackStateCompat.ACTION_STOP)
-
-        notificationView.apply {
-            setImageViewBitmap(R.id.icon, stationInteractor.currentIcon.bitmap)
-            setTextViewText(R.id.content_title, description?.title)
-            setTextViewText(R.id.content_text, description?.subtitle)
-
-            if (AvailableActions.isNextPreviousEnabled(playbackState.actions)) {
-                setViewVisibility(R.id.previous, View.VISIBLE)
-                setViewVisibility(R.id.next, View.VISIBLE)
-            } else {
-                setViewVisibility(R.id.previous, View.INVISIBLE)
-                setViewVisibility(R.id.next, View.INVISIBLE)
-            }
-
-            if (playbackState.state == PlaybackStateCompat.STATE_STOPPED
-                    || playbackState.state == PlaybackStateCompat.STATE_PAUSED) {
-                setInt(R.id.play_pause, "setBackgroundResource", R.drawable.ic_play)
-            } else {
-                setInt(R.id.play_pause, "setBackgroundResource", R.drawable.ic_stop)
-            }
-        }
-
-        val style = android.support.v4.media.app.NotificationCompat.MediaStyle()
-                .setMediaSession(mediaSession.sessionToken)
-                .setShowCancelButton(true)
-                .setCancelButtonIntent(stopIntent)
-
-        return NotificationCompat.Builder(service, CHANNEL_ID)
-                .setShowWhen(false)
-                .setVisibility(NotificationCompat.VISIBILITY_PUBLIC)
-                .setPriority(NotificationCompat.PRIORITY_MAX)
-                .setSmallIcon(R.drawable.ic_station_1)
-                .setContentIntent(mediaSession.controller.sessionActivity)
-                .setDeleteIntent(stopIntent)
-                .setStyle(style)
-                .setCustomContentView(notificationView)
-                .setCustomBigContentView(notificationView)
+        return builder.setCustomContentView(notificationView.setup())
+                .setCustomBigContentView(notificationViewBig.setup())
                 .build()
     }
 
@@ -124,8 +100,53 @@ class MediaNotification(private val service: PlayerService,
         notificationChannel.description = service.getString(R.string.notification_name)
         notificationChannel.enableLights(true)
         notificationChannel.lightColor = Color.RED
-        NotificationManagerCompat.from(service)
         (service.getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager)
                 .createNotificationChannel(notificationChannel)
+    }
+
+    private fun RemoteViews.setup(): RemoteViews {
+        val playbackState = mediaSession.controller.playbackState
+
+        mediaSession.controller.metadata?.let {
+            val metadata = Metadata.create(it)
+
+            if (metadata.isSupported) {
+                setTextViewText(R.id.titleTv, metadata.title)
+                setTextViewText(R.id.artistTv, metadata.artist)
+                setViewVisibility(R.id.artistTv, View.VISIBLE)
+            } else {
+                setTextViewText(R.id.titleTv, service.getString(R.string.metadata_not_available))
+                setViewVisibility(R.id.artistTv, View.GONE)
+            }
+        }
+
+        if (playbackState.state == PlaybackStateCompat.STATE_BUFFERING) {
+            setTextViewText(R.id.titleTv, service.getString(R.string.metadata_buffering))
+            setViewVisibility(R.id.artistTv, View.GONE)
+        }
+
+        setTextViewText(R.id.stationTv, stationInteractor.currentStation.name)
+        setImageViewBitmap(R.id.iconIv, stationInteractor.currentIcon.bitmap)
+
+        if (AvailableActions.isNextPreviousEnabled(playbackState.actions)) {
+            setViewVisibility(R.id.previousBt, View.VISIBLE)
+            setViewVisibility(R.id.nextBt, View.VISIBLE)
+        } else {
+            setViewVisibility(R.id.previousBt, View.GONE)
+            setViewVisibility(R.id.nextBt, View.GONE)
+        }
+
+        if (playbackState.state == PlaybackStateCompat.STATE_STOPPED
+                || playbackState.state == PlaybackStateCompat.STATE_PAUSED) {
+            setInt(R.id.playPauseBt, "setBackgroundResource", R.drawable.ic_play)
+        } else {
+            setInt(R.id.playPauseBt, "setBackgroundResource", R.drawable.ic_stop)
+        }
+
+        setOnClickPendingIntent(R.id.playPauseBt, playPauseIntent)
+        setOnClickPendingIntent(R.id.previousBt, previousIntent)
+        setOnClickPendingIntent(R.id.nextBt, nextIntent)
+
+        return this
     }
 }

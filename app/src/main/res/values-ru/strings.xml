@@ -1,13 +1,12 @@
 <resources>
-    <string name="app_name">Internet Radio Player</string>
-
     <string name="toast_add_success">Станция добавлена</string>
     <string name="toast_add_error">Не удалось добавить станцию</string>
-    <string name="toast_add_force">Станция с заданным именем уже есть</string>
     <string name="toast_net_error">Нет сети</string>
     <string name="toast_remove_success">Станция удалена</string>
     <string name="toast_add_shortcut_success">Ярлык добавлен на рабочий стол</string>
     <string name="toast_shortcut_remove">Станция была удалена. Удалите ярлык вручную.</string>
+    <string name="toast_name_exists_error">Станция с заданным именем уже есть</string>
+    <string name="toast_name_empty_error">Имя станции не может быть пустым</string>
 
     <string name="dialog_remove_message">Вы действительно хотите удалить станцию?</string>
     <string name="dialog_goto_message">Перейти по ссылке?</string>
@@ -66,4 +65,6 @@
     <string name="help_create_2"> - нажав на файл плейлиста в менеджере файлов.\n
         Поддерживаемые расширения - pls, m3u or ram.</string>
     <string name="help_create_3"> - добавив прямую ссылку на аудиопоток.</string>
+
+    <string name="metadata_not_available">Метаданные не доступны</string>
 </resources>

@@ -4,8 +4,8 @@ import android.net.Uri
 import com.arellomobile.mvp.InjectViewState
 import io.github.vladimirmi.internetradioplayer.R
 import io.github.vladimirmi.internetradioplayer.extensions.ioToMain
+import io.github.vladimirmi.internetradioplayer.model.interactor.PlayerControlsInteractor
 import io.github.vladimirmi.internetradioplayer.model.interactor.StationInteractor
-import io.github.vladimirmi.internetradioplayer.model.repository.MediaController
 import io.github.vladimirmi.internetradioplayer.navigation.Router
 import io.github.vladimirmi.internetradioplayer.ui.base.BasePresenter
 import io.reactivex.rxkotlin.addTo
@@ -20,23 +20,32 @@ import javax.inject.Inject
 @InjectViewState
 class RootPresenter
 @Inject constructor(private val router: Router,
-                    private val mediaController: MediaController,
+                    private val controlsInteractor: PlayerControlsInteractor,
                     private val stationInteractor: StationInteractor)
     : BasePresenter<RootView>() {
 
     override fun onFirstViewAttach() {
-        mediaController.connect()
-        setRootScreen()
+        controlsInteractor.connect()
+        stationInteractor.initStations()
+                .ioToMain()
+                .subscribe { setupRootScreen() }
+                .addTo(compDisp)
+    }
+
+    override fun attachView(view: RootView?) {
+        super.attachView(view)
+        stationInteractor.initStations()
+                .ioToMain()
+                .subscribe { viewState.checkIntent() }
+                .addTo(compDisp)
     }
 
     override fun onDestroy() {
-        mediaController.disconnect()
+        controlsInteractor.disconnect()
     }
 
     fun addStation(uri: Uri) {
-        stationInteractor.initStations()
-                .doOnComplete { setRootScreen() }
-                .andThen(stationInteractor.createStation(uri))
+        stationInteractor.createStation(uri)
                 .ioToMain()
                 .doOnSubscribe { viewState.showLoadingIndicator(true) }
                 .doFinally { viewState.showLoadingIndicator(false) }
@@ -53,19 +62,15 @@ class RootPresenter
     }
 
     fun showStation(id: String) {
-        stationInteractor.initStations()
-                .ioToMain()
-                .subscribe {
-                    val station = stationInteractor.getStation(id)
-                    if (station != null) {
-                        stationInteractor.currentStation = station
-                        router.showStationReplace(station)
-                    } else viewState.showToast(R.string.toast_shortcut_remove)
-                }
-                .addTo(compDisp)
+        val station = stationInteractor.getStation(id)
+        if (station != null) {
+            stationInteractor.currentStation = station
+            router.showStationReplace(station)
+        } else viewState.showToast(R.string.toast_shortcut_remove)
     }
 
-    private fun setRootScreen() {
+
+    private fun setupRootScreen() {
         if (stationInteractor.haveStations()) {
             router.newRootScreen(Router.MEDIA_LIST_SCREEN)
         } else {

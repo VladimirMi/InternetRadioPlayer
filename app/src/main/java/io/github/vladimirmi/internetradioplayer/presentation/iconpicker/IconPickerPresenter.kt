@@ -2,9 +2,12 @@ package io.github.vladimirmi.internetradioplayer.presentation.iconpicker
 
 import android.graphics.Bitmap
 import com.arellomobile.mvp.InjectViewState
-import io.github.vladimirmi.internetradioplayer.model.entity.Icon
+import io.github.vladimirmi.internetradioplayer.model.entity.icon.IconOption
+import io.github.vladimirmi.internetradioplayer.model.entity.icon.IconRes
+import io.github.vladimirmi.internetradioplayer.model.entity.icon.IconResource
+import io.github.vladimirmi.internetradioplayer.model.interactor.PlayerControlsInteractor
 import io.github.vladimirmi.internetradioplayer.model.interactor.StationInteractor
-import io.github.vladimirmi.internetradioplayer.model.repository.MediaController
+import io.github.vladimirmi.internetradioplayer.model.service.Metadata
 import io.github.vladimirmi.internetradioplayer.navigation.Router
 import io.github.vladimirmi.internetradioplayer.presentation.root.RootPresenter
 import io.github.vladimirmi.internetradioplayer.presentation.root.ToolbarBuilder
@@ -19,7 +22,7 @@ import javax.inject.Inject
 class IconPickerPresenter
 @Inject constructor(private val rootPresenter: RootPresenter,
                     private val stationInteractor: StationInteractor,
-                    private val mediaController: MediaController,
+                    private val controlsInteractor: PlayerControlsInteractor,
                     private val router: Router)
     : BasePresenter<IconPickerView>() {
 
@@ -49,42 +52,37 @@ class IconPickerPresenter
             viewState.setOption(value)
         }
 
-    var iconRes: IconRes = IconRes.ICON_1
+    var iconResource: IconResource = IconResource.ICON_1
         set(value) {
             field = value
-            viewState.setIconRes(value)
+            viewState.setIconResource(value)
             viewState.setForegroundColor(foregroundColor)
         }
 
     override fun onFirstViewAttach() {
         stationInteractor.currentIcon.let {
             viewState.buildToolbar(ToolbarBuilder().setToolbarTitle(it.name))
-            when (iconOption) {
-                IconOption.ICON -> iconRes = it.iconRes
-                IconOption.FAVICON -> viewState.setIconImage(it.bitmap)
-                else -> {
+            when (it) {
+                is IconRes -> {
+                    iconResource = it.res
+                    foregroundColor = it.foregroundColor
                 }
             }
-            backgroundColor = it.backgroundColor
-            foregroundColor = it.foregroundColor
-            text = it.text
             iconOption = it.option
         }
+    }
 
+    override fun attachView(view: IconPickerView?) {
+        super.attachView(view)
         rootPresenter.viewState.showControls(false)
         rootPresenter.viewState.showMetadata(false)
     }
 
     fun saveIcon(bitmap: Bitmap) {
-        val icon = Icon(
-                name = station.name,
-                bitmap = bitmap,
-                option = iconOption,
-                iconRes = iconRes,
-                backgroundColor = backgroundColor,
-                foregroundColor = foregroundColor,
-                text = text
-        )
+        @Suppress("WhenWithOnlyElse")
+        val icon = when (iconOption) {
+            else -> IconRes(station.name, foregroundColor, iconResource, bitmap)
+        }
         stationInteractor.currentIcon = icon
         exit()
     }
@@ -96,7 +94,8 @@ class IconPickerPresenter
 
     fun exit() {
         rootPresenter.viewState.showControls(true)
-        if (!mediaController.isStopped) {
+        if (!controlsInteractor.isStopped &&
+                Metadata.create(controlsInteractor.playbackMetaData.blockingFirst()).isSupported) {
             rootPresenter.viewState.showMetadata(true)
         }
         router.exit()

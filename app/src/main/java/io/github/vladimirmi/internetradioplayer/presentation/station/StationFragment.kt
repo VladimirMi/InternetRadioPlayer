@@ -4,12 +4,14 @@ import android.graphics.Bitmap
 import android.os.Bundle
 import android.support.design.widget.TextInputLayout
 import android.support.v4.content.ContextCompat
+import android.text.InputType
 import android.text.Spannable
 import android.text.SpannableString
 import android.text.style.ForegroundColorSpan
 import android.text.style.URLSpan
 import android.util.TypedValue
 import android.view.View
+import android.view.inputmethod.EditorInfo
 import android.widget.EditText
 import android.widget.Toast
 import com.arellomobile.mvp.presenter.InjectPresenter
@@ -54,6 +56,9 @@ class StationFragment : BaseFragment(), StationView, BackPressListener {
         val typedValue = TypedValue()
         activity.theme.resolveAttribute(android.R.attr.editTextBackground, typedValue, true)
         editTextBg = typedValue.resourceId
+        titleTil.editText?.imeOptions = EditorInfo.IME_ACTION_DONE
+        titleTil.editText?.setRawInputType(InputType.TYPE_CLASS_TEXT)
+
         uriTil.setEditable(false)
         urlTil.setEditable(false)
         bitrateTil.setEditable(false)
@@ -63,7 +68,6 @@ class StationFragment : BaseFragment(), StationView, BackPressListener {
 
         fab.setOnClickListener { presenter.changeMode() }
         changeIconBt.setOnClickListener { presenter.changeIcon() }
-        changeIconBt.background.alpha = 128
     }
 
     override fun onBackPressed() = presenter.onBackPressed()
@@ -131,7 +135,7 @@ class StationFragment : BaseFragment(), StationView, BackPressListener {
     }
 
     override fun openCancelEditDialog(currentStation: Station, iconChanged: Boolean) {
-        if (currentStation != constructStation() || iconChanged) {
+        if (currentStation.copy(favorite = false) != constructStation() || iconChanged) {
             CancelEditDialog().show(childFragmentManager, "cancel_edit_dialog")
         } else {
             presenter.cancelEdit()

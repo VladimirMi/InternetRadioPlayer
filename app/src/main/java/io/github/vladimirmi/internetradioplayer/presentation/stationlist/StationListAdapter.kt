@@ -42,6 +42,10 @@ class MediaListAdapter(private val callback: StationItemCallback)
         else stationList.getGroupItem(position)
     }
 
+    fun getPosition(station: Station): Int {
+        return stationList.indexOfFirst { it.id == station.id }
+    }
+
     fun selectItem(station: Station, playing: Boolean) {
         selected = station
         this.playing = playing

@@ -1,10 +1,12 @@
 package io.github.vladimirmi.internetradioplayer.model.interactor
 
 import android.net.Uri
+import io.github.vladimirmi.internetradioplayer.R
+import io.github.vladimirmi.internetradioplayer.extensions.ValidationException
 import io.github.vladimirmi.internetradioplayer.model.entity.Filter
-import io.github.vladimirmi.internetradioplayer.model.entity.Icon
 import io.github.vladimirmi.internetradioplayer.model.entity.Station
 import io.github.vladimirmi.internetradioplayer.model.entity.groupedlist.GroupedList
+import io.github.vladimirmi.internetradioplayer.model.entity.icon.Icon
 import io.github.vladimirmi.internetradioplayer.model.manager.ShortcutHelper
 import io.github.vladimirmi.internetradioplayer.model.repository.StationIconRepository
 import io.github.vladimirmi.internetradioplayer.model.repository.StationListRepository
@@ -68,12 +70,23 @@ class StationInteractor
                 }
     }
 
-    fun addStation(station: Station): Single<Boolean> {
-        return if (!stationList.haveItems { it.name == station.name }) {
-            stationRepository.addStation(station)
-                    .mergeWith(saveCurrentIcon(station.name))
-                    .toSingle { true }
-        } else Single.just(false)
+    fun addStation(station: Station): Completable {
+        return validate(station, adding = true).andThen(
+                stationRepository.addStation(station)
+                        .mergeWith(saveCurrentIcon(station.name)))
+                .doOnComplete { currentStation = station }
+    }
+
+    private fun validate(station: Station, adding: Boolean = false): Completable {
+        return when {
+            stationList.haveItems { it.name == station.name } && adding -> {
+                Completable.error(ValidationException(R.string.toast_name_exists_error))
+            }
+            station.name.isBlank() -> {
+                Completable.error(ValidationException(R.string.toast_name_empty_error))
+            }
+            else -> Completable.complete()
+        }
     }
 
     fun updateCurrentStation(newStation: Station): Completable {
@@ -83,14 +96,13 @@ class StationInteractor
             stationRepository.updateStation(newStation)
         } else Completable.complete()
 
-        val updateIcon = saveCurrentIcon(newStation.name)
-
         val remove = if (newStation.name != currentStation.name) {
             removeStation(currentStation)
         } else Completable.complete()
 
-        return updateIcon.mergeWith(updateStation)
-                .concatWith(remove)
+        return validate(newStation).andThen(
+                saveCurrentIcon(newStation.name).mergeWith(updateStation)
+                        .concatWith(remove))
                 .doOnComplete {
                     currentStation = if (stationList.contains(newStation)) {
                         newStation
@@ -104,6 +116,7 @@ class StationInteractor
     fun removeStation(station: Station): Completable {
         return stationRepository.removeStation(station)
                 .mergeWith(removeIcon(station.name))
+                .doOnComplete { shortcutHelper.removeShortcut(station) }
     }
 
     fun showOrHideGroup(group: String) {
@@ -122,10 +135,6 @@ class StationInteractor
         return shortcutHelper.pinShortcut(currentStation, currentIcon)
     }
 
-    fun removeShortcut(station: Station) {
-        shortcutHelper.removeShortcut(station)
-    }
-
     //region =============== Icon ==============
 
     fun iconChanged(): Single<Boolean> =
@@ -134,23 +143,20 @@ class StationInteractor
 
     var currentIcon: Icon
         get() = iconRepository.currentIcon.value
-        set(value) = iconRepository.setCurrentIcon(value)
+        set(value) = iconRepository.currentIcon.accept(value)
 
     val currentIconObs: Observable<Icon> get() = iconRepository.currentIcon
 
-    fun getIcon(path: String): Single<Icon> {
-        return iconRepository.getStationIcon(path)
-    }
+    fun getIcon(path: String): Single<Icon> = iconRepository.getStationIcon(path)
 
     private fun removeIcon(name: String): Completable {
         return iconRepository.removeStationIcon(name)
     }
 
     private fun saveCurrentIcon(newName: String): Completable {
-        val newIcon = currentIcon.copy(name = newName)
         return iconChanged().flatMapCompletable { changed ->
             if (changed || currentIcon.name != newName) {
-                iconRepository.saveStationIcon(newIcon)
+                iconRepository.saveStationIcon(newName)
             } else {
                 Completable.complete()
             }

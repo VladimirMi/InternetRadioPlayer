@@ -4,6 +4,7 @@ import android.graphics.Bitmap
 import android.graphics.Canvas
 import android.os.Bundle
 import android.view.View
+import android.widget.RadioGroup
 import com.arellomobile.mvp.presenter.InjectPresenter
 import com.arellomobile.mvp.presenter.ProvidePresenter
 import io.github.vladimirmi.internetradioplayer.R
@@ -11,11 +12,14 @@ import io.github.vladimirmi.internetradioplayer.di.Scopes
 import io.github.vladimirmi.internetradioplayer.extensions.onTextChanges
 import io.github.vladimirmi.internetradioplayer.extensions.setTint
 import io.github.vladimirmi.internetradioplayer.extensions.setTintExt
+import io.github.vladimirmi.internetradioplayer.model.entity.icon.IconOption
+import io.github.vladimirmi.internetradioplayer.model.entity.icon.IconResource
 import io.github.vladimirmi.internetradioplayer.presentation.root.ToolbarBuilder
 import io.github.vladimirmi.internetradioplayer.presentation.root.ToolbarView
 import io.github.vladimirmi.internetradioplayer.ui.base.BackPressListener
 import io.github.vladimirmi.internetradioplayer.ui.base.BaseFragment
-import kotlinx.android.synthetic.main.fragment_icon_picker.*
+import kotlinx.android.synthetic.main.view_icon.*
+import kotlinx.android.synthetic.main.view_icon_picker_content.*
 import toothpick.Toothpick
 
 /**
@@ -43,8 +47,8 @@ class IconPickerFragment : BaseFragment(), IconPickerView, BackPressListener {
             presenter.iconOption = IconOption.fromId(checkedId)
         }
 
-        iconsRg.setOnCheckedChangeListener { _, checkedId ->
-            presenter.iconRes = IconRes.fromId(checkedId)
+        (iconsRg as RadioGroup).setOnCheckedChangeListener { _, checkedId ->
+            presenter.iconResource = IconResource.fromId(checkedId)
         }
 
         configurationsRg.setOnCheckedChangeListener { _, checkedId ->
@@ -85,7 +89,9 @@ class IconPickerFragment : BaseFragment(), IconPickerView, BackPressListener {
 
     override fun setForegroundColor(colorInt: Int) {
         iconTv.setTextColor(colorInt)
-        iconIv.drawable.setTintExt(colorInt)
+        iconIv.background.mutate().setTintExt(colorInt)
+        // todo for api 16, check others
+        iconIv.invalidate()
         colorPicker.setColor(colorInt)
     }
 
@@ -99,9 +105,9 @@ class IconPickerFragment : BaseFragment(), IconPickerView, BackPressListener {
         configurationsRg.check(R.id.configForegroundBt)
     }
 
-    override fun setIconRes(iconRes: IconRes) {
-        iconsRg.check(iconRes.id)
-        iconIv.setImageResource(iconRes.resId)
+    override fun setIconResource(iconResource: IconResource) {
+        (iconsRg as RadioGroup).check(iconResource.id)
+        iconIv.setBackgroundResource(iconResource.resId)
     }
 
     //endregion

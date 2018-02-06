@@ -18,18 +18,19 @@ import ru.terrakok.cicerone.commands.*
 class Navigator(activity: RootActivity, containerId: Int)
     : SupportAppNavigator(activity, containerId) {
 
-    private var currentKey = ""
+    private var currentKey = currentKeyFromBackStack(activity)
+
+    private fun currentKeyFromBackStack(activity: RootActivity): String {
+        return with(activity.supportFragmentManager) {
+            if (backStackEntryCount > 0) {
+                getBackStackEntryAt(backStackEntryCount - 1).name
+            } else ""
+        }
+    }
 
     init {
-        with(activity.supportFragmentManager) {
-            addOnBackStackChangedListener {
-                currentKey = if (backStackEntryCount > 0) {
-                    val name = getBackStackEntryAt(backStackEntryCount - 1).name
-                    name
-                } else {
-                    ""
-                }
-            }
+        activity.supportFragmentManager.addOnBackStackChangedListener {
+            currentKey = currentKeyFromBackStack(activity)
         }
     }
 

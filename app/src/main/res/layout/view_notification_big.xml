@@ -1,0 +1,101 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="144dp"
+    >
+
+    <ImageView
+        android:id="@+id/iconIv"
+        android:layout_width="72dp"
+        android:layout_height="72dp"
+        android:layout_below="@id/stationTv"
+        android:layout_marginLeft="8dp"
+        android:layout_marginStart="8dp"
+        android:contentDescription="@string/desc_station_icon"
+        tools:src="@drawable/ic_station_1"
+        />
+
+    <TextView
+        android:id="@+id/stationTv"
+        style="@style/TextAppearance.AppCompat.Notification.Title"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="16dp"
+        android:layout_marginRight="16dp"
+        android:layout_marginTop="8dp"
+        android:ellipsize="end"
+        android:singleLine="true"
+        tools:text="Station genetrix accelerare, omnes fiscinaes."
+        />
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="72dp"
+        android:layout_below="@id/stationTv"
+        android:layout_marginEnd="16dp"
+        android:layout_marginLeft="8dp"
+        android:layout_marginRight="16dp"
+        android:layout_marginStart="8dp"
+        android:layout_toEndOf="@id/iconIv"
+        android:layout_toRightOf="@id/iconIv"
+        android:gravity="center"
+        android:orientation="vertical"
+        >
+
+        <TextView
+            android:id="@+id/titleTv"
+            style="@style/TextAppearance.AppCompat.Notification.Title.Media"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:ellipsize="end"
+            android:maxLines="2"
+            tools:text="Current playing Cum genetrix accelerare."
+            />
+
+        <TextView
+            android:id="@+id/artistTv"
+            style="@style/TextAppearance.AppCompat.Notification.Media"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:ellipsize="end"
+            android:maxLines="2"
+            tools:text="artist Brabeuta de brevis tusHercle, urbs fortis!, musa!!"
+            />
+    </LinearLayout>
+
+    <LinearLayout
+        android:id="@+id/notification_controls"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:gravity="center"
+        tools:ignore="ButtonStyle"
+        >
+
+        <Button
+            android:id="@+id/previousBt"
+            android:layout_width="56dp"
+            android:layout_height="56dp"
+            android:background="@drawable/ic_skip_previous"
+            />
+
+        <Button
+            android:id="@+id/playPauseBt"
+            android:layout_width="56dp"
+            android:layout_height="56dp"
+            android:layout_marginLeft="8dp"
+            android:layout_marginRight="8dp"
+            android:background="@drawable/ic_stop"
+            />
+
+        <Button
+            android:id="@+id/nextBt"
+            android:layout_width="56dp"
+            android:layout_height="56dp"
+            android:background="@drawable/ic_skip_next"
+            />
+    </LinearLayout>
+
+</RelativeLayout>

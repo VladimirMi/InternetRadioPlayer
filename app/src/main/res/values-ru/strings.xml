@@ -1,0 +1,70 @@
+<resources>
+    <string name="toast_add_success">Станция добавлена</string>
+    <string name="toast_add_error">Не удалось добавить станцию</string>
+    <string name="toast_net_error">Нет сети</string>
+    <string name="toast_remove_success">Станция удалена</string>
+    <string name="toast_add_shortcut_success">Ярлык добавлен на рабочий стол</string>
+    <string name="toast_shortcut_remove">Станция была удалена. Удалите ярлык вручную.</string>
+    <string name="toast_name_exists_error">Станция с заданным именем уже есть</string>
+    <string name="toast_name_empty_error">Имя станции не может быть пустым</string>
+
+    <string name="dialog_remove_message">Вы действительно хотите удалить станцию?</string>
+    <string name="dialog_goto_message">Перейти по ссылке?</string>
+    <string name="dialog_cancel_edit_message">Отменить изменения?</string>
+    <string name="dialog_cancel_create_message">Отменить добавление новой станции?</string>
+    <string name="dialog_new_station">Добавить новую станцию</string>
+    <string name="dialog_new_station_hint">Вставить ссылку</string>
+    <string name="dialog_add_name">Название</string>
+    <string name="dialog_add_name_err">Необходимо задать имя</string>
+    <string name="dialog_ok">OK</string>
+    <string name="dialog_cancel">Отмена</string>
+
+    <string name="menu_favorite_on">Избранное</string>
+    <string name="menu_favorite_off">Все</string>
+    <string name="menu_more">Больше</string>
+    <string name="menu_station_edit">Редактировать</string>
+    <string name="menu_station_delete">Удалить</string>
+    <string name="menu_station_save">Сохранить</string>
+    <string name="menu_station_shortcut">Добавить ярлык</string>
+    <string name="menu_add_station">Добавить станцию</string>
+    <string name="menu_exit">Выход</string>
+
+    <string name="metadata_buffering">Загрузка…</string>
+
+    <string name="desc_favorite">добавить в избранное</string>
+    <string name="desc_expand_collapse">развернуть/свернуть</string>
+    <string name="desc_station_icon">иконка станции</string>
+    <string name="desc_play_pause_button">кнопка воспроизвести/приостановить</string>
+    <string name="desc_skip_previous_button">кнопка предыдущая станция</string>
+    <string name="desc_skip_next_button">кнопка следующая станция</string>
+
+    <string name="station_list_details">Подробнее</string>
+
+    <string name="station_hint_uri">Адресс потока:</string>
+    <string name="station_hint_url">Адресс станции:</string>
+    <string name="station_hint_bitrate">Битрейт потока</string>
+    <string name="station_hint_rate">Частота дискретизации</string>
+    <string name="station_hint_title">Название</string>
+    <string name="station_hint_folder">Группа</string>
+    <string name="station_title_information">Информация</string>
+    <string name="station_title_genre">Жанры:</string>
+
+    <string name="icon_icon">Иконка</string>
+    <string name="icon_favicon">Иконка сайта</string>
+    <string name="icon_text">Текст</string>
+    <string name="icon_add">Добавить</string>
+    <string name="icon_background_color">Цвет заднего фона</string>
+    <string name="icon_foreground_color">Цвет иконки</string>
+
+    <string name="notification_name">Уведомление Radio Player</string>
+
+    <string name="getstarted_title">Начало работы</string>
+    <string name="help_create">Вы можете создать новую станцию:</string>
+    <string name="help_create_1"> - нажав на ссылку плейлиста в вашем веб браузере.\n
+        К примеру, здесь https://www.internet-radio.com</string>
+    <string name="help_create_2"> - нажав на файл плейлиста в менеджере файлов.\n
+        Поддерживаемые расширения - pls, m3u or ram.</string>
+    <string name="help_create_3"> - добавив прямую ссылку на аудиопоток.</string>
+
+    <string name="metadata_not_available">Метаданные не доступны</string>
+</resources>

@@ -1,15 +1,85 @@
-<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+<manifest
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    package="io.github.vladimirmi.internetradioplayer">
 
-          package="io.github.vladimirmi.radius"
-    >
+    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE"/>
+    <uses-permission android:name="android.permission.WAKE_LOCK"/>
+    <uses-permission android:name="android.permission.INTERNET"/>
+    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE"/>
+    <uses-permission android:name="android.permission.BLUETOOTH"/>
+    <uses-permission android:name="com.android.launcher.permission.INSTALL_SHORTCUT"/>
+    <uses-permission android:name="com.android.launcher.permission.UNINSTALL_SHORTCUT"/>
 
     <application
+        android:name="io.github.vladimirmi.internetradioplayer.App"
         android:allowBackup="true"
+        android:fullBackupContent="@xml/backup_descriptor"
         android:icon="@mipmap/ic_launcher"
-        android:label="@string/app_name"
         android:roundIcon="@mipmap/ic_launcher_round"
+        android:label="@string/app_name"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
+
+        <activity
+            android:name="io.github.vladimirmi.internetradioplayer.presentation.root.RootActivity"
+            android:launchMode="singleInstance"
+            android:theme="@style/AppTheme.Splash">
+
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN"/>
+                <category android:name="android.intent.category.LAUNCHER"/>
+            </intent-filter>
+
+            <intent-filter>
+                <action android:name="android.intent.action.VIEW"/>
+
+                <category android:name="android.intent.category.BROWSABLE"/>
+                <category android:name="android.intent.category.DEFAULT"/>
+
+                <data android:scheme="https"/>
+                <data android:scheme="http"/>
+                <data android:scheme="file"/>
+                <data android:mimeType="audio/x-scpls"/>
+                <data android:mimeType="audio/mpegurl"/>
+                <data android:mimeType="audio/x-mpegurl"/>
+                <data android:mimeType="audio/x-pn-realaudio"/>
+                <data android:mimeType="application/x-mpegurl"/>
+                <data android:mimeType="application/vnd.apple.mpegurl"/>
+                <data android:mimeType="application/vnd.apple.mpegurl.audio"/>
+            </intent-filter>
+
+            <intent-filter>
+                <action android:name="android.intent.action.VIEW"/>
+
+                <category android:name="android.intent.category.BROWSABLE"/>
+                <category android:name="android.intent.category.DEFAULT"/>
+
+                <data android:scheme="https"/>
+                <data android:scheme="http"/>
+                <data android:scheme="file"/>
+                <data android:host="*"/>
+                <data android:pathPattern=".*.m3u"/>
+                <data android:pathPattern=".*.m3u8"/>
+                <data android:pathPattern=".*.pls"/>
+                <data android:pathPattern=".*.ram"/>
+                <!-- https://www.internet-radio.com workaround -->
+                <data android:pathPrefix="/servers/tools/playlistgenerator"/>
+            </intent-filter>
+        </activity>
+
+        <service
+            android:name="io.github.vladimirmi.internetradioplayer.model.service.PlayerService"
+            android:exported="false">
+            <intent-filter>
+                <action android:name="android.media.browse.MediaBrowserService"/>
+            </intent-filter>
+        </service>
+
+        <receiver android:name="android.support.v4.media.session.MediaButtonReceiver">
+            <intent-filter>
+                <action android:name="android.intent.action.MEDIA_BUTTON"/>
+            </intent-filter>
+        </receiver>
 
     </application>
 

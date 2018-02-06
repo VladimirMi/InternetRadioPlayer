@@ -1,0 +1,136 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="vertical"
+    android:padding="16dp"
+    >
+
+    <android.support.design.widget.TextInputLayout
+        android:id="@+id/folderTil"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:hint="@string/station_hint_folder"
+        android:visibility="gone"
+        >
+
+        <android.support.design.widget.TextInputEditText
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:textSize="14sp"
+            tools:text="Folder"
+            />
+
+    </android.support.design.widget.TextInputLayout>
+
+
+    <android.support.design.widget.TextInputLayout
+        android:id="@+id/uriTil"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="8dp"
+        android:hint="@string/station_hint_uri"
+        >
+
+        <android.support.design.widget.TextInputEditText
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:inputType="textUri"
+            android:textAppearance="@style/TextAppearance.AppCompat.Body2"
+            tools:text="http://www.stationstream.com"
+            />
+
+    </android.support.design.widget.TextInputLayout>
+
+    <android.support.design.widget.TextInputLayout
+        android:id="@+id/urlTil"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="8dp"
+        android:hint="@string/station_hint_url"
+        >
+
+        <android.support.design.widget.TextInputEditText
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:inputType="textUri"
+            android:textAppearance="@style/TextAppearance.AppCompat.Body2"
+            tools:text="http://www.stationstream.com"
+            />
+
+    </android.support.design.widget.TextInputLayout>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:baselineAligned="false"
+        android:orientation="horizontal"
+        >
+
+        <android.support.design.widget.TextInputLayout
+            android:id="@+id/bitrateTil"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:hint="@string/station_hint_bitrate"
+            >
+
+            <android.support.design.widget.TextInputEditText
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginEnd="16dp"
+                android:layout_marginRight="16dp"
+                android:hint="@string/unit_bitrate"
+                android:inputType="numberDecimal"
+                android:textAppearance="@style/TextAppearance.AppCompat.Body2"
+                tools:text="128kB"
+                />
+
+        </android.support.design.widget.TextInputLayout>
+
+
+        <android.support.design.widget.TextInputLayout
+            android:id="@+id/sampleTil"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:hint="@string/station_hint_rate"
+            >
+
+            <android.support.design.widget.TextInputEditText
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:hint="@string/unit_sample_rate"
+                android:inputType="numberDecimal"
+                android:textAppearance="@style/TextAppearance.AppCompat.Body2"
+                tools:text="44100Hz"
+                />
+
+        </android.support.design.widget.TextInputLayout>
+
+    </LinearLayout>
+
+    <TextView
+        android:id="@+id/genresTv"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textAppearance="@style/TextAppearance.AppCompat.Caption"
+        android:padding="4dp"
+        android:text="@string/station_title_genre"
+        android:textColor="@color/grey_500"
+        />
+
+    <com.google.android.flexbox.FlexboxLayout
+        android:id="@+id/genresFl"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        app:alignContent="flex_start"
+        app:flexDirection="row"
+        app:flexWrap="wrap"
+        />
+
+</LinearLayout>

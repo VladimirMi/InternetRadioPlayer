@@ -2,7 +2,6 @@ package io.github.vladimirmi.internetradioplayer.ui
 
 import android.annotation.SuppressLint
 import android.content.Context
-import android.graphics.Typeface
 import android.support.v4.content.ContextCompat
 import android.support.v7.widget.AppCompatTextView
 import android.util.TypedValue
@@ -28,7 +27,6 @@ class TagView(context: Context, tag: String, action: ((TagView) -> Unit)?)
         val padding = 8 * context.dp
         setPadding(padding, padding, padding, padding)
         setTextSize(TypedValue.COMPLEX_UNIT_SP, 14f)
-        typeface = Typeface.create("sans-serif-condensed", Typeface.NORMAL)
         text = tag
         id = tag.hashCode()
         setupView()

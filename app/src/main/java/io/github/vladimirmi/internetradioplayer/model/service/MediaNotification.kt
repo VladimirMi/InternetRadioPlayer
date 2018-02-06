@@ -15,7 +15,6 @@ import android.support.v4.media.session.PlaybackStateCompat
 import android.view.View
 import android.widget.RemoteViews
 import io.github.vladimirmi.internetradioplayer.R
-import io.github.vladimirmi.internetradioplayer.model.entity.Metadata
 import io.github.vladimirmi.internetradioplayer.model.interactor.StationInteractor
 
 /**

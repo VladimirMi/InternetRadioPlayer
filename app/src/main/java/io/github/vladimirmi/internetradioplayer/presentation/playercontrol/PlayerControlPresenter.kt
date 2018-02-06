@@ -4,7 +4,6 @@ import android.support.v4.media.session.PlaybackStateCompat
 import android.support.v4.media.session.PlaybackStateCompat.*
 import com.arellomobile.mvp.InjectViewState
 import io.github.vladimirmi.internetradioplayer.R
-import io.github.vladimirmi.internetradioplayer.extensions.ioToMain
 import io.github.vladimirmi.internetradioplayer.model.entity.PlayerMode
 import io.github.vladimirmi.internetradioplayer.model.interactor.PlayerControlsInteractor
 import io.github.vladimirmi.internetradioplayer.model.interactor.StationInteractor
@@ -46,7 +45,7 @@ class PlayerControlPresenter
                 .addTo(compDisp)
 
         stationInteractor.currentIconObs
-                .ioToMain()
+                .observeOn(AndroidSchedulers.mainThread())
                 .subscribe { viewState.setStationIcon(it.bitmap) }
                 .addTo(compDisp)
     }

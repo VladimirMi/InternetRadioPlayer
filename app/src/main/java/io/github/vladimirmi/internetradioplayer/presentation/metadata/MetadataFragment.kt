@@ -37,11 +37,11 @@ class MetadataFragment : BaseFragment(), MetadataView {
         metadataTv.text = context.getString(resId)
     }
 
-    override fun hide() {
+    override fun hideMetadata() {
         view?.visible(false)
     }
 
-    override fun show() {
+    override fun showMetadata() {
         view?.visible(true)
         metadataTv.isSelected = true
     }

@@ -1,6 +1,8 @@
 package io.github.vladimirmi.internetradioplayer.model.interactor
 
 import android.net.Uri
+import io.github.vladimirmi.internetradioplayer.R
+import io.github.vladimirmi.internetradioplayer.extensions.ValidationException
 import io.github.vladimirmi.internetradioplayer.model.entity.Filter
 import io.github.vladimirmi.internetradioplayer.model.entity.Station
 import io.github.vladimirmi.internetradioplayer.model.entity.groupedlist.GroupedList
@@ -68,12 +70,23 @@ class StationInteractor
                 }
     }
 
-    fun addStation(station: Station): Single<Boolean> {
-        return if (!stationList.haveItems { it.name == station.name }) {
-            stationRepository.addStation(station)
-                    .mergeWith(saveCurrentIcon(station.name))
-                    .toSingle { true }
-        } else Single.just(false)
+    fun addStation(station: Station): Completable {
+        return validate(station, adding = true).andThen(
+                stationRepository.addStation(station)
+                        .mergeWith(saveCurrentIcon(station.name)))
+                .doOnComplete { currentStation = station }
+    }
+
+    private fun validate(station: Station, adding: Boolean = false): Completable {
+        return when {
+            stationList.haveItems { it.name == station.name } && adding -> {
+                Completable.error(ValidationException(R.string.toast_name_exists_error))
+            }
+            station.name.isBlank() -> {
+                Completable.error(ValidationException(R.string.toast_name_empty_error))
+            }
+            else -> Completable.complete()
+        }
     }
 
     fun updateCurrentStation(newStation: Station): Completable {
@@ -83,14 +96,13 @@ class StationInteractor
             stationRepository.updateStation(newStation)
         } else Completable.complete()
 
-        val updateIcon = saveCurrentIcon(newStation.name)
-
         val remove = if (newStation.name != currentStation.name) {
             removeStation(currentStation)
         } else Completable.complete()
 
-        return updateIcon.mergeWith(updateStation)
-                .concatWith(remove)
+        return validate(newStation).andThen(
+                saveCurrentIcon(newStation.name).mergeWith(updateStation)
+                        .concatWith(remove))
                 .doOnComplete {
                     currentStation = if (stationList.contains(newStation)) {
                         newStation

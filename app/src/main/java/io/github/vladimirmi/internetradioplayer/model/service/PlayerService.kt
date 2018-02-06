@@ -14,7 +14,6 @@ import io.github.vladimirmi.internetradioplayer.R
 import io.github.vladimirmi.internetradioplayer.di.Scopes
 import io.github.vladimirmi.internetradioplayer.extensions.ioToMain
 import io.github.vladimirmi.internetradioplayer.extensions.toUri
-import io.github.vladimirmi.internetradioplayer.model.entity.Metadata
 import io.github.vladimirmi.internetradioplayer.model.entity.PlayerMode
 import io.github.vladimirmi.internetradioplayer.model.entity.Station
 import io.github.vladimirmi.internetradioplayer.model.interactor.PlayerControlsInteractor

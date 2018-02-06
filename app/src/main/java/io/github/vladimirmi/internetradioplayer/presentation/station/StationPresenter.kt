@@ -3,6 +3,7 @@ package io.github.vladimirmi.internetradioplayer.presentation.station
 import android.view.MenuItem
 import com.arellomobile.mvp.InjectViewState
 import io.github.vladimirmi.internetradioplayer.R
+import io.github.vladimirmi.internetradioplayer.extensions.ValidationException
 import io.github.vladimirmi.internetradioplayer.extensions.ioToMain
 import io.github.vladimirmi.internetradioplayer.model.entity.Station
 import io.github.vladimirmi.internetradioplayer.model.interactor.PlayerControlsInteractor
@@ -107,7 +108,9 @@ class StationPresenter
     fun edit(station: Station) {
         val newStation = station.copy(favorite = stationInteractor.currentStation.favorite)
         stationInteractor.updateCurrentStation(newStation)
-                .subscribe { viewMode() }
+                .subscribeBy(
+                        onComplete = { viewMode() },
+                        onError = { if (it is ValidationException) viewState.showToast(it.resId) })
                 .addTo(compDisp)
     }
 
@@ -121,16 +124,14 @@ class StationPresenter
         val newStation = station.copy(favorite = stationInteractor.currentStation.favorite)
         stationInteractor.addStation(newStation)
                 .ioToMain()
-                .subscribeBy { added ->
-                    if (added) {
-                        viewState.showToast(R.string.toast_add_success)
-                        controlsInteractor.enableNextPrevious(true)
-                        createMode = false
-                        router.newRootScreen(Router.MEDIA_LIST_SCREEN)
-                    } else {
-                        viewState.showToast(R.string.toast_add_force)
-                    }
-                }
+                .subscribeBy(
+                        onComplete = {
+                            viewState.showToast(R.string.toast_add_success)
+                            controlsInteractor.enableNextPrevious(true)
+                            createMode = false
+                            router.newRootScreen(Router.MEDIA_LIST_SCREEN)
+                        },
+                        onError = { if (it is ValidationException) viewState.showToast(it.resId) })
                 .addTo(compDisp)
     }
 

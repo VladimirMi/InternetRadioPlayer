@@ -2,12 +2,12 @@ package io.github.vladimirmi.internetradioplayer.presentation.iconpicker
 
 import android.graphics.Bitmap
 import com.arellomobile.mvp.InjectViewState
-import io.github.vladimirmi.internetradioplayer.model.entity.Metadata
 import io.github.vladimirmi.internetradioplayer.model.entity.icon.IconOption
 import io.github.vladimirmi.internetradioplayer.model.entity.icon.IconRes
 import io.github.vladimirmi.internetradioplayer.model.entity.icon.IconResource
 import io.github.vladimirmi.internetradioplayer.model.interactor.PlayerControlsInteractor
 import io.github.vladimirmi.internetradioplayer.model.interactor.StationInteractor
+import io.github.vladimirmi.internetradioplayer.model.service.Metadata
 import io.github.vladimirmi.internetradioplayer.navigation.Router
 import io.github.vladimirmi.internetradioplayer.presentation.root.RootPresenter
 import io.github.vladimirmi.internetradioplayer.presentation.root.ToolbarBuilder

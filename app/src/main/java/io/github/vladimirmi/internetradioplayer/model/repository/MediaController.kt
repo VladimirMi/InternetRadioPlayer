@@ -9,7 +9,7 @@ import android.support.v4.media.MediaMetadataCompat
 import android.support.v4.media.session.MediaControllerCompat
 import android.support.v4.media.session.PlaybackStateCompat
 import com.jakewharton.rxrelay2.BehaviorRelay
-import io.github.vladimirmi.internetradioplayer.model.entity.Metadata
+import io.github.vladimirmi.internetradioplayer.model.service.Metadata
 import io.github.vladimirmi.internetradioplayer.model.service.PlayerService
 import timber.log.Timber
 import javax.inject.Inject
@@ -54,8 +54,8 @@ class MediaController
         override fun onPlaybackStateChanged(state: PlaybackStateCompat?) {
             state?.let {
                 playbackState.accept(it)
-                if (it.state == PlaybackStateCompat.STATE_PLAYING) {
-                    //todo remake ? wtf
+                if (it.state == PlaybackStateCompat.STATE_PLAYING
+                        && Metadata.create(playbackMetaData.value).isSupported) {
                     playbackMetaData.accept(playbackMetaData.value ?: return)
                 }
             }

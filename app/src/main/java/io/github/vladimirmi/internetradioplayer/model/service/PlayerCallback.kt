@@ -3,7 +3,6 @@ package io.github.vladimirmi.internetradioplayer.model.service
 import com.google.android.exoplayer2.*
 import com.google.android.exoplayer2.source.TrackGroupArray
 import com.google.android.exoplayer2.trackselection.TrackSelectionArray
-import io.github.vladimirmi.internetradioplayer.model.entity.Metadata
 import timber.log.Timber
 
 

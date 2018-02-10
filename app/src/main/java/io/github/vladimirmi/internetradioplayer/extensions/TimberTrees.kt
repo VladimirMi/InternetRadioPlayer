@@ -7,13 +7,16 @@ import timber.log.Timber
 import java.io.File
 import java.text.SimpleDateFormat
 import java.util.*
+import kotlin.collections.HashSet
 
 
 /**
  * Created by Vladimir Mikhalev 21.11.2017.
  */
 
-class FileLoggingTree(context: Context) : Timber.DebugTree() {
+class FileLoggingTree
+private constructor(context: Context,
+                    private val logs: MutableSet<Logs>) : Timber.DebugTree() {
 
     private val logsDir by lazy {
         val dir = File(context.getExternalFilesDir(null), "Logs")
@@ -29,10 +32,12 @@ class FileLoggingTree(context: Context) : Timber.DebugTree() {
     }
 
     private fun writeLog(priority: Int, message: String) {
+        val log = Logs.priority(priority)
+        if (!logs.contains(log)) return
         try {
             val fileName = fileNameFormat.format(Date()) + ".html"
             val timeStamp = timeStampFormat.format(Date())
-            File(logsDir, fileName).appendText(Logs.priority(priority).format(timeStamp, message))
+            File(logsDir, fileName).appendText(log.format(timeStamp, message))
 
         } catch (e: Exception) {
             //ignore
@@ -53,6 +58,19 @@ class FileLoggingTree(context: Context) : Timber.DebugTree() {
         companion object {
             private val map = values().associateBy { it.ordinal + 2 }
             fun priority(int: Int) = map[int]!!
+        }
+    }
+
+    class Builder(private val context: Context) {
+        private val logs: MutableSet<Logs> = HashSet()
+
+        fun log(vararg logs: Logs): Builder {
+            this.logs.addAll(logs)
+            return this
+        }
+
+        fun build(): FileLoggingTree {
+            return FileLoggingTree(context, logs)
         }
     }
 }

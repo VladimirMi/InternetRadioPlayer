@@ -43,7 +43,11 @@ class App : Application() {
         Scopes.app.installModules(AppModule(this))
 
         if (BuildConfig.DEBUG) {
-            Timber.plant(FileLoggingTree(Scopes.context))
+            Timber.plant(
+                    FileLoggingTree.Builder(Scopes.context)
+                            .log(FileLoggingTree.Logs.ERROR)
+                            .build()
+            )
         } else {
             Timber.plant(CrashlyticsTree())
         }

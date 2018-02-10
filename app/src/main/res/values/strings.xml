@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name" translatable="false">Internet Radio Player</string>
+    <string name="app_name" translatable="false">Radio Player</string>
 
     <string name="toast_add_success">Station added</string>
     <string name="toast_add_error">Could not add station</string>

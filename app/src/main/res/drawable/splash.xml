@@ -4,7 +4,7 @@
 
     <item>
         <bitmap
-            android:src="@drawable/radiobot"
+            android:src="@drawable/radio"
             android:gravity="center"/>
     </item>
 </layer-list>

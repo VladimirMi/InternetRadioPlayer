@@ -3,7 +3,7 @@
 <FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
              xmlns:tools="http://schemas.android.com/tools"
              android:layout_width="match_parent"
-             android:layout_height="72dp"
+             android:layout_height="64dp"
     >
 
     <LinearLayout
@@ -17,8 +17,9 @@
             android:id="@+id/iconIv"
             android:layout_width="64dp"
             android:layout_height="64dp"
-            tools:background="@color/accentColor"
             android:contentDescription="@string/desc_station_icon"
+            tools:background="@color/white"
+            tools:src="@drawable/ic_station_1"
             />
 
         <TextView
@@ -27,9 +28,9 @@
             android:layout_width="0dp"
             android:layout_height="match_parent"
             android:layout_weight="1"
+            android:gravity="center_vertical"
             android:paddingLeft="8dp"
             android:paddingRight="8dp"
-            android:gravity="center_vertical"
             tools:text="Item name"
             />
 
@@ -49,9 +50,9 @@
     <View
         android:layout_width="match_parent"
         android:layout_height="1dp"
-        tools:ignore="ContentDescription"
-        android:background="@color/grey_500"
         android:layout_gravity="bottom"
+        android:background="@color/grey_500"
+        tools:ignore="ContentDescription"
         />
 
 </FrameLayout>

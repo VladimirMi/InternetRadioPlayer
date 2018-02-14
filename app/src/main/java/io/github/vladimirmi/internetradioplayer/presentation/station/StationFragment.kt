@@ -12,7 +12,7 @@ import android.text.style.URLSpan
 import android.util.TypedValue
 import android.view.View
 import android.view.inputmethod.EditorInfo
-import android.widget.EditText
+import android.widget.TextView
 import android.widget.Toast
 import com.arellomobile.mvp.presenter.InjectPresenter
 import com.arellomobile.mvp.presenter.ProvidePresenter
@@ -26,7 +26,6 @@ import io.github.vladimirmi.internetradioplayer.presentation.root.ToolbarView
 import io.github.vladimirmi.internetradioplayer.ui.TagView
 import io.github.vladimirmi.internetradioplayer.ui.base.BackPressListener
 import io.github.vladimirmi.internetradioplayer.ui.base.BaseFragment
-import kotlinx.android.synthetic.main.fragment_station.*
 import kotlinx.android.synthetic.main.view_station_info.*
 import toothpick.Toothpick
 
@@ -53,20 +52,20 @@ class StationFragment : BaseFragment(), StationView, BackPressListener {
     }
 
     override fun onViewCreated(view: View?, savedInstanceState: Bundle?) {
+        // save default edit text background
         val typedValue = TypedValue()
         activity.theme.resolveAttribute(android.R.attr.editTextBackground, typedValue, true)
         editTextBg = typedValue.resourceId
+
+        // set action DONE on the multiline text
         titleTil.editText?.imeOptions = EditorInfo.IME_ACTION_DONE
         titleTil.editText?.setRawInputType(InputType.TYPE_CLASS_TEXT)
 
-        uriTil.setEditable(false)
-        urlTil.setEditable(false)
-        bitrateTil.setEditable(false)
-        sampleTil.setEditable(false)
-        urlTil.editText?.setOnClickListener { presenter.openLink((it as EditText).text.toString()) }
-        uriTil.editText?.setOnClickListener { presenter.openLink((it as EditText).text.toString()) }
+        urlTv.linkStyle(true)
+        uriTv.linkStyle(true)
+        urlTv.setOnClickListener { openLink(it as TextView) }
+        uriTv.setOnClickListener { openLink(it as TextView) }
 
-        fab.setOnClickListener { presenter.changeMode() }
         changeIconBt.setOnClickListener { presenter.changeIcon() }
     }
 
@@ -82,18 +81,28 @@ class StationFragment : BaseFragment(), StationView, BackPressListener {
         stationId = station.id
         titleTil.setTextWithoutAnimation(station.name)
 
-        uriTil.setTextWithoutAnimation(station.uri)
-        uriTil.linkStyle(true)
+        groupTil.setTextWithoutAnimation(station.group)
+        groupTil.visible(station.group.isNotBlank())
 
-        urlTil.setTextWithoutAnimation(station.url)
-        urlTil.visible(station.url.isNotBlank())
-        urlTil.linkStyle(true)
+        uriTv.text = station.uri
 
-        bitrateTil.setTextWithoutAnimation("${station.bitrate}kbps")
-        bitrateTil.visible(station.bitrate != 0)
+        urlTv.text = station.url
+        station.url.isNotBlank().let {
+            urlTitleTv.visible(it)
+            urlTv.visible(it)
+        }
 
-        sampleTil.setTextWithoutAnimation("${station.sample}Hz")
-        sampleTil.visible(station.sample != 0)
+        bitrateTv.text = getString(R.string.unit_bitrate, station.bitrate)
+        (station.bitrate != 0).let {
+            bitrateTitleTv.visible(it)
+            bitrateTv.visible(it)
+        }
+
+        sampleTv.text = getString(R.string.unit_sample_rate, station.sample)
+        (station.sample != 0).let {
+            sampleTitleTv.visible(it)
+            sampleTv.visible(it)
+        }
 
         genresTv.visible(station.genre.isNotEmpty())
         genresFl.removeAllViews()
@@ -109,11 +118,9 @@ class StationFragment : BaseFragment(), StationView, BackPressListener {
         changeIconBt.visible(editMode)
 
         if (editMode) {
-            fab.setImageResource(R.drawable.ic_submit)
             titleTil.editText!!.requestFocus()
             titleTil.editText!!.setSelection(titleTil.text.length)
         } else {
-            fab.setImageResource(R.drawable.ic_edit)
             context.inputMethodManager.hideSoftInputFromWindow(view?.windowToken, 0)
         }
     }
@@ -161,14 +168,28 @@ class StationFragment : BaseFragment(), StationView, BackPressListener {
                 }
         return Station(
                 id = stationId,
-                uri = uriTil.text,
+                uri = uriTv.text.toString(),
                 name = titleTil.text,
-                group = folderTil.text,
-                genre = genres,
-                url = urlTil.text,
-                sample = sampleTil.text.substringBefore("Hz").toInt(),
-                bitrate = bitrateTil.text.substringBefore("kbps").toInt()
+                group = groupTil.text,
+                genre = genres
         )
+    }
+
+    private fun TextView.linkStyle(enable: Boolean) {
+        val string = text.toString()
+        val color = ContextCompat.getColor(context, R.color.blue_500)
+        text = if (enable) {
+            val spannable = SpannableString(string)
+            spannable.setSpan(URLSpan(string), 0, spannable.length, Spannable.SPAN_EXCLUSIVE_EXCLUSIVE)
+            spannable.setSpan(ForegroundColorSpan(color), 0, spannable.length, Spannable.SPAN_EXCLUSIVE_EXCLUSIVE)
+            spannable
+        } else {
+            string
+        }
+    }
+
+    private fun openLink(it: TextView) {
+        presenter.openLink(it.text.toString())
     }
 
     private fun TextInputLayout.setTextWithoutAnimation(string: String) {
@@ -178,9 +199,7 @@ class StationFragment : BaseFragment(), StationView, BackPressListener {
     }
 
     private val TextInputLayout.text: String
-        get() {
-            return editText!!.text.toString()
-        }
+        get() = editText!!.text.toString()
 
     private fun TextInputLayout.setEditable(enable: Boolean) {
         editText?.apply {
@@ -191,21 +210,6 @@ class StationFragment : BaseFragment(), StationView, BackPressListener {
 
             if (enable) setBackgroundResource(editTextBg)
             else setBackgroundResource(0)
-        }
-    }
-
-    private fun TextInputLayout.linkStyle(enable: Boolean) {
-        editText?.apply {
-            val string = text.toString()
-            val color = ContextCompat.getColor(context, R.color.blue_500)
-            if (enable) {
-                val spannable = SpannableString(string)
-                spannable.setSpan(URLSpan(string), 0, spannable.length, Spannable.SPAN_EXCLUSIVE_EXCLUSIVE)
-                spannable.setSpan(ForegroundColorSpan(color), 0, spannable.length, Spannable.SPAN_EXCLUSIVE_EXCLUSIVE)
-                setText(spannable)
-            } else {
-                setText(string)
-            }
         }
     }
 }

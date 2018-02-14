@@ -1,21 +1,73 @@
 <?xml version="1.0" encoding="utf-8"?>
-
-<LinearLayout
+<android.support.constraint.ConstraintLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
-    android:layout_height="wrap_content"
-    android:orientation="vertical"
-    android:padding="16dp"
+    android:layout_height="match_parent"
     >
 
+    <ImageView
+        android:id="@+id/iconIv"
+        android:layout_width="72dp"
+        android:layout_height="72dp"
+        android:layout_marginLeft="8dp"
+        android:layout_marginStart="8dp"
+        android:layout_marginTop="8dp"
+        android:contentDescription="@string/desc_station_icon"
+        app:layout_constraintBottom_toBottomOf="@+id/titleTil"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        tools:src="@drawable/ic_station_1"
+        />
+
+    <Button
+        android:id="@+id/changeIconBt"
+        android:layout_width="72dp"
+        android:layout_height="72dp"
+        android:background="@drawable/ic_add_bg"
+        android:visibility="gone"
+        app:layout_constraintStart_toStartOf="@id/iconIv"
+        app:layout_constraintTop_toTopOf="@id/iconIv"
+        tools:visibility="visible"
+        />
+
     <android.support.design.widget.TextInputLayout
-        android:id="@+id/folderTil"
+        android:id="@+id/titleTil"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginEnd="16dp"
+        android:layout_marginLeft="8dp"
+        android:layout_marginRight="16dp"
+        android:layout_marginStart="8dp"
+        android:layout_marginTop="16dp"
+        android:hint="@string/station_hint_title"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toEndOf="@+id/iconIv"
+        app:layout_constraintTop_toTopOf="parent"
+        >
+
+        <android.support.design.widget.TextInputEditText
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:inputType="textMultiLine|textNoSuggestions"
+            android:textAppearance="@style/TextAppearance.AppCompat.Title"
+            tools:text="Title - Sunt vitaes reperire emeritis, neuter fluctuies."
+            />
+
+    </android.support.design.widget.TextInputLayout>
+
+    <android.support.design.widget.TextInputLayout
+        android:id="@+id/groupTil"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:layout_marginEnd="16dp"
+        android:layout_marginStart="16dp"
+        android:layout_marginTop="8dp"
         android:hint="@string/station_hint_folder"
-        android:visibility="gone"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/titleTil"
         >
 
         <android.support.design.widget.TextInputEditText
@@ -27,110 +79,142 @@
 
     </android.support.design.widget.TextInputLayout>
 
-
-    <android.support.design.widget.TextInputLayout
-        android:id="@+id/uriTil"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginBottom="8dp"
-        android:hint="@string/station_hint_uri"
-        >
-
-        <android.support.design.widget.TextInputEditText
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:inputType="textUri"
-            android:textAppearance="@style/TextAppearance.AppCompat.Body2"
-            tools:text="http://www.stationstream.com"
-            />
-
-    </android.support.design.widget.TextInputLayout>
-
-    <android.support.design.widget.TextInputLayout
-        android:id="@+id/urlTil"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginBottom="8dp"
-        android:hint="@string/station_hint_url"
-        >
-
-        <android.support.design.widget.TextInputEditText
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:inputType="textUri"
-            android:textAppearance="@style/TextAppearance.AppCompat.Body2"
-            tools:text="http://www.stationstream.com"
-            />
-
-    </android.support.design.widget.TextInputLayout>
-
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:baselineAligned="false"
-        android:orientation="horizontal"
-        >
-
-        <android.support.design.widget.TextInputLayout
-            android:id="@+id/bitrateTil"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:hint="@string/station_hint_bitrate"
-            >
-
-            <android.support.design.widget.TextInputEditText
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginEnd="16dp"
-                android:layout_marginRight="16dp"
-                android:hint="@string/unit_bitrate"
-                android:inputType="numberDecimal"
-                android:textAppearance="@style/TextAppearance.AppCompat.Body2"
-                tools:text="128kB"
-                />
-
-        </android.support.design.widget.TextInputLayout>
-
-
-        <android.support.design.widget.TextInputLayout
-            android:id="@+id/sampleTil"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:hint="@string/station_hint_rate"
-            >
-
-            <android.support.design.widget.TextInputEditText
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:hint="@string/unit_sample_rate"
-                android:inputType="numberDecimal"
-                android:textAppearance="@style/TextAppearance.AppCompat.Body2"
-                tools:text="44100Hz"
-                />
-
-        </android.support.design.widget.TextInputLayout>
-
-    </LinearLayout>
-
     <TextView
         android:id="@+id/genresTv"
-        android:layout_width="wrap_content"
+        android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:textAppearance="@style/TextAppearance.AppCompat.Caption"
+        android:layout_marginLeft="16dp"
+        android:layout_marginStart="16dp"
+        android:layout_marginTop="16dp"
+        android:fontFamily="sans-serif-medium"
         android:padding="4dp"
-        android:text="@string/station_title_genre"
-        android:textColor="@color/grey_500"
+        android:text="@string/station_genre"
+        android:textAppearance="@style/TextAppearance.AppCompat.Caption"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/groupTil"
         />
 
     <com.google.android.flexbox.FlexboxLayout
         android:id="@+id/genresFl"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:layout_marginEnd="16dp"
+        android:layout_marginStart="16dp"
         app:alignContent="flex_start"
         app:flexDirection="row"
         app:flexWrap="wrap"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/genresTv"
         />
 
-</LinearLayout>
+    <TextView
+        android:id="@+id/bitrateTitleTv"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="16dp"
+        android:layout_marginStart="16dp"
+        android:layout_marginTop="16dp"
+        android:fontFamily="sans-serif-medium"
+        android:padding="4dp"
+        android:text="@string/station_bitrate"
+        android:textAppearance="@style/TextAppearance.AppCompat.Caption"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/genresFl"
+        />
+
+    <TextView
+        android:id="@+id/bitrateTv"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:padding="4dp"
+        android:textAppearance="@style/TextAppearance.AppCompat.Body2"
+        app:layout_constraintStart_toStartOf="@+id/bitrateTitleTv"
+        app:layout_constraintTop_toBottomOf="@id/bitrateTitleTv"
+        tools:text="128kbps"
+        />
+
+    <TextView
+        android:id="@+id/sampleTitleTv"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="32dp"
+        android:layout_marginStart="32dp"
+        android:fontFamily="sans-serif-medium"
+        android:padding="4dp"
+        android:text="@string/station_sample_rate"
+        android:textAppearance="@style/TextAppearance.AppCompat.Caption"
+        app:layout_constraintStart_toEndOf="@+id/bitrateTitleTv"
+        app:layout_constraintTop_toTopOf="@+id/bitrateTitleTv"
+        />
+
+    <TextView
+        android:id="@+id/sampleTv"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:padding="4dp"
+        android:textAppearance="@style/TextAppearance.AppCompat.Body2"
+        app:layout_constraintStart_toStartOf="@+id/sampleTitleTv"
+        app:layout_constraintTop_toBottomOf="@+id/sampleTitleTv"
+        tools:text="22000Hz"
+        />
+
+    <TextView
+        android:id="@+id/uriTitleTv"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="16dp"
+        android:layout_marginStart="16dp"
+        android:layout_marginTop="16dp"
+        android:fontFamily="sans-serif-medium"
+        android:padding="4dp"
+        android:text="@string/station_uri"
+        android:textAppearance="@style/TextAppearance.AppCompat.Caption"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/bitrateTv"
+        />
+
+    <TextView
+        android:id="@+id/uriTv"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginEnd="16dp"
+        android:layout_marginStart="16dp"
+        android:fontFamily="sans-serif-medium"
+        android:padding="4dp"
+        android:textAppearance="@style/TextAppearance.AppCompat.Body2"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/uriTitleTv"
+        tools:text="www.google.com"
+        />
+
+    <TextView
+        android:id="@+id/urlTitleTv"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="16dp"
+        android:layout_marginStart="16dp"
+        android:layout_marginTop="16dp"
+        android:fontFamily="sans-serif-medium"
+        android:padding="4dp"
+        android:text="@string/station_url"
+        android:textAppearance="@style/TextAppearance.AppCompat.Caption"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/uriTv"
+        />
+
+    <TextView
+        android:id="@+id/urlTv"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginEnd="16dp"
+        android:layout_marginStart="16dp"
+        android:fontFamily="sans-serif-medium"
+        android:padding="4dp"
+        android:textAppearance="@style/TextAppearance.AppCompat.Body2"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/urlTitleTv"
+        tools:text="www.google.com"
+        />
+
+</android.support.constraint.ConstraintLayout>

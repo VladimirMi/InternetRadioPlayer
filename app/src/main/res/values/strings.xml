@@ -42,17 +42,17 @@
 
     <string name="station_list_details">Details</string>
 
-    <string name="station_hint_uri">Stream uri:</string>
-    <string name="station_hint_url">Station url:</string>
-    <string name="station_hint_bitrate">Stream bitrate:</string>
-    <string name="station_hint_rate">Source sample rate:</string>
+    <string name="station_uri">Stream uri:</string>
+    <string name="station_url">Station url:</string>
+    <string name="station_bitrate">Stream bitrate:</string>
+    <string name="station_sample_rate">Source sample rate:</string>
     <string name="station_hint_title">Title</string>
     <string name="station_hint_folder">Folder</string>
     <string name="station_title_information">Information</string>
-    <string name="station_title_genre">Genres:</string>
+    <string name="station_genre">Genres:</string>
 
-    <string name="unit_sample_rate" translatable="false">Hz</string>
-    <string name="unit_bitrate" translatable="false">kbps</string>
+    <string name="unit_sample_rate" translatable="false">%1$d\Hz</string>
+    <string name="unit_bitrate" translatable="false">%1$d\kbps</string>
 
     <string name="icon_icon">Icon</string>
     <string name="icon_favicon">Web site icon</string>

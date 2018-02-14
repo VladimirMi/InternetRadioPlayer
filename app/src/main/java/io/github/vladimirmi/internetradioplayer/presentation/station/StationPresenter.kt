@@ -121,7 +121,7 @@ class StationPresenter
     }
 
     fun create(station: Station) {
-        val newStation = station.copy(favorite = stationInteractor.currentStation.favorite)
+        val newStation = stationInteractor.currentStation.copy()
         stationInteractor.addStation(newStation)
                 .ioToMain()
                 .subscribeBy(
@@ -168,5 +168,11 @@ class StationPresenter
         if (stationInteractor.addCurrentShortcut()) {
             viewState.showToast(R.string.toast_add_shortcut_success)
         }
+    }
+
+    private fun getNewStation(info: Station): Station {
+        return stationInteractor.currentStation.copy(
+
+        )
     }
 }

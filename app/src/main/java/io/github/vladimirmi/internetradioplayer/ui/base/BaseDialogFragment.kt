@@ -27,11 +27,11 @@ abstract class BaseDialogFragment : DialogFragment() {
                 .create()
     }
 
-    open protected fun getCustomDialogView(): View? = null
+    protected open fun getCustomDialogView(): View? = null
 
-    abstract protected fun getTitle(): String
+    protected abstract fun getTitle(): String
 
-    abstract protected fun onPositive()
+    protected abstract fun onPositive()
 
-    abstract protected fun onNegative()
+    protected abstract fun onNegative()
 }

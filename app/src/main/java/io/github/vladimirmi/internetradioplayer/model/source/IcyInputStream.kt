@@ -33,7 +33,7 @@ class IcyInputStream(inS: InputStream,
 
     private fun readMetadata() {
         bytesBeforeMetadata = window
-        val size = super.read() shl 4
+        val size = super.read() * 16
         if (size < 1) return
         if (size > buffer.size) {
             buffer = ByteArray(size)

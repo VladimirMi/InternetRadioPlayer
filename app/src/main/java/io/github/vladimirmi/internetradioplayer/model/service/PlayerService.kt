@@ -62,7 +62,8 @@ class PlayerService : MediaBrowserServiceCompat(), SessionCallback.Interface {
 
         session = MediaSessionCompat(this, javaClass.simpleName)
         session.setCallback(SessionCallback(this))
-        session.setFlags(MediaSessionCompat.FLAG_HANDLES_MEDIA_BUTTONS or MediaSessionCompat.FLAG_HANDLES_TRANSPORT_CONTROLS)
+        session.setFlags(MediaSessionCompat.FLAG_HANDLES_MEDIA_BUTTONS
+                or MediaSessionCompat.FLAG_HANDLES_TRANSPORT_CONTROLS)
         session.setPlaybackState(playbackState)
         val activityIntent = Intent(applicationContext, RootActivity::class.java)
         session.setSessionActivity(PendingIntent.getActivity(applicationContext, 0, activityIntent, 0))
@@ -96,10 +97,17 @@ class PlayerService : MediaBrowserServiceCompat(), SessionCallback.Interface {
         playback.releasePlayer()
     }
 
-    override fun onGetRoot(clientPackageName: String, clientUid: Int, rootHints: Bundle?): MediaBrowserServiceCompat.BrowserRoot? =
-            MediaBrowserServiceCompat.BrowserRoot(getString(R.string.app_name), null)
+    override fun onGetRoot(clientPackageName: String,
+                           clientUid: Int,
+                           rootHints: Bundle?): MediaBrowserServiceCompat.BrowserRoot? {
 
-    override fun onLoadChildren(parentId: String, result: MediaBrowserServiceCompat.Result<List<MediaBrowserCompat.MediaItem>>) {
+        return MediaBrowserServiceCompat.BrowserRoot(getString(R.string.app_name), null)
+    }
+
+    override fun onLoadChildren(
+            parentId: String,
+            result: MediaBrowserServiceCompat.Result<List<MediaBrowserCompat.MediaItem>>) {
+
         result.sendResult(emptyList())
     }
 

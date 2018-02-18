@@ -171,8 +171,6 @@ class StationPresenter
     }
 
     private fun getNewStation(info: Station): Station {
-        return stationInteractor.currentStation.copy(
-
-        )
+        return stationInteractor.currentStation.copy()
     }
 }

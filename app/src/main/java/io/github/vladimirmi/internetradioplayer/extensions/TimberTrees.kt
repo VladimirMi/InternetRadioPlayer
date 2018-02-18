@@ -34,6 +34,7 @@ private constructor(context: Context,
     private fun writeLog(priority: Int, message: String) {
         val log = Logs.priority(priority)
         if (!logs.contains(log)) return
+        @Suppress("TooGenericExceptionCaught")
         try {
             val fileName = fileNameFormat.format(Date()) + ".html"
             val timeStamp = timeStampFormat.format(Date())
@@ -53,7 +54,8 @@ private constructor(context: Context,
         ASSERT("orange");
 
         fun format(timeStamp: String, message: String): String =
-                "<p style=\"background:lightgray;\"><strong style=\"background:$color;\">&nbsp&nbsp$timeStamp :&nbsp&nbsp</strong>&nbsp&nbsp$message</p>"
+                "<p style=\"background:lightgray;\"><strong style=\"background:$color;\">" +
+                        "&nbsp&nbsp$timeStamp :&nbsp&nbsp</strong>&nbsp&nbsp$message</p>"
 
         companion object {
             private val map = values().associateBy { it.ordinal + 2 }

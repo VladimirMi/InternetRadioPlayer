@@ -32,4 +32,3 @@ class NewStationDialog : BaseDialogFragment() {
     override fun onNegative() {
     }
 }
-

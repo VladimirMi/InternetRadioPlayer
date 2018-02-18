@@ -100,5 +100,4 @@ class IconPickerPresenter
         }
         router.exit()
     }
-
 }

@@ -13,7 +13,7 @@ import com.arellomobile.mvp.MvpAppCompatFragment
 
 abstract class BaseFragment : MvpAppCompatFragment() {
 
-    abstract protected val layoutRes: Int
+    protected abstract val layoutRes: Int
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -32,5 +32,4 @@ abstract class BaseFragment : MvpAppCompatFragment() {
         }
         return super.onOptionsItemSelected(item)
     }
-
 }

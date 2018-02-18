@@ -5,5 +5,6 @@ package io.github.vladimirmi.internetradioplayer.ui.base
  */
 
 interface BackPressListener {
+
     fun onBackPressed(): Boolean
 }

@@ -21,9 +21,11 @@ import javax.inject.Inject
 class StationIconSource
 @Inject constructor(context: Context) {
 
-    private val FAVICON_BASE_URI = Uri.Builder().scheme("http")
-            .authority("www.google.com")
-            .path("s2/favicons").build()
+    companion object {
+        private val FAVICON_BASE_URI = Uri.Builder().scheme("http")
+                .authority("www.google.com")
+                .path("s2/favicons").build()
+    }
 
     private val appDir = context.getExternalFilesDir(null)
 

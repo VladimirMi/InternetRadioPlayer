@@ -19,13 +19,12 @@ private constructor(val artist: String = unsupported, val title: String = unsupp
                     .substringBefore(';')
                     .trim(' ', '\'')
 
-            if (artistTitle == unsupported) return UNSUPPORTED
-
             var (artist, title) = if (artistTitle.contains(" - ")) {
                 artistTitle.split(" - ", limit = 2)
             } else {
                 listOf("", artistTitle)
             }
+
             if (title.isEmpty()) return UNSUPPORTED
             if (title.endsWith(']')) title = title.substringBeforeLast('[')
 

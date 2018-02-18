@@ -56,7 +56,11 @@ class Navigator(activity: RootActivity, containerId: Int)
         super.applyCommand(command)
     }
 
-    override fun setupFragmentTransactionAnimation(command: Command?, currentFragment: Fragment?, nextFragment: Fragment?, fragmentTransaction: FragmentTransaction?) {
+    override fun setupFragmentTransactionAnimation(
+            command: Command?,
+            currentFragment: Fragment?,
+            nextFragment: Fragment?,
+            fragmentTransaction: FragmentTransaction?) {
         when (command) {
         // order matters because Next and Previous is subclasses of Forward
             is NextStation -> forwardTransition(fragmentTransaction)

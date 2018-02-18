@@ -57,6 +57,7 @@ class IconRes(name: String,
     }
 }
 
+@Suppress("MagicNumber")
 fun randomColor(): Int {
     val random = Random()
     val r = random.nextInt(256)

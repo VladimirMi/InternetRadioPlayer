@@ -57,7 +57,12 @@ abstract class ItemSwipeCallback(context: Context,
         return super.getSwipeDirs(recyclerView, viewHolder)
     }
 
-    override fun onChildDraw(c: Canvas, recyclerView: RecyclerView, viewHolder: RecyclerView.ViewHolder, dX: Float, dY: Float, actionState: Int, isCurrentlyActive: Boolean) {
+    override fun onChildDraw(c: Canvas,
+                             recyclerView: RecyclerView,
+                             viewHolder: RecyclerView.ViewHolder,
+                             dX: Float, dY: Float,
+                             actionState: Int,
+                             isCurrentlyActive: Boolean) {
 
         if (actionState == ItemTouchHelper.ACTION_STATE_SWIPE) {
 

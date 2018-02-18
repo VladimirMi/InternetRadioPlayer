@@ -3,7 +3,6 @@ package io.github.vladimirmi.internetradioplayer.ui
 import android.content.Context
 import android.graphics.Color
 import android.support.annotation.ColorInt
-import android.support.annotation.IntRange
 import android.util.AttributeSet
 import android.view.View
 import android.widget.FrameLayout
@@ -73,17 +72,17 @@ class ColorPicker : FrameLayout, SeekBar.OnSeekBarChangeListener {
     override fun onStopTrackingTouch(seekBar: SeekBar?) {
     }
 
-    private fun setRed(@IntRange(from = 0, to = 255) int: Int) {
+    private fun setRed(int: Int) {
         redValue.text = int.toString()
         updateColor()
     }
 
-    private fun setGreen(@IntRange(from = 0, to = 255) int: Int) {
+    private fun setGreen(int: Int) {
         greenValue.text = int.toString()
         updateColor()
     }
 
-    private fun setBlue(@IntRange(from = 0, to = 255) int: Int) {
+    private fun setBlue(int: Int) {
         blueValue.text = int.toString()
         updateColor()
     }

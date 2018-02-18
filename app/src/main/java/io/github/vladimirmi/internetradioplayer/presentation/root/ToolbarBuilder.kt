@@ -1,5 +1,6 @@
 package io.github.vladimirmi.internetradioplayer.presentation.root
 
+import android.graphics.Color
 import android.support.annotation.StringRes
 import android.view.MenuItem
 import io.github.vladimirmi.internetradioplayer.R
@@ -95,7 +96,7 @@ class MenuItemHolder(val itemTitleResId: Int,
                      val iconResId: Int,
                      val showAsAction: Boolean = false,
                      val order: Int = 0,
-                     val color: Int = 0xFF424242.toInt()) {
+                     val color: Int = Color.DKGRAY) {
 
     val id = itemTitleResId
     override fun equals(other: Any?): Boolean {

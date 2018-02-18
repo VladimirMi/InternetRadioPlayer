@@ -56,6 +56,10 @@ android {
     }
 }
 
+project.afterEvaluate {
+    assembleRelease.dependsOn rootProject.detektCheck
+}
+
 private Integer generateVersionCode() {
     return ext.versionMajor * 10000 + ext.versionMinor * 100 + ext.versionPatch
 }

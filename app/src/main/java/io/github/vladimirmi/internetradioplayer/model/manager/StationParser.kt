@@ -23,6 +23,28 @@ import javax.inject.Inject
 class StationParser
 @Inject constructor(private val gson: Gson) {
 
+    companion object {
+        private const val SCHEME_FILE = "file"
+        private const val SCHEME_HTTP = "http"
+
+        private const val EXT_PLS = "PLS"
+        private const val EXT_M3U = "M3U"
+        private const val EXT_M3U8 = "M3U8"
+        private const val EXT_RAM = "RAM"
+
+        private const val HEADER_NAME = "icy-name"
+        private const val HEADER_GENRE = "icy-genre"
+        private const val HEADER_URL = "icy-url"
+        private const val HEADER_BITRATE = "icy-br"
+        private const val HEADER_SAMPLE = "icy-sr"
+
+        private const val PLS_URI = "File1="
+        private const val PLS_TITLE = "Title1="
+        private const val M3U_HEADER = "#EXTM3U"
+        private const val M3U_INFO = "#EXTINF"
+    }
+
+    @Suppress("TooGenericExceptionCaught")
     fun parseFromJsonFile(file: File): Station? {
         return try {
             gson.fromJson(file.readText(), Station::class.java)
@@ -38,8 +60,8 @@ class StationParser
 
     fun parseFromUri(uri: Uri): Station {
         return when {
-            uri.scheme.startsWith("http") -> parseFromNet(uri)
-            uri.scheme.startsWith("file") -> parseFromPlaylistFile(uri)
+            uri.scheme.startsWith(SCHEME_HTTP) -> parseFromNet(uri) // also https
+            uri.scheme == SCHEME_FILE -> parseFromPlaylistFile(uri)
             else -> throw IllegalArgumentException("Unsupported uri $uri")
         }
     }
@@ -50,9 +72,9 @@ class StationParser
             throw IllegalStateException("Can not find file for uri $uri")
         }
 
-        return when (file.extension) {
-            "pls" -> file.parsePls()
-            "m3u", "m3u8", "ram" -> file.parseM3u()
+        return when (file.extension.toUpperCase()) {
+            EXT_PLS -> file.parsePls()
+            EXT_M3U, EXT_M3U8, EXT_RAM -> file.parseM3u()
             else -> throw IllegalStateException("Unsupported file extension ${file.extension}")
         }
     }
@@ -76,14 +98,16 @@ class StationParser
     }
 
     private fun parseHeaders(station: Station): Station {
+
+
         return station.uri.toURL().useConnection {
             Timber.d("parseHeaders: $headerFields")
             if (headerFields == null) return@useConnection station
-            val title = headerFields["icy-name"]?.get(0)
-            val genres = parseGenres(headerFields["icy-genre"]?.get(0))
-            val url = headerFields["icy-url"]?.get(0)
-            val bitrate = headerFields["icy-br"]?.get(0)?.toInt()
-            val sample = headerFields["icy-sr"]?.get(0)?.toInt()
+            val title = headerFields[HEADER_NAME]?.get(0)
+            val genres = parseGenres(headerFields[HEADER_GENRE]?.get(0))
+            val url = headerFields[HEADER_URL]?.get(0)
+            val bitrate = headerFields[HEADER_BITRATE]?.get(0)?.toInt()
+            val sample = headerFields[HEADER_SAMPLE]?.get(0)?.toInt()
 
             station.copy(
                     name = title ?: station.name,
@@ -112,8 +136,8 @@ class StationParser
             this.bufferedReader().readLines().forEach {
                 val line = it.trim()
                 when {
-                    line.startsWith("File1=") -> uri = line.substring(6).trim()
-                    line.startsWith("Title1=") -> title = line.substring(7).trim()
+                    line.startsWith(PLS_URI) -> uri = line.substring(PLS_URI.length).trim()
+                    line.startsWith(PLS_TITLE) -> title = line.substring(PLS_TITLE.length).trim()
                 }
             }
             return uri?.let { Station(it, title) }
@@ -129,11 +153,11 @@ class StationParser
         var uri: URI? = null
         var title: String = name
         use {
-            this.bufferedReader().readLines().forEach {
+            bufferedReader().readLines().forEach {
                 val line = it.trim()
                 when {
-                    line.startsWith("#EXTM3U") -> extended = true
-                    extended && line.startsWith("#EXTINF") -> title = line.substringAfter(",")
+                    line.startsWith(M3U_HEADER) -> extended = true
+                    extended && line.startsWith(M3U_INFO) -> title = line.substringAfter(",")
                     else -> uri = try {
                         URI(line)
                     } catch (e: URISyntaxException) {

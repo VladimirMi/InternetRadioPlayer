@@ -39,7 +39,7 @@ interface StationView : MvpView {
     fun openLinkDialog(url: String)
 
     @StateStrategyType(OneExecutionStateStrategy::class)
-    fun openCancelEditDialog(currentStation: Station, iconChanged: Boolean)
+    fun openCancelEditDialog(currentStation: StationInfo, iconChanged: Boolean)
 
     @StateStrategyType(OneExecutionStateStrategy::class)
     fun openCancelCreateDialog()

@@ -23,16 +23,19 @@ class StationListRepository
 
     @Volatile var isInitialized = false
     val stationList: GroupingList = GroupingList()
-    val currentStation: BehaviorRelay<Station> = BehaviorRelay.create()
+    val currentStation: BehaviorRelay<Station> = BehaviorRelay.createDefault(Station.nullObject())
     private val lock = ReentrantLock()
 
     fun initStations() {
         lock.withLock {
             if (isInitialized) return
-            stationList.addAll(stationSource.getStationList())
-            stationList.filter(Filter.valueOf(preferences.filter))
-            preferences.hidedGroups.forEach { stationList.hideGroup(it) }
-            currentStation.accept(stationList[preferences.currentPos])
+            val stations = stationSource.getStationList()
+            if (stations.isNotEmpty()) {
+                stationList.addAll(stations)
+                stationList.filter(Filter.valueOf(preferences.filter))
+                preferences.hidedGroups.forEach { stationList.hideGroup(it) }
+                currentStation.accept(stationList[preferences.currentPos])
+            }
             isInitialized = true
         }
     }

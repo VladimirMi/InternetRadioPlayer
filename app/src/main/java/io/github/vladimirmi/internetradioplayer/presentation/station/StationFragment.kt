@@ -38,7 +38,6 @@ class StationFragment : BaseFragment(), StationView, BackPressListener {
 
     override val layoutRes = R.layout.fragment_station
     private var editTextBg: Int = 0
-    private lateinit var stationId: String
 
     @InjectPresenter
     lateinit var presenter: StationPresenter
@@ -57,12 +56,11 @@ class StationFragment : BaseFragment(), StationView, BackPressListener {
         activity.theme.resolveAttribute(android.R.attr.editTextBackground, typedValue, true)
         editTextBg = typedValue.resourceId
 
-        // set action DONE on the multiline text
-        titleTil.editText?.imeOptions = EditorInfo.IME_ACTION_DONE
+        // set appropriate action on the multiline text
+        titleTil.editText?.imeOptions = EditorInfo.IME_ACTION_NEXT
         titleTil.editText?.setRawInputType(InputType.TYPE_CLASS_TEXT)
 
-        urlTv.linkStyle(true)
-        uriTv.linkStyle(true)
+
         urlTv.setOnClickListener { openLink(it as TextView) }
         uriTv.setOnClickListener { openLink(it as TextView) }
 
@@ -78,15 +76,14 @@ class StationFragment : BaseFragment(), StationView, BackPressListener {
     }
 
     override fun setStation(station: Station) {
-        stationId = station.id
         titleTil.setTextWithoutAnimation(station.name)
-
         groupTil.setTextWithoutAnimation(station.group)
-        groupTil.visible(station.group.isNotBlank())
 
         uriTv.text = station.uri
+        uriTv.linkStyle(true)
 
         urlTv.text = station.url
+        urlTv.linkStyle(true)
         station.url.isNotBlank().let {
             urlTitleTv.visible(it)
             urlTv.visible(it)
@@ -116,6 +113,8 @@ class StationFragment : BaseFragment(), StationView, BackPressListener {
     override fun setEditMode(editMode: Boolean) {
         titleTil.setEditable(editMode)
         changeIconBt.visible(editMode)
+        groupTil.setEditable(editMode)
+        groupTil.visible(groupTil.text.isNotBlank() || editMode)
 
         if (editMode) {
             titleTil.editText!!.requestFocus()
@@ -141,8 +140,8 @@ class StationFragment : BaseFragment(), StationView, BackPressListener {
         LinkDialog.newInstance(url).show(childFragmentManager, "link_dialog")
     }
 
-    override fun openCancelEditDialog(currentStation: Station, iconChanged: Boolean) {
-        if (currentStation.copy(favorite = false) != constructStation() || iconChanged) {
+    override fun openCancelEditDialog(currentStation: StationInfo, iconChanged: Boolean) {
+        if (currentStation != constructStation() || iconChanged) {
             CancelEditDialog().show(childFragmentManager, "cancel_edit_dialog")
         } else {
             presenter.cancelEdit()
@@ -159,16 +158,14 @@ class StationFragment : BaseFragment(), StationView, BackPressListener {
 
     //endregion
 
-    private fun constructStation(): Station {
+    private fun constructStation(): StationInfo {
         val genres = ArrayList<String>()
         (0 until genresFl.childCount)
                 .forEach {
                     val tagView = genresFl.getChildAt(it) as TagView
                     genres.add(tagView.text.toString())
                 }
-        return Station(
-                id = stationId,
-                uri = uriTv.text.toString(),
+        return StationInfo(
                 name = titleTil.text,
                 group = groupTil.text,
                 genre = genres

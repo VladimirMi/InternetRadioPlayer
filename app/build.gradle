@@ -15,7 +15,7 @@ keystoreProperties.load(new FileInputStream(keystorePropertiesFile))
 
 ext.versionMajor = 0
 ext.versionMinor = 9
-ext.versionPatch = 1
+ext.versionPatch = 2
 
 android {
     compileSdkVersion 26

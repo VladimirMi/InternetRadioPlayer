@@ -95,7 +95,6 @@ class MediaNotification(private val service: PlayerService,
         val channelName = service.getString(R.string.notification_name)
         val notificationChannel = NotificationChannel(CHANNEL_ID, channelName, NotificationManager.IMPORTANCE_LOW)
 
-        // Configure the notification channel.
         notificationChannel.description = service.getString(R.string.notification_name)
         (service.getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager)
                 .createNotificationChannel(notificationChannel)

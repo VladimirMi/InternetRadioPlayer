@@ -4,7 +4,6 @@ import android.app.Notification
 import android.app.NotificationChannel
 import android.app.NotificationManager
 import android.content.Context
-import android.graphics.Color
 import android.os.Build
 import android.support.annotation.RequiresApi
 import android.support.v4.app.NotificationCompat
@@ -94,12 +93,9 @@ class MediaNotification(private val service: PlayerService,
     @RequiresApi(Build.VERSION_CODES.O)
     private fun createNotificationChannel() {
         val channelName = service.getString(R.string.notification_name)
-        val notificationChannel = NotificationChannel(CHANNEL_ID, channelName, NotificationManager.IMPORTANCE_DEFAULT)
+        val notificationChannel = NotificationChannel(CHANNEL_ID, channelName, NotificationManager.IMPORTANCE_LOW)
 
-        // Configure the notification channel.
         notificationChannel.description = service.getString(R.string.notification_name)
-        notificationChannel.enableLights(true)
-        notificationChannel.lightColor = Color.RED
         (service.getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager)
                 .createNotificationChannel(notificationChannel)
     }

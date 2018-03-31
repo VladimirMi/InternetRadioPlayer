@@ -36,7 +36,7 @@ class PlayerControlFragment : BaseFragment(), PlayerControlView {
         }
     }
 
-    override fun onViewCreated(view: View?, savedInstanceState: Bundle?) {
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         play_pause.setOnClickListener { presenter.playPause() }
         favorite.setOnClickListener { presenter.switchFavorite() }
         iconIv.setOnClickListener { presenter.showStation() }
@@ -56,8 +56,8 @@ class PlayerControlFragment : BaseFragment(), PlayerControlView {
         if (station.favorite) {
             favorite.setBackgroundResource(R.drawable.ic_star)
         } else {
-            favorite.background = ContextCompat.getDrawable(context, R.drawable.ic_star_empty).apply {
-                mutate().setTintExt(ContextCompat.getColor(context, R.color.grey_600))
+            favorite.background = ContextCompat.getDrawable(context!!, R.drawable.ic_star_empty).apply {
+                this!!.mutate().setTintExt(ContextCompat.getColor(context!!, R.color.grey_600))
             }
         }
     }
@@ -67,7 +67,7 @@ class PlayerControlFragment : BaseFragment(), PlayerControlView {
     }
 
     override fun enableNextPrevious(enable: Boolean) {
-        val tint = context.color(if (enable) R.color.grey_600 else R.color.grey_400)
+        val tint = context!!.color(if (enable) R.color.grey_600 else R.color.grey_400)
         previous.setTint(tint)
         next.setTint(tint)
         previous.isEnabled = enable

@@ -50,10 +50,10 @@ class StationFragment : BaseFragment(), StationView, BackPressListener {
         }
     }
 
-    override fun onViewCreated(view: View?, savedInstanceState: Bundle?) {
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         // save default edit text background
         val typedValue = TypedValue()
-        activity.theme.resolveAttribute(android.R.attr.editTextBackground, typedValue, true)
+        activity?.theme?.resolveAttribute(android.R.attr.editTextBackground, typedValue, true)
         editTextBg = typedValue.resourceId
 
         // set appropriate action on the multiline text
@@ -103,7 +103,7 @@ class StationFragment : BaseFragment(), StationView, BackPressListener {
 
         genresTv.visible(station.genre.isNotEmpty())
         genresFl.removeAllViews()
-        station.genre.forEach { genresFl.addView(TagView(context, it, null)) }
+        station.genre.forEach { genresFl.addView(TagView(context!!, it, null)) }
     }
 
     override fun setStationIcon(icon: Bitmap) {
@@ -120,7 +120,7 @@ class StationFragment : BaseFragment(), StationView, BackPressListener {
             titleTil.editText!!.requestFocus()
             titleTil.editText!!.setSelection(titleTil.text.length)
         } else {
-            context.inputMethodManager.hideSoftInputFromWindow(view?.windowToken, 0)
+            context!!.inputMethodManager.hideSoftInputFromWindow(view?.windowToken, 0)
         }
     }
 

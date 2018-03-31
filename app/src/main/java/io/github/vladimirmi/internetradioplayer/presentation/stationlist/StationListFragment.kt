@@ -29,7 +29,7 @@ class StationListFragment : BaseFragment(), StationListView, StationItemCallback
     private val adapter = MediaListAdapter(this)
 
     private val itemTouchHelper by lazy {
-        ItemTouchHelper(object : ItemSwipeCallback(context, 0, ItemTouchHelper.LEFT or ItemTouchHelper.RIGHT) {
+        ItemTouchHelper(object : ItemSwipeCallback(context!!, 0, ItemTouchHelper.LEFT or ItemTouchHelper.RIGHT) {
             override fun onSwiped(viewHolder: RecyclerView.ViewHolder, direction: Int) {
                 val station = adapter.getStation(viewHolder.adapterPosition) ?: return
                 presenter.showStation(station)

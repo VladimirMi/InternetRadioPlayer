@@ -22,25 +22,15 @@
         <item name="android:layout_height">wrap_content</item>
     </style>
 
-    <style name="CustomText.Black">
-        <item name="android:textColor">@color/black</item>
-    </style>
-
-    <style name="CustomText.White">
-        <item name="android:textColor">@color/white</item>
-    </style>
-
-
     <style name="CustomButton" parent="Base.Widget.AppCompat.Button">
-        <item name="colorButtonNormal">@color/accentColor</item>
         <item name="android:textColor">@color/sel_button_text</item>
     </style>
 
-    <style name="AccentButton" parent="CustomButton">
+    <style name="CustomButton.Accent">
         <item name="colorButtonNormal">@color/accentColor</item>
     </style>
 
-    <style name="CancelButton" parent="CustomButton">
+    <style name="CustomButton.Cancel">
         <item name="colorButtonNormal">@color/grey_700</item>
     </style>
 
@@ -52,6 +42,29 @@
         <item name="android:button">@null</item>
         <item name="android:gravity">center</item>
         <item name="android:padding">4dp</item>
+    </style>
+
+    <style name="CustomText.Link">
+        <item name="android:ellipsize">end</item>
+        <item name="android:fontFamily">sans-serif-medium</item>
+        <item name="android:maxLines">1</item>
+        <item name="android:padding">4dp</item>
+        <item name="android:textAppearance">@style/TextAppearance.AppCompat.Body2</item>
+        <item name="android:textColorLink">@color/blue_500</item>
+    </style>
+
+    <style name="CustomText.Label">
+        <item name="android:fontFamily">sans-serif-medium</item>
+        <item name="android:padding">4dp</item>
+        <item name="android:textAppearance">@style/TextAppearance.AppCompat.Caption</item>
+    </style>
+
+    <style name="CustomCard">
+        <item name="android:layout_width">match_parent</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="cardCornerRadius">4dp</item>
+        <item name="cardElevation">2dp</item>
+        <item name="contentPadding">8dp</item>
     </style>
 
 </resources>

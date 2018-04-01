@@ -164,7 +164,7 @@ class GroupingList : MutableGroupedList<Station> {
         stationList.sortBy { it.name }
         stationList.sortBy { it.group }
         createMappings()
-//        if (stationList.isNotEmpty() && itemsSize == 0) filter(Filter.DEFAULT)
+        if (stationList.isNotEmpty() && itemsSize == 0) filter(Filter.DEFAULT)
         notifyObservers()
     }
 

@@ -3,8 +3,8 @@
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
-    android:layout_width="match_parent"
     android:layout_height="wrap_content"
+    android:layout_width="match_parent"
     >
 
     <io.github.vladimirmi.internetradioplayer.ui.ColorSeekBar
@@ -49,7 +49,7 @@
 
     <TextView
         android:id="@+id/redValue"
-        style="@style/CustomText.Black"
+        style="@style/CustomText"
         android:minWidth="30sp"
         android:padding="4dp"
         app:layout_constraintEnd_toEndOf="parent"
@@ -59,7 +59,7 @@
 
     <TextView
         android:id="@+id/greenValue"
-        style="@style/CustomText.Black"
+        style="@style/CustomText"
         android:layout_marginTop="8dp"
         android:minWidth="30sp"
         android:padding="4dp"
@@ -70,7 +70,7 @@
 
     <TextView
         android:id="@+id/blueValue"
-        style="@style/CustomText.Black"
+        style="@style/CustomText"
         android:layout_alignParentEnd="true"
         android:layout_alignParentRight="true"
         android:layout_marginTop="8dp"

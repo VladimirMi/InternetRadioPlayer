@@ -100,8 +100,9 @@ class StationInteractor
             removeStation(currentStation)
         } else Completable.complete()
 
-        return validate(newStation).andThen(
-                saveCurrentIcon(newStation.name).mergeWith(updateStation)
+        return validate(newStation)
+                .andThen(saveCurrentIcon(newStation.name)
+                        .mergeWith(updateStation)
                         .concatWith(remove))
                 .doOnComplete {
                     currentStation = if (stationList.contains(newStation)) {

@@ -15,7 +15,7 @@ keystoreProperties.load(new FileInputStream(keystorePropertiesFile))
 
 ext.versionMajor = 0
 ext.versionMinor = 9
-ext.versionPatch = 1
+ext.versionPatch = 2
 
 android {
     compileSdkVersion 27
@@ -79,6 +79,7 @@ dependencies {
     implementation 'com.android.support:appcompat-v7:' + SUPPORT_LIBRARY_VERSION
     implementation 'com.android.support:design:' + SUPPORT_LIBRARY_VERSION
     implementation 'com.android.support:support-media-compat:' + SUPPORT_LIBRARY_VERSION
+    implementation 'com.android.support:cardview-v7:' + SUPPORT_LIBRARY_VERSION
     implementation 'com.android.support.constraint:constraint-layout:1.1.0-beta6'
     implementation 'com.google.android:flexbox:0.3.1'
     //Rx

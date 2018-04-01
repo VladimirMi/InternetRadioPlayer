@@ -46,9 +46,9 @@
     <string name="station_url">Station url:</string>
     <string name="station_bitrate">Stream bitrate:</string>
     <string name="station_sample_rate">Source sample rate:</string>
-    <string name="station_hint_title">Title</string>
-    <string name="station_hint_folder">Folder</string>
-    <string name="station_title_information">Information</string>
+    <string name="station_title">Title</string>
+    <string name="station_folder">Folder</string>
+    <string name="station_title_information">Information:</string>
     <string name="station_genre">Genres:</string>
 
     <string name="unit_sample_rate" translatable="false">%1$d\Hz</string>

@@ -45,7 +45,7 @@
         >
 
         <TextView
-            android:id="@+id/titleTv"
+            android:id="@+id/titleEt"
             style="@style/TextAppearance.Compat.Notification.Title.Media"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -67,11 +67,11 @@
 
     <LinearLayout
         android:id="@+id/notification_controls"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
         android:layout_alignParentBottom="true"
         android:gravity="center"
         tools:ignore="ButtonStyle"
+        android:layout_height="wrap_content"
+        android:layout_width="match_parent"
         >
 
         <Button

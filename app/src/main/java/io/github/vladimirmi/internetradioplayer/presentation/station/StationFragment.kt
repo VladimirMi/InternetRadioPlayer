@@ -12,6 +12,7 @@ import android.text.style.URLSpan
 import android.util.TypedValue
 import android.view.View
 import android.view.inputmethod.EditorInfo
+import android.widget.EditText
 import android.widget.TextView
 import android.widget.Toast
 import com.arellomobile.mvp.presenter.InjectPresenter
@@ -26,6 +27,7 @@ import io.github.vladimirmi.internetradioplayer.presentation.root.ToolbarView
 import io.github.vladimirmi.internetradioplayer.ui.TagView
 import io.github.vladimirmi.internetradioplayer.ui.base.BackPressListener
 import io.github.vladimirmi.internetradioplayer.ui.base.BaseFragment
+import kotlinx.android.synthetic.main.view_station_detail_info.*
 import kotlinx.android.synthetic.main.view_station_info.*
 import toothpick.Toothpick
 
@@ -46,25 +48,25 @@ class StationFragment : BaseFragment(), StationView, BackPressListener {
     fun providePresenter(): StationPresenter {
         return Toothpick.openScopes(Scopes.ROOT_ACTIVITY, this)
                 .getInstance(StationPresenter::class.java).also {
-            Toothpick.closeScope(this)
-        }
+                    Toothpick.closeScope(this)
+                }
     }
 
-    override fun onViewCreated(view: View?, savedInstanceState: Bundle?) {
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         // save default edit text background
         val typedValue = TypedValue()
-        activity.theme.resolveAttribute(android.R.attr.editTextBackground, typedValue, true)
+        activity?.theme?.resolveAttribute(android.R.attr.editTextBackground, typedValue, true)
         editTextBg = typedValue.resourceId
 
         // set appropriate action on the multiline text
-        titleTil.editText?.imeOptions = EditorInfo.IME_ACTION_NEXT
-        titleTil.editText?.setRawInputType(InputType.TYPE_CLASS_TEXT)
+        titleEt.imeOptions = EditorInfo.IME_ACTION_NEXT
+        titleEt.setRawInputType(InputType.TYPE_CLASS_TEXT)
 
 
         urlTv.setOnClickListener { openLink(it as TextView) }
         uriTv.setOnClickListener { openLink(it as TextView) }
 
-        changeIconBt.setOnClickListener { presenter.changeIcon() }
+//        changeIconBt.setOnClickListener { presenter.changeIcon() }
     }
 
     override fun onBackPressed() = presenter.onBackPressed()
@@ -76,8 +78,8 @@ class StationFragment : BaseFragment(), StationView, BackPressListener {
     }
 
     override fun setStation(station: Station) {
-        titleTil.setTextWithoutAnimation(station.name)
-        groupTil.setTextWithoutAnimation(station.group)
+        titleEt.setText(station.name)
+        groupEt.setText(station.group)
 
         uriTv.text = station.uri
         uriTv.linkStyle(true)
@@ -85,42 +87,44 @@ class StationFragment : BaseFragment(), StationView, BackPressListener {
         urlTv.text = station.url
         urlTv.linkStyle(true)
         station.url.isNotBlank().let {
-            urlTitleTv.visible(it)
+            urlLabelTv.visible(it)
             urlTv.visible(it)
         }
 
         bitrateTv.text = getString(R.string.unit_bitrate, station.bitrate)
         (station.bitrate != 0).let {
-            bitrateTitleTv.visible(it)
+            bitrateLabelTv.visible(it)
             bitrateTv.visible(it)
         }
 
         sampleTv.text = getString(R.string.unit_sample_rate, station.sample)
         (station.sample != 0).let {
-            sampleTitleTv.visible(it)
+            sampleLabelTv.visible(it)
             sampleTv.visible(it)
         }
 
-        genresTv.visible(station.genre.isNotEmpty())
+        genresLabelTv.visible(station.genre.isNotEmpty())
         genresFl.removeAllViews()
-        station.genre.forEach { genresFl.addView(TagView(context, it, null)) }
+        station.genre.forEach { genresFl.addView(TagView(context!!, it, null)) }
     }
 
     override fun setStationIcon(icon: Bitmap) {
-        iconIv.setImageBitmap(icon)
+//        iconIv.setImageBitmap(icon)
     }
 
     override fun setEditMode(editMode: Boolean) {
-        titleTil.setEditable(editMode)
-        changeIconBt.visible(editMode)
-        groupTil.setEditable(editMode)
-        groupTil.visible(groupTil.text.isNotBlank() || editMode)
+        titleEt.setEditable(editMode)
+//        changeIconBt.visible(editMode)
+        val groupVisible = groupEt.text.isNotBlank() || editMode
+        groupLabelTv.visible(groupVisible)
+        groupEt.visible(groupVisible)
+        groupEt.setEditable(editMode)
 
         if (editMode) {
-            titleTil.editText!!.requestFocus()
-            titleTil.editText!!.setSelection(titleTil.text.length)
+            titleEt.requestFocus()
+            titleEt.setSelection(titleEt.text.length)
         } else {
-            context.inputMethodManager.hideSoftInputFromWindow(view?.windowToken, 0)
+            context!!.inputMethodManager.hideSoftInputFromWindow(view?.windowToken, 0)
         }
     }
 
@@ -166,8 +170,8 @@ class StationFragment : BaseFragment(), StationView, BackPressListener {
                     genres.add(tagView.text.toString())
                 }
         return StationInfo(
-                name = titleTil.text,
-                group = groupTil.text,
+                name = titleEt.text.toString(),
+                group = groupEt.text.toString(),
                 genre = genres
         )
     }
@@ -195,18 +199,13 @@ class StationFragment : BaseFragment(), StationView, BackPressListener {
         isHintAnimationEnabled = true
     }
 
-    private val TextInputLayout.text: String
-        get() = editText!!.text.toString()
+    private fun EditText.setEditable(enable: Boolean) {
+        isFocusable = enable
+        isClickable = enable
+        isFocusableInTouchMode = enable
+        isCursorVisible = enable
 
-    private fun TextInputLayout.setEditable(enable: Boolean) {
-        editText?.apply {
-            isFocusable = enable
-            isClickable = enable
-            isFocusableInTouchMode = enable
-            isCursorVisible = enable
-
-            if (enable) setBackgroundResource(editTextBg)
-            else setBackgroundResource(0)
-        }
+        if (enable) setBackgroundResource(editTextBg)
+        else setBackgroundResource(0)
     }
 }

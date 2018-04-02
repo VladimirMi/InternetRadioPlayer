@@ -34,7 +34,7 @@ class MetadataFragment : BaseFragment(), MetadataView {
     }
 
     override fun setMetadata(resId: Int) {
-        metadataTv.text = context.getString(resId)
+        metadataTv.text = context?.getString(resId)
     }
 
     override fun hideMetadata() {

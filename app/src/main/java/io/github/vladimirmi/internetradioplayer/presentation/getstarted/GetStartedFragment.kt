@@ -30,7 +30,7 @@ class GetStartedFragment : BaseFragment(), GetStartedView {
         }
     }
 
-    override fun onViewCreated(view: View?, savedInstanceState: Bundle?) {
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         addNewBt.setOnClickListener { openAddStationDialog() }
     }
 

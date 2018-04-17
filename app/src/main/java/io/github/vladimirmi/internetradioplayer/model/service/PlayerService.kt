@@ -129,12 +129,14 @@ class PlayerService : MediaBrowserServiceCompat(), SessionCallback.Interface {
         val actions = when (playerMode) {
             PlayerMode.NEXT_PREVIOUS_ENABLED -> AvailableActions.NEXT_PREVIOUS_ENABLED
             PlayerMode.NEXT_PREVIOUS_DISABLED -> AvailableActions.NEXT_PREVIOUS_DISABLED
+            else -> return
         }
         val state = createPlaybackState(actions = actions)
         session.setPlaybackState(state)
         notification.update()
     }
 
+    //todo use controls interactor
     private val isPlaying: Boolean
         get() {
             return session.controller.playbackState?.state.let { state ->

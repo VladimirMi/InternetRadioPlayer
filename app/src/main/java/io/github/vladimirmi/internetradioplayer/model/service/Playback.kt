@@ -172,7 +172,7 @@ class Playback(private val service: PlayerService,
             val action = intent.action
             if (action == AudioManager.ACTION_AUDIO_BECOMING_NOISY) {
                 val playing = player?.playWhenReady ?: false
-                service.onPauseCommand(stopDelay = 300000) // 5 min
+                service.onPauseCommand(stopDelay = 180000) // 3 min
                 playAgainOnHeadset = playing
                 Timber.d("onReceive: $playAgainOnHeadset")
 

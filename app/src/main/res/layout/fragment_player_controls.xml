@@ -20,6 +20,17 @@
         />
 
     <Button
+        android:id="@+id/changeIconBt"
+        android:layout_width="72dp"
+        android:layout_height="72dp"
+        android:background="@drawable/ic_add_bg"
+        android:visibility="gone"
+        app:layout_constraintStart_toStartOf="@id/iconIv"
+        app:layout_constraintTop_toTopOf="@id/iconIv"
+        tools:visibility="visible"
+        />
+
+    <Button
         android:id="@+id/previous"
         android:layout_width="48dp"
         android:layout_height="48dp"

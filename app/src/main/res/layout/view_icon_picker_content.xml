@@ -52,7 +52,7 @@
         android:layout_height="wrap_content"
         android:layout_marginTop="16dp"
         android:foreground="@drawable/ic_add"
-        android:theme="@style/AccentButton"
+        android:theme="@style/CustomButton.Accent"
         android:visibility="gone"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
@@ -144,7 +144,7 @@
             android:layout_height="match_parent"
             android:layout_weight="1"
             android:text="@string/dialog_cancel"
-            android:theme="@style/CancelButton"
+            android:theme="@style/CustomButton.Cancel"
             />
 
         <Button
@@ -153,7 +153,7 @@
             android:layout_height="match_parent"
             android:layout_weight="1"
             android:text="@string/dialog_ok"
-            android:theme="@style/AccentButton"
+            android:theme="@style/CustomButton.Accent"
             />
     </LinearLayout>
 

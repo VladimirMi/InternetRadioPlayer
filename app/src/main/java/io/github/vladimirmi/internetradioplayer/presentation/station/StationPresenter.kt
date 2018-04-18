@@ -43,7 +43,7 @@ class StationPresenter
     }
 
     private val editItem = MenuItemHolder(R.string.menu_station_edit, R.drawable.ic_edit, order = 0)
-    private val saveItem = MenuItemHolder(R.string.menu_station_save, R.drawable.ic_submit, order = 0)
+    private val saveItem = MenuItemHolder(R.string.menu_station_save, R.drawable.ic_submit, order = 0, showAsAction = true)
 
     private val toolbarBuilder = ToolbarBuilder().setToolbarTitle(stationInteractor.currentStation.name)
             .addMenuItem(MenuItemHolder(R.string.menu_station_shortcut, R.drawable.ic_shortcut, order = 1))
@@ -58,35 +58,6 @@ class StationPresenter
     override fun attachView(view: StationView?) {
         super.attachView(view)
         viewState.setStationIcon(stationInteractor.currentIcon.bitmap)
-    }
-
-    private fun viewMode() {
-        editMode = false
-        viewState.setEditMode(editMode)
-        val toolbar = toolbarBuilder.removeMenuItem(saveItem)
-                .addMenuItem(editItem)
-
-        viewState.buildToolbar(toolbar)
-        controlsInteractor.enableNextPrevious(true)
-        viewState.setStationIcon(stationInteractor.currentIcon.bitmap)
-    }
-
-    private fun editMode() {
-        editMode = true
-        viewState.setEditMode(editMode)
-        val toolbar = toolbarBuilder.removeMenuItem(editItem)
-                .addMenuItem(saveItem)
-
-        viewState.buildToolbar(toolbar)
-        controlsInteractor.enableNextPrevious(false)
-    }
-
-    fun changeMode() {
-        when {
-            createMode -> viewState.createStation()
-            editMode -> viewState.editStation()
-            else -> editMode()
-        }
     }
 
     fun removeStation() {
@@ -105,8 +76,8 @@ class StationPresenter
     }
 
 
-    fun edit(station: Station) {
-        val newStation = station.copy(favorite = stationInteractor.currentStation.favorite)
+    fun edit(stationInfo: StationInfo) {
+        val newStation = getNewStation(stationInfo)
         stationInteractor.updateCurrentStation(newStation)
                 .subscribeBy(
                         onComplete = { viewMode() },
@@ -120,14 +91,14 @@ class StationPresenter
         viewMode()
     }
 
-    fun create(station: Station) {
-        val newStation = station.copy(favorite = stationInteractor.currentStation.favorite)
+    fun create(stationInfo: StationInfo) {
+        val newStation = getNewStation(stationInfo)
         stationInteractor.addStation(newStation)
                 .ioToMain()
                 .subscribeBy(
                         onComplete = {
                             viewState.showToast(R.string.toast_add_success)
-                            controlsInteractor.enableNextPrevious(true)
+                            controlsInteractor.editMode(false)
                             createMode = false
                             router.newRootScreen(Router.MEDIA_LIST_SCREEN)
                         },
@@ -137,7 +108,7 @@ class StationPresenter
 
     fun cancelCreate() {
         stationInteractor.previousWhenCreate?.let { stationInteractor.currentStation = it }
-        controlsInteractor.enableNextPrevious(true)
+        controlsInteractor.editMode(false)
         createMode = false
         router.exit()
     }
@@ -147,8 +118,9 @@ class StationPresenter
         when {
             createMode -> viewState.openCancelCreateDialog()
             editMode -> {
+                val stationInfo = StationInfo.fromStation(stationInteractor.currentStation)
                 stationInteractor.iconChanged()
-                        .subscribeBy { viewState.openCancelEditDialog(stationInteractor.currentStation, it) }
+                        .subscribeBy { viewState.openCancelEditDialog(stationInfo, it) }
                         .addTo(compDisp)
             }
             else -> router.backTo(null)
@@ -160,13 +132,46 @@ class StationPresenter
         if (!editMode) viewState.openLinkDialog(url)
     }
 
-    fun changeIcon() {
-        router.navigateTo(Router.ICON_PICKER_SCREEN)
+    private fun viewMode() {
+        editMode = false
+        viewState.setEditMode(editMode)
+        val toolbar = toolbarBuilder.removeMenuItem(saveItem)
+                .addMenuItem(editItem)
+
+        viewState.buildToolbar(toolbar)
+        controlsInteractor.editMode(false)
+        viewState.setStationIcon(stationInteractor.currentIcon.bitmap)
+    }
+
+    private fun editMode() {
+        editMode = true
+        viewState.setEditMode(editMode)
+        val toolbar = toolbarBuilder.removeMenuItem(editItem)
+                .addMenuItem(saveItem)
+
+        viewState.buildToolbar(toolbar)
+        controlsInteractor.editMode(true)
+    }
+
+    private fun changeMode() {
+        when {
+            createMode -> viewState.createStation()
+            editMode -> viewState.editStation()
+            else -> editMode()
+        }
     }
 
     private fun addShortcut() {
         if (stationInteractor.addCurrentShortcut()) {
             viewState.showToast(R.string.toast_add_shortcut_success)
         }
+    }
+
+    private fun getNewStation(info: StationInfo): Station {
+        return stationInteractor.currentStation.copy(
+                name = info.name,
+                group = info.group,
+                genre = info.genre
+        )
     }
 }

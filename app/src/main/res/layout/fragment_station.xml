@@ -1,105 +1,14 @@
 <?xml version="1.0" encoding="utf-8"?>
-<android.support.constraint.ConstraintLayout
+<ScrollView
     xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:overScrollMode="ifContentScrolls"
     >
 
-    <View
-        android:id="@+id/view"
-        android:layout_width="0dp"
-        android:layout_height="104dp"
-        android:background="@color/primaryLightColor"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        />
-
-    <View
+    <include
+        layout="@layout/view_station_info"
         android:layout_width="match_parent"
-        android:layout_height="4dp"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/view"
-        android:background="@drawable/shadow"
-        />
-
-    <ImageView
-        android:id="@+id/iconIv"
-        android:layout_width="72dp"
-        android:layout_height="72dp"
-        android:layout_marginLeft="8dp"
-        android:layout_marginStart="8dp"
-        android:layout_marginTop="16dp"
-        android:contentDescription="@string/desc_station_icon"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        tools:src="@drawable/ic_station_1"
-        />
-
-    <Button
-        android:id="@+id/changeIconBt"
-        android:layout_width="72dp"
-        android:layout_height="72dp"
-        android:background="@drawable/ic_add_bg"
-        android:visibility="gone"
-        app:layout_constraintStart_toStartOf="@+id/iconIv"
-        app:layout_constraintTop_toTopOf="@+id/iconIv"
-        tools:visibility="visible"
-        />
-
-    <android.support.design.widget.TextInputLayout
-        android:id="@+id/titleTil"
-        android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:layout_marginEnd="8dp"
-        android:layout_marginStart="8dp"
-        android:hint="@string/station_hint_title"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toEndOf="@+id/iconIv"
-        app:layout_constraintTop_toTopOf="@+id/iconIv"
-        app:layout_constraintBottom_toBottomOf="@+id/iconIv"
-        >
-
-        <android.support.design.widget.TextInputEditText
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:inputType="textMultiLine|textNoSuggestions"
-            tools:text="Title - Sunt vitaes reperire emeritis, neuter fluctuies."
-            android:textAppearance="@style/TextAppearance.AppCompat.Title"
-            />
-
-    </android.support.design.widget.TextInputLayout>
-
-    <ScrollView
-        android:layout_width="0dp"
-        android:layout_height="0dp"
-        android:overScrollMode="ifContentScrolls"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/view"
-        >
-
-        <include
-            layout="@layout/view_station_info"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            />
-    </ScrollView>
-
-    <android.support.design.widget.FloatingActionButton
-        android:id="@+id/fab"
-        style="@style/Widget.Design.FloatingActionButton"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginEnd="24dp"
-        android:layout_marginRight="24dp"
-        app:layout_constraintBottom_toBottomOf="@+id/view"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/view"
         />
-
-</android.support.constraint.ConstraintLayout>
+</ScrollView>

@@ -29,8 +29,8 @@
         >
 
         <TextView
-            android:id="@+id/titleTv"
-            style="@style/TextAppearance.AppCompat.Notification.Title.Media"
+            android:id="@+id/titleEt"
+            style="@style/TextAppearance.Compat.Notification.Title.Media"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:ellipsize="end"
@@ -40,7 +40,7 @@
 
         <TextView
             android:id="@+id/artistTv"
-            style="@style/TextAppearance.AppCompat.Notification.Media"
+            style="@style/TextAppearance.Compat.Notification.Media"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:ellipsize="end"

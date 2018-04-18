@@ -68,6 +68,8 @@ class PlayerControlPresenter
         when (mode) {
             PlayerMode.NEXT_PREVIOUS_DISABLED -> viewState.enableNextPrevious(false)
             PlayerMode.NEXT_PREVIOUS_ENABLED -> viewState.enableNextPrevious(true)
+            PlayerMode.NORMAL_MODE -> viewState.enableEditMode(false)
+            PlayerMode.EDIT_MODE -> viewState.enableEditMode(true)
         }
     }
 
@@ -93,11 +95,15 @@ class PlayerControlPresenter
         router.showStationSlide(stationInteractor.currentStation)
     }
 
-    fun skipPrevious() {
+    fun skipToPrevious() {
         controlsInteractor.skipToPrevious()
     }
 
-    fun skipNext() {
+    fun skipToNext() {
         controlsInteractor.skipToNext()
+    }
+
+    fun changeIcon() {
+        router.navigateTo(Router.ICON_PICKER_SCREEN)
     }
 }

@@ -25,7 +25,7 @@ open class RemoveDialog : BaseDialogFragment() {
     }
 
     override fun onPositive() {
-        val station = arguments.getParcelable<Station>(KEY_STATION)
+        val station = arguments!!.getParcelable<Station>(KEY_STATION)
         (parentFragment as StationListFragment).presenter
                 .removeStation(station)
     }

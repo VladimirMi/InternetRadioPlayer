@@ -2,13 +2,12 @@ package io.github.vladimirmi.internetradioplayer.model.interactor
 
 import android.support.v4.media.MediaMetadataCompat
 import android.support.v4.media.session.PlaybackStateCompat
+import com.jakewharton.rxrelay2.BehaviorRelay
 import io.github.vladimirmi.internetradioplayer.model.entity.PlayerMode
 import io.github.vladimirmi.internetradioplayer.model.manager.NetworkChecker
 import io.github.vladimirmi.internetradioplayer.model.repository.MediaController
 import io.github.vladimirmi.internetradioplayer.model.repository.StationListRepository
 import io.reactivex.Observable
-import io.reactivex.disposables.Disposables
-import io.reactivex.functions.BiFunction
 import javax.inject.Inject
 
 /**
@@ -20,45 +19,38 @@ class PlayerControlsInteractor
                     private val controller: MediaController,
                     private val networkChecker: NetworkChecker) {
 
-    private var enableNextPreviousManualListener: ((Boolean) -> Unit)? = null
-
-    private val enableNextPreviousManualObs = Observable.create<PlayerMode> { e ->
-        enableNextPreviousManualListener = { enabled ->
-            if (!e.isDisposed) {
-                if (enabled) e.onNext(PlayerMode.NEXT_PREVIOUS_ENABLED)
-                else e.onNext(PlayerMode.NEXT_PREVIOUS_DISABLED)
-            }
-        }
-        e.setDisposable(Disposables.fromRunnable { enableNextPreviousManualListener = null })
-    }
-            .distinctUntilChanged()
-            .startWith(PlayerMode.NEXT_PREVIOUS_ENABLED)
-
-    private val enableNextPreviousAutoObs = repository.stationList.observe()
-            .map {
-                if (it.itemsSize > 1) PlayerMode.NEXT_PREVIOUS_ENABLED
-                else PlayerMode.NEXT_PREVIOUS_DISABLED
-            }.distinctUntilChanged()
-
-    val playerModeObs: Observable<PlayerMode> = Observable.combineLatest(
-            enableNextPreviousAutoObs,
-            enableNextPreviousManualObs,
-            BiFunction { manual: PlayerMode, auto: PlayerMode ->
-                if (manual == PlayerMode.NEXT_PREVIOUS_ENABLED && auto == PlayerMode.NEXT_PREVIOUS_ENABLED) {
-                    PlayerMode.NEXT_PREVIOUS_ENABLED
-                } else {
-                    PlayerMode.NEXT_PREVIOUS_DISABLED
-                }
-            }).replay(1).refCount()
-
+    //todo playerMode relay
+    private var oneStation = true
+    private val playerMode = BehaviorRelay.createDefault(PlayerMode.NEXT_PREVIOUS_ENABLED)
     val playbackStateObs: Observable<PlaybackStateCompat> get() = controller.playbackState
+    //todo to Metadata
     val playbackMetaData: Observable<MediaMetadataCompat> get() = controller.playbackMetaData
     val sessionEventObs: Observable<String> get() = controller.sessionEvent
+    val playerModeObs: Observable<PlayerMode> get() = playerMode
 
-    fun enableNextPrevious(enable: Boolean) {
-        enableNextPreviousManualListener?.invoke(enable)
+    init {
+        repository.stationList.observe()
+                .map {
+                    if (it.itemsSize > 1) {
+                        oneStation = false
+                        PlayerMode.NEXT_PREVIOUS_ENABLED
+                    } else {
+                        oneStation = true
+                        PlayerMode.NEXT_PREVIOUS_DISABLED
+                    }
+                }.distinctUntilChanged()
+                .subscribe(playerMode::accept)
     }
 
+    fun editMode(enable: Boolean) {
+        playerMode.accept((if (enable) PlayerMode.EDIT_MODE else PlayerMode.NORMAL_MODE))
+        if (!oneStation) {
+            playerMode.accept((if (enable) PlayerMode.NEXT_PREVIOUS_DISABLED else PlayerMode.NEXT_PREVIOUS_ENABLED))
+        }
+    }
+
+
+    //todo move to stations interactor
     fun nextStation(cycle: Boolean = true): Boolean {
         val next = repository.stationList.getNext(repository.currentStation.value, cycle)
         return if (next != null) {

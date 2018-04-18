@@ -5,12 +5,14 @@ package io.github.vladimirmi.internetradioplayer.model.entity
  */
 
 enum class ContentType(val types: Array<String>) {
+
     MPEG(arrayOf("audio/mpeg")),
     OGG(arrayOf("audio/ogg", "application/ogg", "audio/opus")),
     ACC(arrayOf("audio/aac", "audio/aacp")),
 
     PLS(arrayOf("audio/x-scpls")),
-    M3U(arrayOf("audio/mpegurl", "application/x-mpegurl", "application/x-mpegURL", "audio/x-mpegurl", "application/x-mpegurl")),
+    M3U(arrayOf("audio/mpegurl", "application/x-mpegurl", "application/x-mpegURL",
+            "audio/x-mpegurl", "application/x-mpegurl")),
     HLS(arrayOf("application/vnd.apple.mpegurl", "application/vnd.apple.mpegurl.audio")),
     RAM(arrayOf("audio/x-pn-realaudio"));
 

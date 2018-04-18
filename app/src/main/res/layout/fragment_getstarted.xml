@@ -9,7 +9,7 @@
 
     <TextView
         android:id="@+id/textView2"
-        style="@style/CustomText.Black"
+        style="@style/CustomText"
         android:layout_marginTop="32dp"
         android:textAppearance="@style/Base.TextAppearance.AppCompat.Title"
         android:text="@string/getstarted_title"
@@ -37,7 +37,7 @@
         android:layout_height="wrap_content"
         android:layout_marginBottom="32dp"
         android:text="@string/menu_add_station"
-        android:theme="@style/AccentButton"
+        android:theme="@style/CustomButton.Accent"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"

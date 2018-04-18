@@ -163,7 +163,7 @@ class RootActivity : MvpAppCompatActivity(), RootView, ToolbarView {
                     .forEachIndexed { index, item ->
                         menu.add(0, item.itemTitleResId, index, item.itemTitleResId).apply {
                             setIcon(item.iconResId)
-                            setShowAsActionFlags(MenuItem.SHOW_AS_ACTION_ALWAYS)
+                            setShowAsActionFlags(MenuItem.SHOW_AS_ACTION_IF_ROOM)
                             setOnMenuItemClickListener {
                                 holder.actions.invoke(it)
                                 true
@@ -181,7 +181,7 @@ class RootActivity : MvpAppCompatActivity(), RootView, ToolbarView {
         if (popupItems.isEmpty()) return
 
         val anchorItem = menu.add(R.string.menu_more).apply {
-            setShowAsAction(MenuItem.SHOW_AS_ACTION_ALWAYS)
+            setShowAsAction(MenuItem.SHOW_AS_ACTION_IF_ROOM)
         }
         val anchorView = LayoutInflater.from(this).inflate(R.layout.view_menu_item, toolbar, false)
         anchorView.icon.setImageResource(R.drawable.ic_more)

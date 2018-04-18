@@ -2,6 +2,7 @@ package io.github.vladimirmi.internetradioplayer.extensions
 
 import android.app.DownloadManager
 import android.net.Uri
+import io.github.vladimirmi.internetradioplayer.AppConfig
 import java.net.HttpURLConnection
 import java.net.URI
 import java.net.URL
@@ -19,8 +20,8 @@ fun String.toURI(): URI = URI(this.trim())
 
 fun String.toUri(): Uri = Uri.parse(this.toURI().toString())
 
-fun <T> URL.useConnection(connectTimeout: Int = 3000,
-                          readTimeout: Int = 3000,
+fun <T> URL.useConnection(connectTimeout: Int = AppConfig.CONNECT_TIMEOUT,
+                          readTimeout: Int = AppConfig.READ_TIMEOUT,
                           function: HttpURLConnection.() -> T): T {
 
     val connection = openConnection() as HttpURLConnection

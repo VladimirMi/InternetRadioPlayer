@@ -57,6 +57,7 @@ class IconRes(name: String,
     }
 }
 
+@Suppress("MagicNumber")
 fun randomColor(): Int {
     val random = Random()
     val r = random.nextInt(256)
@@ -67,7 +68,7 @@ fun randomColor(): Int {
 }
 
 fun createBitmap(res: IconResource, color: Int): Bitmap {
-    val drawable = DrawableCompat.wrap(ContextCompat.getDrawable(Scopes.context, res.resId)).mutate()
+    val drawable = DrawableCompat.wrap(ContextCompat.getDrawable(Scopes.context, res.resId)!!).mutate()
     DrawableCompat.setTint(drawable, color)
     return drawable.getBitmap()
 }

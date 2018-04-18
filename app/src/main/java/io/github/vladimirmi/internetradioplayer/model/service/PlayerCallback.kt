@@ -28,13 +28,23 @@ open class PlayerCallback : Player.EventListener {
         Timber.d("onPlayerStateChanged: $playWhenReady $playbackState")
     }
 
-    override fun onLoadingChanged(isLoading: Boolean) {}
+    override fun onLoadingChanged(isLoading: Boolean) {
+    }
 
-    override fun onPositionDiscontinuity() {}
+    override fun onRepeatModeChanged(repeatMode: Int) {
+    }
 
-    override fun onRepeatModeChanged(repeatMode: Int) {}
+    override fun onSeekProcessed() {
+    }
 
-    override fun onTimelineChanged(timeline: Timeline, manifest: Any?) {}
+    override fun onPositionDiscontinuity(reason: Int) {
+    }
+
+    override fun onShuffleModeEnabledChanged(shuffleModeEnabled: Boolean) {
+    }
+
+    override fun onTimelineChanged(timeline: Timeline?, manifest: Any?, reason: Int) {
+    }
 
     open fun onMetadata(metadata: Metadata) {
         Timber.d("onMetadata ${metadata.toLogString()}")

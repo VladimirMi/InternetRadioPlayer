@@ -31,8 +31,8 @@ class GroupingList : MutableGroupedList<Station> {
         }
     }
 
-    override fun get(index: Int): Station {
-        return if (index < 0 || index >= size) Station.nullObject()
+    override fun get(index: Int): Station? {
+        return if (index < 0 || index >= size) null
         else stationList[index]
     }
 

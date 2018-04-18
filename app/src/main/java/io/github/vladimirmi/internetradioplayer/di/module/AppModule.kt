@@ -38,6 +38,7 @@ class AppModule(context: Context) : Module() {
 
         bind(StationInteractor::class.java).singletonInScope()
 
+        //todo Why MediaController in RootActivity scope
         bind(PlayerControlsInteractor::class.java).singletonInScope()
     }
 }

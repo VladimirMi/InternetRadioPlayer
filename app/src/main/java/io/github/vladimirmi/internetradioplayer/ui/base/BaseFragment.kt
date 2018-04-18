@@ -13,7 +13,7 @@ import com.arellomobile.mvp.MvpAppCompatFragment
 
 abstract class BaseFragment : MvpAppCompatFragment() {
 
-    abstract protected val layoutRes: Int
+    protected abstract val layoutRes: Int
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -27,10 +27,9 @@ abstract class BaseFragment : MvpAppCompatFragment() {
 
     override fun onOptionsItemSelected(item: MenuItem?): Boolean {
         if (item?.itemId == android.R.id.home) {
-            activity.onBackPressed()
+            activity?.onBackPressed()
             return true
         }
         return super.onOptionsItemSelected(item)
     }
-
 }

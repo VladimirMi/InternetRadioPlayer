@@ -4,7 +4,6 @@ import android.graphics.Bitmap
 import android.graphics.BitmapFactory
 import android.graphics.Color
 import io.github.vladimirmi.internetradioplayer.model.entity.icon.Icon
-import io.github.vladimirmi.internetradioplayer.model.entity.icon.IconOption
 import io.github.vladimirmi.internetradioplayer.model.entity.icon.IconRes
 import io.github.vladimirmi.internetradioplayer.model.entity.icon.IconResource
 import java.io.ByteArrayOutputStream
@@ -24,6 +23,7 @@ private const val KEY_FG_COLOR = "Foreground color"
 private const val KEY_TEXT = "Text"
 private const val KEY_OPTION = "Option"
 private const val KEY_ICON_RES = "Icon resource"
+private const val AUX_BYTES = 4
 
 
 class PngTextChunk(val key: String, val value: String) {
@@ -33,9 +33,10 @@ class PngTextChunk(val key: String, val value: String) {
         private const val SEPARATOR = '\u0000'
 
         fun create(chunkType: ByteArray, data: ByteArray, crc: Int): PngTextChunk? {
-            if (chunkType.toString(Charset.defaultCharset()) != CHUNK_TYPE) return null
-            val calcCrc = CRC32().apply { update(data) }
-            if (calcCrc.value.toInt() != crc) return null
+            if (chunkType.toString(Charset.defaultCharset()) != CHUNK_TYPE
+                    || CRC32().apply { update(data) }.value.toInt() != crc) {
+                return null
+            }
             val (key, value) = data.toString(Charset.defaultCharset()).split(SEPARATOR)
             return PngTextChunk(key, value)
         }
@@ -43,10 +44,10 @@ class PngTextChunk(val key: String, val value: String) {
 
     fun getByteArray(): ByteArray {
         val dataBytes = "$key$SEPARATOR$value".toByteArray()
-        val lengthBytes = ByteBuffer.allocate(4).putInt(dataBytes.size).array()
+        val lengthBytes = ByteBuffer.allocate(AUX_BYTES).putInt(dataBytes.size).array()
         val chunkTypeBytes = CHUNK_TYPE.toByteArray()
         val crc = CRC32().apply { update(dataBytes) }
-        val crcBytes = ByteBuffer.allocate(4).putInt(crc.value.toInt()).array()
+        val crcBytes = ByteBuffer.allocate(AUX_BYTES).putInt(crc.value.toInt()).array()
 
         return ByteArrayOutputStream().apply {
             write(lengthBytes)
@@ -86,7 +87,7 @@ fun File.decode(): Icon {
     val wrapped = ByteBuffer.wrap(pngBytes)
             .position(SIGN_IHDR_LENGTH) as ByteBuffer
 
-    var option = IconOption.ICON
+//    var option = IconOption.ICON
     var iconRes = IconResource.ICON_1
 //    var backGroundColor = Color.LTGRAY
     var foregroundColor = Color.BLACK
@@ -111,7 +112,7 @@ fun File.decode(): Icon {
 
 private fun nextChunkFromBuffer(buffer: ByteBuffer): PngTextChunk? {
     val length = buffer.int
-    val chunkType = ByteArray(4).also { buffer.get(it) }
+    val chunkType = ByteArray(AUX_BYTES).also { buffer.get(it) }
     val body = ByteArray(length).also { buffer.get(it) }
     val crc = buffer.int
     return PngTextChunk.create(chunkType, body, crc)

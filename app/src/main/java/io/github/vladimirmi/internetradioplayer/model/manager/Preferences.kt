@@ -17,5 +17,4 @@ class Preferences
     var hidedGroups: Set<String> by Preference(context, "HIDED_GROUPS", emptySet())
 
     var filter: String by Preference(context, "CURRENT_FILTER", Filter.DEFAULT.name)
-
 }

@@ -25,11 +25,10 @@ class NewStationDialog : BaseDialogFragment() {
     }
 
     override fun onPositive() {
-        (parentFragment.activity as RootActivity)
-                .addStation(Uri.parse(dialogView!!.linkEt.text.toString()))
+        (parentFragment?.activity as? RootActivity)
+                ?.addStation(Uri.parse(dialogView!!.linkEt.text.toString()))
     }
 
     override fun onNegative() {
     }
 }
-

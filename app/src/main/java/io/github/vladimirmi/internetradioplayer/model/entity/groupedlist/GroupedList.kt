@@ -9,13 +9,13 @@ import io.reactivex.Observable
  */
 interface GroupedList<E> {
 
+    operator fun get(index: Int): E?
+
     fun isGroupTitle(position: Int): Boolean
 
     fun getGroupTitle(position: Int): String
 
     fun getGroupItem(position: Int): E
-
-    operator fun get(index: Int): E
 
     fun isGroupVisible(group: String): Boolean
 

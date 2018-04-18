@@ -12,6 +12,7 @@ import io.github.vladimirmi.internetradioplayer.di.Scopes
 import io.github.vladimirmi.internetradioplayer.extensions.color
 import io.github.vladimirmi.internetradioplayer.extensions.setTint
 import io.github.vladimirmi.internetradioplayer.extensions.setTintExt
+import io.github.vladimirmi.internetradioplayer.extensions.visible
 import io.github.vladimirmi.internetradioplayer.model.entity.Station
 import io.github.vladimirmi.internetradioplayer.ui.base.BaseFragment
 import kotlinx.android.synthetic.main.fragment_player_controls.*
@@ -32,16 +33,17 @@ class PlayerControlFragment : BaseFragment(), PlayerControlView {
     fun providePresenter(): PlayerControlPresenter {
         return Toothpick.openScopes(Scopes.ROOT_ACTIVITY, this)
                 .getInstance(PlayerControlPresenter::class.java).also {
-            Toothpick.closeScope(this)
-        }
+                    Toothpick.closeScope(this)
+                }
     }
 
-    override fun onViewCreated(view: View?, savedInstanceState: Bundle?) {
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         play_pause.setOnClickListener { presenter.playPause() }
         favorite.setOnClickListener { presenter.switchFavorite() }
         iconIv.setOnClickListener { presenter.showStation() }
-        previous.setOnClickListener { presenter.skipPrevious() }
-        next.setOnClickListener { presenter.skipNext() }
+        previous.setOnClickListener { presenter.skipToPrevious() }
+        next.setOnClickListener { presenter.skipToNext() }
+        changeIconBt.setOnClickListener { presenter.changeIcon() }
     }
 
     override fun showStopped() {
@@ -56,8 +58,8 @@ class PlayerControlFragment : BaseFragment(), PlayerControlView {
         if (station.favorite) {
             favorite.setBackgroundResource(R.drawable.ic_star)
         } else {
-            favorite.background = ContextCompat.getDrawable(context, R.drawable.ic_star_empty).apply {
-                mutate().setTintExt(ContextCompat.getColor(context, R.color.grey_600))
+            favorite.background = ContextCompat.getDrawable(context!!, R.drawable.ic_star_empty).apply {
+                this!!.mutate().setTintExt(ContextCompat.getColor(context!!, R.color.grey_600))
             }
         }
     }
@@ -67,11 +69,15 @@ class PlayerControlFragment : BaseFragment(), PlayerControlView {
     }
 
     override fun enableNextPrevious(enable: Boolean) {
-        val tint = context.color(if (enable) R.color.grey_600 else R.color.grey_400)
+        val tint = context!!.color(if (enable) R.color.grey_600 else R.color.grey_400)
         previous.setTint(tint)
         next.setTint(tint)
         previous.isEnabled = enable
         next.isEnabled = enable
+    }
+
+    override fun enableEditMode(enable: Boolean) {
+        changeIconBt.visible(enable)
     }
 
     override fun showToast(resId: Int) {

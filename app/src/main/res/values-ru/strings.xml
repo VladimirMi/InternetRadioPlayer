@@ -40,14 +40,14 @@
 
     <string name="station_list_details">Подробнее</string>
 
-    <string name="station_hint_uri">Адресс потока:</string>
-    <string name="station_hint_url">Адресс станции:</string>
-    <string name="station_hint_bitrate">Битрейт потока</string>
-    <string name="station_hint_rate">Частота дискретизации</string>
-    <string name="station_hint_title">Название</string>
-    <string name="station_hint_folder">Группа</string>
-    <string name="station_title_information">Информация</string>
-    <string name="station_title_genre">Жанры:</string>
+    <string name="station_uri">Адресс потока:</string>
+    <string name="station_url">Адресс станции:</string>
+    <string name="station_bitrate">Битрейт потока:</string>
+    <string name="station_sample_rate">Частота дискретизации:</string>
+    <string name="station_title">Название</string>
+    <string name="station_folder">Группа</string>
+    <string name="station_title_information">Информация:</string>
+    <string name="station_genre">Жанры:</string>
 
     <string name="icon_icon">Иконка</string>
     <string name="icon_favicon">Иконка сайта</string>

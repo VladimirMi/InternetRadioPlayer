@@ -12,8 +12,8 @@ import io.github.vladimirmi.internetradioplayer.extensions.FileLoggingTree
 import timber.log.Timber
 import toothpick.Toothpick
 import toothpick.configuration.Configuration
-import toothpick.registries.FactoryRegistryLocator
-import toothpick.registries.MemberInjectorRegistryLocator
+import toothpick.registries.FactoryRegistryLocator.setRootRegistry
+import toothpick.registries.MemberInjectorRegistryLocator.setRootRegistry
 
 
 /**
@@ -36,17 +36,16 @@ class App : Application() {
             Toothpick.setConfiguration(Configuration.forDevelopment().preventMultipleRootScopes())
         } else {
             Toothpick.setConfiguration(Configuration.forProduction().disableReflection())
-            FactoryRegistryLocator.setRootRegistry(io.github.vladimirmi.internetradioplayer.FactoryRegistry())
-            MemberInjectorRegistryLocator.setRootRegistry(io.github.vladimirmi.internetradioplayer.MemberInjectorRegistry())
+            setRootRegistry(FactoryRegistry())
+            setRootRegistry(MemberInjectorRegistry())
         }
 
         Scopes.app.installModules(AppModule(this))
 
         if (BuildConfig.DEBUG) {
-            Timber.plant(
-                    FileLoggingTree.Builder(Scopes.context)
-                            .log(FileLoggingTree.Logs.ERROR)
-                            .build()
+            Timber.plant(FileLoggingTree.Builder(Scopes.context)
+                    .log(FileLoggingTree.Logs.ERROR)
+                    .build()
             )
         } else {
             Timber.plant(CrashlyticsTree())

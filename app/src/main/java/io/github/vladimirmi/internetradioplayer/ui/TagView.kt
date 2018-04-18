@@ -14,6 +14,9 @@ import io.github.vladimirmi.internetradioplayer.extensions.dp
 class TagView(context: Context, tag: String, action: ((TagView) -> Unit)?)
     : AppCompatTextView(context) {
 
+    private val padding = 8 * context.dp
+    private val margin = 4 * context.dp
+
     var picked = false
         private set
 
@@ -24,7 +27,6 @@ class TagView(context: Context, tag: String, action: ((TagView) -> Unit)?)
                 run(action)
             })
         }
-        val padding = 8 * context.dp
         setPadding(padding, padding, padding, padding)
         setTextSize(TypedValue.COMPLEX_UNIT_SP, 14f)
         text = tag
@@ -32,9 +34,8 @@ class TagView(context: Context, tag: String, action: ((TagView) -> Unit)?)
         setupView()
     }
 
-    override fun setLayoutParams(params: ViewGroup.LayoutParams?) {
+    override fun setLayoutParams(params: ViewGroup.LayoutParams) {
         if (params is FlexboxLayout.LayoutParams) {
-            val margin = (4 * context.dp)
             params.setMargins(margin, margin, margin, margin)
         }
         super.setLayoutParams(params)

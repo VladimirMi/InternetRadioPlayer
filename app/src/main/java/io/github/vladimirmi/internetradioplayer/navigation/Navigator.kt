@@ -1,5 +1,6 @@
 package io.github.vladimirmi.internetradioplayer.navigation
 
+import android.content.Context
 import android.support.v4.app.Fragment
 import android.support.v4.app.FragmentTransaction
 import io.github.vladimirmi.internetradioplayer.R
@@ -34,7 +35,8 @@ class Navigator(activity: RootActivity, containerId: Int)
         }
     }
 
-    override fun createActivityIntent(screenKey: String, data: Any?) = null
+    override fun createActivityIntent(context: Context, screenKey: String, data: Any?) = null
+
 
     override fun createFragment(screenKey: String, data: Any?): Fragment? {
         if (currentKey == screenKey) return null

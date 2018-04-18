@@ -316,7 +316,7 @@ style:
     ignoreEnums: false
   MaxLineLength:
     active: true
-    maxLineLength: 120
+    maxLineLength: 125
     excludePackageStatements: false
     excludeImportStatements: false
   ModifierOrder:

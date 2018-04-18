@@ -18,11 +18,11 @@ class Router : ru.terrakok.cicerone.Router() {
     }
 
     fun skipToNext(station: Station) {
-        executeCommand(NextStation("$STATION_SCREEN$DELIMITER${station.id}"))
+        executeCommands(NextStation("$STATION_SCREEN$DELIMITER${station.id}"))
     }
 
     fun skipToPrevious(station: Station) {
-        executeCommand(PreviousStation("$STATION_SCREEN$DELIMITER${station.id}"))
+        executeCommands(PreviousStation("$STATION_SCREEN$DELIMITER${station.id}"))
     }
 
     fun showStationSlide(station: Station) {
@@ -30,7 +30,7 @@ class Router : ru.terrakok.cicerone.Router() {
     }
 
     fun showStationReplace(station: Station) {
-        executeCommand(ForwardReplace("$STATION_SCREEN$DELIMITER${station.id}"))
+        executeCommands(ForwardReplace("$STATION_SCREEN$DELIMITER${station.id}"))
     }
 }
 

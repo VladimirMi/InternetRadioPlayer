@@ -12,10 +12,8 @@ import java.net.HttpURLConnection
  * Created by Vladimir Mikhalev 21.10.2017.
  */
 
-class IcyDataSource(userAgent: String,
-                    contentTypePredicate: Predicate<String>?,
-                    private val playerCallback: PlayerCallback)
-    : DefaultHttpDataSource(userAgent, contentTypePredicate) {
+class IcyDataSource(userAgent: String, private val playerCallback: PlayerCallback)
+    : DefaultHttpDataSource(userAgent, null) {
 
     init {
         setRequestProperty("Icy-Metadata", "1")

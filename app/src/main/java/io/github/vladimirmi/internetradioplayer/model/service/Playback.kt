@@ -10,7 +10,6 @@ import android.media.AudioManager.*
 import android.net.Uri
 import android.net.wifi.WifiManager
 import com.google.android.exoplayer2.*
-import com.google.android.exoplayer2.extractor.DefaultExtractorsFactory
 import com.google.android.exoplayer2.source.ExtractorMediaSource
 import com.google.android.exoplayer2.trackselection.DefaultTrackSelector
 import com.google.android.exoplayer2.upstream.DefaultAllocator
@@ -18,7 +17,7 @@ import com.google.android.exoplayer2.util.Util
 import io.github.vladimirmi.internetradioplayer.BuildConfig
 import io.github.vladimirmi.internetradioplayer.R
 import io.github.vladimirmi.internetradioplayer.model.service.Playback.AudioFocus.*
-import io.github.vladimirmi.internetradioplayer.model.source.IcyDataSourceFactory
+import io.github.vladimirmi.internetradioplayer.model.source.IcyDataSource
 import timber.log.Timber
 
 
@@ -137,18 +136,9 @@ class Playback(private val service: PlayerService,
 
     private fun preparePlayer(uri: Uri) {
         val userAgent = Util.getUserAgent(service, service.getString(R.string.app_name))
-        val dataSourceFactory = IcyDataSourceFactory(playerCallback, userAgent)
-        //todo update exo player version
-        val mediaSource = ExtractorMediaSource(
-                uri,
-                dataSourceFactory,
-                DefaultExtractorsFactory(),
-                ExtractorMediaSource.DEFAULT_MIN_LOADABLE_RETRY_COUNT_LIVE,
-                null,
-                null,
-                null,
-                ExtractorMediaSource.DEFAULT_LOADING_CHECK_INTERVAL_BYTES
-        )
+
+        val mediaSource = ExtractorMediaSource.Factory { IcyDataSource(userAgent, playerCallback) }
+                .createMediaSource(uri)
 
         player?.prepare(mediaSource)
     }

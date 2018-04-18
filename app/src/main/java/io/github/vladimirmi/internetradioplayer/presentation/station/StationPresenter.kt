@@ -98,7 +98,7 @@ class StationPresenter
                 .subscribeBy(
                         onComplete = {
                             viewState.showToast(R.string.toast_add_success)
-                            controlsInteractor.enableNextPrevious(true)
+                            controlsInteractor.editMode(false)
                             createMode = false
                             router.newRootScreen(Router.MEDIA_LIST_SCREEN)
                         },
@@ -108,7 +108,7 @@ class StationPresenter
 
     fun cancelCreate() {
         stationInteractor.previousWhenCreate?.let { stationInteractor.currentStation = it }
-        controlsInteractor.enableNextPrevious(true)
+        controlsInteractor.editMode(false)
         createMode = false
         router.exit()
     }
@@ -132,10 +132,6 @@ class StationPresenter
         if (!editMode) viewState.openLinkDialog(url)
     }
 
-    fun changeIcon() {
-        router.navigateTo(Router.ICON_PICKER_SCREEN)
-    }
-
     private fun viewMode() {
         editMode = false
         viewState.setEditMode(editMode)
@@ -143,7 +139,7 @@ class StationPresenter
                 .addMenuItem(editItem)
 
         viewState.buildToolbar(toolbar)
-        controlsInteractor.enableNextPrevious(true)
+        controlsInteractor.editMode(false)
         viewState.setStationIcon(stationInteractor.currentIcon.bitmap)
     }
 
@@ -154,7 +150,7 @@ class StationPresenter
                 .addMenuItem(saveItem)
 
         viewState.buildToolbar(toolbar)
-        controlsInteractor.enableNextPrevious(false)
+        controlsInteractor.editMode(true)
     }
 
     private fun changeMode() {

@@ -26,6 +26,9 @@ interface PlayerControlView : MvpView {
     fun enableNextPrevious(enable: Boolean)
 
     @StateStrategyType(AddToEndSingleStrategy::class)
+    fun enableEditMode(enable: Boolean)
+
+    @StateStrategyType(AddToEndSingleStrategy::class)
     fun setStationIcon(stationIcon: Bitmap)
 
     @StateStrategyType(OneExecutionStateStrategy::class)

@@ -33,10 +33,10 @@ class MediaController
         override fun onConnected() {
             try {
                 controller = MediaControllerCompat(context, mediaBrowser.sessionToken)
+                controller?.registerCallback(controllerCallback)
             } catch (e: RemoteException) {
                 Timber.e(e, e.message)
             }
-            controller?.registerCallback(controllerCallback)
         }
 
         override fun onConnectionSuspended() {
@@ -77,8 +77,7 @@ class MediaController
     }
 
     fun connect() {
-        if (mediaBrowser.isConnected) return
-        mediaBrowser.connect()
+        if (!mediaBrowser.isConnected) mediaBrowser.connect()
     }
 
     fun disconnect() {

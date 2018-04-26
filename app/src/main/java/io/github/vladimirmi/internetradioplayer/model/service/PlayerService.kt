@@ -181,13 +181,13 @@ class PlayerService : MediaBrowserServiceCompat(), SessionCallback.Interface {
     }
 
     override fun onSkipToPreviousCommand() {
-        if (controlsInteractor.previousStation()) {
+        if (stationInteractor.previousStation()) {
             session.sendSessionEvent(EVENT_SESSION_PREVIOUS, null)
         }
     }
 
     override fun onSkipToNextCommand() {
-        if (controlsInteractor.nextStation()) {
+        if (stationInteractor.nextStation()) {
             session.sendSessionEvent(EVENT_SESSION_NEXT, null)
         }
     }

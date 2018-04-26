@@ -114,6 +114,22 @@ class StationInteractor
                 }
     }
 
+    fun nextStation(cycle: Boolean = true): Boolean {
+        val next = stationRepository.stationList.getNext(stationRepository.currentStation.value, cycle)
+        return if (next != null) {
+            stationRepository.setCurrentStation(next)
+            true
+        } else false
+    }
+
+    fun previousStation(cycle: Boolean = true): Boolean {
+        val previous = stationRepository.stationList.getPrevious(stationRepository.currentStation.value, cycle)
+        return if (previous != null) {
+            stationRepository.setCurrentStation(previous)
+            true
+        } else false
+    }
+
     fun removeStation(station: Station): Completable {
         return stationRepository.removeStation(station)
                 .mergeWith(removeIcon(station.name))

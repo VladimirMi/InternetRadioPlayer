@@ -49,24 +49,6 @@ class PlayerControlsInteractor
         }
     }
 
-
-    //todo move to stations interactor
-    fun nextStation(cycle: Boolean = true): Boolean {
-        val next = repository.stationList.getNext(repository.currentStation.value, cycle)
-        return if (next != null) {
-            repository.setCurrentStation(next)
-            true
-        } else false
-    }
-
-    fun previousStation(cycle: Boolean = true): Boolean {
-        val previous = repository.stationList.getPrevious(repository.currentStation.value, cycle)
-        return if (previous != null) {
-            repository.setCurrentStation(previous)
-            true
-        } else false
-    }
-
     val isPlaying: Boolean
         get() = with(controller.playbackState) {
             hasValue() && (value.state == PlaybackStateCompat.STATE_PLAYING ||

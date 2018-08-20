@@ -3,62 +3,49 @@ package io.github.vladimirmi.internetradioplayer.model.service
 import android.app.Notification
 import android.app.NotificationChannel
 import android.app.NotificationManager
+import android.app.PendingIntent
 import android.content.Context
 import android.os.Build
 import android.support.annotation.RequiresApi
 import android.support.v4.app.NotificationCompat
-import android.support.v4.app.NotificationManagerCompat
-import android.support.v4.media.session.MediaButtonReceiver
+import android.support.v4.media.MediaMetadataCompat
+import android.support.v4.media.app.NotificationCompat.MediaStyle
 import android.support.v4.media.session.MediaSessionCompat
 import android.support.v4.media.session.PlaybackStateCompat
-import android.view.View
-import android.widget.RemoteViews
 import io.github.vladimirmi.internetradioplayer.R
-import io.github.vladimirmi.internetradioplayer.model.interactor.StationInteractor
 
 /**
  * Created by Vladimir Mikhalev 20.10.2017.
  */
 
-// todo remake in MediaStyle
+private const val CHANNEL_ID = "internet_radio_player_channel"
+private const val PLAYER_NOTIFICATION_ID = 73
+
 class MediaNotification(private val service: PlayerService,
-                        private val mediaSession: MediaSessionCompat,
-                        private val stationInteractor: StationInteractor) {
+                        private val session: MediaSessionCompat) {
 
-    companion object {
-        const val CHANNEL_ID = "radius channel"
-        const val PLAYER_NOTIFICATION_ID = 50
-    }
+    private val notificationManager = service.getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
 
-    private val playPauseIntent = MediaButtonReceiver
-            .buildMediaButtonPendingIntent(service, PlaybackStateCompat.ACTION_PLAY_PAUSE)
-    private val stopIntent = MediaButtonReceiver
-            .buildMediaButtonPendingIntent(service, PlaybackStateCompat.ACTION_STOP)
-    private val nextIntent = MediaButtonReceiver
-            .buildMediaButtonPendingIntent(service, PlaybackStateCompat.ACTION_SKIP_TO_NEXT)
-    private val previousIntent = MediaButtonReceiver
-            .buildMediaButtonPendingIntent(service, PlaybackStateCompat.ACTION_SKIP_TO_PREVIOUS)
+    private val playPauseIntent = PlayerActions.playPauseIntent(service.applicationContext)
+    private val stopIntent = PlayerActions.stopIntent(service.applicationContext)
+    private val nextIntent = PlayerActions.nextIntent(service.applicationContext)
+    private val previousIntent = PlayerActions.previousIntent(service.applicationContext)
 
-    private val notificationView = RemoteViews(service.packageName, R.layout.view_notification)
-    private val notificationViewBig = RemoteViews(service.packageName, R.layout.view_notification_big)
+    private val mediaStyle = MediaStyle()
+            .setMediaSession(session.sessionToken)
+            .setShowCancelButton(true)
+            .setShowActionsInCompactView(0, 1, 2)
+            .setCancelButtonIntent(stopIntent)
+
 
     private val builder = NotificationCompat.Builder(service, CHANNEL_ID)
             .setShowWhen(false)
             .setVisibility(NotificationCompat.VISIBILITY_PUBLIC)
             .setSmallIcon(R.drawable.ic_station_1)
-            .setContentIntent(mediaSession.controller.sessionActivity)
+            .setContentIntent(session.controller.sessionActivity)
             .setDeleteIntent(stopIntent)
             .setPriority(NotificationCompat.PRIORITY_HIGH)
-            .apply {
-                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-                    val style = android.support.v4.media.app.NotificationCompat.MediaStyle()
-                            .setMediaSession(mediaSession.sessionToken)
-                            .setShowCancelButton(true)
-                            .setCancelButtonIntent(stopIntent)
-
-                    setStyle(style)
-                }
-            }
+            .setStyle(mediaStyle)
 
     init {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
@@ -67,74 +54,64 @@ class MediaNotification(private val service: PlayerService,
     }
 
     fun update() {
-        when (mediaSession.controller.playbackState.state) {
-            PlaybackStateCompat.STATE_PLAYING -> {
-                service.startForeground(PLAYER_NOTIFICATION_ID, getNotification())
-                return
-            }
-            PlaybackStateCompat.STATE_STOPPED -> {
-                service.stopForeground(true)
-                NotificationManagerCompat.from(service).cancelAll()
-                return
-            }
-            PlaybackStateCompat.STATE_PAUSED -> {
-                service.stopForeground(false)
+        val state = session.controller.playbackState.state
+        when (state) {
+            PlaybackStateCompat.STATE_PLAYING -> service.startForeground(PLAYER_NOTIFICATION_ID,
+                    createNotification())
+            PlaybackStateCompat.STATE_STOPPED -> service.stopForeground(true)
+            else -> {
+                if (state == PlaybackStateCompat.STATE_PAUSED) {
+                    service.stopForeground(false)
+                }
+                notificationManager.notify(PLAYER_NOTIFICATION_ID, createNotification())
             }
         }
-        NotificationManagerCompat.from(service).notify(PLAYER_NOTIFICATION_ID, getNotification())
     }
 
-    private fun getNotification(): Notification {
-        return builder.setCustomContentView(notificationView.setup())
-                .setCustomBigContentView(notificationViewBig.setup())
-                .build()
+    private fun createNotification(): Notification {
+        val mediaMetadata = session.controller.metadata
+        val playbackState = session.controller.playbackState.state
+        val metadata = Metadata.create(mediaMetadata)
+
+        val stationName = mediaMetadata.getString(MediaMetadataCompat.METADATA_KEY_ALBUM)
+        val stationIcon = mediaMetadata.getBitmap(MediaMetadataCompat.METADATA_KEY_ALBUM_ART)
+
+        builder.setSubText(stationName)
+                .setLargeIcon(stationIcon)
+
+        if (metadata.isSupported) {
+            builder.setContentTitle(metadata.title)
+                    .setContentText(metadata.artist)
+        } else {
+            builder.setContentTitle(service.getString(R.string.metadata_not_available))
+        }
+
+        if (playbackState == PlaybackStateCompat.STATE_BUFFERING) {
+            builder.setContentTitle(service.getString(R.string.metadata_buffering))
+        }
+
+        builder.addAction(generateAction(R.drawable.ic_skip_previous, "Previous", previousIntent))
+        if (playbackState == PlaybackStateCompat.STATE_STOPPED || playbackState == PlaybackStateCompat.STATE_PAUSED) {
+            builder.addAction(generateAction(R.drawable.ic_play, "Play", playPauseIntent))
+        } else {
+            //todo ic_pause
+            builder.addAction(generateAction(R.drawable.ic_stop, "Pause", playPauseIntent))
+        }
+        builder.addAction(generateAction(R.drawable.ic_skip_next, "Next", nextIntent))
+
+        return builder.build()
     }
 
     @RequiresApi(Build.VERSION_CODES.O)
     private fun createNotificationChannel() {
         val channelName = service.getString(R.string.notification_name)
-        val notificationChannel = NotificationChannel(CHANNEL_ID, channelName, NotificationManager.IMPORTANCE_LOW)
+        val channel = NotificationChannel(CHANNEL_ID, channelName, NotificationManager.IMPORTANCE_LOW)
 
-        notificationChannel.description = service.getString(R.string.notification_name)
-        (service.getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager)
-                .createNotificationChannel(notificationChannel)
+        channel.description = service.getString(R.string.notification_name)
+        notificationManager.createNotificationChannel(channel)
     }
 
-    private fun RemoteViews.setup(): RemoteViews {
-        val playbackState = mediaSession.controller.playbackState
-
-        mediaSession.controller.metadata?.let {
-            val metadata = Metadata.create(it)
-
-            if (metadata.isSupported) {
-                setTextViewText(R.id.titleEt, metadata.title)
-                setTextViewText(R.id.artistTv, metadata.artist)
-                setViewVisibility(R.id.artistTv, View.VISIBLE)
-            } else {
-                setTextViewText(R.id.titleEt, service.getString(R.string.metadata_not_available))
-                setViewVisibility(R.id.artistTv, View.GONE)
-            }
-        }
-
-        if (playbackState.state == PlaybackStateCompat.STATE_BUFFERING) {
-            setTextViewText(R.id.titleEt, service.getString(R.string.metadata_buffering))
-            setViewVisibility(R.id.artistTv, View.GONE)
-        }
-
-        setTextViewText(R.id.stationTv, stationInteractor.currentStation.name)
-        setImageViewBitmap(R.id.iconIv, stationInteractor.currentIcon.bitmap)
-
-        if (playbackState.state == PlaybackStateCompat.STATE_STOPPED
-                || playbackState.state == PlaybackStateCompat.STATE_PAUSED) {
-            setInt(R.id.playPauseBt, "setBackgroundResource", R.drawable.ic_play)
-        } else {
-            setInt(R.id.playPauseBt, "setBackgroundResource", R.drawable.ic_stop)
-        }
-
-        setOnClickPendingIntent(R.id.playPauseBt, playPauseIntent)
-        setOnClickPendingIntent(R.id.previousBt, previousIntent)
-        setOnClickPendingIntent(R.id.nextBt, nextIntent)
-
-        return this
+    private fun generateAction(icon: Int, title: String, action: PendingIntent): NotificationCompat.Action {
+        return NotificationCompat.Action.Builder(icon, title, action).build()
     }
 }

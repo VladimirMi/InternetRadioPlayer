@@ -1,6 +1,6 @@
 package io.github.vladimirmi.internetradioplayer.model.service
 
-import android.bluetooth.BluetoothDevice
+import android.bluetooth.BluetoothHeadset
 import android.content.BroadcastReceiver
 import android.content.Context
 import android.content.Intent
@@ -16,27 +16,18 @@ import com.google.android.exoplayer2.upstream.DefaultAllocator
 import com.google.android.exoplayer2.util.Util
 import io.github.vladimirmi.internetradioplayer.BuildConfig
 import io.github.vladimirmi.internetradioplayer.R
-import io.github.vladimirmi.internetradioplayer.model.service.Playback.AudioFocus.*
 import io.github.vladimirmi.internetradioplayer.model.source.IcyDataSource
 import timber.log.Timber
 
+private const val VOLUME_DUCK = 0.2f
+private const val VOLUME_NORMAL = 1.0f
+const val STOP_DELAY = 60000L // default stop delay 1 min
+private const val STOP_DELAY_HEADSET = 3 * 60000L // stop delay on headset unplug
 
 class Playback(private val service: PlayerService,
                private val playerCallback: PlayerCallback)
     : AudioManager.OnAudioFocusChangeListener {
 
-    companion object {
-        private const val VOLUME_DUCK = 0.2f
-        private const val VOLUME_NORMAL = 1.0f
-    }
-
-    enum class AudioFocus {
-        NO_FOCUSED_NO_DUCK,
-        NO_FOCUSED_CAN_DUCK,
-        FOCUSED
-    }
-
-    private var audioFocus = NO_FOCUSED_NO_DUCK
     private var playAgainOnFocus = false
     private var playAgainOnHeadset = false
     private var player: SimpleExoPlayer? = null
@@ -46,82 +37,44 @@ class Playback(private val service: PlayerService,
     private val audioManager = service.getSystemService(Context.AUDIO_SERVICE) as AudioManager
 
     fun play(uri: Uri) {
-        holdResources()
         if (player == null) createPlayer()
         preparePlayer(uri)
-        resume()
+        if (holdResources()) resume()
     }
 
     fun resume() {
-        Timber.d("resume")
-        playAgainOnFocus = true
         player?.playWhenReady = true
     }
 
     fun pause() {
-        Timber.d("pause")
-        playAgainOnFocus = false
-        playAgainOnHeadset = false
         player?.playWhenReady = false
     }
 
     fun stop() {
-        Timber.d("stop")
-        releaseResources()
         playAgainOnFocus = false
         playAgainOnHeadset = false
+        releaseResources()
         player?.stop()
     }
 
     fun releasePlayer() {
-        Timber.d("releasePlayer")
         player?.removeListener(playerCallback)
         player?.release()
         player = null
     }
 
     override fun onAudioFocusChange(focusChange: Int) {
-        audioFocus = when (focusChange) {
-            AUDIOFOCUS_GAIN -> FOCUSED
-            AUDIOFOCUS_LOSS_TRANSIENT_CAN_DUCK -> NO_FOCUSED_CAN_DUCK
-            AUDIOFOCUS_LOSS, AUDIOFOCUS_LOSS_TRANSIENT -> {
-                playAgainOnFocus = player?.playWhenReady ?: false
-                NO_FOCUSED_NO_DUCK
-            }
-            else -> NO_FOCUSED_NO_DUCK
-        }
-        configPlayerState()
-    }
-
-    private fun configPlayerState() {
-        Timber.d("configPlayerState. audioFocus=$audioFocus")
-        when (audioFocus) {
-            FOCUSED -> {
+        when (focusChange) {
+            AUDIOFOCUS_GAIN -> {
                 player?.volume = VOLUME_NORMAL
                 if (playAgainOnFocus) resume()
             }
-            NO_FOCUSED_CAN_DUCK -> player?.volume = VOLUME_DUCK
-            NO_FOCUSED_NO_DUCK -> pause()
-        }
-    }
-
-    @Suppress("DEPRECATION")
-    private fun tryToGetAudioFocus() {
-        if (audioFocus != FOCUSED) {
-            val result = audioManager.requestAudioFocus(this, AudioManager.STREAM_MUSIC,
-                    AUDIOFOCUS_GAIN)
-            if (result == AudioManager.AUDIOFOCUS_REQUEST_GRANTED) {
-                audioFocus = FOCUSED
+            AUDIOFOCUS_LOSS_TRANSIENT_CAN_DUCK -> player?.volume = VOLUME_DUCK
+            AUDIOFOCUS_LOSS, AUDIOFOCUS_LOSS_TRANSIENT -> {
+                playAgainOnFocus = player?.playWhenReady ?: false
+                pause()
             }
-        }
-    }
-
-    @Suppress("DEPRECATION")
-    private fun giveUpAudioFocus() {
-        if (audioFocus == FOCUSED) {
-            if (audioManager.abandonAudioFocus(this) == AudioManager.AUDIOFOCUS_REQUEST_GRANTED) {
-                audioFocus = NO_FOCUSED_NO_DUCK
-            }
+            else -> pause()
         }
     }
 
@@ -136,59 +89,53 @@ class Playback(private val service: PlayerService,
 
     private fun preparePlayer(uri: Uri) {
         val userAgent = Util.getUserAgent(service, service.getString(R.string.app_name))
-
         val mediaSource = ExtractorMediaSource.Factory { IcyDataSource(userAgent, playerCallback) }
                 .createMediaSource(uri)
 
         player?.prepare(mediaSource)
     }
 
-    private fun holdResources() {
-        tryToGetAudioFocus()
+    private fun holdResources(): Boolean {
         registerAudioNoisyReceiver()
         if (!wifiLock.isHeld) wifiLock.acquire()
+        @Suppress("DEPRECATION")
+        return audioManager.requestAudioFocus(this, AudioManager.STREAM_MUSIC,
+                AudioManager.AUDIOFOCUS_GAIN) == AudioManager.AUDIOFOCUS_REQUEST_GRANTED
     }
 
     private fun releaseResources() {
-        Timber.d("releaseResources")
-        giveUpAudioFocus()
         unregisterAudioNoisyReceiver()
         if (wifiLock.isHeld) wifiLock.release()
+        @Suppress("DEPRECATION")
+        audioManager.abandonAudioFocus(this)
     }
 
     private val audioNoisyReceiver = object : BroadcastReceiver() {
         val filter = IntentFilter(ACTION_AUDIO_BECOMING_NOISY).apply {
             addAction(Intent.ACTION_HEADSET_PLUG)
-            addAction(BluetoothDevice.ACTION_ACL_CONNECTED)
+            addAction(BluetoothHeadset.ACTION_CONNECTION_STATE_CHANGED)
         }
 
         @Suppress("DEPRECATION")
         override fun onReceive(context: Context, intent: Intent) {
             val action = intent.action
-            if (action == AudioManager.ACTION_AUDIO_BECOMING_NOISY) {
-                val playing = player?.playWhenReady ?: false
-                service.onPauseCommand(stopDelay = 180000) // 3 min
-                playAgainOnHeadset = playing
-                Timber.d("onReceive: $playAgainOnHeadset")
+            when {
+                action == AudioManager.ACTION_AUDIO_BECOMING_NOISY -> {
+                    playAgainOnHeadset = player?.playWhenReady ?: false
+                    service.onPauseCommand(stopDelay = STOP_DELAY_HEADSET)
 
-            } else if (playAgainOnHeadset && action == Intent.ACTION_HEADSET_PLUG
-                    && intent.getIntExtra("state", 0) == 1) {
-                service.onPlayCommand()
-
-            } else if (playAgainOnHeadset && BluetoothDevice.ACTION_ACL_CONNECTED == action) {
-                var count = 0
-                while (!audioManager.isBluetoothA2dpOn && count < 10) {
-                    Thread.sleep(1000)
-                    count++
                 }
-                if (audioManager.isBluetoothA2dpOn) {
-                    service.onPlayCommand()
-                }
+                playAgainOnHeadset && action == Intent.ACTION_HEADSET_PLUG
+                        && intent.getIntExtra("state", 0) == 1
+                        ||
+                        playAgainOnHeadset && action == BluetoothHeadset.ACTION_CONNECTION_STATE_CHANGED
+                        && intent.getIntExtra(BluetoothHeadset.EXTRA_STATE, 0) == BluetoothHeadset.STATE_CONNECTED
+                -> service.onPlayCommand()
             }
         }
     }
 
-    private var audioNoisyReceiverRegistered = false
+    @Volatile private var audioNoisyReceiverRegistered = false
 
     private fun registerAudioNoisyReceiver() {
         if (!audioNoisyReceiverRegistered) {

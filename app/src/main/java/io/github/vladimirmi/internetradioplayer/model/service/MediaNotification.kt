@@ -124,14 +124,6 @@ class MediaNotification(private val service: PlayerService,
         setTextViewText(R.id.stationTv, stationInteractor.currentStation.name)
         setImageViewBitmap(R.id.iconIv, stationInteractor.currentIcon.bitmap)
 
-        if (AvailableActions.isNextPreviousEnabled(playbackState.actions)) {
-            setViewVisibility(R.id.previousBt, View.VISIBLE)
-            setViewVisibility(R.id.nextBt, View.VISIBLE)
-        } else {
-            setViewVisibility(R.id.previousBt, View.GONE)
-            setViewVisibility(R.id.nextBt, View.GONE)
-        }
-
         if (playbackState.state == PlaybackStateCompat.STATE_STOPPED
                 || playbackState.state == PlaybackStateCompat.STATE_PAUSED) {
             setInt(R.id.playPauseBt, "setBackgroundResource", R.drawable.ic_play)

@@ -49,7 +49,7 @@ class PlayerService : MediaBrowserServiceCompat(), SessionCallback.Interface {
 
     private var playbackState = PlaybackStateCompat.Builder()
             .setState(PlaybackStateCompat.STATE_STOPPED, 0, 1F)
-            .setActions(AvailableActions.NEXT_PREVIOUS_ENABLED).build()
+            .setActions(PlayerActions.DEFAULT_ACTIONS).build()
 
     private var serviceStarted = false
     private var currentStationId: String? = null
@@ -126,12 +126,7 @@ class PlayerService : MediaBrowserServiceCompat(), SessionCallback.Interface {
     }
 
     private fun handlePlayerMode(playerMode: PlayerMode) {
-        val actions = when (playerMode) {
-            PlayerMode.NEXT_PREVIOUS_ENABLED -> AvailableActions.NEXT_PREVIOUS_ENABLED
-            PlayerMode.NEXT_PREVIOUS_DISABLED -> AvailableActions.NEXT_PREVIOUS_DISABLED
-            else -> return
-        }
-        val state = createPlaybackState(actions = actions)
+        val state = createPlaybackState()
         session.setPlaybackState(state)
         notification.update()
     }

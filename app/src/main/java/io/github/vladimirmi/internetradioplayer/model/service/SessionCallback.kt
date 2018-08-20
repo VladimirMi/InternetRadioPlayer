@@ -14,7 +14,7 @@ class SessionCallback(private val callback: Interface)
     }
 
     override fun onPause() {
-        callback.onPauseCommand(stopDelay = 60000) // 1 min
+        callback.onPauseCommand(stopDelay = STOP_DELAY) // 1 min
     }
 
     override fun onStop() {

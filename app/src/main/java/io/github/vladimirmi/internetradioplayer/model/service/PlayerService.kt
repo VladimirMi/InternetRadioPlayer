@@ -70,7 +70,7 @@ class PlayerService : MediaBrowserServiceCompat(), SessionCallback.Interface {
         sessionToken = session.sessionToken
 
         playback = Playback(this, playerCallback)
-        notification = MediaNotification(this, session, stationInteractor)
+        notification = MediaNotification(this, session)
 
         stationInteractor.currentStationObs
                 .subscribe { handleCurrentStation(it) }

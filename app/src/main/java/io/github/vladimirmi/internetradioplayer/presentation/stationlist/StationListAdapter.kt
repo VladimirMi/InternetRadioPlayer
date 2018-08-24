@@ -1,5 +1,6 @@
 package io.github.vladimirmi.internetradioplayer.presentation.stationlist
 
+import android.support.v4.content.ContextCompat
 import android.support.v7.widget.RecyclerView
 import android.view.LayoutInflater
 import android.view.View
@@ -106,7 +107,10 @@ class MediaGroupTitleVH(itemView: View) : RecyclerView.ViewHolder(itemView) {
     }
 
     fun expanded(expanded: Boolean) {
-        itemView.ic_expanded.setImageResource(if (expanded) R.drawable.ic_collapse else R.drawable.ic_expand)
+        val pointer = if (expanded) R.drawable.ic_collapse else R.drawable.ic_expand
+        itemView.ic_expanded.setImageResource(pointer)
+        val bg = if (expanded) R.drawable.shape_item_top else R.drawable.shape_item_single
+        itemView.background = ContextCompat.getDrawable(itemView.context, bg)
     }
 
     fun select(playing: Boolean) {

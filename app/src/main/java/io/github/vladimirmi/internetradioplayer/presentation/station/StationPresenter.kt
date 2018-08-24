@@ -63,9 +63,9 @@ class StationPresenter
     fun removeStation() {
         val station = stationInteractor.currentStation
         if (stationInteractor.stationList.positionOfFirst { it.id == station.id } == 0) {
-            controlsInteractor.nextStation()
+            stationInteractor.nextStation()
         } else {
-            controlsInteractor.previousStation()
+            stationInteractor.previousStation()
         }
         stationInteractor.removeStation(station)
                 .subscribe {

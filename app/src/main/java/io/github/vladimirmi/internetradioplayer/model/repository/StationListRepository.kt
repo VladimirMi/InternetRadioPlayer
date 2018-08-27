@@ -4,7 +4,7 @@ import android.net.Uri
 import com.jakewharton.rxrelay2.BehaviorRelay
 import io.github.vladimirmi.internetradioplayer.model.entity.Filter
 import io.github.vladimirmi.internetradioplayer.model.entity.Station
-import io.github.vladimirmi.internetradioplayer.model.entity.groupedlist.GroupingList
+import io.github.vladimirmi.internetradioplayer.model.entity.groupedlist.StationsGroupList
 import io.github.vladimirmi.internetradioplayer.model.manager.Preferences
 import io.github.vladimirmi.internetradioplayer.model.source.StationSource
 import io.reactivex.Completable
@@ -22,27 +22,32 @@ class StationListRepository
                     private val preferences: Preferences) {
 
     @Volatile var isInitialized = false
-    val stationList: GroupingList = GroupingList()
+    val stationList: StationsGroupList
     val currentStation: BehaviorRelay<Station> = BehaviorRelay.createDefault(Station.nullObject())
     private val lock = ReentrantLock()
+
+    init {
+        val stations = stationSource.getStationList()
+        stationList = StationsGroupList(stations)
+//        if (stations.isNotEmpty()) {
+//            stationList.addAll(stations)
+//            stationList.filter(Filter.valueOf(preferences.filter))
+//            preferences.hidedGroups.forEach { stationList.collapseGroup(it) }
+//            currentStation.accept(stationList[preferences.currentPos])
+//        }
+    }
 
     fun initStations() {
         lock.withLock {
             if (isInitialized) return
-            val stations = stationSource.getStationList()
-            if (stations.isNotEmpty()) {
-                stationList.addAll(stations)
-                stationList.filter(Filter.valueOf(preferences.filter))
-                preferences.hidedGroups.forEach { stationList.hideGroup(it) }
-                currentStation.accept(stationList[preferences.currentPos])
-            }
             isInitialized = true
         }
     }
 
     fun setCurrentStation(station: Station) {
-        val pos = stationList.indexOfFirst { it.id == station.id }
-        currentStation.accept(stationList[pos])
+        val pos = stationList.positionOfFirst(station.id)
+//        currentStation.accept(stationList[pos])
+        currentStation.accept(station)
         preferences.currentPos = pos
     }
 
@@ -51,7 +56,7 @@ class StationListRepository
 
     fun updateStation(newStation: Station): Completable {
         return Completable.fromCallable {
-            stationList[stationList.indexOfFirst { it.id == newStation.id }] = newStation
+            //            stationList[stationList.indexOfFirst { it.id == newStation.id }] = newStation
             saveStation(newStation)
         }
     }
@@ -71,12 +76,12 @@ class StationListRepository
     }
 
     fun showGroup(group: String) {
-        stationList.showGroup(group)
+        stationList.expandGroup(group)
         preferences.hidedGroups = preferences.hidedGroups.toMutableSet().apply { remove(group) }
     }
 
     fun hideGroup(group: String) {
-        stationList.hideGroup(group)
+        stationList.collapseGroup(group)
         preferences.hidedGroups = preferences.hidedGroups.toMutableSet().apply { add(group) }
     }
 
@@ -85,7 +90,7 @@ class StationListRepository
     }
 
     fun filterStations(filter: Filter) {
-        stationList.filter(filter)
+//        stationList.filter(filter)
         preferences.filter = filter.name
     }
 }

@@ -11,7 +11,6 @@ import io.github.vladimirmi.internetradioplayer.di.Scopes
 import io.github.vladimirmi.internetradioplayer.extensions.color
 import io.github.vladimirmi.internetradioplayer.model.entity.Station
 import io.github.vladimirmi.internetradioplayer.model.entity.groupedlist.GroupedList
-import io.github.vladimirmi.internetradioplayer.model.entity.groupedlist.GroupingList
 import io.github.vladimirmi.internetradioplayer.model.interactor.StationInteractor
 import kotlinx.android.synthetic.main.item_group_item.view.*
 import kotlinx.android.synthetic.main.item_group_title.view.*
@@ -29,22 +28,22 @@ class MediaListAdapter(private val callback: StationItemCallback)
     }
 
     private val stationInteractor = Scopes.app.getInstance(StationInteractor::class.java)
-    private var stationList: GroupedList<Station> = GroupingList()
+    private lateinit var stationsList: GroupedList<Station>
     private var selected: Station? = null
     private var playing = false
 
     fun setData(data: GroupedList<Station>) {
-        stationList = data
+        stationsList = data
         notifyDataSetChanged()
     }
 
     fun getStation(position: Int): Station? {
-        return if (stationList.isGroupTitle(position)) null
-        else stationList.getGroupItem(position)
+        return if (stationsList.isGroupTitle(position)) null
+        else stationsList.getGroupItem(position)
     }
 
     fun getPosition(station: Station): Int {
-        return stationList.indexOfFirst { it.id == station.id }
+        return stationsList.positionOfFirst(station.id)
     }
 
     fun selectItem(station: Station, playing: Boolean) {
@@ -54,7 +53,7 @@ class MediaListAdapter(private val callback: StationItemCallback)
     }
 
     override fun getItemViewType(position: Int): Int =
-            if (stationList.isGroupTitle(position)) GROUP_TITLE else GROUP_ITEM
+            if (stationsList.isGroupTitle(position)) GROUP_TITLE else GROUP_ITEM
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): RecyclerView.ViewHolder {
         val inflater = LayoutInflater.from(parent.context)
@@ -73,10 +72,10 @@ class MediaListAdapter(private val callback: StationItemCallback)
     }
 
     private fun setupGroupTitleVH(position: Int, holder: MediaGroupTitleVH) {
-        val title = stationList.getGroupTitle(position)
+        val title = stationsList.getGroupTitle(position)
         holder.bind(title, callback)
-        holder.expanded(stationList.isGroupVisible(title))
-        if (!stationList.isGroupVisible(title) && selected?.group == title) {
+        holder.expanded(stationsList.isGroupExpanded(title))
+        if (!stationsList.isGroupExpanded(title) && selected?.group == title) {
             holder.select(playing)
         } else {
             holder.unselect()
@@ -84,7 +83,7 @@ class MediaListAdapter(private val callback: StationItemCallback)
     }
 
     private fun setupGroupItemVH(position: Int, holder: MediaGroupItemVH) {
-        val station = stationList.getGroupItem(position)
+        val station = stationsList.getGroupItem(position)
         holder.bind(station)
         holder.setCallback(callback, station)
         if (station.uri == selected?.uri) {
@@ -97,7 +96,7 @@ class MediaListAdapter(private val callback: StationItemCallback)
     }
 
 
-    override fun getItemCount(): Int = stationList.overallSize
+    override fun getItemCount(): Int = stationsList.overallSize
 }
 
 class MediaGroupTitleVH(itemView: View) : RecyclerView.ViewHolder(itemView) {

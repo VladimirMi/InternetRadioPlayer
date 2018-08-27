@@ -52,7 +52,7 @@ class StationListPresenter
 
     override fun onFirstViewAttach() {
         rootPresenter.viewState.showControls(true)
-        interactor.stationListObs
+        interactor.stationsListObs
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribeBy { handleStationList(it) }
                 .addTo(compDisp)
@@ -70,26 +70,26 @@ class StationListPresenter
     }
 
     private fun handleStationList(it: GroupedList<Station>) {
-        val newBuilder = when (it.filter) {
-            Filter.DEFAULT -> {
-                if (it.size == 0) {
-                    router.newRootScreen(Router.GET_STARTED_SCREEN)
-                    return
-                }
-                if (it.canFilter(Filter.FAVORITE)) {
-                    builder.addMenuItem(favoriteOnItem)
-                }
-                builder.removeMenuItem(favoriteOffItem)
-            }
-            Filter.FAVORITE -> {
-                if (it.canFilter(Filter.DEFAULT)) {
-                    builder.addMenuItem(favoriteOffItem)
-                }
-                builder.removeMenuItem(favoriteOnItem)
-            }
-        }
-
-        viewState.buildToolbar(newBuilder)
+//        val newBuilder = when (it.filter) {
+//            Filter.DEFAULT -> {
+//                if (it.size == 0) {
+//                    router.newRootScreen(Router.GET_STARTED_SCREEN)
+//                    return
+//                }
+//                if (it.canFilter(Filter.FAVORITE)) {
+//                    builder.addMenuItem(favoriteOnItem)
+//                }
+//                builder.removeMenuItem(favoriteOffItem)
+//            }
+//            Filter.FAVORITE -> {
+//                if (it.canFilter(Filter.DEFAULT)) {
+//                    builder.addMenuItem(favoriteOffItem)
+//                }
+//                builder.removeMenuItem(favoriteOnItem)
+//            }
+//        }
+//
+//        viewState.buildToolbar(newBuilder)
         viewState.setMediaList(it)
     }
 

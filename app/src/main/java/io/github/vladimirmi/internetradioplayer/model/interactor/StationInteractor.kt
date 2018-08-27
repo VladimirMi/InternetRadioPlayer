@@ -1,11 +1,14 @@
 package io.github.vladimirmi.internetradioplayer.model.interactor
 
 import android.net.Uri
+import com.jakewharton.rxrelay2.BehaviorRelay
 import io.github.vladimirmi.internetradioplayer.R
 import io.github.vladimirmi.internetradioplayer.extensions.ValidationException
 import io.github.vladimirmi.internetradioplayer.model.entity.Filter
 import io.github.vladimirmi.internetradioplayer.model.entity.Station
+import io.github.vladimirmi.internetradioplayer.model.entity.groupedlist.Group
 import io.github.vladimirmi.internetradioplayer.model.entity.groupedlist.GroupedList
+import io.github.vladimirmi.internetradioplayer.model.entity.groupedlist.StationsGroupList
 import io.github.vladimirmi.internetradioplayer.model.entity.icon.Icon
 import io.github.vladimirmi.internetradioplayer.model.manager.ShortcutHelper
 import io.github.vladimirmi.internetradioplayer.model.repository.StationIconRepository
@@ -23,7 +26,7 @@ import javax.inject.Inject
 class StationInteractor
 @Inject constructor(private val stationRepository: StationListRepository,
                     private val iconRepository: StationIconRepository,
-                    private val shortcutHelper: ShortcutHelper) {
+                    private val shortcutHelper: ShortcutHelper) : StationsGroupList.OnChangeListener {
 
     var previousWhenCreate: Station? = null
         private set
@@ -34,9 +37,15 @@ class StationInteractor
             if (!value) previousWhenCreate = null
         }
 
-    val stationList: GroupedList<Station> get() = stationRepository.stationList
+    private val stationsList: StationsGroupList
+    private val _stationsListObs = BehaviorRelay.create<GroupedList<Station>>()
+    val stationsListObs: Observable<GroupedList<Station>> get() = _stationsListObs
 
-    val stationListObs: Observable<GroupedList<Station>> get() = stationList.observe()
+    init {
+        stationsList = stationRepository.stationList
+        stationsList.setOnChangeListener(this)
+        _stationsListObs.accept(stationsList)
+    }
 
     var currentStation: Station
         get() = stationRepository.currentStation.value
@@ -50,16 +59,24 @@ class StationInteractor
                             .map { station }
                 }
 
+    override fun onGroupsChange(groups: List<Group<Station>>) {
+        TODO("not implemented")
+    }
+
     fun initStations(): Completable {
         return Completable.fromCallable(stationRepository::initStations)
     }
 
+    override fun onItemsChange(items: List<Station>) {
+        TODO("not implemented")
+    }
+
     fun getStation(id: String): Station? {
-        return stationList.firstOrNull { it.id == id }
+        return stationsList.getGroupItem(id)
     }
 
     fun haveStations(): Boolean {
-        return stationRepository.isInitialized && stationList.haveItems()
+        return stationRepository.isInitialized && stationsList.size != 0
     }
 
     fun createStation(uri: Uri): Single<Station> {
@@ -79,7 +96,7 @@ class StationInteractor
 
     private fun validate(station: Station, adding: Boolean = false): Completable {
         return when {
-            stationList.haveItems { it.name == station.name } && adding -> {
+            stationsList.contains { it.name == station.name } && adding -> {
                 Completable.error(ValidationException(R.string.toast_name_exists_error))
             }
             station.name.isBlank() -> {
@@ -90,7 +107,7 @@ class StationInteractor
     }
 
     fun updateCurrentStation(newStation: Station): Completable {
-        val currentPosition = stationList.positionOfFirst { it.id == currentStation.id }
+        val currentPosition = stationsList.positionOfFirst(currentStation.id)
 
         val updateStation = if (newStation != currentStation) {
             stationRepository.updateStation(newStation)
@@ -105,11 +122,11 @@ class StationInteractor
                         .mergeWith(updateStation)
                         .concatWith(remove))
                 .doOnComplete {
-                    currentStation = if (stationList.contains(newStation)) {
+                    currentStation = if (stationsList.contains { it.id == newStation.id }) {
                         newStation
                     } else {
-                        val newPos = (stationList.itemsSize + currentPosition - 1) % stationList.itemsSize
-                        stationList.getGroupItem(newPos)
+                        val newPos = (stationsList.itemsSize + currentPosition - 1) % stationsList.itemsSize
+                        stationsList.getGroupItem(newPos)
                     }
                 }
     }
@@ -137,7 +154,7 @@ class StationInteractor
     }
 
     fun showOrHideGroup(group: String) {
-        if (stationList.isGroupVisible(group)) {
+        if (stationsList.isGroupExpanded(group)) {
             stationRepository.hideGroup(group)
         } else {
             stationRepository.showGroup(group)

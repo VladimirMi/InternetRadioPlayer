@@ -20,33 +20,16 @@ class PlayerControlsInteractor
                     private val networkChecker: NetworkChecker) {
 
     //todo playerMode relay
-    private var oneStation = true
-    private val playerMode = BehaviorRelay.createDefault(PlayerMode.NEXT_PREVIOUS_ENABLED)
+    private val playerMode = BehaviorRelay.createDefault(PlayerMode.NORMAL_MODE)
     val playbackStateObs: Observable<PlaybackStateCompat> get() = controller.playbackState
     //todo to Metadata
     val playbackMetaData: Observable<MediaMetadataCompat> get() = controller.playbackMetaData
     val sessionEventObs: Observable<String> get() = controller.sessionEvent
     val playerModeObs: Observable<PlayerMode> get() = playerMode
 
-    init {
-        repository.stationList.observe()
-                .map {
-                    if (it.itemsSize > 1) {
-                        oneStation = false
-                        PlayerMode.NEXT_PREVIOUS_ENABLED
-                    } else {
-                        oneStation = true
-                        PlayerMode.NEXT_PREVIOUS_DISABLED
-                    }
-                }.distinctUntilChanged()
-                .subscribe(playerMode::accept)
-    }
 
     fun editMode(enable: Boolean) {
         playerMode.accept((if (enable) PlayerMode.EDIT_MODE else PlayerMode.NORMAL_MODE))
-        if (!oneStation) {
-            playerMode.accept((if (enable) PlayerMode.NEXT_PREVIOUS_DISABLED else PlayerMode.NEXT_PREVIOUS_ENABLED))
-        }
     }
 
     val isPlaying: Boolean

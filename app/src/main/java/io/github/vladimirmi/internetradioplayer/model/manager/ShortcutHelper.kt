@@ -9,7 +9,7 @@ import android.support.v4.content.pm.ShortcutInfoCompat
 import android.support.v4.content.pm.ShortcutManagerCompat
 import android.support.v4.graphics.drawable.IconCompat
 import io.github.vladimirmi.internetradioplayer.R
-import io.github.vladimirmi.internetradioplayer.model.entity.Station
+import io.github.vladimirmi.internetradioplayer.model.db.entity.Station
 import io.github.vladimirmi.internetradioplayer.model.entity.icon.Icon
 import io.github.vladimirmi.internetradioplayer.model.service.PlayerService
 import io.github.vladimirmi.internetradioplayer.presentation.root.RootActivity
@@ -24,7 +24,7 @@ class ShortcutHelper
 
     fun pinShortcut(station: Station, icon: Icon): Boolean {
 
-        val info = ShortcutInfoCompat.Builder(context, station.id)
+        val info = ShortcutInfoCompat.Builder(context, station.id.toString())
                 .setShortLabel(station.name)
                 .setLongLabel(station.name)
                 .setIcon(IconCompat.createWithBitmap(icon.bitmap))
@@ -40,7 +40,8 @@ class ShortcutHelper
     fun removeShortcut(station: Station) {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
             val shortcutManager = context.getSystemService(ShortcutManager::class.java)
-            shortcutManager.disableShortcuts(listOf(station.id), context.getString(R.string.toast_shortcut_remove))
+            shortcutManager.disableShortcuts(listOf(station.id.toString()),
+                    context.getString(R.string.toast_shortcut_remove))
         } else {
             val removeIntent = Intent().apply {
                 putExtra(Intent.EXTRA_SHORTCUT_INTENT, createShortcutIntent(station))

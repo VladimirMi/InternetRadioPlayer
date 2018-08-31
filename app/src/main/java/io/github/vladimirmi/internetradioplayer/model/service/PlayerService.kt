@@ -12,10 +12,9 @@ import com.google.android.exoplayer2.ExoPlaybackException
 import com.google.android.exoplayer2.Player
 import io.github.vladimirmi.internetradioplayer.R
 import io.github.vladimirmi.internetradioplayer.di.Scopes
-import io.github.vladimirmi.internetradioplayer.extensions.ioToMain
 import io.github.vladimirmi.internetradioplayer.extensions.toUri
+import io.github.vladimirmi.internetradioplayer.model.db.entity.Station
 import io.github.vladimirmi.internetradioplayer.model.entity.PlayerMode
-import io.github.vladimirmi.internetradioplayer.model.entity.Station
 import io.github.vladimirmi.internetradioplayer.model.interactor.PlayerControlsInteractor
 import io.github.vladimirmi.internetradioplayer.model.interactor.StationInteractor
 import io.github.vladimirmi.internetradioplayer.presentation.root.RootActivity
@@ -52,8 +51,8 @@ class PlayerService : MediaBrowserServiceCompat(), SessionCallback.Interface {
             .setActions(PlayerActions.DEFAULT_ACTIONS).build()
 
     private var serviceStarted = false
-    private var currentStationId: String? = null
-    private var playingStationId: String? = null
+    private var currentStationId: Int? = null
+    private var playingStationId: Int? = null
     private var stopTask: TimerTask? = null
 
     override fun onCreate() {
@@ -78,11 +77,6 @@ class PlayerService : MediaBrowserServiceCompat(), SessionCallback.Interface {
 
         controlsInteractor.playerModeObs
                 .subscribe { handlePlayerMode(it) }
-                .addTo(compDisp)
-
-        stationInteractor.currentIconObs
-                .ioToMain()
-                .subscribe { notification.update() }
                 .addTo(compDisp)
     }
 
@@ -176,15 +170,11 @@ class PlayerService : MediaBrowserServiceCompat(), SessionCallback.Interface {
     }
 
     override fun onSkipToPreviousCommand() {
-        if (stationInteractor.previousStation()) {
-            session.sendSessionEvent(EVENT_SESSION_PREVIOUS, null)
-        }
+        session.sendSessionEvent(EVENT_SESSION_PREVIOUS, null)
     }
 
     override fun onSkipToNextCommand() {
-        if (stationInteractor.nextStation()) {
-            session.sendSessionEvent(EVENT_SESSION_NEXT, null)
-        }
+        session.sendSessionEvent(EVENT_SESSION_NEXT, null)
     }
 
     //endregion

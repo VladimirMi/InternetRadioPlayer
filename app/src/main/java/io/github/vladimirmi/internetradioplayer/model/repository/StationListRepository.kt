@@ -2,16 +2,17 @@ package io.github.vladimirmi.internetradioplayer.model.repository
 
 import android.net.Uri
 import com.jakewharton.rxrelay2.BehaviorRelay
-import io.github.vladimirmi.internetradioplayer.model.entity.Filter
-import io.github.vladimirmi.internetradioplayer.model.entity.Station
+import io.github.vladimirmi.internetradioplayer.model.db.dao.StationDao
+import io.github.vladimirmi.internetradioplayer.model.db.entity.Group
+import io.github.vladimirmi.internetradioplayer.model.db.entity.Station
 import io.github.vladimirmi.internetradioplayer.model.entity.groupedlist.StationsGroupList
 import io.github.vladimirmi.internetradioplayer.model.manager.Preferences
 import io.github.vladimirmi.internetradioplayer.model.source.StationSource
 import io.reactivex.Completable
 import io.reactivex.Single
-import java.util.concurrent.locks.ReentrantLock
+import io.reactivex.functions.BiFunction
+import io.reactivex.schedulers.Schedulers
 import javax.inject.Inject
-import kotlin.concurrent.withLock
 
 /**
  * Created by Vladimir Mikhalev 30.09.2017.
@@ -19,29 +20,20 @@ import kotlin.concurrent.withLock
 
 class StationListRepository
 @Inject constructor(private val stationSource: StationSource,
-                    private val preferences: Preferences) {
+                    private val preferences: Preferences,
+                    private val dao: StationDao) {
 
-    @Volatile var isInitialized = false
-    val stationList: StationsGroupList
-    val currentStation: BehaviorRelay<Station> = BehaviorRelay.createDefault(Station.nullObject())
-    private val lock = ReentrantLock()
+    val stationList = StationsGroupList()
+    val currentStation: BehaviorRelay<Station> = BehaviorRelay.create()
 
     init {
-        val stations = stationSource.getStationList()
-        stationList = StationsGroupList(stations)
-//        if (stations.isNotEmpty()) {
-//            stationList.addAll(stations)
-//            stationList.filter(Filter.valueOf(preferences.filter))
-//            preferences.hidedGroups.forEach { stationList.collapseGroup(it) }
-//            currentStation.accept(stationList[preferences.currentPos])
-//        }
-    }
-
-    fun initStations() {
-        lock.withLock {
-            if (isInitialized) return
-            isInitialized = true
-        }
+        Single.zip(dao.getAllGroups(), dao.getAllStations(),
+                BiFunction { groups: List<Group>, stations: List<Station> ->
+                    stationList.apply { init(groups, stations) }
+                })
+                .toCompletable()
+                .subscribeOn(Schedulers.io())
+                .subscribe()
     }
 
     fun setCurrentStation(station: Station) {
@@ -54,43 +46,26 @@ class StationListRepository
     fun createStation(uri: Uri): Single<Station> =
             Single.fromCallable { stationSource.parseStation(uri) }
 
-    fun updateStation(newStation: Station): Completable {
+    fun updateStation(station: Station): Completable {
         return Completable.fromCallable {
             //            stationList[stationList.indexOfFirst { it.id == newStation.id }] = newStation
-            saveStation(newStation)
+            dao.update(station)
         }
     }
 
     fun addStation(station: Station): Completable {
         return Completable.fromCallable {
-            stationList.add(station)
-            saveStation(station)
+            dao.insert(station)
         }
     }
 
     fun removeStation(station: Station): Completable {
         return Completable.fromCallable {
-            stationList.remove(station)
-            stationSource.removeStation(station)
+            dao.delete(station)
         }
     }
 
-    fun showGroup(group: String) {
-        stationList.expandGroup(group)
-        preferences.hidedGroups = preferences.hidedGroups.toMutableSet().apply { remove(group) }
-    }
-
-    fun hideGroup(group: String) {
-        stationList.collapseGroup(group)
-        preferences.hidedGroups = preferences.hidedGroups.toMutableSet().apply { add(group) }
-    }
-
-    private fun saveStation(station: Station) {
-        stationSource.saveStation(station)
-    }
-
-    fun filterStations(filter: Filter) {
-//        stationList.filter(filter)
-        preferences.filter = filter.name
+    fun updateGroup(group: Group): Completable {
+        TODO("not implemented")
     }
 }

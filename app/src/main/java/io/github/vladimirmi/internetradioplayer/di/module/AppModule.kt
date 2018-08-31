@@ -3,6 +3,8 @@ package io.github.vladimirmi.internetradioplayer.di.module
 import android.content.Context
 import com.google.gson.Gson
 import com.google.gson.GsonBuilder
+import io.github.vladimirmi.internetradioplayer.model.db.StationsDatabase
+import io.github.vladimirmi.internetradioplayer.model.db.dao.StationDao
 import io.github.vladimirmi.internetradioplayer.model.interactor.PlayerControlsInteractor
 import io.github.vladimirmi.internetradioplayer.model.interactor.StationInteractor
 import io.github.vladimirmi.internetradioplayer.model.manager.ShortcutHelper
@@ -23,6 +25,9 @@ class AppModule(context: Context) : Module() {
 
         val gson = GsonBuilder().setPrettyPrinting().create()
         bind(Gson::class.java).toInstance(gson)
+
+        val db = StationsDatabase.newInstance(context)
+        bind(StationDao::class.java).toInstance(db.stationDao())
 
         bind(StationParser::class.java).singletonInScope()
 

@@ -1,6 +1,5 @@
 package io.github.vladimirmi.internetradioplayer.navigation
 
-import io.github.vladimirmi.internetradioplayer.model.entity.Station
 import ru.terrakok.cicerone.commands.Forward
 
 /**
@@ -17,20 +16,20 @@ class Router : ru.terrakok.cicerone.Router() {
         const val DELIMITER = "$"
     }
 
-    fun skipToNext(station: Station) {
-        executeCommands(NextStation("$STATION_SCREEN$DELIMITER${station.id}"))
+    fun skipToNext(id: Int) {
+        executeCommands(NextStation("$STATION_SCREEN$DELIMITER$id"))
     }
 
-    fun skipToPrevious(station: Station) {
-        executeCommands(PreviousStation("$STATION_SCREEN$DELIMITER${station.id}"))
+    fun skipToPrevious(id: Int) {
+        executeCommands(PreviousStation("$STATION_SCREEN$DELIMITER$id"))
     }
 
-    fun showStationSlide(station: Station) {
-        navigateTo("$STATION_SCREEN$DELIMITER${station.id}")
+    fun showStationSlide(id: Int) {
+        navigateTo("$STATION_SCREEN$DELIMITER$id")
     }
 
-    fun showStationReplace(station: Station) {
-        executeCommands(ForwardReplace("$STATION_SCREEN$DELIMITER${station.id}"))
+    fun showStationReplace(id: Int) {
+        executeCommands(ForwardReplace("$STATION_SCREEN$DELIMITER$id"))
     }
 }
 

@@ -9,7 +9,8 @@ import android.widget.ImageView
 import io.github.vladimirmi.internetradioplayer.R
 import io.github.vladimirmi.internetradioplayer.di.Scopes
 import io.github.vladimirmi.internetradioplayer.extensions.color
-import io.github.vladimirmi.internetradioplayer.model.entity.Station
+import io.github.vladimirmi.internetradioplayer.model.db.entity.Group
+import io.github.vladimirmi.internetradioplayer.model.db.entity.Station
 import io.github.vladimirmi.internetradioplayer.model.entity.groupedlist.GroupedList
 import io.github.vladimirmi.internetradioplayer.model.interactor.StationInteractor
 import kotlinx.android.synthetic.main.item_group_item.view.*
@@ -28,17 +29,17 @@ class MediaListAdapter(private val callback: StationItemCallback)
     }
 
     private val stationInteractor = Scopes.app.getInstance(StationInteractor::class.java)
-    private lateinit var stationsList: GroupedList<Station>
+    private lateinit var stationsList: GroupedList
     private var selected: Station? = null
     private var playing = false
 
-    fun setData(data: GroupedList<Station>) {
+    fun setData(data: GroupedList) {
         stationsList = data
         notifyDataSetChanged()
     }
 
     fun getStation(position: Int): Station? {
-        return if (stationsList.isGroupTitle(position)) null
+        return if (stationsList.isGroup(position)) null
         else stationsList.getGroupItem(position)
     }
 
@@ -53,7 +54,7 @@ class MediaListAdapter(private val callback: StationItemCallback)
     }
 
     override fun getItemViewType(position: Int): Int =
-            if (stationsList.isGroupTitle(position)) GROUP_TITLE else GROUP_ITEM
+            if (stationsList.isGroup(position)) GROUP_TITLE else GROUP_ITEM
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): RecyclerView.ViewHolder {
         val inflater = LayoutInflater.from(parent.context)
@@ -72,10 +73,9 @@ class MediaListAdapter(private val callback: StationItemCallback)
     }
 
     private fun setupGroupTitleVH(position: Int, holder: MediaGroupTitleVH) {
-        val title = stationsList.getGroupTitle(position)
-        holder.bind(title, callback)
-        holder.expanded(stationsList.isGroupExpanded(title))
-        if (!stationsList.isGroupExpanded(title) && selected?.group == title) {
+        val group = stationsList.getGroup(position)
+        holder.bind(group, callback)
+        if (!group.expanded && selected?.groupId == group.id) {
             holder.select(playing)
         } else {
             holder.unselect()
@@ -91,8 +91,8 @@ class MediaListAdapter(private val callback: StationItemCallback)
         } else {
             holder.unselect()
         }
-        val icon = stationInteractor.getIcon(station.name).blockingGet()
-        holder.iconView.setImageBitmap(icon.bitmap)
+//        val icon = stationInteractor.getIcon(station.name).blockingGet()
+//        holder.iconView.setImageBitmap(icon.bitmap)
     }
 
 
@@ -100,16 +100,10 @@ class MediaListAdapter(private val callback: StationItemCallback)
 }
 
 class MediaGroupTitleVH(itemView: View) : RecyclerView.ViewHolder(itemView) {
-    fun bind(title: String, callback: StationItemCallback) {
-        itemView.title.text = title
-        itemView.setOnClickListener { callback.onGroupSelected(title) }
-    }
-
-    fun expanded(expanded: Boolean) {
-        val pointer = if (expanded) R.drawable.ic_collapse else R.drawable.ic_expand
-        itemView.ic_expanded.setImageResource(pointer)
-        val bg = if (expanded) R.drawable.shape_item_top else R.drawable.shape_item_single
-        itemView.background = ContextCompat.getDrawable(itemView.context, bg)
+    fun bind(group: Group, callback: StationItemCallback) {
+        itemView.title.text = group.name
+        itemView.setOnClickListener { callback.onGroupSelected(group.id) }
+        setExpanded(group.expanded)
     }
 
     fun select(playing: Boolean) {
@@ -120,6 +114,13 @@ class MediaGroupTitleVH(itemView: View) : RecyclerView.ViewHolder(itemView) {
     fun unselect() {
         itemView.setBackgroundColor(itemView.context.color(R.color.grey_50))
     }
+
+    private fun setExpanded(expanded: Boolean) {
+        val pointer = if (expanded) R.drawable.ic_collapse else R.drawable.ic_expand
+        itemView.ic_expanded.setImageResource(pointer)
+        val bg = if (expanded) R.drawable.shape_item_top else R.drawable.shape_item_single
+        itemView.background = ContextCompat.getDrawable(itemView.context, bg)
+    }
 }
 
 class MediaGroupItemVH(itemView: View) : RecyclerView.ViewHolder(itemView) {
@@ -129,7 +130,6 @@ class MediaGroupItemVH(itemView: View) : RecyclerView.ViewHolder(itemView) {
     fun bind(station: Station) {
         with(itemView) {
             name.text = station.name
-            favorite.visibility = if (station.favorite) View.VISIBLE else View.INVISIBLE
         }
     }
 
@@ -153,7 +153,7 @@ class MediaGroupItemVH(itemView: View) : RecyclerView.ViewHolder(itemView) {
 
 interface StationItemCallback {
     fun onItemSelected(station: Station)
-    fun onGroupSelected(group: String)
+    fun onGroupSelected(groupId: Int)
     fun onItemOpened(station: Station)
 }
 

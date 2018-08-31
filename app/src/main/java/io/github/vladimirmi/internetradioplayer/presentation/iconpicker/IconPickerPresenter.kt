@@ -10,7 +10,6 @@ import io.github.vladimirmi.internetradioplayer.model.interactor.StationInteract
 import io.github.vladimirmi.internetradioplayer.model.service.Metadata
 import io.github.vladimirmi.internetradioplayer.navigation.Router
 import io.github.vladimirmi.internetradioplayer.presentation.root.RootPresenter
-import io.github.vladimirmi.internetradioplayer.presentation.root.ToolbarBuilder
 import io.github.vladimirmi.internetradioplayer.ui.base.BasePresenter
 import javax.inject.Inject
 
@@ -60,16 +59,16 @@ class IconPickerPresenter
         }
 
     override fun onFirstViewAttach() {
-        stationInteractor.currentIcon.let {
-            viewState.buildToolbar(ToolbarBuilder().setToolbarTitle(it.name))
-            when (it) {
-                is IconRes -> {
-                    iconResource = it.res
-                    foregroundColor = it.foregroundColor
-                }
-            }
-            iconOption = it.option
-        }
+//        stationInteractor.currentIcon.let {
+//            viewState.buildToolbar(ToolbarBuilder().setToolbarTitle(it.name))
+//            when (it) {
+//                is IconRes -> {
+//                    iconResource = it.res
+//                    foregroundColor = it.foregroundColor
+//                }
+//            }
+//            iconOption = it.option
+//        }
     }
 
     override fun attachView(view: IconPickerView?) {
@@ -83,7 +82,7 @@ class IconPickerPresenter
         val icon = when (iconOption) {
             else -> IconRes(station.name, foregroundColor, iconResource, bitmap)
         }
-        stationInteractor.currentIcon = icon
+//        stationInteractor.currentIcon = icon
         exit()
     }
 

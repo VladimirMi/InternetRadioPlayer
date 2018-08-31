@@ -2,12 +2,15 @@ package io.github.vladimirmi.internetradioplayer.model.manager
 
 import android.net.Uri
 import com.google.gson.Gson
-import io.github.vladimirmi.internetradioplayer.extensions.getContentType
-import io.github.vladimirmi.internetradioplayer.extensions.getRedirected
 import io.github.vladimirmi.internetradioplayer.extensions.toURL
-import io.github.vladimirmi.internetradioplayer.extensions.useConnection
-import io.github.vladimirmi.internetradioplayer.model.entity.ContentType
-import io.github.vladimirmi.internetradioplayer.model.entity.Station
+import io.github.vladimirmi.internetradioplayer.extensions.toUri
+import io.github.vladimirmi.internetradioplayer.model.db.entity.Station
+import io.github.vladimirmi.internetradioplayer.model.entity.isAudioStream
+import io.github.vladimirmi.internetradioplayer.model.entity.isPlaylistFile
+import io.github.vladimirmi.internetradioplayer.model.entity.isPlsFile
+import okhttp3.Headers
+import okhttp3.OkHttpClient
+import okhttp3.Request
 import timber.log.Timber
 import java.io.File
 import java.io.InputStream
@@ -54,10 +57,6 @@ class StationParser
         }
     }
 
-    fun toJson(station: Station): String {
-        return gson.toJson(station)
-    }
-
     fun parseFromUri(uri: Uri): Station {
         return when {
             uri.scheme.startsWith(SCHEME_HTTP) -> parseFromNet(uri) // also https
@@ -79,42 +78,34 @@ class StationParser
         }
     }
 
-    private fun parseFromNet(uri: Uri): Station {
-        val url = uri.toURL()
+    private fun parseFromNet(uri: Uri, name: String = uri.host): Station {
+        val client = OkHttpClient()
+        val request = Request.Builder().url(uri.toURL()).build()
+        val response = client.newCall(request).execute()
+        val body = response.body() ?: throw IllegalStateException("Empty body")
+        val type = body.contentType() ?: throw IllegalStateException("Empty content type")
 
-        val newUrl = url.getRedirected()
-        val type = newUrl.getContentType()
-        val station: Station = when {
-            ContentType.isAudio(type) -> Station(name = url.host, uri = url.toString())
-            ContentType.isPlaylist(type) -> {
-                when (ContentType.fromString(type)) {
-                    ContentType.PLS -> newUrl.openStream().parsePls()
-                    else -> newUrl.openStream().parseM3u()
-                }
-            }
-            else -> throw IllegalStateException("Unsupported content type $type")
-        }
-        return parseHeaders(station)
+        return (if (type.isPlaylistFile()) {
+            if (type.isPlsFile()) body.byteStream().parsePls()
+            else body.byteStream().parseM3u()
+
+        } else if (type.isAudioStream()) {
+            createStation(response.headers(), name)
+
+        } else {
+            throw IllegalStateException("Unsupported content type $type")
+
+        }).also { body.close() }
     }
 
-    private fun parseHeaders(station: Station): Station {
+    private fun createStation(headers: Headers, name: String): Station {
+        Timber.d("createStation: $headers")
 
-
-        return station.uri.toURL().useConnection {
-            Timber.d("parseHeaders: $headerFields")
-            if (headerFields == null) return@useConnection station
-            val title = headerFields[HEADER_NAME]?.get(0)
-            val genres = parseGenres(headerFields[HEADER_GENRE]?.get(0))
-            val url = headerFields[HEADER_URL]?.get(0)
-            val bitrate = headerFields[HEADER_BITRATE]?.get(0)?.toInt()
-            val sample = headerFields[HEADER_SAMPLE]?.get(0)?.toInt()
-
-            station.copy(
-                    name = title ?: station.name,
-                    genre = genres ?: station.genre,
-                    url = url ?: station.url,
-                    bitrate = bitrate ?: station.bitrate,
-                    sample = sample ?: station.sample)
+        return Station().also {
+            it.name = headers[HEADER_NAME] ?: name
+            it.url = headers[HEADER_URL] ?: it.url
+            it.bitrate = headers[HEADER_BITRATE]?.toInt() ?: it.bitrate
+            it.sample = headers[HEADER_SAMPLE]?.toInt() ?: it.sample
         }
     }
 
@@ -130,18 +121,25 @@ class StationParser
     private fun File.parsePls() = inputStream().parsePls(name)
 
     private fun InputStream.parsePls(name: String = ""): Station {
-        var uri: String? = null
-        var title: String = name
         use {
-            this.bufferedReader().readLines().forEach {
+            var uri: String? = null
+            var title: String = name
+
+            bufferedReader().readLines().forEach {
                 val line = it.trim()
                 when {
                     line.startsWith(PLS_URI) -> uri = line.substring(PLS_URI.length).trim()
                     line.startsWith(PLS_TITLE) -> title = line.substring(PLS_TITLE.length).trim()
                 }
             }
-            return uri?.let { Station(it, title) }
-                    ?: throw IllegalStateException("Playlist file does not contain stream uri")
+            if (uri != null) {
+                return parseFromNet(
+                        uri = uri!!.toUri(),
+                        name = if (title.isBlank()) uri!!.toUri().host else title
+                )
+            } else {
+                throw IllegalStateException("Playlist file does not contain stream uri")
+            }
         }
     }
 
@@ -149,10 +147,11 @@ class StationParser
     private fun File.parseM3u() = inputStream().parseM3u(name)
 
     private fun InputStream.parseM3u(name: String = ""): Station {
-        var extended = false
-        var uri: URI? = null
-        var title: String = name
         use {
+            var extended = false
+            var uri: URI? = null
+            var title: String = name
+
             bufferedReader().readLines().forEach {
                 val line = it.trim()
                 when {
@@ -165,8 +164,14 @@ class StationParser
                     }
                 }
             }
-            return uri?.let { Station(it.toString(), title) }
-                    ?: throw IllegalStateException("Playlist file does not contain stream uri")
+            if (uri != null) {
+                return parseFromNet(
+                        uri = uri!!.toUri(),
+                        name = if (title.isBlank()) uri!!.toUri().host else title
+                )
+            } else {
+                throw IllegalStateException("Playlist file does not contain stream uri")
+            }
         }
     }
 }

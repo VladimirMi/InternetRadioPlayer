@@ -5,9 +5,6 @@ package io.github.vladimirmi.internetradioplayer.model.entity
  */
 
 enum class PlayerMode {
-
-    NEXT_PREVIOUS_ENABLED,
-    NEXT_PREVIOUS_DISABLED,
     NORMAL_MODE,
     EDIT_MODE
 }

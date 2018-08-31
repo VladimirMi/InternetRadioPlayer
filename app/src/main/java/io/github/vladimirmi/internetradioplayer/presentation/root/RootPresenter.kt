@@ -26,18 +26,6 @@ class RootPresenter
 
     override fun onFirstViewAttach() {
         controlsInteractor.connect()
-        stationInteractor.initStations()
-                .ioToMain()
-                .subscribe { setupRootScreen() }
-                .addTo(compDisp)
-    }
-
-    override fun attachView(view: RootView?) {
-        super.attachView(view)
-        stationInteractor.initStations()
-                .ioToMain()
-                .subscribe { viewState.checkIntent() }
-                .addTo(compDisp)
     }
 
     override fun onDestroy() {
@@ -52,7 +40,7 @@ class RootPresenter
                 .subscribeBy(
                         onSuccess = {
                             viewState.showControls(true)
-                            router.showStationSlide(stationInteractor.currentStation)
+                            router.showStationSlide(stationInteractor.currentStation.id)
                         },
                         onError = {
                             Timber.e(it)
@@ -61,11 +49,11 @@ class RootPresenter
                 ).addTo(compDisp)
     }
 
-    fun showStation(id: String) {
+    fun showStation(id: Int) {
         val station = stationInteractor.getStation(id)
         if (station != null) {
             stationInteractor.currentStation = station
-            router.showStationReplace(station)
+            router.showStationReplace(station.id)
         } else viewState.showToast(R.string.toast_shortcut_remove)
     }
 

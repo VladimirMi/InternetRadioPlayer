@@ -2,8 +2,7 @@ package io.github.vladimirmi.internetradioplayer.model.source
 
 import android.content.Context
 import android.net.Uri
-import io.github.vladimirmi.internetradioplayer.extensions.clear
-import io.github.vladimirmi.internetradioplayer.model.entity.Station
+import io.github.vladimirmi.internetradioplayer.model.db.entity.Station
 import io.github.vladimirmi.internetradioplayer.model.manager.StationParser
 import java.io.File
 import javax.inject.Inject
@@ -22,26 +21,6 @@ class StationSource
     }
 
     private val appDir = context.getExternalFilesDir(null)
-
-    fun getStationList(): ArrayList<Station> {
-        val stationList = ArrayList<Station>()
-        val treeWalk = appDir.walkTopDown()
-        treeWalk.forEach { file ->
-            if (!file.isDirectory && file.extension == extension) {
-                parser.parseFromJsonFile(file)?.let {
-                    stationList.add(it)
-                }
-            }
-        }
-        return stationList
-    }
-
-    fun saveStation(station: Station) {
-        val file = File(appDir, "${station.name}.$extension")
-        if (file.exists()) file.clear()
-
-        file.writeText(parser.toJson(station))
-    }
 
     fun removeStation(station: Station) {
         File(appDir, "${station.name}.$extension").delete()

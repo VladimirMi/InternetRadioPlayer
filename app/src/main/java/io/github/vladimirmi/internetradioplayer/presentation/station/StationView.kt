@@ -5,7 +5,8 @@ import com.arellomobile.mvp.MvpView
 import com.arellomobile.mvp.viewstate.strategy.AddToEndSingleStrategy
 import com.arellomobile.mvp.viewstate.strategy.OneExecutionStateStrategy
 import com.arellomobile.mvp.viewstate.strategy.StateStrategyType
-import io.github.vladimirmi.internetradioplayer.model.entity.Station
+import io.github.vladimirmi.internetradioplayer.model.db.entity.Genre
+import io.github.vladimirmi.internetradioplayer.model.db.entity.Station
 import io.github.vladimirmi.internetradioplayer.presentation.root.ToolbarBuilder
 
 /**
@@ -26,6 +27,12 @@ interface StationView : MvpView {
     @StateStrategyType(AddToEndSingleStrategy::class)
     fun setEditMode(editMode: Boolean)
 
+    @StateStrategyType(AddToEndSingleStrategy::class)
+    fun setGroupName(name: String)
+
+    @StateStrategyType(AddToEndSingleStrategy::class)
+    fun setGenres(genres: List<Genre>)
+
     @StateStrategyType(OneExecutionStateStrategy::class)
     fun editStation()
 
@@ -39,11 +46,14 @@ interface StationView : MvpView {
     fun openLinkDialog(url: String)
 
     @StateStrategyType(OneExecutionStateStrategy::class)
-    fun openCancelEditDialog(currentStation: StationInfo, iconChanged: Boolean)
+    fun openCancelEditDialog(station: Station, iconChanged: Boolean)
 
     @StateStrategyType(OneExecutionStateStrategy::class)
     fun openCancelCreateDialog()
 
     @StateStrategyType(OneExecutionStateStrategy::class)
     fun showToast(resId: Int)
+
+    @StateStrategyType(OneExecutionStateStrategy::class)
+    fun cancelEdit()
 }

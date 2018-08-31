@@ -44,10 +44,10 @@ class PlayerControlPresenter
                 .subscribe { viewState.setStation(it) }
                 .addTo(compDisp)
 
-        stationInteractor.currentIconObs
-                .observeOn(AndroidSchedulers.mainThread())
-                .subscribe { viewState.setStationIcon(it.bitmap) }
-                .addTo(compDisp)
+//        stationInteractor.currentIconObs
+//                .observeOn(AndroidSchedulers.mainThread())
+//                .subscribe { viewState.setStationIcon(it.bitmap) }
+//                .addTo(compDisp)
     }
 
     private fun handleState(state: PlaybackStateCompat) {
@@ -59,15 +59,13 @@ class PlayerControlPresenter
 
     private fun handleSessionEvent(event: String) {
         when (event) {
-            PlayerService.EVENT_SESSION_PREVIOUS -> router.skipToPrevious(stationInteractor.currentStation)
-            PlayerService.EVENT_SESSION_NEXT -> router.skipToNext(stationInteractor.currentStation)
+            PlayerService.EVENT_SESSION_PREVIOUS -> router.skipToPrevious(stationInteractor.currentStation.id)
+            PlayerService.EVENT_SESSION_NEXT -> router.skipToNext(stationInteractor.currentStation.id)
         }
     }
 
     private fun handlePlayerMode(mode: PlayerMode) {
         when (mode) {
-            PlayerMode.NEXT_PREVIOUS_DISABLED -> viewState.enableNextPrevious(false)
-            PlayerMode.NEXT_PREVIOUS_ENABLED -> viewState.enableNextPrevious(true)
             PlayerMode.NORMAL_MODE -> viewState.enableEditMode(false)
             PlayerMode.EDIT_MODE -> viewState.enableEditMode(true)
         }
@@ -85,14 +83,14 @@ class PlayerControlPresenter
 
     fun switchFavorite() {
         val current = stationInteractor.currentStation
-        val copy = current.copy(favorite = !current.favorite)
-        stationInteractor.updateCurrentStation(copy)
-                .subscribe()
-                .addTo(compDisp)
+//        val copy = current.copy(favorite = !current.favorite)
+//        stationInteractor.updateCurrentStation(copy)
+//                .subscribe()
+//                .addTo(compDisp)
     }
 
     fun showStation() {
-        router.showStationSlide(stationInteractor.currentStation)
+        router.showStationSlide(stationInteractor.currentStation.id)
     }
 
     fun skipToPrevious() {

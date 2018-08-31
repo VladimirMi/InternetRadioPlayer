@@ -1,9 +1,12 @@
 package io.github.vladimirmi.internetradioplayer.model.entity.groupedlist
 
+import io.github.vladimirmi.internetradioplayer.model.db.entity.Group
+import io.github.vladimirmi.internetradioplayer.model.db.entity.Station
+
 /**
  * Created by Vladimir Mikhalev 02.11.2017.
  */
-interface GroupedList<E> {
+interface GroupedList {
 
     val size: Int
 
@@ -11,23 +14,23 @@ interface GroupedList<E> {
 
     val overallSize: Int
 
-    fun isGroupTitle(position: Int): Boolean
+    fun isGroup(position: Int): Boolean
 
-    fun getGroupTitle(position: Int): String
+    fun getGroup(position: Int): Group
 
-    fun getGroupItem(position: Int): E
+    fun getGroupItem(position: Int): Station
 
-    fun getGroupItem(id: String): E?
+    fun getGroupItemById(id: Int): Station?
 
-    fun isGroupExpanded(group: String): Boolean
+    fun isGroupExpanded(id: Int): Boolean
 
-    fun getPrevious(element: E): E?
+    fun getPreviousFrom(id: Int): Station?
 
-    fun getNext(element: E): E?
+    fun getNextFrom(id: Int): Station?
 
-    fun positionOfFirst(id: String): Int
+    fun positionOfFirst(id: Int): Int
 
-    fun contains(predicate: (E) -> Boolean): Boolean
+    fun contains(predicate: (Station) -> Boolean): Boolean
 }
 
 

@@ -22,8 +22,8 @@ abstract class BaseDialogFragment : DialogFragment() {
         return AlertDialog.Builder(context)
                 .setView(dialogView)
                 .setTitle(getTitle())
-                .setPositiveButton(R.string.dialog_ok, { _, _ -> onPositive() })
-                .setNegativeButton(R.string.dialog_cancel, { _, _ -> onNegative() })
+                .setPositiveButton(R.string.dialog_ok) { _, _ -> onPositive() }
+                .setNegativeButton(R.string.dialog_cancel) { _, _ -> onNegative() }
                 .create()
     }
 

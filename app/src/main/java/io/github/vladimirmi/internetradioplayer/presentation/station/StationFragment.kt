@@ -21,7 +21,8 @@ import io.github.vladimirmi.internetradioplayer.R
 import io.github.vladimirmi.internetradioplayer.di.Scopes
 import io.github.vladimirmi.internetradioplayer.extensions.inputMethodManager
 import io.github.vladimirmi.internetradioplayer.extensions.visible
-import io.github.vladimirmi.internetradioplayer.model.entity.Station
+import io.github.vladimirmi.internetradioplayer.model.db.entity.Genre
+import io.github.vladimirmi.internetradioplayer.model.db.entity.Station
 import io.github.vladimirmi.internetradioplayer.presentation.root.ToolbarBuilder
 import io.github.vladimirmi.internetradioplayer.presentation.root.ToolbarView
 import io.github.vladimirmi.internetradioplayer.ui.TagView
@@ -79,7 +80,6 @@ class StationFragment : BaseFragment(), StationView, BackPressListener {
 
     override fun setStation(station: Station) {
         titleEt.setText(station.name)
-        groupEt.setText(station.group)
 
         uriTv.text = station.uri
         uriTv.linkStyle(true)
@@ -102,14 +102,24 @@ class StationFragment : BaseFragment(), StationView, BackPressListener {
             sampleLabelTv.visible(it)
             sampleTv.visible(it)
         }
+    }
 
-        genresLabelTv.visible(station.genre.isNotEmpty())
+    override fun setGroupName(name: String) {
+        groupEt.setText(name)
+    }
+
+    override fun setGenres(genres: List<Genre>) {
+        genresLabelTv.visible(genres.isNotEmpty())
         genresFl.removeAllViews()
-        station.genre.forEach { genresFl.addView(TagView(context!!, it, null)) }
+        genres.forEach { genresFl.addView(TagView(context!!, it.name, null)) }
     }
 
     override fun setStationIcon(icon: Bitmap) {
 //        iconIv.setImageBitmap(icon)
+    }
+
+    override fun cancelEdit() {
+        TODO("not implemented")
     }
 
     override fun setEditMode(editMode: Boolean) {
@@ -144,7 +154,7 @@ class StationFragment : BaseFragment(), StationView, BackPressListener {
         LinkDialog.newInstance(url).show(childFragmentManager, "link_dialog")
     }
 
-    override fun openCancelEditDialog(currentStation: StationInfo, iconChanged: Boolean) {
+    override fun openCancelEditDialog(currentStation: Station, iconChanged: Boolean) {
         if (currentStation != constructStation() || iconChanged) {
             CancelEditDialog().show(childFragmentManager, "cancel_edit_dialog")
         } else {
@@ -162,18 +172,19 @@ class StationFragment : BaseFragment(), StationView, BackPressListener {
 
     //endregion
 
-    private fun constructStation(): StationInfo {
+    private fun constructStation(): Station {
         val genres = ArrayList<String>()
         (0 until genresFl.childCount)
                 .forEach {
                     val tagView = genresFl.getChildAt(it) as TagView
                     genres.add(tagView.text.toString())
                 }
-        return StationInfo(
-                name = titleEt.text.toString(),
-                group = groupEt.text.toString(),
-                genre = genres
-        )
+//        return StationInfo(
+////                name = titleEt.text.toString(),
+////                group = groupEt.text.toString(),
+////                genre = genres
+////        )
+        return Station()
     }
 
     private fun TextView.linkStyle(enable: Boolean) {

@@ -3,8 +3,7 @@ package io.github.vladimirmi.internetradioplayer.presentation.stationlist
 import android.view.MenuItem
 import com.arellomobile.mvp.InjectViewState
 import io.github.vladimirmi.internetradioplayer.R
-import io.github.vladimirmi.internetradioplayer.model.entity.Filter
-import io.github.vladimirmi.internetradioplayer.model.entity.Station
+import io.github.vladimirmi.internetradioplayer.model.db.entity.Station
 import io.github.vladimirmi.internetradioplayer.model.entity.groupedlist.GroupedList
 import io.github.vladimirmi.internetradioplayer.model.interactor.PlayerControlsInteractor
 import io.github.vladimirmi.internetradioplayer.model.interactor.StationInteractor
@@ -31,14 +30,10 @@ class StationListPresenter
     : BasePresenter<StationListView>() {
 
     private val addStationItem = MenuItemHolder(R.string.menu_add_station, R.drawable.ic_add, order = 0)
-    private val favoriteOnItem = MenuItemHolder(R.string.menu_favorite_on, R.drawable.ic_star_empty, order = 1)
-    private val favoriteOffItem = MenuItemHolder(R.string.menu_favorite_off, R.drawable.ic_star, true, order = 1)
-    private val exitItem = MenuItemHolder(R.string.menu_exit, R.drawable.ic_exit, order = 2)
+    private val exitItem = MenuItemHolder(R.string.menu_exit, R.drawable.ic_exit, order = 1)
 
     private val actions: (MenuItem) -> Unit = {
         when (it.itemId) {
-            R.string.menu_favorite_on -> interactor.filterStations(Filter.FAVORITE)
-            R.string.menu_favorite_off -> interactor.filterStations(Filter.DEFAULT)
             R.string.menu_add_station -> viewState.openAddStationDialog()
             R.string.menu_exit -> exit()
         }
@@ -69,7 +64,7 @@ class StationListPresenter
                 .addTo(compDisp)
     }
 
-    private fun handleStationList(it: GroupedList<Station>) {
+    private fun handleStationList(it: GroupedList) {
 //        val newBuilder = when (it.filter) {
 //            Filter.DEFAULT -> {
 //                if (it.size == 0) {
@@ -97,19 +92,19 @@ class StationListPresenter
         interactor.currentStation = station
     }
 
-    fun selectGroup(group: String) {
-        interactor.showOrHideGroup(group)
+    fun selectGroup(id: Int) {
+        interactor.showOrHideGroup(id)
     }
 
-    fun removeStation(station: Station) {
-        interactor.removeStation(station)
+    fun removeStation() {
+        interactor.removeCurrentStation()
                 .subscribe()
                 .addTo(compDisp)
     }
 
     fun showStation(station: Station) {
         select(station)
-        router.showStationSlide(station)
+        router.showStationSlide(station.id)
     }
 
     private fun exit() {

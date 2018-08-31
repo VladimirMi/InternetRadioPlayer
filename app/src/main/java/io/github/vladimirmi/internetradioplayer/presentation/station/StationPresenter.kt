@@ -5,7 +5,7 @@ import com.arellomobile.mvp.InjectViewState
 import io.github.vladimirmi.internetradioplayer.R
 import io.github.vladimirmi.internetradioplayer.extensions.ValidationException
 import io.github.vladimirmi.internetradioplayer.extensions.ioToMain
-import io.github.vladimirmi.internetradioplayer.model.entity.Station
+import io.github.vladimirmi.internetradioplayer.model.db.entity.Station
 import io.github.vladimirmi.internetradioplayer.model.interactor.PlayerControlsInteractor
 import io.github.vladimirmi.internetradioplayer.model.interactor.StationInteractor
 import io.github.vladimirmi.internetradioplayer.navigation.Router
@@ -57,17 +57,11 @@ class StationPresenter
 
     override fun attachView(view: StationView?) {
         super.attachView(view)
-        viewState.setStationIcon(stationInteractor.currentIcon.bitmap)
+//        viewState.setStationIcon(stationInteractor.currentIcon.bitmap)
     }
 
     fun removeStation() {
-        val station = stationInteractor.currentStation
-        if (stationInteractor.stationList.positionOfFirst { it.id == station.id } == 0) {
-            stationInteractor.nextStation()
-        } else {
-            stationInteractor.previousStation()
-        }
-        stationInteractor.removeStation(station)
+        stationInteractor.removeCurrentStation()
                 .subscribe {
                     controlsInteractor.stop()
                     router.exit()
@@ -76,7 +70,7 @@ class StationPresenter
     }
 
 
-    fun edit(stationInfo: StationInfo) {
+    fun edit(stationInfo: Station) {
         val newStation = getNewStation(stationInfo)
         stationInteractor.updateCurrentStation(newStation)
                 .subscribeBy(
@@ -91,7 +85,7 @@ class StationPresenter
         viewMode()
     }
 
-    fun create(stationInfo: StationInfo) {
+    fun create(stationInfo: Station) {
         val newStation = getNewStation(stationInfo)
         stationInteractor.addStation(newStation)
                 .ioToMain()
@@ -118,10 +112,11 @@ class StationPresenter
         when {
             createMode -> viewState.openCancelCreateDialog()
             editMode -> {
-                val stationInfo = StationInfo.fromStation(stationInteractor.currentStation)
-                stationInteractor.iconChanged()
-                        .subscribeBy { viewState.openCancelEditDialog(stationInfo, it) }
-                        .addTo(compDisp)
+                viewState.cancelEdit()
+//                val stationInfo = StationInfo.fromStation(stationInteractor.currentStation)
+//                stationInteractor.iconChanged()
+//                        .subscribeBy { viewState.openCancelEditDialog(stationInfo, it) }
+//                        .addTo(compDisp)
             }
             else -> router.backTo(null)
         }
@@ -140,7 +135,7 @@ class StationPresenter
 
         viewState.buildToolbar(toolbar)
         controlsInteractor.editMode(false)
-        viewState.setStationIcon(stationInteractor.currentIcon.bitmap)
+//        viewState.setStationIcon(stationInteractor.currentIcon.bitmap)
     }
 
     private fun editMode() {
@@ -167,11 +162,13 @@ class StationPresenter
         }
     }
 
-    private fun getNewStation(info: StationInfo): Station {
-        return stationInteractor.currentStation.copy(
-                name = info.name,
-                group = info.group,
-                genre = info.genre
-        )
+    private fun getNewStation(info: Station): Station {
+//        return stationInteractor.currentStation.copy(
+//                name = info.name,
+//                group = info.group,
+//                genre = info.genre
+//        )
+
+        return Station()
     }
 }

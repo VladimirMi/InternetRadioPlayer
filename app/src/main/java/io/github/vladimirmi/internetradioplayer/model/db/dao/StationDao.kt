@@ -20,6 +20,12 @@ interface StationDao {
     @Query("SELECT * FROM `group`")
     fun getAllGroups(): Single<List<Group>>
 
+    @Query("SELECT * FROM genre")
+    fun getAllGenres(): Single<List<Genre>>
+
+    @Query("SELECT * FROM station_genre_join")
+    fun getAllStationGenreJoins(): Single<List<StationGenreJoin>>
+
     @Query("SELECT * FROM genre INNER JOIN station_genre_join ON genre.name = genreName WHERE stationId = :id")
     fun getStationGenres(id: Int): Single<List<Genre>>
 

@@ -65,7 +65,6 @@ class StationPresenter
                 .addTo(compDisp)
     }
 
-
     fun edit(station: Station) {
         val newStation = getUpdatedStation(station)
         stationInteractor.updateCurrentStation(newStation)

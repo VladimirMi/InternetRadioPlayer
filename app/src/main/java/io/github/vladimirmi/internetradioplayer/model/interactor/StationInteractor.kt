@@ -6,6 +6,7 @@ import io.github.vladimirmi.internetradioplayer.R
 import io.github.vladimirmi.internetradioplayer.extensions.ValidationException
 import io.github.vladimirmi.internetradioplayer.model.db.entity.Group
 import io.github.vladimirmi.internetradioplayer.model.db.entity.Station
+import io.github.vladimirmi.internetradioplayer.model.db.entity.StationGenreJoin
 import io.github.vladimirmi.internetradioplayer.model.entity.groupedlist.GroupedList
 import io.github.vladimirmi.internetradioplayer.model.entity.groupedlist.StationsGroupList
 import io.github.vladimirmi.internetradioplayer.model.manager.ShortcutHelper
@@ -52,8 +53,17 @@ class StationInteractor
 
     init {
         stationsList.setOnChangeListener { _stationsListObs.accept(it) }
+        val stationsSingle = Single.zip(stationRepository.getAllStations(),
+                stationRepository.getAllStationGenreJoins(),
+                BiFunction { stations: List<Station>, joins: List<StationGenreJoin> ->
+                    stations.forEach { station ->
+                        station.genres = joins.filter { it.stationId == station.id }
+                                .map { it.genreName }
+                    }
+                    stations
+                })
 
-        Single.zip(stationRepository.getAllGroups(), stationRepository.getAllStations(),
+        Single.zip(stationRepository.getAllGroups(), stationsSingle,
                 BiFunction { groups: List<Group>, stations: List<Station> ->
                     stationsList.init(groups, stations)
                 })

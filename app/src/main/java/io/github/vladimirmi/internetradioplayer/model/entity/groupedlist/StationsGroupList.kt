@@ -27,9 +27,10 @@ class StationsGroupList : GroupedList {
         this.groups.addAll(groups)
 
         val groupBy = stations.groupBy { it.groupId }
-        groups.forEach {
-            val items = groupBy[it.id] ?: return@forEach
-            it.items = items.toMutableList()
+        groups.forEach { group ->
+            val items = groupBy[group.id] ?: return@forEach
+            items.forEach { it.group = group.name }
+            group.items = items.toMutableList()
         }
         index()
     }

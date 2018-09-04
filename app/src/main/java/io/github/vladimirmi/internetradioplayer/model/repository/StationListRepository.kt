@@ -31,6 +31,10 @@ class StationListRepository
 
     fun getAllGroups(): Single<List<Group>> = dao.getAllGroups()
 
+    fun getAllGenres(): Single<List<Genre>> = dao.getAllGenres()
+
+    fun getAllStationGenreJoins(): Single<List<StationGenreJoin>> = dao.getAllStationGenreJoins()
+
     fun createStation(uri: Uri): Single<Station> {
         return Single.fromCallable {
             stationParser.parseFromUri(uri)

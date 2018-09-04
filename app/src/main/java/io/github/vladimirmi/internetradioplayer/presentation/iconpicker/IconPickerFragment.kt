@@ -1,5 +1,6 @@
 package io.github.vladimirmi.internetradioplayer.presentation.iconpicker
 
+import `in`.goodiebag.carouselpicker.CarouselPicker
 import android.graphics.Bitmap
 import android.graphics.Canvas
 import android.os.Bundle
@@ -18,9 +19,12 @@ import io.github.vladimirmi.internetradioplayer.presentation.root.ToolbarBuilder
 import io.github.vladimirmi.internetradioplayer.presentation.root.ToolbarView
 import io.github.vladimirmi.internetradioplayer.ui.base.BackPressListener
 import io.github.vladimirmi.internetradioplayer.ui.base.BaseFragment
+import kotlinx.android.synthetic.main.fragment_icon_picker.*
 import kotlinx.android.synthetic.main.view_icon.*
 import kotlinx.android.synthetic.main.view_icon_picker_content.*
+import kotlinx.android.synthetic.main.view_station_icons.*
 import toothpick.Toothpick
+
 
 /**
  * Created by Vladimir Mikhalev 15.12.2017.
@@ -47,10 +51,6 @@ class IconPickerFragment : BaseFragment(), IconPickerView, BackPressListener {
             presenter.iconOption = IconOption.fromId(checkedId)
         }
 
-        (iconsRg as RadioGroup).setOnCheckedChangeListener { _, checkedId ->
-            presenter.iconResource = IconResource.fromId(checkedId)
-        }
-
         configurationsRg.setOnCheckedChangeListener { _, checkedId ->
             if (checkedId == R.id.configBackgroundBt) {
                 colorPicker.setColor(presenter.backgroundColor)
@@ -68,6 +68,15 @@ class IconPickerFragment : BaseFragment(), IconPickerView, BackPressListener {
         iconTextEt.onTextChanges { presenter.text = it }
         okBt.setOnClickListener { presenter.saveIcon(createIconBitmap()) }
         cancelBt.setOnClickListener { presenter.exit() }
+
+        val imageItems = listOf(
+                CarouselPicker.DrawableItem(R.drawable.ic_station_1),
+                CarouselPicker.DrawableItem(R.drawable.ic_station_2),
+                CarouselPicker.DrawableItem(R.drawable.ic_station_3),
+                CarouselPicker.DrawableItem(R.drawable.ic_station_4)
+        )
+        val imageAdapter = CarouselPicker.CarouselViewAdapter(context, imageItems, 0)
+        carousel.adapter = imageAdapter
     }
 
     override fun onBackPressed() = presenter.onBackPressed()

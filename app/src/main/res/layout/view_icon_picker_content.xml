@@ -76,16 +76,6 @@
         tools:text="X"
         />
 
-    <include
-        android:id="@+id/iconsRg"
-        layout="@layout/view_station_icons"
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        />
-
     <RadioGroup
         android:id="@+id/configurationsRg"
         android:layout_width="0dp"

@@ -51,8 +51,8 @@ class PlayerService : MediaBrowserServiceCompat(), SessionCallback.Interface {
             .setActions(PlayerActions.DEFAULT_ACTIONS).build()
 
     private var serviceStarted = false
-    private var currentStationId: Int? = null
-    private var playingStationId: Int? = null
+    private var currentStationId: String? = null
+    private var playingStationId: String? = null
     private var stopTask: TimerTask? = null
 
     override fun onCreate() {

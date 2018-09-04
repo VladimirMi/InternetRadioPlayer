@@ -11,7 +11,6 @@ import javax.inject.Inject
 class Preferences
 @Inject constructor(context: Context) {
 
-    var currentPos: Int by Preference(context, "CURRENT_POSITION", 0)
+    var currentStationId: String by Preference(context, "CURRENT_STATION_ID", "")
 
-    var hidedGroups: Set<String> by Preference(context, "HIDED_GROUPS", emptySet())
 }

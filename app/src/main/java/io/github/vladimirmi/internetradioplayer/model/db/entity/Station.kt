@@ -1,6 +1,7 @@
 package io.github.vladimirmi.internetradioplayer.model.db.entity
 
 import android.arch.persistence.room.*
+import java.util.*
 
 /**
  * Created by Vladimir Mikhalev 28.08.2018.
@@ -8,16 +9,20 @@ import android.arch.persistence.room.*
 
 @Entity(foreignKeys = [ForeignKey(entity = Group::class,
         parentColumns = ["id"],
-        childColumns = ["group_id"])])
+        childColumns = ["group_id"])],
+        indices = [Index(value = ["name"], unique = true)])
 class Station {
 
-    @PrimaryKey(autoGenerate = true) var id = 0
-    var name = ""
-    var uri = ""
-    var url = ""
-    var bitrate = 0
-    var sample = 0
-    var order = 0
+    @PrimaryKey var id: String = UUID.randomUUID().toString()
+    var name: String = ""
+    var uri: String = ""
+    var url: String? = null
+    var bitrate: Int? = null
+    var sample: Int? = null
+    var order: Int = 0
     @Embedded(prefix = "icon_") var icon: Icon? = null
-    @ColumnInfo(name = "group_id") var groupId = 0
+    @ColumnInfo(name = "group_id") var groupId: String = ""
+
+    @Ignore var genres: List<String> = listOf()
+    @Ignore var group: String = ""
 }

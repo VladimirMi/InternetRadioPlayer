@@ -7,12 +7,11 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.ImageView
 import io.github.vladimirmi.internetradioplayer.R
-import io.github.vladimirmi.internetradioplayer.di.Scopes
 import io.github.vladimirmi.internetradioplayer.extensions.color
 import io.github.vladimirmi.internetradioplayer.model.db.entity.Group
 import io.github.vladimirmi.internetradioplayer.model.db.entity.Station
 import io.github.vladimirmi.internetradioplayer.model.entity.groupedlist.GroupedList
-import io.github.vladimirmi.internetradioplayer.model.interactor.StationInteractor
+import io.github.vladimirmi.internetradioplayer.model.entity.groupedlist.StationsGroupList
 import kotlinx.android.synthetic.main.item_group_item.view.*
 import kotlinx.android.synthetic.main.item_group_title.view.*
 
@@ -28,8 +27,7 @@ class MediaListAdapter(private val callback: StationItemCallback)
         const val GROUP_ITEM = 1
     }
 
-    private val stationInteractor = Scopes.app.getInstance(StationInteractor::class.java)
-    private lateinit var stationsList: GroupedList
+    private var stationsList: GroupedList = StationsGroupList()
     private var selected: Station? = null
     private var playing = false
 
@@ -153,7 +151,7 @@ class MediaGroupItemVH(itemView: View) : RecyclerView.ViewHolder(itemView) {
 
 interface StationItemCallback {
     fun onItemSelected(station: Station)
-    fun onGroupSelected(groupId: Int)
+    fun onGroupSelected(groupId: String)
     fun onItemOpened(station: Station)
 }
 

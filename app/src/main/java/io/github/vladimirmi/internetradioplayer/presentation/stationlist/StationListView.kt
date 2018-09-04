@@ -18,7 +18,7 @@ interface StationListView : MvpView {
     fun buildToolbar(builder: ToolbarBuilder)
 
     @StateStrategyType(AddToEndSingleStrategy::class)
-    fun setMediaList(stationList: GroupedList)
+    fun setStations(stationList: GroupedList)
 
     @StateStrategyType(AddToEndSingleStrategy::class)
     fun selectItem(station: Station, playing: Boolean)

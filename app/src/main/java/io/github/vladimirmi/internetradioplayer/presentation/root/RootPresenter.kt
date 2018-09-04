@@ -25,7 +25,13 @@ class RootPresenter
     : BasePresenter<RootView>() {
 
     override fun onFirstViewAttach() {
+        setupRootScreen()
         controlsInteractor.connect()
+    }
+
+    override fun attachView(view: RootView?) {
+        super.attachView(view)
+        viewState.checkIntent()
     }
 
     override fun onDestroy() {

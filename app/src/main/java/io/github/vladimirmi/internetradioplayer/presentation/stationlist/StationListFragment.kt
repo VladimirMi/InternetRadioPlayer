@@ -59,7 +59,7 @@ class StationListFragment : BaseFragment(), StationListView, StationItemCallback
 
     //region =============== StationListView ==============
 
-    override fun setMediaList(stationList: GroupedList) {
+    override fun setStations(stationList: GroupedList) {
         adapter.setData(stationList)
     }
 
@@ -86,7 +86,7 @@ class StationListFragment : BaseFragment(), StationListView, StationItemCallback
 
     //region =============== StationItemCallback ==============
 
-    override fun onGroupSelected(id: Int) {
+    override fun onGroupSelected(id: String) {
         presenter.selectGroup(id)
     }
 

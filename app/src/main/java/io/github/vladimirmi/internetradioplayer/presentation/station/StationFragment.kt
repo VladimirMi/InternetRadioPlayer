@@ -1,6 +1,5 @@
 package io.github.vladimirmi.internetradioplayer.presentation.station
 
-import android.graphics.Bitmap
 import android.os.Bundle
 import android.support.design.widget.TextInputLayout
 import android.support.v4.content.ContextCompat
@@ -21,7 +20,6 @@ import io.github.vladimirmi.internetradioplayer.R
 import io.github.vladimirmi.internetradioplayer.di.Scopes
 import io.github.vladimirmi.internetradioplayer.extensions.inputMethodManager
 import io.github.vladimirmi.internetradioplayer.extensions.visible
-import io.github.vladimirmi.internetradioplayer.model.db.entity.Genre
 import io.github.vladimirmi.internetradioplayer.model.db.entity.Station
 import io.github.vladimirmi.internetradioplayer.presentation.root.ToolbarBuilder
 import io.github.vladimirmi.internetradioplayer.presentation.root.ToolbarView
@@ -86,40 +84,29 @@ class StationFragment : BaseFragment(), StationView, BackPressListener {
 
         urlTv.text = station.url
         urlTv.linkStyle(true)
-        station.url.isNotBlank().let {
+
+        (station.url != null).let {
             urlLabelTv.visible(it)
             urlTv.visible(it)
         }
 
         bitrateTv.text = getString(R.string.unit_bitrate, station.bitrate)
-        (station.bitrate != 0).let {
+        (station.bitrate != null).let {
             bitrateLabelTv.visible(it)
             bitrateTv.visible(it)
         }
 
         sampleTv.text = getString(R.string.unit_sample_rate, station.sample)
-        (station.sample != 0).let {
+        (station.sample != null).let {
             sampleLabelTv.visible(it)
             sampleTv.visible(it)
         }
-    }
 
-    override fun setGroupName(name: String) {
-        groupEt.setText(name)
-    }
+        groupEt.setText(station.group)
 
-    override fun setGenres(genres: List<Genre>) {
-        genresLabelTv.visible(genres.isNotEmpty())
+        genresLabelTv.visible(station.genres.isNotEmpty())
         genresFl.removeAllViews()
-        genres.forEach { genresFl.addView(TagView(context!!, it.name, null)) }
-    }
-
-    override fun setStationIcon(icon: Bitmap) {
-//        iconIv.setImageBitmap(icon)
-    }
-
-    override fun cancelEdit() {
-        TODO("not implemented")
+        station.genres.forEach { genresFl.addView(TagView(context!!, it, null)) }
     }
 
     override fun setEditMode(editMode: Boolean) {
@@ -154,12 +141,12 @@ class StationFragment : BaseFragment(), StationView, BackPressListener {
         LinkDialog.newInstance(url).show(childFragmentManager, "link_dialog")
     }
 
-    override fun openCancelEditDialog(currentStation: Station, iconChanged: Boolean) {
-        if (currentStation != constructStation() || iconChanged) {
-            CancelEditDialog().show(childFragmentManager, "cancel_edit_dialog")
-        } else {
-            presenter.cancelEdit()
-        }
+    override fun openCancelEditDialog() {
+        CancelEditDialog().show(childFragmentManager, "cancel_edit_dialog")
+    }
+
+    override fun cancelEdit() {
+        presenter.tryCancelEdit(constructStation())
     }
 
     override fun openCancelCreateDialog() {
@@ -173,18 +160,16 @@ class StationFragment : BaseFragment(), StationView, BackPressListener {
     //endregion
 
     private fun constructStation(): Station {
-        val genres = ArrayList<String>()
-        (0 until genresFl.childCount)
-                .forEach {
-                    val tagView = genresFl.getChildAt(it) as TagView
-                    genres.add(tagView.text.toString())
-                }
-//        return StationInfo(
-////                name = titleEt.text.toString(),
-////                group = groupEt.text.toString(),
-////                genre = genres
-////        )
-        return Station()
+//        val genres = ArrayList<String>()
+//        (0 until genresFl.childCount)
+//                .forEach {
+//                    val tagView = genresFl.getChildAt(it) as TagView
+//                    genres.add(tagView.text.toString())
+//                }
+        return Station().apply {
+            name = titleEt.text.toString()
+            group = groupEt.text.toString()
+        }
     }
 
     private fun TextView.linkStyle(enable: Boolean) {

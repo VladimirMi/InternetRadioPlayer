@@ -24,16 +24,16 @@ interface StationDao {
     fun getStationGenres(id: Int): Single<List<Genre>>
 
     @Insert
-    fun insert(station: Station)
+    fun insertStation(station: Station): Long
+
+    @Insert(onConflict = OnConflictStrategy.IGNORE)
+    fun insertGenres(genres: List<Genre>)
 
     @Insert
-    fun insert(genre: Genre)
+    fun insertStationGenre(stationGenreJoins: List<StationGenreJoin>)
 
     @Insert
-    fun insert(stationGenreJoin: StationGenreJoin)
-
-    @Insert
-    fun insert(group: Group)
+    fun insertGroup(group: Group): Long
 
     @Update
     fun update(station: Station)

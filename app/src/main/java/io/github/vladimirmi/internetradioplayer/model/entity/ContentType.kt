@@ -15,4 +15,4 @@ fun MediaType.isAudioStream() = supportedAudioTypes.contains(subtype())
 
 fun MediaType.isPlaylistFile() = suppotedPlaylists.contains(subtype())
 
-fun MediaType.isPlsFile() = subtype() == "x-scpl"
+fun MediaType.isPlsFile() = subtype() == "x-scpls"

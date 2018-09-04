@@ -12,7 +12,7 @@ class StationsGroupList : GroupedList {
 
     private val groups = arrayListOf<Group>()
     private val flatIndex = FlatGroupIndex()
-    private var listener: OnChangeListener? = null
+    private var listener: ((GroupedList) -> Unit)? = null
 
     override val size: Int
         get() = groups.fold(0) { acc, group -> acc + group.items.size }
@@ -22,10 +22,6 @@ class StationsGroupList : GroupedList {
 
     override val overallSize: Int
         get() = flatIndex.size
-
-    fun setOnChangeListener(listener: OnChangeListener) {
-        this.listener = listener
-    }
 
     fun init(groups: List<Group>, stations: List<Station>) {
         this.groups.addAll(groups)
@@ -38,29 +34,38 @@ class StationsGroupList : GroupedList {
         index()
     }
 
-    fun collapseGroup(id: Int): Group {
+    fun setOnChangeListener(listener: (GroupedList) -> Unit) {
+        this.listener = listener
+    }
+
+    fun collapseGroup(id: String): Group {
         val group = groups[indexOfGroup(id)]
         group.expanded = false
         index()
         return group
     }
 
-    fun expandGroup(id: Int): Group {
+    fun expandGroup(id: String): Group {
         val group = groups[indexOfGroup(id)]
         group.expanded = true
         index()
         return group
     }
 
-    fun add(station: Station): Station {
+    fun add(group: Group) {
+        group.order = groups.size
+        groups.add(group)
+        index()
+    }
+
+    fun add(station: Station) {
         val items = groups[indexOfGroup(station.groupId)].items
         station.order = items.size
         items.add(station)
         index()
-        return station
     }
 
-    fun removeStation(id: Int): Station {
+    fun removeStation(id: String): Station {
         for (group in groups) {
             for (item in group.items) {
                 if (item.id == id) {
@@ -75,10 +80,10 @@ class StationsGroupList : GroupedList {
 
     private fun index() {
         flatIndex.index(groups)
-        listener?.onListChange()
+        listener?.invoke(this)
     }
 
-    private fun indexOfGroup(groupId: Int): Int {
+    private fun indexOfGroup(groupId: String): Int {
         return groups.indexOfFirst { it.id == groupId }
     }
 
@@ -101,27 +106,27 @@ class StationsGroupList : GroupedList {
         return groups[index.groupIdx].items[index.itemIdx!!]
     }
 
-    override fun getGroupItemById(id: Int): Station? {
+    override fun getGroupItemById(id: String): Station? {
         val index = flatIndex.getIndexById(id)
         if (index == null || index.isGroup()) return null
         return groups[index.groupIdx].items[index.itemIdx!!]
     }
 
-    override fun isGroupExpanded(id: Int): Boolean {
+    override fun isGroupExpanded(id: String): Boolean {
         return groups[indexOfGroup(id)].expanded
     }
 
-    override fun getPreviousFrom(id: Int): Station? {
+    override fun getPreviousFrom(id: String): Station? {
         val index = flatIndex.getPreviousItemIndex(id)
         return index?.run { groups[groupIdx].items[itemIdx!!] }
     }
 
-    override fun getNextFrom(id: Int): Station? {
+    override fun getNextFrom(id: String): Station? {
         val index = flatIndex.getNextItemIndex(id)
         return index?.run { groups[groupIdx].items[itemIdx!!] }
     }
 
-    override fun positionOfFirst(id: Int): Int {
+    override fun positionOfFirst(id: String): Int {
         return flatIndex.positionOfFirst(id)
     }
 
@@ -129,13 +134,9 @@ class StationsGroupList : GroupedList {
         return groups.any { it.items.any(predicate) }
     }
 
-    //endregion
+//endregion
 
-    fun isFirstStation(id: Int): Boolean {
+    fun isFirstStation(id: String): Boolean {
         return (isGroup(0) && positionOfFirst(id) == 1) || positionOfFirst(id) == 0
-    }
-
-    interface OnChangeListener {
-        fun onListChange()
     }
 }

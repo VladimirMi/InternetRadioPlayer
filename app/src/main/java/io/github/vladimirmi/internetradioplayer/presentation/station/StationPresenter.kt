@@ -14,6 +14,7 @@ import io.github.vladimirmi.internetradioplayer.presentation.root.ToolbarBuilder
 import io.github.vladimirmi.internetradioplayer.ui.base.BasePresenter
 import io.reactivex.rxkotlin.addTo
 import io.reactivex.rxkotlin.subscribeBy
+import timber.log.Timber
 import javax.inject.Inject
 
 /**
@@ -55,11 +56,6 @@ class StationPresenter
         if (createMode) editMode() else viewMode()
     }
 
-    override fun attachView(view: StationView?) {
-        super.attachView(view)
-//        viewState.setStationIcon(stationInteractor.currentIcon.bitmap)
-    }
-
     fun removeStation() {
         stationInteractor.removeCurrentStation()
                 .subscribe {
@@ -70,8 +66,8 @@ class StationPresenter
     }
 
 
-    fun edit(stationInfo: Station) {
-        val newStation = getNewStation(stationInfo)
+    fun edit(station: Station) {
+        val newStation = getUpdatedStation(station)
         stationInteractor.updateCurrentStation(newStation)
                 .subscribeBy(
                         onComplete = { viewMode() },
@@ -81,12 +77,12 @@ class StationPresenter
 
     fun cancelEdit() {
         viewState.setStation(stationInteractor.currentStation)
-        stationInteractor.currentStation = stationInteractor.currentStation
         viewMode()
     }
 
-    fun create(stationInfo: Station) {
-        val newStation = getNewStation(stationInfo)
+    fun create(station: Station) {
+        val newStation = getUpdatedStation(station)
+
         stationInteractor.addStation(newStation)
                 .ioToMain()
                 .subscribeBy(
@@ -96,7 +92,10 @@ class StationPresenter
                             createMode = false
                             router.newRootScreen(Router.MEDIA_LIST_SCREEN)
                         },
-                        onError = { if (it is ValidationException) viewState.showToast(it.resId) })
+                        onError = {
+                            if (it is ValidationException) viewState.showToast(it.resId)
+                            else Timber.e(it)
+                        })
                 .addTo(compDisp)
     }
 
@@ -135,7 +134,6 @@ class StationPresenter
 
         viewState.buildToolbar(toolbar)
         controlsInteractor.editMode(false)
-//        viewState.setStationIcon(stationInteractor.currentIcon.bitmap)
     }
 
     private fun editMode() {
@@ -162,13 +160,19 @@ class StationPresenter
         }
     }
 
-    private fun getNewStation(info: Station): Station {
-//        return stationInteractor.currentStation.copy(
-//                name = info.name,
-//                group = info.group,
-//                genre = info.genre
-//        )
+    private fun getUpdatedStation(station: Station): Station {
+        return stationInteractor.currentStation.apply {
+            name = station.name
+            group = station.group
+        }
+    }
 
-        return Station()
+    fun tryCancelEdit(station: Station) {
+        val currentStation = stationInteractor.currentStation
+        if (station.name != currentStation.name || station.group != currentStation.group) {
+            viewState.openCancelEditDialog()
+        } else {
+            cancelEdit()
+        }
     }
 }

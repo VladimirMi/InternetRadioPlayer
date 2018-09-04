@@ -72,4 +72,5 @@
     <string name="help_create_3"> - adding a direct link to the audio stream.</string>
 
     <string name="metadata_not_available">Metadata is not available</string>
+    <string name="default_group">Other</string>
 </resources>

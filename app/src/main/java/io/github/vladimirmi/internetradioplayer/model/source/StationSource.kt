@@ -1,9 +1,7 @@
 package io.github.vladimirmi.internetradioplayer.model.source
 
 import android.content.Context
-import android.net.Uri
 import io.github.vladimirmi.internetradioplayer.model.db.entity.Station
-import io.github.vladimirmi.internetradioplayer.model.manager.StationParser
 import java.io.File
 import javax.inject.Inject
 
@@ -13,8 +11,7 @@ import javax.inject.Inject
  */
 
 class StationSource
-@Inject constructor(context: Context,
-                    private val parser: StationParser) {
+@Inject constructor(context: Context) {
 
     companion object {
         const val extension = "json"
@@ -25,6 +22,4 @@ class StationSource
     fun removeStation(station: Station) {
         File(appDir, "${station.name}.$extension").delete()
     }
-
-    fun parseStation(uri: Uri): Station = parser.parseFromUri(uri)
 }

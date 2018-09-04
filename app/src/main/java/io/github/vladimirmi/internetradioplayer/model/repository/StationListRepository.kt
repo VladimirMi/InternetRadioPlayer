@@ -1,17 +1,15 @@
 package io.github.vladimirmi.internetradioplayer.model.repository
 
 import android.net.Uri
-import com.jakewharton.rxrelay2.BehaviorRelay
 import io.github.vladimirmi.internetradioplayer.model.db.dao.StationDao
+import io.github.vladimirmi.internetradioplayer.model.db.entity.Genre
 import io.github.vladimirmi.internetradioplayer.model.db.entity.Group
 import io.github.vladimirmi.internetradioplayer.model.db.entity.Station
-import io.github.vladimirmi.internetradioplayer.model.entity.groupedlist.StationsGroupList
+import io.github.vladimirmi.internetradioplayer.model.db.entity.StationGenreJoin
 import io.github.vladimirmi.internetradioplayer.model.manager.Preferences
-import io.github.vladimirmi.internetradioplayer.model.source.StationSource
+import io.github.vladimirmi.internetradioplayer.model.manager.StationParser
 import io.reactivex.Completable
 import io.reactivex.Single
-import io.reactivex.functions.BiFunction
-import io.reactivex.schedulers.Schedulers
 import javax.inject.Inject
 
 /**
@@ -19,43 +17,38 @@ import javax.inject.Inject
  */
 
 class StationListRepository
-@Inject constructor(private val stationSource: StationSource,
+@Inject constructor(private val stationParser: StationParser,
                     private val preferences: Preferences,
                     private val dao: StationDao) {
 
-    val stationList = StationsGroupList()
-    val currentStation: BehaviorRelay<Station> = BehaviorRelay.create()
-
-    init {
-        Single.zip(dao.getAllGroups(), dao.getAllStations(),
-                BiFunction { groups: List<Group>, stations: List<Station> ->
-                    stationList.apply { init(groups, stations) }
-                })
-                .toCompletable()
-                .subscribeOn(Schedulers.io())
-                .subscribe()
+    fun saveCurrentStationId(id: String) {
+        preferences.currentStationId = id
     }
 
-    fun setCurrentStation(station: Station) {
-        val pos = stationList.positionOfFirst(station.id)
-//        currentStation.accept(stationList[pos])
-        currentStation.accept(station)
-        preferences.currentPos = pos
-    }
+    fun getCurrentStationId() = preferences.currentStationId
 
-    fun createStation(uri: Uri): Single<Station> =
-            Single.fromCallable { stationSource.parseStation(uri) }
+    fun getAllStations(): Single<List<Station>> = dao.getAllStations()
+
+    fun getAllGroups(): Single<List<Group>> = dao.getAllGroups()
+
+    fun createStation(uri: Uri): Single<Station> {
+        return Single.fromCallable {
+            stationParser.parseFromUri(uri)
+        }
+    }
 
     fun updateStation(station: Station): Completable {
         return Completable.fromCallable {
-            //            stationList[stationList.indexOfFirst { it.id == newStation.id }] = newStation
             dao.update(station)
         }
     }
 
     fun addStation(station: Station): Completable {
         return Completable.fromCallable {
-            dao.insert(station)
+            dao.insertStation(station)
+            val genres = station.genres.map(::Genre)
+            dao.insertGenres(genres)
+            dao.insertStationGenre(genres.map { StationGenreJoin(station.id, it.name) })
         }
     }
 
@@ -65,7 +58,15 @@ class StationListRepository
         }
     }
 
+    fun addGroup(group: Group): Completable {
+        return Completable.fromCallable {
+            dao.insertGroup(group)
+        }
+    }
+
     fun updateGroup(group: Group): Completable {
-        TODO("not implemented")
+        return Completable.fromCallable {
+            dao.update(group)
+        }
     }
 }

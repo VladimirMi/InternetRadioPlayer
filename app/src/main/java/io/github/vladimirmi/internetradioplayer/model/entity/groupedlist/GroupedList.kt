@@ -20,15 +20,15 @@ interface GroupedList {
 
     fun getGroupItem(position: Int): Station
 
-    fun getGroupItemById(id: Int): Station?
+    fun getGroupItemById(id: String): Station?
 
-    fun isGroupExpanded(id: Int): Boolean
+    fun isGroupExpanded(id: String): Boolean
 
-    fun getPreviousFrom(id: Int): Station?
+    fun getPreviousFrom(id: String): Station?
 
-    fun getNextFrom(id: Int): Station?
+    fun getNextFrom(id: String): Station?
 
-    fun positionOfFirst(id: Int): Int
+    fun positionOfFirst(id: String): Int
 
     fun contains(predicate: (Station) -> Boolean): Boolean
 }

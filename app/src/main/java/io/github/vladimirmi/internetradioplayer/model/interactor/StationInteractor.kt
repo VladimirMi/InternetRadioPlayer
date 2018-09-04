@@ -4,6 +4,7 @@ import android.net.Uri
 import com.jakewharton.rxrelay2.BehaviorRelay
 import io.github.vladimirmi.internetradioplayer.R
 import io.github.vladimirmi.internetradioplayer.extensions.ValidationException
+import io.github.vladimirmi.internetradioplayer.model.db.entity.Group
 import io.github.vladimirmi.internetradioplayer.model.db.entity.Station
 import io.github.vladimirmi.internetradioplayer.model.entity.groupedlist.GroupedList
 import io.github.vladimirmi.internetradioplayer.model.entity.groupedlist.StationsGroupList
@@ -13,6 +14,8 @@ import io.github.vladimirmi.internetradioplayer.model.repository.StationListRepo
 import io.reactivex.Completable
 import io.reactivex.Observable
 import io.reactivex.Single
+import io.reactivex.functions.BiFunction
+import io.reactivex.schedulers.Schedulers
 import javax.inject.Inject
 
 
@@ -23,7 +26,7 @@ import javax.inject.Inject
 class StationInteractor
 @Inject constructor(private val stationRepository: StationListRepository,
                     private val iconRepository: StationIconRepository,
-                    private val shortcutHelper: ShortcutHelper) : StationsGroupList.OnChangeListener {
+                    private val shortcutHelper: ShortcutHelper) {
 
     var previousWhenCreate: Station? = null
         private set
@@ -34,24 +37,28 @@ class StationInteractor
             if (!value) previousWhenCreate = null
         }
 
-    private val stationsList: StationsGroupList = stationRepository.stationList
+    private val stationsList = StationsGroupList()
     private val _stationsListObs = BehaviorRelay.create<GroupedList>()
     val stationsListObs: Observable<GroupedList> get() = _stationsListObs
 
-    init {
-        stationsList.setOnChangeListener(this)
-        _stationsListObs.accept(stationsList)
-    }
-
+    private val _currentStationObs = BehaviorRelay.create<Station>()
+    val currentStationObs: Observable<Station> get() = _currentStationObs
     var currentStation: Station
-        get() = stationRepository.currentStation.value
-        set(value) = stationRepository.setCurrentStation(value)
+        get() = _currentStationObs.value ?: Station()
+        set(value) {
+            _currentStationObs.accept(value)
+            stationRepository.saveCurrentStationId(value.id)
+        }
 
-    val currentStationObs: Observable<Station>
-        get() = stationRepository.currentStation
+    init {
+        stationsList.setOnChangeListener { _stationsListObs.accept(it) }
 
-    override fun onListChange() {
-        _stationsListObs.accept(stationsList)
+        Single.zip(stationRepository.getAllGroups(), stationRepository.getAllStations(),
+                BiFunction { groups: List<Group>, stations: List<Station> ->
+                    stationsList.init(groups, stations)
+                })
+                .subscribeOn(Schedulers.io())
+                .subscribe()
     }
 
     fun getStation(id: Int): Station? {
@@ -66,12 +73,20 @@ class StationInteractor
         return stationRepository.createStation(uri)
                 .doOnSuccess {
                     previousWhenCreate = currentStation
-                    stationRepository.currentStation.accept(it)
+                    currentStation = it
                 }
     }
 
     fun addStation(station: Station): Completable {
+        val group = if (station.group.isBlank()) Group.default() else Group(station.group)
+        station.groupId = group.id
+
         return validate(station, adding = true)
+                .doOnComplete {
+                    stationsList.add(group)
+                    stationsList.add(station)
+                }
+                .andThen(stationRepository.addGroup(group))
                 .andThen(stationRepository.addStation(station))
                 .doOnComplete { currentStation = station }
     }
@@ -111,17 +126,13 @@ class StationInteractor
     }
 
     fun nextStation() {
-        val next = stationsList.getNextFrom(stationRepository.currentStation.value.id)
-        if (next != null) {
-            stationRepository.setCurrentStation(next)
-        }
+        val next = stationsList.getNextFrom(currentStation.id)
+        if (next != null) currentStation = next
     }
 
     fun previousStation() {
-        val previous = stationsList.getPreviousFrom(stationRepository.currentStation.value.id)
-        if (previous != null) {
-            stationRepository.setCurrentStation(previous)
-        }
+        val previous = stationsList.getPreviousFrom(currentStation.id)
+        if (previous != null) currentStation = previous
     }
 
     fun removeCurrentStation(): Completable {
@@ -134,7 +145,7 @@ class StationInteractor
         return stationRepository.removeStation(removed)
     }
 
-    fun showOrHideGroup(id: Int): Completable {
+    fun showOrHideGroup(id: String): Completable {
         val group = if (stationsList.isGroupExpanded(id)) {
             stationsList.collapseGroup(id)
         } else {

@@ -49,7 +49,7 @@ class StationListPresenter
         rootPresenter.viewState.showControls(true)
         interactor.stationsListObs
                 .observeOn(AndroidSchedulers.mainThread())
-                .subscribeBy { handleStationList(it) }
+                .subscribeBy { viewState.setStations(it) }
                 .addTo(compDisp)
 
         interactor.currentStationObs
@@ -85,14 +85,13 @@ class StationListPresenter
 //        }
 //
 //        viewState.buildToolbar(newBuilder)
-        viewState.setMediaList(it)
     }
 
     fun select(station: Station) {
         interactor.currentStation = station
     }
 
-    fun selectGroup(id: Int) {
+    fun selectGroup(id: String) {
         interactor.showOrHideGroup(id)
     }
 

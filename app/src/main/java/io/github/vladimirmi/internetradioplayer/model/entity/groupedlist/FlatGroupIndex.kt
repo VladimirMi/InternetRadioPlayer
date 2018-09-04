@@ -8,7 +8,7 @@ import io.github.vladimirmi.internetradioplayer.model.db.entity.Group
 
 class FlatGroupIndex {
 
-    private var flatIndex = ArrayList<GroupIndex>()
+    private val flatIndex = ArrayList<GroupIndex>()
 
     val size: Int
         get() = flatIndex.size
@@ -16,8 +16,11 @@ class FlatGroupIndex {
         get() = flatIndex.count { !it.isGroup() }
 
     fun index(groupList: List<Group>) {
+        flatIndex.clear()
         groupList.forEachIndexed { groupIndex, group ->
-            flatIndex.add(GroupIndex(group.id, groupIndex, null))
+            if (!group.isDefault() || groupList.size > 1) {
+                flatIndex.add(GroupIndex(group.id, groupIndex, null))
+            }
             if (group.expanded) {
                 flatIndex.addAll(group.items.mapIndexed { index, element ->
                     GroupIndex(element.id, groupIndex, index)
@@ -30,11 +33,11 @@ class FlatGroupIndex {
 
     fun getIndex(position: Int) = flatIndex[position]
 
-    fun getIndexById(id: Int): GroupIndex? {
+    fun getIndexById(id: String): GroupIndex? {
         return flatIndex.find { it.id == id }
     }
 
-    fun getPreviousItemIndex(id: Int): GroupIndex? {
+    fun getPreviousItemIndex(id: String): GroupIndex? {
         var previous: GroupIndex? = null
         for (index in flatIndex) {
             if (index.isGroup()) continue
@@ -44,7 +47,7 @@ class FlatGroupIndex {
         return previous ?: flatIndex.lastOrNull { !it.isGroup() }
     }
 
-    fun getNextItemIndex(id: Int): GroupIndex? {
+    fun getNextItemIndex(id: String): GroupIndex? {
         var next: GroupIndex? = null
         for (i in flatIndex.size - 1 downTo 0) {
             val index = flatIndex[i]
@@ -55,12 +58,12 @@ class FlatGroupIndex {
         return next ?: flatIndex.firstOrNull { !it.isGroup() }
     }
 
-    fun positionOfFirst(id: Int): Int {
+    fun positionOfFirst(id: String): Int {
         return flatIndex.indexOfFirst { it.id == id }
     }
 }
 
-class GroupIndex(val id: Int, val groupIdx: Int, val itemIdx: Int?) {
+class GroupIndex(val id: String, val groupIdx: Int, val itemIdx: Int?) {
 
     fun isGroup() = itemIdx == null
 }

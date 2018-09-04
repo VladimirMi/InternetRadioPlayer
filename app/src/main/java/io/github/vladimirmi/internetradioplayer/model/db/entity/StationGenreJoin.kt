@@ -17,8 +17,4 @@ import android.arch.persistence.room.ForeignKey
                     parentColumns = ["name"],
                     childColumns = ["genreName"])
         ])
-class StationGenreJoin {
-
-    var stationId = 0
-    var genreName = ""
-}
+class StationGenreJoin(var stationId: String, var genreName: String)

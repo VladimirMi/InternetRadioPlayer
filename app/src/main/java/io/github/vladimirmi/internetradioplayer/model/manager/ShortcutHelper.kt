@@ -10,7 +10,6 @@ import android.support.v4.content.pm.ShortcutManagerCompat
 import android.support.v4.graphics.drawable.IconCompat
 import io.github.vladimirmi.internetradioplayer.R
 import io.github.vladimirmi.internetradioplayer.model.db.entity.Station
-import io.github.vladimirmi.internetradioplayer.model.entity.icon.Icon
 import io.github.vladimirmi.internetradioplayer.model.service.PlayerService
 import io.github.vladimirmi.internetradioplayer.presentation.root.RootActivity
 import javax.inject.Inject
@@ -22,12 +21,12 @@ import javax.inject.Inject
 class ShortcutHelper
 @Inject constructor(private val context: Context) {
 
-    fun pinShortcut(station: Station, icon: Icon): Boolean {
+    fun pinShortcut(station: Station): Boolean {
 
         val info = ShortcutInfoCompat.Builder(context, station.id.toString())
                 .setShortLabel(station.name)
                 .setLongLabel(station.name)
-                .setIcon(IconCompat.createWithBitmap(icon.bitmap))
+                .setIcon(IconCompat.createWithBitmap(station.icon))
                 .setIntent(createShortcutIntent(station))
                 .setDisabledMessage(context.getString(R.string.toast_shortcut_remove))
                 .build()

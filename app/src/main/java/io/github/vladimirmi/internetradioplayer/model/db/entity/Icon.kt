@@ -5,10 +5,6 @@ package io.github.vladimirmi.internetradioplayer.model.db.entity
  */
 
 class Icon {
-
-    var type: String = ""
-    var url: String = ""
-    var text: String = ""
     var res: Int = 0
     var bg: Int = 0
     var fg: Int = 0

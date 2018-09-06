@@ -89,6 +89,4 @@ dependencies {
     implementation "com.facebook.stetho:stetho:1.5.0"
     //ExoPlayer
     implementation "com.google.android.exoplayer:exoplayer-core:2.7.1"
-
-    implementation "com.github.GoodieBag:CarouselPicker:v1.1"
 }

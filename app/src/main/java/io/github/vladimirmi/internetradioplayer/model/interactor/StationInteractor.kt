@@ -10,7 +10,6 @@ import io.github.vladimirmi.internetradioplayer.model.db.entity.StationGenreJoin
 import io.github.vladimirmi.internetradioplayer.model.entity.groupedlist.GroupedList
 import io.github.vladimirmi.internetradioplayer.model.entity.groupedlist.StationsGroupList
 import io.github.vladimirmi.internetradioplayer.model.manager.ShortcutHelper
-import io.github.vladimirmi.internetradioplayer.model.repository.StationIconRepository
 import io.github.vladimirmi.internetradioplayer.model.repository.StationListRepository
 import io.reactivex.Completable
 import io.reactivex.Observable
@@ -26,7 +25,6 @@ import javax.inject.Inject
 
 class StationInteractor
 @Inject constructor(private val stationRepository: StationListRepository,
-                    private val iconRepository: StationIconRepository,
                     private val shortcutHelper: ShortcutHelper) {
 
     var previousWhenCreate: Station? = null

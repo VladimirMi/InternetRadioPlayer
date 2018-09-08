@@ -1,19 +1,17 @@
 package io.github.vladimirmi.internetradioplayer.presentation.iconpicker
 
-import android.graphics.Bitmap
 import android.os.Bundle
 import android.view.View
 import com.arellomobile.mvp.presenter.InjectPresenter
 import com.arellomobile.mvp.presenter.ProvidePresenter
 import io.github.vladimirmi.internetradioplayer.R
 import io.github.vladimirmi.internetradioplayer.di.Scopes
-import io.github.vladimirmi.internetradioplayer.extensions.setTintExt
+import io.github.vladimirmi.internetradioplayer.model.db.entity.Icon
 import io.github.vladimirmi.internetradioplayer.presentation.root.ToolbarBuilder
 import io.github.vladimirmi.internetradioplayer.presentation.root.ToolbarView
 import io.github.vladimirmi.internetradioplayer.ui.base.BackPressListener
 import io.github.vladimirmi.internetradioplayer.ui.base.BaseFragment
 import kotlinx.android.synthetic.main.fragment_icon_picker.*
-import kotlinx.android.synthetic.main.view_icon.*
 import toothpick.Toothpick
 
 
@@ -37,27 +35,20 @@ class IconPickerFragment : BaseFragment(), IconPickerView, BackPressListener {
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
-//        iconTextEt.isSelected = true
-//        optionsRg.setOnCheckedChangeListener { _, checkedId ->
-//            presenter.iconOption = IconOption.fromId(checkedId)
-//        }
 
         configurationsRg.setOnCheckedChangeListener { _, checkedId ->
+
             if (checkedId == R.id.configBackgroundBt) {
-                colorPicker.setColor(presenter.backgroundColor)
-                colorPicker.setOnColorChangedListener {
-                    presenter.backgroundColor = it
-                }
+                colorPicker.setColor(presenter.icon.bg)
+                colorPicker.setOnColorChangedListener(this::setBackgroundColor)
+
             } else if (checkedId == R.id.configForegroundBt) {
-                colorPicker.setColor(presenter.foregroundColor)
-                colorPicker.setOnColorChangedListener {
-                    presenter.foregroundColor = it
-                }
+                colorPicker.setColor(presenter.icon.fg)
+                colorPicker.setOnColorChangedListener(this::setForegroundColor)
             }
         }
 
-//        iconTextEt.onTextChanges { presenter.text = it }
-        okBt.setOnClickListener { presenter.saveIcon(createIconBitmap()) }
+        okBt.setOnClickListener { presenter.saveIcon() }
         cancelBt.setOnClickListener { presenter.exit() }
     }
 
@@ -69,44 +60,19 @@ class IconPickerFragment : BaseFragment(), IconPickerView, BackPressListener {
         builder.build(activity as ToolbarView)
     }
 
-    override fun setIconImage(icon: Bitmap) {
-        iconIv.setImageBitmap(icon)
-    }
-
-    override fun setIconText(text: String) {
-//        iconTv.text = text
-//        if (iconTextEt.text.toString() != text) iconTextEt.setText(text)
-    }
-
-    override fun setForegroundColor(colorInt: Int) {
-//        iconTv.setTextColor(colorInt)
-        iconIv.background.mutate().setTintExt(colorInt)
-        // todo for api 16, check others
-        iconIv.invalidate()
-        colorPicker.setColor(colorInt)
-    }
-
-    override fun setBackgroundColor(colorInt: Int) {
-//        iconFr.setTint(colorInt)
-        colorPicker.setColor(colorInt)
-    }
-
-    override fun setOption(iconOption: IconOption) {
-//        optionsRg.check(iconOption.id)
-        configurationsRg.check(R.id.configForegroundBt)
-    }
-
-    override fun setIconResource(iconResource: IconResource) {
-//        (iconsRg as RadioGroup).check(iconResource.id)
-        iconIv.setBackgroundResource(iconResource.resId)
+    override fun setIcon(icon: Icon) {
+        carousel.currentItem = icon.res
     }
 
     //endregion
 
+    private fun setForegroundColor(colorInt: Int) {
+        presenter.icon.fg = colorInt
+        colorPicker.setColor(colorInt)
+    }
 
-    private fun createIconBitmap(): Bitmap {
-        val bitmap = Bitmap.createBitmap(100, 100, Bitmap.Config.ARGB_8888)
-//        iconFr.draw(Canvas(bitmap))
-        return bitmap
+    private fun setBackgroundColor(colorInt: Int) {
+        presenter.icon.bg = colorInt
+        colorPicker.setColor(colorInt)
     }
 }

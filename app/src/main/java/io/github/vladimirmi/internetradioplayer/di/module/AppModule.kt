@@ -9,9 +9,7 @@ import io.github.vladimirmi.internetradioplayer.model.interactor.PlayerControlsI
 import io.github.vladimirmi.internetradioplayer.model.interactor.StationInteractor
 import io.github.vladimirmi.internetradioplayer.model.manager.ShortcutHelper
 import io.github.vladimirmi.internetradioplayer.model.manager.StationParser
-import io.github.vladimirmi.internetradioplayer.model.repository.StationIconRepository
 import io.github.vladimirmi.internetradioplayer.model.repository.StationListRepository
-import io.github.vladimirmi.internetradioplayer.model.source.StationIconSource
 import io.github.vladimirmi.internetradioplayer.model.source.StationSource
 import toothpick.config.Module
 
@@ -35,11 +33,7 @@ class AppModule(context: Context) : Module() {
 
         bind(StationSource::class.java).singletonInScope()
 
-        bind(StationIconSource::class.java).singletonInScope()
-
         bind(StationListRepository::class.java).singletonInScope()
-
-        bind(StationIconRepository::class.java).singletonInScope()
 
         bind(StationInteractor::class.java).singletonInScope()
 

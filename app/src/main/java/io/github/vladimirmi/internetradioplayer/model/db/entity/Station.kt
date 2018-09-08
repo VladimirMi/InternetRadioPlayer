@@ -20,7 +20,7 @@ class Station {
     var bitrate: Int? = null
     var sample: Int? = null
     var order: Int = 0
-    @Embedded(prefix = "icon_") var icon: Icon? = null
+    @Embedded(prefix = "icon_") var icon: Icon = Icon()
     @ColumnInfo(name = "group_id") var groupId: String = ""
 
     @Ignore var genres: List<String> = listOf()

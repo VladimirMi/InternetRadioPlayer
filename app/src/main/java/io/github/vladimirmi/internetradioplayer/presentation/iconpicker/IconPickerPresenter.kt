@@ -1,10 +1,6 @@
 package io.github.vladimirmi.internetradioplayer.presentation.iconpicker
 
-import android.graphics.Bitmap
 import com.arellomobile.mvp.InjectViewState
-import io.github.vladimirmi.internetradioplayer.model.entity.icon.IconOption
-import io.github.vladimirmi.internetradioplayer.model.entity.icon.IconRes
-import io.github.vladimirmi.internetradioplayer.model.entity.icon.IconResource
 import io.github.vladimirmi.internetradioplayer.model.interactor.PlayerControlsInteractor
 import io.github.vladimirmi.internetradioplayer.model.interactor.StationInteractor
 import io.github.vladimirmi.internetradioplayer.model.service.Metadata
@@ -25,50 +21,12 @@ class IconPickerPresenter
                     private val router: Router)
     : BasePresenter<IconPickerView>() {
 
-    private val station = stationInteractor.currentStation
+    private val currentIcon = stationInteractor.currentStation.icon
+    val icon = currentIcon!!.copy()
 
-    var backgroundColor: Int = 0
-        set(value) {
-            field = value
-            viewState.setBackgroundColor(value)
-        }
-
-    var foregroundColor: Int = 0
-        set(value) {
-            field = value
-            viewState.setForegroundColor(value)
-        }
-
-    var text: String = ""
-        set(value) {
-            field = value
-            viewState.setIconText(value)
-        }
-
-    var iconOption: IconOption = IconOption.ICON
-        set(value) {
-            field = value
-            viewState.setOption(value)
-        }
-
-    var iconResource: IconResource = IconResource.ICON_1
-        set(value) {
-            field = value
-            viewState.setIconResource(value)
-            viewState.setForegroundColor(foregroundColor)
-        }
 
     override fun onFirstViewAttach() {
-//        stationInteractor.currentIcon.let {
-//            viewState.buildToolbar(ToolbarBuilder().setToolbarTitle(it.name))
-//            when (it) {
-//                is IconRes -> {
-//                    iconResource = it.res
-//                    foregroundColor = it.foregroundColor
-//                }
-//            }
-//            iconOption = it.option
-//        }
+        viewState.setIcon(icon)
     }
 
     override fun attachView(view: IconPickerView?) {
@@ -77,12 +35,7 @@ class IconPickerPresenter
         rootPresenter.viewState.showMetadata(false)
     }
 
-    fun saveIcon(bitmap: Bitmap) {
-        @Suppress("WhenWithOnlyElse")
-        val icon = when (iconOption) {
-            else -> IconRes(station.name, foregroundColor, iconResource, bitmap)
-        }
-//        stationInteractor.currentIcon = icon
+    fun saveIcon() {
         exit()
     }
 

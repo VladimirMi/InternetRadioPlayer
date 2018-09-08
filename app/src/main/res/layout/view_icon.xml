@@ -11,6 +11,7 @@
         android:layout_width="88dp"
         android:layout_height="88dp"
         android:contentDescription="@string/desc_station_icon"
+        android:layout_gravity="center"
         tools:src="@drawable/ic_station_1"
         />
 

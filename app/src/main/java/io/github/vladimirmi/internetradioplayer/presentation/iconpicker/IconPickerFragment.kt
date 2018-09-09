@@ -68,11 +68,11 @@ class IconPickerFragment : BaseFragment(), IconPickerView, BackPressListener {
 
     private fun setForegroundColor(colorInt: Int) {
         presenter.icon.fg = colorInt
-        colorPicker.setColor(colorInt)
+        carousel.setFgColor(colorInt)
     }
 
     private fun setBackgroundColor(colorInt: Int) {
         presenter.icon.bg = colorInt
-        colorPicker.setColor(colorInt)
+        carousel.setBgColor(colorInt)
     }
 }

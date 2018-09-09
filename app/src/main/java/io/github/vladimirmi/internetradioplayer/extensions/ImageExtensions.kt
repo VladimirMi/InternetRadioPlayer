@@ -7,9 +7,13 @@ import android.graphics.Canvas
 import android.graphics.drawable.BitmapDrawable
 import android.graphics.drawable.Drawable
 import android.graphics.drawable.VectorDrawable
+import android.support.annotation.ColorInt
 import android.support.annotation.DrawableRes
 import android.support.graphics.drawable.VectorDrawableCompat
 import android.support.v4.content.ContextCompat
+import android.support.v4.graphics.drawable.DrawableCompat
+import android.view.View
+import android.widget.ImageView
 
 /**
  * Created by Vladimir Mikhalev 08.09.2018.
@@ -36,4 +40,17 @@ fun Drawable.getBitmap(): Bitmap {
             throw IllegalArgumentException("unsupported drawable type")
         }
     }
+}
+
+fun View.setBgTint(@ColorInt colorInt: Int) {
+    background?.setTintExt(colorInt)
+}
+
+fun ImageView.setFgTint(@ColorInt colorInt: Int) {
+    drawable?.setTintExt(colorInt)
+}
+
+fun Drawable.setTintExt(@ColorInt colorInt: Int) {
+    val wrapped = DrawableCompat.wrap(this)
+    DrawableCompat.setTint(wrapped, colorInt)
 }

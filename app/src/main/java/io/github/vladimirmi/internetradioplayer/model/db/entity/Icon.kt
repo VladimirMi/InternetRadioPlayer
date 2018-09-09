@@ -19,5 +19,7 @@ val ICONS = arrayOf(
         R.drawable.ic_station_1,
         R.drawable.ic_station_2,
         R.drawable.ic_station_3,
-        R.drawable.ic_station_4
+        R.drawable.ic_station_4,
+        R.drawable.ic_station_5,
+        R.drawable.ic_station_6
 )

@@ -5,9 +5,9 @@ import android.support.v7.widget.RecyclerView
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.ImageView
 import io.github.vladimirmi.internetradioplayer.R
 import io.github.vladimirmi.internetradioplayer.extensions.color
+import io.github.vladimirmi.internetradioplayer.extensions.getBitmap
 import io.github.vladimirmi.internetradioplayer.model.db.entity.Group
 import io.github.vladimirmi.internetradioplayer.model.db.entity.Station
 import io.github.vladimirmi.internetradioplayer.model.entity.groupedlist.GroupedList
@@ -89,8 +89,6 @@ class MediaListAdapter(private val callback: StationItemCallback)
         } else {
             holder.unselect()
         }
-//        val icon = stationInteractor.getIcon(station.name).blockingGet()
-//        holder.iconView.setImageBitmap(icon.bitmap)
     }
 
 
@@ -123,12 +121,9 @@ class MediaGroupTitleVH(itemView: View) : RecyclerView.ViewHolder(itemView) {
 
 class MediaGroupItemVH(itemView: View) : RecyclerView.ViewHolder(itemView) {
 
-    val iconView: ImageView = itemView.iconIv
-
     fun bind(station: Station) {
-        with(itemView) {
-            name.text = station.name
-        }
+        itemView.name.text = station.name
+        itemView.iconIv.setImageBitmap(station.icon.getBitmap(itemView.context))
     }
 
     fun setCallback(callback: StationItemCallback, station: Station) {

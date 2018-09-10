@@ -6,14 +6,9 @@ import io.github.vladimirmi.internetradioplayer.R
  * Created by Vladimir Mikhalev 28.08.2018.
  */
 
-class Icon {
-
-    var res: Int = 0
-    var bg: Int = 0
-    var fg: Int = 0
-
-    fun copy() = Icon().also { it.res = res; it.bg = bg; it.fg = fg }
-}
+class Icon(var res: Int = 0,
+           var bg: Int = 0,
+           var fg: Int = 0)
 
 val ICONS = arrayOf(
         R.drawable.ic_station_1,

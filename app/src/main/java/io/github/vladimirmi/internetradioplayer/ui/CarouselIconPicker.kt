@@ -14,6 +14,7 @@ import io.github.vladimirmi.internetradioplayer.R
 import io.github.vladimirmi.internetradioplayer.extensions.color
 import io.github.vladimirmi.internetradioplayer.extensions.setFgTint
 import io.github.vladimirmi.internetradioplayer.model.db.entity.ICONS
+import io.github.vladimirmi.internetradioplayer.model.db.entity.Icon
 import kotlinx.android.synthetic.main.view_icon.view.*
 
 /**
@@ -29,36 +30,26 @@ class CarouselIconPicker : ViewPager {
     private val defaultFg = context.color(R.color.grey_600)
     private var bg = defaultBg
     private var fg = defaultFg
+    private var pageTransformer: CustomPageTransformer
+    private var iconListener: ((Icon) -> Unit)? = null
 
     init {
         val adapter = CarouselAdapter()
         this.adapter = adapter
-        offscreenPageLimit = 5
-        clipChildren = true
+        offscreenPageLimit = adapter.count
         overScrollMode = OVER_SCROLL_NEVER
-        setPageTransformer(false, CustomPageTransformer())
+        pageTransformer = CustomPageTransformer()
+        setPageTransformer(false, pageTransformer)
 
         addOnPageChangeListener(object : OnPageChangeListener {
             override fun onPageScrollStateChanged(state: Int) {
             }
 
             override fun onPageScrolled(position: Int, positionOffset: Float, positionOffsetPixels: Int) {
-                if (positionOffset > 0.5) {
-                    setBgColor(defaultBg, position)
-                    setFgColor(defaultFg, position)
-                    setBgColor(bg, position + 1)
-                    setFgColor(fg, position + 1)
-
-                } else if (positionOffset < 0.5) {
-                    setBgColor(defaultBg, position + 1)
-                    setFgColor(defaultFg, position + 1)
-                    setBgColor(bg, position)
-                    setFgColor(fg, position)
-                }
             }
 
             override fun onPageSelected(position: Int) {
-
+                iconListener?.invoke(Icon(position, bg, fg))
             }
         })
     }
@@ -68,7 +59,6 @@ class CarouselIconPicker : ViewPager {
 
         pageMargin = (-measuredWidth / 1.5).toInt()
     }
-
 
     private var startClick = 0f
 
@@ -88,22 +78,22 @@ class CarouselIconPicker : ViewPager {
         return super.onTouchEvent(ev)
     }
 
-    fun setFgColor(colorInt: Int) {
-        fg = colorInt
-        setFgColor(colorInt, currentItem)
+    fun setIconChangeListener(listener: (Icon) -> Unit) {
+        iconListener = listener
     }
 
     fun setBgColor(colorInt: Int) {
         bg = colorInt
-        setBgColor(colorInt, currentItem)
+        pageTransformer.setBgColor(bg, currentItem)
+        getImageView(currentItem)?.setBackgroundColor(bg)
+        iconListener?.invoke(Icon(currentItem, bg, fg))
     }
 
-    private fun setFgColor(colorInt: Int, position: Int) {
-        getImageView(position)?.setFgTint(colorInt)
-    }
-
-    private fun setBgColor(colorInt: Int, position: Int) {
-        getImageView(position)?.setBackgroundColor(colorInt)
+    fun setFgColor(colorInt: Int) {
+        fg = colorInt
+        pageTransformer.setFgColor(fg, currentItem)
+        getImageView(currentItem)?.setFgTint(fg)
+        iconListener?.invoke(Icon(currentItem, bg, fg))
     }
 
     private fun getImageView(position: Int): ImageView? {
@@ -111,6 +101,39 @@ class CarouselIconPicker : ViewPager {
         else (getChildAt(position) as ViewGroup).getChildAt(0) as ImageView
     }
 
+    inner class CustomPageTransformer : ViewPager.PageTransformer {
+
+        private val colors = Array(adapter!!.count) { Pair(defaultBg, defaultFg) }
+
+        fun setBgColor(colorInt: Int, item: Int) {
+            colors[item] = colors[item].copy(first = colorInt)
+        }
+
+        fun setFgColor(colorInt: Int, item: Int) {
+            colors[item] = colors[item].copy(second = colorInt)
+        }
+
+        override fun transformPage(page: View, position: Float) {
+            val imageView = page.iconIv
+            val absPosition = Math.abs(position)
+            val index = page.tag as Int
+
+            fun compareAndSetColors(bg: Int, fg: Int) {
+                if (colors[index].first != bg) imageView.setBackgroundColor(bg)
+                if (colors[index].second != fg) imageView.setFgTint(fg)
+                colors[index] = Pair(bg, fg)
+            }
+
+            if (absPosition < 0.16666) {
+                compareAndSetColors(bg, fg)
+            } else {
+                compareAndSetColors(defaultBg, defaultFg)
+            }
+
+            imageView.scaleY = 1 - absPosition
+            imageView.scaleX = 1 - absPosition
+        }
+    }
 }
 
 class CarouselAdapter : PagerAdapter() {
@@ -134,13 +157,5 @@ class CarouselAdapter : PagerAdapter() {
 
     override fun destroyItem(container: ViewGroup, position: Int, `object`: Any) {
         container.removeView(`object` as View)
-    }
-}
-
-class CustomPageTransformer : ViewPager.PageTransformer {
-
-    override fun transformPage(page: View, position: Float) {
-        page.iconIv.scaleY = 1 - Math.abs(position)
-        page.iconIv.scaleX = 1 - Math.abs(position)
     }
 }

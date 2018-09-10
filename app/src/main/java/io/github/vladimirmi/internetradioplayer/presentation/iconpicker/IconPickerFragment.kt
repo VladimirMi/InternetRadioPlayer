@@ -6,12 +6,14 @@ import com.arellomobile.mvp.presenter.InjectPresenter
 import com.arellomobile.mvp.presenter.ProvidePresenter
 import io.github.vladimirmi.internetradioplayer.R
 import io.github.vladimirmi.internetradioplayer.di.Scopes
+import io.github.vladimirmi.internetradioplayer.extensions.waitForMeasure
 import io.github.vladimirmi.internetradioplayer.model.db.entity.Icon
 import io.github.vladimirmi.internetradioplayer.presentation.root.ToolbarBuilder
 import io.github.vladimirmi.internetradioplayer.presentation.root.ToolbarView
 import io.github.vladimirmi.internetradioplayer.ui.base.BackPressListener
 import io.github.vladimirmi.internetradioplayer.ui.base.BaseFragment
 import kotlinx.android.synthetic.main.fragment_icon_picker.*
+import timber.log.Timber
 import toothpick.Toothpick
 
 
@@ -35,18 +37,21 @@ class IconPickerFragment : BaseFragment(), IconPickerView, BackPressListener {
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        Timber.e("onViewCreated: ")
 
         configurationsRg.setOnCheckedChangeListener { _, checkedId ->
 
             if (checkedId == R.id.configBackgroundBt) {
                 colorPicker.setColor(presenter.icon.bg)
-                colorPicker.setOnColorChangedListener(this::setBackgroundColor)
+                colorPicker.setOnColorChangedListener(carousel::setBgColor)
 
-            } else if (checkedId == R.id.configForegroundBt) {
+            } else {
                 colorPicker.setColor(presenter.icon.fg)
-                colorPicker.setOnColorChangedListener(this::setForegroundColor)
+                colorPicker.setOnColorChangedListener(carousel::setFgColor)
             }
         }
+
+        carousel.setIconChangeListener { presenter.icon = it }
 
         okBt.setOnClickListener { presenter.saveIcon() }
         cancelBt.setOnClickListener { presenter.exit() }
@@ -61,18 +66,16 @@ class IconPickerFragment : BaseFragment(), IconPickerView, BackPressListener {
     }
 
     override fun setIcon(icon: Icon) {
-        carousel.currentItem = icon.res
+        carousel.waitForMeasure {
+            carousel.currentItem = icon.res
+            carousel.setBgColor(icon.bg)
+            carousel.setFgColor(icon.fg)
+        }
+
+        if (configurationsRg.checkedRadioButtonId == -1) {
+            configurationsRg.check(R.id.configForegroundBt)
+        }
     }
 
     //endregion
-
-    private fun setForegroundColor(colorInt: Int) {
-        presenter.icon.fg = colorInt
-        carousel.setFgColor(colorInt)
-    }
-
-    private fun setBackgroundColor(colorInt: Int) {
-        presenter.icon.bg = colorInt
-        carousel.setBgColor(colorInt)
-    }
 }

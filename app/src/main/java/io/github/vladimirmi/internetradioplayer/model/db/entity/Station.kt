@@ -8,9 +8,11 @@ import java.util.*
  * Created by Vladimir Mikhalev 28.08.2018.
  */
 
+//todo create group_id index
 @Entity(foreignKeys = [ForeignKey(entity = Group::class,
         parentColumns = ["id"],
-        childColumns = ["group_id"])],
+        childColumns = ["group_id"],
+        onDelete = ForeignKey.CASCADE)],
         indices = [Index(value = ["name"], unique = true)])
 class Station {
 

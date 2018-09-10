@@ -12,9 +12,11 @@ import android.arch.persistence.room.ForeignKey
         foreignKeys = [
             ForeignKey(entity = Station::class,
                     parentColumns = ["id"],
-                    childColumns = ["stationId"]),
+                    childColumns = ["stationId"],
+                    onDelete = ForeignKey.CASCADE),
             ForeignKey(entity = Genre::class,
                     parentColumns = ["name"],
-                    childColumns = ["genreName"])
+                    childColumns = ["genreName"],
+                    onDelete = ForeignKey.RESTRICT)
         ])
 class StationGenreJoin(var stationId: String, var genreName: String)

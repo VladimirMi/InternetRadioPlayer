@@ -56,9 +56,9 @@ class StationListRepository
         }
     }
 
-    fun removeStation(station: Station): Completable {
+    fun removeStation(id: String): Completable {
         return Completable.fromCallable {
-            dao.delete(station)
+            dao.deleteStation(id)
         }
     }
 

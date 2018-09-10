@@ -67,13 +67,13 @@ class StationsGroupList : GroupedList {
         index()
     }
 
-    fun removeStation(id: String): Station {
+    fun removeStation(id: String) {
         for (group in groups) {
             for (item in group.items) {
                 if (item.id == id) {
                     group.items.remove(item)
                     index()
-                    return item
+                    return
                 }
             }
         }

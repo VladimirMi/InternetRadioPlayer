@@ -47,8 +47,8 @@ interface StationDao {
     @Update
     fun update(group: Group)
 
-    @Delete
-    fun delete(station: Station)
+    @Query("DELETE FROM station WHERE id = :id")
+    fun deleteStation(id: String)
 
     @Delete
     fun delete(genre: Genre)

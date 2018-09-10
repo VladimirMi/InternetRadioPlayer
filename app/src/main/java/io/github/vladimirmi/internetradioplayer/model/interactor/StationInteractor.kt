@@ -15,6 +15,7 @@ import io.reactivex.Completable
 import io.reactivex.Observable
 import io.reactivex.Single
 import io.reactivex.functions.BiFunction
+import timber.log.Timber
 import javax.inject.Inject
 
 
@@ -120,7 +121,7 @@ class StationInteractor
         } else Completable.complete()
 
         val remove = if (newStation.name != currentStation.name) {
-            stationRepository.removeStation(currentStation)
+            stationRepository.removeStation(currentStation.id)
         } else Completable.complete()
 
         return validate(newStation)
@@ -145,13 +146,14 @@ class StationInteractor
     }
 
     fun removeCurrentStation(): Completable {
-        if (stationsList.isFirstStation(currentStation.id)) {
-            previousStation()
-        } else {
-            nextStation()
-        }
-        val removed = stationsList.removeStation(currentStation.id)
-        return stationRepository.removeStation(removed)
+        val stationId = currentStation.id
+        Timber.e("removeCurrentStation: $stationId")
+
+        return stationRepository.removeStation(stationId)
+                .doOnComplete {
+                    if (stationsList.isFirstStation(stationId)) previousStation() else nextStation()
+                    stationsList.removeStation(stationId)
+                }
     }
 
     fun showOrHideGroup(id: String): Completable {

@@ -60,6 +60,10 @@ class StationInteractor
                     }
                     stations
                 })
+                .doOnSuccess { stations ->
+                    val savedCurrentStation = stations.find { it.id == stationRepository.getCurrentStationId() }
+                    savedCurrentStation?.let { currentStation = it }
+                }
 
         Single.zip(stationRepository.getAllGroups(), stationsSingle,
                 BiFunction { groups: List<Group>, stations: List<Station> ->
@@ -165,34 +169,4 @@ class StationInteractor
     fun addCurrentShortcut(): Boolean {
         return shortcutHelper.pinShortcut(currentStation)
     }
-
-//    //region =============== Icon ==============
-//
-//    fun iconChanged(): Single<Boolean> =
-//            iconRepository.getSavedIcon(currentIcon.name)
-//                    .map { currentIcon != it }
-//
-//    var currentIcon: Icon
-//        get() = iconRepository.currentIcon.value
-//        set(value) = iconRepository.currentIcon.accept(value)
-//
-//    val currentIconObs: Observable<Icon> get() = iconRepository.currentIcon
-//
-//    fun getIcon(path: String): Single<Icon> = iconRepository.getStationIcon(path)
-//
-//    private fun removeIcon(name: String): Completable {
-//        return iconRepository.removeStationIcon(name)
-//    }
-//
-//    private fun saveCurrentIcon(newName: String): Completable {
-//        return iconChanged().flatMapCompletable { changed ->
-//            if (changed || currentIcon.name != newName) {
-//                iconRepository.saveStationIcon(newName)
-//            } else {
-//                Completable.complete()
-//            }
-//        }
-//    }
-//
-//    //endregion
 }

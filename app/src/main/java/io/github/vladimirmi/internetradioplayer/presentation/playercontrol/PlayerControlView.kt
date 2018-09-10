@@ -1,6 +1,5 @@
 package io.github.vladimirmi.internetradioplayer.presentation.playercontrol
 
-import android.graphics.Bitmap
 import com.arellomobile.mvp.MvpView
 import com.arellomobile.mvp.viewstate.strategy.AddToEndSingleStrategy
 import com.arellomobile.mvp.viewstate.strategy.OneExecutionStateStrategy
@@ -23,13 +22,7 @@ interface PlayerControlView : MvpView {
     fun setStation(station: Station)
 
     @StateStrategyType(AddToEndSingleStrategy::class)
-    fun enableNextPrevious(enable: Boolean)
-
-    @StateStrategyType(AddToEndSingleStrategy::class)
     fun enableEditMode(enable: Boolean)
-
-    @StateStrategyType(AddToEndSingleStrategy::class)
-    fun setStationIcon(stationIcon: Bitmap)
 
     @StateStrategyType(OneExecutionStateStrategy::class)
     fun showToast(resId: Int)

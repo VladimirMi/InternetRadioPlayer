@@ -1,6 +1,5 @@
 package io.github.vladimirmi.internetradioplayer.presentation.playercontrol
 
-import android.graphics.Bitmap
 import android.os.Bundle
 import android.view.View
 import android.widget.Toast
@@ -8,8 +7,7 @@ import com.arellomobile.mvp.presenter.InjectPresenter
 import com.arellomobile.mvp.presenter.ProvidePresenter
 import io.github.vladimirmi.internetradioplayer.R
 import io.github.vladimirmi.internetradioplayer.di.Scopes
-import io.github.vladimirmi.internetradioplayer.extensions.color
-import io.github.vladimirmi.internetradioplayer.extensions.setTint
+import io.github.vladimirmi.internetradioplayer.extensions.getBitmap
 import io.github.vladimirmi.internetradioplayer.extensions.visible
 import io.github.vladimirmi.internetradioplayer.model.db.entity.Station
 import io.github.vladimirmi.internetradioplayer.ui.base.BaseFragment
@@ -37,7 +35,6 @@ class PlayerControlFragment : BaseFragment(), PlayerControlView {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         play_pause.setOnClickListener { presenter.playPause() }
-        favorite.setOnClickListener { presenter.switchFavorite() }
         iconIv.setOnClickListener { presenter.showStation() }
         previous.setOnClickListener { presenter.skipToPrevious() }
         next.setOnClickListener { presenter.skipToNext() }
@@ -53,19 +50,7 @@ class PlayerControlFragment : BaseFragment(), PlayerControlView {
     }
 
     override fun setStation(station: Station) {
-
-    }
-
-    override fun setStationIcon(stationIcon: Bitmap) {
-        iconIv.setImageBitmap(stationIcon)
-    }
-
-    override fun enableNextPrevious(enable: Boolean) {
-        val tint = context!!.color(if (enable) R.color.grey_600 else R.color.grey_400)
-        previous.setTint(tint)
-        next.setTint(tint)
-        previous.isEnabled = enable
-        next.isEnabled = enable
+        iconIv.setImageBitmap(station.icon.getBitmap(context!!))
     }
 
     override fun enableEditMode(enable: Boolean) {

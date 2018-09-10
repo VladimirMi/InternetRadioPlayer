@@ -10,7 +10,6 @@ import android.support.v4.content.pm.ShortcutManagerCompat
 import android.support.v4.graphics.drawable.IconCompat
 import io.github.vladimirmi.internetradioplayer.R
 import io.github.vladimirmi.internetradioplayer.extensions.getBitmap
-import io.github.vladimirmi.internetradioplayer.model.db.entity.ICONS
 import io.github.vladimirmi.internetradioplayer.model.db.entity.Station
 import io.github.vladimirmi.internetradioplayer.model.service.PlayerService
 import io.github.vladimirmi.internetradioplayer.presentation.root.RootActivity
@@ -28,7 +27,7 @@ class ShortcutHelper
         val info = ShortcutInfoCompat.Builder(context, station.id)
                 .setShortLabel(station.name)
                 .setLongLabel(station.name)
-                .setIcon(IconCompat.createWithBitmap(context.getBitmap(ICONS[station.icon.res])))
+                .setIcon(IconCompat.createWithBitmap(station.icon.getBitmap(context, withBackground = true)))
                 .setIntent(createShortcutIntent(station))
                 .setDisabledMessage(context.getString(R.string.toast_shortcut_remove))
                 .build()

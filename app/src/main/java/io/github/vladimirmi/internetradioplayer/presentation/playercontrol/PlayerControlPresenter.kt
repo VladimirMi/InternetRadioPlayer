@@ -43,11 +43,6 @@ class PlayerControlPresenter
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe { viewState.setStation(it) }
                 .addTo(compDisp)
-
-//        stationInteractor.currentIconObs
-//                .observeOn(AndroidSchedulers.mainThread())
-//                .subscribe { viewState.setStationIcon(it.bitmap) }
-//                .addTo(compDisp)
     }
 
     private fun handleState(state: PlaybackStateCompat) {
@@ -79,14 +74,6 @@ class PlayerControlPresenter
                 playPause()
             }
         }
-    }
-
-    fun switchFavorite() {
-        val current = stationInteractor.currentStation
-//        val copy = current.copy(favorite = !current.favorite)
-//        stationInteractor.updateCurrentStation(copy)
-//                .subscribe()
-//                .addTo(compDisp)
     }
 
     fun showStation() {

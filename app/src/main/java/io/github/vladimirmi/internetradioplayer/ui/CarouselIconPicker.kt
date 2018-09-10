@@ -12,6 +12,7 @@ import android.view.ViewGroup
 import android.widget.ImageView
 import io.github.vladimirmi.internetradioplayer.R
 import io.github.vladimirmi.internetradioplayer.extensions.color
+import io.github.vladimirmi.internetradioplayer.extensions.setBgTint
 import io.github.vladimirmi.internetradioplayer.extensions.setFgTint
 import io.github.vladimirmi.internetradioplayer.model.db.entity.ICONS
 import io.github.vladimirmi.internetradioplayer.model.db.entity.Icon
@@ -85,7 +86,7 @@ class CarouselIconPicker : ViewPager {
     fun setBgColor(colorInt: Int) {
         bg = colorInt
         pageTransformer.setBgColor(bg, currentItem)
-        getImageView(currentItem)?.setBackgroundColor(bg)
+        getImageView(currentItem)?.setBgTint(bg, true)
         iconListener?.invoke(Icon(currentItem, bg, fg))
     }
 
@@ -119,7 +120,7 @@ class CarouselIconPicker : ViewPager {
             val index = page.tag as Int
 
             fun compareAndSetColors(bg: Int, fg: Int) {
-                if (colors[index].first != bg) imageView.setBackgroundColor(bg)
+                if (colors[index].first != bg) imageView.setBgTint(bg, true)
                 if (colors[index].second != fg) imageView.setFgTint(fg)
                 colors[index] = Pair(bg, fg)
             }

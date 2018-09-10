@@ -163,8 +163,7 @@ class StationInteractor
     }
 
     fun addCurrentShortcut(): Boolean {
-//        return shortcutHelper.pinShortcut(currentStation, currentIcon)
-        return true
+        return shortcutHelper.pinShortcut(currentStation)
     }
 
 //    //region =============== Icon ==============

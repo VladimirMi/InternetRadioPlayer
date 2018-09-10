@@ -21,10 +21,10 @@ class IconPickerPresenter
                     private val router: Router)
     : BasePresenter<IconPickerView>() {
 
-    var icon = stationInteractor.currentStation.icon
+    var currentIcon = stationInteractor.currentStation.icon
 
     override fun onFirstViewAttach() {
-        viewState.setIcon(icon)
+        viewState.setIcon(currentIcon)
     }
 
     override fun attachView(view: IconPickerView?) {
@@ -34,7 +34,9 @@ class IconPickerPresenter
     }
 
     fun saveIcon() {
-        stationInteractor.currentStation.icon = icon
+        stationInteractor.currentStation = stationInteractor.currentStation.apply {
+            icon = currentIcon
+        }
         exit()
     }
 

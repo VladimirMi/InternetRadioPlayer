@@ -1,6 +1,7 @@
 package io.github.vladimirmi.internetradioplayer.presentation.iconpicker
 
 import android.os.Bundle
+import android.os.Handler
 import android.view.View
 import com.arellomobile.mvp.presenter.InjectPresenter
 import com.arellomobile.mvp.presenter.ProvidePresenter
@@ -13,7 +14,6 @@ import io.github.vladimirmi.internetradioplayer.presentation.root.ToolbarView
 import io.github.vladimirmi.internetradioplayer.ui.base.BackPressListener
 import io.github.vladimirmi.internetradioplayer.ui.base.BaseFragment
 import kotlinx.android.synthetic.main.fragment_icon_picker.*
-import timber.log.Timber
 import toothpick.Toothpick
 
 
@@ -37,21 +37,19 @@ class IconPickerFragment : BaseFragment(), IconPickerView, BackPressListener {
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
-        Timber.e("onViewCreated: ")
-
         configurationsRg.setOnCheckedChangeListener { _, checkedId ->
 
             if (checkedId == R.id.configBackgroundBt) {
-                colorPicker.setColor(presenter.icon.bg)
+                colorPicker.setColor(presenter.currentIcon.bg)
                 colorPicker.setOnColorChangedListener(carousel::setBgColor)
 
             } else {
-                colorPicker.setColor(presenter.icon.fg)
+                colorPicker.setColor(presenter.currentIcon.fg)
                 colorPicker.setOnColorChangedListener(carousel::setFgColor)
             }
         }
 
-        carousel.setIconChangeListener { presenter.icon = it }
+        carousel.setIconChangeListener { presenter.currentIcon = it }
 
         okBt.setOnClickListener { presenter.saveIcon() }
         cancelBt.setOnClickListener { presenter.exit() }
@@ -66,8 +64,11 @@ class IconPickerFragment : BaseFragment(), IconPickerView, BackPressListener {
     }
 
     override fun setIcon(icon: Icon) {
+        Handler().postDelayed({
+
+        }, 300)
         carousel.waitForMeasure {
-            carousel.currentItem = icon.res
+            carousel.setCurrentItem(icon.res, false)
             carousel.setBgColor(icon.bg)
             carousel.setFgColor(icon.fg)
         }

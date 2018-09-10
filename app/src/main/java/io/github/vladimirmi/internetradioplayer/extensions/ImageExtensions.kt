@@ -4,6 +4,7 @@ import android.annotation.SuppressLint
 import android.content.Context
 import android.graphics.Bitmap
 import android.graphics.Canvas
+import android.graphics.Color
 import android.graphics.drawable.BitmapDrawable
 import android.graphics.drawable.Drawable
 import android.graphics.drawable.VectorDrawable
@@ -11,9 +12,16 @@ import android.support.annotation.ColorInt
 import android.support.annotation.DrawableRes
 import android.support.graphics.drawable.VectorDrawableCompat
 import android.support.v4.content.ContextCompat
+import android.support.v4.graphics.ColorUtils
 import android.support.v4.graphics.drawable.DrawableCompat
 import android.view.View
 import android.widget.ImageView
+import io.github.vladimirmi.internetradioplayer.R
+import io.github.vladimirmi.internetradioplayer.model.db.entity.ICONS
+import io.github.vladimirmi.internetradioplayer.model.db.entity.Icon
+import io.github.vladimirmi.internetradioplayer.model.db.entity.Station
+import java.util.*
+
 
 /**
  * Created by Vladimir Mikhalev 08.09.2018.
@@ -42,8 +50,12 @@ fun Drawable.getBitmap(): Bitmap {
     }
 }
 
-fun View.setBgTint(@ColorInt colorInt: Int) {
-    background?.setTintExt(colorInt)
+fun View.setBgTint(@ColorInt colorInt: Int, mutate: Boolean = false) {
+    if (mutate) {
+        background?.mutate()?.setTintExt(colorInt)
+    } else {
+        background?.setTintExt(colorInt)
+    }
 }
 
 fun ImageView.setFgTint(@ColorInt colorInt: Int) {
@@ -53,4 +65,54 @@ fun ImageView.setFgTint(@ColorInt colorInt: Int) {
 fun Drawable.setTintExt(@ColorInt colorInt: Int) {
     val wrapped = DrawableCompat.wrap(this)
     DrawableCompat.setTint(wrapped, colorInt)
+}
+
+fun Icon.getBitmap(context: Context, withBackground: Boolean = false): Bitmap {
+    val bitmap = Bitmap.createBitmap(256, 256, Bitmap.Config.ARGB_8888)
+    val canvas = Canvas(bitmap)
+
+    if (withBackground) {
+        val background = ContextCompat.getDrawable(context, R.drawable.ic_background)!!
+        background.setTintExt(bg)
+        background.setBounds(0, 0, canvas.width, canvas.height)
+        background.draw(canvas)
+    }
+
+    val drawable = ContextCompat.getDrawable(context, ICONS[res])!!
+    drawable.setTintExt(fg)
+    drawable.setBounds(0, 0, canvas.width, canvas.height)
+    drawable.draw(canvas)
+    return bitmap
+}
+
+fun Station.randomIcon(): Icon {
+    val random = Random()
+    return Icon(res = random.nextInt(ICONS.size),
+            fg = getRandomDarkColor(random),
+            bg = getRandomLightColor(random))
+}
+
+fun getRandomDarkColor(random: Random): Int {
+    val darkThreshold = 0.4
+
+    val color = getRandomColor(random)
+    val luminance = ColorUtils.calculateLuminance(color)
+
+    return if (luminance > darkThreshold) getRandomDarkColor(random) else color
+}
+
+fun getRandomLightColor(random: Random): Int {
+    val lightThreshold = 0.6
+
+    val color = getRandomColor(random)
+    val luminance = ColorUtils.calculateLuminance(color)
+
+    return if (luminance < lightThreshold) getRandomLightColor(random) else color
+}
+
+fun getRandomColor(random: Random): Int {
+    val r = random.nextInt(256)
+    val g = random.nextInt(256)
+    val b = random.nextInt(256)
+    return Color.rgb(r, g, b)
 }

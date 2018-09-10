@@ -13,6 +13,7 @@
         android:contentDescription="@string/desc_station_icon"
         android:layout_gravity="center"
         tools:src="@drawable/ic_station_1"
+        android:background="@drawable/ic_background"
         />
 
 </FrameLayout>

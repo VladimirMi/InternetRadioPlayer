@@ -38,10 +38,10 @@ interface StationDao {
     @Insert
     fun insertStationGenre(stationGenreJoins: List<StationGenreJoin>)
 
-    @Insert
+    @Insert(onConflict = OnConflictStrategy.IGNORE)
     fun insertGroup(group: Group): Long
 
-    @Update
+    @Update(onConflict = OnConflictStrategy.REPLACE)
     fun update(station: Station)
 
     @Update

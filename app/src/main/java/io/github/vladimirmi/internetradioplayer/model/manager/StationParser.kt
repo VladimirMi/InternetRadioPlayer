@@ -109,16 +109,16 @@ class StationParser
             it.url = headers[HEADER_URL]
             it.bitrate = headers[HEADER_BITRATE]?.toInt()
             it.sample = headers[HEADER_SAMPLE]?.toInt()
-            it.genres = parseGenres(headers[HEADER_GENRE])
+            it.genres = ArrayList(parseGenres(headers[HEADER_GENRE]))
         }
     }
 
-    private fun parseGenres(genres: String?): List<String> {
-        if (genres == null) return emptyList()
+    private fun parseGenres(genres: String?): Set<String> {
+        if (genres == null) return emptySet()
         return if (genres.contains(',')) {
-            genres.split(',').map { it.trim() }
+            genres.split(',').map { it.trim() }.toSet()
         } else {
-            genres.split(' ').map { it.trim() }
+            genres.split(' ').map { it.trim() }.toSet()
         }
     }
 

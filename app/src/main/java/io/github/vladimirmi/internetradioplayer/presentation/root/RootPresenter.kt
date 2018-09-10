@@ -25,7 +25,10 @@ class RootPresenter
     : BasePresenter<RootView>() {
 
     override fun onFirstViewAttach() {
-        setupRootScreen()
+        stationInteractor.initStations()
+                .ioToMain()
+                .subscribe { setupRootScreen() }
+                .addTo(compDisp)
         controlsInteractor.connect()
     }
 

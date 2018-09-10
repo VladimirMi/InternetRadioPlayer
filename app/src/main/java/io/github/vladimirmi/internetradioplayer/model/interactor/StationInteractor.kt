@@ -15,7 +15,6 @@ import io.reactivex.Completable
 import io.reactivex.Observable
 import io.reactivex.Single
 import io.reactivex.functions.BiFunction
-import io.reactivex.schedulers.Schedulers
 import javax.inject.Inject
 
 
@@ -49,7 +48,7 @@ class StationInteractor
             stationRepository.saveCurrentStationId(value.id)
         }
 
-    init {
+    fun initStations(): Completable {
         stationsList.setOnChangeListener { _stationsListObs.accept(it) }
         val stationsSingle = Single.zip(stationRepository.getAllStations(),
                 stationRepository.getAllStationGenreJoins(),
@@ -65,12 +64,10 @@ class StationInteractor
                     savedCurrentStation?.let { currentStation = it }
                 }
 
-        Single.zip(stationRepository.getAllGroups(), stationsSingle,
+        return Single.zip(stationRepository.getAllGroups(), stationsSingle,
                 BiFunction { groups: List<Group>, stations: List<Station> ->
                     stationsList.init(groups, stations)
-                })
-                .subscribeOn(Schedulers.io())
-                .subscribe()
+                }).toCompletable()
     }
 
     fun getStation(id: Int): Station? {

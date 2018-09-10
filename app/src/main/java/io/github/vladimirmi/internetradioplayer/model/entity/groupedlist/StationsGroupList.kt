@@ -54,6 +54,7 @@ class StationsGroupList : GroupedList {
     }
 
     fun add(group: Group) {
+        if (groups.find { it.id == group.id } != null) return
         group.order = groups.size
         groups.add(group)
         index()

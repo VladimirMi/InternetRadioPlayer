@@ -58,6 +58,7 @@ class StationPresenter
 
     fun removeStation() {
         stationInteractor.removeCurrentStation()
+                .ioToMain()
                 .subscribe {
                     controlsInteractor.stop()
                     router.exit()

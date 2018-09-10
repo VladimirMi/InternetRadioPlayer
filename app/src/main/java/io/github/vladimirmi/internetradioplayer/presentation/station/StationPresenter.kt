@@ -61,7 +61,8 @@ class StationPresenter
                 .ioToMain()
                 .subscribe {
                     controlsInteractor.stop()
-                    router.exit()
+                    if (stationInteractor.haveStations()) router.exit()
+                    else router.newRootScreen(Router.GET_STARTED_SCREEN)
                 }
                 .addTo(compDisp)
     }

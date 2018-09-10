@@ -4,7 +4,6 @@ import android.view.MenuItem
 import com.arellomobile.mvp.InjectViewState
 import io.github.vladimirmi.internetradioplayer.R
 import io.github.vladimirmi.internetradioplayer.model.db.entity.Station
-import io.github.vladimirmi.internetradioplayer.model.entity.groupedlist.GroupedList
 import io.github.vladimirmi.internetradioplayer.model.interactor.PlayerControlsInteractor
 import io.github.vladimirmi.internetradioplayer.model.interactor.StationInteractor
 import io.github.vladimirmi.internetradioplayer.navigation.Router
@@ -62,29 +61,6 @@ class StationListPresenter
         controlsInteractor.playbackStateObs
                 .subscribe { viewState.selectItem(interactor.currentStation, controlsInteractor.isPlaying) }
                 .addTo(compDisp)
-    }
-
-    private fun handleStationList(it: GroupedList) {
-//        val newBuilder = when (it.filter) {
-//            Filter.DEFAULT -> {
-//                if (it.size == 0) {
-//                    router.newRootScreen(Router.GET_STARTED_SCREEN)
-//                    return
-//                }
-//                if (it.canFilter(Filter.FAVORITE)) {
-//                    builder.addMenuItem(favoriteOnItem)
-//                }
-//                builder.removeMenuItem(favoriteOffItem)
-//            }
-//            Filter.FAVORITE -> {
-//                if (it.canFilter(Filter.DEFAULT)) {
-//                    builder.addMenuItem(favoriteOffItem)
-//                }
-//                builder.removeMenuItem(favoriteOnItem)
-//            }
-//        }
-//
-//        viewState.buildToolbar(newBuilder)
     }
 
     fun select(station: Station) {

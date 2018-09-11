@@ -13,7 +13,6 @@ import okhttp3.OkHttpClient
 import okhttp3.Request
 import timber.log.Timber
 import java.io.File
-import java.io.InputStream
 import java.lang.IllegalArgumentException
 import java.net.URI
 import java.net.URISyntaxException
@@ -87,8 +86,8 @@ class StationParser
 
         Timber.d("parseFromNet: $type")
         return (if (type.isPlaylistFile()) {
-            if (type.isPlsFile()) body.byteStream().parsePls()
-            else body.byteStream().parseM3u()
+            if (type.isPlsFile()) body.string().parsePls()
+            else body.string().parseM3u()
 
         } else if (type.isAudioStream()) {
             createStation(response.headers(), name).apply {
@@ -105,7 +104,7 @@ class StationParser
         Timber.d("createStation: $headers")
 
         return Station().also {
-            it.name = headers[HEADER_NAME] ?: ""
+            it.name = headers[HEADER_NAME] ?: name
             it.url = headers[HEADER_URL]
             it.bitrate = headers[HEADER_BITRATE]?.toInt()
             it.sample = headers[HEADER_SAMPLE]?.toInt()
@@ -122,59 +121,57 @@ class StationParser
         }
     }
 
-    private fun File.parsePls() = inputStream().parsePls(name)
+    private fun File.parsePls(): Station {
+        return readText().parsePls(name)
+    }
 
-    private fun InputStream.parsePls(name: String = ""): Station {
-        use { inputStream ->
-            var uri: String? = null
-            var title: String = name
+    private fun String.parsePls(name: String = ""): Station {
+        var uri: String? = null
+        var title: String = name
 
-            inputStream.bufferedReader().readLines().forEach {
-                val line = it.trim()
-                Timber.d("parsePls: $line")
-                when {
-                    line.startsWith(PLS_URI) -> uri = line.substring(PLS_URI.length).trim()
-                    line.startsWith(PLS_TITLE) -> title = line.substring(PLS_TITLE.length).trim()
-                }
+        lines().forEach {
+            val line = it.trim()
+            Timber.d("parsePls: $line")
+            when {
+                line.startsWith(PLS_URI) -> uri = line.substring(PLS_URI.length).trim()
+                line.startsWith(PLS_TITLE) -> title = line.substring(PLS_TITLE.length).trim()
             }
-            return uri?.let {
-                parseFromNet(
-                        uri = it.toUri(),
-                        name = if (title.isBlank()) it.toUri().host else title
-                )
-            } ?: throw IllegalStateException("Playlist file does not contain stream uri")
         }
+        return uri?.let {
+            parseFromNet(
+                    uri = it.toUri(),
+                    name = if (title.isBlank()) it.toUri().host else title
+            )
+        } ?: throw IllegalStateException("Playlist file does not contain stream uri")
     }
 
 
-    private fun File.parseM3u() = inputStream().parseM3u(name)
+    private fun File.parseM3u() = readText().parseM3u(name)
 
-    private fun InputStream.parseM3u(name: String = ""): Station {
-        use { inputStream ->
-            var extended = false
-            var uri: URI? = null
-            var title: String = name
+    private fun String.parseM3u(name: String = ""): Station {
+        var extended = false
+        var uri: URI? = null
+        var title: String = name
 
-            inputStream.bufferedReader().readLines().forEach {
-                val line = it.trim()
-                Timber.d("parseM3u: $line")
-                when {
-                    line.startsWith(M3U_HEADER) -> extended = true
-                    extended && line.startsWith(M3U_INFO) -> title = line.substringAfter(",")
-                    else -> uri = try {
-                        URI(line)
-                    } catch (e: URISyntaxException) {
-                        null
-                    }
+        lines().forEach {
+            val line = it.trim()
+            Timber.d("parseM3u: $line")
+            when {
+                line.startsWith(M3U_HEADER) -> extended = true
+                extended && line.startsWith(M3U_INFO) -> title = line.substringAfter(",")
+                else -> uri = try {
+                    URI(line)
+                } catch (e: URISyntaxException) {
+                    null
                 }
             }
-            return uri?.let {
-                parseFromNet(
-                        uri = it.toUri(),
-                        name = if (title.isBlank()) it.toUri().host else title
-                )
-            } ?: throw IllegalStateException("Playlist file does not contain stream uri")
         }
+        return uri?.let {
+            parseFromNet(
+                    uri = it.toUri(),
+                    name = if (title.isBlank()) it.toUri().host else title
+            )
+        } ?: throw IllegalStateException("Playlist file does not contain stream uri")
     }
 }
 

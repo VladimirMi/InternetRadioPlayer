@@ -133,7 +133,7 @@ class StationInteractor
 
         return stationRepository.remove(station)
                 .doOnComplete {
-                    if (stationsList.isFirstStation(id)) previousStation(id) else nextStation(id)
+                    if (stationsList.isFirstStation(id)) nextStation(id) else previousStation(id)
                     groups[indexOfGroup(station.groupId)].stations.remove(station)
                     buildStationsList()
                 }

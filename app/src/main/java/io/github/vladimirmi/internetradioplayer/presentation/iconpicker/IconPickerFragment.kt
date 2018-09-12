@@ -1,7 +1,6 @@
 package io.github.vladimirmi.internetradioplayer.presentation.iconpicker
 
 import android.os.Bundle
-import android.os.Handler
 import android.view.View
 import com.arellomobile.mvp.presenter.InjectPresenter
 import com.arellomobile.mvp.presenter.ProvidePresenter
@@ -64,9 +63,6 @@ class IconPickerFragment : BaseFragment(), IconPickerView, BackPressListener {
     }
 
     override fun setIcon(icon: Icon) {
-        Handler().postDelayed({
-
-        }, 300)
         carousel.waitForMeasure {
             carousel.setCurrentItem(icon.res, false)
             carousel.setBgColor(icon.bg)

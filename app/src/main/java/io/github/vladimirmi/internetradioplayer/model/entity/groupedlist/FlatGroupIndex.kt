@@ -22,7 +22,7 @@ class FlatGroupIndex {
                 flatIndex.add(GroupIndex(group.id, groupIndex, null))
             }
             if (group.expanded) {
-                flatIndex.addAll(group.items.mapIndexed { index, element ->
+                flatIndex.addAll(group.stations.mapIndexed { index, element ->
                     GroupIndex(element.id, groupIndex, index)
                 })
             }

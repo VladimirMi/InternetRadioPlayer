@@ -67,8 +67,8 @@ class StationPresenter
                 .addTo(compDisp)
     }
 
-    fun edit(station: Station) {
-        val newStation = getUpdatedStation(station)
+    fun edit(stationInfo: StationInfo) {
+        val newStation = getUpdatedStation(stationInfo)
         stationInteractor.updateCurrentStation(newStation)
                 .subscribeBy(
                         onComplete = { viewMode() },
@@ -81,8 +81,8 @@ class StationPresenter
         viewMode()
     }
 
-    fun create(station: Station) {
-        val newStation = getUpdatedStation(station)
+    fun create(stationInfo: StationInfo) {
+        val newStation = getUpdatedStation(stationInfo)
 
         stationInteractor.addStation(newStation)
                 .ioToMain()
@@ -161,16 +161,15 @@ class StationPresenter
         }
     }
 
-    private fun getUpdatedStation(station: Station): Station {
-        return stationInteractor.currentStation.apply {
-            name = station.name
-            group = station.group
+    private fun getUpdatedStation(stationInfo: StationInfo): Station {
+        return stationInteractor.currentStation.copy(name = stationInfo.name).apply {
+            group = stationInfo.group
         }
     }
 
-    fun tryCancelEdit(station: Station) {
+    fun tryCancelEdit(stationInfo: StationInfo) {
         val currentStation = stationInteractor.currentStation
-        if (station.name != currentStation.name || station.group != currentStation.group) {
+        if (stationInfo.name != currentStation.name || stationInfo.group != currentStation.group) {
             viewState.openCancelEditDialog()
         } else {
             cancelEdit()

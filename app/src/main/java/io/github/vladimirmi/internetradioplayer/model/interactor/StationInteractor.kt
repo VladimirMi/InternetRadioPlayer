@@ -36,21 +36,20 @@ class StationInteractor
             if (!value) previousWhenCreate = null
         }
 
-    private val stationsList = StationsGroupList()
     private val _stationsListObs = BehaviorRelay.create<GroupedList>()
     val stationsListObs: Observable<GroupedList> get() = _stationsListObs
+    private val stationsList = StationsGroupList()
 
     private val _currentStationObs = BehaviorRelay.create<Station>()
     val currentStationObs: Observable<Station> get() = _currentStationObs
     var currentStation: Station
-        get() = _currentStationObs.value ?: Station()
+        get() = _currentStationObs.value ?: Station.nullObj()
         set(value) {
             _currentStationObs.accept(value)
             stationRepository.saveCurrentStationId(value.id)
         }
 
     fun initStations(): Completable {
-        stationsList.setOnChangeListener { _stationsListObs.accept(it) }
         val stationsSingle = Single.zip(stationRepository.getAllStations(),
                 stationRepository.getAllStationGenreJoins(),
                 BiFunction { stations: List<Station>, joins: List<StationGenreJoin> ->
@@ -67,7 +66,9 @@ class StationInteractor
 
         return Single.zip(stationRepository.getAllGroups(), stationsSingle,
                 BiFunction { groups: List<Group>, stations: List<Station> ->
-                    stationsList.init(groups, stations)
+                    stationsList.init(groups, stations, stationRepository) {
+                        _stationsListObs.accept(it)
+                    }
                 }).toCompletable()
     }
 
@@ -88,16 +89,8 @@ class StationInteractor
     }
 
     fun addStation(station: Station): Completable {
-        val group = if (station.group.isBlank()) Group.default() else Group(station.group)
-        station.groupId = group.id
-
         return validate(station, adding = true)
-                .doOnComplete {
-                    stationsList.add(group)
-                    stationsList.add(station)
-                }
-                .andThen(stationRepository.addGroup(group))
-                .andThen(stationRepository.addStation(station))
+                .andThen(stationsList.add(station))
                 .doOnComplete { currentStation = station }
     }
 
@@ -120,9 +113,9 @@ class StationInteractor
             stationRepository.updateStation(newStation)
         } else Completable.complete()
 
-        val remove = if (newStation.name != currentStation.name) {
-            stationRepository.removeStation(currentStation.id)
-        } else Completable.complete()
+//        val remove = if (newStation.name != currentStation.name) {
+//            stationRepository.removeStation(currentStation.id)
+//        } else Completable.complete()
 
         return validate(newStation)
                 .doOnComplete {
@@ -147,22 +140,21 @@ class StationInteractor
 
     fun removeCurrentStation(): Completable {
         val stationId = currentStation.id
+        val groupId = currentStation.groupId
+        val next = if (stationsList.isFirstStation(stationId)) stationsList.getPreviousFrom(stationId)
+        else stationsList.getNextFrom(stationId)
         Timber.e("removeCurrentStation: $stationId")
 
-        return stationRepository.removeStation(stationId)
-                .doOnComplete {
-                    if (stationsList.isFirstStation(stationId)) previousStation() else nextStation()
-                    stationsList.removeStation(stationId)
-                }
+        return stationsList.removeStation(stationId, groupId)
+                .doOnComplete { currentStation = next ?: Station.nullObj() }
     }
 
     fun showOrHideGroup(id: String): Completable {
-        val group = if (stationsList.isGroupExpanded(id)) {
+        return if (stationsList.isGroupExpanded(id)) {
             stationsList.collapseGroup(id)
         } else {
             stationsList.expandGroup(id)
         }
-        return stationRepository.updateGroup(group)
     }
 
     fun addCurrentShortcut(): Boolean {

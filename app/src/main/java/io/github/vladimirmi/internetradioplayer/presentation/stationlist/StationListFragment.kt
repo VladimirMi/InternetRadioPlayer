@@ -26,7 +26,7 @@ import toothpick.Toothpick
 class StationListFragment : BaseFragment(), StationListView, StationItemCallback {
 
     override val layoutRes = R.layout.fragment_media_list
-    private val adapter = MediaListAdapter(this)
+    private val adapter = StationListAdapter(this)
 
     private val itemTouchHelper by lazy {
         ItemTouchHelper(object : ItemSwipeCallback(context!!, 0, ItemTouchHelper.LEFT or ItemTouchHelper.RIGHT) {

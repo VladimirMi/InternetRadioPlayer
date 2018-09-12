@@ -1,7 +1,6 @@
 package io.github.vladimirmi.internetradioplayer.model.db.entity
 
 import android.arch.persistence.room.*
-import io.github.vladimirmi.internetradioplayer.extensions.randomIcon
 import java.util.*
 
 /**
@@ -13,19 +12,34 @@ import java.util.*
         parentColumns = ["id"],
         childColumns = ["group_id"],
         onDelete = ForeignKey.CASCADE)],
-        indices = [Index(value = ["name"], unique = true)])
-class Station {
+        indices = [Index(value = ["name"], unique = true), Index(value = ["group_id"])])
 
-    @PrimaryKey var id: String = UUID.randomUUID().toString()
-    var name: String = ""
-    var uri: String = ""
-    var url: String? = null
-    var bitrate: Int? = null
-    var sample: Int? = null
-    var order: Int = 0
-    @Embedded(prefix = "icon_") var icon: Icon = randomIcon()
-    @ColumnInfo(name = "group_id") var groupId: String = ""
+data class Station(
+        @PrimaryKey val id: String,
+        val name: String,
+        val uri: String,
+        val url: String?,
+        val bitrate: Int?,
+        val sample: Int?,
+        val order: Int,
+        @Embedded(prefix = "icon_") val icon: Icon,
+        @ColumnInfo(name = "group_id") val groupId: String
+) {
 
     @Ignore var genres: List<String> = listOf()
-    @Ignore var group: String = ""
+    @Ignore var group: String = Group.DEFAULT_NAME
+
+    @Ignore constructor(name: String,
+                        uri: String,
+                        url: String?,
+                        bitrate: Int?,
+                        sample: Int?)
+            : this(UUID.randomUUID().toString(), name, uri, url, bitrate, sample,
+            0, Icon.randomIcon(), Group.DEFAULT_ID)
+
+    companion object {
+        fun nullObj() = Station("", "", "", 0, 0) //empty uri not valid (can't be)
+    }
+
+    fun isNull() = uri.isEmpty()
 }

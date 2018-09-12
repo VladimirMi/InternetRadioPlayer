@@ -90,9 +90,7 @@ class StationParser
             else body.string().parseM3u()
 
         } else if (type.isAudioStream()) {
-            createStation(response.headers(), name).apply {
-                this.uri = uri.toString()
-            }
+            createStation(name, uri, response.headers())
 
         } else {
             throw IllegalStateException("Unsupported content type $type")
@@ -100,14 +98,15 @@ class StationParser
         }).also { body.close() }
     }
 
-    private fun createStation(headers: Headers, name: String): Station {
+    private fun createStation(name: String, uri: Uri, headers: Headers): Station {
         Timber.d("createStation: $headers")
 
-        return Station().also {
-            it.name = headers[HEADER_NAME] ?: name
-            it.url = headers[HEADER_URL]
-            it.bitrate = headers[HEADER_BITRATE]?.toInt()
-            it.sample = headers[HEADER_SAMPLE]?.toInt()
+        return Station(
+                name = headers[HEADER_NAME] ?: name,
+                uri = uri.toString(),
+                url = headers[HEADER_URL],
+                bitrate = headers[HEADER_BITRATE]?.toInt(),
+                sample = headers[HEADER_SAMPLE]?.toInt()).also {
             it.genres = ArrayList(parseGenres(headers[HEADER_GENRE]))
         }
     }

@@ -34,9 +34,7 @@ class IconPickerPresenter
     }
 
     fun saveIcon() {
-        stationInteractor.currentStation = stationInteractor.currentStation.apply {
-            icon = currentIcon
-        }
+        stationInteractor.currentStation = stationInteractor.currentStation.copy(icon = currentIcon)
         exit()
     }
 

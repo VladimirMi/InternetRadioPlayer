@@ -159,17 +159,17 @@ class StationFragment : BaseFragment(), StationView, BackPressListener {
 
     //endregion
 
-    private fun constructStation(): Station {
-//        val genres = ArrayList<String>()
-//        (0 until genresFl.childCount)
-//                .forEach {
-//                    val tagView = genresFl.getChildAt(it) as TagView
-//                    genres.add(tagView.text.toString())
-//                }
-        return Station().apply {
-            name = titleEt.text.toString()
-            group = groupEt.text.toString()
-        }
+    private fun constructStation(): StationInfo {
+        val genres = ArrayList<String>()
+        (0 until genresFl.childCount)
+                .forEach {
+                    val tagView = genresFl.getChildAt(it) as TagView
+                    genres.add(tagView.text.toString())
+                }
+        return StationInfo(
+                name = titleEt.text.toString(),
+                group = groupEt.text.toString(),
+                genres = genres)
     }
 
     private fun TextView.linkStyle(enable: Boolean) {

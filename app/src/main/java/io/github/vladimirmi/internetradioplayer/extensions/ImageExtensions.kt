@@ -19,7 +19,6 @@ import android.widget.ImageView
 import io.github.vladimirmi.internetradioplayer.R
 import io.github.vladimirmi.internetradioplayer.model.db.entity.ICONS
 import io.github.vladimirmi.internetradioplayer.model.db.entity.Icon
-import io.github.vladimirmi.internetradioplayer.model.db.entity.Station
 import java.util.*
 
 
@@ -83,13 +82,6 @@ fun Icon.getBitmap(context: Context, withBackground: Boolean = false): Bitmap {
     drawable.setBounds(0, 0, canvas.width, canvas.height)
     drawable.draw(canvas)
     return bitmap
-}
-
-fun Station.randomIcon(): Icon {
-    val random = Random()
-    return Icon(res = random.nextInt(ICONS.size),
-            fg = getRandomDarkColor(random),
-            bg = getRandomLightColor(random))
 }
 
 fun getRandomDarkColor(random: Random): Int {

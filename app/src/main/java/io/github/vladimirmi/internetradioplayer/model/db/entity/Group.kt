@@ -4,37 +4,26 @@ import android.arch.persistence.room.Entity
 import android.arch.persistence.room.Ignore
 import android.arch.persistence.room.Index
 import android.arch.persistence.room.PrimaryKey
-import io.github.vladimirmi.internetradioplayer.R
-import io.github.vladimirmi.internetradioplayer.di.Scopes
-import java.util.*
 
 /**
  * Created by Vladimir Mikhalev 28.08.2018.
  */
 
 @Entity(indices = [Index(value = ["name"], unique = true)])
-class Group() {
+data class Group(@PrimaryKey
+                 val id: String,
+                 val name: String,
+                 val expanded: Boolean,
+                 val order: Int) {
 
-    @PrimaryKey
-    var id: String = UUID.randomUUID().toString()
-    var name: String = ""
-    var expanded: Boolean = true
-    var order: Int = 0
-    @Ignore var items: MutableList<Station> = arrayListOf()
+    @Ignore var stations: MutableList<Station> = arrayListOf()
 
-    constructor(name: String) : this() {
-        this.name = name
-    }
+    @Ignore
+    constructor(id: String, name: String, order: Int) : this(id, name, true, order)
 
     companion object {
         const val DEFAULT_ID = "default_id"
-
-        fun default(): Group {
-            return Group().apply {
-                id = DEFAULT_ID
-                name = Scopes.context.getString(R.string.default_group)
-            }
-        }
+        const val DEFAULT_NAME = "default_name"
     }
 
     fun isDefault() = id == DEFAULT_ID

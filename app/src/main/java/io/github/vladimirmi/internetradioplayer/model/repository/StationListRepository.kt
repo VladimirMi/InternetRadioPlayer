@@ -6,6 +6,7 @@ import io.github.vladimirmi.internetradioplayer.model.db.entity.Genre
 import io.github.vladimirmi.internetradioplayer.model.db.entity.Group
 import io.github.vladimirmi.internetradioplayer.model.db.entity.Station
 import io.github.vladimirmi.internetradioplayer.model.db.entity.StationGenreJoin
+import io.github.vladimirmi.internetradioplayer.model.entity.groupedlist.StationsGroupListener
 import io.github.vladimirmi.internetradioplayer.model.manager.Preferences
 import io.github.vladimirmi.internetradioplayer.model.manager.StationParser
 import io.reactivex.Completable
@@ -19,7 +20,8 @@ import javax.inject.Inject
 class StationListRepository
 @Inject constructor(private val stationParser: StationParser,
                     private val preferences: Preferences,
-                    private val dao: StationDao) {
+                    private val dao: StationDao) : StationsGroupListener {
+
 
     fun saveCurrentStationId(id: String) {
         preferences.currentStationId = id
@@ -47,7 +49,23 @@ class StationListRepository
         }
     }
 
-    fun addStation(station: Station): Completable {
+    override fun onGroupAdd(group: Group): Completable {
+        return Completable.fromCallable {
+            dao.insertGroup(group)
+        }
+    }
+
+    override fun onGroupRemove(group: Group): Completable {
+        TODO("not implemented")
+    }
+
+    override fun onGroupUpdate(groups: List<Group>): Completable {
+        return Completable.fromCallable {
+            groups.forEach { dao.update(it) }
+        }
+    }
+
+    override fun onStationAdd(station: Station): Completable {
         return Completable.fromCallable {
             dao.insertStation(station)
             val genres = station.genres.map(::Genre)
@@ -56,21 +74,13 @@ class StationListRepository
         }
     }
 
-    fun removeStation(id: String): Completable {
+    override fun onStationRemove(station: Station): Completable {
         return Completable.fromCallable {
-            dao.deleteStation(id)
+            dao.deleteStation(station.id)
         }
     }
 
-    fun addGroup(group: Group): Completable {
-        return Completable.fromCallable {
-            dao.insertGroup(group)
-        }
-    }
-
-    fun updateGroup(group: Group): Completable {
-        return Completable.fromCallable {
-            dao.update(group)
-        }
+    override fun onStationUpdate(stations: List<Station>): Completable {
+        TODO("not implemented")
     }
 }

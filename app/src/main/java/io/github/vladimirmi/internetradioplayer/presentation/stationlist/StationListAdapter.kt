@@ -19,7 +19,7 @@ import kotlinx.android.synthetic.main.item_group_title.view.*
  * Created by Vladimir Mikhalev 04.10.2017.
  */
 
-class MediaListAdapter(private val callback: StationItemCallback)
+class StationListAdapter(private val callback: StationItemCallback)
     : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
 
     private companion object {

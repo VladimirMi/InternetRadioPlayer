@@ -11,7 +11,7 @@ import com.arellomobile.mvp.presenter.ProvidePresenter
 import io.github.vladimirmi.internetradioplayer.R
 import io.github.vladimirmi.internetradioplayer.di.Scopes
 import io.github.vladimirmi.internetradioplayer.model.db.entity.Station
-import io.github.vladimirmi.internetradioplayer.model.entity.groupedlist.GroupedList
+import io.github.vladimirmi.internetradioplayer.model.entity.FlatStationsList
 import io.github.vladimirmi.internetradioplayer.presentation.getstarted.NewStationDialog
 import io.github.vladimirmi.internetradioplayer.presentation.root.ToolbarBuilder
 import io.github.vladimirmi.internetradioplayer.presentation.root.ToolbarView
@@ -59,7 +59,7 @@ class StationListFragment : BaseFragment(), StationListView, StationItemCallback
 
     //region =============== StationListView ==============
 
-    override fun setStations(stationList: GroupedList) {
+    override fun setStations(stationList: FlatStationsList) {
         adapter.setData(stationList)
     }
 

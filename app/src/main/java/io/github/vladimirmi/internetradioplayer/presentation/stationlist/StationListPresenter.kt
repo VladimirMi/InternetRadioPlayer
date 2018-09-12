@@ -68,11 +68,11 @@ class StationListPresenter
     }
 
     fun selectGroup(id: String) {
-        interactor.showOrHideGroup(id)
+        interactor.expandOrCollapseGroup(id)
     }
 
     fun removeStation() {
-        interactor.removeCurrentStation()
+        interactor.removeStation(interactor.currentStation.id)
                 .subscribe()
                 .addTo(compDisp)
     }

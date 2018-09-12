@@ -58,7 +58,7 @@ class RootPresenter
                 ).addTo(compDisp)
     }
 
-    fun showStation(id: Int) {
+    fun showStation(id: String) {
         val station = stationInteractor.getStation(id)
         if (station != null) {
             stationInteractor.currentStation = station

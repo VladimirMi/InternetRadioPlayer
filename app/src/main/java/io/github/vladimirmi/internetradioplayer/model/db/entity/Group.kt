@@ -16,7 +16,7 @@ data class Group(@PrimaryKey
                  val expanded: Boolean,
                  val order: Int) {
 
-    @Ignore var stations: MutableList<Station> = arrayListOf()
+    @Ignore val stations: MutableList<Station> = arrayListOf()
 
     @Ignore
     constructor(id: String, name: String, order: Int) : this(id, name, true, order)

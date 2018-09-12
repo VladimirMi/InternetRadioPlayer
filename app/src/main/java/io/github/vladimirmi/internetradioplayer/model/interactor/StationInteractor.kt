@@ -6,16 +6,15 @@ import io.github.vladimirmi.internetradioplayer.R
 import io.github.vladimirmi.internetradioplayer.extensions.ValidationException
 import io.github.vladimirmi.internetradioplayer.model.db.entity.Group
 import io.github.vladimirmi.internetradioplayer.model.db.entity.Station
-import io.github.vladimirmi.internetradioplayer.model.db.entity.StationGenreJoin
-import io.github.vladimirmi.internetradioplayer.model.entity.groupedlist.GroupedList
-import io.github.vladimirmi.internetradioplayer.model.entity.groupedlist.StationsGroupList
+import io.github.vladimirmi.internetradioplayer.model.entity.FlatStationsList
 import io.github.vladimirmi.internetradioplayer.model.manager.ShortcutHelper
 import io.github.vladimirmi.internetradioplayer.model.repository.StationListRepository
 import io.reactivex.Completable
 import io.reactivex.Observable
 import io.reactivex.Single
-import io.reactivex.functions.BiFunction
-import timber.log.Timber
+import io.reactivex.rxkotlin.Singles
+import java.lang.IllegalStateException
+import java.util.*
 import javax.inject.Inject
 
 
@@ -27,6 +26,8 @@ class StationInteractor
 @Inject constructor(private val stationRepository: StationListRepository,
                     private val shortcutHelper: ShortcutHelper) {
 
+    private val groups = arrayListOf<Group>()
+
     var previousWhenCreate: Station? = null
         private set
 
@@ -35,10 +36,6 @@ class StationInteractor
         set(value) {
             if (!value) previousWhenCreate = null
         }
-
-    private val _stationsListObs = BehaviorRelay.create<GroupedList>()
-    val stationsListObs: Observable<GroupedList> get() = _stationsListObs
-    private val stationsList = StationsGroupList()
 
     private val _currentStationObs = BehaviorRelay.create<Station>()
     val currentStationObs: Observable<Station> get() = _currentStationObs
@@ -49,35 +46,52 @@ class StationInteractor
             stationRepository.saveCurrentStationId(value.id)
         }
 
-    fun initStations(): Completable {
-        val stationsSingle = Single.zip(stationRepository.getAllStations(),
-                stationRepository.getAllStationGenreJoins(),
-                BiFunction { stations: List<Station>, joins: List<StationGenreJoin> ->
-                    stations.forEach { station ->
-                        station.genres = joins.filter { it.stationId == station.id }
-                                .map { it.genreName }
-                    }
-                    stations
-                })
-                .doOnSuccess { stations ->
-                    val savedCurrentStation = stations.find { it.id == stationRepository.getCurrentStationId() }
-                    savedCurrentStation?.let { currentStation = it }
-                }
+    private val _stationsListObs = BehaviorRelay.create<FlatStationsList>()
+    val stationsListObs: Observable<FlatStationsList> get() = _stationsListObs
+    private val stationsList = FlatStationsList()
 
-        return Single.zip(stationRepository.getAllGroups(), stationsSingle,
-                BiFunction { groups: List<Group>, stations: List<Station> ->
-                    stationsList.init(groups, stations, stationRepository) {
-                        _stationsListObs.accept(it)
-                    }
-                }).toCompletable()
+    fun initStations(): Completable {
+
+        val stationsSingle = Singles.zip(stationRepository.getAllStations(),
+                stationRepository.getAllStationGenreJoins()) { stations, joins ->
+            stations.forEach { station ->
+                station.genres = joins.filter { it.stationId == station.id }
+                        .map { it.genreName }
+            }
+            stations
+        }.doOnSuccess { stations ->
+            val savedCurrentStation = stations.find { it.id == stationRepository.getCurrentStationId() }
+            savedCurrentStation?.let { currentStation = it }
+        }
+
+        return Singles.zip(stationRepository.getAllGroups(), stationsSingle) { groups, stations ->
+            this.groups.addAll(groups)
+
+            val groupBy = stations.groupBy { it.groupId }
+            groups.forEach { group ->
+                val items = groupBy[group.id] ?: return@forEach
+                items.forEach { it.group = group.name }
+                group.stations.addAll(items)
+            }
+            buildStationsList()
+        }.toCompletable()
     }
 
-    fun getStation(id: Int): Station? {
-        return stationsList.getGroupItem(id)
+    fun addCurrentShortcut(): Boolean {
+        return shortcutHelper.pinShortcut(currentStation)
+    }
+
+    fun getStation(id: String): Station? {
+        for (group in groups) {
+            for (station in group.stations) {
+                if (station.id == id) return station
+            }
+        }
+        return null
     }
 
     fun haveStations(): Boolean {
-        return stationsList.size != 0
+        return groups.fold(0) { acc, group -> acc + group.stations.size } != 0
     }
 
     fun createStation(uri: Uri): Single<Station> {
@@ -89,75 +103,98 @@ class StationInteractor
     }
 
     fun addStation(station: Station): Completable {
-        return validate(station, adding = true)
-                .andThen(stationsList.add(station))
-                .doOnComplete { currentStation = station }
+        validate(station, adding = true)?.let { return it }
+
+        return addGroup(station.group).flatMapCompletable { group ->
+            val newStation = station.copy(groupId = group.id, order = group.stations.size)
+            stationRepository.add(newStation).doOnComplete {
+                group.stations.add(newStation)
+                currentStation = newStation
+                buildStationsList()
+            }
+        }
     }
 
-    private fun validate(station: Station, adding: Boolean = false): Completable {
+    fun updateStation(station: Station): Completable {
+        validate(station, adding = true)?.let { return it }
+
+        return stationRepository.updateStations(listOf(station))
+                .doOnComplete {
+                    val stations = groups[indexOfGroup(station.groupId)].stations
+                    stations[stations.indexOfFirst { it.id == station.id }] = station
+                    currentStation = station
+                    buildStationsList()
+                }
+    }
+
+    fun removeStation(id: String): Completable {
+        val station = getStation(id)
+                ?: return Completable.error(IllegalStateException("Can not find station with id $id"))
+
+        return stationRepository.remove(station)
+                .doOnComplete {
+                    if (stationsList.isFirstStation(id)) previousStation(id) else nextStation(id)
+                    groups[indexOfGroup(station.groupId)].stations.remove(station)
+                    buildStationsList()
+                }
+    }
+
+    fun nextStation(id: String = currentStation.id) {
+        stationsList.getNextFrom(id)?.let { currentStation = it }
+    }
+
+    fun previousStation(id: String = currentStation.id) {
+        stationsList.getPreviousFrom(id)?.let { currentStation = it }
+    }
+
+    fun expandOrCollapseGroup(id: String): Completable {
+        val i = indexOfGroup(id)
+        val group = groups[i]
+        val newGroup = group.copy(expanded = !group.expanded)
+        return stationRepository.updateGroups(listOf(newGroup))
+                .doOnComplete {
+                    groups[i] = newGroup
+                    buildStationsList()
+                }
+    }
+
+    private fun addGroup(name: String): Single<Group> {
+        groups.find { it.name == name }?.let { return Single.just(it) }
+
+        val group = Group(if (name == Group.DEFAULT_NAME) Group.DEFAULT_ID else UUID.randomUUID().toString(),
+                name, groups.size)
+
+        return stationRepository.add(group)
+                .andThen(Single.fromCallable {
+                    groups.add(group)
+                    buildStationsList()
+                    group
+                })
+    }
+
+    private fun buildStationsList() {
+        stationsList.build(groups)
+        _stationsListObs.accept(stationsList)
+    }
+
+    private fun containsStation(predicate: (Station) -> Boolean): Boolean {
+        return groups.any { it.stations.any(predicate) }
+    }
+
+    private fun validate(station: Station, adding: Boolean = false): Completable? {
         return when {
-            stationsList.contains { it.name == station.name } && adding -> {
+            containsStation { it.name == station.name } && adding -> {
                 Completable.error(ValidationException(R.string.toast_name_exists_error))
             }
             station.name.isBlank() -> {
                 Completable.error(ValidationException(R.string.toast_name_empty_error))
             }
-            else -> Completable.complete()
+            else -> null
         }
     }
 
-    fun updateCurrentStation(newStation: Station): Completable {
-        val currentPosition = stationsList.positionOfFirst(currentStation.id)
-
-        val updateStation = if (newStation != currentStation) {
-            stationRepository.updateStation(newStation)
-        } else Completable.complete()
-
-//        val remove = if (newStation.name != currentStation.name) {
-//            stationRepository.removeStation(currentStation.id)
-//        } else Completable.complete()
-
-        return validate(newStation)
-                .doOnComplete {
-                    currentStation = if (stationsList.contains { it.id == newStation.id }) {
-                        newStation
-                    } else {
-                        val newPos = (stationsList.itemsSize + currentPosition - 1) % stationsList.itemsSize
-                        stationsList.getGroupItem(newPos)
-                    }
-                }
-    }
-
-    fun nextStation() {
-        val next = stationsList.getNextFrom(currentStation.id)
-        if (next != null) currentStation = next
-    }
-
-    fun previousStation() {
-        val previous = stationsList.getPreviousFrom(currentStation.id)
-        if (previous != null) currentStation = previous
-    }
-
-    fun removeCurrentStation(): Completable {
-        val stationId = currentStation.id
-        val groupId = currentStation.groupId
-        val next = if (stationsList.isFirstStation(stationId)) stationsList.getPreviousFrom(stationId)
-        else stationsList.getNextFrom(stationId)
-        Timber.e("removeCurrentStation: $stationId")
-
-        return stationsList.removeStation(stationId, groupId)
-                .doOnComplete { currentStation = next ?: Station.nullObj() }
-    }
-
-    fun showOrHideGroup(id: String): Completable {
-        return if (stationsList.isGroupExpanded(id)) {
-            stationsList.collapseGroup(id)
-        } else {
-            stationsList.expandGroup(id)
-        }
-    }
-
-    fun addCurrentShortcut(): Boolean {
-        return shortcutHelper.pinShortcut(currentStation)
+    private fun indexOfGroup(groupId: String): Int {
+        return groups.indexOfFirst { it.id == groupId }
     }
 }
+

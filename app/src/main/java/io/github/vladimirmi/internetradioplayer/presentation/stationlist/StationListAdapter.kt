@@ -10,8 +10,7 @@ import io.github.vladimirmi.internetradioplayer.extensions.color
 import io.github.vladimirmi.internetradioplayer.extensions.getBitmap
 import io.github.vladimirmi.internetradioplayer.model.db.entity.Group
 import io.github.vladimirmi.internetradioplayer.model.db.entity.Station
-import io.github.vladimirmi.internetradioplayer.model.entity.groupedlist.GroupedList
-import io.github.vladimirmi.internetradioplayer.model.entity.groupedlist.StationsGroupList
+import io.github.vladimirmi.internetradioplayer.model.entity.FlatStationsList
 import kotlinx.android.synthetic.main.item_group_item.view.*
 import kotlinx.android.synthetic.main.item_group_title.view.*
 
@@ -27,22 +26,22 @@ class StationListAdapter(private val callback: StationItemCallback)
         const val GROUP_ITEM = 1
     }
 
-    private var stationsList: GroupedList = StationsGroupList()
+    private var stationsList = FlatStationsList()
     private var selected: Station? = null
     private var playing = false
 
-    fun setData(data: GroupedList) {
+    fun setData(data: FlatStationsList) {
         stationsList = data
         notifyDataSetChanged()
     }
 
     fun getStation(position: Int): Station? {
         return if (stationsList.isGroup(position)) null
-        else stationsList.getGroupItem(position)
+        else stationsList.getStation(position)
     }
 
     fun getPosition(station: Station): Int {
-        return stationsList.positionOfFirst(station.id)
+        return stationsList.positionOfStation(station.id)
     }
 
     fun selectItem(station: Station, playing: Boolean) {
@@ -81,7 +80,7 @@ class StationListAdapter(private val callback: StationItemCallback)
     }
 
     private fun setupGroupItemVH(position: Int, holder: MediaGroupItemVH) {
-        val station = stationsList.getGroupItem(position)
+        val station = stationsList.getStation(position)
         holder.bind(station)
         holder.setCallback(callback, station)
         if (station.uri == selected?.uri) {
@@ -92,7 +91,7 @@ class StationListAdapter(private val callback: StationItemCallback)
     }
 
 
-    override fun getItemCount(): Int = stationsList.overallSize
+    override fun getItemCount(): Int = stationsList.size
 }
 
 class MediaGroupTitleVH(itemView: View) : RecyclerView.ViewHolder(itemView) {

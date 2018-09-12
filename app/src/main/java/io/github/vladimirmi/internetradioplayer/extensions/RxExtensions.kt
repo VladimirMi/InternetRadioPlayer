@@ -26,9 +26,5 @@ fun Completable.ioToMain(): Completable {
             .observeOn(AndroidSchedulers.mainThread())
 }
 
-fun Completable.then(block: () -> Any): Completable {
-    return andThen(Completable.fromCallable(block))
-}
-
 class ValidationException(@StringRes val resId: Int) : Exception()
 

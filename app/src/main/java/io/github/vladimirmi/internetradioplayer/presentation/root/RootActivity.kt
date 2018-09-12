@@ -98,7 +98,7 @@ class RootActivity : MvpAppCompatActivity(), RootView, ToolbarView {
     override fun checkIntent() {
         if (intent != null) {
             if (intent.hasExtra(PlayerService.EXTRA_STATION_ID)) {
-                presenter.showStation(intent.getIntExtra(PlayerService.EXTRA_STATION_ID, 0))
+                presenter.showStation(intent.getStringExtra(PlayerService.EXTRA_STATION_ID))
             }
             intent.data?.let { addStation(it) }
             intent = null

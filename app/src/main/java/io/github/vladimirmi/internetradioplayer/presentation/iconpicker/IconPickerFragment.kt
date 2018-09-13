@@ -5,9 +5,9 @@ import android.view.View
 import com.arellomobile.mvp.presenter.InjectPresenter
 import com.arellomobile.mvp.presenter.ProvidePresenter
 import io.github.vladimirmi.internetradioplayer.R
+import io.github.vladimirmi.internetradioplayer.data.db.entity.Icon
 import io.github.vladimirmi.internetradioplayer.di.Scopes
 import io.github.vladimirmi.internetradioplayer.extensions.waitForMeasure
-import io.github.vladimirmi.internetradioplayer.model.db.entity.Icon
 import io.github.vladimirmi.internetradioplayer.presentation.root.ToolbarBuilder
 import io.github.vladimirmi.internetradioplayer.presentation.root.ToolbarView
 import io.github.vladimirmi.internetradioplayer.ui.base.BackPressListener

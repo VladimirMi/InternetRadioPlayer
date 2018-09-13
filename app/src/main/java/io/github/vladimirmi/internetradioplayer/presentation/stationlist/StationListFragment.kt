@@ -9,9 +9,9 @@ import android.widget.Toast
 import com.arellomobile.mvp.presenter.InjectPresenter
 import com.arellomobile.mvp.presenter.ProvidePresenter
 import io.github.vladimirmi.internetradioplayer.R
+import io.github.vladimirmi.internetradioplayer.data.db.entity.Station
 import io.github.vladimirmi.internetradioplayer.di.Scopes
-import io.github.vladimirmi.internetradioplayer.model.db.entity.Station
-import io.github.vladimirmi.internetradioplayer.model.entity.FlatStationsList
+import io.github.vladimirmi.internetradioplayer.domain.model.FlatStationsList
 import io.github.vladimirmi.internetradioplayer.presentation.getstarted.NewStationDialog
 import io.github.vladimirmi.internetradioplayer.presentation.root.ToolbarBuilder
 import io.github.vladimirmi.internetradioplayer.presentation.root.ToolbarView

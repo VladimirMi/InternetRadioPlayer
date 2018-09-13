@@ -17,8 +17,8 @@ import android.support.v4.graphics.drawable.DrawableCompat
 import android.view.View
 import android.widget.ImageView
 import io.github.vladimirmi.internetradioplayer.R
-import io.github.vladimirmi.internetradioplayer.model.db.entity.ICONS
-import io.github.vladimirmi.internetradioplayer.model.db.entity.Icon
+import io.github.vladimirmi.internetradioplayer.data.db.entity.ICONS
+import io.github.vladimirmi.internetradioplayer.data.db.entity.Icon
 import java.util.*
 
 

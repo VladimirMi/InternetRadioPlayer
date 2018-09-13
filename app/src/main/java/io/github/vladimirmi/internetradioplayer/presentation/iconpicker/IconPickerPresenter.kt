@@ -1,9 +1,9 @@
 package io.github.vladimirmi.internetradioplayer.presentation.iconpicker
 
 import com.arellomobile.mvp.InjectViewState
-import io.github.vladimirmi.internetradioplayer.model.interactor.PlayerControlsInteractor
-import io.github.vladimirmi.internetradioplayer.model.interactor.StationInteractor
-import io.github.vladimirmi.internetradioplayer.model.service.Metadata
+import io.github.vladimirmi.internetradioplayer.data.service.Metadata
+import io.github.vladimirmi.internetradioplayer.domain.interactor.PlayerControlsInteractor
+import io.github.vladimirmi.internetradioplayer.domain.interactor.StationInteractor
 import io.github.vladimirmi.internetradioplayer.navigation.Router
 import io.github.vladimirmi.internetradioplayer.presentation.root.RootPresenter
 import io.github.vladimirmi.internetradioplayer.ui.base.BasePresenter

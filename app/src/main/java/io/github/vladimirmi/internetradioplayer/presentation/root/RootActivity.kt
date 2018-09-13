@@ -18,11 +18,11 @@ import com.arellomobile.mvp.MvpAppCompatActivity
 import com.arellomobile.mvp.presenter.InjectPresenter
 import com.arellomobile.mvp.presenter.ProvidePresenter
 import io.github.vladimirmi.internetradioplayer.R
+import io.github.vladimirmi.internetradioplayer.data.service.PlayerService
 import io.github.vladimirmi.internetradioplayer.di.Scopes
 import io.github.vladimirmi.internetradioplayer.di.module.RootActivityModule
 import io.github.vladimirmi.internetradioplayer.extensions.setTintExt
 import io.github.vladimirmi.internetradioplayer.extensions.visible
-import io.github.vladimirmi.internetradioplayer.model.service.PlayerService
 import io.github.vladimirmi.internetradioplayer.navigation.Navigator
 import io.github.vladimirmi.internetradioplayer.ui.base.BackPressListener
 import kotlinx.android.synthetic.main.activity_root.*

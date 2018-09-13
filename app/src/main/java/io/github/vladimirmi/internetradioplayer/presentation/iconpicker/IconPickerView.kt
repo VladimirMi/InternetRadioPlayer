@@ -3,7 +3,7 @@ package io.github.vladimirmi.internetradioplayer.presentation.iconpicker
 import com.arellomobile.mvp.MvpView
 import com.arellomobile.mvp.viewstate.strategy.AddToEndSingleStrategy
 import com.arellomobile.mvp.viewstate.strategy.StateStrategyType
-import io.github.vladimirmi.internetradioplayer.model.db.entity.Icon
+import io.github.vladimirmi.internetradioplayer.data.db.entity.Icon
 import io.github.vladimirmi.internetradioplayer.presentation.root.ToolbarBuilder
 
 /**

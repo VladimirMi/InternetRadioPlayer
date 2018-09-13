@@ -11,11 +11,11 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.ImageView
 import io.github.vladimirmi.internetradioplayer.R
+import io.github.vladimirmi.internetradioplayer.data.db.entity.ICONS
+import io.github.vladimirmi.internetradioplayer.data.db.entity.Icon
 import io.github.vladimirmi.internetradioplayer.extensions.color
 import io.github.vladimirmi.internetradioplayer.extensions.setBgTint
 import io.github.vladimirmi.internetradioplayer.extensions.setFgTint
-import io.github.vladimirmi.internetradioplayer.model.db.entity.ICONS
-import io.github.vladimirmi.internetradioplayer.model.db.entity.Icon
 import kotlinx.android.synthetic.main.view_icon.view.*
 
 /**

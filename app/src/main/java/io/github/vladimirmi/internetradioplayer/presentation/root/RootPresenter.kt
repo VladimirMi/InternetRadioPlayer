@@ -3,9 +3,9 @@ package io.github.vladimirmi.internetradioplayer.presentation.root
 import android.net.Uri
 import com.arellomobile.mvp.InjectViewState
 import io.github.vladimirmi.internetradioplayer.R
+import io.github.vladimirmi.internetradioplayer.domain.interactor.PlayerControlsInteractor
+import io.github.vladimirmi.internetradioplayer.domain.interactor.StationInteractor
 import io.github.vladimirmi.internetradioplayer.extensions.ioToMain
-import io.github.vladimirmi.internetradioplayer.model.interactor.PlayerControlsInteractor
-import io.github.vladimirmi.internetradioplayer.model.interactor.StationInteractor
 import io.github.vladimirmi.internetradioplayer.navigation.Router
 import io.github.vladimirmi.internetradioplayer.ui.base.BasePresenter
 import io.reactivex.rxkotlin.addTo

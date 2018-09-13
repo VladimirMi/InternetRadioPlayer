@@ -67,7 +67,7 @@
         </activity>
 
         <service
-            android:name="io.github.vladimirmi.internetradioplayer.model.service.PlayerService"
+            android:name="io.github.vladimirmi.internetradioplayer.data.service.PlayerService"
             android:exported="false">
             <intent-filter>
                 <action android:name="android.media.browse.MediaBrowserService"/>

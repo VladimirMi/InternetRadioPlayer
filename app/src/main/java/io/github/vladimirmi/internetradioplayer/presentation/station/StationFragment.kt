@@ -17,10 +17,10 @@ import android.widget.Toast
 import com.arellomobile.mvp.presenter.InjectPresenter
 import com.arellomobile.mvp.presenter.ProvidePresenter
 import io.github.vladimirmi.internetradioplayer.R
+import io.github.vladimirmi.internetradioplayer.data.db.entity.Station
 import io.github.vladimirmi.internetradioplayer.di.Scopes
 import io.github.vladimirmi.internetradioplayer.extensions.inputMethodManager
 import io.github.vladimirmi.internetradioplayer.extensions.visible
-import io.github.vladimirmi.internetradioplayer.model.db.entity.Station
 import io.github.vladimirmi.internetradioplayer.presentation.root.ToolbarBuilder
 import io.github.vladimirmi.internetradioplayer.presentation.root.ToolbarView
 import io.github.vladimirmi.internetradioplayer.ui.TagView

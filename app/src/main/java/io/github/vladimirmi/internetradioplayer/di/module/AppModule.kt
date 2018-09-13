@@ -3,14 +3,14 @@ package io.github.vladimirmi.internetradioplayer.di.module
 import android.content.Context
 import com.google.gson.Gson
 import com.google.gson.GsonBuilder
-import io.github.vladimirmi.internetradioplayer.model.db.StationsDatabase
-import io.github.vladimirmi.internetradioplayer.model.db.dao.StationDao
-import io.github.vladimirmi.internetradioplayer.model.interactor.PlayerControlsInteractor
-import io.github.vladimirmi.internetradioplayer.model.interactor.StationInteractor
-import io.github.vladimirmi.internetradioplayer.model.manager.ShortcutHelper
-import io.github.vladimirmi.internetradioplayer.model.manager.StationParser
-import io.github.vladimirmi.internetradioplayer.model.repository.StationListRepository
-import io.github.vladimirmi.internetradioplayer.model.source.StationSource
+import io.github.vladimirmi.internetradioplayer.data.db.StationsDatabase
+import io.github.vladimirmi.internetradioplayer.data.db.dao.StationDao
+import io.github.vladimirmi.internetradioplayer.data.manager.ShortcutHelper
+import io.github.vladimirmi.internetradioplayer.data.manager.StationParser
+import io.github.vladimirmi.internetradioplayer.data.repository.StationListRepository
+import io.github.vladimirmi.internetradioplayer.data.source.StationSource
+import io.github.vladimirmi.internetradioplayer.domain.interactor.PlayerControlsInteractor
+import io.github.vladimirmi.internetradioplayer.domain.interactor.StationInteractor
 import toothpick.config.Module
 
 /**

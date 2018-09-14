@@ -1,6 +1,5 @@
 package io.github.vladimirmi.internetradioplayer.data.source
 
-import io.github.vladimirmi.internetradioplayer.data.service.Metadata
 import io.github.vladimirmi.internetradioplayer.data.service.PlayerCallback
 import java.io.FilterInputStream
 import java.io.InputStream
@@ -15,7 +14,7 @@ class IcyInputStream(inS: InputStream,
     : FilterInputStream(inS) {
 
     private var bytesBeforeMetadata = window
-    private var metadata: Metadata? = null
+    private var metaString = ""
     private var buffer = ByteArray(128)
 
     override fun read(): Int {
@@ -38,24 +37,21 @@ class IcyInputStream(inS: InputStream,
         if (size > buffer.size) {
             buffer = ByteArray(size)
         }
-        ensureRead(buffer, 0, size)
+        ensureFill(buffer, 0, size)
         val actualSize = buffer.indexOfFirst { it.toInt() == 0 }
-        parseMetadata(String(buffer, 0, actualSize))
-    }
-
-    private fun parseMetadata(meta: String) {
-        val metadata = Metadata.create(meta)
-        if (this.metadata != metadata) {
-            playerCallback.onMetadata(metadata)
-            this.metadata = metadata
+        //todo detect charset
+        val metaString = String(buffer, 0, actualSize)
+        if (this.metaString != metaString) {
+            playerCallback.onMetadata(metaString)
+            this.metaString = metaString
         }
     }
 
-    private fun ensureRead(buffer: ByteArray, offset: Int, size: Int): Int {
+    private fun ensureFill(buffer: ByteArray, offset: Int, size: Int): Int {
         val n = super.read(buffer, offset, size)
 
         return if (n != -1 && size - n > 0) {
-            n + ensureRead(buffer, offset + n, size - n)
+            n + ensureFill(buffer, offset + n, size - n)
         } else {
             n
         }

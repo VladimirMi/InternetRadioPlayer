@@ -44,10 +44,10 @@ class StationListAdapter(private val callback: StationItemCallback)
         return stationsList.positionOfStation(station.id)
     }
 
-    fun selectItem(station: Station, playing: Boolean) {
-        selected = station
-        this.playing = playing
-        notifyDataSetChanged()
+    fun selectItem(playing: Boolean) {
+//        selected = station
+//        this.playing = playing
+//        notifyDataSetChanged()
     }
 
     override fun getItemViewType(position: Int): Int =
@@ -145,7 +145,7 @@ class MediaGroupItemVH(itemView: View) : RecyclerView.ViewHolder(itemView) {
 
 interface StationItemCallback {
     fun onItemSelected(station: Station)
-    fun onGroupSelected(groupId: String)
+    fun onGroupSelected(id: String)
     fun onItemOpened(station: Station)
 }
 

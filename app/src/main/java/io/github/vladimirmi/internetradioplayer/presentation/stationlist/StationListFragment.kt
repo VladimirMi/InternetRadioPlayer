@@ -63,11 +63,11 @@ class StationListFragment : BaseFragment(), StationListView, StationItemCallback
         adapter.setData(stationList)
     }
 
-    override fun selectItem(station: Station, playing: Boolean) {
-        adapter.selectItem(station, playing)
+    override fun selectedPlaying(playing: Boolean) {
+        adapter.selectItem(playing)
         //todo select from position
-        val position = adapter.getPosition(station)
-        if (position != -1) media_recycler.scrollToPosition(position)
+//        val position = adapter.getPosition(station)
+//        if (position != -1) media_recycler.scrollToPosition(position)
     }
 
     override fun openAddStationDialog() {

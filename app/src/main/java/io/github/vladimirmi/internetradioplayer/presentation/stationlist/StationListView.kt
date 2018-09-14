@@ -4,7 +4,6 @@ import com.arellomobile.mvp.MvpView
 import com.arellomobile.mvp.viewstate.strategy.AddToEndSingleStrategy
 import com.arellomobile.mvp.viewstate.strategy.OneExecutionStateStrategy
 import com.arellomobile.mvp.viewstate.strategy.StateStrategyType
-import io.github.vladimirmi.internetradioplayer.data.db.entity.Station
 import io.github.vladimirmi.internetradioplayer.domain.model.FlatStationsList
 import io.github.vladimirmi.internetradioplayer.presentation.root.ToolbarBuilder
 
@@ -21,7 +20,7 @@ interface StationListView : MvpView {
     fun setStations(stationList: FlatStationsList)
 
     @StateStrategyType(AddToEndSingleStrategy::class)
-    fun selectItem(station: Station, playing: Boolean)
+    fun selectedPlaying(playing: Boolean)
 
     @StateStrategyType(OneExecutionStateStrategy::class)
     fun showToast(resId: Int)

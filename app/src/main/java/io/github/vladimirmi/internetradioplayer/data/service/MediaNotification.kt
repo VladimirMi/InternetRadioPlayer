@@ -8,11 +8,11 @@ import android.content.Context
 import android.os.Build
 import android.support.annotation.RequiresApi
 import android.support.v4.app.NotificationCompat
-import android.support.v4.media.MediaMetadataCompat
 import android.support.v4.media.app.NotificationCompat.MediaStyle
 import android.support.v4.media.session.MediaSessionCompat
 import android.support.v4.media.session.PlaybackStateCompat
 import io.github.vladimirmi.internetradioplayer.R
+import timber.log.Timber
 
 /**
  * Created by Vladimir Mikhalev 20.10.2017.
@@ -69,22 +69,19 @@ class MediaNotification(private val service: PlayerService,
     }
 
     private fun createNotification(): Notification {
-        val mediaMetadata = session.controller.metadata
+        val metadata = session.controller.metadata
         val playbackState = session.controller.playbackState.state
-        val metadata = Metadata.create(mediaMetadata)
 
-        val stationName = mediaMetadata.getString(MediaMetadataCompat.METADATA_KEY_ALBUM)
-        val stationIcon = mediaMetadata.getBitmap(MediaMetadataCompat.METADATA_KEY_ALBUM_ART)
+        Timber.e("createNotification: ${metadata.description.description}")
+        Timber.e("createNotification: ${metadata.description.title}")
+        Timber.e("createNotification: ${metadata.description.subtitle}")
 
-        builder.setSubText(stationName)
-                .setLargeIcon(stationIcon)
+        builder.setSubText(metadata.album)
+                .setLargeIcon(metadata.art)
 
-        if (metadata.isSupported) {
-            builder.setContentTitle(metadata.title)
-                    .setContentText(metadata.artist)
-        } else {
-            builder.setContentTitle(service.getString(R.string.metadata_not_available))
-        }
+        builder.setContentTitle(metadata.title)
+                .setContentText(metadata.artist)
+
 
         if (playbackState == PlaybackStateCompat.STATE_BUFFERING) {
             builder.setContentTitle(service.getString(R.string.metadata_buffering))

@@ -1,5 +1,6 @@
 package io.github.vladimirmi.internetradioplayer.presentation.stationlist
 
+import android.support.v4.media.session.PlaybackStateCompat
 import android.view.MenuItem
 import com.arellomobile.mvp.InjectViewState
 import io.github.vladimirmi.internetradioplayer.R
@@ -55,11 +56,10 @@ class StationListPresenter
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe {
                     viewState.buildToolbar(builder.setToolbarTitle(it.name))
-                    viewState.selectItem(it, controlsInteractor.isPlaying)
                 }.addTo(compDisp)
 
         controlsInteractor.playbackStateObs
-                .subscribe { viewState.selectItem(interactor.currentStation, controlsInteractor.isPlaying) }
+                .subscribe { viewState.selectedPlaying(it.state == PlaybackStateCompat.STATE_PLAYING) }
                 .addTo(compDisp)
     }
 

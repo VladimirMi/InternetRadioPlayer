@@ -19,10 +19,8 @@ class PlayerControlsInteractor
                     private val controller: MediaController,
                     private val networkChecker: NetworkChecker) {
 
-    //todo playerMode relay
     private val playerMode = BehaviorRelay.createDefault(PlayerMode.NORMAL_MODE)
     val playbackStateObs: Observable<PlaybackStateCompat> get() = controller.playbackState
-    //todo to Metadata
     val playbackMetaData: Observable<MediaMetadataCompat> get() = controller.playbackMetaData
     val sessionEventObs: Observable<String> get() = controller.sessionEvent
     val playerModeObs: Observable<PlayerMode> get() = playerMode

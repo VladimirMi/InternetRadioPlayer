@@ -34,19 +34,19 @@ class PlayerControlFragment : BaseFragment(), PlayerControlView {
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
-        play_pause.setOnClickListener { presenter.playPause() }
+        playPauseBt.setOnClickListener { presenter.playPause() }
         iconIv.setOnClickListener { presenter.showStation() }
-        previous.setOnClickListener { presenter.skipToPrevious() }
-        next.setOnClickListener { presenter.skipToNext() }
+        previousBt.setOnClickListener { presenter.skipToPrevious() }
+        nextBt.setOnClickListener { presenter.skipToNext() }
         changeIconBt.setOnClickListener { presenter.changeIcon() }
     }
 
     override fun showStopped() {
-        play_pause.setBackgroundResource(R.drawable.ic_play)
+        playPauseBt.setBackgroundResource(R.drawable.ic_play)
     }
 
     override fun showPlaying() {
-        play_pause.setBackgroundResource(R.drawable.ic_stop)
+        playPauseBt.setBackgroundResource(R.drawable.ic_stop)
     }
 
     override fun setStation(station: Station) {

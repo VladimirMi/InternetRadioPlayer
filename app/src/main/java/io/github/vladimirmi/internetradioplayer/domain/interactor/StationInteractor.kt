@@ -28,24 +28,20 @@ class StationInteractor
 
     private val groups = arrayListOf<Group>()
 
-    var previousWhenCreate: Station? = null
+    var previousWhenEdit: Station? = null
         private set
-
-    var isCreateMode: Boolean
-        get() = previousWhenCreate != null
-        set(value) {
-            if (!value) previousWhenCreate = null
-        }
+    var createMode: Boolean = false
+        private set
 
     private val _currentStationObs = BehaviorRelay.create<Station>()
     val currentStationObs: Observable<Station> get() = _currentStationObs
+
     var currentStation: Station
         get() = _currentStationObs.value ?: Station.nullObj()
         set(value) {
             _currentStationObs.accept(value)
             stationRepository.saveCurrentStationId(value.id)
         }
-
     private val _stationsListObs = BehaviorRelay.create<FlatStationsList>()
     val stationsListObs: Observable<FlatStationsList> get() = _stationsListObs
     private val stationsList = FlatStationsList()
@@ -81,6 +77,14 @@ class StationInteractor
         return shortcutHelper.pinShortcut(currentStation)
     }
 
+    fun setEditMode(editMode: Boolean) {
+        if (editMode) previousWhenEdit = currentStation
+        else {
+            previousWhenEdit = null
+            createMode = false
+        }
+    }
+
     fun getStation(id: String): Station? {
         for (group in groups) {
             for (station in group.stations) {
@@ -97,7 +101,8 @@ class StationInteractor
     fun createStation(uri: Uri): Single<Station> {
         return stationRepository.createStation(uri)
                 .doOnSuccess {
-                    previousWhenCreate = currentStation
+                    setEditMode(true)
+                    createMode = true
                     currentStation = it
                 }
     }
@@ -116,7 +121,7 @@ class StationInteractor
     }
 
     fun updateStation(station: Station): Completable {
-        validate(station, adding = true)?.let { return it }
+        validate(station)?.let { return it }
 
         return stationRepository.updateStations(listOf(station))
                 .doOnComplete {
@@ -183,7 +188,7 @@ class StationInteractor
 
     private fun validate(station: Station, adding: Boolean = false): Completable? {
         return when {
-            containsStation { it.name == station.name } && adding -> {
+            adding && containsStation { it.name == station.name } -> {
                 Completable.error(ValidationException(R.string.toast_name_exists_error))
             }
             station.name.isBlank() -> {

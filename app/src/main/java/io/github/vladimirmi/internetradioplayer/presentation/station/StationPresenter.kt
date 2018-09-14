@@ -28,12 +28,9 @@ class StationPresenter
                     private val router: Router)
     : BasePresenter<StationView>() {
 
-    private var editMode = false
-    private var createMode: Boolean
-        get() = interactor.isCreateMode
-        set(value) {
-            interactor.isCreateMode = value
-        }
+    private var editMode: Boolean
+        get() = interactor.previousWhenEdit != null
+        set(value) = interactor.setEditMode(value)
 
     private val menuActions: (MenuItem) -> Unit = {
         when (it.itemId) {
@@ -53,7 +50,7 @@ class StationPresenter
 
     override fun onFirstViewAttach() {
         viewState.setStation(interactor.currentStation)
-        if (createMode) editMode() else viewMode()
+        if (editMode) editMode() else viewMode()
     }
 
     fun removeStation() {
@@ -68,15 +65,20 @@ class StationPresenter
     }
 
     fun edit(stationInfo: StationInfo) {
-        val newStation = getUpdatedStation(stationInfo)
-        interactor.updateStation(newStation)
+        Timber.e("edit: ")
+        interactor.updateStation(getUpdatedStation(stationInfo))
+                .ioToMain()
                 .subscribeBy(
                         onComplete = { viewMode() },
-                        onError = { if (it is ValidationException) viewState.showToast(it.resId) })
+                        onError = {
+                            if (it is ValidationException) viewState.showToast(it.resId)
+                            else Timber.e(it)
+                        })
                 .addTo(compDisp)
     }
 
     fun cancelEdit() {
+        interactor.currentStation = interactor.previousWhenEdit!!
         viewState.setStation(interactor.currentStation)
         viewMode()
     }
@@ -89,8 +91,7 @@ class StationPresenter
                 .subscribeBy(
                         onComplete = {
                             viewState.showToast(R.string.toast_add_success)
-                            controlsInteractor.editMode(false)
-                            createMode = false
+                            viewMode()
                             router.newRootScreen(Router.MEDIA_LIST_SCREEN)
                         },
                         onError = {
@@ -101,23 +102,16 @@ class StationPresenter
     }
 
     fun cancelCreate() {
-        interactor.previousWhenCreate?.let { interactor.currentStation = it }
-        controlsInteractor.editMode(false)
-        createMode = false
+        interactor.currentStation = interactor.previousWhenEdit!!
+        viewMode()
         router.exit()
     }
 
 
     fun onBackPressed(): Boolean {
         when {
-            createMode -> viewState.openCancelCreateDialog()
-            editMode -> {
-                viewState.cancelEdit()
-//                val stationInfo = StationInfo.fromStation(interactor.currentStation)
-//                interactor.iconChanged()
-//                        .subscribeBy { viewState.openCancelEditDialog(stationInfo, it) }
-//                        .addTo(compDisp)
-            }
+            interactor.createMode -> viewState.openCancelCreateDialog()
+            editMode -> viewState.cancelEdit()
             else -> router.backTo(null)
         }
         return true
@@ -149,7 +143,7 @@ class StationPresenter
 
     private fun changeMode() {
         when {
-            createMode -> viewState.createStation()
+            interactor.createMode -> viewState.createStation()
             editMode -> viewState.editStation()
             else -> editMode()
         }
@@ -168,8 +162,7 @@ class StationPresenter
     }
 
     fun tryCancelEdit(stationInfo: StationInfo) {
-        val currentStation = interactor.currentStation
-        if (stationInfo.name != currentStation.name || stationInfo.group != currentStation.group) {
+        if (getUpdatedStation(stationInfo) != interactor.previousWhenEdit) {
             viewState.openCancelEditDialog()
         } else {
             cancelEdit()

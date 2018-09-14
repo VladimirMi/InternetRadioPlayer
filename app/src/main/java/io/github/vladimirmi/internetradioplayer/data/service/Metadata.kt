@@ -43,3 +43,7 @@ fun MediaMetadataCompat.setStation(station: Station, context: Context): MediaMet
             .putBitmap(MediaMetadataCompat.METADATA_KEY_ALBUM_ART, station.icon.getBitmap(context, true))
             .build()
 }
+
+fun MediaMetadataCompat.notSupported(): Boolean {
+    return title.isNullOrBlank() || artist.isNullOrBlank()
+}

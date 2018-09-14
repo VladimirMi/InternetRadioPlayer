@@ -19,10 +19,16 @@ interface PlayerControlView : MvpView {
     fun showPlaying()
 
     @StateStrategyType(AddToEndSingleStrategy::class)
+    fun showLoading()
+
+    @StateStrategyType(AddToEndSingleStrategy::class)
     fun setStation(station: Station)
 
     @StateStrategyType(AddToEndSingleStrategy::class)
     fun enableEditMode(enable: Boolean)
+
+    @StateStrategyType(AddToEndSingleStrategy::class)
+    fun setMetadata(metadata: String)
 
     @StateStrategyType(OneExecutionStateStrategy::class)
     fun showToast(resId: Int)

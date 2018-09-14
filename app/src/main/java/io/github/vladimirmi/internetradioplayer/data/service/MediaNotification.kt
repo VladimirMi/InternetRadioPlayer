@@ -64,10 +64,10 @@ class MediaNotification(private val service: PlayerService,
         val playbackState = session.controller.playbackState.state
 
         metadata?.let {
-            builder.setSubText(it.album)
-                    .setLargeIcon(it.art)
-                    .setContentTitle(it.title)
-                    .setContentText(it.artist)
+            builder.setLargeIcon(it.art)
+                    .setContentTitle(it.description.title)
+                    .setContentText(it.description.subtitle)
+                    .setSubText(it.description.description)
         }
 
         if (playbackState == PlaybackStateCompat.STATE_BUFFERING) {
@@ -107,6 +107,5 @@ class MediaNotification(private val service: PlayerService,
                 .setContentIntent(session.controller.sessionActivity)
                 .setDeleteIntent(stopIntent)
                 .setPriority(NotificationCompat.PRIORITY_HIGH)
-                .setStyle(mediaStyle)
     }
 }

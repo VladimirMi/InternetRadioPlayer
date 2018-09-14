@@ -22,21 +22,12 @@
 
     </android.support.design.widget.AppBarLayout>
 
-    <fragment
-        android:id="@+id/metadataFr"
-        android:name="io.github.vladimirmi.internetradioplayer.presentation.metadata.MetadataFragment"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_below="@id/appbar"
-        tools:layout="@layout/fragment_metadata"
-        />
-
     <FrameLayout
         android:id="@+id/mainFr"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:layout_above="@id/playerControlsFr"
-        android:layout_below="@id/metadataFr"
+        android:layout_below="@id/appbar"
         />
 
     <fragment
@@ -48,30 +39,16 @@
         tools:layout="@layout/fragment_player_controls"
         />
 
-    <View
-        android:layout_width="match_parent"
-        android:layout_height="4dp"
-        android:layout_below="@id/metadataFr"
-        android:background="@drawable/shadow"
-        />
-
     <ProgressBar
         android:id="@+id/loadingPb"
         style="@style/Widget.AppCompat.ProgressBar.Horizontal"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_below="@+id/metadataFr"
+        android:layout_below="@id/appbar"
         android:layout_marginTop="-6dp"
         android:indeterminate="true"
         android:visibility="gone"
         tools:visibility="visible"
-        />
-
-    <View
-        android:layout_width="match_parent"
-        android:layout_height="4dp"
-        android:layout_above="@id/playerControlsFr"
-        android:background="@drawable/shadow_reverse"
         />
 
 </RelativeLayout>

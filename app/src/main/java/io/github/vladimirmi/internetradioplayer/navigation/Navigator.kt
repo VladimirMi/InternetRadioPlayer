@@ -43,7 +43,7 @@ class Navigator(activity: RootActivity, containerId: Int)
         val screen = screenKey.substringBefore(Router.DELIMITER)
         return when (screen) {
             Router.GET_STARTED_SCREEN -> GetStartedFragment()
-            Router.MEDIA_LIST_SCREEN -> StationListFragment()
+            Router.STATIONS_LIST_SCREEN -> StationListFragment()
             Router.STATION_SCREEN -> StationFragment()
             Router.ICON_PICKER_SCREEN -> IconPickerFragment()
             else -> null

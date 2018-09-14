@@ -30,8 +30,11 @@ class MediaController
     private val connectionCallbacks = object : MediaBrowserCompat.ConnectionCallback() {
         override fun onConnected() {
             try {
-                controller = MediaControllerCompat(context, mediaBrowser.sessionToken)
-                controller?.registerCallback(controllerCallback)
+                controller = MediaControllerCompat(context, mediaBrowser.sessionToken).apply {
+                    registerCallback(controllerCallback)
+                    controllerCallback.onPlaybackStateChanged(playbackState)
+                    controllerCallback.onMetadataChanged(metadata)
+                }
             } catch (e: RemoteException) {
                 Timber.e(e, e.message)
             }

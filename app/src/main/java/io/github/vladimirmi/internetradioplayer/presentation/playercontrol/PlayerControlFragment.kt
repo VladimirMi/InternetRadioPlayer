@@ -43,14 +43,25 @@ class PlayerControlFragment : BaseFragment(), PlayerControlView {
 
     override fun showStopped() {
         playPauseBt.setBackgroundResource(R.drawable.ic_play)
+//        loadingPb.visible(false)
     }
 
     override fun showPlaying() {
         playPauseBt.setBackgroundResource(R.drawable.ic_stop)
+//        loadingPb.visible(false)
+    }
+
+    override fun showLoading() {
+        playPauseBt.setBackgroundResource(R.drawable.ic_play)
+//        loadingPb.visible(true)
     }
 
     override fun setStation(station: Station) {
         iconIv.setImageBitmap(station.icon.getBitmap(context!!))
+    }
+
+    override fun setMetadata(metadata: String) {
+        metadataTv.text = metadata
     }
 
     override fun enableEditMode(enable: Boolean) {

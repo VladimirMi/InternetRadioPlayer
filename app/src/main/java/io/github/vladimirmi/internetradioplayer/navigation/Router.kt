@@ -10,7 +10,7 @@ class Router : ru.terrakok.cicerone.Router() {
 
     companion object {
         const val GET_STARTED_SCREEN = "get_started_screen"
-        const val MEDIA_LIST_SCREEN = "media_list_screen"
+        const val STATIONS_LIST_SCREEN = "media_list_screen"
         const val STATION_SCREEN = "station_screen"
         const val ICON_PICKER_SCREEN = "icon_picker_screen"
         const val DELIMITER = "$"

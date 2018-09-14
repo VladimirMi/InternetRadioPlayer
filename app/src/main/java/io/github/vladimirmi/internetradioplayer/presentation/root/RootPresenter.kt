@@ -69,7 +69,7 @@ class RootPresenter
 
     private fun setupRootScreen() {
         if (stationInteractor.haveStations()) {
-            router.newRootScreen(Router.MEDIA_LIST_SCREEN)
+            router.newRootScreen(Router.STATIONS_LIST_SCREEN)
         } else {
             router.newRootScreen(Router.GET_STARTED_SCREEN)
         }

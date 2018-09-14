@@ -1,10 +1,11 @@
 package io.github.vladimirmi.internetradioplayer.presentation.playercontrol
 
+import android.support.v4.media.MediaMetadataCompat
 import android.support.v4.media.session.PlaybackStateCompat
 import android.support.v4.media.session.PlaybackStateCompat.*
 import com.arellomobile.mvp.InjectViewState
 import io.github.vladimirmi.internetradioplayer.R
-import io.github.vladimirmi.internetradioplayer.data.service.PlayerService
+import io.github.vladimirmi.internetradioplayer.data.service.*
 import io.github.vladimirmi.internetradioplayer.domain.interactor.PlayerControlsInteractor
 import io.github.vladimirmi.internetradioplayer.domain.interactor.StationInteractor
 import io.github.vladimirmi.internetradioplayer.domain.model.PlayerMode
@@ -12,6 +13,7 @@ import io.github.vladimirmi.internetradioplayer.navigation.Router
 import io.github.vladimirmi.internetradioplayer.ui.base.BasePresenter
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.rxkotlin.addTo
+import io.reactivex.rxkotlin.subscribeBy
 import javax.inject.Inject
 
 /**
@@ -34,6 +36,10 @@ class PlayerControlPresenter
                 .subscribe { handleSessionEvent(it) }
                 .addTo(compDisp)
 
+        controlsInteractor.playbackMetaData
+                .subscribeBy { handleMetadata(it) }
+                .addTo(compDisp)
+
         controlsInteractor.playerModeObs
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe { handlePlayerMode(it) }
@@ -48,8 +54,14 @@ class PlayerControlPresenter
     private fun handleState(state: PlaybackStateCompat) {
         when (state.state) {
             STATE_PAUSED, STATE_STOPPED -> viewState.showStopped()
+            STATE_BUFFERING -> viewState.showLoading()
             STATE_PLAYING -> viewState.showPlaying()
         }
+    }
+
+    private fun handleMetadata(metadata: MediaMetadataCompat) {
+        if (metadata.notSupported()) viewState.setMetadata(metadata.album!!)
+        else viewState.setMetadata("${metadata.artist} - ${metadata.title}")
     }
 
     private fun handleSessionEvent(event: String) {

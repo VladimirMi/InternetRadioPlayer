@@ -1,89 +1,105 @@
 <?xml version="1.0" encoding="utf-8"?>
 
-<android.support.constraint.ConstraintLayout
+<LinearLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:background="@color/primaryLightColor"
+    android:orientation="vertical"
     >
 
-    <TextView
-        android:id="@+id/metadataTv"
-        android:layout_width="0dp"
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="4dp"
+        android:background="@drawable/shadow_reverse"
+        />
+
+    <android.support.constraint.ConstraintLayout
+        xmlns:android="http://schemas.android.com/apk/res/android"
+        xmlns:app="http://schemas.android.com/apk/res-auto"
+        xmlns:tools="http://schemas.android.com/tools"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginLeft="8dp"
-        android:layout_marginRight="8dp"
-        android:layout_marginTop="4dp"
-        android:ellipsize="marquee"
-        android:marqueeRepeatLimit="marquee_forever"
-        android:singleLine="true"
-        android:textAppearance="@style/TextAppearance.AppCompat.Subhead.Inverse"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toEndOf="@+id/iconIv"
-        app:layout_constraintTop_toTopOf="parent"
-        tools:text="Festus vigils ducunt ad gemna."
-        />
+        android:background="@color/primaryLightColor"
+        >
 
-    <ImageView
-        android:id="@+id/iconIv"
-        android:layout_width="72dp"
-        android:layout_height="72dp"
-        android:contentDescription="@string/desc_station_icon"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        tools:src="@color/grey_500"
-        />
+        <TextView
+            android:id="@+id/metadataTv"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="8dp"
+            android:layout_marginTop="4dp"
+            android:layout_marginRight="8dp"
+            android:ellipsize="marquee"
+            android:marqueeRepeatLimit="marquee_forever"
+            android:singleLine="true"
+            android:textAppearance="@style/TextAppearance.AppCompat.Subhead"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toEndOf="@+id/iconIv"
+            app:layout_constraintTop_toTopOf="parent"
+            tools:text="Festus vigils ducunt ad gemna."
+            />
 
-    <Button
-        android:id="@+id/changeIconBt"
-        android:layout_width="72dp"
-        android:layout_height="72dp"
-        android:background="@drawable/ic_add_bg"
-        android:visibility="gone"
-        app:layout_constraintStart_toStartOf="@id/iconIv"
-        app:layout_constraintTop_toTopOf="@id/iconIv"
-        tools:visibility="visible"
-        />
+        <ImageView
+            android:id="@+id/iconIv"
+            android:layout_width="72dp"
+            android:layout_height="72dp"
+            android:contentDescription="@string/desc_station_icon"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            tools:src="@color/grey_500"
+            />
 
-    <ImageButton
-        android:id="@+id/previousBt"
-        android:layout_width="48dp"
-        android:layout_height="48dp"
-        android:layout_marginEnd="8dp"
-        android:layout_marginRight="8dp"
-        android:background="@drawable/ic_skip_previous"
-        android:contentDescription="@string/desc_skip_previous_button"
-        app:layout_constraintBottom_toBottomOf="@+id/playPauseBt"
-        app:layout_constraintEnd_toStartOf="@+id/playPauseBt"
-        app:layout_constraintTop_toTopOf="@+id/playPauseBt"
-        />
+        <Button
+            android:id="@+id/changeIconBt"
+            android:layout_width="72dp"
+            android:layout_height="72dp"
+            android:background="@drawable/ic_add_bg"
+            android:visibility="gone"
+            app:layout_constraintStart_toStartOf="@id/iconIv"
+            app:layout_constraintTop_toTopOf="@id/iconIv"
+            tools:visibility="visible"
+            />
 
-    <ImageButton
-        android:id="@+id/playPauseBt"
-        android:layout_width="56dp"
-        android:layout_height="56dp"
-        android:layout_marginTop="20dp"
-        android:background="@drawable/ic_play"
-        android:contentDescription="@string/desc_play_pause_button"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        />
+        <ImageButton
+            android:id="@+id/previousBt"
+            android:layout_width="48dp"
+            android:layout_height="48dp"
+            android:layout_marginEnd="8dp"
+            android:layout_marginRight="8dp"
+            android:background="@drawable/ic_skip_previous"
+            android:contentDescription="@string/desc_skip_previous_button"
+            app:layout_constraintBottom_toBottomOf="@+id/playPauseBt"
+            app:layout_constraintEnd_toStartOf="@+id/playPauseBt"
+            app:layout_constraintTop_toTopOf="@+id/playPauseBt"
+            />
 
-    <ImageButton
-        android:id="@+id/nextBt"
-        android:layout_width="48dp"
-        android:layout_height="48dp"
-        android:layout_marginLeft="8dp"
-        android:layout_marginStart="8dp"
-        android:background="@drawable/ic_skip_next"
-        android:contentDescription="@string/desc_skip_next_button"
-        app:layout_constraintBottom_toBottomOf="@+id/playPauseBt"
-        app:layout_constraintStart_toEndOf="@+id/playPauseBt"
-        app:layout_constraintTop_toTopOf="@+id/playPauseBt"
-        />
+        <ImageButton
+            android:id="@+id/playPauseBt"
+            android:layout_width="56dp"
+            android:layout_height="56dp"
+            android:layout_marginTop="20dp"
+            android:background="@drawable/ic_play"
+            android:contentDescription="@string/desc_play_pause_button"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            />
 
-</android.support.constraint.ConstraintLayout>
+        <ImageButton
+            android:id="@+id/nextBt"
+            android:layout_width="48dp"
+            android:layout_height="48dp"
+            android:layout_marginStart="8dp"
+            android:layout_marginLeft="8dp"
+            android:background="@drawable/ic_skip_next"
+            android:contentDescription="@string/desc_skip_next_button"
+            app:layout_constraintBottom_toBottomOf="@+id/playPauseBt"
+            app:layout_constraintStart_toEndOf="@+id/playPauseBt"
+            app:layout_constraintTop_toTopOf="@+id/playPauseBt"
+            />
+
+    </android.support.constraint.ConstraintLayout>
+</LinearLayout>

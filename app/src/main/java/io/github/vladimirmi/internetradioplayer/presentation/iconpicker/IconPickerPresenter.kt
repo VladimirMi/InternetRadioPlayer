@@ -27,7 +27,6 @@ class IconPickerPresenter
     override fun attachView(view: IconPickerView?) {
         super.attachView(view)
         rootPresenter.viewState.showControls(false)
-        rootPresenter.viewState.showMetadata(false)
     }
 
     fun saveIcon() {

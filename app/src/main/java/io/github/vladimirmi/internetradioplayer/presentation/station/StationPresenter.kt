@@ -65,7 +65,6 @@ class StationPresenter
     }
 
     fun edit(stationInfo: StationInfo) {
-        Timber.e("edit: ")
         interactor.updateStation(getUpdatedStation(stationInfo))
                 .ioToMain()
                 .subscribeBy(
@@ -92,7 +91,7 @@ class StationPresenter
                         onComplete = {
                             viewState.showToast(R.string.toast_add_success)
                             viewMode()
-                            router.newRootScreen(Router.MEDIA_LIST_SCREEN)
+                            router.newRootScreen(Router.STATIONS_LIST_SCREEN)
                         },
                         onError = {
                             if (it is ValidationException) viewState.showToast(it.resId)

@@ -28,6 +28,6 @@
     <color name="secondaryTextColor">@color/grey_600</color>
     <color name="accentColor">@color/teal_500</color>
 
-    <color name="shadow">#779e9e9e</color>
+    <color name="shadow">#44212121</color>
     <color name="transparent_grey">#55222222</color>
 </resources>

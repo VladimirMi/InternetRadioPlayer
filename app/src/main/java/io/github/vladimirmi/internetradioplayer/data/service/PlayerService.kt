@@ -107,7 +107,10 @@ class PlayerService : MediaBrowserServiceCompat(), SessionCallback.Interface {
     }
 
     private fun handleCurrentStation(station: Station) {
-        currentStationId = station.id
+        if (currentStationId != station.id) {
+            mediaMetadata = mediaMetadata.setArtistTitle("")
+            currentStationId = station.id
+        }
         if (isPlaying && currentStationId != playingStationId) playCurrent()
         mediaMetadata = mediaMetadata.setStation(station, this)
         session.setMetadata(mediaMetadata)

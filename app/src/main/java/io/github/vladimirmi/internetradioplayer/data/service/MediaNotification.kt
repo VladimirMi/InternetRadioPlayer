@@ -8,11 +8,11 @@ import android.content.Context
 import android.os.Build
 import android.support.annotation.RequiresApi
 import android.support.v4.app.NotificationCompat
+import android.support.v4.media.MediaMetadataCompat
 import android.support.v4.media.app.NotificationCompat.MediaStyle
 import android.support.v4.media.session.MediaSessionCompat
 import android.support.v4.media.session.PlaybackStateCompat
 import io.github.vladimirmi.internetradioplayer.R
-import timber.log.Timber
 
 /**
  * Created by Vladimir Mikhalev 20.10.2017.
@@ -37,16 +37,6 @@ class MediaNotification(private val service: PlayerService,
             .setShowActionsInCompactView(0, 1, 2)
             .setCancelButtonIntent(stopIntent)
 
-
-    private val builder = NotificationCompat.Builder(service, CHANNEL_ID)
-            .setShowWhen(false)
-            .setVisibility(NotificationCompat.VISIBILITY_PUBLIC)
-            .setSmallIcon(R.drawable.ic_station_1)
-            .setContentIntent(session.controller.sessionActivity)
-            .setDeleteIntent(stopIntent)
-            .setPriority(NotificationCompat.PRIORITY_HIGH)
-            .setStyle(mediaStyle)
-
     init {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
             createNotificationChannel()
@@ -69,19 +59,16 @@ class MediaNotification(private val service: PlayerService,
     }
 
     private fun createNotification(): Notification {
-        val metadata = session.controller.metadata
+        val builder = createBuilder()
+        val metadata: MediaMetadataCompat? = session.controller.metadata
         val playbackState = session.controller.playbackState.state
 
-        Timber.e("createNotification: ${metadata.description.description}")
-        Timber.e("createNotification: ${metadata.description.title}")
-        Timber.e("createNotification: ${metadata.description.subtitle}")
-
-        builder.setSubText(metadata.album)
-                .setLargeIcon(metadata.art)
-
-        builder.setContentTitle(metadata.title)
-                .setContentText(metadata.artist)
-
+        metadata?.let {
+            builder.setSubText(it.album)
+                    .setLargeIcon(it.art)
+                    .setContentTitle(it.title)
+                    .setContentText(it.artist)
+        }
 
         if (playbackState == PlaybackStateCompat.STATE_BUFFERING) {
             builder.setContentTitle(service.getString(R.string.metadata_buffering))
@@ -110,5 +97,16 @@ class MediaNotification(private val service: PlayerService,
 
     private fun generateAction(icon: Int, title: String, action: PendingIntent): NotificationCompat.Action {
         return NotificationCompat.Action.Builder(icon, title, action).build()
+    }
+
+    private fun createBuilder(): NotificationCompat.Builder {
+        return NotificationCompat.Builder(service, CHANNEL_ID)
+                .setShowWhen(false)
+                .setVisibility(NotificationCompat.VISIBILITY_PUBLIC)
+                .setSmallIcon(R.drawable.ic_station_1)
+                .setContentIntent(session.controller.sessionActivity)
+                .setDeleteIntent(stopIntent)
+                .setPriority(NotificationCompat.PRIORITY_HIGH)
+                .setStyle(mediaStyle)
     }
 }

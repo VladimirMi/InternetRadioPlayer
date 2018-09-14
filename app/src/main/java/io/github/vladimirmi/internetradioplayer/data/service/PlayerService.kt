@@ -14,7 +14,6 @@ import io.github.vladimirmi.internetradioplayer.domain.interactor.StationInterac
 import io.github.vladimirmi.internetradioplayer.extensions.toUri
 import io.reactivex.disposables.CompositeDisposable
 import io.reactivex.rxkotlin.addTo
-import timber.log.Timber
 import toothpick.Toothpick
 import java.util.*
 import javax.inject.Inject
@@ -110,7 +109,8 @@ class PlayerService : MediaBrowserServiceCompat(), SessionCallback.Interface {
     private fun handleCurrentStation(station: Station) {
         currentStationId = station.id
         if (isPlaying && currentStationId != playingStationId) playCurrent()
-        mediaMetadata.setStation(station, this)
+        mediaMetadata = mediaMetadata.setStation(station, this)
+        session.setMetadata(mediaMetadata)
         notification.update()
     }
 
@@ -134,7 +134,6 @@ class PlayerService : MediaBrowserServiceCompat(), SessionCallback.Interface {
     //region =============== SessionCallback ==============
 
     override fun onPlayCommand() {
-        Timber.e("onPlayCommand: ")
         stopTask?.cancel()
         startService()
         if (isPaused && currentStationId == playingStationId) playback.resume()
@@ -174,6 +173,7 @@ class PlayerService : MediaBrowserServiceCompat(), SessionCallback.Interface {
                 mediaMetadata = mediaMetadata.setArtistTitle("")
                 session.setMetadata(mediaMetadata)
             }
+            notification.update()
         }
 
         override fun onPlayerError(error: Int) {

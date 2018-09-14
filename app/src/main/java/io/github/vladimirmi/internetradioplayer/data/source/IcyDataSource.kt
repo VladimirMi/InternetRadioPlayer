@@ -82,8 +82,7 @@ class IcyDataSource(private val userAgent: String,
             IcyInputStream(inputStream, metaWindow, playerCallback)
         } else {
             Timber.d("stream does not support icy metadata")
-            //todo Implement
-//            playerCallback.onMetadata(Metadata.UNSUPPORTED)
+            playerCallback.onMetadata("")
             inputStream
         }
     }

@@ -1,6 +1,7 @@
 package io.github.vladimirmi.internetradioplayer.data.service
 
 import android.content.Context
+import android.graphics.Bitmap
 import android.support.v4.media.MediaMetadataCompat
 import io.github.vladimirmi.internetradioplayer.data.db.entity.Station
 import io.github.vladimirmi.internetradioplayer.extensions.getBitmap
@@ -9,15 +10,14 @@ import io.github.vladimirmi.internetradioplayer.extensions.getBitmap
  * Created by Vladimir Mikhalev 01.02.2018.
  */
 
-val MediaMetadataCompat.artist get() = getString(MediaMetadataCompat.METADATA_KEY_ARTIST)
-val MediaMetadataCompat.title get() = getString(MediaMetadataCompat.METADATA_KEY_TITLE)
-val MediaMetadataCompat.album get() = getString(MediaMetadataCompat.METADATA_KEY_ALBUM)
-val MediaMetadataCompat.art get() = getBitmap(MediaMetadataCompat.METADATA_KEY_ALBUM_ART)
+val MediaMetadataCompat.artist: String? get() = getString(MediaMetadataCompat.METADATA_KEY_ARTIST)
+val MediaMetadataCompat.title: String? get() = getString(MediaMetadataCompat.METADATA_KEY_TITLE)
+val MediaMetadataCompat.album: String? get() = getString(MediaMetadataCompat.METADATA_KEY_ALBUM)
+val MediaMetadataCompat.art: Bitmap? get() = getBitmap(MediaMetadataCompat.METADATA_KEY_ALBUM_ART)
 
 val EMPTY_METADATA: MediaMetadataCompat get() = MediaMetadataCompat.Builder().build()
 
 fun MediaMetadataCompat.setArtistTitle(metadata: String): MediaMetadataCompat {
-    val builder = MediaMetadataCompat.Builder(this)
 
     val artistTitle = metadata.substringAfter("StreamTitle=", "")
             .substringBefore(';')
@@ -31,7 +31,8 @@ fun MediaMetadataCompat.setArtistTitle(metadata: String): MediaMetadataCompat {
 
     if (title.endsWith(']')) title = title.substringBeforeLast('[')
 
-    return builder.putString(MediaMetadataCompat.METADATA_KEY_ARTIST, artist)
+    return MediaMetadataCompat.Builder(this)
+            .putString(MediaMetadataCompat.METADATA_KEY_ARTIST, artist)
             .putString(MediaMetadataCompat.METADATA_KEY_TITLE, title)
             .build()
 }

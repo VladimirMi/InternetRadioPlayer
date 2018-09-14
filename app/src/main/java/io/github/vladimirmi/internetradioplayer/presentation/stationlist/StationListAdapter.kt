@@ -131,7 +131,7 @@ open class GroupElementVH(itemView: View) : RecyclerView.ViewHolder(itemView) {
 
     fun select(selected: Boolean, playing: Boolean) {
         val colorId = when {
-            playing -> R.color.green_100
+            playing -> R.color.green_200
             selected -> R.color.grey_300
             else -> R.color.grey_50
         }

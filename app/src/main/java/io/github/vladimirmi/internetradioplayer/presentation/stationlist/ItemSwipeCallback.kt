@@ -53,7 +53,7 @@ abstract class ItemSwipeCallback(context: Context,
     abstract override fun onSwiped(viewHolder: RecyclerView.ViewHolder, direction: Int)
 
     override fun getSwipeDirs(recyclerView: RecyclerView?, viewHolder: RecyclerView.ViewHolder?): Int {
-        if (viewHolder is MediaGroupTitleVH) return 0
+        if (viewHolder is GroupTitleVH) return 0
         return super.getSwipeDirs(recyclerView, viewHolder)
     }
 

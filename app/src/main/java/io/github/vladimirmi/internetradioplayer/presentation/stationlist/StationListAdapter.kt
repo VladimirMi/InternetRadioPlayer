@@ -1,6 +1,7 @@
 package io.github.vladimirmi.internetradioplayer.presentation.stationlist
 
 import android.support.v4.content.ContextCompat
+import android.support.v7.util.DiffUtil
 import android.support.v7.widget.RecyclerView
 import android.view.LayoutInflater
 import android.view.View
@@ -14,100 +15,136 @@ import io.github.vladimirmi.internetradioplayer.extensions.getBitmap
 import kotlinx.android.synthetic.main.item_group_item.view.*
 import kotlinx.android.synthetic.main.item_group_title.view.*
 
+
 /**
  * Created by Vladimir Mikhalev 04.10.2017.
  */
 
+private const val GROUP_TITLE = 0
+private const val GROUP_ITEM = 1
+private const val PAYLOAD_SELECTED_CHANGE = "PAYLOAD_SELECTED_CHANGE"
+private const val PAYLOAD_BACKGROUND_CHANGE = "PAYLOAD_BACKGROUND_CHANGE"
+
 class StationListAdapter(private val callback: StationItemCallback)
     : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
 
-    private companion object {
-        const val GROUP_TITLE = 0
-        const val GROUP_ITEM = 1
-    }
-
-    private var stationsList = FlatStationsList()
-    private var selected: Station? = null
+    private var stations = FlatStationsList()
+    private var selectedStation = Station.nullObj()
+    private var selectedPosition = 0
     private var playing = false
 
     fun setData(data: FlatStationsList) {
-        stationsList = data
-        notifyDataSetChanged()
+        val diffResult = DiffUtil.calculateDiff(object : DiffUtil.Callback() {
+            override fun getOldListSize(): Int = stations.size
+            override fun getNewListSize(): Int = data.size
+
+            override fun areItemsTheSame(oldItemPosition: Int, newItemPosition: Int): Boolean {
+                fun getId(list: FlatStationsList, position: Int): String {
+                    return if (list.isStation(position)) list.getStation(position).id
+                    else list.getGroup(position).id
+                }
+                return getId(stations, oldItemPosition) == getId(data, newItemPosition)
+            }
+
+            override fun areContentsTheSame(oldItemPosition: Int, newItemPosition: Int) = true
+        })
+        stations = data
+        diffResult.dispatchUpdatesTo(this)
     }
 
     fun getStation(position: Int): Station? {
-        return if (stationsList.isGroup(position)) null
-        else stationsList.getStation(position)
+        return if (stations.isGroup(position)) null
+        else stations.getStation(position)
     }
 
     fun getPosition(station: Station): Int {
-        return stationsList.positionOfStation(station.id)
+        return stations.positionOfStation(station.id)
     }
 
-    fun selectItem(playing: Boolean) {
-//        selected = station
-//        this.playing = playing
-//        notifyDataSetChanged()
+    fun selectStation(station: Station) {
+        val oldSelectedPos = selectedPosition
+        val newSelectedPos = getPosition(station)
+        selectedStation = station
+        selectedPosition = newSelectedPos
+
+        notifyItemChanged(oldSelectedPos, PAYLOAD_SELECTED_CHANGE)
+        notifyItemChanged(newSelectedPos, PAYLOAD_SELECTED_CHANGE)
+    }
+
+    fun setPlaying(playing: Boolean) {
+        this.playing = playing
+        notifyItemChanged(selectedPosition, PAYLOAD_SELECTED_CHANGE)
     }
 
     override fun getItemViewType(position: Int): Int =
-            if (stationsList.isGroup(position)) GROUP_TITLE else GROUP_ITEM
+            if (stations.isGroup(position)) GROUP_TITLE else GROUP_ITEM
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): RecyclerView.ViewHolder {
         val inflater = LayoutInflater.from(parent.context)
         return when (viewType) {
-            GROUP_TITLE -> MediaGroupTitleVH(inflater.inflate(R.layout.item_group_title, parent, false))
-            GROUP_ITEM -> MediaGroupItemVH(inflater.inflate(R.layout.item_group_item, parent, false))
+            GROUP_TITLE -> GroupTitleVH(inflater.inflate(R.layout.item_group_title, parent, false))
+            GROUP_ITEM -> GroupItemVH(inflater.inflate(R.layout.item_group_item, parent, false))
             else -> throw IllegalStateException("Unknown view type")
+        }
+    }
+
+    override fun onBindViewHolder(holder: RecyclerView.ViewHolder, position: Int, payloads: MutableList<Any>) {
+        holder as GroupElementVH
+        if (payloads.contains(PAYLOAD_SELECTED_CHANGE)) {
+            if (stations.isStation(position)) {
+                val station = stations.getStation(position)
+                holder.select(station.id == selectedStation.id, playing)
+            } else {
+                val group = stations.getGroup(position)
+                holder.select(!group.expanded && group.id == selectedStation.groupId, playing)
+            }
+        } else {
+            super.onBindViewHolder(holder, position, payloads)
         }
     }
 
     override fun onBindViewHolder(holder: RecyclerView.ViewHolder, position: Int) {
         when (holder) {
-            is MediaGroupTitleVH -> setupGroupTitleVH(position, holder)
-            is MediaGroupItemVH -> setupGroupItemVH(position, holder)
+            is GroupTitleVH -> setupGroupTitleVH(position, holder)
+            is GroupItemVH -> setupGroupItemVH(position, holder)
         }
     }
 
-    private fun setupGroupTitleVH(position: Int, holder: MediaGroupTitleVH) {
-        val group = stationsList.getGroup(position)
+    private fun setupGroupTitleVH(position: Int, holder: GroupTitleVH) {
+        val group = stations.getGroup(position)
         holder.bind(group, callback)
-        if (!group.expanded && selected?.groupId == group.id) {
-            holder.select(playing)
-        } else {
-            holder.unselect()
-        }
+        holder.select(!group.expanded && group.id == selectedStation.groupId, playing)
     }
 
-    private fun setupGroupItemVH(position: Int, holder: MediaGroupItemVH) {
-        val station = stationsList.getStation(position)
+    private fun setupGroupItemVH(position: Int, holder: GroupItemVH) {
+        val station = stations.getStation(position)
         holder.bind(station)
+        holder.select(station.id == selectedStation.id, playing)
         holder.setCallback(callback, station)
-        if (station.uri == selected?.uri) {
-            holder.select(playing)
-        } else {
-            holder.unselect()
-        }
     }
 
 
-    override fun getItemCount(): Int = stationsList.size
+    override fun getItemCount(): Int = stations.size
 }
 
-class MediaGroupTitleVH(itemView: View) : RecyclerView.ViewHolder(itemView) {
+open class GroupElementVH(itemView: View) : RecyclerView.ViewHolder(itemView) {
+
+    fun select(selected: Boolean, playing: Boolean) {
+        val colorId = when {
+            playing -> R.color.green_100
+            selected -> R.color.grey_300
+            else -> R.color.grey_50
+        }
+        itemView.setBackgroundColor(itemView.context.color(colorId))
+    }
+}
+
+
+class GroupTitleVH(itemView: View) : GroupElementVH(itemView) {
     fun bind(group: Group, callback: StationItemCallback) {
         itemView.title.text = group.name
         itemView.setOnClickListener { callback.onGroupSelected(group.id) }
         setExpanded(group.expanded)
-    }
-
-    fun select(playing: Boolean) {
-        if (playing) itemView.setBackgroundColor(itemView.context.color(R.color.green_100))
-        else itemView.setBackgroundColor(itemView.context.color(R.color.grey_300))
-    }
-
-    fun unselect() {
-        itemView.setBackgroundColor(itemView.context.color(R.color.grey_50))
     }
 
     private fun setExpanded(expanded: Boolean) {
@@ -118,7 +155,7 @@ class MediaGroupTitleVH(itemView: View) : RecyclerView.ViewHolder(itemView) {
     }
 }
 
-class MediaGroupItemVH(itemView: View) : RecyclerView.ViewHolder(itemView) {
+class GroupItemVH(itemView: View) : GroupElementVH(itemView) {
 
     fun bind(station: Station) {
         itemView.name.text = station.name
@@ -131,15 +168,6 @@ class MediaGroupItemVH(itemView: View) : RecyclerView.ViewHolder(itemView) {
             callback.onItemOpened(station)
             true
         }
-    }
-
-    fun select(playing: Boolean) {
-        if (playing) itemView.setBackgroundColor(itemView.context.color(R.color.green_100))
-        else itemView.setBackgroundColor(itemView.context.color(R.color.grey_300))
-    }
-
-    fun unselect() {
-        itemView.setBackgroundColor(itemView.context.color(R.color.grey_50))
     }
 }
 

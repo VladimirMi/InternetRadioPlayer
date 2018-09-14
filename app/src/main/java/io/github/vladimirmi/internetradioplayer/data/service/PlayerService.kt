@@ -14,6 +14,7 @@ import io.github.vladimirmi.internetradioplayer.domain.interactor.StationInterac
 import io.github.vladimirmi.internetradioplayer.extensions.toUri
 import io.reactivex.disposables.CompositeDisposable
 import io.reactivex.rxkotlin.addTo
+import timber.log.Timber
 import toothpick.Toothpick
 import java.util.*
 import javax.inject.Inject
@@ -133,6 +134,7 @@ class PlayerService : MediaBrowserServiceCompat(), SessionCallback.Interface {
     //region =============== SessionCallback ==============
 
     override fun onPlayCommand() {
+        Timber.e("onPlayCommand: ")
         stopTask?.cancel()
         startService()
         if (isPaused && currentStationId == playingStationId) playback.resume()

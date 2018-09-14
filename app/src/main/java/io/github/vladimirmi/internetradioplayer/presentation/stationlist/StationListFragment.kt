@@ -43,12 +43,8 @@ class StationListFragment : BaseFragment(), StationListView, StationItemCallback
     fun providePresenter(): StationListPresenter {
         return Toothpick.openScopes(Scopes.ROOT_ACTIVITY, this)
                 .getInstance(StationListPresenter::class.java).also {
-            Toothpick.closeScope(this)
-        }
-    }
-
-    fun notifyList() {
-        adapter.notifyDataSetChanged()
+                    Toothpick.closeScope(this)
+                }
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
@@ -63,11 +59,14 @@ class StationListFragment : BaseFragment(), StationListView, StationItemCallback
         adapter.setData(stationList)
     }
 
-    override fun selectedPlaying(playing: Boolean) {
-        adapter.selectItem(playing)
-        //todo select from position
-//        val position = adapter.getPosition(station)
-//        if (position != -1) media_recycler.scrollToPosition(position)
+    override fun selectStation(station: Station) {
+        adapter.selectStation(station)
+        val position = adapter.getPosition(station)
+        if (position != -1) media_recycler.scrollToPosition(position)
+    }
+
+    override fun setPlaying(playing: Boolean) {
+        adapter.setPlaying(playing)
     }
 
     override fun openAddStationDialog() {

@@ -56,10 +56,11 @@ class StationListPresenter
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe {
                     viewState.buildToolbar(builder.setToolbarTitle(it.name))
+                    viewState.selectStation(it)
                 }.addTo(compDisp)
 
         controlsInteractor.playbackStateObs
-                .subscribe { viewState.selectedPlaying(it.state == PlaybackStateCompat.STATE_PLAYING) }
+                .subscribe { viewState.setPlaying(it.state == PlaybackStateCompat.STATE_PLAYING) }
                 .addTo(compDisp)
     }
 

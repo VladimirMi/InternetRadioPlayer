@@ -90,7 +90,7 @@ class StationListFragment : BaseFragment(), StationListView, StationItemCallback
     }
 
     override fun onItemSelected(station: Station) {
-        presenter.select(station)
+        presenter.selectStation(station)
     }
 
     override fun onItemOpened(station: Station) {

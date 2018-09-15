@@ -67,6 +67,7 @@ class PlayerService : MediaBrowserServiceCompat(), SessionCallback.Interface {
         session.setFlags(MediaSessionCompat.FLAG_HANDLES_MEDIA_BUTTONS
                 or MediaSessionCompat.FLAG_HANDLES_TRANSPORT_CONTROLS)
         session.setPlaybackState(playbackState)
+        session.setMetadata(mediaMetadata)
         session.setSessionActivity(PlayerActions.sessionActivity(this))
         sessionToken = session.sessionToken
     }

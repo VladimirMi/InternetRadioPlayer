@@ -60,7 +60,9 @@ class PlayerControlPresenter
     }
 
     private fun handleMetadata(metadata: MediaMetadataCompat) {
-        if (metadata.notSupported()) viewState.setMetadata(metadata.album!!)
+        //todo fix
+//        if (metadata.notSupported()&&metadata.notEmpty()) viewState.setMetadata(metadata.album!!)
+        if (metadata.notSupported() && metadata.album != null) viewState.setMetadata(metadata.album!!)
         else viewState.setMetadata("${metadata.artist} - ${metadata.title}")
     }
 

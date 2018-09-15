@@ -15,7 +15,6 @@ import io.github.vladimirmi.internetradioplayer.extensions.getBitmap
 import kotlinx.android.synthetic.main.item_group_item.view.*
 import kotlinx.android.synthetic.main.item_group_title.view.*
 
-
 /**
  * Created by Vladimir Mikhalev 04.10.2017.
  */
@@ -35,8 +34,13 @@ class StationListAdapter(private val callback: StationItemCallback)
 
     fun setData(data: FlatStationsList) {
         val diffResult = DiffUtil.calculateDiff(object : DiffUtil.Callback() {
-            override fun getOldListSize(): Int = stations.size
-            override fun getNewListSize(): Int = data.size
+            override fun getOldListSize(): Int {
+                return stations.size
+            }
+
+            override fun getNewListSize(): Int {
+                return data.size
+            }
 
             override fun areItemsTheSame(oldItemPosition: Int, newItemPosition: Int): Boolean {
                 fun getId(list: FlatStationsList, position: Int): String {
@@ -46,7 +50,14 @@ class StationListAdapter(private val callback: StationItemCallback)
                 return getId(stations, oldItemPosition) == getId(data, newItemPosition)
             }
 
-            override fun areContentsTheSame(oldItemPosition: Int, newItemPosition: Int) = true
+            override fun areContentsTheSame(oldItemPosition: Int, newItemPosition: Int): Boolean {
+                if (data.isGroup(newItemPosition)) {
+                    if (data.getGroup(newItemPosition).expanded != stations.getGroup(oldItemPosition).expanded) {
+                        return false
+                    }
+                }
+                return true
+            }
         })
         stations = data
         diffResult.dispatchUpdatesTo(this)

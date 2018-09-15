@@ -7,6 +7,7 @@ import io.github.vladimirmi.internetradioplayer.R
 import io.github.vladimirmi.internetradioplayer.data.db.entity.Station
 import io.github.vladimirmi.internetradioplayer.domain.interactor.PlayerControlsInteractor
 import io.github.vladimirmi.internetradioplayer.domain.interactor.StationInteractor
+import io.github.vladimirmi.internetradioplayer.extensions.ioToMain
 import io.github.vladimirmi.internetradioplayer.navigation.Router
 import io.github.vladimirmi.internetradioplayer.presentation.root.MenuItemHolder
 import io.github.vladimirmi.internetradioplayer.presentation.root.RootPresenter
@@ -64,12 +65,15 @@ class StationListPresenter
                 .addTo(compDisp)
     }
 
-    fun select(station: Station) {
+    fun selectStation(station: Station) {
         interactor.currentStation = station
     }
 
     fun selectGroup(id: String) {
         interactor.expandOrCollapseGroup(id)
+                .ioToMain()
+                .subscribe()
+                .addTo(compDisp)
     }
 
     fun removeStation() {
@@ -79,7 +83,7 @@ class StationListPresenter
     }
 
     fun showStation(station: Station) {
-        select(station)
+        selectStation(station)
         router.showStationSlide(station.id)
     }
 

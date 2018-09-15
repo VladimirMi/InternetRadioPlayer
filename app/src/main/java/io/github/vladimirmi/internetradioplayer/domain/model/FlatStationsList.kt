@@ -8,7 +8,9 @@ import java.lang.IllegalStateException
  * Created by Vladimir Mikhalev 12.09.2018.
  */
 
-class FlatStationsList {
+class FlatStationsList(groups: List<Group>) {
+
+    constructor() : this(emptyList())
 
     private val flatList = ArrayList<Any>()
 
@@ -17,8 +19,7 @@ class FlatStationsList {
     val stationsSize: Int
         get() = flatList.count { it is Station }
 
-    fun build(groups: List<Group>) {
-        flatList.clear()
+    init {
         groups.forEach { group ->
             if (!group.isDefault() || groups.size > 1) {
                 flatList.add(group)

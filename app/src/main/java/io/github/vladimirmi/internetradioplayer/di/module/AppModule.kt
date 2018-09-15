@@ -4,7 +4,6 @@ import android.content.Context
 import com.google.gson.Gson
 import com.google.gson.GsonBuilder
 import io.github.vladimirmi.internetradioplayer.data.db.StationsDatabase
-import io.github.vladimirmi.internetradioplayer.data.db.dao.StationDao
 import io.github.vladimirmi.internetradioplayer.data.manager.ShortcutHelper
 import io.github.vladimirmi.internetradioplayer.data.manager.StationParser
 import io.github.vladimirmi.internetradioplayer.data.repository.StationListRepository
@@ -25,7 +24,7 @@ class AppModule(context: Context) : Module() {
         bind(Gson::class.java).toInstance(gson)
 
         val db = StationsDatabase.newInstance(context)
-        bind(StationDao::class.java).toInstance(db.stationDao())
+        bind(StationsDatabase::class.java).toInstance(db)
 
         bind(StationParser::class.java).singletonInScope()
 

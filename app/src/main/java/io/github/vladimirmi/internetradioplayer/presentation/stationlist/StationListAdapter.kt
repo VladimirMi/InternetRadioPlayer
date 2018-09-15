@@ -1,6 +1,5 @@
 package io.github.vladimirmi.internetradioplayer.presentation.stationlist
 
-import android.support.v4.content.ContextCompat
 import android.support.v7.util.DiffUtil
 import android.support.v7.widget.RecyclerView
 import android.view.LayoutInflater
@@ -142,14 +141,13 @@ open class GroupElementVH(itemView: View) : RecyclerView.ViewHolder(itemView) {
 
     fun select(selected: Boolean, playing: Boolean) {
         val colorId = when {
-            playing -> R.color.green_200
+            selected && playing -> R.color.green_200
             selected -> R.color.grey_300
             else -> R.color.grey_50
         }
         itemView.setBackgroundColor(itemView.context.color(colorId))
     }
 }
-
 
 class GroupTitleVH(itemView: View) : GroupElementVH(itemView) {
     fun bind(group: Group, callback: StationItemCallback) {
@@ -161,8 +159,8 @@ class GroupTitleVH(itemView: View) : GroupElementVH(itemView) {
     private fun setExpanded(expanded: Boolean) {
         val pointer = if (expanded) R.drawable.ic_collapse else R.drawable.ic_expand
         itemView.ic_expanded.setImageResource(pointer)
-        val bg = if (expanded) R.drawable.shape_item_top else R.drawable.shape_item_single
-        itemView.background = ContextCompat.getDrawable(itemView.context, bg)
+//        val bg = if (expanded) R.drawable.shape_item_top else R.drawable.shape_item_single
+//        itemView.background = ContextCompat.getDrawable(itemView.context, bg)
     }
 }
 

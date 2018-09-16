@@ -107,5 +107,6 @@ class MediaNotification(private val service: PlayerService,
                 .setContentIntent(session.controller.sessionActivity)
                 .setDeleteIntent(stopIntent)
                 .setPriority(NotificationCompat.PRIORITY_HIGH)
+                .setStyle(mediaStyle)
     }
 }

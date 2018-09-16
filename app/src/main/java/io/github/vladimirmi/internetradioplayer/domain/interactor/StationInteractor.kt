@@ -15,6 +15,7 @@ import io.reactivex.Completable
 import io.reactivex.Observable
 import io.reactivex.Single
 import io.reactivex.rxkotlin.Singles
+import timber.log.Timber
 import java.util.*
 import javax.inject.Inject
 
@@ -116,6 +117,7 @@ class StationInteractor
     }
 
     fun getCurrentGroup(): Group {
+        Timber.e("getCurrentGroup: ${currentStation.groupId}")
         return groups.find { it.id == currentStation.groupId }!!
     }
 

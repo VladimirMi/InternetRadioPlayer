@@ -17,7 +17,8 @@ class FlatStationsList(private val flatList: MutableList<Any> = arrayListOf()) {
         fun createFrom(groups: List<Group>): FlatStationsList {
             val flatList = arrayListOf<Any>()
             groups.forEach { group ->
-                if (!group.isDefault() || groups.size > 1) {
+                if ((group.isDefault() && groups.count { it.stations.isNotEmpty() } > 1) ||
+                        (!group.isDefault() && group.stations.isNotEmpty())) {
                     flatList.add(group)
                 }
                 if (group.expanded) {

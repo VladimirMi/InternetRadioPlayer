@@ -14,7 +14,6 @@ class IcyInputStream(inS: InputStream,
     : FilterInputStream(inS) {
 
     private var bytesBeforeMetadata = window
-    private var metaString = ""
     private var buffer = ByteArray(128)
 
     override fun read(): Int {
@@ -41,10 +40,7 @@ class IcyInputStream(inS: InputStream,
         val actualSize = buffer.indexOfFirst { it.toInt() == 0 }
         //todo detect charset
         val metaString = String(buffer, 0, actualSize)
-        if (this.metaString != metaString) {
-            playerCallback.onMetadata(metaString)
-            this.metaString = metaString
-        }
+        playerCallback.onMetadata(metaString)
     }
 
     private fun ensureFill(buffer: ByteArray, offset: Int, size: Int): Int {

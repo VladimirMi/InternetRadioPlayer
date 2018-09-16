@@ -16,7 +16,7 @@ import io.github.vladimirmi.internetradioplayer.presentation.getstarted.NewStati
 import io.github.vladimirmi.internetradioplayer.presentation.root.ToolbarBuilder
 import io.github.vladimirmi.internetradioplayer.presentation.root.ToolbarView
 import io.github.vladimirmi.internetradioplayer.ui.base.BaseFragment
-import kotlinx.android.synthetic.main.fragment_media_list.*
+import kotlinx.android.synthetic.main.fragment_stations_list.*
 import toothpick.Toothpick
 
 /**
@@ -25,7 +25,7 @@ import toothpick.Toothpick
 
 class StationListFragment : BaseFragment(), StationListView, StationItemCallback {
 
-    override val layoutRes = R.layout.fragment_media_list
+    override val layoutRes = R.layout.fragment_stations_list
     private val adapter = StationListAdapter(this)
 
     private val itemTouchHelper by lazy {

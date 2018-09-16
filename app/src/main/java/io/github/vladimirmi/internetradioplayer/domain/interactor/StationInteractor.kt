@@ -15,8 +15,6 @@ import io.reactivex.Completable
 import io.reactivex.Observable
 import io.reactivex.Single
 import io.reactivex.rxkotlin.Singles
-import timber.log.Timber
-import java.util.*
 import javax.inject.Inject
 
 
@@ -117,7 +115,7 @@ class StationInteractor
     }
 
     fun getCurrentGroup(): Group {
-        Timber.e("getCurrentGroup: ${currentStation.groupId}")
+        if (createMode) return Group.default()
         return groups.find { it.id == currentStation.groupId }!!
     }
 
@@ -217,8 +215,7 @@ class StationInteractor
     private fun addGroup(name: String): Single<Group> {
         groups.find { it.name == name }?.let { return Single.just(it) }
 
-        val group = Group(if (name == Group.DEFAULT_NAME) Group.DEFAULT_ID else UUID.randomUUID().toString(),
-                name, groups.size)
+        val group = if (name == Group.DEFAULT_NAME) Group.default() else Group(name, groups.size)
 
         return stationRepository.addGroup(group)
                 .andThen(Single.fromCallable {

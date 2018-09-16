@@ -34,6 +34,7 @@ class PlayerControlFragment : BaseFragment(), PlayerControlView {
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        metadataTv.isSelected = true
         playPauseBt.setOnClickListener { presenter.playPause() }
         iconIv.setOnClickListener { presenter.showStation() }
         previousBt.setOnClickListener { presenter.skipToPrevious() }

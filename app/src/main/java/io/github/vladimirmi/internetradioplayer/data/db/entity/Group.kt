@@ -6,6 +6,7 @@ import android.arch.persistence.room.Index
 import android.arch.persistence.room.PrimaryKey
 import android.content.Context
 import io.github.vladimirmi.internetradioplayer.R
+import java.util.*
 
 /**
  * Created by Vladimir Mikhalev 28.08.2018.
@@ -21,11 +22,13 @@ data class Group(@PrimaryKey
     @Ignore var stations: MutableList<Station> = arrayListOf()
 
     @Ignore
-    constructor(id: String, name: String, order: Int) : this(id, name, true, order)
+    constructor(name: String, order: Int) : this(UUID.randomUUID().toString(), name, true, order)
 
     companion object {
         const val DEFAULT_ID = "default_id"
         const val DEFAULT_NAME = "default_name"
+
+        fun default() = Group(DEFAULT_ID, DEFAULT_NAME, true, 0)
     }
 
     fun isDefault() = id == DEFAULT_ID

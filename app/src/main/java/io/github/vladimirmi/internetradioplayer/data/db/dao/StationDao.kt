@@ -27,7 +27,7 @@ interface StationDao {
     fun getAllStationGenreJoins(): Single<List<StationGenreJoin>>
 
     @Query("SELECT * FROM genre INNER JOIN station_genre_join ON genre.name = genreName WHERE stationId = :id")
-    fun getStationGenres(id: Int): Single<List<Genre>>
+    fun getStationGenres(id: String): Single<List<Genre>>
 
     @Insert
     fun insertStation(station: Station): Long

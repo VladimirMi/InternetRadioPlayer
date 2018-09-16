@@ -32,9 +32,7 @@ class StationListRepository
 
     fun getAllGroups(): Single<List<Group>> = db.stationDao().getAllGroups()
 
-    fun getAllGenres(): Single<List<Genre>> = db.stationDao().getAllGenres()
-
-    fun getAllStationGenreJoins(): Single<List<StationGenreJoin>> = db.stationDao().getAllStationGenreJoins()
+    fun getStationGenres(id: String): Single<List<Genre>> = db.stationDao().getStationGenres(id)
 
     fun createStation(uri: Uri): Single<Station> {
         return Single.fromCallable {

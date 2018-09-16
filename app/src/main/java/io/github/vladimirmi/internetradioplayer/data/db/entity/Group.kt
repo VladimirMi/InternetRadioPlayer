@@ -4,6 +4,8 @@ import android.arch.persistence.room.Entity
 import android.arch.persistence.room.Ignore
 import android.arch.persistence.room.Index
 import android.arch.persistence.room.PrimaryKey
+import android.content.Context
+import io.github.vladimirmi.internetradioplayer.R
 
 /**
  * Created by Vladimir Mikhalev 28.08.2018.
@@ -27,4 +29,9 @@ data class Group(@PrimaryKey
     }
 
     fun isDefault() = id == DEFAULT_ID
+
+    fun getViewName(context: Context): String {
+        return if (name == DEFAULT_NAME) context.getString(R.string.default_group)
+        else name
+    }
 }

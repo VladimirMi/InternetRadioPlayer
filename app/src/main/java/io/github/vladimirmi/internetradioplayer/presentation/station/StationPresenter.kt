@@ -3,7 +3,6 @@ package io.github.vladimirmi.internetradioplayer.presentation.station
 import android.view.MenuItem
 import com.arellomobile.mvp.InjectViewState
 import io.github.vladimirmi.internetradioplayer.R
-import io.github.vladimirmi.internetradioplayer.data.db.entity.Station
 import io.github.vladimirmi.internetradioplayer.domain.interactor.PlayerControlsInteractor
 import io.github.vladimirmi.internetradioplayer.domain.interactor.StationInteractor
 import io.github.vladimirmi.internetradioplayer.extensions.ValidationException
@@ -50,6 +49,12 @@ class StationPresenter
 
     override fun onFirstViewAttach() {
         viewState.setStation(interactor.currentStation)
+        viewState.setGroup(interactor.getCurrentGroup())
+        interactor.getCurrentGenres()
+                .ioToMain()
+                .subscribeBy { viewState.setGenres(it) }
+                .addTo(compDisp)
+
         if (editMode) editMode() else viewMode()
     }
 
@@ -65,7 +70,7 @@ class StationPresenter
     }
 
     fun edit(stationInfo: StationInfo) {
-        interactor.updateStation(getUpdatedStation(stationInfo))
+        interactor.updateCurrentStation(stationInfo.stationName, stationInfo.groupName)
                 .ioToMain()
                 .subscribeBy(
                         onComplete = { viewMode() },
@@ -83,9 +88,7 @@ class StationPresenter
     }
 
     fun create(stationInfo: StationInfo) {
-        val newStation = getUpdatedStation(stationInfo)
-
-        interactor.addStation(newStation)
+        interactor.addCurrentStation(stationInfo.stationName, stationInfo.groupName)
                 .ioToMain()
                 .subscribeBy(
                         onComplete = {
@@ -154,14 +157,8 @@ class StationPresenter
         }
     }
 
-    private fun getUpdatedStation(stationInfo: StationInfo): Station {
-        return interactor.currentStation.copy(name = stationInfo.name).apply {
-            group = stationInfo.group
-        }
-    }
-
     fun tryCancelEdit(stationInfo: StationInfo) {
-        if (getUpdatedStation(stationInfo) != interactor.previousWhenEdit) {
+        if (interactor.stationChanged(stationInfo)) {
             viewState.openCancelEditDialog()
         } else {
             cancelEdit()

@@ -17,6 +17,8 @@ import android.widget.Toast
 import com.arellomobile.mvp.presenter.InjectPresenter
 import com.arellomobile.mvp.presenter.ProvidePresenter
 import io.github.vladimirmi.internetradioplayer.R
+import io.github.vladimirmi.internetradioplayer.data.db.entity.Genre
+import io.github.vladimirmi.internetradioplayer.data.db.entity.Group
 import io.github.vladimirmi.internetradioplayer.data.db.entity.Station
 import io.github.vladimirmi.internetradioplayer.di.Scopes
 import io.github.vladimirmi.internetradioplayer.extensions.inputMethodManager
@@ -101,12 +103,16 @@ class StationFragment : BaseFragment(), StationView, BackPressListener {
             sampleLabelTv.visible(it)
             sampleTv.visible(it)
         }
+    }
 
-        groupEt.setText(station.group)
+    override fun setGroup(group: Group) {
+        groupEt.setText(group.getViewName(context!!))
+    }
 
-        genresLabelTv.visible(station.genres.isNotEmpty())
+    override fun setGenres(genres: List<Genre>) {
+        genresLabelTv.visible(genres.isNotEmpty())
         genresFl.removeAllViews()
-        station.genres.forEach { genresFl.addView(TagView(context!!, it, null)) }
+        genres.forEach { genresFl.addView(TagView(context!!, it.name, null)) }
     }
 
     override fun setEditMode(editMode: Boolean) {
@@ -167,9 +173,9 @@ class StationFragment : BaseFragment(), StationView, BackPressListener {
                     genres.add(tagView.text.toString())
                 }
         return StationInfo(
-                name = titleEt.text.toString(),
+                stationName = titleEt.text.toString(),
                 group = groupEt.text.toString(),
-                genres = genres)
+                genres = genres, context = context!!)
     }
 
     private fun TextView.linkStyle(enable: Boolean) {

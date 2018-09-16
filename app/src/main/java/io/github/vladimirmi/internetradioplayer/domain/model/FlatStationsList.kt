@@ -2,7 +2,6 @@ package io.github.vladimirmi.internetradioplayer.domain.model
 
 import io.github.vladimirmi.internetradioplayer.data.db.entity.Group
 import io.github.vladimirmi.internetradioplayer.data.db.entity.Station
-import timber.log.Timber
 import java.util.*
 
 
@@ -77,25 +76,13 @@ class FlatStationsList(private val flatList: MutableList<Any> = arrayListOf()) {
     }
 
     fun moveItem(from: Int, to: Int) {
-//        fun checkStationChangeGroup(groupPos: Int, stationPos: Int) {
-//            if (isGroup(groupPos) && isStation(stationPos)) {
-//                val group = getGroup(groupPos)
-//                val station = getStation(stationPos)
-//                if (station.groupId != group.id) {
-//                    flatList[stationPos] = station.copy()
-//                }
-//            }
-//        }
-
         if (from < to) {
             for (i in from until to) {
                 Collections.swap(flatList, i, i + 1)
-//                checkStationChangeGroup(i, i + 1)
             }
         } else {
             for (i in from downTo to + 1) {
                 Collections.swap(flatList, i, i - 1)
-//                checkStationChangeGroup(i - 1, i)
             }
         }
     }
@@ -133,7 +120,6 @@ class FlatStationsList(private val flatList: MutableList<Any> = arrayListOf()) {
         stations.getGroups().forEachIndexed { index, group ->
             if (group != other[index]) updates.add(group)
         }
-        Timber.e("getGroupUpdatesFrom: ${updates.size}")
         return updates
     }
 
@@ -143,7 +129,6 @@ class FlatStationsList(private val flatList: MutableList<Any> = arrayListOf()) {
         stations.getStations().forEachIndexed { index, station ->
             if (station != other[index]) updates.add(station)
         }
-        Timber.e("getStationUpdatesFrom: ${updates.size}")
         return updates
     }
 

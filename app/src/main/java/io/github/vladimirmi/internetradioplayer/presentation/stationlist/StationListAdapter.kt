@@ -42,11 +42,7 @@ class StationListAdapter(private val callback: StationItemCallback)
             }
 
             override fun areItemsTheSame(oldItemPosition: Int, newItemPosition: Int): Boolean {
-                fun getId(list: FlatStationsList, position: Int): String {
-                    return if (list.isStation(position)) list.getStation(position).id
-                    else list.getGroup(position).id
-                }
-                return getId(stations, oldItemPosition) == getId(data, newItemPosition)
+                return stations.getId(oldItemPosition) == data.getId(newItemPosition)
             }
 
             override fun areContentsTheSame(oldItemPosition: Int, newItemPosition: Int): Boolean {
@@ -165,7 +161,7 @@ open class GroupElementVH(itemView: View) : RecyclerView.ViewHolder(itemView) {
 
 class GroupTitleVH(itemView: View) : GroupElementVH(itemView) {
     fun bind(group: Group, callback: StationItemCallback) {
-        itemView.title.text = group.name
+        itemView.title.text = group.getViewName(itemView.context)
         itemView.setOnClickListener { callback.onGroupSelected(group.id) }
         setExpanded(group.expanded)
     }

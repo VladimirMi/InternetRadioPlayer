@@ -13,7 +13,6 @@ import io.reactivex.Completable
 import io.reactivex.Observable
 import io.reactivex.Single
 import io.reactivex.rxkotlin.Singles
-import java.lang.IllegalStateException
 import java.util.*
 import javax.inject.Inject
 
@@ -44,7 +43,7 @@ class StationInteractor
         }
     private val _stationsListObs = BehaviorRelay.create<FlatStationsList>()
     val stationsListObs: Observable<FlatStationsList> get() = _stationsListObs
-    private val stationsList = FlatStationsList()
+    private var stationsList = FlatStationsList()
 
     fun initStations(): Completable {
         return buildGroupsList().doOnComplete {
@@ -60,6 +59,7 @@ class StationInteractor
             groups.map { group -> group.apply { map[id]?.let { group.stations = it.toMutableList() } } }
 
         }.flatMapCompletable { groups ->
+            //todo optimize
             val groupUpdates = arrayListOf<Group>()
             val stationUpdates = arrayListOf<Station>()
 
@@ -84,7 +84,8 @@ class StationInteractor
     }
 
     private fun buildStationsList() {
-        _stationsListObs.accept(FlatStationsList(groups))
+        stationsList = FlatStationsList.createFrom(groups)
+        _stationsListObs.accept(FlatStationsList.createFrom(groups))
     }
 
     fun addCurrentShortcut(): Boolean {
@@ -126,7 +127,7 @@ class StationInteractor
 
         return addGroup(station.group).flatMapCompletable { group ->
             val newStation = station.copy(groupId = group.id, order = group.stations.size)
-            stationRepository.add(newStation).doOnComplete {
+            stationRepository.addStation(newStation).doOnComplete {
                 group.stations.add(newStation)
                 currentStation = newStation
                 buildStationsList()
@@ -142,6 +143,7 @@ class StationInteractor
             val newStation = station.copy(groupId = group.id, order = order)
             stationRepository.updateStations(listOf(newStation))
                     .doOnComplete { currentStation = newStation }
+            //todo optimize
         }.andThen(buildGroupsList())
     }
 
@@ -149,8 +151,9 @@ class StationInteractor
         val station = getStation(id)
                 ?: return Completable.error(IllegalStateException("Can not find station with id $id"))
 
-        return stationRepository.remove(station)
+        return stationRepository.removeStation(station)
                 .doOnComplete { if (stationsList.isFirstStation(id)) nextStation(id) else previousStation(id) }
+                //todo optimize
                 .andThen(buildGroupsList())
     }
 
@@ -174,13 +177,23 @@ class StationInteractor
                 }
     }
 
+    fun moveGroupElements(stations: FlatStationsList): Completable {
+        val updateGroups = Single.fromCallable { stationsList.getGroupUpdatesFrom(stations) }
+                .flatMapCompletable { stationRepository.updateGroups(it) }
+
+        val updateStations = Single.fromCallable { stationsList.getStationUpdatesFrom(stations) }
+                .flatMapCompletable { stationRepository.updateStations(it) }
+
+        return updateGroups.andThen(updateStations).andThen(buildGroupsList())
+    }
+
     private fun addGroup(name: String): Single<Group> {
         groups.find { it.name == name }?.let { return Single.just(it) }
 
         val group = Group(if (name == Group.DEFAULT_NAME) Group.DEFAULT_ID else UUID.randomUUID().toString(),
                 name, groups.size)
 
-        return stationRepository.add(group)
+        return stationRepository.addGroup(group)
                 .andThen(Single.fromCallable {
                     groups.add(group)
                     buildStationsList()

@@ -14,10 +14,10 @@ import io.reactivex.Single
 @Dao
 interface StationDao {
 
-    @Query("SELECT * FROM station")
+    @Query("SELECT * FROM station ORDER BY `order` ASC")
     fun getAllStations(): Single<List<Station>>
 
-    @Query("SELECT * FROM `group`")
+    @Query("SELECT * FROM `group` ORDER BY `order` ASC")
     fun getAllGroups(): Single<List<Group>>
 
     @Query("SELECT * FROM genre")
@@ -41,11 +41,11 @@ interface StationDao {
     @Insert(onConflict = OnConflictStrategy.IGNORE)
     fun insertGroup(group: Group): Long
 
-    @Update(onConflict = OnConflictStrategy.REPLACE)
-    fun update(station: Station)
+    @Update
+    fun updateStation(station: Station)
 
     @Update
-    fun update(group: Group)
+    fun updateGroup(group: Group)
 
     @Query("DELETE FROM station WHERE id = :id")
     fun deleteStation(id: String)

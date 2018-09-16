@@ -16,10 +16,7 @@ import io.github.vladimirmi.internetradioplayer.extensions.sp
  * Created by Vladimir Mikhalev 17.11.2017.
  */
 
-abstract class ItemSwipeCallback(context: Context,
-                                 dragDirs: Int,
-                                 swipeDirs: Int)
-    : ItemTouchHelper.SimpleCallback(dragDirs, swipeDirs) {
+abstract class ItemSwipeCallback(context: Context) : ItemTouchHelper.SimpleCallback(0, 0) {
 
     private val dp = context.dp
     private val sp = context.sp
@@ -43,18 +40,30 @@ abstract class ItemSwipeCallback(context: Context,
         isAntiAlias = true
     }
 
-
-    override fun onMove(
-            recyclerView: RecyclerView,
-            viewHolder: RecyclerView.ViewHolder,
-            target: RecyclerView.ViewHolder
-    ): Boolean = false
+    abstract override fun onMove(recyclerView: RecyclerView, viewHolder: RecyclerView.ViewHolder,
+                                 target: RecyclerView.ViewHolder): Boolean
 
     abstract override fun onSwiped(viewHolder: RecyclerView.ViewHolder, direction: Int)
 
+    override fun onSelectedChanged(viewHolder: RecyclerView.ViewHolder?, actionState: Int) {
+        if (actionState == ItemTouchHelper.ACTION_STATE_DRAG && viewHolder != null) {
+            onStartDrag(viewHolder.adapterPosition)
+
+        } else if (actionState == ItemTouchHelper.ACTION_STATE_IDLE) onIdle()
+        super.onSelectedChanged(viewHolder, actionState)
+    }
+
+    abstract fun onStartDrag(position: Int)
+
+    abstract fun onIdle()
+
+    override fun getDragDirs(recyclerView: RecyclerView?, viewHolder: RecyclerView.ViewHolder?): Int {
+        return ItemTouchHelper.UP or ItemTouchHelper.DOWN
+    }
+
     override fun getSwipeDirs(recyclerView: RecyclerView?, viewHolder: RecyclerView.ViewHolder?): Int {
         if (viewHolder is GroupTitleVH) return 0
-        return super.getSwipeDirs(recyclerView, viewHolder)
+        return ItemTouchHelper.LEFT or ItemTouchHelper.RIGHT
     }
 
     override fun onChildDraw(c: Canvas,

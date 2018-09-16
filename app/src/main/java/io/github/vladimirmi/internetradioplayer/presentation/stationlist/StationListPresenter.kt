@@ -7,7 +7,7 @@ import io.github.vladimirmi.internetradioplayer.R
 import io.github.vladimirmi.internetradioplayer.data.db.entity.Station
 import io.github.vladimirmi.internetradioplayer.domain.interactor.PlayerControlsInteractor
 import io.github.vladimirmi.internetradioplayer.domain.interactor.StationInteractor
-import io.github.vladimirmi.internetradioplayer.extensions.ioToMain
+import io.github.vladimirmi.internetradioplayer.domain.model.FlatStationsList
 import io.github.vladimirmi.internetradioplayer.navigation.Router
 import io.github.vladimirmi.internetradioplayer.presentation.root.MenuItemHolder
 import io.github.vladimirmi.internetradioplayer.presentation.root.RootPresenter
@@ -16,6 +16,7 @@ import io.github.vladimirmi.internetradioplayer.ui.base.BasePresenter
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.rxkotlin.addTo
 import io.reactivex.rxkotlin.subscribeBy
+import io.reactivex.schedulers.Schedulers
 import javax.inject.Inject
 
 /**
@@ -71,13 +72,14 @@ class StationListPresenter
 
     fun selectGroup(id: String) {
         interactor.expandOrCollapseGroup(id)
-                .ioToMain()
+                .subscribeOn(Schedulers.io())
                 .subscribe()
                 .addTo(compDisp)
     }
 
     fun removeStation() {
         interactor.removeStation(interactor.currentStation.id)
+                .subscribeOn(Schedulers.io())
                 .subscribe()
                 .addTo(compDisp)
     }
@@ -90,6 +92,13 @@ class StationListPresenter
     private fun exit() {
         controlsInteractor.stop()
         router.exit()
+    }
+
+    fun moveGroupElements(stations: FlatStationsList) {
+        interactor.moveGroupElements(stations)
+                .subscribeOn(Schedulers.io())
+                .subscribe()
+                .addTo(compDisp)
     }
 }
 

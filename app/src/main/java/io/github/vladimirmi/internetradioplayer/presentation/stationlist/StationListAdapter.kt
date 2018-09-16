@@ -86,6 +86,20 @@ class StationListAdapter(private val callback: StationItemCallback)
         notifyItemChanged(selectedPosition, PAYLOAD_SELECTED_CHANGE)
     }
 
+    fun onMove(from: Int, to: Int) {
+        stations.moveItem(from, to)
+        notifyItemMoved(from, to)
+    }
+
+    fun onStartDrag(position: Int) {
+        setData(stations.startMove(position))
+    }
+
+    fun onIdle(): FlatStationsList {
+        stations.endMove()
+        return stations
+    }
+
     override fun getItemViewType(position: Int): Int =
             if (stations.isGroup(position)) GROUP_TITLE else GROUP_ITEM
 
@@ -173,10 +187,6 @@ class GroupItemVH(itemView: View) : GroupElementVH(itemView) {
 
     fun setCallback(callback: StationItemCallback, station: Station) {
         itemView.setOnClickListener { callback.onItemSelected(station) }
-        itemView.setOnLongClickListener {
-            callback.onItemOpened(station)
-            true
-        }
     }
 }
 

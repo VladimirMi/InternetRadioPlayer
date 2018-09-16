@@ -31,7 +31,7 @@
 //
 //        fun create(chunkType: ByteArray, data: ByteArray, crc: Int): PngTextChunk? {
 //            if (chunkType.toString(Charset.defaultCharset()) != CHUNK_TYPE
-//                    || CRC32().apply { update(data) }.value.toInt() != crc) {
+//                    || CRC32().apply { updateStation(data) }.value.toInt() != crc) {
 //                return null
 //            }
 //            val (key, value) = data.toString(Charset.defaultCharset()).split(SEPARATOR)
@@ -43,7 +43,7 @@
 //        val dataBytes = "$key$SEPARATOR$value".toByteArray()
 //        val lengthBytes = ByteBuffer.allocate(AUX_BYTES).putInt(dataBytes.size).array()
 //        val chunkTypeBytes = CHUNK_TYPE.toByteArray()
-//        val crc = CRC32().apply { update(dataBytes) }
+//        val crc = CRC32().apply { updateStation(dataBytes) }
 //        val crcBytes = ByteBuffer.allocate(AUX_BYTES).putInt(crc.value.toInt()).array()
 //
 //        return ByteArrayOutputStream().apply {

@@ -29,10 +29,24 @@ class StationListFragment : BaseFragment(), StationListView, StationItemCallback
     private val adapter = StationListAdapter(this)
 
     private val itemTouchHelper by lazy {
-        ItemTouchHelper(object : ItemSwipeCallback(context!!, 0, ItemTouchHelper.LEFT or ItemTouchHelper.RIGHT) {
+        ItemTouchHelper(object : ItemSwipeCallback(context!!) {
             override fun onSwiped(viewHolder: RecyclerView.ViewHolder, direction: Int) {
                 val station = adapter.getStation(viewHolder.adapterPosition) ?: return
                 presenter.showStation(station)
+            }
+
+            override fun onMove(recyclerView: RecyclerView, viewHolder: RecyclerView.ViewHolder,
+                                target: RecyclerView.ViewHolder): Boolean {
+                adapter.onMove(viewHolder.adapterPosition, target.adapterPosition)
+                return true
+            }
+
+            override fun onStartDrag(position: Int) {
+                adapter.onStartDrag(position)
+            }
+
+            override fun onIdle() {
+                presenter.moveGroupElements(adapter.onIdle())
             }
         })
     }

@@ -10,7 +10,6 @@ import io.github.vladimirmi.internetradioplayer.data.manager.Preferences
 import io.github.vladimirmi.internetradioplayer.data.manager.StationParser
 import io.reactivex.Completable
 import io.reactivex.Single
-import timber.log.Timber
 import javax.inject.Inject
 
 /**
@@ -43,26 +42,25 @@ class StationListRepository
         }
     }
 
-    fun add(group: Group): Completable {
+    fun addGroup(group: Group): Completable {
         return Completable.fromCallable {
             db.stationDao().insertGroup(group)
         }
     }
 
-    fun remove(group: Group): Completable {
+    fun removeGroup(group: Group): Completable {
         TODO("not implemented")
     }
 
     fun updateGroups(groups: List<Group>): Completable {
         return Completable.fromCallable {
             db.runInTransaction {
-                groups.forEach { db.stationDao().update(it) }
+                groups.forEach { db.stationDao().updateGroup(it) }
             }
         }
     }
 
-    fun add(station: Station): Completable {
-        Timber.e("add: ${station.name}")
+    fun addStation(station: Station): Completable {
         return Completable.fromCallable {
             db.stationDao().insertStation(station)
             val genres = station.genres.map(::Genre)
@@ -71,17 +69,16 @@ class StationListRepository
         }
     }
 
-    fun remove(station: Station): Completable {
+    fun removeStation(station: Station): Completable {
         return Completable.fromCallable {
             db.stationDao().deleteStation(station.id)
         }
     }
 
     fun updateStations(stations: List<Station>): Completable {
-        Timber.e("updateStations: ${stations.size}")
         return Completable.fromCallable {
             db.runInTransaction {
-                stations.forEach { db.stationDao().update(it) }
+                stations.forEach { db.stationDao().updateStation(it) }
             }
         }
     }

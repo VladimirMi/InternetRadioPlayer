@@ -197,10 +197,10 @@ class StationInteractor
     }
 
     fun stationChanged(stationInfo: StationInfo): Boolean {
-        if (currentStation.icon != previousWhenEdit!!.icon) return false
-        if (stationInfo.stationName != previousWhenEdit!!.name) return false
-        if (stationInfo.groupName != getCurrentGroup().name) return false
-        return true
+        if (currentStation.icon != previousWhenEdit!!.icon) return true
+        if (stationInfo.stationName != previousWhenEdit!!.name) return true
+        if (stationInfo.groupName != getCurrentGroup().name) return true
+        return false
     }
 
     fun moveGroupElements(stations: FlatStationsList): Completable {

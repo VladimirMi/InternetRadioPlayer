@@ -17,7 +17,6 @@ import android.widget.Toast
 import com.arellomobile.mvp.presenter.InjectPresenter
 import com.arellomobile.mvp.presenter.ProvidePresenter
 import io.github.vladimirmi.internetradioplayer.R
-import io.github.vladimirmi.internetradioplayer.data.db.entity.Genre
 import io.github.vladimirmi.internetradioplayer.data.db.entity.Group
 import io.github.vladimirmi.internetradioplayer.data.db.entity.Station
 import io.github.vladimirmi.internetradioplayer.di.Scopes
@@ -109,10 +108,10 @@ class StationFragment : BaseFragment(), StationView, BackPressListener {
         groupEt.setText(group.getViewName(context!!))
     }
 
-    override fun setGenres(genres: List<Genre>) {
+    override fun setGenres(genres: List<String>) {
         genresLabelTv.visible(genres.isNotEmpty())
         genresFl.removeAllViews()
-        genres.forEach { genresFl.addView(TagView(context!!, it.name, null)) }
+        genres.forEach { genresFl.addView(TagView(context!!, it, null)) }
     }
 
     override fun setEditMode(editMode: Boolean) {

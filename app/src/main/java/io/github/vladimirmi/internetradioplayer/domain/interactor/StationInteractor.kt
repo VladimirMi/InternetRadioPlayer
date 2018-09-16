@@ -119,8 +119,10 @@ class StationInteractor
         return groups.find { it.id == currentStation.groupId }!!
     }
 
-    fun getCurrentGenres(): Single<List<Genre>> {
+    fun getCurrentGenres(): Single<List<String>> {
+        if (createMode) return Single.just(currentStation.genres)
         return stationRepository.getStationGenres(currentStation.id)
+                .map { it.map(Genre::name) }
     }
 
     fun haveStations(): Boolean {
@@ -141,6 +143,7 @@ class StationInteractor
 
         return addGroup(groupName).flatMapCompletable { group ->
             val newStation = currentStation.copy(groupId = group.id, order = group.stations.size)
+            newStation.genres = currentStation.genres
             stationRepository.addStation(newStation).doOnComplete {
                 group.stations.add(newStation)
                 currentStation = newStation
@@ -206,6 +209,7 @@ class StationInteractor
                 .flatMapCompletable { stationRepository.updateStations(it) }
 
         return updateGroups.andThen(updateStations).andThen(buildGroupsList())
+                .doOnComplete { currentStation = getStation(currentStation.id)!! }
     }
 
     private fun addGroup(name: String): Single<Group> {

@@ -174,12 +174,16 @@ class StationInteractor
                 .andThen(buildGroupsList())
     }
 
-    fun nextStation(id: String = currentStation.id) {
-        stationsList.getNextFrom(id)?.let { currentStation = it }
+    fun nextStation(id: String = currentStation.id): Boolean {
+        val next = stationsList.getNextFrom(id)
+        next?.let { currentStation = it }
+        return next != null
     }
 
-    fun previousStation(id: String = currentStation.id) {
-        stationsList.getPreviousFrom(id)?.let { currentStation = it }
+    fun previousStation(id: String = currentStation.id): Boolean {
+        val previous = stationsList.getPreviousFrom(id)
+        previous?.let { currentStation = it }
+        return previous != null
     }
 
     fun expandOrCollapseGroup(id: String): Completable {

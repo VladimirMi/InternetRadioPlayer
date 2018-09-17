@@ -53,7 +53,8 @@ class FlatStationsList(private val flatList: MutableList<Any> = arrayListOf()) {
             if (element.id == id && previous != null) return previous
             previous = element
         }
-        return previous ?: flatList.lastOrNull { it is Station } as? Station
+        previous = previous ?: flatList.lastOrNull { it is Station } as? Station
+        return if (previous?.id == id) null else previous
     }
 
     fun getNextFrom(id: String): Station? {
@@ -65,7 +66,8 @@ class FlatStationsList(private val flatList: MutableList<Any> = arrayListOf()) {
             if (element.id == id && next != null) return next
             next = element
         }
-        return next ?: flatList.firstOrNull { it is Station } as? Station
+        next = next ?: flatList.firstOrNull { it is Station } as? Station
+        return if (next?.id == id) null else next
     }
 
     fun isFirstStation(id: String): Boolean {

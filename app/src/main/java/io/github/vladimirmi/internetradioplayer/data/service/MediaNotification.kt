@@ -76,9 +76,9 @@ class MediaNotification(private val service: PlayerService,
 
         builder.addAction(generateAction(R.drawable.ic_skip_previous, "Previous", previousIntent))
         if (playbackState == PlaybackStateCompat.STATE_STOPPED || playbackState == PlaybackStateCompat.STATE_PAUSED) {
-            builder.addAction(generateAction(R.drawable.icon_play, "Play", playPauseIntent))
+            builder.addAction(generateAction(R.drawable.ic_play, "Play", playPauseIntent))
         } else {
-            builder.addAction(generateAction(R.drawable.icon_pause, "Pause", playPauseIntent))
+            builder.addAction(generateAction(R.drawable.ic_pause, "Pause", playPauseIntent))
         }
         builder.addAction(generateAction(R.drawable.ic_skip_next, "Next", nextIntent))
 

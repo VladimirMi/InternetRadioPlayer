@@ -32,4 +32,10 @@ interface PlayerControlView : MvpView {
 
     @StateStrategyType(OneExecutionStateStrategy::class)
     fun showToast(resId: Int)
+
+    @StateStrategyType(OneExecutionStateStrategy::class)
+    fun showNext()
+
+    @StateStrategyType(OneExecutionStateStrategy::class)
+    fun showPrevious()
 }

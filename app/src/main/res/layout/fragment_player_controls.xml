@@ -83,8 +83,8 @@
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:pb_playColor="@color/green_500"
-            app:pb_pauseColor="@color/red_800"
+            app:pb_playColor="@color/play_button"
+            app:pb_pauseColor="@color/pause_button"
             />
 
         <ImageButton

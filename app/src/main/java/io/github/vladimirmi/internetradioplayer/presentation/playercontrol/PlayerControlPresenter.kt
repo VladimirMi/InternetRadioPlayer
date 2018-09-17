@@ -68,8 +68,14 @@ class PlayerControlPresenter
 
     private fun handleSessionEvent(event: String) {
         when (event) {
-            PlayerService.EVENT_SESSION_PREVIOUS -> router.skipToPrevious(stationInteractor.currentStation.id)
-            PlayerService.EVENT_SESSION_NEXT -> router.skipToNext(stationInteractor.currentStation.id)
+            PlayerService.EVENT_SESSION_PREVIOUS -> {
+                viewState.showPrevious()
+                router.skipToPrevious(stationInteractor.currentStation.id)
+            }
+            PlayerService.EVENT_SESSION_NEXT -> {
+                viewState.showNext()
+                router.skipToNext(stationInteractor.currentStation.id)
+            }
         }
     }
 

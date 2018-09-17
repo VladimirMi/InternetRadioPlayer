@@ -8,10 +8,7 @@ import com.arellomobile.mvp.presenter.ProvidePresenter
 import io.github.vladimirmi.internetradioplayer.R
 import io.github.vladimirmi.internetradioplayer.data.db.entity.Station
 import io.github.vladimirmi.internetradioplayer.di.Scopes
-import io.github.vladimirmi.internetradioplayer.extensions.color
-import io.github.vladimirmi.internetradioplayer.extensions.getBitmap
-import io.github.vladimirmi.internetradioplayer.extensions.setTintExt
-import io.github.vladimirmi.internetradioplayer.extensions.visible
+import io.github.vladimirmi.internetradioplayer.extensions.*
 import io.github.vladimirmi.internetradioplayer.ui.base.BaseFragment
 import kotlinx.android.synthetic.main.fragment_player_controls.*
 import toothpick.Toothpick
@@ -43,7 +40,7 @@ class PlayerControlFragment : BaseFragment(), PlayerControlView {
         previousBt.setOnClickListener { presenter.skipToPrevious() }
         nextBt.setOnClickListener { presenter.skipToNext() }
         changeIconBt.setOnClickListener { presenter.changeIcon() }
-        loadingPb.indeterminateDrawable.mutate().setTintExt(context!!.color(R.color.red_800))
+        loadingPb.indeterminateDrawable.mutate().setTintExt(context!!.color(R.color.pause_button))
     }
 
     override fun showStopped() {
@@ -59,6 +56,14 @@ class PlayerControlFragment : BaseFragment(), PlayerControlView {
     override fun showLoading() {
         playPauseBt.isPlaying = true
         loadingPb.visible(true)
+    }
+
+    override fun showNext() {
+        nextBt.bounceXAnimation(200f).start()
+    }
+
+    override fun showPrevious() {
+        previousBt.bounceXAnimation(-200f).start()
     }
 
     override fun setStation(station: Station) {

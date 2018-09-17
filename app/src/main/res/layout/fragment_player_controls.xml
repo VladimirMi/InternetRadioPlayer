@@ -43,8 +43,8 @@
 
         <ImageView
             android:id="@+id/iconIv"
-            android:layout_width="72dp"
-            android:layout_height="72dp"
+            android:layout_width="80dp"
+            android:layout_height="80dp"
             android:contentDescription="@string/desc_station_icon"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent"
@@ -53,8 +53,8 @@
 
         <Button
             android:id="@+id/changeIconBt"
-            android:layout_width="72dp"
-            android:layout_height="72dp"
+            android:layout_width="80dp"
+            android:layout_height="80dp"
             android:background="@drawable/ic_add_bg"
             android:visibility="gone"
             app:layout_constraintStart_toStartOf="@id/iconIv"
@@ -64,10 +64,10 @@
 
         <ImageButton
             android:id="@+id/previousBt"
-            android:layout_width="48dp"
-            android:layout_height="48dp"
-            android:layout_marginEnd="8dp"
-            android:layout_marginRight="8dp"
+            android:layout_width="44dp"
+            android:layout_height="44dp"
+            android:layout_marginEnd="12dp"
+            android:layout_marginRight="12dp"
             android:background="@drawable/ic_skip_previous"
             android:contentDescription="@string/desc_skip_previous_button"
             app:layout_constraintBottom_toBottomOf="@+id/playPauseBt"
@@ -75,30 +75,41 @@
             app:layout_constraintTop_toTopOf="@+id/playPauseBt"
             />
 
-        <ImageButton
+        <io.github.vladimirmi.playerbutton.PlayerButton
             android:id="@+id/playPauseBt"
-            android:layout_width="56dp"
-            android:layout_height="56dp"
-            android:layout_marginTop="20dp"
-            android:background="@drawable/ic_play"
+            android:layout_width="58dp"
+            android:layout_height="58dp"
             android:contentDescription="@string/desc_play_pause_button"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent"
+            app:pb_playColor="@color/green_500"
+            app:pb_pauseColor="@color/red_800"
             />
 
         <ImageButton
             android:id="@+id/nextBt"
-            android:layout_width="48dp"
-            android:layout_height="48dp"
-            android:layout_marginStart="8dp"
-            android:layout_marginLeft="8dp"
+            android:layout_width="44dp"
+            android:layout_height="44dp"
+            android:layout_marginStart="12dp"
+            android:layout_marginLeft="12dp"
             android:background="@drawable/ic_skip_next"
             android:contentDescription="@string/desc_skip_next_button"
             app:layout_constraintBottom_toBottomOf="@+id/playPauseBt"
             app:layout_constraintStart_toEndOf="@+id/playPauseBt"
             app:layout_constraintTop_toTopOf="@+id/playPauseBt"
+            />
+
+        <ProgressBar
+            android:id="@+id/loadingPb"
+            android:layout_width="60dp"
+            android:layout_height="60dp"
+            android:indeterminate="true"
+            android:visibility="gone"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintBottom_toBottomOf="parent"
+            tools:visibility="visible"
             />
 
     </android.support.constraint.ConstraintLayout>

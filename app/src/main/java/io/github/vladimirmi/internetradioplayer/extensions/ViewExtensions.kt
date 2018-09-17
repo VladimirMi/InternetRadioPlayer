@@ -1,6 +1,5 @@
 package io.github.vladimirmi.internetradioplayer.extensions
 
-import android.support.annotation.ColorInt
 import android.text.Editable
 import android.text.TextWatcher
 import android.view.View
@@ -30,10 +29,6 @@ inline fun View.waitForMeasure(crossinline block: () -> Unit) {
 
 fun View.visible(visible: Boolean) {
     visibility = if (visible) View.VISIBLE else View.GONE
-}
-
-fun View.setTint(@ColorInt colorInt: Int) {
-    background?.setTintExt(colorInt)
 }
 
 

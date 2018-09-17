@@ -8,7 +8,9 @@ import com.arellomobile.mvp.presenter.ProvidePresenter
 import io.github.vladimirmi.internetradioplayer.R
 import io.github.vladimirmi.internetradioplayer.data.db.entity.Station
 import io.github.vladimirmi.internetradioplayer.di.Scopes
+import io.github.vladimirmi.internetradioplayer.extensions.color
 import io.github.vladimirmi.internetradioplayer.extensions.getBitmap
+import io.github.vladimirmi.internetradioplayer.extensions.setTintExt
 import io.github.vladimirmi.internetradioplayer.extensions.visible
 import io.github.vladimirmi.internetradioplayer.ui.base.BaseFragment
 import kotlinx.android.synthetic.main.fragment_player_controls.*
@@ -36,25 +38,27 @@ class PlayerControlFragment : BaseFragment(), PlayerControlView {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         metadataTv.isSelected = true
         playPauseBt.setOnClickListener { presenter.playPause() }
+        playPauseBt.setManualMode(true)
         iconIv.setOnClickListener { presenter.showStation() }
         previousBt.setOnClickListener { presenter.skipToPrevious() }
         nextBt.setOnClickListener { presenter.skipToNext() }
         changeIconBt.setOnClickListener { presenter.changeIcon() }
+        loadingPb.indeterminateDrawable.mutate().setTintExt(context!!.color(R.color.red_800))
     }
 
     override fun showStopped() {
-        playPauseBt.setBackgroundResource(R.drawable.ic_play)
-//        loadingPb.visible(false)
+        playPauseBt.isPlaying = false
+        loadingPb.visible(false)
     }
 
     override fun showPlaying() {
-        playPauseBt.setBackgroundResource(R.drawable.ic_stop)
-//        loadingPb.visible(false)
+        playPauseBt.isPlaying = true
+        loadingPb.visible(false)
     }
 
     override fun showLoading() {
-        playPauseBt.setBackgroundResource(R.drawable.ic_play)
-//        loadingPb.visible(true)
+        playPauseBt.isPlaying = true
+        loadingPb.visible(true)
     }
 
     override fun setStation(station: Station) {

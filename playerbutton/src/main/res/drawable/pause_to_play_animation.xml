@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="utf-8"?>
+<animated-vector
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:drawable="@drawable/icon_pause">
+
+    <target
+        android:name="up"
+        android:animation="@animator/up_pause_play_animation"/>
+
+    <target
+        android:name="dw"
+        android:animation="@animator/dw_pause_play_animation"/>
+
+    <target
+        android:name="group"
+        android:animation="@animator/reverse_rotate_90_animation"/>
+
+</animated-vector>

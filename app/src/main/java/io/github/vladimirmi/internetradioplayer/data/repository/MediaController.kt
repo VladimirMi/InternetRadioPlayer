@@ -10,6 +10,7 @@ import android.support.v4.media.session.MediaControllerCompat
 import android.support.v4.media.session.PlaybackStateCompat
 import com.jakewharton.rxrelay2.BehaviorRelay
 import io.github.vladimirmi.internetradioplayer.data.service.PlayerService
+import io.reactivex.rxkotlin.subscribeBy
 import timber.log.Timber
 import javax.inject.Inject
 
@@ -26,6 +27,7 @@ class MediaController
     val playbackState: BehaviorRelay<PlaybackStateCompat> = BehaviorRelay.create()
     val playbackMetaData: BehaviorRelay<MediaMetadataCompat> = BehaviorRelay.create()
     val sessionEvent: BehaviorRelay<String> = BehaviorRelay.create()
+    private val connected = BehaviorRelay.createDefault(false)
 
     private val connectionCallbacks = object : MediaBrowserCompat.ConnectionCallback() {
         override fun onConnected() {
@@ -35,6 +37,7 @@ class MediaController
                     controllerCallback.onPlaybackStateChanged(playbackState)
                     controllerCallback.onMetadataChanged(metadata)
                 }
+                connected.accept(true)
             } catch (e: RemoteException) {
                 Timber.e(e, e.message)
             }
@@ -77,10 +80,12 @@ class MediaController
 
     fun disconnect() {
         mediaBrowser.disconnect()
+        connected.accept(false)
     }
 
     fun play() {
-        controller?.transportControls?.play()
+        connected.filter { it }.first(true)
+                .subscribeBy { controller?.transportControls?.play() }
     }
 
     fun pause() {

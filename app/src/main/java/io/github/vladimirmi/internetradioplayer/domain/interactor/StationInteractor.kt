@@ -134,10 +134,13 @@ class StationInteractor
 
     fun createStation(uri: Uri): Single<Station> {
         return stationRepository.createStation(uri)
-                .doOnSuccess {
-                    setEditMode(true)
-                    createMode = true
-                    currentStation = it
+                .doOnSuccess { newStation ->
+                    val station = getStation { it.uri == newStation.uri } ?: newStation
+                    if (station.id == newStation.id) {
+                        setEditMode(true)
+                        createMode = true
+                    }
+                    currentStation = station
                 }
     }
 
@@ -216,7 +219,7 @@ class StationInteractor
                 .flatMapCompletable { stationRepository.updateStations(it) }
 
         return updateGroups.andThen(updateStations).andThen(buildGroupsList())
-                .doOnComplete { currentStation = getStation(currentStation.id)!! }
+                .doOnComplete { currentStation = getStation(currentStation.id) ?: Station.nullObj() }
     }
 
     private fun addGroup(name: String): Single<Group> {

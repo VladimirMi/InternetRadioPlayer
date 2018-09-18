@@ -1,5 +1,6 @@
 package io.github.vladimirmi.internetradioplayer.presentation.root
 
+import android.annotation.SuppressLint
 import android.net.Uri
 import com.arellomobile.mvp.InjectViewState
 import io.github.vladimirmi.internetradioplayer.R
@@ -24,28 +25,36 @@ class RootPresenter
                     private val stationInteractor: StationInteractor)
     : BasePresenter<RootView>() {
 
+    private var firstAttach = true
+
     override fun onFirstViewAttach() {
+        controlsInteractor.connect()
+
         stationInteractor.initStations()
                 .ioToMain()
-                .subscribeBy(onComplete = { setupRootScreen() }, onError = { Timber.e(it) })
+                .subscribeBy(onComplete = {
+                    setupRootScreen()
+                    viewState.checkIntent()
+                }, onError = { Timber.e(it) })
                 .addTo(compDisp)
 
         stationInteractor.currentStationObs
+                .ioToMain()
                 .subscribe { viewState.showControls(!it.isNull()) }
                 .addTo(compDisp)
-
-        controlsInteractor.connect()
+        firstAttach = false
     }
 
     override fun attachView(view: RootView?) {
+        if (!firstAttach) viewState.checkIntent()
         super.attachView(view)
-        viewState.checkIntent()
     }
 
     override fun onDestroy() {
         controlsInteractor.disconnect()
     }
 
+    @SuppressLint("CheckResult")
     fun addStation(uri: Uri, startPlay: Boolean) {
         val station = stationInteractor.getStation { it.uri == uri.toString() }
         if (station != null) {
@@ -60,9 +69,7 @@ class RootPresenter
                 .doOnSubscribe { viewState.showLoadingIndicator(true) }
                 .doFinally { viewState.showLoadingIndicator(false) }
                 .subscribeBy(
-                        onSuccess = {
-                            router.showStationSlide(stationInteractor.currentStation.id)
-                        },
+                        onSuccess = { router.showStationSlide(stationInteractor.currentStation.id) },
                         onError = {
                             Timber.e(it)
                             viewState.showToast(R.string.toast_add_error)
@@ -70,6 +77,7 @@ class RootPresenter
                 ).addTo(compDisp)
     }
 
+    @SuppressLint("CheckResult")
     fun showStation(id: String, startPlay: Boolean) {
         val station = stationInteractor.getStation { it.id == id }
         if (station != null) {

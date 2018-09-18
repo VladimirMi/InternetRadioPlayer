@@ -16,6 +16,7 @@
     <string name="dialog_cancel_create_message">Cancel adding a new station?</string>
     <string name="dialog_new_station">Add new station</string>
     <string name="dialog_new_station_hint">Paste streaming link</string>
+    <string name="dialog_start_playback">Start playback</string>
     <string name="dialog_add_name">Title</string>
     <string name="dialog_add_name_err">Specify a name</string>
     <string name="dialog_ok">OK</string>

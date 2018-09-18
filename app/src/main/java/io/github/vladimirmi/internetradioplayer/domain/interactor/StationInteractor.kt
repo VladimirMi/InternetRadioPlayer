@@ -96,8 +96,8 @@ class StationInteractor
         _stationsListObs.accept(stationsList)
     }
 
-    fun addCurrentShortcut(): Boolean {
-        return shortcutHelper.pinShortcut(currentStation)
+    fun addCurrentShortcut(startPlay: Boolean): Boolean {
+        return shortcutHelper.pinShortcut(currentStation, startPlay)
     }
 
     fun setEditMode(editMode: Boolean) {

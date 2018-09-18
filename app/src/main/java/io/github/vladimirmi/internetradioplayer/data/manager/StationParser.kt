@@ -1,7 +1,6 @@
 package io.github.vladimirmi.internetradioplayer.data.manager
 
 import android.net.Uri
-import com.google.gson.Gson
 import io.github.vladimirmi.internetradioplayer.data.db.entity.Station
 import io.github.vladimirmi.internetradioplayer.extensions.toURL
 import io.github.vladimirmi.internetradioplayer.extensions.toUri
@@ -11,7 +10,6 @@ import okhttp3.OkHttpClient
 import okhttp3.Request
 import timber.log.Timber
 import java.io.File
-import java.lang.IllegalArgumentException
 import java.net.URI
 import java.net.URISyntaxException
 import javax.inject.Inject
@@ -49,18 +47,7 @@ private fun MediaType.isPlaylistFile() = suppotedPlaylists.contains(subtype())
 
 private fun MediaType.isPlsFile() = subtype() == "x-scpls"
 
-class StationParser
-@Inject constructor(private val gson: Gson) {
-
-    @Suppress("TooGenericExceptionCaught")
-    fun parseFromJsonFile(file: File): Station? {
-        return try {
-            gson.fromJson(file.readText(), Station::class.java)
-        } catch (e: Exception) {
-            Timber.e(e)
-            null
-        }
-    }
+class StationParser @Inject constructor() {
 
     fun parseFromUri(uri: Uri): Station {
         return when {

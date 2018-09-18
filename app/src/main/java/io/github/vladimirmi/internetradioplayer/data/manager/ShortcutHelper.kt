@@ -10,8 +10,8 @@ import android.support.v4.content.pm.ShortcutManagerCompat
 import android.support.v4.graphics.drawable.IconCompat
 import io.github.vladimirmi.internetradioplayer.R
 import io.github.vladimirmi.internetradioplayer.data.db.entity.Station
-import io.github.vladimirmi.internetradioplayer.data.service.PlayerService
 import io.github.vladimirmi.internetradioplayer.extensions.getBitmap
+import io.github.vladimirmi.internetradioplayer.extensions.toUri
 import io.github.vladimirmi.internetradioplayer.presentation.root.RootActivity
 import javax.inject.Inject
 
@@ -22,13 +22,13 @@ import javax.inject.Inject
 class ShortcutHelper
 @Inject constructor(private val context: Context) {
 
-    fun pinShortcut(station: Station): Boolean {
+    fun pinShortcut(station: Station, startPlay: Boolean): Boolean {
 
         val info = ShortcutInfoCompat.Builder(context, station.id)
                 .setShortLabel(station.name)
                 .setLongLabel(station.name)
                 .setIcon(IconCompat.createWithBitmap(station.icon.getBitmap(context, withBackground = true)))
-                .setIntent(createShortcutIntent(station))
+                .setIntent(createShortcutIntent(station, startPlay))
                 .setDisabledMessage(context.getString(R.string.toast_shortcut_remove))
                 .build()
 
@@ -40,11 +40,12 @@ class ShortcutHelper
     fun removeShortcut(station: Station) {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
             val shortcutManager = context.getSystemService(ShortcutManager::class.java)
-            shortcutManager.disableShortcuts(listOf(station.id.toString()),
+            shortcutManager.disableShortcuts(listOf(station.id),
                     context.getString(R.string.toast_shortcut_remove))
         } else {
+            //todo valid startPlay
             val removeIntent = Intent().apply {
-                putExtra(Intent.EXTRA_SHORTCUT_INTENT, createShortcutIntent(station))
+                putExtra(Intent.EXTRA_SHORTCUT_INTENT, createShortcutIntent(station, true))
                 putExtra(Intent.EXTRA_SHORTCUT_NAME, station.name)
                 action = "com.android.launcher.action.UNINSTALL_SHORTCUT"
             }
@@ -52,11 +53,14 @@ class ShortcutHelper
         }
     }
 
-    private fun createShortcutIntent(station: Station): Intent {
+    private fun createShortcutIntent(station: Station, startPlay: Boolean): Intent {
         return Intent(context, RootActivity::class.java).apply {
-            putExtra(PlayerService.EXTRA_STATION_ID, station.id)
             putExtra("duplicate", false)
-            action = Intent.ACTION_MAIN
+            putExtra(EXTRA_PLAY, startPlay)
+            data = station.uri.toUri()
+            action = Intent.ACTION_VIEW
         }
     }
 }
+
+const val EXTRA_PLAY = "play"

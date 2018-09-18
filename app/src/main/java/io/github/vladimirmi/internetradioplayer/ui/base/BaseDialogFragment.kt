@@ -31,7 +31,6 @@ abstract class BaseDialogFragment : DialogFragment() {
 
     protected abstract fun getTitle(): String
 
-    //todo pass Function T -> R
     protected abstract fun onPositive()
 
     protected abstract fun onNegative()

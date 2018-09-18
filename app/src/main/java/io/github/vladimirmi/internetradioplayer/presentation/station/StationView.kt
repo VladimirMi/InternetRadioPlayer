@@ -48,6 +48,9 @@ interface StationView : MvpView {
     fun openCancelCreateDialog()
 
     @StateStrategyType(OneExecutionStateStrategy::class)
+    fun openAddShortcutDialog()
+
+    @StateStrategyType(OneExecutionStateStrategy::class)
     fun showToast(resId: Int)
 
     @StateStrategyType(OneExecutionStateStrategy::class)

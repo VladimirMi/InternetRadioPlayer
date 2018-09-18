@@ -29,7 +29,6 @@ import io.github.vladimirmi.internetradioplayer.ui.base.BackPressListener
 import kotlinx.android.synthetic.main.activity_root.*
 import kotlinx.android.synthetic.main.view_menu_item.view.*
 import ru.terrakok.cicerone.NavigatorHolder
-import timber.log.Timber
 import toothpick.Toothpick
 import javax.inject.Inject
 
@@ -117,7 +116,6 @@ class RootActivity : MvpAppCompatActivity(), RootView, ToolbarView {
     }
 
     override fun showControls(visible: Boolean) {
-        Timber.e("showControls: $visible")
         val slide = createSlideTransition()
         slide.mode = if (visible) Visibility.MODE_IN else Visibility.MODE_OUT
         TransitionManager.beginDelayedTransition(root, slide)

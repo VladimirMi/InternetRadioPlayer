@@ -35,7 +35,7 @@ class StationPresenter
         when (it.itemId) {
             R.string.menu_station_edit, R.string.menu_station_save -> changeMode()
             R.string.menu_station_delete -> viewState.openRemoveDialog()
-            R.string.menu_station_shortcut -> addShortcut()
+            R.string.menu_station_shortcut -> viewState.openAddShortcutDialog()
         }
     }
 
@@ -151,8 +151,8 @@ class StationPresenter
         }
     }
 
-    private fun addShortcut() {
-        if (interactor.addCurrentShortcut()) {
+    fun addShortcut(startPlay: Boolean) {
+        if (interactor.addCurrentShortcut(startPlay)) {
             viewState.showToast(R.string.toast_add_shortcut_success)
         }
     }

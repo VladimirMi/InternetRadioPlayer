@@ -150,6 +150,10 @@ class StationFragment : BaseFragment(), StationView, BackPressListener {
         CancelEditDialog().show(childFragmentManager, "cancel_edit_dialog")
     }
 
+    override fun openAddShortcutDialog() {
+        AddShortcutDialog().show(childFragmentManager, "add_shortcut_dialog")
+    }
+
     override fun cancelEdit() {
         presenter.tryCancelEdit(constructStation())
     }

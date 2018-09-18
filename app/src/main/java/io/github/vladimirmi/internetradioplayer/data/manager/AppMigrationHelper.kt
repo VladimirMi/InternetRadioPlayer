@@ -10,7 +10,6 @@ import io.github.vladimirmi.internetradioplayer.model.manager.decode
 import io.reactivex.Completable
 import timber.log.Timber
 import java.io.File
-import java.util.*
 import javax.inject.Inject
 
 /**
@@ -52,7 +51,10 @@ class AppMigrationHelper
     private fun createStation(legacyStation: LegacyStation, group: Group) {
         with(legacyStation) {
             val station = Station(
-                    id, name, uri, url, bitrate, sample,
+                    id, name, uri,
+                    if (url.isBlank()) null else url,
+                    if (bitrate == 0) null else bitrate,
+                    if (sample == 0) null else sample,
                     group.stations.size,
                     getIcon("$name.png"),
                     group.id
@@ -80,12 +82,12 @@ class AppMigrationHelper
         return file.decode()
     }
 
-    class LegacyStation(val id: String = UUID.randomUUID().toString(),
+    class LegacyStation(val id: String,
                         val uri: String,
                         val name: String,
                         val group: String = Group.DEFAULT_NAME,
                         val genre: List<String> = emptyList(),
-                        val url: String? = null,
-                        val bitrate: Int? = null,
-                        val sample: Int? = null)
+                        val url: String = "",
+                        val bitrate: Int = 0,
+                        val sample: Int = 0)
 }

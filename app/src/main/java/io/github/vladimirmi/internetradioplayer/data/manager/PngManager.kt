@@ -14,10 +14,7 @@ import java.util.zip.CRC32
  */
 
 private const val SIGN_IHDR_LENGTH = 33 // bytes
-private const val KEY_BG_COLOR = "Background color"
 private const val KEY_FG_COLOR = "Foreground color"
-private const val KEY_TEXT = "Text"
-private const val KEY_OPTION = "Option"
 private const val KEY_ICON_RES = "Icon resource"
 private const val AUX_BYTES = 4
 
@@ -89,7 +86,7 @@ fun File.decode(): Icon {
     var chunk = nextChunkFromBuffer(wrapped)
     while (chunk != null) {
         when (chunk.key) {
-            KEY_ICON_RES -> iconRes = chunk.value.substringAfterLast("_", "0").toInt()
+            KEY_ICON_RES -> iconRes = chunk.value.substringAfterLast("_", "1").toInt() - 1
             KEY_FG_COLOR -> foregroundColor = chunk.value.toInt()
         }
         chunk = nextChunkFromBuffer(wrapped)

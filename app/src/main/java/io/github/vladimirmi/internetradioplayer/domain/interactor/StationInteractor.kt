@@ -6,6 +6,7 @@ import io.github.vladimirmi.internetradioplayer.R
 import io.github.vladimirmi.internetradioplayer.data.db.entity.Genre
 import io.github.vladimirmi.internetradioplayer.data.db.entity.Group
 import io.github.vladimirmi.internetradioplayer.data.db.entity.Station
+import io.github.vladimirmi.internetradioplayer.data.manager.AppMigrationHelper
 import io.github.vladimirmi.internetradioplayer.data.manager.ShortcutHelper
 import io.github.vladimirmi.internetradioplayer.data.repository.StationListRepository
 import io.github.vladimirmi.internetradioplayer.domain.model.FlatStationsList
@@ -24,7 +25,8 @@ import javax.inject.Inject
 
 class StationInteractor
 @Inject constructor(private val stationRepository: StationListRepository,
-                    private val shortcutHelper: ShortcutHelper) {
+                    private val shortcutHelper: ShortcutHelper,
+                    private val migrationHelper: AppMigrationHelper) {
 
     private val groups = arrayListOf<Group>()
 
@@ -47,10 +49,11 @@ class StationInteractor
     private var stationsList = FlatStationsList()
 
     fun initStations(): Completable {
-        return buildGroupsList().doOnComplete {
-            val savedCurrentStation = getStation(stationRepository.getCurrentStationId())
-            savedCurrentStation?.let { currentStation = it }
-        }
+        return migrationHelper.tryMigrate()
+                .andThen(buildGroupsList()).doOnComplete {
+                    val savedCurrentStation = getStation(stationRepository.getCurrentStationId())
+                    savedCurrentStation?.let { currentStation = it }
+                }
     }
 
     private fun buildGroupsList(): Completable {

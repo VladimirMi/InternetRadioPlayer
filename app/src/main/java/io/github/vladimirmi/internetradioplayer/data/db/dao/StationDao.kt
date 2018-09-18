@@ -35,7 +35,7 @@ interface StationDao {
     @Insert(onConflict = OnConflictStrategy.IGNORE)
     fun insertGenres(genres: List<Genre>)
 
-    @Insert
+    @Insert(onConflict = OnConflictStrategy.IGNORE)
     fun insertStationGenre(stationGenreJoins: List<StationGenreJoin>)
 
     @Insert(onConflict = OnConflictStrategy.IGNORE)

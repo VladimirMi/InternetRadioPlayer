@@ -1,61 +1,60 @@
-//package io.github.vladimirmi.internetradioplayer.model.manager
-//
-//import android.graphics.Bitmap
-//import android.graphics.BitmapFactory
-//import android.graphics.Color
-//import java.io.ByteArrayOutputStream
-//import java.io.File
-//import java.io.FileOutputStream
-//import java.nio.ByteBuffer
-//import java.nio.charset.Charset
-//import java.util.zip.CRC32
-//
-///**
-// * Created by Vladimir Mikhalev 31.12.2017.
-// */
-//
-//private const val SIGN_IHDR_LENGTH = 33 // bytes
-//private const val KEY_BG_COLOR = "Background color"
-//private const val KEY_FG_COLOR = "Foreground color"
-//private const val KEY_TEXT = "Text"
-//private const val KEY_OPTION = "Option"
-//private const val KEY_ICON_RES = "Icon resource"
-//private const val AUX_BYTES = 4
-//
-//
-//class PngTextChunk(val key: String, val value: String) {
-//
-//    companion object {
-//        const val CHUNK_TYPE = "tEXt"
-//        private const val SEPARATOR = '\u0000'
-//
-//        fun create(chunkType: ByteArray, data: ByteArray, crc: Int): PngTextChunk? {
-//            if (chunkType.toString(Charset.defaultCharset()) != CHUNK_TYPE
-//                    || CRC32().apply { updateStation(data) }.value.toInt() != crc) {
-//                return null
-//            }
-//            val (key, value) = data.toString(Charset.defaultCharset()).split(SEPARATOR)
-//            return PngTextChunk(key, value)
-//        }
-//    }
-//
-//    fun getByteArray(): ByteArray {
-//        val dataBytes = "$key$SEPARATOR$value".toByteArray()
-//        val lengthBytes = ByteBuffer.allocate(AUX_BYTES).putInt(dataBytes.size).array()
-//        val chunkTypeBytes = CHUNK_TYPE.toByteArray()
-//        val crc = CRC32().apply { updateStation(dataBytes) }
-//        val crcBytes = ByteBuffer.allocate(AUX_BYTES).putInt(crc.value.toInt()).array()
-//
-//        return ByteArrayOutputStream().apply {
-//            write(lengthBytes)
-//            write(chunkTypeBytes)
-//            write(dataBytes)
-//            write(crcBytes)
-//        }.toByteArray()
-//    }
-//}
-//
-//
+package io.github.vladimirmi.internetradioplayer.model.manager
+
+import android.graphics.Color
+import io.github.vladimirmi.internetradioplayer.data.db.entity.ICONS
+import io.github.vladimirmi.internetradioplayer.data.db.entity.Icon
+import java.io.ByteArrayOutputStream
+import java.io.File
+import java.nio.ByteBuffer
+import java.nio.charset.Charset
+import java.util.zip.CRC32
+
+/**
+ * Created by Vladimir Mikhalev 31.12.2017.
+ */
+
+private const val SIGN_IHDR_LENGTH = 33 // bytes
+private const val KEY_BG_COLOR = "Background color"
+private const val KEY_FG_COLOR = "Foreground color"
+private const val KEY_TEXT = "Text"
+private const val KEY_OPTION = "Option"
+private const val KEY_ICON_RES = "Icon resource"
+private const val AUX_BYTES = 4
+
+
+class PngTextChunk(val key: String, val value: String) {
+
+    companion object {
+        const val CHUNK_TYPE = "tEXt"
+        private const val SEPARATOR = '\u0000'
+
+        fun create(chunkType: ByteArray, data: ByteArray, crc: Int): PngTextChunk? {
+            if (chunkType.toString(Charset.defaultCharset()) != CHUNK_TYPE
+                    || CRC32().apply { update(data) }.value.toInt() != crc) {
+                return null
+            }
+            val (key, value) = data.toString(Charset.defaultCharset()).split(SEPARATOR)
+            return PngTextChunk(key, value)
+        }
+    }
+
+    fun getByteArray(): ByteArray {
+        val dataBytes = "$key$SEPARATOR$value".toByteArray()
+        val lengthBytes = ByteBuffer.allocate(AUX_BYTES).putInt(dataBytes.size).array()
+        val chunkTypeBytes = CHUNK_TYPE.toByteArray()
+        val crc = CRC32().apply { update(dataBytes) }
+        val crcBytes = ByteBuffer.allocate(AUX_BYTES).putInt(crc.value.toInt()).array()
+
+        return ByteArrayOutputStream().apply {
+            write(lengthBytes)
+            write(chunkTypeBytes)
+            write(dataBytes)
+            write(crcBytes)
+        }.toByteArray()
+    }
+}
+
+
 //fun File.encode(icon: Icon) {
 //    ByteArrayOutputStream().use { outS ->
 //        icon.bitmap.compress(Bitmap.CompressFormat.PNG, 100, outS)
@@ -78,39 +77,30 @@
 //        }
 //    }
 //}
-//
-//fun File.decode(): Icon {
-//    val pngBytes = readBytes()
-//    val wrapped = ByteBuffer.wrap(pngBytes)
-//            .position(SIGN_IHDR_LENGTH) as ByteBuffer
-//
-////    var option = IconOption.ICON
-//    var iconRes = IconResource.ICON_1
-////    var backGroundColor = Color.LTGRAY
-//    var foregroundColor = Color.BLACK
-////    var text = ""
-//
-//    var chunk = nextChunkFromBuffer(wrapped)
-//    while (chunk != null) {
-//        when (chunk.key) {
-////            KEY_OPTION -> option = IconOption.fromName(chunk.value)
-//            KEY_ICON_RES -> iconRes = IconResource.fromName(chunk.value)
-////            KEY_BG_COLOR -> backGroundColor = chunk.value.toInt()
-//            KEY_FG_COLOR -> foregroundColor = chunk.value.toInt()
-////            KEY_TEXT -> text = chunk.value
-//        }
-//        chunk = nextChunkFromBuffer(wrapped)
-//    }
-//
-//    val bitmap = BitmapFactory.decodeByteArray(pngBytes, 0, pngBytes.size)
-//
-//    return IconRes(nameWithoutExtension, foregroundColor, iconRes, bitmap)
-//}
-//
-//private fun nextChunkFromBuffer(buffer: ByteBuffer): PngTextChunk? {
-//    val length = buffer.int
-//    val chunkType = ByteArray(AUX_BYTES).also { buffer.get(it) }
-//    val body = ByteArray(length).also { buffer.get(it) }
-//    val crc = buffer.int
-//    return PngTextChunk.create(chunkType, body, crc)
-//}
+
+fun File.decode(): Icon {
+    val pngBytes = readBytes()
+    val wrapped = ByteBuffer.wrap(pngBytes)
+            .position(SIGN_IHDR_LENGTH) as ByteBuffer
+
+    var iconRes = ICONS[0]
+    var foregroundColor = Color.BLACK
+
+    var chunk = nextChunkFromBuffer(wrapped)
+    while (chunk != null) {
+        when (chunk.key) {
+            KEY_ICON_RES -> iconRes = chunk.value.substringAfterLast("_", "0").toInt()
+            KEY_FG_COLOR -> foregroundColor = chunk.value.toInt()
+        }
+        chunk = nextChunkFromBuffer(wrapped)
+    }
+    return Icon(iconRes, Color.WHITE, foregroundColor)
+}
+
+private fun nextChunkFromBuffer(buffer: ByteBuffer): PngTextChunk? {
+    val length = buffer.int
+    val chunkType = ByteArray(AUX_BYTES).also { buffer.get(it) }
+    val body = ByteArray(length).also { buffer.get(it) }
+    val crc = buffer.int
+    return PngTextChunk.create(chunkType, body, crc)
+}

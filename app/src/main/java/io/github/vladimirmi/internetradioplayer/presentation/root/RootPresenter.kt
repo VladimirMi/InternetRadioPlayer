@@ -27,7 +27,7 @@ class RootPresenter
     override fun onFirstViewAttach() {
         stationInteractor.initStations()
                 .ioToMain()
-                .subscribe { setupRootScreen() }
+                .subscribeBy(onComplete = { setupRootScreen() }, onError = { Timber.e(it) })
                 .addTo(compDisp)
         controlsInteractor.connect()
     }

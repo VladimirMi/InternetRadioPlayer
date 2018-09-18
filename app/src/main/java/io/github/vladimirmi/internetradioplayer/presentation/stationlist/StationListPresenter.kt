@@ -48,7 +48,6 @@ class StationListPresenter
 
 
     override fun onFirstViewAttach() {
-        rootPresenter.viewState.showControls(true)
         interactor.stationsListObs
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribeBy { viewState.setStations(it) }

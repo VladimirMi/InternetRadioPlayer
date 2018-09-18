@@ -52,7 +52,7 @@ class StationInteractor
         return migrationHelper.tryMigrate()
                 .andThen(buildGroupsList()).doOnComplete {
                     val savedCurrentStation = getStation(stationRepository.getCurrentStationId())
-                    savedCurrentStation?.let { currentStation = it }
+                    currentStation = savedCurrentStation ?: Station.nullObj()
                 }
     }
 

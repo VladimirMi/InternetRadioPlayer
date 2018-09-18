@@ -29,6 +29,14 @@ class RootPresenter
                 .ioToMain()
                 .subscribeBy(onComplete = { setupRootScreen() }, onError = { Timber.e(it) })
                 .addTo(compDisp)
+
+        stationInteractor.currentStationObs
+                .subscribe {
+                    Timber.e("onFirstViewAttach: $it")
+                    viewState.showControls(!it.isNull())
+                }
+                .addTo(compDisp)
+
         controlsInteractor.connect()
     }
 
@@ -48,7 +56,6 @@ class RootPresenter
                 .doFinally { viewState.showLoadingIndicator(false) }
                 .subscribeBy(
                         onSuccess = {
-                            viewState.showControls(true)
                             router.showStationSlide(stationInteractor.currentStation.id)
                         },
                         onError = {

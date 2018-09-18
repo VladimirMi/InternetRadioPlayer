@@ -31,10 +31,7 @@ class RootPresenter
                 .addTo(compDisp)
 
         stationInteractor.currentStationObs
-                .subscribe {
-                    Timber.e("onFirstViewAttach: $it")
-                    viewState.showControls(!it.isNull())
-                }
+                .subscribe { viewState.showControls(!it.isNull()) }
                 .addTo(compDisp)
 
         controlsInteractor.connect()
@@ -49,7 +46,15 @@ class RootPresenter
         controlsInteractor.disconnect()
     }
 
-    fun addStation(uri: Uri) {
+    fun addStation(uri: Uri, startPlay: Boolean) {
+        val station = stationInteractor.getStation { it.uri == uri.toString() }
+        if (station != null) {
+            stationInteractor.currentStation = station
+            router.showStationReplace(station.id)
+            if (startPlay) controlsInteractor.play()
+            return
+        }
+
         stationInteractor.createStation(uri)
                 .ioToMain()
                 .doOnSubscribe { viewState.showLoadingIndicator(true) }
@@ -65,12 +70,15 @@ class RootPresenter
                 ).addTo(compDisp)
     }
 
-    fun showStation(id: String) {
-        val station = stationInteractor.getStation(id)
+    fun showStation(id: String, startPlay: Boolean) {
+        val station = stationInteractor.getStation { it.id == id }
         if (station != null) {
             stationInteractor.currentStation = station
             router.showStationReplace(station.id)
-        } else viewState.showToast(R.string.toast_shortcut_remove)
+            if (startPlay) controlsInteractor.play()
+        } else {
+            viewState.showToast(R.string.toast_shortcut_remove)
+        }
     }
 
 

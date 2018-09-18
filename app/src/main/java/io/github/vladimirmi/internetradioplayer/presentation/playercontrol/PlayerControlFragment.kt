@@ -40,22 +40,22 @@ class PlayerControlFragment : BaseFragment(), PlayerControlView {
         previousBt.setOnClickListener { presenter.skipToPrevious() }
         nextBt.setOnClickListener { presenter.skipToNext() }
         changeIconBt.setOnClickListener { presenter.changeIcon() }
-        loadingPb.indeterminateDrawable.mutate().setTintExt(context!!.color(R.color.pause_button))
+        bufferingPb.indeterminateDrawable.mutate().setTintExt(context!!.color(R.color.pause_button))
     }
 
     override fun showStopped() {
         playPauseBt.isPlaying = false
-        loadingPb.visible(false)
+        bufferingPb.visible(false)
     }
 
     override fun showPlaying() {
         playPauseBt.isPlaying = true
-        loadingPb.visible(false)
+        bufferingPb.visible(false)
     }
 
     override fun showLoading() {
         playPauseBt.isPlaying = true
-        loadingPb.visible(true)
+        bufferingPb.visible(true)
     }
 
     override fun showNext() {

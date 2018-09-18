@@ -19,6 +19,7 @@ import com.arellomobile.mvp.MvpAppCompatActivity
 import com.arellomobile.mvp.presenter.InjectPresenter
 import com.arellomobile.mvp.presenter.ProvidePresenter
 import io.github.vladimirmi.internetradioplayer.R
+import io.github.vladimirmi.internetradioplayer.data.manager.EXTRA_PLAY
 import io.github.vladimirmi.internetradioplayer.data.service.PlayerService
 import io.github.vladimirmi.internetradioplayer.di.Scopes
 import io.github.vladimirmi.internetradioplayer.di.module.RootActivityModule
@@ -99,10 +100,13 @@ class RootActivity : MvpAppCompatActivity(), RootView, ToolbarView {
 
     override fun checkIntent() {
         if (intent != null) {
+            val startPlay = intent.getBooleanExtra(EXTRA_PLAY, false)
             if (intent.hasExtra(PlayerService.EXTRA_STATION_ID)) {
-                presenter.showStation(intent.getStringExtra(PlayerService.EXTRA_STATION_ID))
+                //todo legacy
+                presenter.showStation(intent.getStringExtra(PlayerService.EXTRA_STATION_ID), startPlay)
+            } else {
+                intent.data?.let { addStation(it, startPlay) }
             }
-            intent.data?.let { addStation(it) }
             intent = null
         }
     }
@@ -126,8 +130,8 @@ class RootActivity : MvpAppCompatActivity(), RootView, ToolbarView {
         loadingPb.visible(visible)
     }
 
-    fun addStation(uri: Uri) {
-        presenter.addStation(uri)
+    fun addStation(uri: Uri, startPlay: Boolean = false) {
+        presenter.addStation(uri, startPlay)
     }
 
     //endregion

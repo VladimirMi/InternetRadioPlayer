@@ -46,6 +46,8 @@ class PlayerControlsInteractor
 
     fun disconnect() = controller.disconnect()
 
+    fun play() = controller.play()
+
     fun playPause() {
         if (isPlaying) {
             controller.pause()

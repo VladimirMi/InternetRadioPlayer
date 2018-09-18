@@ -108,10 +108,10 @@ class StationInteractor
         }
     }
 
-    fun getStation(id: String): Station? {
+    fun getStation(predicate: (Station) -> Boolean): Station? {
         for (group in groups) {
             for (station in group.stations) {
-                if (station.id == id) return station
+                if (predicate.invoke(station)) return station
             }
         }
         return null
@@ -251,5 +251,7 @@ class StationInteractor
     private fun indexOfGroup(groupId: String): Int {
         return groups.indexOfFirst { it.id == groupId }
     }
+
+    private fun getStation(id: String) = getStation { it.id == id }
 }
 

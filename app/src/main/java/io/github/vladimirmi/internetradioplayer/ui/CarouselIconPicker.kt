@@ -14,8 +14,7 @@ import io.github.vladimirmi.internetradioplayer.R
 import io.github.vladimirmi.internetradioplayer.data.db.entity.ICONS
 import io.github.vladimirmi.internetradioplayer.data.db.entity.Icon
 import io.github.vladimirmi.internetradioplayer.extensions.color
-import io.github.vladimirmi.internetradioplayer.extensions.setBgTint
-import io.github.vladimirmi.internetradioplayer.extensions.setFgTint
+import io.github.vladimirmi.internetradioplayer.extensions.setTintExt
 import kotlinx.android.synthetic.main.view_icon.view.*
 
 /**
@@ -86,20 +85,19 @@ class CarouselIconPicker : ViewPager {
     fun setBgColor(colorInt: Int) {
         bg = colorInt
         pageTransformer.setBgColor(bg, currentItem)
-        getImageView(currentItem)?.setBgTint(bg, true)
+        getImageView(currentItem).background.setTintExt(colorInt)
         iconListener?.invoke(Icon(currentItem, bg, fg))
     }
 
     fun setFgColor(colorInt: Int) {
         fg = colorInt
         pageTransformer.setFgColor(fg, currentItem)
-        getImageView(currentItem)?.setFgTint(fg)
+        getImageView(currentItem).drawable.setTintExt(colorInt)
         iconListener?.invoke(Icon(currentItem, bg, fg))
     }
 
-    private fun getImageView(position: Int): ImageView? {
-        return if (position < 0 || position >= childCount) null
-        else (getChildAt(position) as ViewGroup).getChildAt(0) as ImageView
+    private fun getImageView(position: Int): ImageView {
+        return (getChildAt(position) as ViewGroup).getChildAt(0) as ImageView
     }
 
     inner class CustomPageTransformer : ViewPager.PageTransformer {
@@ -120,8 +118,8 @@ class CarouselIconPicker : ViewPager {
             val index = page.tag as Int
 
             fun compareAndSetColors(bg: Int, fg: Int) {
-                if (colors[index].first != bg) imageView.setBgTint(bg, true)
-                if (colors[index].second != fg) imageView.setFgTint(fg)
+                if (colors[index].first != bg) imageView.background.setTintExt(bg)
+                if (colors[index].second != fg) imageView.drawable.setTintExt(fg)
                 colors[index] = Pair(bg, fg)
             }
 
@@ -147,6 +145,7 @@ class CarouselAdapter : PagerAdapter() {
         return ICONS.size
     }
 
+    @SuppressLint("InflateParams")
     override fun instantiateItem(container: ViewGroup, position: Int): Any {
         val iconView = LayoutInflater.from(container.context).inflate(R.layout.view_icon, null)
         container.addView(iconView)

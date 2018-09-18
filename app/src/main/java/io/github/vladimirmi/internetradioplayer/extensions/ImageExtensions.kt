@@ -5,17 +5,15 @@ import android.content.Context
 import android.graphics.Bitmap
 import android.graphics.Canvas
 import android.graphics.Color
+import android.graphics.PorterDuff
 import android.graphics.drawable.BitmapDrawable
 import android.graphics.drawable.Drawable
 import android.graphics.drawable.VectorDrawable
+import android.os.Build
 import android.support.annotation.ColorInt
-import android.support.annotation.DrawableRes
 import android.support.graphics.drawable.VectorDrawableCompat
 import android.support.v4.content.ContextCompat
 import android.support.v4.graphics.ColorUtils
-import android.support.v4.graphics.drawable.DrawableCompat
-import android.view.View
-import android.widget.ImageView
 import io.github.vladimirmi.internetradioplayer.R
 import io.github.vladimirmi.internetradioplayer.data.db.entity.ICONS
 import io.github.vladimirmi.internetradioplayer.data.db.entity.Icon
@@ -25,10 +23,6 @@ import java.util.*
 /**
  * Created by Vladimir Mikhalev 08.09.2018.
  */
-
-fun Context.getBitmap(@DrawableRes id: Int): Bitmap {
-    return ContextCompat.getDrawable(this, id)!!.getBitmap()
-}
 
 @SuppressLint("NewApi")
 fun Drawable.getBitmap(): Bitmap {
@@ -49,21 +43,12 @@ fun Drawable.getBitmap(): Bitmap {
     }
 }
 
-fun View.setBgTint(@ColorInt colorInt: Int, mutate: Boolean = false) {
-    if (mutate) {
-        background?.mutate()?.setTintExt(colorInt)
+fun Drawable.setTintExt(@ColorInt tint: Int) {
+    if (Build.VERSION.SDK_INT >= 21) {
+        mutate().setTint(tint)
     } else {
-        background?.setTintExt(colorInt)
+        mutate().setColorFilter(tint, PorterDuff.Mode.SRC_IN)
     }
-}
-
-fun ImageView.setFgTint(@ColorInt colorInt: Int) {
-    drawable?.setTintExt(colorInt)
-}
-
-fun Drawable.setTintExt(@ColorInt colorInt: Int) {
-    val wrapped = DrawableCompat.wrap(this)
-    DrawableCompat.setTint(wrapped, colorInt)
 }
 
 fun Icon.getBitmap(context: Context, withBackground: Boolean = false): Bitmap {

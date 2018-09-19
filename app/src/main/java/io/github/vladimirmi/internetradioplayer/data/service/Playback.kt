@@ -23,6 +23,10 @@ private const val VOLUME_DUCK = 0.2f
 private const val VOLUME_NORMAL = 1.0f
 const val STOP_DELAY = 60000L // default stop delay 1 min
 private const val STOP_DELAY_HEADSET = 3 * 60000L // stop delay on headset unplug
+private const val MIN_BUFFER_MS = 30000
+private const val MAX_BUFFER_MS = 40000
+private const val BUFFER_FOR_PLAYBACK_MS = 4000
+private const val BUFFER_FOR_PLAYBACK_AFTER_REBUFFER_MS = 6000
 
 class Playback(private val service: PlayerService,
                private val playerCallback: PlayerCallback)
@@ -82,7 +86,9 @@ class Playback(private val service: PlayerService,
         Timber.d("createPlayer")
         val rendererFactory = DefaultRenderersFactory(service)
         val trackSelector = DefaultTrackSelector()
-        val loadControl = DefaultLoadControl(DefaultAllocator(true, C.DEFAULT_AUDIO_BUFFER_SIZE))
+        val loadControl = DefaultLoadControl(DefaultAllocator(true, C.DEFAULT_AUDIO_BUFFER_SIZE * 2),
+                MIN_BUFFER_MS, MAX_BUFFER_MS, BUFFER_FOR_PLAYBACK_MS, BUFFER_FOR_PLAYBACK_AFTER_REBUFFER_MS,
+                -1, true)
         player = ExoPlayerFactory.newSimpleInstance(rendererFactory, trackSelector, loadControl)
         player?.addListener(playerCallback)
     }

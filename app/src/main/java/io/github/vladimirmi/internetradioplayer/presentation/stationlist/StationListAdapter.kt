@@ -28,7 +28,6 @@ class StationListAdapter(private val callback: StationItemCallback)
 
     private var stations = FlatStationsList()
     private var selectedStation = Station.nullObj()
-    private var selectedPosition = 0
     private var playing = false
 
     fun setData(data: FlatStationsList) {
@@ -68,18 +67,13 @@ class StationListAdapter(private val callback: StationItemCallback)
     }
 
     fun selectStation(station: Station) {
-        val oldSelectedPos = selectedPosition
-        val newSelectedPos = getPosition(station)
         selectedStation = station
-        selectedPosition = newSelectedPos
-
-        notifyItemChanged(oldSelectedPos, PAYLOAD_SELECTED_CHANGE)
-        notifyItemChanged(newSelectedPos, PAYLOAD_SELECTED_CHANGE)
+        notifyItemRangeChanged(0, itemCount, PAYLOAD_SELECTED_CHANGE)
     }
 
     fun setPlaying(playing: Boolean) {
         this.playing = playing
-        notifyItemChanged(selectedPosition, PAYLOAD_SELECTED_CHANGE)
+        notifyItemRangeChanged(0, itemCount, PAYLOAD_SELECTED_CHANGE)
     }
 
     fun onMove(from: Int, to: Int) {
@@ -111,12 +105,12 @@ class StationListAdapter(private val callback: StationItemCallback)
     override fun onBindViewHolder(holder: RecyclerView.ViewHolder, position: Int, payloads: MutableList<Any>) {
         holder as GroupElementVH
         if (payloads.contains(PAYLOAD_SELECTED_CHANGE)) {
-            if (stations.isStation(position)) {
-                val station = stations.getStation(position)
-                holder.select(station.id == selectedStation.id, playing)
-            } else {
+            if (holder is GroupTitleVH) {
                 val group = stations.getGroup(position)
-                holder.select(!group.expanded && group.id == selectedStation.groupId, playing)
+                val selected = !group.expanded && group.id == selectedStation.groupId
+                holder.select(selected, playing)
+            } else {
+                holder.select(stations.getStation(position).id == selectedStation.id, playing)
             }
         } else {
             super.onBindViewHolder(holder, position, payloads)
@@ -133,7 +127,8 @@ class StationListAdapter(private val callback: StationItemCallback)
     private fun setupGroupTitleVH(position: Int, holder: GroupTitleVH) {
         val group = stations.getGroup(position)
         holder.bind(group, callback)
-        holder.select(!group.expanded && group.id == selectedStation.groupId, playing)
+        val selected = !group.expanded && group.id == selectedStation.groupId
+        holder.select(selected, playing)
     }
 
     private fun setupGroupItemVH(position: Int, holder: GroupItemVH) {
@@ -142,7 +137,6 @@ class StationListAdapter(private val callback: StationItemCallback)
         holder.select(station.id == selectedStation.id, playing)
         holder.setCallback(callback, station)
     }
-
 
     override fun getItemCount(): Int = stations.size
 }

@@ -90,7 +90,6 @@ class FlatStationsList(private val flatList: MutableList<Any> = arrayListOf()) {
         }
     }
 
-
     fun startMove(position: Int): FlatStationsList {
         if (isGroup(position)) {
             return FlatStationsList(flatList.asSequence().filterIsInstance(Group::class.java)
@@ -136,6 +135,5 @@ class FlatStationsList(private val flatList: MutableList<Any> = arrayListOf()) {
     }
 
     private fun getGroups() = flatList.filterIsInstance(Group::class.java)
-
     private fun getStations() = flatList.filterIsInstance(Station::class.java)
 }

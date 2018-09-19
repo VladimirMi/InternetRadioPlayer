@@ -38,11 +38,13 @@ abstract class PlayerCallback : Player.EventListener {
     }
 
     override fun onPlayerStateChanged(playWhenReady: Boolean, playbackState: Int) {
-        val state = when (playbackState) {
-            Player.STATE_IDLE -> PlaybackStateCompat.STATE_STOPPED
-            Player.STATE_BUFFERING -> if (playWhenReady) PlaybackStateCompat.STATE_BUFFERING else PlaybackStateCompat.STATE_PAUSED
-            Player.STATE_READY -> if (playWhenReady) PlaybackStateCompat.STATE_PLAYING else PlaybackStateCompat.STATE_PAUSED
-            Player.STATE_ENDED -> PlaybackStateCompat.STATE_STOPPED
+        val state = when {
+            playbackState == Player.STATE_IDLE -> PlaybackStateCompat.STATE_STOPPED
+            playbackState == Player.STATE_BUFFERING && playWhenReady -> PlaybackStateCompat.STATE_BUFFERING
+            playbackState == Player.STATE_BUFFERING && !playWhenReady -> PlaybackStateCompat.STATE_PAUSED
+            playbackState == Player.STATE_READY && playWhenReady -> PlaybackStateCompat.STATE_PLAYING
+            playbackState == Player.STATE_READY && !playWhenReady -> PlaybackStateCompat.STATE_PAUSED
+            playbackState == Player.STATE_ENDED -> PlaybackStateCompat.STATE_STOPPED
             else -> PlaybackStateCompat.STATE_NONE
         }
         onPlayerStateChanged(state)

@@ -19,7 +19,7 @@ private const val KEY_ICON_RES = "Icon resource"
 private const val AUX_BYTES = 4
 
 
-class PngTextChunk(val key: String, val value: String) {
+private class PngTextChunk(val key: String, val value: String) {
 
     companion object {
         const val CHUNK_TYPE = "tEXt"

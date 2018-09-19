@@ -2,6 +2,7 @@ package io.github.vladimirmi.internetradioplayer.data.manager
 
 import android.content.Context
 import com.google.gson.Gson
+import com.google.gson.JsonSyntaxException
 import io.github.vladimirmi.internetradioplayer.data.db.entity.Group
 import io.github.vladimirmi.internetradioplayer.data.db.entity.Icon
 import io.github.vladimirmi.internetradioplayer.data.db.entity.Station
@@ -70,7 +71,7 @@ class AppMigrationHelper
         val file = File(appDir, path)
         return try {
             gson.fromJson(file.readText(), LegacyStation::class.java)
-        } catch (e: Exception) {
+        } catch (e: JsonSyntaxException) {
             Timber.e(e)
             null
         }

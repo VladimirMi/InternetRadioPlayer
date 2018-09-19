@@ -129,12 +129,8 @@ class StationParser @Inject constructor() {
                 line.startsWith(PLS_TITLE) -> title = line.substring(PLS_TITLE.length).trim()
             }
         }
-        return uri?.let {
-            parseFromNet(
-                    uri = it.toUri(),
-                    name = if (title.isBlank()) it.toUri().host else title
-            )
-        } ?: throw IllegalStateException("Playlist file does not contain stream uri")
+        if (uri == null) throw IllegalStateException("Playlist file does not contain stream uri")
+        return parseFromNet(uri!!.toUri(), if (title.isBlank()) uri!!.toUri().host else title)
     }
 
 
@@ -158,12 +154,8 @@ class StationParser @Inject constructor() {
                 }
             }
         }
-        return uri?.let {
-            parseFromNet(
-                    uri = it.toUri(),
-                    name = if (title.isBlank()) it.toUri().host else title
-            )
-        } ?: throw IllegalStateException("Playlist file does not contain stream uri")
+        if (uri == null) throw IllegalStateException("Playlist file does not contain stream uri")
+        return parseFromNet(uri!!.toUri(), if (title.isBlank()) uri!!.toUri().host else title)
     }
 }
 

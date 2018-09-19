@@ -44,7 +44,7 @@ fun Drawable.getBitmap(): Bitmap {
 }
 
 fun Drawable.setTintExt(@ColorInt tint: Int) {
-    if (Build.VERSION.SDK_INT >= 21) {
+    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
         mutate().setTint(tint)
     } else {
         mutate().setColorFilter(tint, PorterDuff.Mode.SRC_IN)
@@ -52,7 +52,8 @@ fun Drawable.setTintExt(@ColorInt tint: Int) {
 }
 
 fun Icon.getBitmap(context: Context, withBackground: Boolean = false): Bitmap {
-    val bitmap = Bitmap.createBitmap(256, 256, Bitmap.Config.ARGB_8888)
+    val iconSize = 256
+    val bitmap = Bitmap.createBitmap(iconSize, iconSize, Bitmap.Config.ARGB_8888)
     val canvas = Canvas(bitmap)
 
     if (withBackground) {

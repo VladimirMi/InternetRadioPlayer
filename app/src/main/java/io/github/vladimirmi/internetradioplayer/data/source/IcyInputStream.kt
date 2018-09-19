@@ -13,8 +13,8 @@ class IcyInputStream(inS: InputStream,
                      private val playerCallback: PlayerCallback)
     : FilterInputStream(inS) {
 
-    private var bytesBeforeMetadata = window
     private var buffer = ByteArray(128)
+    private var bytesBeforeMetadata = window
 
     override fun read(): Int {
         val byte = super.read()

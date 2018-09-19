@@ -16,9 +16,8 @@ buildscript {
 }
 
 plugins {
-    id "io.gitlab.arturbosch.detekt" version "1.0.0.RC6-3"
+    id "io.gitlab.arturbosch.detekt" version "1.0.0.RC8"
 }
-
 
 allprojects {
     repositories {
@@ -35,16 +34,16 @@ task clean(type: Delete) {
 
 tasks.whenTaskAdded { task ->
     if (task.name == 'assembleRelease') {
-        assembleRelease.dependsOn rootProject.detektCheck
+        assembleRelease.dependsOn rootProject.detekt
     }
 }
 
 detekt {
-    version = "1.0.0.RC6-3"
+    version = "1.0.0.RC8"
     profile("main") {
         input = "$projectDir/app/src/main"
-        config = "$projectDir/detekt.yml"
-        filters = ".*test.*,.*/resources/.*,.*/tmp/.*"
+        config = "$projectDir/detekt-config.yml"
+        filters = ".*test.*,.*/resources/.*,.*/tmp/.*,.*/build/.*"
         output = "$projectDir/reports"
     }
 }

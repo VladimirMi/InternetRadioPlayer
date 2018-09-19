@@ -13,8 +13,8 @@ import java.net.URL
 /**
  * Created by Vladimir Mikhalev 21.10.2017.
  */
-private const val connectTimeoutMillis = 5000
-private const val readTimeoutMillis = 5000
+private const val CONNECT_TIMEOUT_MILLIS = 5000
+private const val READ_TIMEOUT_MILLIS = 5000
 
 
 class IcyDataSource(private val userAgent: String,
@@ -40,7 +40,8 @@ class IcyDataSource(private val userAgent: String,
         }
 
         // Check for a valid response code.
-        if (responseCode < 200 || responseCode > 299) {
+
+        if (responseCode !in IntRange(200, 299)) {
             val headers = connection!!.headerFields
             closeConnectionQuietly()
             throw IOException(String.format("Invalid response code %d: %s", responseCode, headers))
@@ -92,8 +93,8 @@ class IcyDataSource(private val userAgent: String,
         val connection = URL(dataSpec.uri.toString()).openConnection() as HttpURLConnection
 
         return connection.apply {
-            connectTimeout = connectTimeoutMillis
-            readTimeout = readTimeoutMillis
+            connectTimeout = CONNECT_TIMEOUT_MILLIS
+            readTimeout = READ_TIMEOUT_MILLIS
             instanceFollowRedirects = true
             setRequestProperty("User-Agent", userAgent)
             setRequestProperty("Icy-Metadata", "1")
@@ -108,7 +109,7 @@ class IcyDataSource(private val userAgent: String,
     private fun closeConnectionQuietly() {
         try {
             connection?.disconnect()
-        } catch (e: Exception) {
+        } catch (e: IOException) {
             Timber.w(e, "Unexpected error while disconnecting")
         }
         connection = null

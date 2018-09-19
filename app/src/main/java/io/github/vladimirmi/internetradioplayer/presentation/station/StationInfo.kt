@@ -10,5 +10,5 @@ import io.github.vladimirmi.internetradioplayer.data.db.entity.Group
 
 class StationInfo(val stationName: String, group: String, val genres: List<String>, context: Context) {
 
-    val groupName = if (group == context.getString(R.string.default_group)) Group.DEFAULT_NAME else group
+    val groupName = if (group == context.getString(R.string.default_group) || group.isBlank()) Group.DEFAULT_NAME else group
 }

@@ -21,8 +21,6 @@ class App : Application() {
     override fun onCreate() {
         super.onCreate()
 
-        Stetho.initializeWithDefaults(this)
-
         if (BuildConfig.DEBUG) {
             Toothpick.setConfiguration(Configuration.forDevelopment().preventMultipleRootScopes())
         } else {
@@ -34,6 +32,7 @@ class App : Application() {
         Scopes.app.installModules(AppModule(this))
 
         if (BuildConfig.DEBUG) {
+            Stetho.initializeWithDefaults(this)
             Timber.plant(FileLoggingTree.Builder(Scopes.context)
                     .log(FileLoggingTree.Logs.ERROR)
                     .build()

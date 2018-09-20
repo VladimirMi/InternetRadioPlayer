@@ -67,4 +67,6 @@
     <string name="help_create_3"> - добавив прямую ссылку на аудиопоток.</string>
 
     <string name="metadata_not_available">Метаданные не доступны</string>
+    <string name="dialog_start_playback">Начать воспроизведение</string>
+    <string name="default_group">Разное</string>
 </resources>

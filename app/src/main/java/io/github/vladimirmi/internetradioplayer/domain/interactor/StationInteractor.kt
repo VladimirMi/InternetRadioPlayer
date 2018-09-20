@@ -175,7 +175,10 @@ class StationInteractor
                 ?: return Completable.error(IllegalStateException("Can not find station with id $id"))
 
         return stationRepository.removeStation(station)
-                .doOnComplete { if (stationsList.isFirstStation(id)) nextStation(id) else previousStation(id) }
+                .doOnComplete {
+                    val change = if (stationsList.isFirstStation(id)) nextStation(id) else previousStation(id)
+                    if (!change) currentStation = Station.nullObj()
+                }
                 //todo optimize
                 .andThen(buildGroupsList())
     }

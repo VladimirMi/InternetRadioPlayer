@@ -20,13 +20,13 @@ import javax.inject.Inject
 class AppMigrationHelper
 @Inject constructor(context: Context, private val gson: Gson, private val repository: StationListRepository) {
 
-    private val appDir = context.getExternalFilesDir(null)
+    private val appDir: File? = context.getExternalFilesDir(null)
     private val groups = arrayListOf<Group>()
     private val stations = arrayListOf<Station>()
 
     fun tryMigrate(): Completable {
-        val paths: Array<String> = appDir.list { _, name -> name.endsWith(".json") }
-        if (paths.isEmpty()) return Completable.complete()
+        val paths: Array<String>? = appDir?.list { _, name -> name.endsWith(".json") }
+        if (paths?.isEmpty() != false) return Completable.complete()
 
         return Completable.fromCallable {
             paths.forEach { path ->
@@ -38,7 +38,7 @@ class AppMigrationHelper
         }
                 .andThen(Completable.defer { Completable.merge(groups.map { repository.addGroup(it) }) })
                 .andThen(Completable.defer { Completable.merge(stations.map { repository.addStation(it) }) })
-                .doOnComplete { appDir.listFiles().forEach { if (it.isFile) it.delete() } }
+                .doOnComplete { appDir!!.listFiles().forEach { if (it.isFile) it.delete() } }
     }
 
     private fun createGroup(name: String): Group {

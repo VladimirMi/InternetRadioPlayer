@@ -39,8 +39,10 @@ class RootPresenter
                 .addTo(compDisp)
 
         stationInteractor.currentStationObs
+                .map { !it.isNull() }
+                .distinctUntilChanged()
                 .ioToMain()
-                .subscribe { viewState.showControls(!it.isNull()) }
+                .subscribe(viewState::showControls)
                 .addTo(compDisp)
         firstAttach = false
     }

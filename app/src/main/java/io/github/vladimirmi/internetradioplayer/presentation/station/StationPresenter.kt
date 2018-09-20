@@ -104,6 +104,7 @@ class StationPresenter
     }
 
     fun cancelCreate() {
+        Timber.e("cancelCreate: ${interactor.previousWhenEdit}")
         interactor.currentStation = interactor.previousWhenEdit!!
         viewMode()
         router.exit()
@@ -134,7 +135,7 @@ class StationPresenter
     }
 
     private fun editMode() {
-        editMode = true
+        if (!interactor.createMode) editMode = true
         viewState.setEditMode(editMode)
         val toolbar = toolbarBuilder.removeMenuItem(editItem)
                 .addMenuItem(saveItem)

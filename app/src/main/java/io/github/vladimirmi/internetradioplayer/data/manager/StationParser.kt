@@ -1,5 +1,6 @@
 package io.github.vladimirmi.internetradioplayer.data.manager
 
+import android.content.Context
 import android.net.Uri
 import io.github.vladimirmi.internetradioplayer.data.db.entity.Station
 import io.github.vladimirmi.internetradioplayer.extensions.toURL
@@ -19,6 +20,7 @@ import javax.inject.Inject
  */
 
 private const val SCHEME_FILE = "file"
+private const val SCHEME_CONTENT = "content"
 private const val SCHEME_HTTP = "http"
 
 private const val EXT_PLS = "PLS"
@@ -37,6 +39,7 @@ private const val PLS_TITLE = "Title1="
 private const val M3U_HEADER = "#EXTM3U"
 private const val M3U_INFO = "#EXTINF"
 
+private const val PLS_TYPE = "audio/x-scpls"
 private val supportedAudioTypes = arrayOf("mpeg", "ogg", "opus", "aac", "aacp")
 private val suppotedPlaylists = arrayOf("x-scpls", "mpegurl", "x-mpegurl", "x-mpegURL",
         "vnd.apple.mpegurl", "vnd.apple.mpegurl.audio", "x-pn-realaudio")
@@ -47,27 +50,24 @@ private fun MediaType.isPlaylistFile() = suppotedPlaylists.contains(subtype())
 
 private fun MediaType.isPlsFile() = subtype() == "x-scpls"
 
-class StationParser @Inject constructor() {
+class StationParser
+@Inject constructor(private val context: Context) {
 
     fun parseFromUri(uri: Uri): Station {
         return when {
             uri.scheme.startsWith(SCHEME_HTTP) -> parseFromNet(uri) // also https
-            uri.scheme == SCHEME_FILE -> parseFromPlaylistFile(uri)
+            uri.scheme == SCHEME_FILE || uri.scheme == SCHEME_CONTENT -> parseFromPlaylistFile(uri)
             else -> throw IllegalArgumentException("Unsupported uri $uri")
         }
     }
 
     private fun parseFromPlaylistFile(uri: Uri): Station {
-        val file = File(uri.toString())
-        if (!file.exists()) {
-            throw IllegalStateException("Can not find file for uri $uri")
+        val type = context.contentResolver.getType(uri)
+        val name = uri.lastPathSegment ?: ""
+        val content = context.contentResolver.openInputStream(uri).use { stream ->
+            stream.bufferedReader().use { it.readText() }
         }
-
-        return when (file.extension.toUpperCase()) {
-            EXT_PLS -> file.parsePls()
-            EXT_M3U, EXT_M3U8, EXT_RAM -> file.parseM3u()
-            else -> throw IllegalStateException("Unsupported file extension ${file.extension}")
-        }
+        return if (type == PLS_TYPE) content.parsePls(name) else content.parseM3u(name)
     }
 
     private fun parseFromNet(uri: Uri, name: String = uri.host): Station {

@@ -15,7 +15,7 @@ import io.github.vladimirmi.internetradioplayer.data.db.entity.StationGenreJoin
  */
 
 @Database(entities = [Station::class, Genre::class, StationGenreJoin::class, Group::class],
-        version = 1)
+        version = 1, exportSchema = false)
 abstract class StationsDatabase : RoomDatabase() {
 
     abstract fun stationDao(): StationDao

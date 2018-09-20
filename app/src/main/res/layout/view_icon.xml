@@ -1,33 +1,19 @@
 <?xml version="1.0" encoding="utf-8"?>
 <FrameLayout
-    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
-    android:id="@+id/iconFr"
-    android:layout_width="72dp"
-    android:layout_height="72dp"
-    android:layout_marginTop="16dp"
-    android:layout_gravity="center"
-    tools:showIn="@layout/fragment_icon_picker"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
     >
 
     <ImageView
         android:id="@+id/iconIv"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
+        android:layout_width="88dp"
+        android:layout_height="88dp"
         android:contentDescription="@string/desc_station_icon"
+        android:layout_gravity="center"
         tools:src="@drawable/ic_station_1"
+        android:background="@drawable/ic_background"
         />
 
-    <TextView
-        android:id="@+id/iconTv"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:gravity="center"
-        android:padding="4dp"
-        android:visibility="gone"
-        app:autoSizeTextType="uniform"
-        tools:ignore="MissingPrefix"
-        tools:text="S"
-        />
 </FrameLayout>

@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="utf-8"?>
+<vector
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:width="48dp"
+    android:height="48dp"
+    android:viewportHeight="48.0"
+    android:viewportWidth="48.0">
+    <group
+        android:name="group"
+        android:pivotX="24"
+        android:pivotY="24"
+        android:rotation="90">
+        <path
+            android:name="up"
+            android:fillColor="#fafafa"
+            android:pathData="@string/pause_up"/>
+
+        <path
+            android:name="dw"
+            android:fillColor="#fafafa"
+            android:pathData="@string/pause_dw"/>
+    </group>
+</vector>

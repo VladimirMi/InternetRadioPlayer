@@ -1,42 +1,14 @@
 package io.github.vladimirmi.internetradioplayer.presentation.station
 
-import io.github.vladimirmi.internetradioplayer.model.entity.Station
+import android.content.Context
+import io.github.vladimirmi.internetradioplayer.R
+import io.github.vladimirmi.internetradioplayer.data.db.entity.Group
 
 /**
- * Created by Vladimir Mikhalev 20.02.2018.
+ * Created by Vladimir Mikhalev 12.09.2018.
  */
 
-class StationInfo(
-        val name: String,
-        val group: String,
-        val genre: List<String>
-) {
+class StationInfo(val stationName: String, group: String, val genres: List<String>, context: Context) {
 
-    companion object {
-        fun fromStation(station: Station): StationInfo {
-            return StationInfo(station.name, station.group, station.genre)
-        }
-    }
-
-    override fun equals(other: Any?): Boolean {
-        if (this === other) return true
-        if (javaClass != other?.javaClass) return false
-
-        other as StationInfo
-
-        if (name != other.name) return false
-        if (group != other.group) return false
-        if (genre != other.genre) return false
-
-        return true
-    }
-
-    override fun hashCode(): Int {
-        var result = name.hashCode()
-        result = 31 * result + group.hashCode()
-        result = 31 * result + genre.hashCode()
-        return result
-    }
-
-
+    val groupName = if (group == context.getString(R.string.default_group) || group.isBlank()) Group.DEFAULT_NAME else group
 }

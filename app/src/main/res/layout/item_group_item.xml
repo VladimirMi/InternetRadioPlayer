@@ -34,17 +34,6 @@
             tools:text="Item name"
             />
 
-        <ImageView
-            android:id="@+id/favorite"
-            android:layout_width="48dp"
-            android:layout_height="48dp"
-            android:contentDescription="@string/desc_favorite"
-            android:padding="12dp"
-            android:src="@drawable/ic_star"
-            android:visibility="invisible"
-            tools:visibility="visible"
-            />
-
     </LinearLayout>
 
     <View

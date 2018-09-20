@@ -1,11 +1,12 @@
 package io.github.vladimirmi.internetradioplayer.presentation.root
 
+import android.annotation.SuppressLint
 import android.net.Uri
 import com.arellomobile.mvp.InjectViewState
 import io.github.vladimirmi.internetradioplayer.R
+import io.github.vladimirmi.internetradioplayer.domain.interactor.PlayerControlsInteractor
+import io.github.vladimirmi.internetradioplayer.domain.interactor.StationInteractor
 import io.github.vladimirmi.internetradioplayer.extensions.ioToMain
-import io.github.vladimirmi.internetradioplayer.model.interactor.PlayerControlsInteractor
-import io.github.vladimirmi.internetradioplayer.model.interactor.StationInteractor
 import io.github.vladimirmi.internetradioplayer.navigation.Router
 import io.github.vladimirmi.internetradioplayer.ui.base.BasePresenter
 import io.reactivex.rxkotlin.addTo
@@ -24,36 +25,53 @@ class RootPresenter
                     private val stationInteractor: StationInteractor)
     : BasePresenter<RootView>() {
 
+    private var firstAttach = true
+
     override fun onFirstViewAttach() {
         controlsInteractor.connect()
+
         stationInteractor.initStations()
                 .ioToMain()
-                .subscribe { setupRootScreen() }
+                .subscribeBy(onComplete = {
+                    setupRootScreen()
+                    viewState.checkIntent()
+                }, onError = { Timber.e(it) })
                 .addTo(compDisp)
+
+        stationInteractor.currentStationObs
+                .map { !it.isNull() }
+                .distinctUntilChanged()
+                .ioToMain()
+                .subscribe(viewState::showControls)
+                .addTo(compDisp)
+        firstAttach = false
     }
 
     override fun attachView(view: RootView?) {
+        if (!firstAttach) viewState.checkIntent()
         super.attachView(view)
-        stationInteractor.initStations()
-                .ioToMain()
-                .subscribe { viewState.checkIntent() }
-                .addTo(compDisp)
     }
 
     override fun onDestroy() {
         controlsInteractor.disconnect()
     }
 
-    fun addStation(uri: Uri) {
+    @SuppressLint("CheckResult")
+    fun addStation(uri: Uri, startPlay: Boolean) {
+        val station = stationInteractor.getStation { it.uri == uri.toString() }
+        if (station != null) {
+            stationInteractor.currentStation = station
+            router.showStationReplace(station.id)
+            if (startPlay) controlsInteractor.play()
+            return
+        }
+
         stationInteractor.createStation(uri)
                 .ioToMain()
                 .doOnSubscribe { viewState.showLoadingIndicator(true) }
                 .doFinally { viewState.showLoadingIndicator(false) }
                 .subscribeBy(
-                        onSuccess = {
-                            viewState.showControls(true)
-                            router.showStationSlide(stationInteractor.currentStation)
-                        },
+                        onSuccess = { router.showStationSlide(stationInteractor.currentStation.id) },
                         onError = {
                             Timber.e(it)
                             viewState.showToast(R.string.toast_add_error)
@@ -61,18 +79,22 @@ class RootPresenter
                 ).addTo(compDisp)
     }
 
-    fun showStation(id: String) {
-        val station = stationInteractor.getStation(id)
+    @SuppressLint("CheckResult")
+    fun showStation(id: String, startPlay: Boolean) {
+        val station = stationInteractor.getStation { it.id == id }
         if (station != null) {
             stationInteractor.currentStation = station
-            router.showStationReplace(station)
-        } else viewState.showToast(R.string.toast_shortcut_remove)
+            router.showStationReplace(station.id)
+            if (startPlay) controlsInteractor.play()
+        } else {
+            viewState.showToast(R.string.toast_shortcut_remove)
+        }
     }
 
 
     private fun setupRootScreen() {
         if (stationInteractor.haveStations()) {
-            router.newRootScreen(Router.MEDIA_LIST_SCREEN)
+            router.newRootScreen(Router.STATIONS_LIST_SCREEN)
         } else {
             router.newRootScreen(Router.GET_STARTED_SCREEN)
         }

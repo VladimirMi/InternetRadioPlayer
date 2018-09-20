@@ -1,11 +1,10 @@
 package io.github.vladimirmi.internetradioplayer.presentation.playercontrol
 
-import android.graphics.Bitmap
 import com.arellomobile.mvp.MvpView
 import com.arellomobile.mvp.viewstate.strategy.AddToEndSingleStrategy
 import com.arellomobile.mvp.viewstate.strategy.OneExecutionStateStrategy
 import com.arellomobile.mvp.viewstate.strategy.StateStrategyType
-import io.github.vladimirmi.internetradioplayer.model.entity.Station
+import io.github.vladimirmi.internetradioplayer.data.db.entity.Station
 
 /**
  * Created by Vladimir Mikhalev 23.10.2017.
@@ -20,17 +19,23 @@ interface PlayerControlView : MvpView {
     fun showPlaying()
 
     @StateStrategyType(AddToEndSingleStrategy::class)
-    fun setStation(station: Station)
+    fun showLoading()
 
     @StateStrategyType(AddToEndSingleStrategy::class)
-    fun enableNextPrevious(enable: Boolean)
+    fun setStation(station: Station)
 
     @StateStrategyType(AddToEndSingleStrategy::class)
     fun enableEditMode(enable: Boolean)
 
     @StateStrategyType(AddToEndSingleStrategy::class)
-    fun setStationIcon(stationIcon: Bitmap)
+    fun setMetadata(metadata: String)
 
     @StateStrategyType(OneExecutionStateStrategy::class)
     fun showToast(resId: Int)
+
+    @StateStrategyType(OneExecutionStateStrategy::class)
+    fun showNext()
+
+    @StateStrategyType(OneExecutionStateStrategy::class)
+    fun showPrevious()
 }

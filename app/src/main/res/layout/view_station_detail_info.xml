@@ -87,6 +87,7 @@
                 android:layout_height="wrap_content"
                 android:layout_gravity="fill_horizontal"
                 tools:text="www.google.com"
+                android:textIsSelectable="true"
                 />
 
             <TextView

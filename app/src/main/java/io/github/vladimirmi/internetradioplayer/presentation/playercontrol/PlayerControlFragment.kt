@@ -1,19 +1,14 @@
 package io.github.vladimirmi.internetradioplayer.presentation.playercontrol
 
-import android.graphics.Bitmap
 import android.os.Bundle
-import android.support.v4.content.ContextCompat
 import android.view.View
 import android.widget.Toast
 import com.arellomobile.mvp.presenter.InjectPresenter
 import com.arellomobile.mvp.presenter.ProvidePresenter
 import io.github.vladimirmi.internetradioplayer.R
+import io.github.vladimirmi.internetradioplayer.data.db.entity.Station
 import io.github.vladimirmi.internetradioplayer.di.Scopes
-import io.github.vladimirmi.internetradioplayer.extensions.color
-import io.github.vladimirmi.internetradioplayer.extensions.setTint
-import io.github.vladimirmi.internetradioplayer.extensions.setTintExt
-import io.github.vladimirmi.internetradioplayer.extensions.visible
-import io.github.vladimirmi.internetradioplayer.model.entity.Station
+import io.github.vladimirmi.internetradioplayer.extensions.*
 import io.github.vladimirmi.internetradioplayer.ui.base.BaseFragment
 import kotlinx.android.synthetic.main.fragment_player_controls.*
 import toothpick.Toothpick
@@ -38,42 +33,45 @@ class PlayerControlFragment : BaseFragment(), PlayerControlView {
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
-        play_pause.setOnClickListener { presenter.playPause() }
-        favorite.setOnClickListener { presenter.switchFavorite() }
+        metadataTv.isSelected = true
+        playPauseBt.setOnClickListener { presenter.playPause() }
+        playPauseBt.setManualMode(true)
         iconIv.setOnClickListener { presenter.showStation() }
-        previous.setOnClickListener { presenter.skipToPrevious() }
-        next.setOnClickListener { presenter.skipToNext() }
+        previousBt.setOnClickListener { presenter.skipToPrevious() }
+        nextBt.setOnClickListener { presenter.skipToNext() }
         changeIconBt.setOnClickListener { presenter.changeIcon() }
+        bufferingPb.indeterminateDrawable.mutate().setTintExt(context!!.color(R.color.pause_button))
     }
 
     override fun showStopped() {
-        play_pause.setBackgroundResource(R.drawable.ic_play)
+        playPauseBt.isPlaying = false
+        bufferingPb.visible(false)
     }
 
     override fun showPlaying() {
-        play_pause.setBackgroundResource(R.drawable.ic_stop)
+        playPauseBt.isPlaying = true
+        bufferingPb.visible(false)
+    }
+
+    override fun showLoading() {
+        playPauseBt.isPlaying = true
+        bufferingPb.visible(true)
+    }
+
+    override fun showNext() {
+        nextBt.bounceXAnimation(200f).start()
+    }
+
+    override fun showPrevious() {
+        previousBt.bounceXAnimation(-200f).start()
     }
 
     override fun setStation(station: Station) {
-        if (station.favorite) {
-            favorite.setBackgroundResource(R.drawable.ic_star)
-        } else {
-            favorite.background = ContextCompat.getDrawable(context!!, R.drawable.ic_star_empty).apply {
-                this!!.mutate().setTintExt(ContextCompat.getColor(context!!, R.color.grey_600))
-            }
-        }
+        iconIv.setImageBitmap(station.icon.getBitmap(context!!))
     }
 
-    override fun setStationIcon(stationIcon: Bitmap) {
-        iconIv.setImageBitmap(stationIcon)
-    }
-
-    override fun enableNextPrevious(enable: Boolean) {
-        val tint = context!!.color(if (enable) R.color.grey_600 else R.color.grey_400)
-        previous.setTint(tint)
-        next.setTint(tint)
-        previous.isEnabled = enable
-        next.isEnabled = enable
+    override fun setMetadata(metadata: String) {
+        metadataTv.text = metadata
     }
 
     override fun enableEditMode(enable: Boolean) {

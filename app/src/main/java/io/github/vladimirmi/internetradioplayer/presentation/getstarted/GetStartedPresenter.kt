@@ -4,7 +4,6 @@ import android.view.MenuItem
 import com.arellomobile.mvp.InjectViewState
 import io.github.vladimirmi.internetradioplayer.R
 import io.github.vladimirmi.internetradioplayer.presentation.root.MenuItemHolder
-import io.github.vladimirmi.internetradioplayer.presentation.root.RootPresenter
 import io.github.vladimirmi.internetradioplayer.presentation.root.ToolbarBuilder
 import io.github.vladimirmi.internetradioplayer.ui.base.BasePresenter
 import javax.inject.Inject
@@ -16,8 +15,7 @@ import javax.inject.Inject
 
 @InjectViewState
 class GetStartedPresenter
-@Inject constructor(private val rootPresenter: RootPresenter)
-    : BasePresenter<GetStartedView>() {
+@Inject constructor() : BasePresenter<GetStartedView>() {
 
     private val actions: (MenuItem) -> Unit = {
         when (it.itemId) {
@@ -30,10 +28,5 @@ class GetStartedPresenter
 
     override fun onFirstViewAttach() {
         viewState.buildToolbar(builder)
-    }
-
-    override fun attachView(view: GetStartedView?) {
-        super.attachView(view)
-        rootPresenter.viewState.showControls(false)
     }
 }

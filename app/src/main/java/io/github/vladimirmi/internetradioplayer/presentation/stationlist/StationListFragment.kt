@@ -9,14 +9,14 @@ import android.widget.Toast
 import com.arellomobile.mvp.presenter.InjectPresenter
 import com.arellomobile.mvp.presenter.ProvidePresenter
 import io.github.vladimirmi.internetradioplayer.R
+import io.github.vladimirmi.internetradioplayer.data.db.entity.Station
 import io.github.vladimirmi.internetradioplayer.di.Scopes
-import io.github.vladimirmi.internetradioplayer.model.entity.Station
-import io.github.vladimirmi.internetradioplayer.model.entity.groupedlist.GroupedList
+import io.github.vladimirmi.internetradioplayer.domain.model.FlatStationsList
 import io.github.vladimirmi.internetradioplayer.presentation.getstarted.NewStationDialog
 import io.github.vladimirmi.internetradioplayer.presentation.root.ToolbarBuilder
 import io.github.vladimirmi.internetradioplayer.presentation.root.ToolbarView
 import io.github.vladimirmi.internetradioplayer.ui.base.BaseFragment
-import kotlinx.android.synthetic.main.fragment_media_list.*
+import kotlinx.android.synthetic.main.fragment_stations_list.*
 import toothpick.Toothpick
 
 /**
@@ -25,14 +25,28 @@ import toothpick.Toothpick
 
 class StationListFragment : BaseFragment(), StationListView, StationItemCallback {
 
-    override val layoutRes = R.layout.fragment_media_list
-    private val adapter = MediaListAdapter(this)
+    override val layoutRes = R.layout.fragment_stations_list
+    private val adapter = StationListAdapter(this)
 
     private val itemTouchHelper by lazy {
-        ItemTouchHelper(object : ItemSwipeCallback(context!!, 0, ItemTouchHelper.LEFT or ItemTouchHelper.RIGHT) {
+        ItemTouchHelper(object : ItemSwipeCallback(context!!) {
             override fun onSwiped(viewHolder: RecyclerView.ViewHolder, direction: Int) {
                 val station = adapter.getStation(viewHolder.adapterPosition) ?: return
                 presenter.showStation(station)
+            }
+
+            override fun onMove(recyclerView: RecyclerView, viewHolder: RecyclerView.ViewHolder,
+                                target: RecyclerView.ViewHolder): Boolean {
+                adapter.onMove(viewHolder.adapterPosition, target.adapterPosition)
+                return true
+            }
+
+            override fun onStartDrag(position: Int) {
+                adapter.onStartDrag(position)
+            }
+
+            override fun onIdle() {
+                presenter.moveGroupElements(adapter.onIdle())
             }
         })
     }
@@ -43,12 +57,8 @@ class StationListFragment : BaseFragment(), StationListView, StationItemCallback
     fun providePresenter(): StationListPresenter {
         return Toothpick.openScopes(Scopes.ROOT_ACTIVITY, this)
                 .getInstance(StationListPresenter::class.java).also {
-            Toothpick.closeScope(this)
-        }
-    }
-
-    fun notifyList() {
-        adapter.notifyDataSetChanged()
+                    Toothpick.closeScope(this)
+                }
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
@@ -59,15 +69,18 @@ class StationListFragment : BaseFragment(), StationListView, StationItemCallback
 
     //region =============== StationListView ==============
 
-    override fun setMediaList(stationList: GroupedList<Station>) {
+    override fun setStations(stationList: FlatStationsList) {
         adapter.setData(stationList)
     }
 
-    override fun selectItem(station: Station, playing: Boolean) {
-        adapter.selectItem(station, playing)
-        //todo select from position
+    override fun selectStation(station: Station) {
+        adapter.selectStation(station)
         val position = adapter.getPosition(station)
         if (position != -1) media_recycler.scrollToPosition(position)
+    }
+
+    override fun setPlaying(playing: Boolean) {
+        adapter.setPlaying(playing)
     }
 
     override fun openAddStationDialog() {
@@ -86,12 +99,12 @@ class StationListFragment : BaseFragment(), StationListView, StationItemCallback
 
     //region =============== StationItemCallback ==============
 
-    override fun onGroupSelected(group: String) {
-        presenter.selectGroup(group)
+    override fun onGroupSelected(id: String) {
+        presenter.selectGroup(id)
     }
 
     override fun onItemSelected(station: Station) {
-        presenter.select(station)
+        presenter.selectStation(station)
     }
 
     override fun onItemOpened(station: Station) {

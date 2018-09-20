@@ -6,23 +6,25 @@ import android.net.Uri
 import android.os.Bundle
 import android.support.annotation.StringRes
 import android.support.design.widget.Snackbar
+import android.support.transition.Slide
+import android.support.transition.TransitionManager
+import android.support.transition.Visibility
+import android.support.v4.view.animation.FastOutSlowInInterpolator
 import android.support.v7.view.menu.MenuBuilder
 import android.support.v7.view.menu.MenuPopupHelper
 import android.support.v7.widget.PopupMenu
-import android.view.LayoutInflater
-import android.view.Menu
-import android.view.MenuItem
-import android.view.View
+import android.view.*
 import android.widget.Toast
 import com.arellomobile.mvp.MvpAppCompatActivity
 import com.arellomobile.mvp.presenter.InjectPresenter
 import com.arellomobile.mvp.presenter.ProvidePresenter
 import io.github.vladimirmi.internetradioplayer.R
+import io.github.vladimirmi.internetradioplayer.data.manager.EXTRA_PLAY
+import io.github.vladimirmi.internetradioplayer.data.service.PlayerService
 import io.github.vladimirmi.internetradioplayer.di.Scopes
 import io.github.vladimirmi.internetradioplayer.di.module.RootActivityModule
 import io.github.vladimirmi.internetradioplayer.extensions.setTintExt
 import io.github.vladimirmi.internetradioplayer.extensions.visible
-import io.github.vladimirmi.internetradioplayer.model.service.PlayerService
 import io.github.vladimirmi.internetradioplayer.navigation.Navigator
 import io.github.vladimirmi.internetradioplayer.ui.base.BackPressListener
 import kotlinx.android.synthetic.main.activity_root.*
@@ -30,6 +32,7 @@ import kotlinx.android.synthetic.main.view_menu_item.view.*
 import ru.terrakok.cicerone.NavigatorHolder
 import toothpick.Toothpick
 import javax.inject.Inject
+
 
 /**
  * Created by Vladimir Mikhalev 01.10.2017.
@@ -97,10 +100,13 @@ class RootActivity : MvpAppCompatActivity(), RootView, ToolbarView {
 
     override fun checkIntent() {
         if (intent != null) {
+            val startPlay = intent.getBooleanExtra(EXTRA_PLAY, false)
             if (intent.hasExtra(PlayerService.EXTRA_STATION_ID)) {
-                presenter.showStation(intent.getStringExtra(PlayerService.EXTRA_STATION_ID))
+                //todo legacy
+                presenter.showStation(intent.getStringExtra(PlayerService.EXTRA_STATION_ID), startPlay)
+            } else {
+                intent.data?.let { addStation(it, startPlay) }
             }
-            intent.data?.let { addStation(it) }
             intent = null
         }
     }
@@ -114,19 +120,18 @@ class RootActivity : MvpAppCompatActivity(), RootView, ToolbarView {
     }
 
     override fun showControls(visible: Boolean) {
+        val slide = createSlideTransition()
+        slide.mode = if (visible) Visibility.MODE_IN else Visibility.MODE_OUT
+        TransitionManager.beginDelayedTransition(root, slide)
         playerControlsFr.view?.visible(visible)
-    }
-
-    override fun showMetadata(visible: Boolean) {
-        metadataFr.view?.visible(visible)
     }
 
     override fun showLoadingIndicator(visible: Boolean) {
         loadingPb.visible(visible)
     }
 
-    fun addStation(uri: Uri) {
-        presenter.addStation(uri)
+    fun addStation(uri: Uri, startPlay: Boolean = false) {
+        presenter.addStation(uri, startPlay)
     }
 
     //endregion
@@ -208,4 +213,13 @@ class RootActivity : MvpAppCompatActivity(), RootView, ToolbarView {
         }
     }
     //endregion
+
+    private fun createSlideTransition(): Slide {
+        val slide = Slide()
+        slide.slideEdge = Gravity.BOTTOM
+        slide.duration = 300
+        slide.addTarget(R.id.playerControlsFr)
+        slide.interpolator = FastOutSlowInInterpolator()
+        return slide
+    }
 }

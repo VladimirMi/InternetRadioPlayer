@@ -1,17 +1,19 @@
 package io.github.vladimirmi.internetradioplayer.presentation.playercontrol
 
+import android.support.v4.media.MediaMetadataCompat
 import android.support.v4.media.session.PlaybackStateCompat
 import android.support.v4.media.session.PlaybackStateCompat.*
 import com.arellomobile.mvp.InjectViewState
 import io.github.vladimirmi.internetradioplayer.R
-import io.github.vladimirmi.internetradioplayer.model.entity.PlayerMode
-import io.github.vladimirmi.internetradioplayer.model.interactor.PlayerControlsInteractor
-import io.github.vladimirmi.internetradioplayer.model.interactor.StationInteractor
-import io.github.vladimirmi.internetradioplayer.model.service.PlayerService
+import io.github.vladimirmi.internetradioplayer.data.service.*
+import io.github.vladimirmi.internetradioplayer.domain.interactor.PlayerControlsInteractor
+import io.github.vladimirmi.internetradioplayer.domain.interactor.StationInteractor
+import io.github.vladimirmi.internetradioplayer.domain.model.PlayerMode
 import io.github.vladimirmi.internetradioplayer.navigation.Router
 import io.github.vladimirmi.internetradioplayer.ui.base.BasePresenter
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.rxkotlin.addTo
+import io.reactivex.rxkotlin.subscribeBy
 import javax.inject.Inject
 
 /**
@@ -34,6 +36,10 @@ class PlayerControlPresenter
                 .subscribe { handleSessionEvent(it) }
                 .addTo(compDisp)
 
+        controlsInteractor.playbackMetaData
+                .subscribeBy { handleMetadata(it) }
+                .addTo(compDisp)
+
         controlsInteractor.playerModeObs
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe { handlePlayerMode(it) }
@@ -43,31 +49,38 @@ class PlayerControlPresenter
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe { viewState.setStation(it) }
                 .addTo(compDisp)
-
-        stationInteractor.currentIconObs
-                .observeOn(AndroidSchedulers.mainThread())
-                .subscribe { viewState.setStationIcon(it.bitmap) }
-                .addTo(compDisp)
     }
 
     private fun handleState(state: PlaybackStateCompat) {
         when (state.state) {
             STATE_PAUSED, STATE_STOPPED -> viewState.showStopped()
+            STATE_BUFFERING -> viewState.showLoading()
             STATE_PLAYING -> viewState.showPlaying()
         }
     }
 
+    private fun handleMetadata(metadata: MediaMetadataCompat) {
+        //todo fix
+//        if (metadata.notSupported()&&metadata.notEmpty()) viewState.setMetadata(metadata.album!!)
+        if (metadata.notSupported() && metadata.album != null) viewState.setMetadata(metadata.album!!)
+        else viewState.setMetadata("${metadata.artist} - ${metadata.title}")
+    }
+
     private fun handleSessionEvent(event: String) {
         when (event) {
-            PlayerService.EVENT_SESSION_PREVIOUS -> router.skipToPrevious(stationInteractor.currentStation)
-            PlayerService.EVENT_SESSION_NEXT -> router.skipToNext(stationInteractor.currentStation)
+            PlayerService.EVENT_SESSION_PREVIOUS -> {
+                viewState.showPrevious()
+                router.skipToPrevious(stationInteractor.currentStation.id)
+            }
+            PlayerService.EVENT_SESSION_NEXT -> {
+                viewState.showNext()
+                router.skipToNext(stationInteractor.currentStation.id)
+            }
         }
     }
 
     private fun handlePlayerMode(mode: PlayerMode) {
         when (mode) {
-            PlayerMode.NEXT_PREVIOUS_DISABLED -> viewState.enableNextPrevious(false)
-            PlayerMode.NEXT_PREVIOUS_ENABLED -> viewState.enableNextPrevious(true)
             PlayerMode.NORMAL_MODE -> viewState.enableEditMode(false)
             PlayerMode.EDIT_MODE -> viewState.enableEditMode(true)
         }
@@ -83,16 +96,8 @@ class PlayerControlPresenter
         }
     }
 
-    fun switchFavorite() {
-        val current = stationInteractor.currentStation
-        val copy = current.copy(favorite = !current.favorite)
-        stationInteractor.updateCurrentStation(copy)
-                .subscribe()
-                .addTo(compDisp)
-    }
-
     fun showStation() {
-        router.showStationSlide(stationInteractor.currentStation)
+        router.showStationSlide(stationInteractor.currentStation.id)
     }
 
     fun skipToPrevious() {

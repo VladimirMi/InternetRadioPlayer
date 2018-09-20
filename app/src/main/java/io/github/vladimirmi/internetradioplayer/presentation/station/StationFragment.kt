@@ -1,6 +1,5 @@
 package io.github.vladimirmi.internetradioplayer.presentation.station
 
-import android.graphics.Bitmap
 import android.os.Bundle
 import android.support.design.widget.TextInputLayout
 import android.support.v4.content.ContextCompat
@@ -18,10 +17,11 @@ import android.widget.Toast
 import com.arellomobile.mvp.presenter.InjectPresenter
 import com.arellomobile.mvp.presenter.ProvidePresenter
 import io.github.vladimirmi.internetradioplayer.R
+import io.github.vladimirmi.internetradioplayer.data.db.entity.Group
+import io.github.vladimirmi.internetradioplayer.data.db.entity.Station
 import io.github.vladimirmi.internetradioplayer.di.Scopes
 import io.github.vladimirmi.internetradioplayer.extensions.inputMethodManager
 import io.github.vladimirmi.internetradioplayer.extensions.visible
-import io.github.vladimirmi.internetradioplayer.model.entity.Station
 import io.github.vladimirmi.internetradioplayer.presentation.root.ToolbarBuilder
 import io.github.vladimirmi.internetradioplayer.presentation.root.ToolbarView
 import io.github.vladimirmi.internetradioplayer.ui.TagView
@@ -79,37 +79,39 @@ class StationFragment : BaseFragment(), StationView, BackPressListener {
 
     override fun setStation(station: Station) {
         titleEt.setText(station.name)
-        groupEt.setText(station.group)
 
         uriTv.text = station.uri
         uriTv.linkStyle(true)
 
         urlTv.text = station.url
         urlTv.linkStyle(true)
-        station.url.isNotBlank().let {
+
+        (station.url != null).let {
             urlLabelTv.visible(it)
             urlTv.visible(it)
         }
 
         bitrateTv.text = getString(R.string.unit_bitrate, station.bitrate)
-        (station.bitrate != 0).let {
+        (station.bitrate != null).let {
             bitrateLabelTv.visible(it)
             bitrateTv.visible(it)
         }
 
         sampleTv.text = getString(R.string.unit_sample_rate, station.sample)
-        (station.sample != 0).let {
+        (station.sample != null).let {
             sampleLabelTv.visible(it)
             sampleTv.visible(it)
         }
-
-        genresLabelTv.visible(station.genre.isNotEmpty())
-        genresFl.removeAllViews()
-        station.genre.forEach { genresFl.addView(TagView(context!!, it, null)) }
     }
 
-    override fun setStationIcon(icon: Bitmap) {
-//        iconIv.setImageBitmap(icon)
+    override fun setGroup(group: Group) {
+        groupEt.setText(group.getViewName(context!!))
+    }
+
+    override fun setGenres(genres: List<String>) {
+        genresLabelTv.visible(genres.isNotEmpty())
+        genresFl.removeAllViews()
+        genres.forEach { genresFl.addView(TagView(context!!, it, null)) }
     }
 
     override fun setEditMode(editMode: Boolean) {
@@ -144,12 +146,16 @@ class StationFragment : BaseFragment(), StationView, BackPressListener {
         LinkDialog.newInstance(url).show(childFragmentManager, "link_dialog")
     }
 
-    override fun openCancelEditDialog(currentStation: StationInfo, iconChanged: Boolean) {
-        if (currentStation != constructStation() || iconChanged) {
-            CancelEditDialog().show(childFragmentManager, "cancel_edit_dialog")
-        } else {
-            presenter.cancelEdit()
-        }
+    override fun openCancelEditDialog() {
+        CancelEditDialog().show(childFragmentManager, "cancel_edit_dialog")
+    }
+
+    override fun openAddShortcutDialog() {
+        AddShortcutDialog().show(childFragmentManager, "add_shortcut_dialog")
+    }
+
+    override fun cancelEdit() {
+        presenter.tryCancelEdit(constructStation())
     }
 
     override fun openCancelCreateDialog() {
@@ -170,10 +176,9 @@ class StationFragment : BaseFragment(), StationView, BackPressListener {
                     genres.add(tagView.text.toString())
                 }
         return StationInfo(
-                name = titleEt.text.toString(),
+                stationName = titleEt.text.toString(),
                 group = groupEt.text.toString(),
-                genre = genres
-        )
+                genres = genres, context = context!!)
     }
 
     private fun TextView.linkStyle(enable: Boolean) {

@@ -1,0 +1,9 @@
+<resources>
+    <string name="app_name">PlayerButton</string>
+
+    <string name="play_up">M16,10 L38,24 L38,24 L16,24 z</string>
+    <string name="play_dw">M16,24 L38,24 L38,24 L16,38 z</string>
+
+    <string name="pause_up">M12,12 L36,12 L36,20 L12,20 z</string>
+    <string name="pause_dw">M12,28 L36,28 L36,36 L12,36 z</string>
+</resources>

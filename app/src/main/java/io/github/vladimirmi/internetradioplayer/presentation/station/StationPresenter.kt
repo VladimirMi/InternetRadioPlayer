@@ -3,17 +3,17 @@ package io.github.vladimirmi.internetradioplayer.presentation.station
 import android.view.MenuItem
 import com.arellomobile.mvp.InjectViewState
 import io.github.vladimirmi.internetradioplayer.R
+import io.github.vladimirmi.internetradioplayer.domain.interactor.PlayerControlsInteractor
+import io.github.vladimirmi.internetradioplayer.domain.interactor.StationInteractor
 import io.github.vladimirmi.internetradioplayer.extensions.ValidationException
 import io.github.vladimirmi.internetradioplayer.extensions.ioToMain
-import io.github.vladimirmi.internetradioplayer.model.entity.Station
-import io.github.vladimirmi.internetradioplayer.model.interactor.PlayerControlsInteractor
-import io.github.vladimirmi.internetradioplayer.model.interactor.StationInteractor
 import io.github.vladimirmi.internetradioplayer.navigation.Router
 import io.github.vladimirmi.internetradioplayer.presentation.root.MenuItemHolder
 import io.github.vladimirmi.internetradioplayer.presentation.root.ToolbarBuilder
 import io.github.vladimirmi.internetradioplayer.ui.base.BasePresenter
 import io.reactivex.rxkotlin.addTo
 import io.reactivex.rxkotlin.subscribeBy
+import timber.log.Timber
 import javax.inject.Inject
 
 /**
@@ -22,107 +22,99 @@ import javax.inject.Inject
 
 @InjectViewState
 class StationPresenter
-@Inject constructor(private val stationInteractor: StationInteractor,
+@Inject constructor(private val interactor: StationInteractor,
                     private val controlsInteractor: PlayerControlsInteractor,
                     private val router: Router)
     : BasePresenter<StationView>() {
 
-    private var editMode = false
-    private var createMode: Boolean
-        get() = stationInteractor.isCreateMode
-        set(value) {
-            stationInteractor.isCreateMode = value
-        }
+    private var editMode: Boolean
+        get() = interactor.previousWhenEdit != null
+        set(value) = interactor.setEditMode(value)
 
     private val menuActions: (MenuItem) -> Unit = {
         when (it.itemId) {
             R.string.menu_station_edit, R.string.menu_station_save -> changeMode()
             R.string.menu_station_delete -> viewState.openRemoveDialog()
-            R.string.menu_station_shortcut -> addShortcut()
+            R.string.menu_station_shortcut -> viewState.openAddShortcutDialog()
         }
     }
 
     private val editItem = MenuItemHolder(R.string.menu_station_edit, R.drawable.ic_edit, order = 0)
     private val saveItem = MenuItemHolder(R.string.menu_station_save, R.drawable.ic_submit, order = 0, showAsAction = true)
 
-    private val toolbarBuilder = ToolbarBuilder().setToolbarTitle(stationInteractor.currentStation.name)
+    private val toolbarBuilder = ToolbarBuilder().setToolbarTitle(interactor.currentStation.name)
             .addMenuItem(MenuItemHolder(R.string.menu_station_shortcut, R.drawable.ic_shortcut, order = 1))
             .addMenuItem(MenuItemHolder(R.string.menu_station_delete, R.drawable.ic_delete, order = 2))
             .setMenuActions(menuActions)
 
     override fun onFirstViewAttach() {
-        viewState.setStation(stationInteractor.currentStation)
-        if (createMode) editMode() else viewMode()
-    }
+        viewState.setStation(interactor.currentStation)
+        viewState.setGroup(interactor.getCurrentGroup())
+        interactor.getCurrentGenres()
+                .ioToMain()
+                .subscribeBy { viewState.setGenres(it) }
+                .addTo(compDisp)
 
-    override fun attachView(view: StationView?) {
-        super.attachView(view)
-        viewState.setStationIcon(stationInteractor.currentIcon.bitmap)
+        if (editMode) editMode() else viewMode()
     }
 
     fun removeStation() {
-        val station = stationInteractor.currentStation
-        if (stationInteractor.stationList.positionOfFirst { it.id == station.id } == 0) {
-            controlsInteractor.nextStation()
-        } else {
-            controlsInteractor.previousStation()
-        }
-        stationInteractor.removeStation(station)
+        interactor.removeStation(interactor.currentStation.id)
+                .ioToMain()
                 .subscribe {
                     controlsInteractor.stop()
-                    router.exit()
+                    if (interactor.haveStations()) router.exit()
+                    else router.newRootScreen(Router.GET_STARTED_SCREEN)
                 }
                 .addTo(compDisp)
     }
 
-
     fun edit(stationInfo: StationInfo) {
-        val newStation = getNewStation(stationInfo)
-        stationInteractor.updateCurrentStation(newStation)
+        interactor.updateCurrentStation(stationInfo.stationName, stationInfo.groupName)
+                .ioToMain()
                 .subscribeBy(
                         onComplete = { viewMode() },
-                        onError = { if (it is ValidationException) viewState.showToast(it.resId) })
+                        onError = {
+                            if (it is ValidationException) viewState.showToast(it.resId)
+                            else Timber.e(it)
+                        })
                 .addTo(compDisp)
     }
 
     fun cancelEdit() {
-        viewState.setStation(stationInteractor.currentStation)
-        stationInteractor.currentStation = stationInteractor.currentStation
+        interactor.currentStation = interactor.previousWhenEdit!!
+        viewState.setStation(interactor.currentStation)
         viewMode()
     }
 
     fun create(stationInfo: StationInfo) {
-        val newStation = getNewStation(stationInfo)
-        stationInteractor.addStation(newStation)
+        interactor.addCurrentStation(stationInfo.stationName, stationInfo.groupName)
                 .ioToMain()
                 .subscribeBy(
                         onComplete = {
                             viewState.showToast(R.string.toast_add_success)
-                            controlsInteractor.editMode(false)
-                            createMode = false
-                            router.newRootScreen(Router.MEDIA_LIST_SCREEN)
+                            viewMode()
+                            router.newRootScreen(Router.STATIONS_LIST_SCREEN)
                         },
-                        onError = { if (it is ValidationException) viewState.showToast(it.resId) })
+                        onError = {
+                            if (it is ValidationException) viewState.showToast(it.resId)
+                            else Timber.e(it)
+                        })
                 .addTo(compDisp)
     }
 
     fun cancelCreate() {
-        stationInteractor.previousWhenCreate?.let { stationInteractor.currentStation = it }
-        controlsInteractor.editMode(false)
-        createMode = false
+        Timber.e("cancelCreate: ${interactor.previousWhenEdit}")
+        interactor.currentStation = interactor.previousWhenEdit!!
+        viewMode()
         router.exit()
     }
 
 
     fun onBackPressed(): Boolean {
         when {
-            createMode -> viewState.openCancelCreateDialog()
-            editMode -> {
-                val stationInfo = StationInfo.fromStation(stationInteractor.currentStation)
-                stationInteractor.iconChanged()
-                        .subscribeBy { viewState.openCancelEditDialog(stationInfo, it) }
-                        .addTo(compDisp)
-            }
+            interactor.createMode -> viewState.openCancelCreateDialog()
+            editMode -> viewState.cancelEdit()
             else -> router.backTo(null)
         }
         return true
@@ -140,11 +132,10 @@ class StationPresenter
 
         viewState.buildToolbar(toolbar)
         controlsInteractor.editMode(false)
-        viewState.setStationIcon(stationInteractor.currentIcon.bitmap)
     }
 
     private fun editMode() {
-        editMode = true
+        if (!interactor.createMode) editMode = true
         viewState.setEditMode(editMode)
         val toolbar = toolbarBuilder.removeMenuItem(editItem)
                 .addMenuItem(saveItem)
@@ -155,23 +146,23 @@ class StationPresenter
 
     private fun changeMode() {
         when {
-            createMode -> viewState.createStation()
+            interactor.createMode -> viewState.createStation()
             editMode -> viewState.editStation()
             else -> editMode()
         }
     }
 
-    private fun addShortcut() {
-        if (stationInteractor.addCurrentShortcut()) {
+    fun addShortcut(startPlay: Boolean) {
+        if (interactor.addCurrentShortcut(startPlay)) {
             viewState.showToast(R.string.toast_add_shortcut_success)
         }
     }
 
-    private fun getNewStation(info: StationInfo): Station {
-        return stationInteractor.currentStation.copy(
-                name = info.name,
-                group = info.group,
-                genre = info.genre
-        )
+    fun tryCancelEdit(stationInfo: StationInfo) {
+        if (interactor.stationChanged(stationInfo)) {
+            viewState.openCancelEditDialog()
+        } else {
+            cancelEdit()
+        }
     }
 }

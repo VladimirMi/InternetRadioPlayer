@@ -1,6 +1,6 @@
 package io.github.vladimirmi.internetradioplayer.di.module
 
-import io.github.vladimirmi.internetradioplayer.model.repository.MediaController
+import io.github.vladimirmi.internetradioplayer.data.repository.MediaController
 import io.github.vladimirmi.internetradioplayer.navigation.Router
 import io.github.vladimirmi.internetradioplayer.presentation.root.RootPresenter
 import ru.terrakok.cicerone.Cicerone

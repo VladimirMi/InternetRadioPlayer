@@ -1,26 +1,20 @@
 package io.github.vladimirmi.internetradioplayer.presentation.iconpicker
 
-import android.graphics.Bitmap
-import android.graphics.Canvas
 import android.os.Bundle
 import android.view.View
-import android.widget.RadioGroup
 import com.arellomobile.mvp.presenter.InjectPresenter
 import com.arellomobile.mvp.presenter.ProvidePresenter
 import io.github.vladimirmi.internetradioplayer.R
+import io.github.vladimirmi.internetradioplayer.data.db.entity.Icon
 import io.github.vladimirmi.internetradioplayer.di.Scopes
-import io.github.vladimirmi.internetradioplayer.extensions.onTextChanges
-import io.github.vladimirmi.internetradioplayer.extensions.setTint
-import io.github.vladimirmi.internetradioplayer.extensions.setTintExt
-import io.github.vladimirmi.internetradioplayer.model.entity.icon.IconOption
-import io.github.vladimirmi.internetradioplayer.model.entity.icon.IconResource
+import io.github.vladimirmi.internetradioplayer.extensions.waitForMeasure
 import io.github.vladimirmi.internetradioplayer.presentation.root.ToolbarBuilder
 import io.github.vladimirmi.internetradioplayer.presentation.root.ToolbarView
 import io.github.vladimirmi.internetradioplayer.ui.base.BackPressListener
 import io.github.vladimirmi.internetradioplayer.ui.base.BaseFragment
-import kotlinx.android.synthetic.main.view_icon.*
-import kotlinx.android.synthetic.main.view_icon_picker_content.*
+import kotlinx.android.synthetic.main.fragment_icon_picker.*
 import toothpick.Toothpick
+
 
 /**
  * Created by Vladimir Mikhalev 15.12.2017.
@@ -42,31 +36,21 @@ class IconPickerFragment : BaseFragment(), IconPickerView, BackPressListener {
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
-        iconTextEt.isSelected = true
-        optionsRg.setOnCheckedChangeListener { _, checkedId ->
-            presenter.iconOption = IconOption.fromId(checkedId)
-        }
-
-        (iconsRg as RadioGroup).setOnCheckedChangeListener { _, checkedId ->
-            presenter.iconResource = IconResource.fromId(checkedId)
-        }
-
         configurationsRg.setOnCheckedChangeListener { _, checkedId ->
+
             if (checkedId == R.id.configBackgroundBt) {
-                colorPicker.setColor(presenter.backgroundColor)
-                colorPicker.setOnColorChangedListener {
-                    presenter.backgroundColor = it
-                }
-            } else if (checkedId == R.id.configForegroundBt) {
-                colorPicker.setColor(presenter.foregroundColor)
-                colorPicker.setOnColorChangedListener {
-                    presenter.foregroundColor = it
-                }
+                colorPicker.setColor(presenter.currentIcon.bg)
+                colorPicker.setOnColorChangedListener(carousel::setBgColor)
+
+            } else {
+                colorPicker.setColor(presenter.currentIcon.fg)
+                colorPicker.setOnColorChangedListener(carousel::setFgColor)
             }
         }
 
-        iconTextEt.onTextChanges { presenter.text = it }
-        okBt.setOnClickListener { presenter.saveIcon(createIconBitmap()) }
+        carousel.setIconChangeListener { presenter.currentIcon = it }
+
+        okBt.setOnClickListener { presenter.saveIcon() }
         cancelBt.setOnClickListener { presenter.exit() }
     }
 
@@ -78,44 +62,17 @@ class IconPickerFragment : BaseFragment(), IconPickerView, BackPressListener {
         builder.build(activity as ToolbarView)
     }
 
-    override fun setIconImage(icon: Bitmap) {
-        iconIv.setImageBitmap(icon)
-    }
+    override fun setIcon(icon: Icon) {
+        carousel.waitForMeasure {
+            carousel.setCurrentItem(icon.res, false)
+            carousel.setBgColor(icon.bg)
+            carousel.setFgColor(icon.fg)
+        }
 
-    override fun setIconText(text: String) {
-        iconTv.text = text
-        if (iconTextEt.text.toString() != text) iconTextEt.setText(text)
-    }
-
-    override fun setForegroundColor(colorInt: Int) {
-        iconTv.setTextColor(colorInt)
-        iconIv.background.mutate().setTintExt(colorInt)
-        // todo for api 16, check others
-        iconIv.invalidate()
-        colorPicker.setColor(colorInt)
-    }
-
-    override fun setBackgroundColor(colorInt: Int) {
-        iconFr.setTint(colorInt)
-        colorPicker.setColor(colorInt)
-    }
-
-    override fun setOption(iconOption: IconOption) {
-        optionsRg.check(iconOption.id)
-        configurationsRg.check(R.id.configForegroundBt)
-    }
-
-    override fun setIconResource(iconResource: IconResource) {
-        (iconsRg as RadioGroup).check(iconResource.id)
-        iconIv.setBackgroundResource(iconResource.resId)
+        if (configurationsRg.checkedRadioButtonId == -1) {
+            configurationsRg.check(R.id.configForegroundBt)
+        }
     }
 
     //endregion
-
-
-    private fun createIconBitmap(): Bitmap {
-        val bitmap = Bitmap.createBitmap(iconFr.width, iconFr.height, Bitmap.Config.ARGB_8888)
-        iconFr.draw(Canvas(bitmap))
-        return bitmap
-    }
 }

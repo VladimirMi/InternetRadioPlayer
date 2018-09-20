@@ -1,6 +1,5 @@
 package io.github.vladimirmi.internetradioplayer.extensions
 
-import android.support.annotation.StringRes
 import io.reactivex.Completable
 import io.reactivex.Observable
 import io.reactivex.Single
@@ -25,6 +24,4 @@ fun Completable.ioToMain(): Completable {
     return subscribeOn(Schedulers.io())
             .observeOn(AndroidSchedulers.mainThread())
 }
-
-class ValidationException(@StringRes val resId: Int) : Exception()
 

@@ -104,7 +104,6 @@ class StationPresenter
     }
 
     fun cancelCreate() {
-        Timber.e("cancelCreate: ${interactor.previousWhenEdit}")
         interactor.currentStation = interactor.previousWhenEdit!!
         viewMode()
         router.exit()

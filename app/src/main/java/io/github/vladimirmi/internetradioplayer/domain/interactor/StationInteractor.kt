@@ -119,7 +119,7 @@ class StationInteractor
 
     fun getCurrentGroup(): Group {
         if (createMode) return Group.default()
-        return groups.find { it.id == currentStation.groupId }!!
+        return groups.find { it.id == currentStation.groupId } ?: Group.default()
     }
 
     fun getCurrentGenres(): Single<List<String>> {

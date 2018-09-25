@@ -62,6 +62,8 @@ class IcyDataSource(private val userAgent: String,
     }
 
     override fun close() {
+//        timerTask?.cancel()
+//        timerTask = null
         try {
             inputStream?.close()
         } finally {
@@ -70,7 +72,34 @@ class IcyDataSource(private val userAgent: String,
         }
     }
 
+//    private var readed = 0
+//    private var timerTask: TimerTask? = null
+//    private var count = 0
+//    private var kbps = 0
+
     override fun read(buffer: ByteArray?, offset: Int, readLength: Int): Int {
+//        val read = inputStream?.read(buffer, offset, readLength) ?: 0
+//        readed += read
+//
+//        if (timerTask == null) {
+//            timerTask = Timer().scheduleAtFixedRate(5000, 1000) {
+//                if (count == 0) {
+//                    count = 1
+//                    readed = 0
+//                }
+//                val calcKbps = readed * 8 / 1000
+//                if (kbps == 0) {
+//                    kbps = calcKbps
+//                } else {
+//                    count++
+//                    kbps += calcKbps
+//                }
+//                Timber.e("read: ${kbps / count}kbps")
+//                readed = 0
+//            }
+//        }
+//
+//        return read
         return inputStream?.read(buffer, offset, readLength) ?: 0
     }
 

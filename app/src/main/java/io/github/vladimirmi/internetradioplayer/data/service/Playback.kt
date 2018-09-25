@@ -9,24 +9,20 @@ import android.media.AudioManager
 import android.media.AudioManager.*
 import android.net.Uri
 import android.net.wifi.WifiManager
-import com.google.android.exoplayer2.*
+import com.google.android.exoplayer2.DefaultRenderersFactory
+import com.google.android.exoplayer2.ExoPlayerFactory
+import com.google.android.exoplayer2.SimpleExoPlayer
 import com.google.android.exoplayer2.source.ExtractorMediaSource
 import com.google.android.exoplayer2.trackselection.DefaultTrackSelector
-import com.google.android.exoplayer2.upstream.DefaultAllocator
 import com.google.android.exoplayer2.util.Util
 import io.github.vladimirmi.internetradioplayer.BuildConfig
 import io.github.vladimirmi.internetradioplayer.R
 import io.github.vladimirmi.internetradioplayer.data.source.IcyDataSource
-import timber.log.Timber
 
 private const val VOLUME_DUCK = 0.2f
 private const val VOLUME_NORMAL = 1.0f
 const val STOP_DELAY = 60000L // default stop delay 1 min
 private const val STOP_DELAY_HEADSET = 3 * 60000L // stop delay on headset unplug
-private const val MIN_BUFFER_MS = 30000
-private const val MAX_BUFFER_MS = 40000
-private const val BUFFER_FOR_PLAYBACK_MS = 4000
-private const val BUFFER_FOR_PLAYBACK_AFTER_REBUFFER_MS = 6000
 
 class Playback(private val service: PlayerService,
                private val playerCallback: PlayerCallback)
@@ -83,13 +79,9 @@ class Playback(private val service: PlayerService,
     }
 
     private fun createPlayer() {
-        Timber.d("createPlayer")
         val rendererFactory = DefaultRenderersFactory(service)
         val trackSelector = DefaultTrackSelector()
-        val loadControl = DefaultLoadControl(DefaultAllocator(true, C.DEFAULT_AUDIO_BUFFER_SIZE * 2),
-                MIN_BUFFER_MS, MAX_BUFFER_MS, BUFFER_FOR_PLAYBACK_MS, BUFFER_FOR_PLAYBACK_AFTER_REBUFFER_MS,
-                -1, true)
-        player = ExoPlayerFactory.newSimpleInstance(rendererFactory, trackSelector, loadControl)
+        player = ExoPlayerFactory.newSimpleInstance(rendererFactory, trackSelector, LoadControl())
         player?.addListener(playerCallback)
     }
 

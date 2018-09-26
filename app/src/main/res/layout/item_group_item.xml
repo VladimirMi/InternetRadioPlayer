@@ -1,9 +1,14 @@
 <?xml version="1.0" encoding="utf-8"?>
 
-<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
-             xmlns:tools="http://schemas.android.com/tools"
-             android:layout_width="match_parent"
-             android:layout_height="64dp"
+<FrameLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="64dp"
+    android:background="@drawable/shape_item_middle"
+    android:foreground="?android:attr/selectableItemBackground"
+    android:layout_marginRight="8dp"
+    android:layout_marginLeft="8dp"
     >
 
     <LinearLayout
@@ -37,10 +42,11 @@
     </LinearLayout>
 
     <View
+        android:id="@+id/itemDelimiter"
         android:layout_width="match_parent"
         android:layout_height="1dp"
         android:layout_gravity="bottom"
-        android:background="@color/grey_500"
+        android:background="@color/grey_300"
         tools:ignore="ContentDescription"
         />
 

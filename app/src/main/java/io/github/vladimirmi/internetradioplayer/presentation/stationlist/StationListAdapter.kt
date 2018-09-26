@@ -1,16 +1,22 @@
 package io.github.vladimirmi.internetradioplayer.presentation.stationlist
 
+import android.os.Build
+import android.support.v4.content.ContextCompat
 import android.support.v7.util.DiffUtil
 import android.support.v7.widget.RecyclerView
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.view.ViewOutlineProvider
 import io.github.vladimirmi.internetradioplayer.R
 import io.github.vladimirmi.internetradioplayer.data.db.entity.Group
 import io.github.vladimirmi.internetradioplayer.data.db.entity.Station
 import io.github.vladimirmi.internetradioplayer.domain.model.FlatStationsList
 import io.github.vladimirmi.internetradioplayer.extensions.color
 import io.github.vladimirmi.internetradioplayer.extensions.getBitmap
+import io.github.vladimirmi.internetradioplayer.extensions.setTintExt
+import io.github.vladimirmi.internetradioplayer.extensions.visible
+import io.github.vladimirmi.internetradioplayer.ui.FixedOutlineProvider
 import kotlinx.android.synthetic.main.item_group_item.view.*
 import kotlinx.android.synthetic.main.item_group_title.view.*
 
@@ -22,6 +28,8 @@ private const val GROUP_TITLE = 0
 private const val GROUP_ITEM = 1
 private const val PAYLOAD_SELECTED_CHANGE = "PAYLOAD_SELECTED_CHANGE"
 private const val PAYLOAD_BACKGROUND_CHANGE = "PAYLOAD_BACKGROUND_CHANGE"
+private val defaultOutline = if (Build.VERSION.SDK_INT >= 21) ViewOutlineProvider.BACKGROUND else null
+private val fixedOutline = if (Build.VERSION.SDK_INT >= 21) FixedOutlineProvider() else null
 
 class StationListAdapter(private val callback: StationItemCallback)
     : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
@@ -142,14 +150,19 @@ class StationListAdapter(private val callback: StationItemCallback)
 }
 
 open class GroupElementVH(itemView: View) : RecyclerView.ViewHolder(itemView) {
+    private var colorId = R.color.grey_50
 
     fun select(selected: Boolean, playing: Boolean) {
-        val colorId = when {
+        colorId = when {
             selected && playing -> R.color.green_200
             selected -> R.color.grey_300
             else -> R.color.grey_50
         }
-        itemView.setBackgroundColor(itemView.context.color(colorId))
+        setBgColor()
+    }
+
+    protected fun setBgColor() {
+        itemView.background.setTintExt(itemView.context.color(colorId))
     }
 }
 
@@ -163,8 +176,12 @@ class GroupTitleVH(itemView: View) : GroupElementVH(itemView) {
     private fun setExpanded(expanded: Boolean) {
         val pointer = if (expanded) R.drawable.ic_collapse else R.drawable.ic_expand
         itemView.ic_expanded.setImageResource(pointer)
-//        val bg = if (expanded) R.drawable.shape_item_top else R.drawable.shape_item_single
-//        itemView.background = ContextCompat.getDrawable(itemView.context, bg)
+        val bg = if (expanded) R.drawable.shape_item_top else R.drawable.shape_item_single
+        itemView.background = ContextCompat.getDrawable(itemView.context, bg)
+        setBgColor()
+        itemView.titleDelimiter.visible(expanded)
+        if (Build.VERSION.SDK_INT < 21) return
+        itemView.outlineProvider = defaultOutline
     }
 }
 

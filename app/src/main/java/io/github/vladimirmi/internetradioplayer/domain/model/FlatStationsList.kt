@@ -73,6 +73,11 @@ class FlatStationsList(private val flatList: MutableList<Any> = arrayListOf()) {
         return (isGroup(0) && isStation(1) && getStation(1).id == id) || (isStation(0) && getStation(0).id == id)
     }
 
+    fun isLastStationInGroup(position: Int): Boolean {
+        if (position > flatList.size - 1 || isGroup(position)) return false
+        return position == flatList.size - 1 || isGroup(position + 1)
+    }
+
     fun positionOfStation(id: String): Int {
         return flatList.indexOfFirst { it is Station && it.id == id }
     }

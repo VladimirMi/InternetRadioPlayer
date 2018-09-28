@@ -141,7 +141,8 @@ class StationListAdapter(private val callback: StationItemCallback)
 
     private fun setupGroupItemVH(position: Int, holder: GroupItemVH) {
         val station = stations.getStation(position)
-        holder.bind(station)
+
+        holder.bind(station, stations.isLastStationInGroup(position))
         holder.select(station.id == selectedStation.id, playing)
         holder.setCallback(callback, station)
     }
@@ -187,9 +188,15 @@ class GroupTitleVH(itemView: View) : GroupElementVH(itemView) {
 
 class GroupItemVH(itemView: View) : GroupElementVH(itemView) {
 
-    fun bind(station: Station) {
+    fun bind(station: Station, lastStationInGroup: Boolean) {
         itemView.name.text = station.name
         itemView.iconIv.setImageBitmap(station.icon.getBitmap(itemView.context))
+        itemView.itemDelimiter.visible(!lastStationInGroup)
+        val bg = if (lastStationInGroup) R.drawable.shape_item_bottom else R.drawable.shape_item_middle
+        itemView.background = ContextCompat.getDrawable(itemView.context, bg)
+        setBgColor()
+        if (Build.VERSION.SDK_INT < 21) return
+        itemView.outlineProvider = if (lastStationInGroup) defaultOutline else fixedOutline
     }
 
     fun setCallback(callback: StationItemCallback, station: Station) {

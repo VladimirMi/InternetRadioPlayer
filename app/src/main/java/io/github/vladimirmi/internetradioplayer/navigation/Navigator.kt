@@ -46,6 +46,7 @@ class Navigator(activity: RootActivity, containerId: Int)
             Router.STATIONS_LIST_SCREEN -> StationListFragment()
             Router.STATION_SCREEN -> StationFragment()
             Router.ICON_PICKER_SCREEN -> IconPickerFragment()
+            Router.SETTINGS_SCREEN -> IconPickerFragment()
             else -> null
         }
     }

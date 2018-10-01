@@ -30,6 +30,7 @@
     <string name="menu_station_save">Save</string>
     <string name="menu_station_shortcut">Add station shortcut</string>
     <string name="menu_add_station">Add station</string>
+    <string name="menu_settings">Settings</string>
     <string name="menu_exit">Exit</string>
 
     <string name="metadata_buffering">Loading…</string>
@@ -74,4 +75,14 @@
 
     <string name="metadata_not_available">Metadata is not available</string>
     <string name="default_group">Other</string>
+
+    <string name="setting_buffer">Initial buffer length</string>
+
+    <string name="second">%1$d second</string>
+    <string name="seconds">%1$d seconds</string>
+
+    <plurals name="plural_second">
+        <item quantity="one">@string/second</item>
+        <item quantity="other">@string/seconds</item>
+    </plurals>
 </resources>

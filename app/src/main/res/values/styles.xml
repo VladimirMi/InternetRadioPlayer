@@ -7,6 +7,7 @@
         <item name="android:textColorPrimary">@color/primaryTextColor</item>
         <item name="android:textColorSecondary">@color/secondaryTextColor</item>
         <item name="android:windowSoftInputMode">adjustPan|stateAlwaysHidden</item>
+        <item name="preferenceTheme">@style/PreferenceThemeOverlay</item>
     </style>
 
     <style name="AppTheme.Splash">

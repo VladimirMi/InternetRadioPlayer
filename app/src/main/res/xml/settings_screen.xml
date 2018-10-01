@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<android.support.v7.preference.PreferenceScreen
+    xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <io.github.vladimirmi.internetradioplayer.ui.SeekBarDialogPreference
+        android:key="BUFFER_LENGTH"
+        android:title="@string/setting_buffer"
+        android:defaultValue="3"/>
+
+</android.support.v7.preference.PreferenceScreen>

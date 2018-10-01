@@ -32,11 +32,13 @@ class StationListPresenter
     : BasePresenter<StationListView>() {
 
     private val addStationItem = MenuItemHolder(R.string.menu_add_station, R.drawable.ic_add, order = 0)
-    private val exitItem = MenuItemHolder(R.string.menu_exit, R.drawable.ic_exit, order = 1)
+    private val settingsItem = MenuItemHolder(R.string.menu_settings, R.drawable.ic_exit, order = 1)
+    private val exitItem = MenuItemHolder(R.string.menu_exit, R.drawable.ic_exit, order = 2)
 
     private val actions: (MenuItem) -> Unit = {
         when (it.itemId) {
             R.string.menu_add_station -> viewState.openAddStationDialog()
+            R.string.menu_settings -> router.navigateTo(Router.SETTINGS_SCREEN)
             R.string.menu_exit -> exit()
         }
     }
@@ -44,6 +46,7 @@ class StationListPresenter
     private val builder = ToolbarBuilder().setToolbarTitleId(R.string.app_name)
             .setMenuActions(actions)
             .addMenuItem(addStationItem)
+            .addMenuItem(settingsItem)
             .addMenuItem(exitItem)
 
 

@@ -32,7 +32,7 @@ class StationListPresenter
     : BasePresenter<StationListView>() {
 
     private val addStationItem = MenuItemHolder(R.string.menu_add_station, R.drawable.ic_add, order = 0)
-    private val settingsItem = MenuItemHolder(R.string.menu_settings, R.drawable.ic_exit, order = 1)
+    private val settingsItem = MenuItemHolder(R.string.menu_settings, R.drawable.ic_settings, order = 1)
     private val exitItem = MenuItemHolder(R.string.menu_exit, R.drawable.ic_exit, order = 2)
 
     private val actions: (MenuItem) -> Unit = {

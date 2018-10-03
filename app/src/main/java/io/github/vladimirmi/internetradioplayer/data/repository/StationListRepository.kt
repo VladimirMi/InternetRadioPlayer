@@ -28,7 +28,15 @@ class StationListRepository
 
     fun getCurrentStationId() = preferences.currentStationId
 
-    fun getAllStations(): Single<List<Station>> = db.stationDao().getAllStations()
+    fun getAllStations(): Single<List<Station>> {
+        return db.stationDao().getAllStations()
+                .toObservable()
+                .flatMapIterable { it }
+                .flatMapSingle { station ->
+                    db.stationDao().getStationGenres(station.id)
+                            .map { station.apply { genres = it.map(Genre::name) } }
+                }.toList()
+    }
 
     fun getAllGroups(): Single<List<Group>> = db.stationDao().getAllGroups()
 

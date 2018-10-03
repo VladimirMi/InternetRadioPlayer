@@ -28,7 +28,7 @@ class StationInteractor
                     private val shortcutHelper: ShortcutHelper,
                     private val migrationHelper: AppMigrationHelper) {
 
-    private val groups = arrayListOf<Group>()
+    val groups = arrayListOf<Group>()
 
     var previousWhenEdit: Station? = null
         private set

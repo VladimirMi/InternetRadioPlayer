@@ -1,4 +1,4 @@
-package io.github.vladimirmi.internetradioplayer.presentation.root
+package io.github.vladimirmi.internetradioplayer.presentation.base
 
 import android.support.annotation.StringRes
 

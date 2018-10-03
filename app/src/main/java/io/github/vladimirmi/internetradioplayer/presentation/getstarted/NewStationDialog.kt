@@ -5,8 +5,8 @@ import android.net.Uri
 import android.view.LayoutInflater
 import android.view.View
 import io.github.vladimirmi.internetradioplayer.R
+import io.github.vladimirmi.internetradioplayer.presentation.base.BaseDialogFragment
 import io.github.vladimirmi.internetradioplayer.presentation.root.RootActivity
-import io.github.vladimirmi.internetradioplayer.ui.base.BaseDialogFragment
 import kotlinx.android.synthetic.main.dialog_new_station.view.*
 
 /**

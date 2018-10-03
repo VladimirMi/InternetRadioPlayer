@@ -4,7 +4,7 @@ import android.annotation.SuppressLint
 import android.view.LayoutInflater
 import android.view.View
 import io.github.vladimirmi.internetradioplayer.R
-import io.github.vladimirmi.internetradioplayer.ui.base.BaseDialogFragment
+import io.github.vladimirmi.internetradioplayer.presentation.base.BaseDialogFragment
 import kotlinx.android.synthetic.main.dialog_add_shortcut.view.*
 
 /**

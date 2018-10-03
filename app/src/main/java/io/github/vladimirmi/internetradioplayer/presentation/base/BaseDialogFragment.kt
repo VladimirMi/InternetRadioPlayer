@@ -1,4 +1,4 @@
-package io.github.vladimirmi.internetradioplayer.ui.base
+package io.github.vladimirmi.internetradioplayer.presentation.base
 
 import android.app.AlertDialog
 import android.app.Dialog

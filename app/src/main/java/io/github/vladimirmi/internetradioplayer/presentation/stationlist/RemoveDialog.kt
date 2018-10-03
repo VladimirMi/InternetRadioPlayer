@@ -1,7 +1,7 @@
 package io.github.vladimirmi.internetradioplayer.presentation.stationlist
 
 import io.github.vladimirmi.internetradioplayer.R
-import io.github.vladimirmi.internetradioplayer.ui.base.BaseDialogFragment
+import io.github.vladimirmi.internetradioplayer.presentation.base.BaseDialogFragment
 
 /**
  * Created by Vladimir Mikhalev 28.12.2017.

@@ -1,11 +1,9 @@
 package io.github.vladimirmi.internetradioplayer.presentation.getstarted
 
-import android.view.MenuItem
 import com.arellomobile.mvp.InjectViewState
 import io.github.vladimirmi.internetradioplayer.R
-import io.github.vladimirmi.internetradioplayer.presentation.root.MenuItemHolder
-import io.github.vladimirmi.internetradioplayer.presentation.root.ToolbarBuilder
-import io.github.vladimirmi.internetradioplayer.ui.base.BasePresenter
+import io.github.vladimirmi.internetradioplayer.presentation.base.BasePresenter
+import io.github.vladimirmi.internetradioplayer.presentation.base.MenuItemHolder
 import javax.inject.Inject
 
 /**
@@ -17,14 +15,11 @@ import javax.inject.Inject
 class GetStartedPresenter
 @Inject constructor() : BasePresenter<GetStartedView>() {
 
-    private val actions: (MenuItem) -> Unit = {
-        when (it.itemId) {
-            R.string.menu_add_station -> viewState.openAddStationDialog()
-        }
-    }
-
-    private val builder = ToolbarBuilder().addMenuItem(MenuItemHolder(R.string.menu_add_station, R.drawable.ic_add))
-            .setMenuActions(actions)
+    private val builder = getStandardToolbarBuilder()
+            .addMenuItem(MenuItemHolder(R.string.menu_add_station, R.drawable.ic_add))
+            .setMenuActions {
+                if (it.itemId == R.string.menu_add_station) viewState.openAddStationDialog()
+            }
 
     override fun onFirstViewAttach() {
         viewState.buildToolbar(builder)

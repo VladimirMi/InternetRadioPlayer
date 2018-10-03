@@ -4,7 +4,7 @@ import com.arellomobile.mvp.MvpView
 import com.arellomobile.mvp.viewstate.strategy.AddToEndSingleStrategy
 import com.arellomobile.mvp.viewstate.strategy.OneExecutionStateStrategy
 import com.arellomobile.mvp.viewstate.strategy.StateStrategyType
-import io.github.vladimirmi.internetradioplayer.presentation.root.ToolbarBuilder
+import io.github.vladimirmi.internetradioplayer.presentation.base.ToolbarBuilder
 
 /**
  * Created by Vladimir Mikhalev 23.12.2017.

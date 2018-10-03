@@ -4,7 +4,7 @@ import android.content.Intent
 import android.os.Bundle
 import io.github.vladimirmi.internetradioplayer.R
 import io.github.vladimirmi.internetradioplayer.extensions.toUri
-import io.github.vladimirmi.internetradioplayer.ui.base.BaseDialogFragment
+import io.github.vladimirmi.internetradioplayer.presentation.base.BaseDialogFragment
 
 /**
  * Created by Vladimir Mikhalev 31.12.2017.

@@ -1,4 +1,4 @@
-package io.github.vladimirmi.internetradioplayer.presentation.root
+package io.github.vladimirmi.internetradioplayer.presentation.base
 
 import android.graphics.Color
 import android.support.annotation.StringRes
@@ -73,7 +73,6 @@ class MenuHolder {
     private val items = ArrayList<MenuItemHolder>()
     lateinit var actions: (MenuItem) -> Unit
     val menu: List<MenuItemHolder> get() = items
-
 
     fun addItem(item: MenuItemHolder) {
         if (!items.contains(item)) items.add(item)

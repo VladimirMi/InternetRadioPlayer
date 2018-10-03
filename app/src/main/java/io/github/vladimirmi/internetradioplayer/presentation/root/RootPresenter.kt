@@ -8,7 +8,7 @@ import io.github.vladimirmi.internetradioplayer.domain.interactor.PlayerControls
 import io.github.vladimirmi.internetradioplayer.domain.interactor.StationInteractor
 import io.github.vladimirmi.internetradioplayer.extensions.ioToMain
 import io.github.vladimirmi.internetradioplayer.navigation.Router
-import io.github.vladimirmi.internetradioplayer.ui.base.BasePresenter
+import io.github.vladimirmi.internetradioplayer.presentation.base.BasePresenter
 import io.reactivex.rxkotlin.addTo
 import io.reactivex.rxkotlin.subscribeBy
 import timber.log.Timber
@@ -36,14 +36,14 @@ class RootPresenter
                     setupRootScreen()
                     viewState.checkIntent()
                 }, onError = { Timber.e(it) })
-                .addTo(compDisp)
+                .addTo(subs)
 
         stationInteractor.currentStationObs
                 .map { !it.isNull() }
                 .distinctUntilChanged()
                 .ioToMain()
                 .subscribe(viewState::showControls)
-                .addTo(compDisp)
+                .addTo(subs)
         firstAttach = false
     }
 
@@ -76,7 +76,7 @@ class RootPresenter
                             Timber.e(it)
                             viewState.showToast(R.string.toast_add_error)
                         }
-                ).addTo(compDisp)
+                ).addTo(subs)
     }
 
     @SuppressLint("CheckResult")
@@ -91,6 +91,14 @@ class RootPresenter
         }
     }
 
+    fun openSetting() {
+        router.navigateTo(Router.SETTINGS_SCREEN)
+    }
+
+    fun exitApp() {
+        controlsInteractor.stop()
+        router.exit()
+    }
 
     private fun setupRootScreen() {
         if (stationInteractor.haveStations()) {

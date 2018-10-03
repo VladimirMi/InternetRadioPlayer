@@ -3,9 +3,8 @@ package io.github.vladimirmi.internetradioplayer.presentation.iconpicker
 import com.arellomobile.mvp.InjectViewState
 import io.github.vladimirmi.internetradioplayer.domain.interactor.StationInteractor
 import io.github.vladimirmi.internetradioplayer.navigation.Router
+import io.github.vladimirmi.internetradioplayer.presentation.base.BasePresenter
 import io.github.vladimirmi.internetradioplayer.presentation.root.RootPresenter
-import io.github.vladimirmi.internetradioplayer.presentation.root.ToolbarBuilder
-import io.github.vladimirmi.internetradioplayer.ui.base.BasePresenter
 import javax.inject.Inject
 
 /**
@@ -23,7 +22,8 @@ class IconPickerPresenter
 
     override fun onFirstViewAttach() {
         viewState.setIcon(currentIcon)
-        viewState.buildToolbar(ToolbarBuilder().setToolbarTitle(interactor.currentStation.name)
+        viewState.buildToolbar(getStandardToolbarBuilder()
+                .setToolbarTitle(interactor.currentStation.name)
                 .enableBackNavigation())
     }
 

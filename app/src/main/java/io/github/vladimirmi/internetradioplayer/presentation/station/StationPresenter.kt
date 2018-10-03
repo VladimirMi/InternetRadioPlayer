@@ -8,9 +8,8 @@ import io.github.vladimirmi.internetradioplayer.domain.interactor.StationInterac
 import io.github.vladimirmi.internetradioplayer.extensions.ValidationException
 import io.github.vladimirmi.internetradioplayer.extensions.ioToMain
 import io.github.vladimirmi.internetradioplayer.navigation.Router
-import io.github.vladimirmi.internetradioplayer.presentation.root.MenuItemHolder
-import io.github.vladimirmi.internetradioplayer.presentation.root.ToolbarBuilder
-import io.github.vladimirmi.internetradioplayer.ui.base.BasePresenter
+import io.github.vladimirmi.internetradioplayer.presentation.base.BasePresenter
+import io.github.vladimirmi.internetradioplayer.presentation.base.MenuItemHolder
 import io.reactivex.rxkotlin.addTo
 import io.reactivex.rxkotlin.subscribeBy
 import timber.log.Timber
@@ -42,7 +41,8 @@ class StationPresenter
     private val editItem = MenuItemHolder(R.string.menu_station_edit, R.drawable.ic_edit, order = 0)
     private val saveItem = MenuItemHolder(R.string.menu_station_save, R.drawable.ic_submit, order = 0, showAsAction = true)
 
-    private val toolbarBuilder = ToolbarBuilder().setToolbarTitle(interactor.currentStation.name)
+    private val toolbarBuilder = getStandardToolbarBuilder()
+            .setToolbarTitle(interactor.currentStation.name)
             .addMenuItem(MenuItemHolder(R.string.menu_station_shortcut, R.drawable.ic_shortcut, order = 1))
             .addMenuItem(MenuItemHolder(R.string.menu_station_delete, R.drawable.ic_delete, order = 2))
             .setMenuActions(menuActions)
@@ -53,7 +53,7 @@ class StationPresenter
         interactor.getCurrentGenres()
                 .ioToMain()
                 .subscribeBy { viewState.setGenres(it) }
-                .addTo(compDisp)
+                .addTo(subs)
 
         if (editMode) editMode() else viewMode()
     }
@@ -66,7 +66,7 @@ class StationPresenter
                     if (interactor.haveStations()) router.exit()
                     else router.newRootScreen(Router.GET_STARTED_SCREEN)
                 }
-                .addTo(compDisp)
+                .addTo(subs)
     }
 
     fun edit(stationInfo: StationInfo) {
@@ -78,7 +78,7 @@ class StationPresenter
                             if (it is ValidationException) viewState.showToast(it.resId)
                             else Timber.e(it)
                         })
-                .addTo(compDisp)
+                .addTo(subs)
     }
 
     fun cancelEdit() {
@@ -100,7 +100,7 @@ class StationPresenter
                             if (it is ValidationException) viewState.showToast(it.resId)
                             else Timber.e(it)
                         })
-                .addTo(compDisp)
+                .addTo(subs)
     }
 
     fun cancelCreate() {

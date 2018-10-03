@@ -6,9 +6,7 @@ import com.arellomobile.mvp.presenter.InjectPresenter
 import com.arellomobile.mvp.presenter.ProvidePresenter
 import io.github.vladimirmi.internetradioplayer.R
 import io.github.vladimirmi.internetradioplayer.di.Scopes
-import io.github.vladimirmi.internetradioplayer.presentation.root.ToolbarBuilder
-import io.github.vladimirmi.internetradioplayer.presentation.root.ToolbarView
-import io.github.vladimirmi.internetradioplayer.ui.base.BaseFragment
+import io.github.vladimirmi.internetradioplayer.presentation.base.BaseFragment
 import kotlinx.android.synthetic.main.fragment_getstarted.*
 import toothpick.Toothpick
 
@@ -32,10 +30,6 @@ class GetStartedFragment : BaseFragment(), GetStartedView {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         addNewBt.setOnClickListener { openAddStationDialog() }
-    }
-
-    override fun buildToolbar(builder: ToolbarBuilder) {
-        builder.build(activity as ToolbarView)
     }
 
     override fun openAddStationDialog() {

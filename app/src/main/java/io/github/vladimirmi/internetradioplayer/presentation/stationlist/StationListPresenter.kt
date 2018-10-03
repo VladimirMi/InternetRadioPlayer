@@ -1,7 +1,6 @@
 package io.github.vladimirmi.internetradioplayer.presentation.stationlist
 
 import android.support.v4.media.session.PlaybackStateCompat
-import android.view.MenuItem
 import com.arellomobile.mvp.InjectViewState
 import io.github.vladimirmi.internetradioplayer.R
 import io.github.vladimirmi.internetradioplayer.data.db.entity.Station
@@ -9,10 +8,8 @@ import io.github.vladimirmi.internetradioplayer.domain.interactor.PlayerControls
 import io.github.vladimirmi.internetradioplayer.domain.interactor.StationInteractor
 import io.github.vladimirmi.internetradioplayer.domain.model.FlatStationsList
 import io.github.vladimirmi.internetradioplayer.navigation.Router
-import io.github.vladimirmi.internetradioplayer.presentation.root.MenuItemHolder
-import io.github.vladimirmi.internetradioplayer.presentation.root.RootPresenter
-import io.github.vladimirmi.internetradioplayer.presentation.root.ToolbarBuilder
-import io.github.vladimirmi.internetradioplayer.ui.base.BasePresenter
+import io.github.vladimirmi.internetradioplayer.presentation.base.BasePresenter
+import io.github.vladimirmi.internetradioplayer.presentation.base.MenuItemHolder
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.rxkotlin.addTo
 import io.reactivex.rxkotlin.subscribeBy
@@ -25,47 +22,33 @@ import javax.inject.Inject
 
 @InjectViewState
 class StationListPresenter
-@Inject constructor(private val rootPresenter: RootPresenter,
-                    private val interactor: StationInteractor,
+@Inject constructor(private val interactor: StationInteractor,
                     private val controlsInteractor: PlayerControlsInteractor,
                     private val router: Router)
     : BasePresenter<StationListView>() {
 
-    private val addStationItem = MenuItemHolder(R.string.menu_add_station, R.drawable.ic_add, order = 0)
-    private val settingsItem = MenuItemHolder(R.string.menu_settings, R.drawable.ic_settings, order = 1)
-    private val exitItem = MenuItemHolder(R.string.menu_exit, R.drawable.ic_exit, order = 2)
-
-    private val actions: (MenuItem) -> Unit = {
-        when (it.itemId) {
-            R.string.menu_add_station -> viewState.openAddStationDialog()
-            R.string.menu_settings -> router.navigateTo(Router.SETTINGS_SCREEN)
-            R.string.menu_exit -> exit()
-        }
-    }
-
-    private val builder = ToolbarBuilder().setToolbarTitleId(R.string.app_name)
-            .setMenuActions(actions)
-            .addMenuItem(addStationItem)
-            .addMenuItem(settingsItem)
-            .addMenuItem(exitItem)
-
+    private val builder = getStandardToolbarBuilder()
+            .addMenuItem(MenuItemHolder(R.string.menu_add_station, R.drawable.ic_add, order = 0))
+            .setMenuActions {
+                if (it.itemId == R.string.menu_add_station) viewState.openAddStationDialog()
+            }
 
     override fun onFirstViewAttach() {
         interactor.stationsListObs
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribeBy { viewState.setStations(it) }
-                .addTo(compDisp)
+                .addTo(subs)
 
         interactor.currentStationObs
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe {
                     viewState.buildToolbar(builder.setToolbarTitle(it.name))
                     viewState.selectStation(it)
-                }.addTo(compDisp)
+                }.addTo(subs)
 
         controlsInteractor.playbackStateObs
                 .subscribe { viewState.setPlaying(it.state == PlaybackStateCompat.STATE_PLAYING) }
-                .addTo(compDisp)
+                .addTo(subs)
     }
 
     fun selectStation(station: Station) {
@@ -76,14 +59,14 @@ class StationListPresenter
         interactor.expandOrCollapseGroup(id)
                 .subscribeOn(Schedulers.io())
                 .subscribe()
-                .addTo(compDisp)
+                .addTo(subs)
     }
 
     fun removeStation() {
         interactor.removeStation(interactor.currentStation.id)
                 .subscribeOn(Schedulers.io())
                 .subscribe()
-                .addTo(compDisp)
+                .addTo(subs)
     }
 
     fun showStation(station: Station) {
@@ -91,16 +74,11 @@ class StationListPresenter
         router.showStationSlide(station.id)
     }
 
-    private fun exit() {
-        controlsInteractor.stop()
-        router.exit()
-    }
-
     fun moveGroupElements(stations: FlatStationsList) {
         interactor.moveGroupElements(stations)
                 .subscribeOn(Schedulers.io())
                 .subscribe()
-                .addTo(compDisp)
+                .addTo(subs)
     }
 }
 

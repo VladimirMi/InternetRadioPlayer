@@ -18,7 +18,9 @@ import javax.inject.Inject
  */
 
 class AppMigrationHelper
-@Inject constructor(context: Context, private val gson: Gson, private val repository: StationListRepository) {
+@Inject constructor(context: Context,
+                    private val gson: Gson,
+                    private val repository: StationListRepository) {
 
     private val appDir: File? = context.getExternalFilesDir(null)
     private val groups = arrayListOf<Group>()

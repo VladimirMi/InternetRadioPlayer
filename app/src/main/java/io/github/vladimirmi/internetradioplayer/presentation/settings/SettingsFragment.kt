@@ -25,7 +25,6 @@ class SettingsFragment : PreferenceFragmentCompat() {
         val backupRestoreHelper = Scopes.app.getInstance(BackupRestoreHelper::class.java)
         findPreference("BACKUP_STATIONS").setOnPreferenceClickListener {
             val uri = backupRestoreHelper.createBackup()
-            Timber.e("onCreatePreferences: $uri")
             val intent = ShareCompat.IntentBuilder.from(activity)
                     .setType("text/xml")
                     .setSubject("Subject")
@@ -37,6 +36,9 @@ class SettingsFragment : PreferenceFragmentCompat() {
             true
         }
         findPreference("RESTORE_STATIONS").setOnPreferenceClickListener {
+            val intent = Intent(Intent.ACTION_GET_CONTENT)
+            intent.type = "text/xml"
+            startActivityForResult(intent, 999)
 
             true
         }
@@ -52,4 +54,7 @@ class SettingsFragment : PreferenceFragmentCompat() {
         }
     }
 
+    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+        Timber.e("onActivityResult: $requestCode $resultCode $data")
+    }
 }

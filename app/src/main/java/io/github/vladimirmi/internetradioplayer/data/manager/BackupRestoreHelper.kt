@@ -7,14 +7,15 @@ import android.util.Xml
 import io.github.vladimirmi.internetradioplayer.BuildConfig
 import io.github.vladimirmi.internetradioplayer.data.db.entity.Group
 import io.github.vladimirmi.internetradioplayer.data.db.entity.Station
-import io.github.vladimirmi.internetradioplayer.data.repository.StationListRepository
 import io.github.vladimirmi.internetradioplayer.domain.interactor.StationInteractor
 import io.github.vladimirmi.internetradioplayer.extensions.clear
-import io.reactivex.rxkotlin.Singles
+import org.xmlpull.v1.XmlPullParser
 import org.xmlpull.v1.XmlSerializer
 import java.io.File
+import java.io.InputStream
 import java.io.StringWriter
 import javax.inject.Inject
+import org.xmlpull.v1.XmlPullParser.FEATURE_PROCESS_NAMESPACES
 
 /**
  * Created by Vladimir Mikhalev 02.10.2018.
@@ -24,8 +25,10 @@ class BackupRestoreHelper
 @Inject constructor(private val interactor: StationInteractor,
                     private val context: Context) {
 
+    private val ns: String? = null
+
     fun createBackup(): Uri {
-        val file = File(context.cacheDir, "backup.xml")
+        val file = File(context.cacheDir, "stations_backup.xml")
         if (file.exists()) file.clear()
         file.writeText(createXml(interactor.groups))
 
@@ -38,13 +41,13 @@ class BackupRestoreHelper
         serializer.setOutput(writer)
 
         serializer.startDocument("UTF-8", true)
-        serializer.startTag("", "data")
-        serializer.attribute("", "version", "1")
+        serializer.startTag(ns, "data")
+        serializer.attribute(ns, "version", "1")
 
         writeStations(serializer, groups)
         writeGroups(serializer, groups)
 
-        serializer.endTag("", "data")
+        serializer.endTag(ns, "data")
         serializer.endDocument()
 
         return writer.toString()
@@ -52,37 +55,52 @@ class BackupRestoreHelper
 
     private fun writeStations(serializer: XmlSerializer, groups: List<Group>) {
         fun writeStation(station: Station, group: String) {
-            serializer.startTag("", "station")
+            serializer.startTag(ns, "station")
             with(station) {
-                serializer.attribute("", "name", name)
-                serializer.attribute("", "group", group)
-                serializer.attribute("", "streamUri", uri)
-                url?.let { serializer.attribute("", "url", url) }
-                bitrate?.let { serializer.attribute("", "bitrate", bitrate.toString()) }
-                sample?.let { serializer.attribute("", "sample", sample.toString()) }
-                serializer.attribute("", "genre", genres.joinToString())
-                serializer.attribute("", "order", order.toString())
+                serializer.attribute(ns, "name", name)
+                serializer.attribute(ns, "group", group)
+                serializer.attribute(ns, "streamUri", uri)
+                url?.let { serializer.attribute(ns, "url", url) }
+                bitrate?.let { serializer.attribute(ns, "bitrate", bitrate.toString()) }
+                sample?.let { serializer.attribute(ns, "sample", sample.toString()) }
+                serializer.attribute(ns, "genre", genres.joinToString())
+                serializer.attribute(ns, "order", order.toString())
+                serializer.attribute(ns, "icon_res", icon.res.toString())
+                serializer.attribute(ns, "icon_bg", icon.bg.toString())
+                serializer.attribute(ns, "icon_fg", icon.fg.toString())
             }
-            serializer.endTag("", "station")
+            serializer.endTag(ns, "station")
         }
 
-        serializer.startTag("", "stations")
+        serializer.startTag(ns, "stations")
         groups.forEach { group -> group.stations.forEach { writeStation(it, group.name) } }
-        serializer.endTag("", "stations")
+        serializer.endTag(ns, "stations")
     }
 
     private fun writeGroups(serializer: XmlSerializer, groups: List<Group>) {
-        serializer.startTag("", "groups")
+        serializer.startTag(ns, "groups")
         groups.forEach { group ->
-            serializer.startTag("", "group")
+            serializer.startTag(ns, "group")
             with(group) {
-                serializer.attribute("", "name", name)
-                serializer.attribute("", "order", order.toString())
-                serializer.attribute("", "expanded", expanded.toString())
+                serializer.attribute(ns, "name", name)
+                serializer.attribute(ns, "order", order.toString())
+                serializer.attribute(ns, "expanded", expanded.toString())
             }
-            serializer.endTag("", "group")
+            serializer.endTag(ns, "group")
         }
-        serializer.endTag("", "groups")
+        serializer.endTag(ns, "groups")
+    }
+
+
+
+    fun restoreBackup(inS: InputStream) {
+        val parser = Xml.newPullParser()
+        parser.setFeature(XmlPullParser.FEATURE_PROCESS_NAMESPACES, false)
+
+        inS.use {
+            parser.setInput(it, null)
+            parser.nextTag()
+        }
     }
 }
 

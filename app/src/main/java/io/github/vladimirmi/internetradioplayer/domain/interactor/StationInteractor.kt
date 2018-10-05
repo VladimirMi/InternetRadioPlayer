@@ -150,6 +150,7 @@ class StationInteractor
         return addGroup(groupName).flatMapCompletable { group ->
             val newStation = currentStation.copy(groupId = group.id, order = group.stations.size)
             newStation.genres = currentStation.genres
+            newStation.groupName = groupName
             stationRepository.addStation(newStation).doOnComplete {
                 group.stations.add(newStation)
                 currentStation = newStation

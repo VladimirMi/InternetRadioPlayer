@@ -27,6 +27,7 @@ data class Station(
 ) {
 
     @Ignore var genres: List<String> = listOf()
+    @Ignore var groupName: String = Group.DEFAULT_NAME
 
     @Ignore constructor(name: String,
                         uri: String,

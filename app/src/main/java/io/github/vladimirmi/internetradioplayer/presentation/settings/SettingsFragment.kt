@@ -10,8 +10,9 @@ import io.github.vladimirmi.internetradioplayer.ui.SeekBarDialogPreference
 import android.content.Intent
 import android.support.v4.app.ShareCompat
 import io.github.vladimirmi.internetradioplayer.data.manager.BackupRestoreHelper
+import io.github.vladimirmi.internetradioplayer.extensions.ioToMain
+import io.reactivex.rxkotlin.subscribeBy
 import timber.log.Timber
-
 
 /**
  * Created by Vladimir Mikhalev 30.09.2018.
@@ -19,10 +20,11 @@ import timber.log.Timber
 
 class SettingsFragment : PreferenceFragmentCompat() {
 
+    private val backupRestoreHelper = Scopes.app.getInstance(BackupRestoreHelper::class.java)
+
     override fun onCreatePreferences(savedInstanceState: Bundle?, rootKey: String?) {
         addPreferencesFromResource(R.xml.settings_screen)
 
-        val backupRestoreHelper = Scopes.app.getInstance(BackupRestoreHelper::class.java)
         findPreference("BACKUP_STATIONS").setOnPreferenceClickListener {
             val uri = backupRestoreHelper.createBackup()
             val intent = ShareCompat.IntentBuilder.from(activity)
@@ -56,5 +58,8 @@ class SettingsFragment : PreferenceFragmentCompat() {
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         Timber.e("onActivityResult: $requestCode $resultCode $data")
+        backupRestoreHelper.restoreBackup(context!!.contentResolver.openInputStream(data!!.data))
+                .ioToMain()
+                .subscribeBy(onError = { Timber.e(it)})
     }
 }

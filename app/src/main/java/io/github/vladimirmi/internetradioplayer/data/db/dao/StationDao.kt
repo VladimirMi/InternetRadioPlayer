@@ -20,6 +20,9 @@ interface StationDao {
     @Query("SELECT * FROM `group` ORDER BY `order` ASC")
     fun getAllGroups(): Single<List<Group>>
 
+    @Query("SELECT * FROM `group` WHERE name = :groupName")
+    fun getGroupByName(groupName: String): Group
+
     @Query("SELECT * FROM genre")
     fun getAllGenres(): Single<List<Genre>>
 
@@ -29,13 +32,13 @@ interface StationDao {
     @Query("SELECT * FROM genre INNER JOIN station_genre_join ON genre.name = genreName WHERE stationId = :id")
     fun getStationGenres(id: String): Single<List<Genre>>
 
-    @Insert
+    @Insert(onConflict = OnConflictStrategy.IGNORE)
     fun insertStation(station: Station): Long
 
     @Insert(onConflict = OnConflictStrategy.IGNORE)
     fun insertGenres(genres: List<Genre>)
 
-    @Insert(onConflict = OnConflictStrategy.IGNORE)
+    @Insert(onConflict = OnConflictStrategy.REPLACE)
     fun insertStationGenre(stationGenreJoins: List<StationGenreJoin>)
 
     @Insert(onConflict = OnConflictStrategy.IGNORE)

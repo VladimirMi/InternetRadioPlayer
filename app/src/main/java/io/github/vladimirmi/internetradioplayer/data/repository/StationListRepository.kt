@@ -68,7 +68,12 @@ class StationListRepository
 
     fun addStation(station: Station): Completable {
         return Completable.fromCallable {
-            db.stationDao().insertStation(station)
+            val group = db.stationDao().getGroupByName(station.groupName)
+            val newStation = if (station.groupId != group.id) {
+                station.copy(groupId = group.id)
+            } else station
+
+            db.stationDao().insertStation(newStation)
             val genres = station.genres.map(::Genre)
             db.stationDao().insertGenres(genres)
             db.stationDao().insertStationGenre(genres.map { StationGenreJoin(station.id, it.name) })

@@ -8,7 +8,8 @@ import java.util.*
  */
 
 //todo create group_id index
-@Entity(foreignKeys = [ForeignKey(entity = Group::class,
+@Entity(foreignKeys = [ForeignKey(
+        entity = Group::class,
         parentColumns = ["id"],
         childColumns = ["group_id"],
         onDelete = ForeignKey.CASCADE)],

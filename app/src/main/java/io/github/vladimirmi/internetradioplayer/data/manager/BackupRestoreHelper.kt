@@ -18,6 +18,7 @@ import timber.log.Timber
 import java.io.File
 import java.io.InputStream
 import java.io.StringWriter
+import java.util.*
 import javax.inject.Inject
 
 /**
@@ -63,7 +64,6 @@ class BackupRestoreHelper
         fun writeStation(station: Station, group: String) {
             serializer.startTag(ns, "station")
             with(station) {
-                serializer.attribute(ns, "id", id)
                 serializer.attribute(ns, "name", name)
                 serializer.attribute(ns, "group", group)
                 serializer.attribute(ns, "streamUri", uri)
@@ -89,7 +89,6 @@ class BackupRestoreHelper
         groups.forEach { group ->
             serializer.startTag(ns, "group")
             with(group) {
-                serializer.attribute(ns, "id", id)
                 serializer.attribute(ns, "name", name)
                 serializer.attribute(ns, "order", order.toString())
                 serializer.attribute(ns, "expanded", expanded.toString())
@@ -108,7 +107,6 @@ class BackupRestoreHelper
             inS.use {
                 parser.setInput(it, null)
                 while (parser.next() != XmlPullParser.END_DOCUMENT) {
-                    Timber.e("restoreBackup: ${parser.eventType} ${parser.name}")
 
                     if (parser.eventType == XmlPullParser.START_TAG) {
                         if (parser.name == "stations") stations.addAll(parseStations(parser))
@@ -129,12 +127,11 @@ class BackupRestoreHelper
     }
 
     private fun parseStations(parser: XmlPullParser): List<Station> {
-        Timber.e("parseStations: ${parser.eventType} ${parser.name}")
         val list = arrayListOf<Station>()
         while (!(parser.next() == XmlPullParser.END_TAG && parser.name == "stations")) {
             if (parser.eventType == XmlPullParser.START_TAG && parser.name == "station") {
                 val station = Station(
-                        id = parser.getAttributeValue(ns, "id"),
+                        id = UUID.randomUUID().toString(),
                         groupId = Group.DEFAULT_ID,
                         name = parser.getAttributeValue(ns, "name"),
                         uri = parser.getAttributeValue(ns, "streamUri"),
@@ -157,7 +154,6 @@ class BackupRestoreHelper
     }
 
     private fun parseGroups(parser: XmlPullParser): List<Group> {
-        Timber.e("parseGroups: ")
         val list = arrayListOf<Group>()
         while (!(parser.next() == XmlPullParser.END_TAG && parser.name == "groups")) {
             if (parser.eventType == XmlPullParser.START_TAG && parser.name == "group") {
@@ -166,7 +162,7 @@ class BackupRestoreHelper
                     list.add(Group.default())
                     continue
                 }
-                val id = parser.getAttributeValue(ns, "id")
+                val id = UUID.randomUUID().toString()
                 val expanded = parser.getAttributeValue(ns, "expanded")!!.toBoolean()
                 val order = parser.getAttributeValue(ns, "order").toInt()
                 val group = Group(id, name, expanded, order)

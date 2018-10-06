@@ -52,7 +52,7 @@ class StationInteractor
         return migrationHelper.tryMigrate()
                 .andThen(buildGroupsList()).doOnComplete {
                     val savedCurrentStation = getStation(stationRepository.getCurrentStationId())
-                    currentStation = savedCurrentStation ?: Station.nullObj()
+                    currentStation = savedCurrentStation ?: stationsList.getFirstStation() ?: Station.nullObj()
                 }
     }
 
@@ -128,9 +128,7 @@ class StationInteractor
                 .map { it.map(Genre::name) }
     }
 
-    fun haveStations(): Boolean {
-        return groups.fold(0) { acc, group -> acc + group.stations.size } != 0
-    }
+    fun haveStations(): Boolean = stationsList.haveStations()
 
     fun createStation(uri: Uri): Single<Station> {
         return stationRepository.createStation(uri)

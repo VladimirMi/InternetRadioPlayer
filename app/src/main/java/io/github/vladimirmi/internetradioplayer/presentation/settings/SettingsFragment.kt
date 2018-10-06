@@ -10,8 +10,11 @@ import io.github.vladimirmi.internetradioplayer.R
 import io.github.vladimirmi.internetradioplayer.data.manager.BACKUP_TYPE
 import io.github.vladimirmi.internetradioplayer.data.manager.BackupRestoreHelper
 import io.github.vladimirmi.internetradioplayer.di.Scopes
+import io.github.vladimirmi.internetradioplayer.domain.interactor.StationInteractor
 import io.github.vladimirmi.internetradioplayer.extensions.ioToMain
 import io.github.vladimirmi.internetradioplayer.extensions.startActivitySafe
+import io.github.vladimirmi.internetradioplayer.navigation.Router
+import io.github.vladimirmi.internetradioplayer.presentation.base.BackPressListener
 import io.github.vladimirmi.internetradioplayer.ui.SeekBarDialogPreference
 import io.reactivex.rxkotlin.subscribeBy
 import timber.log.Timber
@@ -22,9 +25,10 @@ import timber.log.Timber
 
 private const val PICK_BACKUP_REQUEST_CODE = 999
 
-class SettingsFragment : PreferenceFragmentCompat() {
+class SettingsFragment : PreferenceFragmentCompat(), BackPressListener {
 
     private val backupRestoreHelper = Scopes.app.getInstance(BackupRestoreHelper::class.java)
+    private val router = Scopes.rootActivity.getInstance(Router::class.java)
 
     override fun onCreatePreferences(savedInstanceState: Bundle?, rootKey: String?) {
         addPreferencesFromResource(R.xml.settings_screen)
@@ -65,8 +69,14 @@ class SettingsFragment : PreferenceFragmentCompat() {
         if (requestCode == PICK_BACKUP_REQUEST_CODE && resultCode == Activity.RESULT_OK
                 && data?.data != null) {
             backupRestoreHelper.restoreBackup(context!!.contentResolver.openInputStream(data.data))
+                    .andThen(Scopes.app.getInstance(StationInteractor::class.java).initStations())
                     .ioToMain()
+                    .doOnComplete { router.newRootScreen(Router.STATIONS_LIST_SCREEN) }
                     .subscribeBy(onError = { Timber.e(it) })
         }
+    }
+
+    override fun onBackPressed(): Boolean {
+        return false
     }
 }

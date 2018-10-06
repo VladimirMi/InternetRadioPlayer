@@ -26,7 +26,7 @@ fun Context.getDisplayMetrics(): DisplayMetrics {
     return displayMetrics
 }
 
-fun Context.startActivitySafe(intent: Intent, onError: () -> Unit = {}) {
+inline fun Context.startActivitySafe(intent: Intent, onError: () -> Unit = {}) {
     if (packageManager.resolveActivity(intent, 0) != null) {
         startActivity(intent)
     } else {

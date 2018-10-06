@@ -1,5 +1,6 @@
 <resources>
     <string name="app_name" translatable="false">Radio Player</string>
+    <string name="full_app_name" translatable="false">Internet Radio Player</string>
 
     <string name="toast_add_success">Station added</string>
     <string name="toast_add_error">Could not add station</string>
@@ -80,6 +81,7 @@
 
     <string name="second">%1$d second</string>
     <string name="seconds">%1$d seconds</string>
+    <string name="chooser_backup">Save with</string>
 
     <plurals name="plural_second">
         <item quantity="one">@string/second</item>

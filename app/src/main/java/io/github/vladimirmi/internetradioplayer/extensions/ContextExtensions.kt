@@ -2,6 +2,7 @@ package io.github.vladimirmi.internetradioplayer.extensions
 
 import android.app.DownloadManager
 import android.content.Context
+import android.content.Intent
 import android.support.annotation.ColorRes
 import android.support.v4.content.ContextCompat
 import android.util.DisplayMetrics
@@ -23,6 +24,14 @@ fun Context.getDisplayMetrics(): DisplayMetrics {
     val displayMetrics = DisplayMetrics()
     (this.getSystemService(Context.WINDOW_SERVICE) as WindowManager).defaultDisplay.getMetrics(displayMetrics)
     return displayMetrics
+}
+
+fun Context.startActivitySafe(intent: Intent, onError: () -> Unit = {}) {
+    if (packageManager.resolveActivity(intent, 0) != null) {
+        startActivity(intent)
+    } else {
+        onError.invoke()
+    }
 }
 
 val Context.downloadManager: DownloadManager

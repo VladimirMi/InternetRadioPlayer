@@ -1,5 +1,6 @@
 package io.github.vladimirmi.internetradioplayer.data.service
 
+import android.content.SharedPreferences
 import com.google.android.exoplayer2.C
 import com.google.android.exoplayer2.DefaultLoadControl
 import com.google.android.exoplayer2.Renderer
@@ -21,19 +22,24 @@ class LoadControl
     : DefaultLoadControl(DefaultAllocator(true, C.DEFAULT_AUDIO_BUFFER_SIZE)) {
 
     private var targetBufferSize = 0
-    private var initialBufferLength = prefs.initialBufferLength * 1_000_000L
-    private var bufferLength = prefs.bufferLength * 1_000_000L
+    private var initialBufferLength = prefs.initialBufferLength * 1000000L
+    private var bufferLength = prefs.bufferLength * 1000000L
     private var isBuffering: Boolean = false
 
-    init {
-        prefs.sharedPreferences.registerOnSharedPreferenceChangeListener { _, key ->
-            if (key == INITIAL_BUFFER_LENGTH_KEY) {
-                initialBufferLength = prefs.initialBufferLength * 1000000L
 
-            } else if (key == BUFFER_LENGTH_KEY) {
-                bufferLength = prefs.bufferLength * 1000000L
-            }
+    private val listener = SharedPreferences.OnSharedPreferenceChangeListener { _, key ->
+        if (key == INITIAL_BUFFER_LENGTH_KEY) {
+            initialBufferLength = prefs.initialBufferLength * 1000000L
+            reset(true)
+
+        } else if (key == BUFFER_LENGTH_KEY) {
+            bufferLength = prefs.bufferLength * 1000000L
+            reset(true)
         }
+    }
+
+    init {
+        prefs.sharedPreferences.registerOnSharedPreferenceChangeListener(listener)
     }
 
     override fun onTracksSelected(renderers: Array<Renderer>, trackGroups: TrackGroupArray,

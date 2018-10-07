@@ -6,6 +6,12 @@
 
         <io.github.vladimirmi.internetradioplayer.ui.SeekBarDialogPreference
             android:defaultValue="3"
+            android:key="INITIAL_BUFFER_LENGTH"
+            android:title="@string/setting_initial_buffer"
+            />
+
+        <io.github.vladimirmi.internetradioplayer.ui.SeekBarDialogPreference
+            android:defaultValue="6"
             android:key="BUFFER_LENGTH"
             android:title="@string/setting_buffer"
             />

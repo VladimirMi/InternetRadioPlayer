@@ -77,7 +77,8 @@
     <string name="metadata_not_available">Metadata is not available</string>
     <string name="default_group">Other</string>
 
-    <string name="setting_buffer">Initial buffer length</string>
+    <string name="setting_initial_buffer">Initial buffer duration</string>
+    <string name="setting_buffer">Buffer duration</string>
 
     <string name="second">%1$d second</string>
     <string name="seconds">%1$d seconds</string>

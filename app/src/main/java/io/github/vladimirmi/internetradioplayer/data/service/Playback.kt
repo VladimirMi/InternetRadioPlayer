@@ -18,6 +18,7 @@ import com.google.android.exoplayer2.util.Util
 import io.github.vladimirmi.internetradioplayer.BuildConfig
 import io.github.vladimirmi.internetradioplayer.R
 import io.github.vladimirmi.internetradioplayer.data.source.IcyDataSource
+import io.github.vladimirmi.internetradioplayer.di.Scopes
 
 private const val VOLUME_DUCK = 0.2f
 private const val VOLUME_NORMAL = 1.0f
@@ -31,6 +32,7 @@ class Playback(private val service: PlayerService,
     private var playAgainOnFocus = false
     private var playAgainOnHeadset = false
     private var player: SimpleExoPlayer? = null
+    private val loadControl = Scopes.app.getInstance(LoadControl::class.java)
 
     private val wifiLock = (service.applicationContext.getSystemService(Context.WIFI_SERVICE) as WifiManager)
             .createWifiLock(WifiManager.WIFI_MODE_FULL, BuildConfig.APPLICATION_ID)
@@ -81,7 +83,7 @@ class Playback(private val service: PlayerService,
     private fun createPlayer() {
         val rendererFactory = DefaultRenderersFactory(service)
         val trackSelector = DefaultTrackSelector()
-        player = ExoPlayerFactory.newSimpleInstance(rendererFactory, trackSelector, LoadControl())
+        player = ExoPlayerFactory.newSimpleInstance(rendererFactory, trackSelector, loadControl)
         player?.addListener(playerCallback)
     }
 

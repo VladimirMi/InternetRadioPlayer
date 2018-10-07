@@ -41,6 +41,7 @@ class SeekBarDialogPreference : DialogPreference {
         return R.layout.pref_seekbar
     }
 
-    fun createSummary(progress: Int): String =
-            context.resources.getQuantityString(R.plurals.plural_second, progress, progress)
+    fun createSummary(progress: Int): String {
+        return context.resources.getQuantityString(R.plurals.plural_second, progress, progress)
+    }
 }

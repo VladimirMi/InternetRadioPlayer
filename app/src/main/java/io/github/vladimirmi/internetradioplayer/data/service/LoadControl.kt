@@ -2,19 +2,83 @@ package io.github.vladimirmi.internetradioplayer.data.service
 
 import com.google.android.exoplayer2.C
 import com.google.android.exoplayer2.DefaultLoadControl
+import com.google.android.exoplayer2.Renderer
+import com.google.android.exoplayer2.source.TrackGroupArray
+import com.google.android.exoplayer2.trackselection.TrackSelectionArray
 import com.google.android.exoplayer2.upstream.DefaultAllocator
+import com.google.android.exoplayer2.util.Util
+import io.github.vladimirmi.internetradioplayer.data.manager.BUFFER_LENGTH_KEY
+import io.github.vladimirmi.internetradioplayer.data.manager.INITIAL_BUFFER_LENGTH_KEY
+import io.github.vladimirmi.internetradioplayer.data.manager.Preferences
+import javax.inject.Inject
 
 /**
  * Created by Vladimir Mikhalev 22.09.2018.
  */
 
-private const val MIN_BUFFER_MS = 30000
-private const val MAX_BUFFER_MS = 40000
-private const val BUFFER_FOR_PLAYBACK_MS = 4000
-private const val BUFFER_FOR_PLAYBACK_AFTER_REBUFFER_MS = 6000
+class LoadControl
+@Inject constructor(private val prefs: Preferences)
+    : DefaultLoadControl(DefaultAllocator(true, C.DEFAULT_AUDIO_BUFFER_SIZE)) {
 
-class LoadControl : DefaultLoadControl(
-        DefaultAllocator(true, C.DEFAULT_AUDIO_BUFFER_SIZE),
-        MIN_BUFFER_MS, MAX_BUFFER_MS,
-        BUFFER_FOR_PLAYBACK_MS, BUFFER_FOR_PLAYBACK_AFTER_REBUFFER_MS,
-        -1, true)
+    private var targetBufferSize = 0
+    private var initialBufferLength = prefs.initialBufferLength * 1_000_000L
+    private var bufferLength = prefs.bufferLength * 1_000_000L
+    private var isBuffering: Boolean = false
+
+    init {
+        prefs.sharedPreferences.registerOnSharedPreferenceChangeListener { _, key ->
+            if (key == INITIAL_BUFFER_LENGTH_KEY) {
+                initialBufferLength = prefs.initialBufferLength * 1000000L
+
+            } else if (key == BUFFER_LENGTH_KEY) {
+                bufferLength = prefs.bufferLength * 1000000L
+            }
+        }
+    }
+
+    override fun onTracksSelected(renderers: Array<Renderer>, trackGroups: TrackGroupArray,
+                                  trackSelections: TrackSelectionArray) {
+        targetBufferSize = calculateTargetBufferSize(renderers, trackSelections)
+        (allocator as DefaultAllocator).setTargetBufferSize(targetBufferSize)
+    }
+
+    override fun shouldContinueLoading(bufferedDurationUs: Long, playbackSpeed: Float): Boolean {
+        val targetBufferSizeReached = allocator.totalBytesAllocated >= targetBufferSize
+
+        isBuffering = (bufferedDurationUs < DEFAULT_MIN_BUFFER_MS // below low watermark
+                || (bufferedDurationUs <= DEFAULT_MAX_BUFFER_MS // between watermarks
+                && isBuffering
+                && !targetBufferSizeReached))
+
+        return isBuffering
+    }
+
+    override fun shouldStartPlayback(bufferedDurationUs: Long,
+                                     playbackSpeed: Float,
+                                     rebuffering: Boolean): Boolean {
+
+        val bufferDuration = Util.getPlayoutDurationForMediaDuration(bufferedDurationUs, playbackSpeed)
+        val minBufferDuration = if (rebuffering) bufferLength else initialBufferLength
+        return minBufferDuration <= 0 || bufferDuration >= minBufferDuration
+    }
+
+    override fun onPrepared() {
+        reset(false)
+    }
+
+    override fun onStopped() {
+        reset(true)
+    }
+
+    override fun onReleased() {
+        reset(true)
+    }
+
+    private fun reset(resetAllocator: Boolean) {
+        targetBufferSize = 0
+        isBuffering = false
+        if (resetAllocator) {
+            (allocator as DefaultAllocator).reset()
+        }
+    }
+}

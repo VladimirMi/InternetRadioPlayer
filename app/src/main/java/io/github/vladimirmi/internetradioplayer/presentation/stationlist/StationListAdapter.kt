@@ -12,10 +12,7 @@ import io.github.vladimirmi.internetradioplayer.R
 import io.github.vladimirmi.internetradioplayer.data.db.entity.Group
 import io.github.vladimirmi.internetradioplayer.data.db.entity.Station
 import io.github.vladimirmi.internetradioplayer.domain.model.FlatStationsList
-import io.github.vladimirmi.internetradioplayer.extensions.color
-import io.github.vladimirmi.internetradioplayer.extensions.getBitmap
-import io.github.vladimirmi.internetradioplayer.extensions.setTintExt
-import io.github.vladimirmi.internetradioplayer.extensions.visible
+import io.github.vladimirmi.internetradioplayer.extensions.*
 import io.github.vladimirmi.internetradioplayer.ui.FixedOutlineProvider
 import kotlinx.android.synthetic.main.item_group_item.view.*
 import kotlinx.android.synthetic.main.item_group_title.view.*
@@ -126,6 +123,7 @@ class StationListAdapter(private val callback: StationItemCallback)
     }
 
     override fun onBindViewHolder(holder: RecyclerView.ViewHolder, position: Int) {
+        (holder as GroupElementVH).setLastElement(position == itemCount - 1)
         when (holder) {
             is GroupTitleVH -> setupGroupTitleVH(position, holder)
             is GroupItemVH -> setupGroupItemVH(position, holder)
@@ -160,6 +158,12 @@ open class GroupElementVH(itemView: View) : RecyclerView.ViewHolder(itemView) {
             else -> R.color.grey_50
         }
         setBgColor()
+    }
+
+    fun setLastElement(boolean: Boolean) {
+        val lp = itemView.layoutParams as ViewGroup.MarginLayoutParams
+        lp.bottomMargin = (if (boolean) 16 else 0) * itemView.context.dp
+        itemView.layoutParams = lp
     }
 
     protected fun setBgColor() {

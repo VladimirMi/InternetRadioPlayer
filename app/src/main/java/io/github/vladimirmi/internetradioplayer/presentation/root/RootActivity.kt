@@ -224,7 +224,7 @@ class RootActivity : MvpAppCompatActivity(), RootView, ToolbarView {
 
     private fun standardMenuActions(menuItem: MenuItem) {
         when (menuItem.itemId) {
-            R.string.menu_settings -> presenter.openSetting()
+            R.string.menu_settings -> presenter.openSettings()
             R.string.menu_exit -> presenter.exitApp()
         }
     }

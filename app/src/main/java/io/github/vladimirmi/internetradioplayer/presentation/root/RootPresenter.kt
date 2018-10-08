@@ -91,13 +91,13 @@ class RootPresenter
         }
     }
 
-    fun openSetting() {
+    fun openSettings() {
         router.navigateTo(Router.SETTINGS_SCREEN)
     }
 
     fun exitApp() {
         controlsInteractor.stop()
-        router.exit()
+        router.finishChain()
     }
 
     private fun setupRootScreen() {

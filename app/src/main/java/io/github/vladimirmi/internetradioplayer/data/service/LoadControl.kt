@@ -22,18 +22,20 @@ class LoadControl
     : DefaultLoadControl(DefaultAllocator(true, C.DEFAULT_AUDIO_BUFFER_SIZE)) {
 
     private var targetBufferSize = 0
-    private var initialBufferLength = prefs.initialBufferLength * 1000000L
-    private var bufferLength = prefs.bufferLength * 1000000L
+    private var initialBufferUs = prefs.initialBufferLength * 1000000L
+    private var bufferUs = prefs.bufferLength * 1000000L
+    private val minBufferUs = DEFAULT_MIN_BUFFER_MS * 1000L
+    private val maxBufferUs = DEFAULT_MAX_BUFFER_MS * 1000L
     private var isBuffering: Boolean = false
 
 
     private val listener = SharedPreferences.OnSharedPreferenceChangeListener { _, key ->
         if (key == INITIAL_BUFFER_LENGTH_KEY) {
-            initialBufferLength = prefs.initialBufferLength * 1000000L
+            initialBufferUs = prefs.initialBufferLength * 1000000L
             reset(true)
 
         } else if (key == BUFFER_LENGTH_KEY) {
-            bufferLength = prefs.bufferLength * 1000000L
+            bufferUs = prefs.bufferLength * 1000000L
             reset(true)
         }
     }
@@ -51,10 +53,10 @@ class LoadControl
     override fun shouldContinueLoading(bufferedDurationUs: Long, playbackSpeed: Float): Boolean {
         val targetBufferSizeReached = allocator.totalBytesAllocated >= targetBufferSize
 
-        isBuffering = (bufferedDurationUs < DEFAULT_MIN_BUFFER_MS // below low watermark
-                || (bufferedDurationUs <= DEFAULT_MAX_BUFFER_MS // between watermarks
+        isBuffering = bufferedDurationUs < minBufferUs // below low watermark
+                || (bufferedDurationUs <= maxBufferUs // between watermarks
                 && isBuffering
-                && !targetBufferSizeReached))
+                && !targetBufferSizeReached)
 
         return isBuffering
     }
@@ -64,7 +66,7 @@ class LoadControl
                                      rebuffering: Boolean): Boolean {
 
         val bufferDuration = Util.getPlayoutDurationForMediaDuration(bufferedDurationUs, playbackSpeed)
-        val minBufferDuration = if (rebuffering) bufferLength else initialBufferLength
+        val minBufferDuration = if (rebuffering) bufferUs else initialBufferUs
         return minBufferDuration <= 0 || bufferDuration >= minBufferDuration
     }
 

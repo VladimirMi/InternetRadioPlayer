@@ -84,6 +84,8 @@ class StationListAdapter(private val callback: StationItemCallback)
     fun onMove(from: Int, to: Int) {
         stations.moveItem(from, to)
         notifyItemMoved(from, to)
+        notifyItemChanged(from, PAYLOAD_BACKGROUND_CHANGE)
+        notifyItemChanged(to, PAYLOAD_BACKGROUND_CHANGE)
     }
 
     fun onStartDrag(position: Int) {
@@ -117,13 +119,16 @@ class StationListAdapter(private val callback: StationItemCallback)
             } else {
                 holder.select(stations.getStation(position).id == selectedStation.id, playing)
             }
+        } else if (payloads.contains(PAYLOAD_BACKGROUND_CHANGE)) {
+            holder.setBottomMargin(position == itemCount - 1)
+            (holder as? GroupItemVH)?.changeBackground(stations.isLastStationInGroup(position))
         } else {
             super.onBindViewHolder(holder, position, payloads)
         }
     }
 
     override fun onBindViewHolder(holder: RecyclerView.ViewHolder, position: Int) {
-        (holder as GroupElementVH).setLastElement(position == itemCount - 1)
+        (holder as GroupElementVH).setBottomMargin(position == itemCount - 1)
         when (holder) {
             is GroupTitleVH -> setupGroupTitleVH(position, holder)
             is GroupItemVH -> setupGroupItemVH(position, holder)
@@ -132,7 +137,8 @@ class StationListAdapter(private val callback: StationItemCallback)
 
     private fun setupGroupTitleVH(position: Int, holder: GroupTitleVH) {
         val group = stations.getGroup(position)
-        holder.bind(group, callback)
+        holder.bind(group)
+        holder.itemView.setOnClickListener { callback.onGroupSelected(group.id) }
         val selected = !group.expanded && group.id == selectedStation.groupId
         holder.select(selected, playing)
     }
@@ -140,9 +146,10 @@ class StationListAdapter(private val callback: StationItemCallback)
     private fun setupGroupItemVH(position: Int, holder: GroupItemVH) {
         val station = stations.getStation(position)
 
-        holder.bind(station, stations.isLastStationInGroup(position))
+        holder.bind(station)
+        holder.changeBackground(stations.isLastStationInGroup(position))
         holder.select(station.id == selectedStation.id, playing)
-        holder.setCallback(callback, station)
+        holder.itemView.setOnClickListener { callback.onItemSelected(station) }
     }
 
     override fun getItemCount(): Int = stations.size
@@ -160,9 +167,9 @@ open class GroupElementVH(itemView: View) : RecyclerView.ViewHolder(itemView) {
         setBgColor()
     }
 
-    fun setLastElement(boolean: Boolean) {
+    fun setBottomMargin(isLastElement: Boolean) {
         val lp = itemView.layoutParams as ViewGroup.MarginLayoutParams
-        lp.bottomMargin = (if (boolean) 16 else 0) * itemView.context.dp
+        lp.bottomMargin = (if (isLastElement) 16 else 0) * itemView.context.dp
         itemView.layoutParams = lp
     }
 
@@ -172,9 +179,9 @@ open class GroupElementVH(itemView: View) : RecyclerView.ViewHolder(itemView) {
 }
 
 class GroupTitleVH(itemView: View) : GroupElementVH(itemView) {
-    fun bind(group: Group, callback: StationItemCallback) {
+
+    fun bind(group: Group) {
         itemView.title.text = group.getViewName(itemView.context)
-        itemView.setOnClickListener { callback.onGroupSelected(group.id) }
         setExpanded(group.expanded)
     }
 
@@ -192,19 +199,18 @@ class GroupTitleVH(itemView: View) : GroupElementVH(itemView) {
 
 class GroupItemVH(itemView: View) : GroupElementVH(itemView) {
 
-    fun bind(station: Station, lastStationInGroup: Boolean) {
+    fun bind(station: Station) {
         itemView.name.text = station.name
         itemView.iconIv.setImageBitmap(station.icon.getBitmap(itemView.context))
+    }
+
+    fun changeBackground(lastStationInGroup: Boolean) {
         itemView.itemDelimiter.visible(!lastStationInGroup)
         val bg = if (lastStationInGroup) R.drawable.shape_item_bottom else R.drawable.shape_item_middle
         itemView.background = ContextCompat.getDrawable(itemView.context, bg)
         setBgColor()
         if (Build.VERSION.SDK_INT < 21) return
         itemView.outlineProvider = if (lastStationInGroup) defaultOutline else fixedOutline
-    }
-
-    fun setCallback(callback: StationItemCallback, station: Station) {
-        itemView.setOnClickListener { callback.onItemSelected(station) }
     }
 }
 

@@ -200,7 +200,7 @@ class RootActivity : MvpAppCompatActivity(), RootView, ToolbarView {
         }
         popup.setOnMenuItemClickListener {
             standardMenuActions(it)
-            holder.actions.invoke(it)
+            holder.actions?.invoke(it)
             true
         }
 

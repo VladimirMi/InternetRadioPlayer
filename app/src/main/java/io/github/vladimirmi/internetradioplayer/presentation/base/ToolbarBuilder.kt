@@ -12,6 +12,17 @@ class ToolbarBuilder {
     private var backNavEnabled = false
     private val menuHolder = MenuHolder()
 
+    companion object {
+        fun standart(): ToolbarBuilder {
+            val settingsItem = MenuItemHolder(R.string.menu_settings, R.drawable.ic_settings, order = 99)
+            val exitItem = MenuItemHolder(R.string.menu_exit, R.drawable.ic_exit, order = 100)
+            return ToolbarBuilder().apply {
+                addMenuItem(settingsItem)
+                addMenuItem(exitItem)
+            }
+        }
+    }
+
     fun setToolbarVisible(toolbarVisible: Boolean = true): ToolbarBuilder {
         isToolbarVisible = toolbarVisible
         return this
@@ -71,7 +82,7 @@ class ToolbarBuilder {
 
 class MenuHolder {
     private val items = ArrayList<MenuItemHolder>()
-    lateinit var actions: (MenuItem) -> Unit
+    var actions: ((MenuItem) -> Unit)? = null
     val menu: List<MenuItemHolder> get() = items
 
     fun addItem(item: MenuItemHolder) {

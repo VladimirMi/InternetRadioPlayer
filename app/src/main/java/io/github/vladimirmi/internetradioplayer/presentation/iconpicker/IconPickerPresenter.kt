@@ -23,7 +23,7 @@ class IconPickerPresenter
 
     override fun onFirstViewAttach() {
         viewState.setIcon(currentIcon)
-        viewState.buildToolbar(ToolbarBuilder.standart()
+        viewState.buildToolbar(ToolbarBuilder.standard()
                 .setToolbarTitle(interactor.currentStation.name)
                 .enableBackNavigation())
     }

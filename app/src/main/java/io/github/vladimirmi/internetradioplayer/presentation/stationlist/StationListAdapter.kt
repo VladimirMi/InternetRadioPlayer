@@ -120,15 +120,17 @@ class StationListAdapter(private val callback: StationItemCallback)
                 holder.select(stations.getStation(position).id == selectedStation.id, playing)
             }
         } else if (payloads.contains(PAYLOAD_BACKGROUND_CHANGE)) {
-            holder.setBottomMargin(position == itemCount - 1)
-            (holder as? GroupItemVH)?.changeBackground(stations.isLastStationInGroup(position))
+            holder.setMargins(position == 0 || holder is GroupTitleVH, position == itemCount - 1)
+            (holder as? GroupItemVH)?.changeBackground(stations.isLastStationInGroup(position),
+                    position == 0)
         } else {
             super.onBindViewHolder(holder, position, payloads)
         }
     }
 
     override fun onBindViewHolder(holder: RecyclerView.ViewHolder, position: Int) {
-        (holder as GroupElementVH).setBottomMargin(position == itemCount - 1)
+        (holder as GroupElementVH).setMargins(position == 0 || holder is GroupTitleVH,
+                position == itemCount - 1)
         when (holder) {
             is GroupTitleVH -> setupGroupTitleVH(position, holder)
             is GroupItemVH -> setupGroupItemVH(position, holder)
@@ -147,7 +149,7 @@ class StationListAdapter(private val callback: StationItemCallback)
         val station = stations.getStation(position)
 
         holder.bind(station)
-        holder.changeBackground(stations.isLastStationInGroup(position))
+        holder.changeBackground(stations.isLastStationInGroup(position), position == 0)
         holder.select(station.id == selectedStation.id, playing)
         holder.itemView.setOnClickListener { callback.onItemSelected(station) }
     }
@@ -167,9 +169,10 @@ open class GroupElementVH(itemView: View) : RecyclerView.ViewHolder(itemView) {
         setBgColor()
     }
 
-    fun setBottomMargin(isLastElement: Boolean) {
+    fun setMargins(addTopMargin: Boolean, addBottomMargin: Boolean) {
         val lp = itemView.layoutParams as ViewGroup.MarginLayoutParams
-        lp.bottomMargin = (if (isLastElement) 16 else 0) * itemView.context.dp
+        lp.topMargin = (if (addTopMargin) 16 else 0) * itemView.context.dp
+        lp.bottomMargin = (if (addBottomMargin) 16 else 0) * itemView.context.dp
         itemView.layoutParams = lp
     }
 
@@ -204,13 +207,18 @@ class GroupItemVH(itemView: View) : GroupElementVH(itemView) {
         itemView.iconIv.setImageBitmap(station.icon.getBitmap(itemView.context))
     }
 
-    fun changeBackground(lastStationInGroup: Boolean) {
+    fun changeBackground(lastStationInGroup: Boolean, firstInList: Boolean) {
         itemView.itemDelimiter.visible(!lastStationInGroup)
-        val bg = if (lastStationInGroup) R.drawable.shape_item_bottom else R.drawable.shape_item_middle
+        val bg = when {
+            lastStationInGroup -> R.drawable.shape_item_bottom
+            firstInList -> R.drawable.shape_item_top
+            else -> R.drawable.shape_item_middle
+        }
         itemView.background = ContextCompat.getDrawable(itemView.context, bg)
         setBgColor()
         if (Build.VERSION.SDK_INT < 21) return
-        itemView.outlineProvider = if (lastStationInGroup) defaultOutline else fixedOutline
+        itemView.outlineProvider = if (lastStationInGroup || firstInList) defaultOutline
+        else fixedOutline
     }
 }
 

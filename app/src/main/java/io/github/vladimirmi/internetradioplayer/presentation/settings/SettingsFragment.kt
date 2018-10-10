@@ -37,7 +37,7 @@ class SettingsFragment : PreferenceFragmentCompat(), BackPressListener {
     override fun onActivityCreated(savedInstanceState: Bundle?) {
         super.onActivityCreated(savedInstanceState)
         (activity as RootView).showControls(false)
-        ToolbarBuilder.standart().build(activity as ToolbarView)
+        ToolbarBuilder.standard().build(activity as ToolbarView)
     }
 
     override fun onCreatePreferences(savedInstanceState: Bundle?, rootKey: String?) {

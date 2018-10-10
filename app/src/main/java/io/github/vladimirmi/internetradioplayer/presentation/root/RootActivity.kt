@@ -171,6 +171,7 @@ class RootActivity : MvpAppCompatActivity(), RootView, ToolbarView {
                         menu.add(0, item.itemTitleResId, index, item.itemTitleResId).apply {
                             setIcon(item.iconResId)
                             setShowAsActionFlags(MenuItem.SHOW_AS_ACTION_IF_ROOM)
+                            setOnMenuItemClickListener { holder.actions?.invoke(it); true }
                         }
                     }
             configurePopupFor(menu, holder)

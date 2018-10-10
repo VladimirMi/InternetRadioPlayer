@@ -13,7 +13,7 @@ class ToolbarBuilder {
     private val menuHolder = MenuHolder()
 
     companion object {
-        fun standart(): ToolbarBuilder {
+        fun standard(): ToolbarBuilder {
             val settingsItem = MenuItemHolder(R.string.menu_settings, R.drawable.ic_settings, order = 99)
             val exitItem = MenuItemHolder(R.string.menu_exit, R.drawable.ic_exit, order = 100)
             return ToolbarBuilder().apply {

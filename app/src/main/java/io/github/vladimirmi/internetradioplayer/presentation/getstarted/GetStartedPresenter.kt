@@ -16,7 +16,7 @@ import javax.inject.Inject
 class GetStartedPresenter
 @Inject constructor() : BasePresenter<GetStartedView>() {
 
-    private val builder = ToolbarBuilder.standart()
+    private val builder = ToolbarBuilder.standard()
             .addMenuItem(MenuItemHolder(R.string.menu_add_station, R.drawable.ic_add))
             .setMenuActions {
                 if (it.itemId == R.string.menu_add_station) viewState.openAddStationDialog()

@@ -10,7 +10,6 @@ import okhttp3.MediaType
 import okhttp3.OkHttpClient
 import okhttp3.Request
 import timber.log.Timber
-import java.io.File
 import java.net.URI
 import java.net.URISyntaxException
 import javax.inject.Inject
@@ -51,7 +50,8 @@ private fun MediaType.isPlaylistFile() = suppotedPlaylists.contains(subtype())
 private fun MediaType.isPlsFile() = subtype() == "x-scpls"
 
 class StationParser
-@Inject constructor(private val context: Context) {
+@Inject constructor(private val context: Context,
+                    private val client: OkHttpClient) {
 
     fun parseFromUri(uri: Uri): Station {
         return when {
@@ -71,7 +71,6 @@ class StationParser
     }
 
     private fun parseFromNet(uri: Uri, name: String = uri.host): Station {
-        val client = OkHttpClient()
         val request = Request.Builder().url(uri.toURL()).build()
         val response = client.newCall(request).execute()
         val body = response.body() ?: throw IllegalStateException("Empty body")
@@ -107,14 +106,10 @@ class StationParser
     private fun parseGenres(genres: String?): Set<String> {
         if (genres == null) return emptySet()
         return if (genres.contains(',')) {
-            genres.split(',').map { it.trim() }.toSet()
+            genres.split(',').asSequence().map { it.trim() }.toSet()
         } else {
-            genres.split(' ').map { it.trim() }.toSet()
+            genres.split(' ').asSequence().map { it.trim() }.toSet()
         }
-    }
-
-    private fun File.parsePls(): Station {
-        return readText().parsePls(name)
     }
 
     private fun String.parsePls(name: String = ""): Station {
@@ -130,11 +125,11 @@ class StationParser
             }
         }
         if (uri == null) throw IllegalStateException("Playlist file does not contain stream uri")
-        return parseFromNet(uri!!.toUri(), if (title.isBlank()) uri!!.toUri().host else title)
+        if (title.isBlank()) {
+            title = uri!!.toUri().host ?: uri.toString()
+        }
+        return parseFromNet(uri!!.toUri(), title)
     }
-
-
-    private fun File.parseM3u() = readText().parseM3u(name)
 
     private fun String.parseM3u(name: String = ""): Station {
         var extended = false
@@ -155,7 +150,10 @@ class StationParser
             }
         }
         if (uri == null) throw IllegalStateException("Playlist file does not contain stream uri")
-        return parseFromNet(uri!!.toUri(), if (title.isBlank()) uri!!.toUri().host else title)
+        if (title.isBlank()) {
+            title = uri!!.toUri().host ?: uri.toString()
+        }
+        return parseFromNet(uri!!.toUri(), title)
     }
 }
 

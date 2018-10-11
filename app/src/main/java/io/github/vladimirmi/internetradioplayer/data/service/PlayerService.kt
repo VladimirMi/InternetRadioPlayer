@@ -7,8 +7,10 @@ import android.support.v4.media.MediaBrowserCompat
 import android.support.v4.media.MediaBrowserServiceCompat
 import android.support.v4.media.session.MediaSessionCompat
 import android.support.v4.media.session.PlaybackStateCompat
+import com.google.android.exoplayer2.ExoPlaybackException
 import io.github.vladimirmi.internetradioplayer.R
 import io.github.vladimirmi.internetradioplayer.data.db.entity.Station
+import io.github.vladimirmi.internetradioplayer.data.utils.ExponentialBackoff
 import io.github.vladimirmi.internetradioplayer.di.Scopes
 import io.github.vladimirmi.internetradioplayer.domain.interactor.StationInteractor
 import io.github.vladimirmi.internetradioplayer.extensions.toUri
@@ -47,6 +49,7 @@ class PlayerService : MediaBrowserServiceCompat(), SessionCallback.Interface {
     private var currentStationId: String? = null
     private var playingStationId: String? = null
     private var stopTask: TimerTask? = null
+    private val exponentialBackoff = ExponentialBackoff()
 
     override fun onCreate() {
         super.onCreate()
@@ -182,6 +185,9 @@ class PlayerService : MediaBrowserServiceCompat(), SessionCallback.Interface {
 
         override fun onPlayerError(error: Int) {
             onStopCommand()
+            if (error == ExoPlaybackException.TYPE_SOURCE) {
+                val scheduled = exponentialBackoff.schedule { onPlayCommand() }
+            }
         }
 
         override fun onMetadata(metadata: String) {

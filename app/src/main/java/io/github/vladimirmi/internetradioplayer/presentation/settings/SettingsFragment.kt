@@ -7,9 +7,9 @@ import android.support.v4.app.ShareCompat
 import android.support.v7.preference.Preference
 import android.support.v7.preference.PreferenceFragmentCompat
 import io.github.vladimirmi.internetradioplayer.R
-import io.github.vladimirmi.internetradioplayer.data.manager.BACKUP_TYPE
-import io.github.vladimirmi.internetradioplayer.data.manager.BackupRestoreHelper
-import io.github.vladimirmi.internetradioplayer.data.manager.PREFERENCES_NAME
+import io.github.vladimirmi.internetradioplayer.data.utils.BACKUP_TYPE
+import io.github.vladimirmi.internetradioplayer.data.utils.BackupRestoreHelper
+import io.github.vladimirmi.internetradioplayer.data.utils.PREFERENCES_NAME
 import io.github.vladimirmi.internetradioplayer.di.Scopes
 import io.github.vladimirmi.internetradioplayer.domain.interactor.StationInteractor
 import io.github.vladimirmi.internetradioplayer.extensions.ioToMain

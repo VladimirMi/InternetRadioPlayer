@@ -6,8 +6,8 @@ import io.github.vladimirmi.internetradioplayer.data.db.entity.Genre
 import io.github.vladimirmi.internetradioplayer.data.db.entity.Group
 import io.github.vladimirmi.internetradioplayer.data.db.entity.Station
 import io.github.vladimirmi.internetradioplayer.data.db.entity.StationGenreJoin
-import io.github.vladimirmi.internetradioplayer.data.manager.Preferences
-import io.github.vladimirmi.internetradioplayer.data.manager.StationParser
+import io.github.vladimirmi.internetradioplayer.data.utils.Preferences
+import io.github.vladimirmi.internetradioplayer.data.utils.StationParser
 import io.reactivex.Completable
 import io.reactivex.Single
 import javax.inject.Inject

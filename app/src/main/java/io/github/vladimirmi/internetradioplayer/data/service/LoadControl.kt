@@ -8,9 +8,9 @@ import com.google.android.exoplayer2.source.TrackGroupArray
 import com.google.android.exoplayer2.trackselection.TrackSelectionArray
 import com.google.android.exoplayer2.upstream.DefaultAllocator
 import com.google.android.exoplayer2.util.Util
-import io.github.vladimirmi.internetradioplayer.data.manager.BUFFER_LENGTH_KEY
-import io.github.vladimirmi.internetradioplayer.data.manager.INITIAL_BUFFER_LENGTH_KEY
-import io.github.vladimirmi.internetradioplayer.data.manager.Preferences
+import io.github.vladimirmi.internetradioplayer.data.utils.BUFFER_LENGTH_KEY
+import io.github.vladimirmi.internetradioplayer.data.utils.INITIAL_BUFFER_LENGTH_KEY
+import io.github.vladimirmi.internetradioplayer.data.utils.Preferences
 import javax.inject.Inject
 
 /**

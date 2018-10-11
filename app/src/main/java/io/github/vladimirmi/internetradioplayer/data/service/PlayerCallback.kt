@@ -20,21 +20,18 @@ abstract class PlayerCallback : Player.EventListener {
 
     @SuppressLint("SwitchIntDef")
     override fun onPlayerError(error: ExoPlaybackException) {
-        val messageId = when (error.type) {
+        when (error.type) {
             ExoPlaybackException.TYPE_RENDERER -> {
                 Timber.w("RENDERER error occurred: ${error.rendererException}")
-                0
             }
             ExoPlaybackException.TYPE_SOURCE -> {
                 Timber.w("SOURCE error occurred: ${error.sourceException}")
-                1
             }
             else -> {
                 Timber.w("UNEXPECTED error occurred: ${error.unexpectedException}")
-                2
             }
         }
-        onPlayerError(messageId)
+        onPlayerError(error.type)
     }
 
     override fun onPlayerStateChanged(playWhenReady: Boolean, playbackState: Int) {

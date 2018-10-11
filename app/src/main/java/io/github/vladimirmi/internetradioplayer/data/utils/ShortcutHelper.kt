@@ -1,4 +1,4 @@
-package io.github.vladimirmi.internetradioplayer.data.manager
+package io.github.vladimirmi.internetradioplayer.data.utils
 
 import android.annotation.SuppressLint
 import android.content.Context

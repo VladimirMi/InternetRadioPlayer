@@ -4,11 +4,11 @@ import android.content.Context
 import com.google.gson.Gson
 import com.google.gson.GsonBuilder
 import io.github.vladimirmi.internetradioplayer.data.db.StationsDatabase
-import io.github.vladimirmi.internetradioplayer.data.manager.ShortcutHelper
-import io.github.vladimirmi.internetradioplayer.data.manager.StationParser
 import io.github.vladimirmi.internetradioplayer.data.repository.StationListRepository
 import io.github.vladimirmi.internetradioplayer.data.service.LoadControl
 import io.github.vladimirmi.internetradioplayer.data.source.StationSource
+import io.github.vladimirmi.internetradioplayer.data.utils.ShortcutHelper
+import io.github.vladimirmi.internetradioplayer.data.utils.StationParser
 import io.github.vladimirmi.internetradioplayer.domain.interactor.PlayerControlsInteractor
 import io.github.vladimirmi.internetradioplayer.domain.interactor.StationInteractor
 import toothpick.config.Module

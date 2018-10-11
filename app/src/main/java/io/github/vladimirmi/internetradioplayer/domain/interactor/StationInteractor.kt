@@ -6,9 +6,9 @@ import io.github.vladimirmi.internetradioplayer.R
 import io.github.vladimirmi.internetradioplayer.data.db.entity.Genre
 import io.github.vladimirmi.internetradioplayer.data.db.entity.Group
 import io.github.vladimirmi.internetradioplayer.data.db.entity.Station
-import io.github.vladimirmi.internetradioplayer.data.manager.AppMigrationHelper
-import io.github.vladimirmi.internetradioplayer.data.manager.ShortcutHelper
 import io.github.vladimirmi.internetradioplayer.data.repository.StationListRepository
+import io.github.vladimirmi.internetradioplayer.data.utils.AppMigrationHelper
+import io.github.vladimirmi.internetradioplayer.data.utils.ShortcutHelper
 import io.github.vladimirmi.internetradioplayer.domain.model.FlatStationsList
 import io.github.vladimirmi.internetradioplayer.extensions.ValidationException
 import io.github.vladimirmi.internetradioplayer.presentation.station.StationInfo

@@ -3,9 +3,9 @@ package io.github.vladimirmi.internetradioplayer.domain.interactor
 import android.support.v4.media.MediaMetadataCompat
 import android.support.v4.media.session.PlaybackStateCompat
 import com.jakewharton.rxrelay2.BehaviorRelay
-import io.github.vladimirmi.internetradioplayer.data.manager.NetworkChecker
 import io.github.vladimirmi.internetradioplayer.data.repository.MediaController
 import io.github.vladimirmi.internetradioplayer.data.repository.StationListRepository
+import io.github.vladimirmi.internetradioplayer.data.utils.NetworkChecker
 import io.github.vladimirmi.internetradioplayer.domain.model.PlayerMode
 import io.reactivex.Observable
 import javax.inject.Inject

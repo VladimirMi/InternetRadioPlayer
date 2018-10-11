@@ -6,6 +6,7 @@ import com.google.android.exoplayer2.*
 import com.google.android.exoplayer2.source.TrackGroupArray
 import com.google.android.exoplayer2.trackselection.TrackSelectionArray
 import timber.log.Timber
+import java.net.ConnectException
 
 
 abstract class PlayerCallback : Player.EventListener {
@@ -20,18 +21,18 @@ abstract class PlayerCallback : Player.EventListener {
 
     @SuppressLint("SwitchIntDef")
     override fun onPlayerError(error: ExoPlaybackException) {
-        when (error.type) {
+        val exception = when (error.type) {
             ExoPlaybackException.TYPE_RENDERER -> {
-                Timber.w("RENDERER error occurred: ${error.rendererException}")
+                RuntimeException("Renderer error occurred: ${error.rendererException.message}")
             }
             ExoPlaybackException.TYPE_SOURCE -> {
-                Timber.w("SOURCE error occurred: ${error.sourceException}")
+                ConnectException("Source error occurred: ${error.sourceException.message}")
             }
             else -> {
-                Timber.w("UNEXPECTED error occurred: ${error.unexpectedException}")
+                RuntimeException("Unexpected error occurred: ${error.unexpectedException.message}")
             }
         }
-        onPlayerError(error.type)
+        onPlayerError(exception)
     }
 
     override fun onPlayerStateChanged(playWhenReady: Boolean, playbackState: Int) {
@@ -69,5 +70,5 @@ abstract class PlayerCallback : Player.EventListener {
 
     abstract fun onMetadata(metadata: String)
 
-    abstract fun onPlayerError(error: Int)
+    abstract fun onPlayerError(error: Exception)
 }

@@ -7,16 +7,17 @@ import android.support.v4.media.MediaBrowserCompat
 import android.support.v4.media.MediaBrowserServiceCompat
 import android.support.v4.media.session.MediaSessionCompat
 import android.support.v4.media.session.PlaybackStateCompat
-import com.google.android.exoplayer2.ExoPlaybackException
 import io.github.vladimirmi.internetradioplayer.R
 import io.github.vladimirmi.internetradioplayer.data.db.entity.Station
 import io.github.vladimirmi.internetradioplayer.data.utils.ExponentialBackoff
 import io.github.vladimirmi.internetradioplayer.di.Scopes
 import io.github.vladimirmi.internetradioplayer.domain.interactor.StationInteractor
+import io.github.vladimirmi.internetradioplayer.extensions.errorHandler
 import io.github.vladimirmi.internetradioplayer.extensions.toUri
 import io.reactivex.disposables.CompositeDisposable
 import io.reactivex.rxkotlin.addTo
 import toothpick.Toothpick
+import java.net.ConnectException
 import java.util.*
 import javax.inject.Inject
 import kotlin.concurrent.schedule
@@ -183,10 +184,13 @@ class PlayerService : MediaBrowserServiceCompat(), SessionCallback.Interface {
             notification.update()
         }
 
-        override fun onPlayerError(error: Int) {
+        override fun onPlayerError(error: Exception) {
             onStopCommand()
-            if (error == ExoPlaybackException.TYPE_SOURCE) {
+            if (error is ConnectException) {
                 val scheduled = exponentialBackoff.schedule { onPlayCommand() }
+                if (!scheduled) errorHandler.invoke(error)
+            } else {
+                errorHandler.invoke(error)
             }
         }
 

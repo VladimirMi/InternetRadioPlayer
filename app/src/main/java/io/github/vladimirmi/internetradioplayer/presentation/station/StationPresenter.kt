@@ -5,15 +5,14 @@ import com.arellomobile.mvp.InjectViewState
 import io.github.vladimirmi.internetradioplayer.R
 import io.github.vladimirmi.internetradioplayer.domain.interactor.PlayerControlsInteractor
 import io.github.vladimirmi.internetradioplayer.domain.interactor.StationInteractor
-import io.github.vladimirmi.internetradioplayer.extensions.ValidationException
 import io.github.vladimirmi.internetradioplayer.extensions.ioToMain
+import io.github.vladimirmi.internetradioplayer.extensions.subscribeByEx
 import io.github.vladimirmi.internetradioplayer.navigation.Router
 import io.github.vladimirmi.internetradioplayer.presentation.base.BasePresenter
 import io.github.vladimirmi.internetradioplayer.presentation.base.MenuItemHolder
 import io.github.vladimirmi.internetradioplayer.presentation.base.ToolbarBuilder
 import io.reactivex.rxkotlin.addTo
 import io.reactivex.rxkotlin.subscribeBy
-import timber.log.Timber
 import javax.inject.Inject
 
 /**
@@ -73,12 +72,7 @@ class StationPresenter
     fun edit(stationInfo: StationInfo) {
         interactor.updateCurrentStation(stationInfo.stationName, stationInfo.groupName)
                 .ioToMain()
-                .subscribeBy(
-                        onComplete = { viewMode() },
-                        onError = {
-                            if (it is ValidationException) viewState.showToast(it.resId)
-                            else Timber.e(it)
-                        })
+                .subscribeByEx(onComplete = { viewMode() })
                 .addTo(subs)
     }
 
@@ -91,15 +85,11 @@ class StationPresenter
     fun create(stationInfo: StationInfo) {
         interactor.addCurrentStation(stationInfo.stationName, stationInfo.groupName)
                 .ioToMain()
-                .subscribeBy(
+                .subscribeByEx(
                         onComplete = {
                             viewState.showToast(R.string.toast_add_success)
                             viewMode()
                             router.newRootScreen(Router.STATIONS_LIST_SCREEN)
-                        },
-                        onError = {
-                            if (it is ValidationException) viewState.showToast(it.resId)
-                            else Timber.e(it)
                         })
                 .addTo(subs)
     }
@@ -109,7 +99,6 @@ class StationPresenter
         viewMode()
         router.exit()
     }
-
 
     fun onBackPressed(): Boolean {
         when {

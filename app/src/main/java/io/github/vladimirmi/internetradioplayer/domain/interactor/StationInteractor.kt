@@ -10,7 +10,7 @@ import io.github.vladimirmi.internetradioplayer.data.repository.StationListRepos
 import io.github.vladimirmi.internetradioplayer.data.utils.AppMigrationHelper
 import io.github.vladimirmi.internetradioplayer.data.utils.ShortcutHelper
 import io.github.vladimirmi.internetradioplayer.domain.model.FlatStationsList
-import io.github.vladimirmi.internetradioplayer.extensions.ValidationException
+import io.github.vladimirmi.internetradioplayer.extensions.MessageException
 import io.github.vladimirmi.internetradioplayer.presentation.station.StationInfo
 import io.reactivex.Completable
 import io.reactivex.Observable
@@ -246,10 +246,10 @@ class StationInteractor
     private fun validate(stationName: String, adding: Boolean = false): Completable? {
         return when {
             adding && containsStation { it.name == stationName } -> {
-                Completable.error(ValidationException(R.string.toast_name_exists_error))
+                Completable.error(MessageException(R.string.toast_name_exists_error))
             }
             stationName.isBlank() -> {
-                Completable.error(ValidationException(R.string.toast_name_empty_error))
+                Completable.error(MessageException(R.string.toast_name_empty_error))
             }
             else -> null
         }

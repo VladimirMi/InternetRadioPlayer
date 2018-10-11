@@ -7,11 +7,10 @@ import io.github.vladimirmi.internetradioplayer.R
 import io.github.vladimirmi.internetradioplayer.domain.interactor.PlayerControlsInteractor
 import io.github.vladimirmi.internetradioplayer.domain.interactor.StationInteractor
 import io.github.vladimirmi.internetradioplayer.extensions.ioToMain
+import io.github.vladimirmi.internetradioplayer.extensions.subscribeByEx
 import io.github.vladimirmi.internetradioplayer.navigation.Router
 import io.github.vladimirmi.internetradioplayer.presentation.base.BasePresenter
 import io.reactivex.rxkotlin.addTo
-import io.reactivex.rxkotlin.subscribeBy
-import timber.log.Timber
 import javax.inject.Inject
 
 /**
@@ -32,10 +31,10 @@ class RootPresenter
 
         stationInteractor.initStations()
                 .ioToMain()
-                .subscribeBy(onComplete = {
+                .subscribeByEx(onComplete = {
                     setupRootScreen()
                     viewState.checkIntent()
-                }, onError = { Timber.e(it) })
+                })
                 .addTo(subs)
 
         stationInteractor.currentStationObs
@@ -70,13 +69,9 @@ class RootPresenter
                 .ioToMain()
                 .doOnSubscribe { viewState.showLoadingIndicator(true) }
                 .doFinally { viewState.showLoadingIndicator(false) }
-                .subscribeBy(
-                        onSuccess = { router.showStationSlide(stationInteractor.currentStation.id) },
-                        onError = {
-                            Timber.e(it)
-                            viewState.showToast(R.string.toast_add_error)
-                        }
-                ).addTo(subs)
+                .subscribeByEx(onSuccess = {
+                    router.showStationSlide(stationInteractor.currentStation.id)
+                }).addTo(subs)
     }
 
     @SuppressLint("CheckResult")

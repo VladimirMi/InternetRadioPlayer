@@ -51,13 +51,14 @@ private fun MediaType.isPlsFile() = subtype() == "x-scpls"
 
 class StationParser
 @Inject constructor(private val context: Context,
-                    private val client: OkHttpClient) {
+                    private val client: OkHttpClient,
+                    private val networkChecker: NetworkChecker) {
 
     fun parseFromUri(uri: Uri): Station {
         return when {
             uri.scheme.startsWith(SCHEME_HTTP) -> parseFromNet(uri) // also https
             uri.scheme == SCHEME_FILE || uri.scheme == SCHEME_CONTENT -> parseFromPlaylistFile(uri)
-            else -> throw IllegalArgumentException("Unsupported uri $uri")
+            else -> throw IllegalArgumentException("Error: Unsupported uri $uri")
         }
     }
 
@@ -71,10 +72,12 @@ class StationParser
     }
 
     private fun parseFromNet(uri: Uri, name: String = uri.host): Station {
+        if (!networkChecker.isAvailable()) throw IllegalStateException("Error: No connection")
+
         val request = Request.Builder().url(uri.toURL()).build()
         val response = client.newCall(request).execute()
-        val body = response.body() ?: throw IllegalStateException("Empty body")
-        val type = body.contentType() ?: throw IllegalStateException("Empty content type")
+        val body = response.body() ?: throw IllegalStateException("Error: Empty body")
+        val type = body.contentType() ?: throw IllegalStateException("Error: Empty content type")
 
         Timber.d("parseFromNet: $type")
         return (if (type.isPlaylistFile()) {
@@ -85,7 +88,7 @@ class StationParser
             createStation(name, uri, response.headers())
 
         } else {
-            throw IllegalStateException("Unsupported content type $type")
+            throw IllegalStateException("Error: Unsupported content type $type")
 
         }).also { body.close() }
     }
@@ -124,7 +127,7 @@ class StationParser
                 line.startsWith(PLS_TITLE) -> title = line.substring(PLS_TITLE.length).trim()
             }
         }
-        if (uri == null) throw IllegalStateException("Playlist file does not contain stream uri")
+        if (uri == null) throw IllegalStateException("Error: Playlist file does not contain stream uri")
         if (title.isBlank()) {
             title = uri!!.toUri().host ?: uri.toString()
         }
@@ -149,7 +152,7 @@ class StationParser
                 }
             }
         }
-        if (uri == null) throw IllegalStateException("Playlist file does not contain stream uri")
+        if (uri == null) throw IllegalStateException("Error: Playlist file does not contain stream uri")
         if (title.isBlank()) {
             title = uri!!.toUri().host ?: uri.toString()
         }

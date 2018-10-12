@@ -20,10 +20,10 @@ interface StationListView : MvpView {
     @StateStrategyType(AddToEndSingleStrategy::class)
     fun setStations(stationList: FlatStationsList)
 
-    @StateStrategyType(OneExecutionStateStrategy::class)
+    @StateStrategyType(AddToEndSingleStrategy::class)
     fun selectStation(station: Station)
 
-    @StateStrategyType(OneExecutionStateStrategy::class)
+    @StateStrategyType(AddToEndSingleStrategy::class)
     fun setPlaying(playing: Boolean)
 
     @StateStrategyType(OneExecutionStateStrategy::class)

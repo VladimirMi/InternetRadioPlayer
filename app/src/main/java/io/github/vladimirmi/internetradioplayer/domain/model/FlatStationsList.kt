@@ -70,7 +70,9 @@ class FlatStationsList(private val flatList: MutableList<Any> = arrayListOf()) {
     }
 
     fun isFirstStation(id: String): Boolean {
-        return (isGroup(0) && isStation(1) && getStation(1).id == id) || (isStation(0) && getStation(0).id == id)
+        return size == 0
+                || isGroup(0) && isStation(1) && getStation(1).id == id
+                || isStation(0) && getStation(0).id == id
     }
 
     fun isLastStationInGroup(position: Int): Boolean {

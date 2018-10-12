@@ -5,6 +5,7 @@ import android.app.Dialog
 import android.os.Bundle
 import android.support.v4.app.DialogFragment
 import android.view.View
+import android.view.ViewGroup
 import io.github.vladimirmi.internetradioplayer.R
 
 /**
@@ -15,7 +16,11 @@ import io.github.vladimirmi.internetradioplayer.R
 abstract class BaseDialogFragment : DialogFragment() {
 
     protected val dialogView: View? by lazy {
-        getCustomDialogView()
+        val view = getCustomDialogView()
+        if (view != null && view.parent != null) {
+            (view.parent as ViewGroup).removeView(view)
+        }
+        view
     }
 
     override fun onCreateDialog(savedInstanceState: Bundle?): Dialog {

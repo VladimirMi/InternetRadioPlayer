@@ -44,7 +44,7 @@ interface StationDao {
     @Insert(onConflict = OnConflictStrategy.IGNORE)
     fun insertGroup(group: Group): Long
 
-    @Update
+    @Update(onConflict = OnConflictStrategy.IGNORE)
     fun updateStation(station: Station)
 
     @Update

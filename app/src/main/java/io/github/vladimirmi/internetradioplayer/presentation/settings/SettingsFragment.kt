@@ -14,14 +14,13 @@ import io.github.vladimirmi.internetradioplayer.di.Scopes
 import io.github.vladimirmi.internetradioplayer.domain.interactor.StationInteractor
 import io.github.vladimirmi.internetradioplayer.extensions.ioToMain
 import io.github.vladimirmi.internetradioplayer.extensions.startActivitySafe
+import io.github.vladimirmi.internetradioplayer.extensions.subscribeByEx
 import io.github.vladimirmi.internetradioplayer.navigation.Router
 import io.github.vladimirmi.internetradioplayer.presentation.base.BackPressListener
 import io.github.vladimirmi.internetradioplayer.presentation.base.ToolbarBuilder
 import io.github.vladimirmi.internetradioplayer.presentation.base.ToolbarView
 import io.github.vladimirmi.internetradioplayer.presentation.root.RootView
 import io.github.vladimirmi.internetradioplayer.ui.SeekBarDialogPreference
-import io.reactivex.rxkotlin.subscribeBy
-import timber.log.Timber
 
 /**
  * Created by Vladimir Mikhalev 30.09.2018.
@@ -83,7 +82,7 @@ class SettingsFragment : PreferenceFragmentCompat(), BackPressListener {
                     .andThen(Scopes.app.getInstance(StationInteractor::class.java).initStations())
                     .ioToMain()
                     .doOnComplete { router.newRootScreen(Router.STATIONS_LIST_SCREEN) }
-                    .subscribeBy(onError = { Timber.e(it) })
+                    .subscribeByEx()
         }
     }
 

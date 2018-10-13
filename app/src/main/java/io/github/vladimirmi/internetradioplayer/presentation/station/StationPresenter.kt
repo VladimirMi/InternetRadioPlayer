@@ -61,11 +61,11 @@ class StationPresenter
     fun removeStation() {
         interactor.removeStation(interactor.currentStation.id)
                 .ioToMain()
-                .subscribe {
+                .subscribeByEx(onComplete = {
                     controlsInteractor.stop()
                     if (interactor.haveStations()) router.exit()
                     else router.newRootScreen(Router.GET_STARTED_SCREEN)
-                }
+                })
                 .addTo(subs)
     }
 

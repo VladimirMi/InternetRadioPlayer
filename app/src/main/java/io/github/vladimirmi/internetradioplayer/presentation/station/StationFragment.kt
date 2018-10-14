@@ -96,16 +96,14 @@ class StationFragment : BaseFragment(), StationView, BackPressListener {
             sampleLabelTv.visible(it)
             sampleTv.visible(it)
         }
-    }
 
-    override fun setGroup(group: Group) {
-        groupEt.setText(group.getViewName(context!!))
-    }
+        groupEt.setText(Group.getViewName(station.groupName, context!!))
 
-    override fun setGenres(genres: List<String>) {
-        genresLabelTv.visible(genres.isNotEmpty())
-        genresFl.removeAllViews()
-        genres.forEach { genresFl.addView(TagView(context!!, it, null)) }
+        with(station.genres) {
+            genresLabelTv.visible(isNotEmpty())
+            genresFl.removeAllViews()
+            forEach { genresFl.addView(TagView(context!!, it, null)) }
+        }
     }
 
     override fun setEditMode(editMode: Boolean) {
@@ -171,8 +169,8 @@ class StationFragment : BaseFragment(), StationView, BackPressListener {
                 }
         return StationInfo(
                 stationName = titleEt.text.toString(),
-                group = groupEt.text.toString(),
-                genres = genres, context = context!!)
+                groupName = Group.getDbName(groupEt.text.toString(), context!!),
+                genres = genres)
     }
 
     private fun TextView.linkStyle(enable: Boolean) {

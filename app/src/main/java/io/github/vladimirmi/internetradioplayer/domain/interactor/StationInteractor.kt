@@ -3,7 +3,6 @@ package io.github.vladimirmi.internetradioplayer.domain.interactor
 import android.net.Uri
 import com.jakewharton.rxrelay2.BehaviorRelay
 import io.github.vladimirmi.internetradioplayer.R
-import io.github.vladimirmi.internetradioplayer.data.db.entity.Genre
 import io.github.vladimirmi.internetradioplayer.data.db.entity.Group
 import io.github.vladimirmi.internetradioplayer.data.db.entity.Station
 import io.github.vladimirmi.internetradioplayer.data.repository.StationListRepository
@@ -62,6 +61,7 @@ class StationInteractor
             val map = stations.groupBy { it.groupId }
             groups.forEach { group ->
                 val groupStations = map[group.id]
+                groupStations?.forEach { it.groupName = group.name }
                 groupStations?.let { group.stations = groupStations.toMutableList() }
             }
             groups
@@ -117,17 +117,6 @@ class StationInteractor
         return null
     }
 
-    fun getCurrentGroup(): Group {
-        if (createMode) return Group.default()
-        return groups.find { it.id == currentStation.groupId } ?: Group.default()
-    }
-
-    fun getCurrentGenres(): Single<List<String>> {
-        if (createMode) return Single.just(currentStation.genres)
-        return stationRepository.getStationGenres(currentStation.id)
-                .map { it.map(Genre::name) }
-    }
-
     fun haveStations(): Boolean = stationsList.haveStations()
 
     fun createStation(uri: Uri): Single<Station> {
@@ -163,6 +152,7 @@ class StationInteractor
         return addGroup(groupName).flatMapCompletable { group ->
             val order = if (currentStation.groupId != group.id) group.stations.size else currentStation.order
             val newStation = currentStation.copy(name = stationName, groupId = group.id, order = order)
+            newStation.groupName = groupName
             stationRepository.updateStations(listOf(newStation))
                     .doOnComplete { currentStation = newStation }
             //todo optimize
@@ -211,7 +201,7 @@ class StationInteractor
         return when {
             currentStation.icon != previousWhenEdit!!.icon -> true
             stationInfo.stationName != previousWhenEdit!!.name -> true
-            stationInfo.groupName != getCurrentGroup().name -> true
+            stationInfo.groupName != previousWhenEdit!!.groupName -> true
             else -> false
         }
     }

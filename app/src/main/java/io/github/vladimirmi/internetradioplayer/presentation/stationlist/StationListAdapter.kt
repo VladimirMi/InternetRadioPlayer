@@ -184,7 +184,7 @@ open class GroupElementVH(itemView: View) : RecyclerView.ViewHolder(itemView) {
 class GroupTitleVH(itemView: View) : GroupElementVH(itemView) {
 
     fun bind(group: Group) {
-        itemView.title.text = group.getViewName(itemView.context)
+        itemView.title.text = Group.getViewName(group.name, itemView.context)
         setExpanded(group.expanded)
     }
 

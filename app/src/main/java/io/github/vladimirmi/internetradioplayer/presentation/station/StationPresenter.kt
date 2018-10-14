@@ -12,7 +12,6 @@ import io.github.vladimirmi.internetradioplayer.presentation.base.BasePresenter
 import io.github.vladimirmi.internetradioplayer.presentation.base.MenuItemHolder
 import io.github.vladimirmi.internetradioplayer.presentation.base.ToolbarBuilder
 import io.reactivex.rxkotlin.addTo
-import io.reactivex.rxkotlin.subscribeBy
 import javax.inject.Inject
 
 /**
@@ -49,11 +48,6 @@ class StationPresenter
 
     override fun onFirstViewAttach() {
         viewState.setStation(interactor.currentStation)
-        viewState.setGroup(interactor.getCurrentGroup())
-        interactor.getCurrentGenres()
-                .ioToMain()
-                .subscribeBy { viewState.setGenres(it) }
-                .addTo(subs)
 
         if (editMode) editMode() else viewMode()
     }
@@ -116,7 +110,8 @@ class StationPresenter
     private fun viewMode() {
         editMode = false
         viewState.setEditMode(editMode)
-        val toolbar = toolbarBuilder.removeMenuItem(saveItem)
+        val toolbar = toolbarBuilder
+                .removeMenuItem(saveItem)
                 .addMenuItem(editItem)
                 .addMenuItem(deleteItem)
 
@@ -125,13 +120,13 @@ class StationPresenter
     }
 
     private fun editMode() {
-        val toolbar = toolbarBuilder.removeMenuItem(editItem)
-                .addMenuItem(saveItem)
-
         if (!interactor.createMode) editMode = true
-        else toolbar.removeMenuItem(deleteItem)
-
         viewState.setEditMode(editMode)
+        val toolbar = toolbarBuilder
+                .removeMenuItem(editItem)
+                .addMenuItem(saveItem)
+                .removeMenuItem(deleteItem)
+
         viewState.buildToolbar(toolbar)
         controlsInteractor.editMode(true)
     }

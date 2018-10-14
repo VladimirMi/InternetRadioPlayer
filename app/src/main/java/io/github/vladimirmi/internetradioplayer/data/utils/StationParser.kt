@@ -4,14 +4,13 @@ import android.content.Context
 import android.net.Uri
 import io.github.vladimirmi.internetradioplayer.data.db.entity.Station
 import io.github.vladimirmi.internetradioplayer.extensions.toURL
-import io.github.vladimirmi.internetradioplayer.extensions.toUri
 import okhttp3.Headers
 import okhttp3.MediaType
 import okhttp3.OkHttpClient
 import okhttp3.Request
 import timber.log.Timber
-import java.net.URI
 import java.net.URISyntaxException
+import java.net.URL
 import javax.inject.Inject
 
 /**
@@ -22,10 +21,10 @@ private const val SCHEME_FILE = "file"
 private const val SCHEME_CONTENT = "content"
 private const val SCHEME_HTTP = "http"
 
-private const val EXT_PLS = "PLS"
-private const val EXT_M3U = "M3U"
-private const val EXT_M3U8 = "M3U8"
-private const val EXT_RAM = "RAM"
+private const val EXT_PLS = "pls"
+private const val EXT_M3U = "m3u"
+private const val EXT_M3U8 = "m3u8"
+private const val EXT_RAM = "ram"
 
 private const val HEADER_NAME = "icy-name"
 private const val HEADER_GENRE = "icy-genre"
@@ -55,8 +54,9 @@ class StationParser
                     private val networkChecker: NetworkChecker) {
 
     fun parseFromUri(uri: Uri): Station {
+        Timber.d("parseFromUri: $uri")
         return when {
-            uri.scheme.startsWith(SCHEME_HTTP) -> parseFromNet(uri) // also https
+            uri.scheme.startsWith(SCHEME_HTTP) -> parseFromNet(uri.toURL()) // also https
             uri.scheme == SCHEME_FILE || uri.scheme == SCHEME_CONTENT -> parseFromPlaylistFile(uri)
             else -> throw IllegalArgumentException("Error: Unsupported uri $uri")
         }
@@ -68,13 +68,16 @@ class StationParser
         val content = context.contentResolver.openInputStream(uri).use { stream ->
             stream.bufferedReader().use { it.readText() }
         }
-        return if (type == PLS_TYPE) content.parsePls(name) else content.parseM3u(name)
+        return if (type == PLS_TYPE
+                || type == null && name.substringAfterLast('.').toLowerCase() == EXT_PLS) {
+            content.parsePls(name)
+        } else content.parseM3u(name)
     }
 
-    private fun parseFromNet(uri: Uri, name: String = uri.host): Station {
+    private fun parseFromNet(url: URL, name: String = url.host): Station {
         if (!networkChecker.isAvailable()) throw IllegalStateException("Error: No connection")
 
-        val request = Request.Builder().url(uri.toURL()).build()
+        val request = Request.Builder().url(url).build()
         val response = client.newCall(request).execute()
         val body = response.body() ?: throw IllegalStateException("Error: Empty body")
         val type = body.contentType() ?: throw IllegalStateException("Error: Empty content type")
@@ -85,7 +88,7 @@ class StationParser
             else body.string().parseM3u()
 
         } else if (type.isAudioStream()) {
-            createStation(name, uri, response.headers())
+            createStation(name, url, response.headers())
 
         } else {
             throw IllegalStateException("Error: Unsupported content type $type")
@@ -93,12 +96,12 @@ class StationParser
         }).also { body.close() }
     }
 
-    private fun createStation(name: String, uri: Uri, headers: Headers): Station {
+    private fun createStation(name: String, url: URL, headers: Headers): Station {
         Timber.d("createStation: $headers")
 
         return Station(
                 name = headers[HEADER_NAME] ?: name,
-                uri = uri.toString(),
+                uri = url.toString(),
                 url = headers[HEADER_URL],
                 bitrate = headers[HEADER_BITRATE]?.toInt(),
                 sample = headers[HEADER_SAMPLE]?.toInt()).also {
@@ -116,27 +119,27 @@ class StationParser
     }
 
     private fun String.parsePls(name: String = ""): Station {
-        var uri: String? = null
+        var url: URL? = null
         var title: String = name
 
         lines().forEach {
             val line = it.trim()
             Timber.d("parsePls: $line")
             when {
-                line.startsWith(PLS_URI) -> uri = line.substring(PLS_URI.length).trim()
+                line.startsWith(PLS_URI) -> url = line.substring(PLS_URI.length).trim().toURL()
                 line.startsWith(PLS_TITLE) -> title = line.substring(PLS_TITLE.length).trim()
             }
         }
-        if (uri == null) throw IllegalStateException("Error: Playlist file does not contain stream uri")
+        if (url == null) throw IllegalStateException("Error: Playlist file does not contain stream uri")
         if (title.isBlank()) {
-            title = uri!!.toUri().host ?: uri.toString()
+            title = url!!.host ?: url.toString()
         }
-        return parseFromNet(uri!!.toUri(), title)
+        return parseFromNet(url!!, title)
     }
 
     private fun String.parseM3u(name: String = ""): Station {
         var extended = false
-        var uri: URI? = null
+        var url: URL? = null
         var title: String = name
 
         lines().forEach {
@@ -145,18 +148,18 @@ class StationParser
             when {
                 line.startsWith(M3U_HEADER) -> extended = true
                 extended && line.startsWith(M3U_INFO) -> title = line.substringAfter(",")
-                else -> uri = try {
-                    URI(line)
+                else -> url = try {
+                    URL(line)
                 } catch (e: URISyntaxException) {
                     null
                 }
             }
         }
-        if (uri == null) throw IllegalStateException("Error: Playlist file does not contain stream uri")
+        if (url == null) throw IllegalStateException("Error: Playlist file does not contain stream uri")
         if (title.isBlank()) {
-            title = uri!!.toUri().host ?: uri.toString()
+            title = url!!.host ?: url.toString()
         }
-        return parseFromNet(uri!!.toUri(), title)
+        return parseFromNet(url!!, title)
     }
 }
 

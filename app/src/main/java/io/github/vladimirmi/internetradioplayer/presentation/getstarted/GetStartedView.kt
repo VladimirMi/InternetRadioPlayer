@@ -16,5 +16,8 @@ interface GetStartedView : MvpView {
     fun buildToolbar(builder: ToolbarBuilder)
 
     @StateStrategyType(OneExecutionStateStrategy::class)
+    fun showControls(visible: Boolean)
+
+    @StateStrategyType(OneExecutionStateStrategy::class)
     fun openAddStationDialog()
 }

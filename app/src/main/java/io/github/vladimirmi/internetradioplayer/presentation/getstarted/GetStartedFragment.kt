@@ -31,10 +31,13 @@ class GetStartedFragment : BaseFragment(), GetStartedView {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         addNewBt.setOnClickListener { openAddStationDialog() }
-        (activity as RootView).showControls(false)
     }
 
     override fun openAddStationDialog() {
         NewStationDialog().show(childFragmentManager, "new_station_dialog")
+    }
+
+    override fun showControls(visible: Boolean) {
+        (activity as RootView).showControls(visible)
     }
 }

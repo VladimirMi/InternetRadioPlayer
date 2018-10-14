@@ -122,12 +122,14 @@ class StationInteractor
     fun createStation(uri: Uri): Single<Station> {
         return stationRepository.createStation(uri)
                 .doOnSuccess { newStation ->
-                    val station = getStation { it.uri == newStation.uri } ?: newStation
-                    if (station.id == newStation.id) {
+                    val station = getStation { it.uri == newStation.uri }
+                    if (station == null) {
                         setEditMode(true)
                         createMode = true
+                        currentStation = newStation
+                    } else {
+                        currentStation = station
                     }
-                    currentStation = station
                 }
     }
 

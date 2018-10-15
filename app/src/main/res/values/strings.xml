@@ -78,7 +78,9 @@
     <string name="default_group">Other</string>
 
     <string name="setting_initial_buffer">Initial buffer duration</string>
+    <string name="setting_initial_buffer_desc">Initial duration of media that must be buffered for playback to start</string>
     <string name="setting_buffer">Buffer duration</string>
+    <string name="setting_buffer_desc">Duration of media that must be buffered for playback to resume after a rebuffer</string>
 
     <string name="second">%1$d second</string>
     <string name="seconds">%1$d seconds</string>

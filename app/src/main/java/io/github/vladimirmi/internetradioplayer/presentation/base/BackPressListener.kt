@@ -1,4 +1,4 @@
-package io.github.vladimirmi.internetradioplayer.ui.base
+package io.github.vladimirmi.internetradioplayer.presentation.base
 
 /**
  * Created by Vladimir Mikhalev 03.12.2017.

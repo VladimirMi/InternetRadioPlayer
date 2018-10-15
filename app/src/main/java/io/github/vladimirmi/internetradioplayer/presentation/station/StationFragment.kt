@@ -22,11 +22,9 @@ import io.github.vladimirmi.internetradioplayer.data.db.entity.Station
 import io.github.vladimirmi.internetradioplayer.di.Scopes
 import io.github.vladimirmi.internetradioplayer.extensions.inputMethodManager
 import io.github.vladimirmi.internetradioplayer.extensions.visible
-import io.github.vladimirmi.internetradioplayer.presentation.root.ToolbarBuilder
-import io.github.vladimirmi.internetradioplayer.presentation.root.ToolbarView
+import io.github.vladimirmi.internetradioplayer.presentation.base.BackPressListener
+import io.github.vladimirmi.internetradioplayer.presentation.base.BaseFragment
 import io.github.vladimirmi.internetradioplayer.ui.TagView
-import io.github.vladimirmi.internetradioplayer.ui.base.BackPressListener
-import io.github.vladimirmi.internetradioplayer.ui.base.BaseFragment
 import kotlinx.android.synthetic.main.view_station_detail_info.*
 import kotlinx.android.synthetic.main.view_station_info.*
 import toothpick.Toothpick
@@ -73,10 +71,6 @@ class StationFragment : BaseFragment(), StationView, BackPressListener {
 
     //region =============== StationView ==============
 
-    override fun buildToolbar(builder: ToolbarBuilder) {
-        builder.build(activity as ToolbarView)
-    }
-
     override fun setStation(station: Station) {
         titleEt.setText(station.name)
 
@@ -102,16 +96,14 @@ class StationFragment : BaseFragment(), StationView, BackPressListener {
             sampleLabelTv.visible(it)
             sampleTv.visible(it)
         }
-    }
 
-    override fun setGroup(group: Group) {
-        groupEt.setText(group.getViewName(context!!))
-    }
+        groupEt.setText(Group.getViewName(station.groupName, context!!))
 
-    override fun setGenres(genres: List<String>) {
-        genresLabelTv.visible(genres.isNotEmpty())
-        genresFl.removeAllViews()
-        genres.forEach { genresFl.addView(TagView(context!!, it, null)) }
+        with(station.genres) {
+            genresLabelTv.visible(isNotEmpty())
+            genresFl.removeAllViews()
+            forEach { genresFl.addView(TagView(context!!, it, null)) }
+        }
     }
 
     override fun setEditMode(editMode: Boolean) {
@@ -177,8 +169,8 @@ class StationFragment : BaseFragment(), StationView, BackPressListener {
                 }
         return StationInfo(
                 stationName = titleEt.text.toString(),
-                group = groupEt.text.toString(),
-                genres = genres, context = context!!)
+                groupName = Group.getDbName(groupEt.text.toString(), context!!),
+                genres = genres)
     }
 
     private fun TextView.linkStyle(enable: Boolean) {

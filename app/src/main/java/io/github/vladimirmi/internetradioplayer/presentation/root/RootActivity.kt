@@ -19,14 +19,16 @@ import com.arellomobile.mvp.MvpAppCompatActivity
 import com.arellomobile.mvp.presenter.InjectPresenter
 import com.arellomobile.mvp.presenter.ProvidePresenter
 import io.github.vladimirmi.internetradioplayer.R
-import io.github.vladimirmi.internetradioplayer.data.manager.EXTRA_PLAY
 import io.github.vladimirmi.internetradioplayer.data.service.PlayerService
+import io.github.vladimirmi.internetradioplayer.data.utils.EXTRA_PLAY
 import io.github.vladimirmi.internetradioplayer.di.Scopes
 import io.github.vladimirmi.internetradioplayer.di.module.RootActivityModule
 import io.github.vladimirmi.internetradioplayer.extensions.setTintExt
 import io.github.vladimirmi.internetradioplayer.extensions.visible
 import io.github.vladimirmi.internetradioplayer.navigation.Navigator
-import io.github.vladimirmi.internetradioplayer.ui.base.BackPressListener
+import io.github.vladimirmi.internetradioplayer.presentation.base.BackPressListener
+import io.github.vladimirmi.internetradioplayer.presentation.base.MenuHolder
+import io.github.vladimirmi.internetradioplayer.presentation.base.ToolbarView
 import kotlinx.android.synthetic.main.activity_root.*
 import kotlinx.android.synthetic.main.view_menu_item.view.*
 import ru.terrakok.cicerone.NavigatorHolder
@@ -169,10 +171,7 @@ class RootActivity : MvpAppCompatActivity(), RootView, ToolbarView {
                         menu.add(0, item.itemTitleResId, index, item.itemTitleResId).apply {
                             setIcon(item.iconResId)
                             setShowAsActionFlags(MenuItem.SHOW_AS_ACTION_IF_ROOM)
-                            setOnMenuItemClickListener {
-                                holder.actions.invoke(it)
-                                true
-                            }
+                            setOnMenuItemClickListener { holder.actions?.invoke(it); true }
                         }
                     }
             configurePopupFor(menu, holder)
@@ -201,7 +200,8 @@ class RootActivity : MvpAppCompatActivity(), RootView, ToolbarView {
             }
         }
         popup.setOnMenuItemClickListener {
-            holder.actions.invoke(it)
+            standardMenuActions(it)
+            holder.actions?.invoke(it)
             true
         }
 
@@ -221,5 +221,12 @@ class RootActivity : MvpAppCompatActivity(), RootView, ToolbarView {
         slide.addTarget(R.id.playerControlsFr)
         slide.interpolator = FastOutSlowInInterpolator()
         return slide
+    }
+
+    private fun standardMenuActions(menuItem: MenuItem) {
+        when (menuItem.itemId) {
+            R.string.menu_settings -> presenter.openSettings()
+            R.string.menu_exit -> presenter.exitApp()
+        }
     }
 }

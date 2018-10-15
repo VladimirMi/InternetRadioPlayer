@@ -1,16 +1,19 @@
 package io.github.vladimirmi.internetradioplayer.presentation.stationlist
 
+import android.os.Build
+import android.support.v4.content.ContextCompat
 import android.support.v7.util.DiffUtil
 import android.support.v7.widget.RecyclerView
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.view.ViewOutlineProvider
 import io.github.vladimirmi.internetradioplayer.R
 import io.github.vladimirmi.internetradioplayer.data.db.entity.Group
 import io.github.vladimirmi.internetradioplayer.data.db.entity.Station
 import io.github.vladimirmi.internetradioplayer.domain.model.FlatStationsList
-import io.github.vladimirmi.internetradioplayer.extensions.color
-import io.github.vladimirmi.internetradioplayer.extensions.getBitmap
+import io.github.vladimirmi.internetradioplayer.extensions.*
+import io.github.vladimirmi.internetradioplayer.ui.FixedOutlineProvider
 import kotlinx.android.synthetic.main.item_group_item.view.*
 import kotlinx.android.synthetic.main.item_group_title.view.*
 
@@ -22,6 +25,8 @@ private const val GROUP_TITLE = 0
 private const val GROUP_ITEM = 1
 private const val PAYLOAD_SELECTED_CHANGE = "PAYLOAD_SELECTED_CHANGE"
 private const val PAYLOAD_BACKGROUND_CHANGE = "PAYLOAD_BACKGROUND_CHANGE"
+private val defaultOutline = if (Build.VERSION.SDK_INT >= 21) ViewOutlineProvider.BACKGROUND else null
+private val fixedOutline = if (Build.VERSION.SDK_INT >= 21) FixedOutlineProvider() else null
 
 class StationListAdapter(private val callback: StationItemCallback)
     : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
@@ -79,6 +84,8 @@ class StationListAdapter(private val callback: StationItemCallback)
     fun onMove(from: Int, to: Int) {
         stations.moveItem(from, to)
         notifyItemMoved(from, to)
+        notifyItemChanged(from, PAYLOAD_BACKGROUND_CHANGE)
+        notifyItemChanged(to, PAYLOAD_BACKGROUND_CHANGE)
     }
 
     fun onStartDrag(position: Int) {
@@ -112,12 +119,18 @@ class StationListAdapter(private val callback: StationItemCallback)
             } else {
                 holder.select(stations.getStation(position).id == selectedStation.id, playing)
             }
+        } else if (payloads.contains(PAYLOAD_BACKGROUND_CHANGE)) {
+            holder.setMargins(position == 0 || holder is GroupTitleVH, position == itemCount - 1)
+            (holder as? GroupItemVH)?.changeBackground(stations.isLastStationInGroup(position),
+                    position == 0)
         } else {
             super.onBindViewHolder(holder, position, payloads)
         }
     }
 
     override fun onBindViewHolder(holder: RecyclerView.ViewHolder, position: Int) {
+        (holder as GroupElementVH).setMargins(position == 0 || holder is GroupTitleVH,
+                position == itemCount - 1)
         when (holder) {
             is GroupTitleVH -> setupGroupTitleVH(position, holder)
             is GroupItemVH -> setupGroupItemVH(position, holder)
@@ -126,45 +139,64 @@ class StationListAdapter(private val callback: StationItemCallback)
 
     private fun setupGroupTitleVH(position: Int, holder: GroupTitleVH) {
         val group = stations.getGroup(position)
-        holder.bind(group, callback)
+        holder.bind(group)
+        holder.itemView.setOnClickListener { callback.onGroupSelected(group.id) }
         val selected = !group.expanded && group.id == selectedStation.groupId
         holder.select(selected, playing)
     }
 
     private fun setupGroupItemVH(position: Int, holder: GroupItemVH) {
         val station = stations.getStation(position)
+
         holder.bind(station)
+        holder.changeBackground(stations.isLastStationInGroup(position), position == 0)
         holder.select(station.id == selectedStation.id, playing)
-        holder.setCallback(callback, station)
+        holder.itemView.setOnClickListener { callback.onItemSelected(station) }
     }
 
     override fun getItemCount(): Int = stations.size
 }
 
 open class GroupElementVH(itemView: View) : RecyclerView.ViewHolder(itemView) {
+    private var colorId = R.color.grey_50
 
     fun select(selected: Boolean, playing: Boolean) {
-        val colorId = when {
+        colorId = when {
             selected && playing -> R.color.green_200
             selected -> R.color.grey_300
             else -> R.color.grey_50
         }
-        itemView.setBackgroundColor(itemView.context.color(colorId))
+        setBgColor()
+    }
+
+    fun setMargins(addTopMargin: Boolean, addBottomMargin: Boolean) {
+        val lp = itemView.layoutParams as ViewGroup.MarginLayoutParams
+        lp.topMargin = (if (addTopMargin) 16 else 0) * itemView.context.dp
+        lp.bottomMargin = (if (addBottomMargin) 16 else 0) * itemView.context.dp
+        itemView.layoutParams = lp
+    }
+
+    protected fun setBgColor() {
+        itemView.background.setTintExt(itemView.context.color(colorId))
     }
 }
 
 class GroupTitleVH(itemView: View) : GroupElementVH(itemView) {
-    fun bind(group: Group, callback: StationItemCallback) {
-        itemView.title.text = group.getViewName(itemView.context)
-        itemView.setOnClickListener { callback.onGroupSelected(group.id) }
+
+    fun bind(group: Group) {
+        itemView.title.text = Group.getViewName(group.name, itemView.context)
         setExpanded(group.expanded)
     }
 
     private fun setExpanded(expanded: Boolean) {
         val pointer = if (expanded) R.drawable.ic_collapse else R.drawable.ic_expand
         itemView.ic_expanded.setImageResource(pointer)
-//        val bg = if (expanded) R.drawable.shape_item_top else R.drawable.shape_item_single
-//        itemView.background = ContextCompat.getDrawable(itemView.context, bg)
+        val bg = if (expanded) R.drawable.shape_item_top else R.drawable.shape_item_single
+        itemView.background = ContextCompat.getDrawable(itemView.context, bg)
+        setBgColor()
+        itemView.titleDelimiter.visible(expanded)
+        if (Build.VERSION.SDK_INT < 21) return
+        itemView.outlineProvider = defaultOutline
     }
 }
 
@@ -175,8 +207,18 @@ class GroupItemVH(itemView: View) : GroupElementVH(itemView) {
         itemView.iconIv.setImageBitmap(station.icon.getBitmap(itemView.context))
     }
 
-    fun setCallback(callback: StationItemCallback, station: Station) {
-        itemView.setOnClickListener { callback.onItemSelected(station) }
+    fun changeBackground(lastStationInGroup: Boolean, firstInList: Boolean) {
+        itemView.itemDelimiter.visible(!lastStationInGroup)
+        val bg = when {
+            lastStationInGroup -> R.drawable.shape_item_bottom
+            firstInList -> R.drawable.shape_item_top
+            else -> R.drawable.shape_item_middle
+        }
+        itemView.background = ContextCompat.getDrawable(itemView.context, bg)
+        setBgColor()
+        if (Build.VERSION.SDK_INT < 21) return
+        itemView.outlineProvider = if (lastStationInGroup || firstInList) defaultOutline
+        else fixedOutline
     }
 }
 

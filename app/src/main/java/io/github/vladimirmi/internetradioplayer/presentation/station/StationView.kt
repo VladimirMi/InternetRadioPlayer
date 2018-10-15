@@ -4,9 +4,8 @@ import com.arellomobile.mvp.MvpView
 import com.arellomobile.mvp.viewstate.strategy.AddToEndSingleStrategy
 import com.arellomobile.mvp.viewstate.strategy.OneExecutionStateStrategy
 import com.arellomobile.mvp.viewstate.strategy.StateStrategyType
-import io.github.vladimirmi.internetradioplayer.data.db.entity.Group
 import io.github.vladimirmi.internetradioplayer.data.db.entity.Station
-import io.github.vladimirmi.internetradioplayer.presentation.root.ToolbarBuilder
+import io.github.vladimirmi.internetradioplayer.presentation.base.ToolbarBuilder
 
 /**
  * Created by Vladimir Mikhalev 18.11.2017.
@@ -16,12 +15,6 @@ interface StationView : MvpView {
 
     @StateStrategyType(AddToEndSingleStrategy::class)
     fun setStation(station: Station)
-
-    @StateStrategyType(AddToEndSingleStrategy::class)
-    fun setGroup(group: Group)
-
-    @StateStrategyType(AddToEndSingleStrategy::class)
-    fun setGenres(genres: List<String>)
 
     @StateStrategyType(AddToEndSingleStrategy::class)
     fun buildToolbar(builder: ToolbarBuilder)

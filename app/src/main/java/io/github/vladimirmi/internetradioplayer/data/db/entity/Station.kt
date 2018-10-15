@@ -8,7 +8,8 @@ import java.util.*
  */
 
 //todo create group_id index
-@Entity(foreignKeys = [ForeignKey(entity = Group::class,
+@Entity(foreignKeys = [ForeignKey(
+        entity = Group::class,
         parentColumns = ["id"],
         childColumns = ["group_id"],
         onDelete = ForeignKey.CASCADE)],
@@ -27,6 +28,7 @@ data class Station(
 ) {
 
     @Ignore var genres: List<String> = listOf()
+    @Ignore var groupName: String = Group.DEFAULT_NAME
 
     @Ignore constructor(name: String,
                         uri: String,

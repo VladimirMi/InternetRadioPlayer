@@ -29,12 +29,18 @@ data class Group(@PrimaryKey
         const val DEFAULT_NAME = "default_name"
 
         fun default() = Group(DEFAULT_ID, DEFAULT_NAME, true, 0)
+
+        fun getViewName(name: String, context: Context): String {
+            return if (name == DEFAULT_NAME) context.getString(R.string.default_group)
+            else name
+        }
+
+        fun getDbName(name: String, context: Context): String {
+            return if (name == context.getString(R.string.default_group) || name.isBlank()) {
+                Group.DEFAULT_NAME
+            } else name
+        }
     }
 
     fun isDefault() = id == DEFAULT_ID
-
-    fun getViewName(context: Context): String {
-        return if (name == DEFAULT_NAME) context.getString(R.string.default_group)
-        else name
-    }
 }

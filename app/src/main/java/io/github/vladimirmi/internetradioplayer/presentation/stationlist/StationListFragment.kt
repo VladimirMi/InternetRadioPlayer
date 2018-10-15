@@ -12,10 +12,8 @@ import io.github.vladimirmi.internetradioplayer.R
 import io.github.vladimirmi.internetradioplayer.data.db.entity.Station
 import io.github.vladimirmi.internetradioplayer.di.Scopes
 import io.github.vladimirmi.internetradioplayer.domain.model.FlatStationsList
+import io.github.vladimirmi.internetradioplayer.presentation.base.BaseFragment
 import io.github.vladimirmi.internetradioplayer.presentation.getstarted.NewStationDialog
-import io.github.vladimirmi.internetradioplayer.presentation.root.ToolbarBuilder
-import io.github.vladimirmi.internetradioplayer.presentation.root.ToolbarView
-import io.github.vladimirmi.internetradioplayer.ui.base.BaseFragment
 import kotlinx.android.synthetic.main.fragment_stations_list.*
 import toothpick.Toothpick
 
@@ -89,10 +87,6 @@ class StationListFragment : BaseFragment(), StationListView, StationItemCallback
 
     override fun showToast(resId: Int) {
         Toast.makeText(context, resId, Toast.LENGTH_SHORT).show()
-    }
-
-    override fun buildToolbar(builder: ToolbarBuilder) {
-        builder.build(activity as ToolbarView)
     }
 
     //endregion

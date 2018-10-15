@@ -1,4 +1,4 @@
-package io.github.vladimirmi.internetradioplayer.data.manager
+package io.github.vladimirmi.internetradioplayer.data.utils
 
 import android.content.Context
 import android.net.ConnectivityManager

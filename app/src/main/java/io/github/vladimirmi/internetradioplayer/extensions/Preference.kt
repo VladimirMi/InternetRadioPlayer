@@ -1,7 +1,7 @@
 package io.github.vladimirmi.internetradioplayer.extensions
 
 import android.annotation.SuppressLint
-import android.content.Context
+import android.content.SharedPreferences
 import kotlin.reflect.KProperty
 
 /**
@@ -9,13 +9,9 @@ import kotlin.reflect.KProperty
  */
 
 class Preference<T>(
-        private val context: Context,
+        private val prefs: SharedPreferences,
         private val name: String,
         private val default: T) {
-
-    private val prefs by lazy {
-        context.getSharedPreferences("default", Context.MODE_PRIVATE)
-    }
 
     operator fun getValue(thisRef: Any?, property: KProperty<*>): T =
             findPreference(name, default)

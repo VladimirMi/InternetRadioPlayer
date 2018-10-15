@@ -7,6 +7,7 @@ import io.github.vladimirmi.internetradioplayer.R
 import io.github.vladimirmi.internetradioplayer.presentation.getstarted.GetStartedFragment
 import io.github.vladimirmi.internetradioplayer.presentation.iconpicker.IconPickerFragment
 import io.github.vladimirmi.internetradioplayer.presentation.root.RootActivity
+import io.github.vladimirmi.internetradioplayer.presentation.settings.SettingsFragment
 import io.github.vladimirmi.internetradioplayer.presentation.station.StationFragment
 import io.github.vladimirmi.internetradioplayer.presentation.stationlist.StationListFragment
 import ru.terrakok.cicerone.android.SupportAppNavigator
@@ -46,6 +47,7 @@ class Navigator(activity: RootActivity, containerId: Int)
             Router.STATIONS_LIST_SCREEN -> StationListFragment()
             Router.STATION_SCREEN -> StationFragment()
             Router.ICON_PICKER_SCREEN -> IconPickerFragment()
+            Router.SETTINGS_SCREEN -> SettingsFragment()
             else -> null
         }
     }

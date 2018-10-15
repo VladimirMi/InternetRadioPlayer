@@ -70,7 +70,14 @@ class FlatStationsList(private val flatList: MutableList<Any> = arrayListOf()) {
     }
 
     fun isFirstStation(id: String): Boolean {
-        return (isGroup(0) && isStation(1) && getStation(1).id == id) || (isStation(0) && getStation(0).id == id)
+        return size == 0
+                || isGroup(0) && isStation(1) && getStation(1).id == id
+                || isStation(0) && getStation(0).id == id
+    }
+
+    fun isLastStationInGroup(position: Int): Boolean {
+        if (position > flatList.size - 1 || isGroup(position)) return false
+        return position == flatList.size - 1 || isGroup(position + 1)
     }
 
     fun positionOfStation(id: String): Int {
@@ -132,6 +139,10 @@ class FlatStationsList(private val flatList: MutableList<Any> = arrayListOf()) {
         }
         return updates
     }
+
+    fun getFirstStation(): Station? = flatList.firstOrNull { it is Station } as? Station
+
+    fun haveStations() = flatList.any { it is Station }
 
     private fun getGroups() = flatList.filterIsInstance(Group::class.java)
     private fun getStations() = flatList.filterIsInstance(Station::class.java)

@@ -5,15 +5,13 @@ import com.arellomobile.mvp.InjectViewState
 import io.github.vladimirmi.internetradioplayer.R
 import io.github.vladimirmi.internetradioplayer.domain.interactor.PlayerControlsInteractor
 import io.github.vladimirmi.internetradioplayer.domain.interactor.StationInteractor
-import io.github.vladimirmi.internetradioplayer.extensions.ValidationException
 import io.github.vladimirmi.internetradioplayer.extensions.ioToMain
+import io.github.vladimirmi.internetradioplayer.extensions.subscribeByEx
 import io.github.vladimirmi.internetradioplayer.navigation.Router
-import io.github.vladimirmi.internetradioplayer.presentation.root.MenuItemHolder
-import io.github.vladimirmi.internetradioplayer.presentation.root.ToolbarBuilder
-import io.github.vladimirmi.internetradioplayer.ui.base.BasePresenter
+import io.github.vladimirmi.internetradioplayer.presentation.base.BasePresenter
+import io.github.vladimirmi.internetradioplayer.presentation.base.MenuItemHolder
+import io.github.vladimirmi.internetradioplayer.presentation.base.ToolbarBuilder
 import io.reactivex.rxkotlin.addTo
-import io.reactivex.rxkotlin.subscribeBy
-import timber.log.Timber
 import javax.inject.Inject
 
 /**
@@ -41,19 +39,15 @@ class StationPresenter
 
     private val editItem = MenuItemHolder(R.string.menu_station_edit, R.drawable.ic_edit, order = 0)
     private val saveItem = MenuItemHolder(R.string.menu_station_save, R.drawable.ic_submit, order = 0, showAsAction = true)
+    private val deleteItem = MenuItemHolder(R.string.menu_station_delete, R.drawable.ic_delete, order = 2)
 
-    private val toolbarBuilder = ToolbarBuilder().setToolbarTitle(interactor.currentStation.name)
+    private val toolbarBuilder = ToolbarBuilder.standard()
+            .setToolbarTitle(interactor.currentStation.name)
             .addMenuItem(MenuItemHolder(R.string.menu_station_shortcut, R.drawable.ic_shortcut, order = 1))
-            .addMenuItem(MenuItemHolder(R.string.menu_station_delete, R.drawable.ic_delete, order = 2))
             .setMenuActions(menuActions)
 
     override fun onFirstViewAttach() {
         viewState.setStation(interactor.currentStation)
-        viewState.setGroup(interactor.getCurrentGroup())
-        interactor.getCurrentGenres()
-                .ioToMain()
-                .subscribeBy { viewState.setGenres(it) }
-                .addTo(compDisp)
 
         if (editMode) editMode() else viewMode()
     }
@@ -61,24 +55,19 @@ class StationPresenter
     fun removeStation() {
         interactor.removeStation(interactor.currentStation.id)
                 .ioToMain()
-                .subscribe {
+                .subscribeByEx(onComplete = {
                     controlsInteractor.stop()
                     if (interactor.haveStations()) router.exit()
                     else router.newRootScreen(Router.GET_STARTED_SCREEN)
-                }
-                .addTo(compDisp)
+                })
+                .addTo(subs)
     }
 
     fun edit(stationInfo: StationInfo) {
         interactor.updateCurrentStation(stationInfo.stationName, stationInfo.groupName)
                 .ioToMain()
-                .subscribeBy(
-                        onComplete = { viewMode() },
-                        onError = {
-                            if (it is ValidationException) viewState.showToast(it.resId)
-                            else Timber.e(it)
-                        })
-                .addTo(compDisp)
+                .subscribeByEx(onComplete = { viewMode() })
+                .addTo(subs)
     }
 
     fun cancelEdit() {
@@ -90,26 +79,20 @@ class StationPresenter
     fun create(stationInfo: StationInfo) {
         interactor.addCurrentStation(stationInfo.stationName, stationInfo.groupName)
                 .ioToMain()
-                .subscribeBy(
+                .subscribeByEx(
                         onComplete = {
                             viewState.showToast(R.string.toast_add_success)
                             viewMode()
                             router.newRootScreen(Router.STATIONS_LIST_SCREEN)
-                        },
-                        onError = {
-                            if (it is ValidationException) viewState.showToast(it.resId)
-                            else Timber.e(it)
                         })
-                .addTo(compDisp)
+                .addTo(subs)
     }
 
     fun cancelCreate() {
-        Timber.e("cancelCreate: ${interactor.previousWhenEdit}")
         interactor.currentStation = interactor.previousWhenEdit!!
         viewMode()
         router.exit()
     }
-
 
     fun onBackPressed(): Boolean {
         when {
@@ -127,8 +110,10 @@ class StationPresenter
     private fun viewMode() {
         editMode = false
         viewState.setEditMode(editMode)
-        val toolbar = toolbarBuilder.removeMenuItem(saveItem)
+        val toolbar = toolbarBuilder
+                .removeMenuItem(saveItem)
                 .addMenuItem(editItem)
+                .addMenuItem(deleteItem)
 
         viewState.buildToolbar(toolbar)
         controlsInteractor.editMode(false)
@@ -137,8 +122,10 @@ class StationPresenter
     private fun editMode() {
         if (!interactor.createMode) editMode = true
         viewState.setEditMode(editMode)
-        val toolbar = toolbarBuilder.removeMenuItem(editItem)
+        val toolbar = toolbarBuilder
+                .removeMenuItem(editItem)
                 .addMenuItem(saveItem)
+                .removeMenuItem(deleteItem)
 
         viewState.buildToolbar(toolbar)
         controlsInteractor.editMode(true)

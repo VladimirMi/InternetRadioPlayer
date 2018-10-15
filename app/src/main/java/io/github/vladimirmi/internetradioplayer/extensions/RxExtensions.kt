@@ -1,10 +1,14 @@
 package io.github.vladimirmi.internetradioplayer.extensions
 
+import android.widget.Toast
+import io.github.vladimirmi.internetradioplayer.di.Scopes
 import io.reactivex.Completable
 import io.reactivex.Observable
 import io.reactivex.Single
 import io.reactivex.android.schedulers.AndroidSchedulers
+import io.reactivex.disposables.Disposable
 import io.reactivex.schedulers.Schedulers
+import timber.log.Timber
 
 /**
  * Created by Vladimir Mikhalev 14.11.2017.
@@ -25,3 +29,21 @@ fun Completable.ioToMain(): Completable {
             .observeOn(AndroidSchedulers.mainThread())
 }
 
+val errorHandler: (Throwable) -> Unit = {
+    if (it is MessageException) {
+        Toast.makeText(Scopes.context, it.resId, Toast.LENGTH_SHORT).show()
+    } else {
+        Timber.e(it)
+        Toast.makeText(Scopes.context, it.message, Toast.LENGTH_SHORT).show()
+    }
+}
+
+fun <T : Any> Single<T>.subscribeByEx(
+        onError: (Throwable) -> Unit = errorHandler,
+        onSuccess: (T) -> Unit = {}
+): Disposable = subscribe(onSuccess, onError)
+
+fun Completable.subscribeByEx(
+        onError: (Throwable) -> Unit = errorHandler,
+        onComplete: () -> Unit = {}
+): Disposable = subscribe(onComplete, onError)

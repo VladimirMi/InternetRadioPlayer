@@ -6,8 +6,8 @@ import io.github.vladimirmi.internetradioplayer.data.db.entity.Genre
 import io.github.vladimirmi.internetradioplayer.data.db.entity.Group
 import io.github.vladimirmi.internetradioplayer.data.db.entity.Station
 import io.github.vladimirmi.internetradioplayer.data.db.entity.StationGenreJoin
-import io.github.vladimirmi.internetradioplayer.data.manager.Preferences
-import io.github.vladimirmi.internetradioplayer.data.manager.StationParser
+import io.github.vladimirmi.internetradioplayer.data.utils.Preferences
+import io.github.vladimirmi.internetradioplayer.data.utils.StationParser
 import io.reactivex.Completable
 import io.reactivex.Single
 import javax.inject.Inject
@@ -28,7 +28,15 @@ class StationListRepository
 
     fun getCurrentStationId() = preferences.currentStationId
 
-    fun getAllStations(): Single<List<Station>> = db.stationDao().getAllStations()
+    fun getAllStations(): Single<List<Station>> {
+        return db.stationDao().getAllStations()
+                .toObservable()
+                .flatMapIterable { it }
+                .flatMapSingle { station ->
+                    db.stationDao().getStationGenres(station.id)
+                            .map { station.apply { genres = it.map(Genre::name) } }
+                }.toList()
+    }
 
     fun getAllGroups(): Single<List<Group>> = db.stationDao().getAllGroups()
 
@@ -60,7 +68,12 @@ class StationListRepository
 
     fun addStation(station: Station): Completable {
         return Completable.fromCallable {
-            db.stationDao().insertStation(station)
+            val group = db.stationDao().getGroupByName(station.groupName)
+            val newStation = if (station.groupId != group.id) {
+                station.copy(groupId = group.id)
+            } else station
+
+            db.stationDao().insertStation(newStation)
             val genres = station.genres.map(::Genre)
             db.stationDao().insertGenres(genres)
             db.stationDao().insertStationGenre(genres.map { StationGenreJoin(station.id, it.name) })

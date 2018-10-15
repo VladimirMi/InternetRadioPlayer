@@ -10,7 +10,7 @@ import io.github.vladimirmi.internetradioplayer.domain.interactor.PlayerControls
 import io.github.vladimirmi.internetradioplayer.domain.interactor.StationInteractor
 import io.github.vladimirmi.internetradioplayer.domain.model.PlayerMode
 import io.github.vladimirmi.internetradioplayer.navigation.Router
-import io.github.vladimirmi.internetradioplayer.ui.base.BasePresenter
+import io.github.vladimirmi.internetradioplayer.presentation.base.BasePresenter
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.rxkotlin.addTo
 import io.reactivex.rxkotlin.subscribeBy
@@ -30,25 +30,25 @@ class PlayerControlPresenter
     override fun onFirstViewAttach() {
         controlsInteractor.playbackStateObs
                 .subscribe { handleState(it) }
-                .addTo(compDisp)
+                .addTo(subs)
 
         controlsInteractor.sessionEventObs
                 .subscribe { handleSessionEvent(it) }
-                .addTo(compDisp)
+                .addTo(subs)
 
         controlsInteractor.playbackMetaData
                 .subscribeBy { handleMetadata(it) }
-                .addTo(compDisp)
+                .addTo(subs)
 
         controlsInteractor.playerModeObs
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe { handlePlayerMode(it) }
-                .addTo(compDisp)
+                .addTo(subs)
 
         stationInteractor.currentStationObs
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe { viewState.setStation(it) }
-                .addTo(compDisp)
+                .addTo(subs)
     }
 
     private fun handleState(state: PlaybackStateCompat) {

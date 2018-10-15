@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="utf-8"?>
+<PreferenceScreen
+    xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <PreferenceCategory android:title="Stream settings">
+
+        <io.github.vladimirmi.internetradioplayer.ui.SeekBarDialogPreference
+            android:defaultValue="3"
+            android:dialogMessage="@string/setting_initial_buffer_desc"
+            android:key="INITIAL_BUFFER_LENGTH"
+            android:title="@string/setting_initial_buffer"
+            />
+
+        <io.github.vladimirmi.internetradioplayer.ui.SeekBarDialogPreference
+            android:defaultValue="6"
+            android:dialogMessage="@string/setting_buffer_desc"
+            android:key="BUFFER_LENGTH"
+            android:title="@string/setting_buffer"
+            />
+
+    </PreferenceCategory>
+
+    <PreferenceCategory android:title="Backup and restore">
+
+        <Preference
+            android:key="BACKUP_STATIONS"
+            android:persistent="false"
+            android:title="Backup stations"
+            />
+
+        <Preference
+            android:key="RESTORE_STATIONS"
+            android:persistent="false"
+            android:title="Restore stations"
+            />
+
+    </PreferenceCategory>
+
+    <PreferenceCategory android:title="About">
+
+        <Preference android:title="Privacy policy">
+            <intent
+                android:action="android.intent.action.VIEW"
+                android:data="https://vladimirmi.github.io/InternetRadioPlayer/"/>
+        </Preference>
+
+    </PreferenceCategory>
+
+
+</PreferenceScreen>

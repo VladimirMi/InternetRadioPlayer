@@ -1,4 +1,4 @@
-package io.github.vladimirmi.internetradioplayer.data.manager
+package io.github.vladimirmi.internetradioplayer.data.utils
 
 import android.annotation.SuppressLint
 import android.content.Context
@@ -23,10 +23,11 @@ class ShortcutHelper
 @Inject constructor(private val context: Context) {
 
     fun pinShortcut(station: Station, startPlay: Boolean): Boolean {
+        val label = if (station.name.isBlank()) "Default name" else station.name
 
         val info = ShortcutInfoCompat.Builder(context, station.id)
-                .setShortLabel(station.name)
-                .setLongLabel(station.name)
+                .setShortLabel(label)
+                .setLongLabel(label)
                 .setIcon(IconCompat.createWithBitmap(station.icon.getBitmap(context, withBackground = true)))
                 .setIntent(createShortcutIntent(station, startPlay))
                 .setDisabledMessage(context.getString(R.string.toast_shortcut_remove))

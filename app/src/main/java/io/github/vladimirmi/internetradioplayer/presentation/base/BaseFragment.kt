@@ -1,4 +1,4 @@
-package io.github.vladimirmi.internetradioplayer.ui.base
+package io.github.vladimirmi.internetradioplayer.presentation.base
 
 import android.os.Bundle
 import android.view.LayoutInflater
@@ -31,5 +31,9 @@ abstract class BaseFragment : MvpAppCompatFragment() {
             return true
         }
         return super.onOptionsItemSelected(item)
+    }
+
+    fun buildToolbar(builder: ToolbarBuilder) {
+        builder.build(activity as ToolbarView)
     }
 }

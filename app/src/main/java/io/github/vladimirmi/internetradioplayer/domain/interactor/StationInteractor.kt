@@ -3,14 +3,13 @@ package io.github.vladimirmi.internetradioplayer.domain.interactor
 import android.net.Uri
 import com.jakewharton.rxrelay2.BehaviorRelay
 import io.github.vladimirmi.internetradioplayer.R
-import io.github.vladimirmi.internetradioplayer.data.db.entity.Genre
 import io.github.vladimirmi.internetradioplayer.data.db.entity.Group
 import io.github.vladimirmi.internetradioplayer.data.db.entity.Station
-import io.github.vladimirmi.internetradioplayer.data.manager.AppMigrationHelper
-import io.github.vladimirmi.internetradioplayer.data.manager.ShortcutHelper
 import io.github.vladimirmi.internetradioplayer.data.repository.StationListRepository
+import io.github.vladimirmi.internetradioplayer.data.utils.AppMigrationHelper
+import io.github.vladimirmi.internetradioplayer.data.utils.ShortcutHelper
 import io.github.vladimirmi.internetradioplayer.domain.model.FlatStationsList
-import io.github.vladimirmi.internetradioplayer.extensions.ValidationException
+import io.github.vladimirmi.internetradioplayer.extensions.MessageException
 import io.github.vladimirmi.internetradioplayer.presentation.station.StationInfo
 import io.reactivex.Completable
 import io.reactivex.Observable
@@ -28,7 +27,7 @@ class StationInteractor
                     private val shortcutHelper: ShortcutHelper,
                     private val migrationHelper: AppMigrationHelper) {
 
-    private val groups = arrayListOf<Group>()
+    val groups = arrayListOf<Group>()
 
     var previousWhenEdit: Station? = null
         private set
@@ -52,7 +51,7 @@ class StationInteractor
         return migrationHelper.tryMigrate()
                 .andThen(buildGroupsList()).doOnComplete {
                     val savedCurrentStation = getStation(stationRepository.getCurrentStationId())
-                    currentStation = savedCurrentStation ?: Station.nullObj()
+                    currentStation = savedCurrentStation ?: stationsList.getFirstStation() ?: Station.nullObj()
                 }
     }
 
@@ -62,6 +61,7 @@ class StationInteractor
             val map = stations.groupBy { it.groupId }
             groups.forEach { group ->
                 val groupStations = map[group.id]
+                groupStations?.forEach { it.groupName = group.name }
                 groupStations?.let { group.stations = groupStations.toMutableList() }
             }
             groups
@@ -117,30 +117,19 @@ class StationInteractor
         return null
     }
 
-    fun getCurrentGroup(): Group {
-        if (createMode) return Group.default()
-        return groups.find { it.id == currentStation.groupId }!!
-    }
-
-    fun getCurrentGenres(): Single<List<String>> {
-        if (createMode) return Single.just(currentStation.genres)
-        return stationRepository.getStationGenres(currentStation.id)
-                .map { it.map(Genre::name) }
-    }
-
-    fun haveStations(): Boolean {
-        return groups.fold(0) { acc, group -> acc + group.stations.size } != 0
-    }
+    fun haveStations(): Boolean = stationsList.haveStations()
 
     fun createStation(uri: Uri): Single<Station> {
         return stationRepository.createStation(uri)
                 .doOnSuccess { newStation ->
-                    val station = getStation { it.uri == newStation.uri } ?: newStation
-                    if (station.id == newStation.id) {
+                    val station = getStation { it.uri == newStation.uri }
+                    if (station == null) {
                         setEditMode(true)
                         createMode = true
+                        currentStation = newStation
+                    } else {
+                        currentStation = station
                     }
-                    currentStation = station
                 }
     }
 
@@ -150,6 +139,7 @@ class StationInteractor
         return addGroup(groupName).flatMapCompletable { group ->
             val newStation = currentStation.copy(groupId = group.id, order = group.stations.size)
             newStation.genres = currentStation.genres
+            newStation.groupName = groupName
             stationRepository.addStation(newStation).doOnComplete {
                 group.stations.add(newStation)
                 currentStation = newStation
@@ -164,6 +154,7 @@ class StationInteractor
         return addGroup(groupName).flatMapCompletable { group ->
             val order = if (currentStation.groupId != group.id) group.stations.size else currentStation.order
             val newStation = currentStation.copy(name = stationName, groupId = group.id, order = order)
+            newStation.groupName = groupName
             stationRepository.updateStations(listOf(newStation))
                     .doOnComplete { currentStation = newStation }
             //todo optimize
@@ -176,8 +167,9 @@ class StationInteractor
 
         return stationRepository.removeStation(station)
                 .doOnComplete {
-                    val change = if (stationsList.isFirstStation(id)) nextStation(id) else previousStation(id)
-                    if (!change) currentStation = Station.nullObj()
+                    val changed = if (stationsList.isFirstStation(id)) nextStation(id)
+                    else previousStation(id)
+                    if (!changed) currentStation = Station.nullObj()
                 }
                 //todo optimize
                 .andThen(buildGroupsList())
@@ -211,7 +203,7 @@ class StationInteractor
         return when {
             currentStation.icon != previousWhenEdit!!.icon -> true
             stationInfo.stationName != previousWhenEdit!!.name -> true
-            stationInfo.groupName != getCurrentGroup().name -> true
+            stationInfo.groupName != previousWhenEdit!!.groupName -> true
             else -> false
         }
     }
@@ -247,10 +239,10 @@ class StationInteractor
     private fun validate(stationName: String, adding: Boolean = false): Completable? {
         return when {
             adding && containsStation { it.name == stationName } -> {
-                Completable.error(ValidationException(R.string.toast_name_exists_error))
+                Completable.error(MessageException(R.string.toast_name_exists_error))
             }
             stationName.isBlank() -> {
-                Completable.error(ValidationException(R.string.toast_name_empty_error))
+                Completable.error(MessageException(R.string.toast_name_empty_error))
             }
             else -> null
         }

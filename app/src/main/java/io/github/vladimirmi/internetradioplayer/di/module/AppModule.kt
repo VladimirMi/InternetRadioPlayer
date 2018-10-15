@@ -4,12 +4,14 @@ import android.content.Context
 import com.google.gson.Gson
 import com.google.gson.GsonBuilder
 import io.github.vladimirmi.internetradioplayer.data.db.StationsDatabase
-import io.github.vladimirmi.internetradioplayer.data.manager.ShortcutHelper
-import io.github.vladimirmi.internetradioplayer.data.manager.StationParser
 import io.github.vladimirmi.internetradioplayer.data.repository.StationListRepository
+import io.github.vladimirmi.internetradioplayer.data.service.LoadControl
 import io.github.vladimirmi.internetradioplayer.data.source.StationSource
+import io.github.vladimirmi.internetradioplayer.data.utils.ShortcutHelper
+import io.github.vladimirmi.internetradioplayer.data.utils.StationParser
 import io.github.vladimirmi.internetradioplayer.domain.interactor.PlayerControlsInteractor
 import io.github.vladimirmi.internetradioplayer.domain.interactor.StationInteractor
+import okhttp3.OkHttpClient
 import toothpick.config.Module
 
 /**
@@ -17,8 +19,11 @@ import toothpick.config.Module
  */
 
 class AppModule(context: Context) : Module() {
+
     init {
         bind(Context::class.java).toInstance(context)
+
+        bind(OkHttpClient::class.java).toInstance(OkHttpClient())
 
         val gson = GsonBuilder().setPrettyPrinting().create()
         bind(Gson::class.java).toInstance(gson)
@@ -36,7 +41,8 @@ class AppModule(context: Context) : Module() {
 
         bind(StationInteractor::class.java).singletonInScope()
 
-        //todo Why MediaController in RootActivity scope
         bind(PlayerControlsInteractor::class.java).singletonInScope()
+
+        bind(LoadControl::class.java).singletonInScope()
     }
 }

@@ -22,10 +22,10 @@ class TagView(context: Context, tag: String, action: ((TagView) -> Unit)?)
 
     init {
         if (action != null) {
-            setOnClickListener({
+            setOnClickListener {
                 pick()
                 run(action)
-            })
+            }
         }
         setPadding(padding, padding, padding, padding)
         setTextSize(TypedValue.COMPLEX_UNIT_SP, 14f)

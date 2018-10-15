@@ -13,7 +13,7 @@ fun String.toURL(): URL = URL(this.trim())
 
 fun Uri.toURL(): URL = this.toString().toURL()
 
-fun URI.toUri() = Uri.parse(toString())
+fun URI.toUri(): Uri = Uri.parse(toString())
 
 fun String.toURI(): URI = URI(this.trim())
 

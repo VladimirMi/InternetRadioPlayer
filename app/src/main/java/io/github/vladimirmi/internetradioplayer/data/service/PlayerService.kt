@@ -9,12 +9,15 @@ import android.support.v4.media.session.MediaSessionCompat
 import android.support.v4.media.session.PlaybackStateCompat
 import io.github.vladimirmi.internetradioplayer.R
 import io.github.vladimirmi.internetradioplayer.data.db.entity.Station
+import io.github.vladimirmi.internetradioplayer.data.utils.ExponentialBackoff
 import io.github.vladimirmi.internetradioplayer.di.Scopes
 import io.github.vladimirmi.internetradioplayer.domain.interactor.StationInteractor
+import io.github.vladimirmi.internetradioplayer.extensions.errorHandler
 import io.github.vladimirmi.internetradioplayer.extensions.toUri
 import io.reactivex.disposables.CompositeDisposable
 import io.reactivex.rxkotlin.addTo
 import toothpick.Toothpick
+import java.net.ConnectException
 import java.util.*
 import javax.inject.Inject
 import kotlin.concurrent.schedule
@@ -47,6 +50,7 @@ class PlayerService : MediaBrowserServiceCompat(), SessionCallback.Interface {
     private var currentStationId: String? = null
     private var playingStationId: String? = null
     private var stopTask: TimerTask? = null
+    private val exponentialBackoff = ExponentialBackoff()
 
     override fun onCreate() {
         super.onCreate()
@@ -180,8 +184,14 @@ class PlayerService : MediaBrowserServiceCompat(), SessionCallback.Interface {
             notification.update()
         }
 
-        override fun onPlayerError(error: Int) {
+        override fun onPlayerError(error: Exception) {
             onStopCommand()
+            if (error is ConnectException) {
+                val scheduled = exponentialBackoff.schedule { onPlayCommand() }
+                if (!scheduled) errorHandler.invoke(error)
+            } else {
+                errorHandler.invoke(error)
+            }
         }
 
         override fun onMetadata(metadata: String) {

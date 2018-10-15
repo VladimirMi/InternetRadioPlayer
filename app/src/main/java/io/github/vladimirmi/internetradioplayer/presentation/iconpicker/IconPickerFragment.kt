@@ -8,10 +8,8 @@ import io.github.vladimirmi.internetradioplayer.R
 import io.github.vladimirmi.internetradioplayer.data.db.entity.Icon
 import io.github.vladimirmi.internetradioplayer.di.Scopes
 import io.github.vladimirmi.internetradioplayer.extensions.waitForMeasure
-import io.github.vladimirmi.internetradioplayer.presentation.root.ToolbarBuilder
-import io.github.vladimirmi.internetradioplayer.presentation.root.ToolbarView
-import io.github.vladimirmi.internetradioplayer.ui.base.BackPressListener
-import io.github.vladimirmi.internetradioplayer.ui.base.BaseFragment
+import io.github.vladimirmi.internetradioplayer.presentation.base.BackPressListener
+import io.github.vladimirmi.internetradioplayer.presentation.base.BaseFragment
 import kotlinx.android.synthetic.main.fragment_icon_picker.*
 import toothpick.Toothpick
 
@@ -57,10 +55,6 @@ class IconPickerFragment : BaseFragment(), IconPickerView, BackPressListener {
     override fun onBackPressed() = presenter.onBackPressed()
 
     //region =============== IconPickerView ==============
-
-    override fun buildToolbar(builder: ToolbarBuilder) {
-        builder.build(activity as ToolbarView)
-    }
 
     override fun setIcon(icon: Icon) {
         carousel.waitForMeasure {

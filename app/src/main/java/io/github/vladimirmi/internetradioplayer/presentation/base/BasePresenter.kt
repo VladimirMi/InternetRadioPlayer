@@ -1,4 +1,4 @@
-package io.github.vladimirmi.internetradioplayer.ui.base
+package io.github.vladimirmi.internetradioplayer.presentation.base
 
 import com.arellomobile.mvp.MvpPresenter
 import com.arellomobile.mvp.MvpView
@@ -10,9 +10,9 @@ import io.reactivex.disposables.CompositeDisposable
 
 abstract class BasePresenter<V : MvpView> : MvpPresenter<V>() {
 
-    protected val compDisp = CompositeDisposable()
+    protected val subs = CompositeDisposable()
 
     override fun onDestroy() {
-        compDisp.dispose()
+        subs.dispose()
     }
 }

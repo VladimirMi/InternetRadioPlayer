@@ -13,7 +13,7 @@
     <string name="dialog_cancel_edit_message">Отменить изменения?</string>
     <string name="dialog_cancel_create_message">Отменить добавление новой станции?</string>
     <string name="dialog_new_station">Добавить новую станцию</string>
-    <string name="dialog_new_station_hint">Вставить ссылку</string>
+    <string name="dialog_new_station_hint">Вставить ссылку на поток или плейлист</string>
     <string name="dialog_add_name">Название</string>
     <string name="dialog_add_name_err">Необходимо задать имя</string>
     <string name="dialog_ok">OK</string>
@@ -64,9 +64,17 @@
         К примеру, здесь https://www.internet-radio.com</string>
     <string name="help_create_2"> - нажав на файл плейлиста в менеджере файлов.\n
         Поддерживаемые расширения - pls, m3u or ram.</string>
-    <string name="help_create_3"> - добавив прямую ссылку на аудиопоток.</string>
+    <string name="help_create_3"> - добавив прямую ссылку на аудиопоток или плейлист.</string>
 
     <string name="metadata_not_available">Метаданные не доступны</string>
     <string name="dialog_start_playback">Начать воспроизведение</string>
     <string name="default_group">Разное</string>
+    <string name="menu_settings">Настройки</string>
+    <string name="second">%1$d секунда</string>
+    <string name="seconds">%1$d секунды</string>
+    <string name="chooser_backup">Сохранить с помощью</string>
+    <string name="setting_initial_buffer">Начальный размер буфера</string>
+    <string name="setting_buffer">Размер буфера</string>
+    <string name="setting_initial_buffer_desc">Начальный размер буфера для старта воспроизведения</string>
+    <string name="setting_buffer_desc">Размер буфера для продолжения воспроизведения после буферизации</string>
 </resources>

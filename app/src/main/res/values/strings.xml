@@ -16,7 +16,7 @@
     <string name="dialog_cancel_edit_message">Cancel changes?</string>
     <string name="dialog_cancel_create_message">Cancel adding a new station?</string>
     <string name="dialog_new_station">Add new station</string>
-    <string name="dialog_new_station_hint">Paste streaming link</string>
+    <string name="dialog_new_station_hint">Paste link to the audio stream or playlist</string>
     <string name="dialog_start_playback">Start playback</string>
     <string name="dialog_add_name">Title</string>
     <string name="dialog_add_name_err">Specify a name</string>
@@ -72,7 +72,7 @@
         For example here https://www.internet-radio.com</string>
     <string name="help_create_2"> - clicking on the playlist file in the file manager.\n
         The supported extensions are pls, m3u or ram.</string>
-    <string name="help_create_3"> - adding a direct link to the audio stream.</string>
+    <string name="help_create_3"> - adding a direct link to the audio stream or playlist.</string>
 
     <string name="metadata_not_available">Metadata is not available</string>
     <string name="default_group">Other</string>

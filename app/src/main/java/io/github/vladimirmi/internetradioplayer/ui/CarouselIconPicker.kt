@@ -84,43 +84,29 @@ class CarouselIconPicker : ViewPager {
 
     fun setBgColor(colorInt: Int) {
         bg = colorInt
-        pageTransformer.setBgColor(bg, currentItem)
-        getImageView(currentItem).background.setTintExt(colorInt)
+        getImageView(currentItem)?.background?.setTintExt(colorInt)
         iconListener?.invoke(Icon(currentItem, bg, fg))
     }
 
     fun setFgColor(colorInt: Int) {
         fg = colorInt
-        pageTransformer.setFgColor(fg, currentItem)
-        getImageView(currentItem).drawable.setTintExt(colorInt)
+        getImageView(currentItem)?.drawable?.setTintExt(colorInt)
         iconListener?.invoke(Icon(currentItem, bg, fg))
     }
 
-    private fun getImageView(position: Int): ImageView {
-        return (getChildAt(position) as ViewGroup).getChildAt(0) as ImageView
+    private fun getImageView(position: Int): ImageView? {
+        return (getChildAt(position) as? ViewGroup)?.getChildAt(0) as? ImageView
     }
 
     inner class CustomPageTransformer : ViewPager.PageTransformer {
 
-        private val colors = Array(adapter!!.count) { Pair(defaultBg, defaultFg) }
-
-        fun setBgColor(colorInt: Int, item: Int) {
-            colors[item] = colors[item].copy(first = colorInt)
-        }
-
-        fun setFgColor(colorInt: Int, item: Int) {
-            colors[item] = colors[item].copy(second = colorInt)
-        }
-
         override fun transformPage(page: View, position: Float) {
             val imageView = page.iconIv
             val absPosition = Math.abs(position)
-            val index = page.tag as Int
 
             fun compareAndSetColors(bg: Int, fg: Int) {
-                if (colors[index].first != bg) imageView.background.setTintExt(bg)
-                if (colors[index].second != fg) imageView.drawable.setTintExt(fg)
-                colors[index] = Pair(bg, fg)
+                imageView.background.setTintExt(bg)
+                imageView.drawable.setTintExt(fg)
             }
 
             if (absPosition < 0.16666) {
@@ -151,7 +137,6 @@ class CarouselAdapter : PagerAdapter() {
         container.addView(iconView)
         iconView.iconIv.setImageResource(ICONS[position])
         iconView.tag = position
-
         return iconView
     }
 

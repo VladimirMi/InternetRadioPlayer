@@ -1,6 +1,7 @@
 package io.github.vladimirmi.internetradioplayer.presentation.root
 
 import com.arellomobile.mvp.MvpView
+import com.arellomobile.mvp.viewstate.strategy.AddToEndSingleStrategy
 import com.arellomobile.mvp.viewstate.strategy.OneExecutionStateStrategy
 import com.arellomobile.mvp.viewstate.strategy.StateStrategyType
 
@@ -19,9 +20,9 @@ interface RootView : MvpView {
     @StateStrategyType(OneExecutionStateStrategy::class)
     fun showSnackbar(resId: Int)
 
-    @StateStrategyType(OneExecutionStateStrategy::class)
+    @StateStrategyType(AddToEndSingleStrategy::class)
     fun showControls(visible: Boolean)
 
-    @StateStrategyType(OneExecutionStateStrategy::class)
+    @StateStrategyType(AddToEndSingleStrategy::class)
     fun showLoadingIndicator(visible: Boolean)
 }

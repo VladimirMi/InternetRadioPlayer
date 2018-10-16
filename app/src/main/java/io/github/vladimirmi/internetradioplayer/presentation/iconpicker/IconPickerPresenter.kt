@@ -22,7 +22,6 @@ class IconPickerPresenter
     var currentIcon = interactor.currentStation.icon
 
     override fun onFirstViewAttach() {
-        viewState.setIcon(currentIcon)
         viewState.buildToolbar(ToolbarBuilder.standard()
                 .setToolbarTitle(interactor.currentStation.name)
                 .enableBackNavigation())

@@ -159,11 +159,14 @@ class PlayerService : MediaBrowserServiceCompat(), SessionCallback.Interface {
     }
 
     override fun onSkipToPreviousCommand() {
+        //todo refactor (remove player mode)
+        if (stationInteractor.createMode || stationInteractor.previousWhenEdit != null) return
         val changed = stationInteractor.previousStation()
         if (changed) session.sendSessionEvent(EVENT_SESSION_PREVIOUS, null)
     }
 
     override fun onSkipToNextCommand() {
+        if (stationInteractor.createMode || stationInteractor.previousWhenEdit != null) return
         val changed = stationInteractor.nextStation()
         if (changed) session.sendSessionEvent(EVENT_SESSION_NEXT, null)
     }

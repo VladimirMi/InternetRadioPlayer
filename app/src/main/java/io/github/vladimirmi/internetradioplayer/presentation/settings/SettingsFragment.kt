@@ -33,10 +33,10 @@ class SettingsFragment : PreferenceFragmentCompat(), BackPressListener {
     private val backupRestoreHelper = Scopes.app.getInstance(BackupRestoreHelper::class.java)
     private val router = Scopes.rootActivity.getInstance(Router::class.java)
 
-    override fun onActivityCreated(savedInstanceState: Bundle?) {
-        super.onActivityCreated(savedInstanceState)
+    override fun onResume() {
+        super.onResume()
         (activity as RootView).showControls(false)
-        ToolbarBuilder.standard().build(activity as ToolbarView)
+        ToolbarBuilder.exit().build(activity as ToolbarView)
     }
 
     override fun onCreatePreferences(savedInstanceState: Bundle?, rootKey: String?) {

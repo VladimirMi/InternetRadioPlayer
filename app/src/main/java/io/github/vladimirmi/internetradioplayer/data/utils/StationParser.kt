@@ -9,7 +9,7 @@ import okhttp3.MediaType
 import okhttp3.OkHttpClient
 import okhttp3.Request
 import timber.log.Timber
-import java.net.URISyntaxException
+import java.net.MalformedURLException
 import java.net.URL
 import javax.inject.Inject
 
@@ -56,7 +56,7 @@ class StationParser
     fun parseFromUri(uri: Uri): Station {
         Timber.d("parseFromUri: $uri")
         return when {
-            uri.scheme.startsWith(SCHEME_HTTP) -> parseFromNet(uri.toURL()) // also https
+            uri.scheme.startsWith(SCHEME_HTTP, true) -> parseFromNet(uri.toURL()) // also https
             uri.scheme == SCHEME_FILE || uri.scheme == SCHEME_CONTENT -> parseFromPlaylistFile(uri)
             else -> throw IllegalArgumentException("Error: Unsupported uri $uri")
         }
@@ -122,19 +122,20 @@ class StationParser
         var url: URL? = null
         var title: String = name
 
-        lines().forEach {
-            val line = it.trim()
+        for (l in lines()) {
+            val line = l.trim()
+            if (line.isEmpty()) continue
             Timber.d("parsePls: $line")
             when {
-                line.startsWith(PLS_URI) -> url = line.substring(PLS_URI.length).trim().toURL()
-                line.startsWith(PLS_TITLE) -> title = line.substring(PLS_TITLE.length).trim()
+                line.startsWith(PLS_URI, true) -> url = line.substring(PLS_URI.length).trim().toURL()
+                line.startsWith(PLS_TITLE, true) -> title = line.substring(PLS_TITLE.length).trim()
             }
         }
         if (url == null) throw IllegalStateException("Error: Playlist file does not contain stream uri")
         if (title.isBlank()) {
-            title = url!!.host ?: url.toString()
+            title = url.host ?: url.toString()
         }
-        return parseFromNet(url!!, title)
+        return parseFromNet(url, title)
     }
 
     private fun String.parseM3u(name: String = ""): Station {
@@ -142,24 +143,26 @@ class StationParser
         var url: URL? = null
         var title: String = name
 
-        lines().forEach {
-            val line = it.trim()
+        for (l in lines()) {
+            val line = l.trim()
+            if (line.isEmpty()) continue
             Timber.d("parseM3u: $line")
             when {
-                line.startsWith(M3U_HEADER) -> extended = true
-                extended && line.startsWith(M3U_INFO) -> title = line.substringAfter(",")
-                else -> url = try {
+                line.startsWith(M3U_HEADER, true) -> extended = true
+                extended && line.startsWith(M3U_INFO, true) -> title = line.substringAfter(",")
+                !line.startsWith("#EXT", true) -> url = try {
                     URL(line)
-                } catch (e: URISyntaxException) {
-                    null
+                } catch (e: MalformedURLException) {
+                    Timber.w(e.message)
+                    url
                 }
             }
         }
         if (url == null) throw IllegalStateException("Error: Playlist file does not contain stream uri")
         if (title.isBlank()) {
-            title = url!!.host ?: url.toString()
+            title = url.host ?: url.toString()
         }
-        return parseFromNet(url!!, title)
+        return parseFromNet(url, title)
     }
 }
 

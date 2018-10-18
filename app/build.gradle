@@ -9,7 +9,7 @@ ext.versionPatch = 1
 
 android {
     compileSdkVersion 27
-    buildToolsVersion '28.0.2'
+    buildToolsVersion '28.0.3'
     defaultConfig {
         applicationId "io.github.vladimirmi.internetradioplayer"
         minSdkVersion 16

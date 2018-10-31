@@ -77,10 +77,17 @@
     <string name="metadata_not_available">Metadata is not available</string>
     <string name="default_group">Other</string>
 
+
+    <string name="settings_stream">Stream settings</string>
+    <string name="settings_backup_restore">Backup and restore</string>
+    <string name="settings_about">About</string>
     <string name="setting_initial_buffer">Initial buffer duration</string>
     <string name="setting_initial_buffer_desc">Initial duration of media that must be buffered for playback to start</string>
     <string name="setting_buffer">Buffer duration</string>
     <string name="setting_buffer_desc">Duration of media that must be buffered for playback to resume after a rebuffer</string>
+    <string name="setting_backup">Backup stations</string>
+    <string name="setting_restore">Restore stations</string>
+    <string name="setting_privacy">Privacy policy</string>
 
     <string name="second">%1$d second</string>
     <string name="seconds">%1$d seconds</string>

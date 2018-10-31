@@ -77,4 +77,10 @@
     <string name="setting_buffer">Размер буфера</string>
     <string name="setting_initial_buffer_desc">Начальный размер буфера для старта воспроизведения</string>
     <string name="setting_buffer_desc">Размер буфера для продолжения воспроизведения после буферизации</string>
+    <string name="settings_stream">Настройки воспроизведения</string>
+    <string name="settings_backup_restore">Сохранение и восстановление</string>
+    <string name="settings_about">О программе</string>
+    <string name="setting_privacy">Политика конфиденциальности</string>
+    <string name="setting_backup">Сохранить список станций</string>
+    <string name="setting_restore">Восстановить список станций</string>
 </resources>

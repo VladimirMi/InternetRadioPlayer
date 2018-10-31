@@ -2,7 +2,7 @@
 <PreferenceScreen
     xmlns:android="http://schemas.android.com/apk/res/android">
 
-    <PreferenceCategory android:title="Stream settings">
+    <PreferenceCategory android:title="@string/settings_stream">
 
         <io.github.vladimirmi.internetradioplayer.ui.SeekBarDialogPreference
             android:defaultValue="3"
@@ -20,25 +20,25 @@
 
     </PreferenceCategory>
 
-    <PreferenceCategory android:title="Backup and restore">
+    <PreferenceCategory android:title="@string/settings_backup_restore">
 
         <Preference
             android:key="BACKUP_STATIONS"
             android:persistent="false"
-            android:title="Backup stations"
+            android:title="@string/setting_backup"
             />
 
         <Preference
             android:key="RESTORE_STATIONS"
             android:persistent="false"
-            android:title="Restore stations"
+            android:title="@string/setting_restore"
             />
 
     </PreferenceCategory>
 
-    <PreferenceCategory android:title="About">
+    <PreferenceCategory android:title="@string/settings_about">
 
-        <Preference android:title="Privacy policy">
+        <Preference android:title="@string/setting_privacy">
             <intent
                 android:action="android.intent.action.VIEW"
                 android:data="https://vladimirmi.github.io/InternetRadioPlayer/"/>

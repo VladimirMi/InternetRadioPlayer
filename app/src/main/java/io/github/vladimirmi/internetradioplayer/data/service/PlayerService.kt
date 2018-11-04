@@ -188,7 +188,8 @@ class PlayerService : MediaBrowserServiceCompat(), SessionCallback.Interface {
         }
 
         override fun onPlayerError(error: Exception) {
-            onStopCommand()
+            //todo refactor this
+            playback.stop()
             if (error is ConnectException) {
                 val scheduled = exponentialBackoff.schedule { onPlayCommand() }
                 if (!scheduled) errorHandler.invoke(error)

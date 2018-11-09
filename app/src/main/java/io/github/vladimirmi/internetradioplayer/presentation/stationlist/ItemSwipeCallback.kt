@@ -57,11 +57,11 @@ abstract class ItemSwipeCallback(context: Context) : ItemTouchHelper.SimpleCallb
 
     abstract fun onIdle()
 
-    override fun getDragDirs(recyclerView: RecyclerView?, viewHolder: RecyclerView.ViewHolder?): Int {
+    override fun getDragDirs(recyclerView: RecyclerView, viewHolder: RecyclerView.ViewHolder): Int {
         return ItemTouchHelper.UP or ItemTouchHelper.DOWN
     }
 
-    override fun getSwipeDirs(recyclerView: RecyclerView?, viewHolder: RecyclerView.ViewHolder?): Int {
+    override fun getSwipeDirs(recyclerView: RecyclerView, viewHolder: RecyclerView.ViewHolder): Int {
         if (viewHolder is GroupTitleVH) return 0
         return ItemTouchHelper.LEFT or ItemTouchHelper.RIGHT
     }

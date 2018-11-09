@@ -31,13 +31,13 @@ class PlayerControlsInteractor
 
     val isPlaying: Boolean
         get() = with(controller.playbackState) {
-            hasValue() && (value.state == PlaybackStateCompat.STATE_PLAYING ||
-                    value.state == PlaybackStateCompat.STATE_BUFFERING)
+            hasValue() && (value?.state == PlaybackStateCompat.STATE_PLAYING ||
+                    value?.state == PlaybackStateCompat.STATE_BUFFERING)
         }
 
     val isStopped: Boolean
         get() = with(controller.playbackState) {
-            hasValue() && (value.state == PlaybackStateCompat.STATE_STOPPED)
+            hasValue() && (value?.state == PlaybackStateCompat.STATE_STOPPED)
         }
 
     val isNetAvail: Boolean get() = networkChecker.isAvailable()

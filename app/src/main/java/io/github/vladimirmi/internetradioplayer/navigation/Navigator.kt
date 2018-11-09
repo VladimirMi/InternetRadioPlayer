@@ -25,7 +25,7 @@ class Navigator(activity: RootActivity, containerId: Int)
     private fun currentKeyFromBackStack(activity: RootActivity): String {
         return with(activity.supportFragmentManager) {
             if (backStackEntryCount > 0) {
-                getBackStackEntryAt(backStackEntryCount - 1).name
+                getBackStackEntryAt(backStackEntryCount - 1).name!!
             } else ""
         }
     }

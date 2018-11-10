@@ -1,18 +1,15 @@
 package io.github.vladimirmi.internetradioplayer.presentation.stationlist
 
-import android.os.Bundle
 import android.support.v7.widget.LinearLayoutManager
 import android.support.v7.widget.RecyclerView
 import android.support.v7.widget.helper.ItemTouchHelper
 import android.view.View
 import android.widget.Toast
-import com.arellomobile.mvp.presenter.InjectPresenter
-import com.arellomobile.mvp.presenter.ProvidePresenter
 import io.github.vladimirmi.internetradioplayer.R
 import io.github.vladimirmi.internetradioplayer.data.db.entity.Station
 import io.github.vladimirmi.internetradioplayer.di.Scopes
 import io.github.vladimirmi.internetradioplayer.domain.model.FlatStationsList
-import io.github.vladimirmi.internetradioplayer.presentation.base.BaseFragmentLegacy
+import io.github.vladimirmi.internetradioplayer.presentation.base.BaseFragment
 import io.github.vladimirmi.internetradioplayer.presentation.getstarted.NewStationDialog
 import kotlinx.android.synthetic.main.fragment_stations_list.*
 import toothpick.Toothpick
@@ -21,9 +18,11 @@ import toothpick.Toothpick
  * Created by Vladimir Mikhalev 30.09.2017.
  */
 
-class StationListFragment : BaseFragmentLegacy(), StationListView, StationItemCallback {
+class StationListFragment : BaseFragment<StationListPresenter, StationListView>(), StationListView,
+        StationItemCallback {
 
-    override val layoutRes = R.layout.fragment_stations_list
+    override val layout = R.layout.fragment_stations_list
+
     private val adapter = StationListAdapter(this)
 
     private val itemTouchHelper by lazy {
@@ -49,17 +48,15 @@ class StationListFragment : BaseFragmentLegacy(), StationListView, StationItemCa
         })
     }
 
-    @InjectPresenter lateinit var presenter: StationListPresenter
 
-    @ProvidePresenter
-    fun providePresenter(): StationListPresenter {
+    override fun providePresenter(): StationListPresenter {
         return Toothpick.openScopes(Scopes.ROOT_ACTIVITY, this)
                 .getInstance(StationListPresenter::class.java).also {
                     Toothpick.closeScope(this)
                 }
     }
 
-    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+    override fun setupView(view: View) {
         media_recycler.layoutManager = LinearLayoutManager(context)
         media_recycler.adapter = adapter
         itemTouchHelper.attachToRecyclerView(media_recycler)

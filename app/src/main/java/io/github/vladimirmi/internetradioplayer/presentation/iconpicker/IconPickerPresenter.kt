@@ -3,7 +3,7 @@ package io.github.vladimirmi.internetradioplayer.presentation.iconpicker
 import com.arellomobile.mvp.InjectViewState
 import io.github.vladimirmi.internetradioplayer.domain.interactor.StationInteractor
 import io.github.vladimirmi.internetradioplayer.navigation.Router
-import io.github.vladimirmi.internetradioplayer.presentation.base.BasePresenter
+import io.github.vladimirmi.internetradioplayer.presentation.base.BasePresenterLegacy
 import io.github.vladimirmi.internetradioplayer.presentation.base.ToolbarBuilder
 import io.github.vladimirmi.internetradioplayer.presentation.root.RootPresenter
 import javax.inject.Inject
@@ -17,7 +17,7 @@ class IconPickerPresenter
 @Inject constructor(private val rootPresenter: RootPresenter,
                     private val interactor: StationInteractor,
                     private val router: Router)
-    : BasePresenter<IconPickerView>() {
+    : BasePresenterLegacy<IconPickerView>() {
 
     var currentIcon = interactor.currentStation.icon
 

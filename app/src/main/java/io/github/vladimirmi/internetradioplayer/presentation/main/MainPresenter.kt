@@ -2,7 +2,7 @@ package io.github.vladimirmi.internetradioplayer.presentation.main
 
 import com.arellomobile.mvp.InjectViewState
 import io.github.vladimirmi.internetradioplayer.navigation.Router
-import io.github.vladimirmi.internetradioplayer.presentation.base.BasePresenter
+import io.github.vladimirmi.internetradioplayer.presentation.base.BasePresenterLegacy
 import javax.inject.Inject
 
 /**
@@ -12,7 +12,7 @@ import javax.inject.Inject
 @InjectViewState
 class MainPresenter
 @Inject constructor(private val router: Router)
-    : BasePresenter<MainView>() {
+    : BasePresenterLegacy<MainView>() {
 
     override fun onFirstViewAttach() {
     }

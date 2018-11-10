@@ -1,7 +1,5 @@
 package io.github.vladimirmi.internetradioplayer.presentation.station
 
-import android.os.Bundle
-import android.support.design.widget.TextInputLayout
 import android.support.v4.content.ContextCompat
 import android.text.InputType
 import android.text.Spannable
@@ -14,15 +12,12 @@ import android.view.inputmethod.EditorInfo
 import android.widget.EditText
 import android.widget.TextView
 import android.widget.Toast
-import com.arellomobile.mvp.presenter.InjectPresenter
-import com.arellomobile.mvp.presenter.ProvidePresenter
 import io.github.vladimirmi.internetradioplayer.R
 import io.github.vladimirmi.internetradioplayer.data.db.entity.Group
 import io.github.vladimirmi.internetradioplayer.data.db.entity.Station
 import io.github.vladimirmi.internetradioplayer.di.Scopes
 import io.github.vladimirmi.internetradioplayer.extensions.inputMethodManager
 import io.github.vladimirmi.internetradioplayer.extensions.visible
-import io.github.vladimirmi.internetradioplayer.presentation.base.BackPressListener
 import io.github.vladimirmi.internetradioplayer.presentation.base.BaseFragment
 import io.github.vladimirmi.internetradioplayer.ui.TagView
 import kotlinx.android.synthetic.main.view_station_detail_info.*
@@ -34,23 +29,20 @@ import toothpick.Toothpick
  * Created by Vladimir Mikhalev 18.11.2017.
  */
 
-class StationFragment : BaseFragment(), StationView, BackPressListener {
+class StationFragment : BaseFragment<StationPresenter, StationView>(), StationView {
 
-    override val layoutRes = R.layout.fragment_station
+    override val layout = R.layout.fragment_station
+
     private var editTextBg: Int = 0
 
-    @InjectPresenter
-    lateinit var presenter: StationPresenter
-
-    @ProvidePresenter
-    fun providePresenter(): StationPresenter {
+    override fun providePresenter(): StationPresenter {
         return Toothpick.openScopes(Scopes.ROOT_ACTIVITY, this)
                 .getInstance(StationPresenter::class.java).also {
                     Toothpick.closeScope(this)
                 }
     }
 
-    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+    override fun setupView(view: View) {
         // save default edit text background
         val typedValue = TypedValue()
         activity?.theme?.resolveAttribute(android.R.attr.editTextBackground, typedValue, true)
@@ -63,8 +55,6 @@ class StationFragment : BaseFragment(), StationView, BackPressListener {
 
         urlTv.setOnClickListener { openLink(it as TextView) }
         uriTv.setOnClickListener { openLink(it as TextView) }
-
-//        changeIconBt.setOnClickListener { presenter.changeIcon() }
     }
 
     override fun onBackPressed() = presenter.onBackPressed()
@@ -108,7 +98,6 @@ class StationFragment : BaseFragment(), StationView, BackPressListener {
 
     override fun setEditMode(editMode: Boolean) {
         titleEt.setEditable(editMode)
-//        changeIconBt.visible(editMode)
         val groupVisible = groupEt.text.isNotBlank() || editMode
         groupLabelTv.visible(groupVisible)
         groupEt.visible(groupVisible)
@@ -154,10 +143,6 @@ class StationFragment : BaseFragment(), StationView, BackPressListener {
         CancelCreateDialog().show(childFragmentManager, "cancel_create_dialog")
     }
 
-    override fun showToast(resId: Int) {
-        Toast.makeText(context, resId, Toast.LENGTH_SHORT).show()
-    }
-
     //endregion
 
     private fun constructStation(): StationInfo {
@@ -188,12 +173,6 @@ class StationFragment : BaseFragment(), StationView, BackPressListener {
 
     private fun openLink(it: TextView) {
         presenter.openLink(it.text.toString())
-    }
-
-    private fun TextInputLayout.setTextWithoutAnimation(string: String) {
-        isHintAnimationEnabled = false
-        editText?.setText(string)
-        isHintAnimationEnabled = true
     }
 
     private fun EditText.setEditable(enable: Boolean) {

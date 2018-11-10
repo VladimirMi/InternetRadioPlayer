@@ -7,7 +7,7 @@ import com.arellomobile.mvp.presenter.ProvidePresenter
 import io.github.vladimirmi.internetradioplayer.R
 import io.github.vladimirmi.internetradioplayer.di.Scopes
 import io.github.vladimirmi.internetradioplayer.presentation.base.BackPressListener
-import io.github.vladimirmi.internetradioplayer.presentation.base.BaseFragment
+import io.github.vladimirmi.internetradioplayer.presentation.base.BaseFragmentLegacy
 import kotlinx.android.synthetic.main.fragment_icon_picker.*
 import toothpick.Toothpick
 
@@ -16,7 +16,7 @@ import toothpick.Toothpick
  * Created by Vladimir Mikhalev 15.12.2017.
  */
 
-class IconPickerFragment : BaseFragment(), IconPickerView, BackPressListener {
+class IconPickerFragment : BaseFragmentLegacy(), IconPickerView, BackPressListener {
 
     override val layoutRes = R.layout.fragment_icon_picker
 

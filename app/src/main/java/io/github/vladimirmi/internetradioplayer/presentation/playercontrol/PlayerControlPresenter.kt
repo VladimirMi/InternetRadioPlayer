@@ -10,7 +10,7 @@ import io.github.vladimirmi.internetradioplayer.domain.interactor.PlayerControls
 import io.github.vladimirmi.internetradioplayer.domain.interactor.StationInteractor
 import io.github.vladimirmi.internetradioplayer.domain.model.PlayerMode
 import io.github.vladimirmi.internetradioplayer.navigation.Router
-import io.github.vladimirmi.internetradioplayer.presentation.base.BasePresenter
+import io.github.vladimirmi.internetradioplayer.presentation.base.BasePresenterLegacy
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.rxkotlin.addTo
 import io.reactivex.rxkotlin.subscribeBy
@@ -25,7 +25,7 @@ class PlayerControlPresenter
 @Inject constructor(private val controlsInteractor: PlayerControlsInteractor,
                     private val stationInteractor: StationInteractor,
                     private val router: Router)
-    : BasePresenter<PlayerControlView>() {
+    : BasePresenterLegacy<PlayerControlView>() {
 
     override fun onFirstViewAttach() {
         controlsInteractor.playbackStateObs

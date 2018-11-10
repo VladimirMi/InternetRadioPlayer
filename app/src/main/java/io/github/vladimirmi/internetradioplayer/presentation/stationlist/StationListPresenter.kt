@@ -9,7 +9,7 @@ import io.github.vladimirmi.internetradioplayer.domain.interactor.StationInterac
 import io.github.vladimirmi.internetradioplayer.domain.model.FlatStationsList
 import io.github.vladimirmi.internetradioplayer.extensions.subscribeByEx
 import io.github.vladimirmi.internetradioplayer.navigation.Router
-import io.github.vladimirmi.internetradioplayer.presentation.base.BasePresenter
+import io.github.vladimirmi.internetradioplayer.presentation.base.BasePresenterLegacy
 import io.github.vladimirmi.internetradioplayer.presentation.base.MenuItemHolder
 import io.github.vladimirmi.internetradioplayer.presentation.base.ToolbarBuilder
 import io.reactivex.android.schedulers.AndroidSchedulers
@@ -27,7 +27,7 @@ class StationListPresenter
 @Inject constructor(private val interactor: StationInteractor,
                     private val controlsInteractor: PlayerControlsInteractor,
                     private val router: Router)
-    : BasePresenter<StationListView>() {
+    : BasePresenterLegacy<StationListView>() {
 
     private val builder = ToolbarBuilder.standard()
             .addMenuItem(MenuItemHolder(R.string.menu_add_station, R.drawable.ic_add, order = 0))

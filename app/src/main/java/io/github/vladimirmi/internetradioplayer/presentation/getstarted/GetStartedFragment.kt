@@ -6,7 +6,7 @@ import com.arellomobile.mvp.presenter.InjectPresenter
 import com.arellomobile.mvp.presenter.ProvidePresenter
 import io.github.vladimirmi.internetradioplayer.R
 import io.github.vladimirmi.internetradioplayer.di.Scopes
-import io.github.vladimirmi.internetradioplayer.presentation.base.BaseFragment
+import io.github.vladimirmi.internetradioplayer.presentation.base.BaseFragmentLegacy
 import io.github.vladimirmi.internetradioplayer.presentation.root.RootView
 import kotlinx.android.synthetic.main.fragment_getstarted.*
 import toothpick.Toothpick
@@ -15,7 +15,7 @@ import toothpick.Toothpick
  * Created by Vladimir Mikhalev 22.12.2017.
  */
 
-class GetStartedFragment : BaseFragment(), GetStartedView {
+class GetStartedFragment : BaseFragmentLegacy(), GetStartedView {
 
     override val layoutRes = R.layout.fragment_getstarted
 

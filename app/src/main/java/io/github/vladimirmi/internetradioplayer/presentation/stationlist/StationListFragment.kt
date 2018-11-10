@@ -12,7 +12,7 @@ import io.github.vladimirmi.internetradioplayer.R
 import io.github.vladimirmi.internetradioplayer.data.db.entity.Station
 import io.github.vladimirmi.internetradioplayer.di.Scopes
 import io.github.vladimirmi.internetradioplayer.domain.model.FlatStationsList
-import io.github.vladimirmi.internetradioplayer.presentation.base.BaseFragment
+import io.github.vladimirmi.internetradioplayer.presentation.base.BaseFragmentLegacy
 import io.github.vladimirmi.internetradioplayer.presentation.getstarted.NewStationDialog
 import kotlinx.android.synthetic.main.fragment_stations_list.*
 import toothpick.Toothpick
@@ -21,7 +21,7 @@ import toothpick.Toothpick
  * Created by Vladimir Mikhalev 30.09.2017.
  */
 
-class StationListFragment : BaseFragment(), StationListView, StationItemCallback {
+class StationListFragment : BaseFragmentLegacy(), StationListView, StationItemCallback {
 
     override val layoutRes = R.layout.fragment_stations_list
     private val adapter = StationListAdapter(this)

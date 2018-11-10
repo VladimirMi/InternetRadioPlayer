@@ -18,7 +18,6 @@ import javax.inject.Inject
  * Created by Vladimir Mikhalev 18.11.2017.
  */
 
-@InjectViewState
 class StationPresenter
 @Inject constructor(private val interactor: StationInteractor,
                     private val controlsInteractor: PlayerControlsInteractor,
@@ -32,8 +31,8 @@ class StationPresenter
     private val menuActions: (MenuItem) -> Unit = {
         when (it.itemId) {
             R.string.menu_station_edit, R.string.menu_station_save -> changeMode()
-            R.string.menu_station_delete -> viewState.openRemoveDialog()
-            R.string.menu_station_shortcut -> viewState.openAddShortcutDialog()
+            R.string.menu_station_delete -> view?.openRemoveDialog()
+            R.string.menu_station_shortcut -> view?.openAddShortcutDialog()
         }
     }
 
@@ -46,8 +45,8 @@ class StationPresenter
             .addMenuItem(MenuItemHolder(R.string.menu_station_shortcut, R.drawable.ic_shortcut, order = 1))
             .setMenuActions(menuActions)
 
-    override fun onFirstViewAttach() {
-        viewState.setStation(interactor.currentStation)
+    override fun onAttach(view: StationView) {
+        view.setStation(interactor.currentStation)
 
         if (editMode) editMode() else viewMode()
     }
@@ -60,19 +59,19 @@ class StationPresenter
                     if (interactor.haveStations()) router.exit()
                     else router.newRootScreen(Router.GET_STARTED_SCREEN)
                 })
-                .addTo(subs)
+                .addTo(dataSubs)
     }
 
     fun edit(stationInfo: StationInfo) {
         interactor.updateCurrentStation(stationInfo.stationName, stationInfo.groupName)
                 .ioToMain()
                 .subscribeByEx(onComplete = { viewMode() })
-                .addTo(subs)
+                .addTo(viewSubs)
     }
 
     fun cancelEdit() {
         interactor.currentStation = interactor.previousWhenEdit!!
-        viewState.setStation(interactor.currentStation)
+        view?.setStation(interactor.currentStation)
         viewMode()
     }
 
@@ -81,11 +80,11 @@ class StationPresenter
                 .ioToMain()
                 .subscribeByEx(
                         onComplete = {
-                            viewState.showToast(R.string.toast_add_success)
+                            view?.showToast(R.string.toast_add_success)
                             viewMode()
                             router.newRootScreen(Router.STATIONS_LIST_SCREEN)
                         })
-                .addTo(subs)
+                .addTo(viewSubs)
     }
 
     fun cancelCreate() {
@@ -96,58 +95,58 @@ class StationPresenter
 
     fun onBackPressed(): Boolean {
         when {
-            interactor.createMode -> viewState.openCancelCreateDialog()
-            editMode -> viewState.cancelEdit()
+            interactor.createMode -> view?.openCancelCreateDialog()
+            editMode -> view?.cancelEdit()
             else -> router.backTo(null)
         }
         return true
     }
 
     fun openLink(url: String) {
-        if (!editMode) viewState.openLinkDialog(url)
+        if (!editMode) view?.openLinkDialog(url)
     }
 
     private fun viewMode() {
         editMode = false
-        viewState.setEditMode(editMode)
+        view?.setEditMode(editMode)
         val toolbar = toolbarBuilder
                 .removeMenuItem(saveItem)
                 .addMenuItem(editItem)
                 .addMenuItem(deleteItem)
 
-        viewState.buildToolbar(toolbar)
+        view?.buildToolbar(toolbar)
         controlsInteractor.editMode(false)
     }
 
     private fun editMode() {
         if (!interactor.createMode) editMode = true
-        viewState.setEditMode(editMode)
+        view?.setEditMode(editMode)
         val toolbar = toolbarBuilder
                 .removeMenuItem(editItem)
                 .addMenuItem(saveItem)
                 .removeMenuItem(deleteItem)
 
-        viewState.buildToolbar(toolbar)
+        view?.buildToolbar(toolbar)
         controlsInteractor.editMode(true)
     }
 
     private fun changeMode() {
         when {
-            interactor.createMode -> viewState.createStation()
-            editMode -> viewState.editStation()
+            interactor.createMode -> view?.createStation()
+            editMode -> view?.editStation()
             else -> editMode()
         }
     }
 
     fun addShortcut(startPlay: Boolean) {
         if (interactor.addCurrentShortcut(startPlay)) {
-            viewState.showToast(R.string.toast_add_shortcut_success)
+            view?.showToast(R.string.toast_add_shortcut_success)
         }
     }
 
     fun tryCancelEdit(stationInfo: StationInfo) {
         if (interactor.stationChanged(stationInfo)) {
-            viewState.openCancelEditDialog()
+            view?.openCancelEditDialog()
         } else {
             cancelEdit()
         }

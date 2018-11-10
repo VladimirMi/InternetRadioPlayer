@@ -9,7 +9,7 @@ import io.github.vladimirmi.internetradioplayer.domain.interactor.StationInterac
 import io.github.vladimirmi.internetradioplayer.extensions.ioToMain
 import io.github.vladimirmi.internetradioplayer.extensions.subscribeByEx
 import io.github.vladimirmi.internetradioplayer.navigation.Router
-import io.github.vladimirmi.internetradioplayer.presentation.base.BasePresenter
+import io.github.vladimirmi.internetradioplayer.presentation.base.BasePresenterLegacy
 import io.reactivex.rxkotlin.addTo
 import javax.inject.Inject
 
@@ -22,7 +22,7 @@ class RootPresenter
 @Inject constructor(private val router: Router,
                     private val controlsInteractor: PlayerControlsInteractor,
                     private val stationInteractor: StationInteractor)
-    : BasePresenter<RootView>() {
+    : BasePresenterLegacy<RootView>() {
 
     private var firstAttach = true
 

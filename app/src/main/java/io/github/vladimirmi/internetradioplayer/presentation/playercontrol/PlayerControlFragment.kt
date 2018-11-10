@@ -9,7 +9,7 @@ import io.github.vladimirmi.internetradioplayer.R
 import io.github.vladimirmi.internetradioplayer.data.db.entity.Station
 import io.github.vladimirmi.internetradioplayer.di.Scopes
 import io.github.vladimirmi.internetradioplayer.extensions.*
-import io.github.vladimirmi.internetradioplayer.presentation.base.BaseFragment
+import io.github.vladimirmi.internetradioplayer.presentation.base.BaseFragmentLegacy
 import kotlinx.android.synthetic.main.fragment_player_controls.*
 import toothpick.Toothpick
 
@@ -18,7 +18,7 @@ import toothpick.Toothpick
  * Created by Vladimir Mikhalev 23.10.2017.
  */
 
-class PlayerControlFragment : BaseFragment(), PlayerControlView {
+class PlayerControlFragment : BaseFragmentLegacy(), PlayerControlView {
 
     override val layoutRes = R.layout.fragment_player_controls
 

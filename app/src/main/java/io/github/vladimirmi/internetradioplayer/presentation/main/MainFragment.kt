@@ -6,7 +6,7 @@ import com.arellomobile.mvp.presenter.InjectPresenter
 import com.arellomobile.mvp.presenter.ProvidePresenter
 import io.github.vladimirmi.internetradioplayer.R
 import io.github.vladimirmi.internetradioplayer.di.Scopes
-import io.github.vladimirmi.internetradioplayer.presentation.base.BaseFragment
+import io.github.vladimirmi.internetradioplayer.presentation.base.BaseFragmentLegacy
 import kotlinx.android.synthetic.main.fragment_main.*
 import toothpick.Toothpick
 
@@ -15,7 +15,7 @@ import toothpick.Toothpick
  * Created by Vladimir Mikhalev 23.10.2017.
  */
 
-class MainFragment : BaseFragment(), MainView {
+class MainFragment : BaseFragmentLegacy(), MainView {
 
     override val layoutRes = R.layout.fragment_main
 
@@ -30,6 +30,6 @@ class MainFragment : BaseFragment(), MainView {
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
-        mainTl.setupWithViewPager()
+        mainTl.setupWithViewPager(mainPager)
     }
 }

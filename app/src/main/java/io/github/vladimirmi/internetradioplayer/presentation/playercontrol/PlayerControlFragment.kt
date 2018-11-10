@@ -1,15 +1,12 @@
 package io.github.vladimirmi.internetradioplayer.presentation.playercontrol
 
-import android.os.Bundle
 import android.view.View
 import android.widget.Toast
-import com.arellomobile.mvp.presenter.InjectPresenter
-import com.arellomobile.mvp.presenter.ProvidePresenter
 import io.github.vladimirmi.internetradioplayer.R
 import io.github.vladimirmi.internetradioplayer.data.db.entity.Station
 import io.github.vladimirmi.internetradioplayer.di.Scopes
 import io.github.vladimirmi.internetradioplayer.extensions.*
-import io.github.vladimirmi.internetradioplayer.presentation.base.BaseFragmentLegacy
+import io.github.vladimirmi.internetradioplayer.presentation.base.BaseFragment
 import kotlinx.android.synthetic.main.fragment_player_controls.*
 import toothpick.Toothpick
 
@@ -18,21 +15,19 @@ import toothpick.Toothpick
  * Created by Vladimir Mikhalev 23.10.2017.
  */
 
-class PlayerControlFragment : BaseFragmentLegacy(), PlayerControlView {
+class PlayerControlFragment : BaseFragment<PlayerControlPresenter, PlayerControlView>(),
+        PlayerControlView {
 
-    override val layoutRes = R.layout.fragment_player_controls
+    override val layout = R.layout.fragment_player_controls
 
-    @InjectPresenter lateinit var presenter: PlayerControlPresenter
-
-    @ProvidePresenter
-    fun providePresenter(): PlayerControlPresenter {
+    override fun providePresenter(): PlayerControlPresenter {
         return Toothpick.openScopes(Scopes.ROOT_ACTIVITY, this)
                 .getInstance(PlayerControlPresenter::class.java).also {
                     Toothpick.closeScope(this)
                 }
     }
 
-    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+    override fun setupView(view: View) {
         metadataTv.isSelected = true
         playPauseBt.setOnClickListener { presenter.playPause() }
         playPauseBt.setManualMode(true)

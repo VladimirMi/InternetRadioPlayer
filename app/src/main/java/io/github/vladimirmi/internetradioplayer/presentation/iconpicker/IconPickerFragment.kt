@@ -1,13 +1,9 @@
 package io.github.vladimirmi.internetradioplayer.presentation.iconpicker
 
-import android.os.Bundle
 import android.view.View
-import com.arellomobile.mvp.presenter.InjectPresenter
-import com.arellomobile.mvp.presenter.ProvidePresenter
 import io.github.vladimirmi.internetradioplayer.R
 import io.github.vladimirmi.internetradioplayer.di.Scopes
-import io.github.vladimirmi.internetradioplayer.presentation.base.BackPressListener
-import io.github.vladimirmi.internetradioplayer.presentation.base.BaseFragmentLegacy
+import io.github.vladimirmi.internetradioplayer.presentation.base.BaseFragment
 import kotlinx.android.synthetic.main.fragment_icon_picker.*
 import toothpick.Toothpick
 
@@ -16,22 +12,18 @@ import toothpick.Toothpick
  * Created by Vladimir Mikhalev 15.12.2017.
  */
 
-class IconPickerFragment : BaseFragmentLegacy(), IconPickerView, BackPressListener {
+class IconPickerFragment : BaseFragment<IconPickerPresenter, IconPickerView>(), IconPickerView {
 
-    override val layoutRes = R.layout.fragment_icon_picker
+    override val layout = R.layout.fragment_icon_picker
 
-    @InjectPresenter
-    lateinit var presenter: IconPickerPresenter
-
-    @ProvidePresenter
-    fun providePresenter(): IconPickerPresenter {
+    override fun providePresenter(): IconPickerPresenter {
         val scope = Toothpick.openScopes(Scopes.ROOT_ACTIVITY, this)
         return scope.getInstance(IconPickerPresenter::class.java).also {
             Toothpick.closeScope(this)
         }
     }
 
-    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+    override fun setupView(view: View) {
         setupCarousel()
         setupColorPicker(configurationsRg.checkedRadioButtonId)
         configurationsRg.setOnCheckedChangeListener { _, checkedId ->

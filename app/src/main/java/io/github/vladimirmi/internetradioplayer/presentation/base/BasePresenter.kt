@@ -11,15 +11,17 @@ open class BasePresenter<V : BaseView> {
     protected var view: V? = null
     protected val viewSubs = CompositeDisposable()
     protected val dataSubs = CompositeDisposable()
-    private var isFirstAttach = true
+    protected var isFirstAttach = true
 
     fun attachView(view: V) {
         this.view = view
         if (isFirstAttach) {
             onFirstAttach(view)
+            onAttach(view)
             isFirstAttach = false
+        } else {
+            onAttach(view)
         }
-        onAttach(view)
     }
 
     fun detachView() {

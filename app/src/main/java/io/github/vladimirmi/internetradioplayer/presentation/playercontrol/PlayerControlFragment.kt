@@ -73,7 +73,7 @@ class PlayerControlFragment : BaseFragment<PlayerControlPresenter, PlayerControl
         changeIconBt.visible(enable)
     }
 
-    override fun showToast(resId: Int) {
+    override fun showMessage(resId: Int) {
         Toast.makeText(context, resId, Toast.LENGTH_SHORT).show()
     }
 }

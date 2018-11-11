@@ -11,7 +11,6 @@ import android.view.View
 import android.view.inputmethod.EditorInfo
 import android.widget.EditText
 import android.widget.TextView
-import android.widget.Toast
 import io.github.vladimirmi.internetradioplayer.R
 import io.github.vladimirmi.internetradioplayer.data.db.entity.Group
 import io.github.vladimirmi.internetradioplayer.data.db.entity.Station
@@ -57,7 +56,7 @@ class StationFragment : BaseFragment<StationPresenter, StationView>(), StationVi
         uriTv.setOnClickListener { openLink(it as TextView) }
     }
 
-    override fun onBackPressed() = presenter.onBackPressed()
+    override fun handleBackPressed() = presenter.onBackPressed()
 
     //region =============== StationView ==============
 

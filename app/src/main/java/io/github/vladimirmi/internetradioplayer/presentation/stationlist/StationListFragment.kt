@@ -82,7 +82,7 @@ class StationListFragment : BaseFragment<StationListPresenter, StationListView>(
         NewStationDialog().show(childFragmentManager, "new_station_dialog")
     }
 
-    override fun showToast(resId: Int) {
+    override fun showMessage(resId: Int) {
         Toast.makeText(context, resId, Toast.LENGTH_SHORT).show()
     }
 

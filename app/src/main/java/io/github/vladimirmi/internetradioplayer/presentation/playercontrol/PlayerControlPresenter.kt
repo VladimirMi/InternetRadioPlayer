@@ -87,7 +87,7 @@ class PlayerControlPresenter
     fun playPause() {
         with(controlsInteractor) {
             if (!isPlaying && !isNetAvail) {
-                view?.showToast(R.string.toast_net_error)
+                view?.showMessage(R.string.toast_net_error)
             } else {
                 playPause()
             }

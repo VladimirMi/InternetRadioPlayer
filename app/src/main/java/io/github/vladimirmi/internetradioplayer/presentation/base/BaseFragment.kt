@@ -57,15 +57,15 @@ abstract class BaseFragment<P : BasePresenter<V>, V : BaseView> : Fragment(), Ba
 
     //region =============== BaseView =============s=
 
-    override fun onBackPressed(): Boolean {
-        return childFragmentManager.fragments.any { it is BaseView && it.onBackPressed() }
+    override fun handleBackPressed(): Boolean {
+        return childFragmentManager.fragments.any { it is BaseView && it.handleBackPressed() }
     }
 
     override fun buildToolbar(builder: ToolbarBuilder) {
         builder.build(activity as ToolbarView)
     }
 
-    override fun showToast(resId: Int) {
+    override fun showMessage(resId: Int) {
         Toast.makeText(context, resId, Toast.LENGTH_SHORT).show()
     }
 

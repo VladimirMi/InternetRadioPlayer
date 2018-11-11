@@ -4,7 +4,6 @@ import io.github.vladimirmi.internetradioplayer.domain.interactor.StationInterac
 import io.github.vladimirmi.internetradioplayer.navigation.Router
 import io.github.vladimirmi.internetradioplayer.presentation.base.BasePresenter
 import io.github.vladimirmi.internetradioplayer.presentation.base.ToolbarBuilder
-import io.github.vladimirmi.internetradioplayer.presentation.root.RootPresenter
 import javax.inject.Inject
 
 /**
@@ -12,8 +11,7 @@ import javax.inject.Inject
  */
 
 class IconPickerPresenter
-@Inject constructor(private val rootPresenter: RootPresenter,
-                    private val interactor: StationInteractor,
+@Inject constructor(private val interactor: StationInteractor,
                     private val router: Router)
     : BasePresenter<IconPickerView>() {
 
@@ -26,7 +24,7 @@ class IconPickerPresenter
     }
 
     override fun onAttach(view: IconPickerView) {
-        rootPresenter.viewState.showControls(false)
+        view.showControls(false)
     }
 
     fun saveIcon() {
@@ -40,7 +38,7 @@ class IconPickerPresenter
     }
 
     fun exit() {
-        rootPresenter.viewState.showControls(true)
+        view?.showControls(true)
         router.exit()
     }
 }

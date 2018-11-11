@@ -1,7 +1,6 @@
 package io.github.vladimirmi.internetradioplayer.presentation.station
 
 import android.view.MenuItem
-import com.arellomobile.mvp.InjectViewState
 import io.github.vladimirmi.internetradioplayer.R
 import io.github.vladimirmi.internetradioplayer.domain.interactor.PlayerControlsInteractor
 import io.github.vladimirmi.internetradioplayer.domain.interactor.StationInteractor
@@ -80,7 +79,7 @@ class StationPresenter
                 .ioToMain()
                 .subscribeByEx(
                         onComplete = {
-                            view?.showToast(R.string.toast_add_success)
+                            view?.showMessage(R.string.toast_add_success)
                             viewMode()
                             router.newRootScreen(Router.STATIONS_LIST_SCREEN)
                         })
@@ -140,7 +139,7 @@ class StationPresenter
 
     fun addShortcut(startPlay: Boolean) {
         if (interactor.addCurrentShortcut(startPlay)) {
-            view?.showToast(R.string.toast_add_shortcut_success)
+            view?.showMessage(R.string.toast_add_shortcut_success)
         }
     }
 

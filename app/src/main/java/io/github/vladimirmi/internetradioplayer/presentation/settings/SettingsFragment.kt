@@ -81,7 +81,7 @@ class SettingsFragment : PreferenceFragmentCompat(), BackPressListener {
             backupRestoreHelper.restoreBackup(context!!.contentResolver.openInputStream(data.data!!)!!)
                     .andThen(Scopes.app.getInstance(StationInteractor::class.java).initStations())
                     .ioToMain()
-                    .doOnComplete { router.newRootScreen(Router.STATIONS_LIST_SCREEN) }
+                    .doOnComplete { router.exit() }
                     .subscribeByEx()
         }
     }

@@ -43,6 +43,15 @@
     <string name="desc_skip_previous_button">skip previous button</string>
     <string name="desc_skip_next_button">skip next button</string>
 
+    <string name="tabs_search">Search</string>
+    <string name="tabs_stations">Stations</string>
+    <string name="tabs_player">Player</string>
+    <string-array name="uber_stations_tabs">
+        <item>@string/tabs_search</item>
+        <item>@string/tabs_stations</item>
+        <item>@string/tabs_player</item>
+    </string-array>
+
     <string name="station_list_details">Details</string>
 
     <string name="station_uri">Stream uri:</string>

@@ -24,6 +24,7 @@ class MainFragment : BaseFragment<MainPresenter, MainView>(), MainView {
     }
 
     override fun setupView(view: View) {
+        mainPager.adapter = MainPagerAdapter(context!!, childFragmentManager)
         mainTl.setupWithViewPager(mainPager)
     }
 }

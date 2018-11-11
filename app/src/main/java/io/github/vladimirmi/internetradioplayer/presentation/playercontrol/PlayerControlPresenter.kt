@@ -13,6 +13,7 @@ import io.github.vladimirmi.internetradioplayer.presentation.base.BasePresenter
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.rxkotlin.addTo
 import io.reactivex.rxkotlin.subscribeBy
+import timber.log.Timber
 import javax.inject.Inject
 
 /**
@@ -68,11 +69,13 @@ class PlayerControlPresenter
         when (event) {
             PlayerService.EVENT_SESSION_PREVIOUS -> {
                 view?.showPrevious()
-                router.skipToPrevious(stationInteractor.currentStation.id)
+                Timber.e("handleSessionEvent: previous")
+//                router.skipToPrevious(stationInteractor.currentStation.id)
             }
             PlayerService.EVENT_SESSION_NEXT -> {
                 view?.showNext()
-                router.skipToNext(stationInteractor.currentStation.id)
+                Timber.e("handleSessionEvent: next")
+//                router.skipToNext(stationInteractor.currentStation.id)
             }
         }
     }
@@ -95,7 +98,8 @@ class PlayerControlPresenter
     }
 
     fun showStation() {
-        router.showStationSlide(stationInteractor.currentStation.id)
+        Timber.e("showStation: ")
+//        router.showStationSlide(stationInteractor.currentStation.id)
     }
 
     fun skipToPrevious() {

@@ -10,6 +10,7 @@ import io.github.vladimirmi.internetradioplayer.extensions.subscribeByEx
 import io.github.vladimirmi.internetradioplayer.navigation.Router
 import io.github.vladimirmi.internetradioplayer.presentation.base.BasePresenter
 import io.reactivex.rxkotlin.addTo
+import timber.log.Timber
 import javax.inject.Inject
 
 /**
@@ -25,11 +26,11 @@ class RootPresenter
 
     override fun onFirstAttach(view: RootView) {
         controlsInteractor.connect()
+        setupRootScreen()
 
         stationInteractor.initStations()
                 .ioToMain()
                 .subscribeByEx(onComplete = {
-                    setupRootScreen()
                     view.checkIntent()
                 })
                 .addTo(dataSubs)
@@ -55,7 +56,8 @@ class RootPresenter
         val station = stationInteractor.getStation { it.uri == uri.toString() }
         if (station != null) {
             stationInteractor.currentStation = station
-            router.showStationReplace(station.id)
+//            router.showStationReplace(station.id)
+            Timber.e("addStation: existed ${station.name}")
             if (startPlay) controlsInteractor.play()
             return
         }
@@ -65,7 +67,8 @@ class RootPresenter
                 .doOnSubscribe { view?.showLoadingIndicator(true) }
                 .doFinally { view?.showLoadingIndicator(false) }
                 .subscribeByEx(onSuccess = {
-                    router.showStationSlide(stationInteractor.currentStation.id)
+                    Timber.e("addStation: ${it.name}")
+//                    router.showStationSlide(stationInteractor.currentStation.id)
                 }).addTo(viewSubs)
     }
 
@@ -74,7 +77,8 @@ class RootPresenter
         val station = stationInteractor.getStation { it.id == id }
         if (station != null) {
             stationInteractor.currentStation = station
-            router.showStationReplace(station.id)
+            Timber.e("showStation: ${station.name}")
+//            router.showStationReplace(station.id)
             if (startPlay) controlsInteractor.play()
         } else {
             view?.showMessage(R.string.toast_shortcut_remove)
@@ -91,10 +95,12 @@ class RootPresenter
     }
 
     private fun setupRootScreen() {
-        if (stationInteractor.haveStations()) {
-            router.newRootScreen(Router.STATIONS_LIST_SCREEN)
-        } else {
-            router.newRootScreen(Router.GET_STARTED_SCREEN)
-        }
+        Timber.e("setupRootScreen: ")
+        router.newRootScreen(Router.MAIN_SCREEN)
+//        if (stationInteractor.haveStations()) {
+//            router.newRootScreen(Router.STATIONS_LIST_SCREEN)
+//        } else {
+//            router.newRootScreen(Router.GET_STARTED_SCREEN)
+//        }
     }
 }

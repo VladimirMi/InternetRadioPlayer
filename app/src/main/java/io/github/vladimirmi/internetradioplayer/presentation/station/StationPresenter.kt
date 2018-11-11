@@ -11,6 +11,7 @@ import io.github.vladimirmi.internetradioplayer.presentation.base.BasePresenter
 import io.github.vladimirmi.internetradioplayer.presentation.base.MenuItemHolder
 import io.github.vladimirmi.internetradioplayer.presentation.base.ToolbarBuilder
 import io.reactivex.rxkotlin.addTo
+import timber.log.Timber
 import javax.inject.Inject
 
 /**
@@ -55,8 +56,9 @@ class StationPresenter
                 .ioToMain()
                 .subscribeByEx(onComplete = {
                     controlsInteractor.stop()
-                    if (interactor.haveStations()) router.exit()
-                    else router.newRootScreen(Router.GET_STARTED_SCREEN)
+                    Timber.e("removeStation: ")
+//                    if (interactor.haveStations()) router.exit()
+//                    else router.newRootScreen(Router.GET_STARTED_SCREEN)
                 })
                 .addTo(dataSubs)
     }
@@ -81,7 +83,8 @@ class StationPresenter
                         onComplete = {
                             view?.showMessage(R.string.toast_add_success)
                             viewMode()
-                            router.newRootScreen(Router.STATIONS_LIST_SCREEN)
+                            Timber.e("create: ${stationInfo.stationName}")
+//                            router.newRootScreen(Router.STATIONS_LIST_SCREEN)
                         })
                 .addTo(viewSubs)
     }

@@ -15,6 +15,7 @@ import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.rxkotlin.addTo
 import io.reactivex.rxkotlin.subscribeBy
 import io.reactivex.schedulers.Schedulers
+import timber.log.Timber
 import javax.inject.Inject
 
 /**
@@ -70,8 +71,9 @@ class StationListPresenter
     }
 
     fun showStation(station: Station) {
-        selectStation(station)
-        router.showStationSlide(station.id)
+        Timber.e("showStation: ${station.name}")
+//        selectStation(station)
+//        router.showStationSlide(station.id)
     }
 
     fun moveGroupElements(stations: FlatStationsList) {

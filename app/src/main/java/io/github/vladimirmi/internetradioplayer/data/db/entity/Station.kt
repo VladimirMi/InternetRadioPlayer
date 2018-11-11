@@ -1,6 +1,6 @@
 package io.github.vladimirmi.internetradioplayer.data.db.entity
 
-import android.arch.persistence.room.*
+import androidx.room.*
 import java.util.*
 
 /**

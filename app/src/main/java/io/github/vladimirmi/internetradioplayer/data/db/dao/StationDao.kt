@@ -1,6 +1,6 @@
 package io.github.vladimirmi.internetradioplayer.data.db.dao
 
-import android.arch.persistence.room.*
+import androidx.room.*
 import io.github.vladimirmi.internetradioplayer.data.db.entity.Genre
 import io.github.vladimirmi.internetradioplayer.data.db.entity.Group
 import io.github.vladimirmi.internetradioplayer.data.db.entity.Station

@@ -1,8 +1,7 @@
 package io.github.vladimirmi.internetradioplayer.navigation
 
 import android.content.Context
-import android.support.v4.app.Fragment
-import android.support.v4.app.FragmentTransaction
+import androidx.fragment.app.Fragment
 import io.github.vladimirmi.internetradioplayer.R
 import io.github.vladimirmi.internetradioplayer.presentation.getstarted.GetStartedFragment
 import io.github.vladimirmi.internetradioplayer.presentation.iconpicker.IconPickerFragment
@@ -62,9 +61,9 @@ class Navigator(activity: RootActivity, containerId: Int)
 
     override fun setupFragmentTransactionAnimation(
             command: Command?,
-            currentFragment: Fragment?,
-            nextFragment: Fragment?,
-            fragmentTransaction: FragmentTransaction?) {
+            currentFragment: androidx.fragment.app.Fragment?,
+            nextFragment: androidx.fragment.app.Fragment?,
+            fragmentTransaction: androidx.fragment.app.FragmentTransaction?) {
         when (command) {
         // order matters because Next and Previous is subclasses of Forward
             is NextStation -> forwardTransition(fragmentTransaction)
@@ -76,27 +75,27 @@ class Navigator(activity: RootActivity, containerId: Int)
         }
     }
 
-    private fun previousTransition(fragmentTransaction: FragmentTransaction?) {
+    private fun previousTransition(fragmentTransaction: androidx.fragment.app.FragmentTransaction?) {
         fragmentTransaction?.setCustomAnimations(R.anim.slide_in_left, R.anim.slide_out_right,
                 R.anim.slide_in_left, R.anim.slide_out_right)
     }
 
-    private fun backTransition(fragmentTransaction: FragmentTransaction?) {
+    private fun backTransition(fragmentTransaction: androidx.fragment.app.FragmentTransaction?) {
         fragmentTransaction?.setCustomAnimations(R.anim.slide_in_left, R.anim.slide_out_right,
                 R.anim.slide_in_right, R.anim.slide_out_left)
     }
 
-    private fun forwardTransition(fragmentTransaction: FragmentTransaction?) {
+    private fun forwardTransition(fragmentTransaction: androidx.fragment.app.FragmentTransaction?) {
         fragmentTransaction?.setCustomAnimations(R.anim.slide_in_right, R.anim.slide_out_left,
                 R.anim.slide_in_left, R.anim.slide_out_right)
     }
 
-    private fun replaceTransition(fragmentTransaction: FragmentTransaction?) {
+    private fun replaceTransition(fragmentTransaction: androidx.fragment.app.FragmentTransaction?) {
         fragmentTransaction?.setCustomAnimations(android.R.anim.fade_in, android.R.anim.fade_out,
                 android.R.anim.fade_in, android.R.anim.fade_out)
     }
 
-    private fun forwardReplaceTransition(fragmentTransaction: FragmentTransaction?) {
+    private fun forwardReplaceTransition(fragmentTransaction: androidx.fragment.app.FragmentTransaction?) {
         fragmentTransaction?.setCustomAnimations(android.R.anim.fade_in, android.R.anim.fade_out,
                 R.anim.slide_in_left, R.anim.slide_out_right)
     }

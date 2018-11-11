@@ -3,11 +3,11 @@ package io.github.vladimirmi.internetradioplayer.extensions
 import android.app.DownloadManager
 import android.content.Context
 import android.content.Intent
-import android.support.annotation.ColorRes
-import android.support.v4.content.ContextCompat
 import android.util.DisplayMetrics
 import android.view.WindowManager
 import android.view.inputmethod.InputMethodManager
+import androidx.annotation.ColorRes
+import androidx.core.content.ContextCompat
 
 
 /**

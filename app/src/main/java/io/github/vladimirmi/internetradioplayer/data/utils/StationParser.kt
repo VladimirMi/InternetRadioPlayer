@@ -9,6 +9,7 @@ import okhttp3.MediaType
 import okhttp3.OkHttpClient
 import okhttp3.Request
 import timber.log.Timber
+import java.io.InputStream
 import java.net.MalformedURLException
 import java.net.URL
 import javax.inject.Inject
@@ -56,7 +57,7 @@ class StationParser
     fun parseFromUri(uri: Uri): Station {
         Timber.d("parseFromUri: $uri")
         return when {
-            uri.scheme.startsWith(SCHEME_HTTP, true) -> parseFromNet(uri.toURL()) // also https
+            uri.scheme?.startsWith(SCHEME_HTTP, true) == true -> parseFromNet(uri.toURL()) // also https
             uri.scheme == SCHEME_FILE || uri.scheme == SCHEME_CONTENT -> parseFromPlaylistFile(uri)
             else -> throw IllegalArgumentException("Error: Unsupported uri $uri")
         }
@@ -65,7 +66,7 @@ class StationParser
     private fun parseFromPlaylistFile(uri: Uri): Station {
         val type = context.contentResolver.getType(uri)
         val name = uri.lastPathSegment ?: ""
-        val content = context.contentResolver.openInputStream(uri).use { stream ->
+        val content = context.contentResolver.openInputStream(uri).use { stream: InputStream ->
             stream.bufferedReader().use { it.readText() }
         }
         return if (type == PLS_TYPE

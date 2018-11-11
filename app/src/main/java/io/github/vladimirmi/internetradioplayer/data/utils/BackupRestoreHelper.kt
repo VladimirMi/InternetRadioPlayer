@@ -2,8 +2,8 @@ package io.github.vladimirmi.internetradioplayer.data.utils
 
 import android.content.Context
 import android.net.Uri
-import android.support.v4.content.FileProvider
 import android.util.Xml
+import androidx.core.content.FileProvider
 import io.github.vladimirmi.internetradioplayer.BuildConfig
 import io.github.vladimirmi.internetradioplayer.data.db.entity.Group
 import io.github.vladimirmi.internetradioplayer.data.db.entity.Icon

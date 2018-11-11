@@ -1,10 +1,10 @@
 package io.github.vladimirmi.internetradioplayer.presentation.base
 
 import android.os.Bundle
-import android.support.design.widget.Snackbar
-import android.support.v7.app.AppCompatActivity
 import android.view.Menu
 import android.view.View
+import androidx.appcompat.app.AppCompatActivity
+import com.google.android.material.snackbar.Snackbar
 
 /**
  * Created by Vladimir Mikhalev 11.11.2018.
@@ -58,7 +58,7 @@ abstract class BaseActivity<P : BasePresenter<V>, V : BaseView>
     }
 
     override fun handleBackPressed(): Boolean {
-        return supportFragmentManager.fragments.any { it is BaseView && it.handleBackPressed() }
+        return supportFragmentManager.fragments.any { it is BackPressListener && it.handleBackPressed() }
     }
 
     override fun showMessage(resId: Int) {

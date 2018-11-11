@@ -3,9 +3,9 @@ package io.github.vladimirmi.internetradioplayer.presentation.settings
 import android.app.Activity
 import android.content.Intent
 import android.os.Bundle
-import android.support.v4.app.ShareCompat
-import android.support.v7.preference.Preference
-import android.support.v7.preference.PreferenceFragmentCompat
+import androidx.core.app.ShareCompat
+import androidx.preference.Preference
+import androidx.preference.PreferenceFragmentCompat
 import io.github.vladimirmi.internetradioplayer.R
 import io.github.vladimirmi.internetradioplayer.data.utils.BACKUP_TYPE
 import io.github.vladimirmi.internetradioplayer.data.utils.BackupRestoreHelper
@@ -69,7 +69,7 @@ class SettingsFragment : PreferenceFragmentCompat(), BackPressListener {
         if (preference is SeekBarDialogPreference) {
             val fragment = SeekBarDialogFragment.newInstance(preference.key)
             fragment.setTargetFragment(this, 0)
-            fragment.show(fragmentManager, "SeekBarDialogFragment")
+            fragment.show(fragmentManager!!, "SeekBarDialogFragment")
         } else {
             super.onDisplayPreferenceDialog(preference)
         }
@@ -78,7 +78,7 @@ class SettingsFragment : PreferenceFragmentCompat(), BackPressListener {
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         if (requestCode == PICK_BACKUP_REQUEST_CODE && resultCode == Activity.RESULT_OK
                 && data?.data != null) {
-            backupRestoreHelper.restoreBackup(context!!.contentResolver.openInputStream(data.data))
+            backupRestoreHelper.restoreBackup(context!!.contentResolver.openInputStream(data.data!!)!!)
                     .andThen(Scopes.app.getInstance(StationInteractor::class.java).initStations())
                     .ioToMain()
                     .doOnComplete { router.newRootScreen(Router.STATIONS_LIST_SCREEN) }
@@ -86,7 +86,7 @@ class SettingsFragment : PreferenceFragmentCompat(), BackPressListener {
         }
     }
 
-    override fun onBackPressed(): Boolean {
+    override fun handleBackPressed(): Boolean {
         (activity as RootView).showControls(true)
         return false
     }

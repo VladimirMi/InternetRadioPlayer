@@ -1,8 +1,8 @@
 package io.github.vladimirmi.internetradioplayer.presentation.base
 
 import android.graphics.Color
-import android.support.annotation.StringRes
 import android.view.MenuItem
+import androidx.annotation.StringRes
 import io.github.vladimirmi.internetradioplayer.R
 
 class ToolbarBuilder {

@@ -1,13 +1,13 @@
 package io.github.vladimirmi.internetradioplayer.extensions
 
-import android.support.animation.DynamicAnimation
-import android.support.animation.SpringAnimation
-import android.support.animation.SpringForce
 import android.text.Editable
 import android.text.TextWatcher
 import android.view.View
 import android.view.ViewTreeObserver
 import android.widget.TextView
+import androidx.dynamicanimation.animation.DynamicAnimation
+import androidx.dynamicanimation.animation.SpringAnimation
+import androidx.dynamicanimation.animation.SpringForce
 
 
 /**

@@ -1,8 +1,8 @@
 package io.github.vladimirmi.internetradioplayer.presentation.base
 
-import android.support.annotation.StringRes
-import android.support.v7.app.AppCompatActivity
 import android.view.Menu
+import androidx.annotation.StringRes
+import androidx.appcompat.app.AppCompatActivity
 
 /**
  * Created by Vladimir Mikhalev 29.11.2017.

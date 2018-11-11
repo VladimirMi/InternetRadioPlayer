@@ -2,14 +2,13 @@ package io.github.vladimirmi.internetradioplayer.ui
 
 import android.annotation.SuppressLint
 import android.content.Context
-import android.support.v4.view.PagerAdapter
-import android.support.v4.view.ViewPager
 import android.util.AttributeSet
 import android.view.LayoutInflater
 import android.view.MotionEvent
 import android.view.View
 import android.view.ViewGroup
 import android.widget.ImageView
+import androidx.viewpager.widget.ViewPager
 import io.github.vladimirmi.internetradioplayer.R
 import io.github.vladimirmi.internetradioplayer.data.db.entity.ICONS
 import io.github.vladimirmi.internetradioplayer.data.db.entity.Icon
@@ -98,7 +97,7 @@ class CarouselIconPicker : ViewPager {
         return (getChildAt(position) as? ViewGroup)?.getChildAt(0) as? ImageView
     }
 
-    inner class CustomPageTransformer : ViewPager.PageTransformer {
+    inner class CustomPageTransformer : androidx.viewpager.widget.ViewPager.PageTransformer {
 
         override fun transformPage(page: View, position: Float) {
             val imageView = page.iconIv
@@ -121,7 +120,7 @@ class CarouselIconPicker : ViewPager {
     }
 }
 
-class CarouselAdapter : PagerAdapter() {
+class CarouselAdapter : androidx.viewpager.widget.PagerAdapter() {
 
     override fun isViewFromObject(view: View, `object`: Any): Boolean {
         return view == `object`

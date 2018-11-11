@@ -27,7 +27,7 @@ class LinkDialog : BaseDialogFragment() {
     }
 
     override fun onPositive() {
-        val url = arguments!!.getString(KEY_URL)
+        val url = arguments?.getString(KEY_URL)!!
         context?.startActivitySafe(Intent(Intent.ACTION_VIEW, url.toUri()))
     }
 

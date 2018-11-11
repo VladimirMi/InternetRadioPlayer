@@ -2,8 +2,8 @@ package io.github.vladimirmi.internetradioplayer.ui
 
 import android.content.Context
 import android.content.res.TypedArray
-import android.support.v7.preference.DialogPreference
 import android.util.AttributeSet
+import androidx.preference.DialogPreference
 import io.github.vladimirmi.internetradioplayer.R
 
 
@@ -15,9 +15,7 @@ class SeekBarDialogPreference : DialogPreference {
 
     constructor(context: Context) : this(context, null)
     constructor(context: Context, attrs: AttributeSet?) : this(context, attrs, R.attr.dialogPreferenceStyle)
-    constructor(context: Context, attrs: AttributeSet?, defStyleAttr: Int) : super(context, attrs, defStyleAttr) {
-
-    }
+    constructor(context: Context, attrs: AttributeSet?, defStyleAttr: Int) : super(context, attrs, defStyleAttr)
 
     var progress = 0
         set(value) {

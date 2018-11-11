@@ -3,9 +3,9 @@ package io.github.vladimirmi.internetradioplayer.presentation.base
 import android.app.AlertDialog
 import android.app.Dialog
 import android.os.Bundle
-import android.support.v4.app.DialogFragment
 import android.view.View
 import android.view.ViewGroup
+import androidx.fragment.app.DialogFragment
 import io.github.vladimirmi.internetradioplayer.R
 
 /**

@@ -3,7 +3,6 @@ package io.github.vladimirmi.internetradioplayer.data.service
 import android.app.PendingIntent
 import android.content.Context
 import android.content.Intent
-import android.support.v4.media.session.MediaButtonReceiver
 import android.support.v4.media.session.PlaybackStateCompat
 import io.github.vladimirmi.internetradioplayer.presentation.root.RootActivity
 
@@ -19,22 +18,22 @@ object PlayerActions {
             or PlaybackStateCompat.ACTION_SKIP_TO_PREVIOUS)
 
     fun playPauseIntent(context: Context): PendingIntent {
-        return MediaButtonReceiver.buildMediaButtonPendingIntent(context,
+        return androidx.media.session.MediaButtonReceiver.buildMediaButtonPendingIntent(context,
                 PlaybackStateCompat.ACTION_PLAY_PAUSE)
     }
 
     fun stopIntent(context: Context): PendingIntent {
-        return MediaButtonReceiver.buildMediaButtonPendingIntent(context,
+        return androidx.media.session.MediaButtonReceiver.buildMediaButtonPendingIntent(context,
                 PlaybackStateCompat.ACTION_STOP)
     }
 
     fun nextIntent(context: Context): PendingIntent {
-        return MediaButtonReceiver.buildMediaButtonPendingIntent(context,
+        return androidx.media.session.MediaButtonReceiver.buildMediaButtonPendingIntent(context,
                 PlaybackStateCompat.ACTION_SKIP_TO_NEXT)
     }
 
     fun previousIntent(context: Context): PendingIntent {
-        return MediaButtonReceiver.buildMediaButtonPendingIntent(context,
+        return androidx.media.session.MediaButtonReceiver.buildMediaButtonPendingIntent(context,
                 PlaybackStateCompat.ACTION_SKIP_TO_PREVIOUS)
     }
 

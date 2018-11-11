@@ -1,6 +1,5 @@
 package io.github.vladimirmi.internetradioplayer.presentation.station
 
-import android.support.v4.content.ContextCompat
 import android.text.InputType
 import android.text.Spannable
 import android.text.SpannableString
@@ -11,6 +10,7 @@ import android.view.View
 import android.view.inputmethod.EditorInfo
 import android.widget.EditText
 import android.widget.TextView
+import androidx.core.content.ContextCompat
 import io.github.vladimirmi.internetradioplayer.R
 import io.github.vladimirmi.internetradioplayer.data.db.entity.Group
 import io.github.vladimirmi.internetradioplayer.data.db.entity.Station

@@ -2,11 +2,11 @@ package io.github.vladimirmi.internetradioplayer.ui
 
 import android.content.Context
 import android.graphics.Color
-import android.support.annotation.ColorInt
 import android.util.AttributeSet
 import android.view.View
 import android.widget.FrameLayout
 import android.widget.SeekBar
+import androidx.annotation.ColorInt
 import io.github.vladimirmi.internetradioplayer.R
 import kotlinx.android.synthetic.main.view_color_picker.view.*
 

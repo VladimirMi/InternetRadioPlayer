@@ -5,9 +5,8 @@ import android.graphics.Canvas
 import android.graphics.Color
 import android.graphics.Paint
 import android.graphics.RectF
-import android.support.v4.content.ContextCompat
-import android.support.v7.widget.RecyclerView
-import android.support.v7.widget.helper.ItemTouchHelper
+import androidx.core.content.ContextCompat
+import androidx.recyclerview.widget.ItemTouchHelper
 import io.github.vladimirmi.internetradioplayer.R
 import io.github.vladimirmi.internetradioplayer.extensions.dp
 import io.github.vladimirmi.internetradioplayer.extensions.sp
@@ -40,12 +39,12 @@ abstract class ItemSwipeCallback(context: Context) : ItemTouchHelper.SimpleCallb
         isAntiAlias = true
     }
 
-    abstract override fun onMove(recyclerView: RecyclerView, viewHolder: RecyclerView.ViewHolder,
-                                 target: RecyclerView.ViewHolder): Boolean
+    abstract override fun onMove(recyclerView: androidx.recyclerview.widget.RecyclerView, viewHolder: androidx.recyclerview.widget.RecyclerView.ViewHolder,
+                                 target: androidx.recyclerview.widget.RecyclerView.ViewHolder): Boolean
 
-    abstract override fun onSwiped(viewHolder: RecyclerView.ViewHolder, direction: Int)
+    abstract override fun onSwiped(viewHolder: androidx.recyclerview.widget.RecyclerView.ViewHolder, direction: Int)
 
-    override fun onSelectedChanged(viewHolder: RecyclerView.ViewHolder?, actionState: Int) {
+    override fun onSelectedChanged(viewHolder: androidx.recyclerview.widget.RecyclerView.ViewHolder?, actionState: Int) {
         if (actionState == ItemTouchHelper.ACTION_STATE_DRAG && viewHolder != null) {
             onStartDrag(viewHolder.adapterPosition)
 
@@ -57,18 +56,18 @@ abstract class ItemSwipeCallback(context: Context) : ItemTouchHelper.SimpleCallb
 
     abstract fun onIdle()
 
-    override fun getDragDirs(recyclerView: RecyclerView, viewHolder: RecyclerView.ViewHolder): Int {
+    override fun getDragDirs(recyclerView: androidx.recyclerview.widget.RecyclerView, viewHolder: androidx.recyclerview.widget.RecyclerView.ViewHolder): Int {
         return ItemTouchHelper.UP or ItemTouchHelper.DOWN
     }
 
-    override fun getSwipeDirs(recyclerView: RecyclerView, viewHolder: RecyclerView.ViewHolder): Int {
+    override fun getSwipeDirs(recyclerView: androidx.recyclerview.widget.RecyclerView, viewHolder: androidx.recyclerview.widget.RecyclerView.ViewHolder): Int {
         if (viewHolder is GroupTitleVH) return 0
         return ItemTouchHelper.LEFT or ItemTouchHelper.RIGHT
     }
 
     override fun onChildDraw(c: Canvas,
-                             recyclerView: RecyclerView,
-                             viewHolder: RecyclerView.ViewHolder,
+                             recyclerView: androidx.recyclerview.widget.RecyclerView,
+                             viewHolder: androidx.recyclerview.widget.RecyclerView.ViewHolder,
                              dX: Float, dY: Float,
                              actionState: Int,
                              isCurrentlyActive: Boolean) {

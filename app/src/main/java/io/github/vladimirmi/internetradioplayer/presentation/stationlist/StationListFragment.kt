@@ -1,10 +1,8 @@
 package io.github.vladimirmi.internetradioplayer.presentation.stationlist
 
-import android.support.v7.widget.LinearLayoutManager
-import android.support.v7.widget.RecyclerView
-import android.support.v7.widget.helper.ItemTouchHelper
 import android.view.View
 import android.widget.Toast
+import androidx.recyclerview.widget.ItemTouchHelper
 import io.github.vladimirmi.internetradioplayer.R
 import io.github.vladimirmi.internetradioplayer.data.db.entity.Station
 import io.github.vladimirmi.internetradioplayer.di.Scopes
@@ -27,13 +25,13 @@ class StationListFragment : BaseFragment<StationListPresenter, StationListView>(
 
     private val itemTouchHelper by lazy {
         ItemTouchHelper(object : ItemSwipeCallback(context!!) {
-            override fun onSwiped(viewHolder: RecyclerView.ViewHolder, direction: Int) {
+            override fun onSwiped(viewHolder: androidx.recyclerview.widget.RecyclerView.ViewHolder, direction: Int) {
                 val station = adapter.getStation(viewHolder.adapterPosition) ?: return
                 presenter.showStation(station)
             }
 
-            override fun onMove(recyclerView: RecyclerView, viewHolder: RecyclerView.ViewHolder,
-                                target: RecyclerView.ViewHolder): Boolean {
+            override fun onMove(recyclerView: androidx.recyclerview.widget.RecyclerView, viewHolder: androidx.recyclerview.widget.RecyclerView.ViewHolder,
+                                target: androidx.recyclerview.widget.RecyclerView.ViewHolder): Boolean {
                 adapter.onMove(viewHolder.adapterPosition, target.adapterPosition)
                 return true
             }
@@ -57,7 +55,7 @@ class StationListFragment : BaseFragment<StationListPresenter, StationListView>(
     }
 
     override fun setupView(view: View) {
-        media_recycler.layoutManager = LinearLayoutManager(context)
+        media_recycler.layoutManager = androidx.recyclerview.widget.LinearLayoutManager(context)
         media_recycler.adapter = adapter
         itemTouchHelper.attachToRecyclerView(media_recycler)
     }

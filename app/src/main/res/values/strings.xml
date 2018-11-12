@@ -42,6 +42,7 @@
     <string name="desc_play_pause_button">play/pause button</string>
     <string name="desc_skip_previous_button">skip previous button</string>
     <string name="desc_skip_next_button">skip next button</string>
+    <string name="desc_search_history">recent suggestion</string>
 
     <string name="tabs_search">Search</string>
     <string name="tabs_stations">Stations</string>

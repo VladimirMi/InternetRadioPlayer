@@ -4,12 +4,13 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
-    android:layout_height="54dp"
+    android:layout_height="48dp"
     android:layout_marginLeft="8dp"
     android:layout_marginRight="8dp"
     android:background="@drawable/shape_item_single"
     android:elevation="2dp"
     android:foreground="?android:attr/selectableItemBackground"
+    tools:ignore="UnusedAttribute"
     >
 
     <ImageView
@@ -19,30 +20,31 @@
         android:layout_gravity="center"
         android:layout_marginStart="8dp"
         android:layout_marginLeft="8dp"
-        android:contentDescription="@string/desc_expand_collapse"
-        android:src="@drawable/ic_collapse"
+        android:contentDescription="@string/desc_search_history"
+        android:src="@drawable/ic_history"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
         />
 
     <TextView
-        android:id="@+id/title"
+        android:id="@+id/suggestionTv"
         style="@style/TextAppearance.AppCompat.Title"
-        android:layout_width="wrap_content"
+        android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_marginStart="16dp"
-        android:layout_marginLeft="16dp"
+        android:layout_marginEnd="16dp"
         android:gravity="center_vertical"
         android:textSize="18sp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintStart_toEndOf="@+id/iconIv"
+        app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        tools:text="Group"
+        tools:text="Suggestion"
         />
 
     <View
-        android:id="@+id/titleDelimiter"
+        android:id="@+id/delimiter"
         android:layout_width="match_parent"
         android:layout_height="1dp"
         android:layout_gravity="bottom"

@@ -7,6 +7,7 @@ import android.view.ViewGroup
 import android.view.ViewOutlineProvider
 import androidx.core.content.ContextCompat
 import androidx.recyclerview.widget.DiffUtil
+import androidx.recyclerview.widget.RecyclerView
 import io.github.vladimirmi.internetradioplayer.R
 import io.github.vladimirmi.internetradioplayer.data.db.entity.Group
 import io.github.vladimirmi.internetradioplayer.data.db.entity.Station
@@ -28,7 +29,7 @@ private val defaultOutline = if (Build.VERSION.SDK_INT >= 21) ViewOutlineProvide
 private val fixedOutline = if (Build.VERSION.SDK_INT >= 21) FixedOutlineProvider() else null
 
 class StationListAdapter(private val callback: StationItemCallback)
-    : androidx.recyclerview.widget.RecyclerView.Adapter<androidx.recyclerview.widget.RecyclerView.ViewHolder>() {
+    : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
 
     private var stations = FlatStationsList()
     private var selectedStation = Station.nullObj()
@@ -99,7 +100,7 @@ class StationListAdapter(private val callback: StationItemCallback)
     override fun getItemViewType(position: Int): Int =
             if (stations.isGroup(position)) GROUP_TITLE else GROUP_ITEM
 
-    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): androidx.recyclerview.widget.RecyclerView.ViewHolder {
+    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): RecyclerView.ViewHolder {
         val inflater = LayoutInflater.from(parent.context)
         return when (viewType) {
             GROUP_TITLE -> GroupTitleVH(inflater.inflate(R.layout.item_group_title, parent, false))
@@ -108,7 +109,7 @@ class StationListAdapter(private val callback: StationItemCallback)
         }
     }
 
-    override fun onBindViewHolder(holder: androidx.recyclerview.widget.RecyclerView.ViewHolder, position: Int, payloads: MutableList<Any>) {
+    override fun onBindViewHolder(holder: RecyclerView.ViewHolder, position: Int, payloads: MutableList<Any>) {
         holder as GroupElementVH
         if (payloads.contains(PAYLOAD_SELECTED_CHANGE)) {
             if (holder is GroupTitleVH) {
@@ -127,7 +128,7 @@ class StationListAdapter(private val callback: StationItemCallback)
         }
     }
 
-    override fun onBindViewHolder(holder: androidx.recyclerview.widget.RecyclerView.ViewHolder, position: Int) {
+    override fun onBindViewHolder(holder: RecyclerView.ViewHolder, position: Int) {
         (holder as GroupElementVH).setMargins(position == 0 || holder is GroupTitleVH,
                 position == itemCount - 1)
         when (holder) {
@@ -156,7 +157,7 @@ class StationListAdapter(private val callback: StationItemCallback)
     override fun getItemCount(): Int = stations.size
 }
 
-open class GroupElementVH(itemView: View) : androidx.recyclerview.widget.RecyclerView.ViewHolder(itemView) {
+open class GroupElementVH(itemView: View) : RecyclerView.ViewHolder(itemView) {
     private var colorId = R.color.grey_50
 
     fun select(selected: Boolean, playing: Boolean) {
@@ -189,7 +190,7 @@ class GroupTitleVH(itemView: View) : GroupElementVH(itemView) {
 
     private fun setExpanded(expanded: Boolean) {
         val pointer = if (expanded) R.drawable.ic_collapse else R.drawable.ic_expand
-        itemView.ic_expanded.setImageResource(pointer)
+        itemView.iconIv.setImageResource(pointer)
         val bg = if (expanded) R.drawable.shape_item_top else R.drawable.shape_item_single
         itemView.background = ContextCompat.getDrawable(itemView.context, bg)
         setBgColor()

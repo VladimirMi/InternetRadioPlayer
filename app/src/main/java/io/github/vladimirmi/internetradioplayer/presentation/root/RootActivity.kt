@@ -1,7 +1,6 @@
 package io.github.vladimirmi.internetradioplayer.presentation.root
 
 import android.annotation.SuppressLint
-import android.app.SearchManager
 import android.content.Intent
 import android.net.Uri
 import android.os.Bundle
@@ -95,20 +94,12 @@ class RootActivity : BaseActivity<RootPresenter, RootView>(), RootView {
 
     override fun checkIntent() {
         if (intent == null) return
-        Timber.e("checkIntent: ")
-        if (Intent.ACTION_SEARCH == intent.action) {
-            intent.getStringExtra(SearchManager.QUERY)?.let {
-                //                    search(it)
-                Timber.e("checkIntent: $it")
-            }
+        val startPlay = intent.getBooleanExtra(EXTRA_PLAY, false)
+        if (intent.hasExtra(PlayerService.EXTRA_STATION_ID)) {
+            //todo legacy
+            presenter.showStation(intent.getStringExtra(PlayerService.EXTRA_STATION_ID), startPlay)
         } else {
-            val startPlay = intent.getBooleanExtra(EXTRA_PLAY, false)
-            if (intent.hasExtra(PlayerService.EXTRA_STATION_ID)) {
-                //todo legacy
-                presenter.showStation(intent.getStringExtra(PlayerService.EXTRA_STATION_ID), startPlay)
-            } else {
-                intent.data?.let { addStation(it, startPlay) }
-            }
+            intent.data?.let { addStation(it, startPlay) }
         }
         intent = null
     }

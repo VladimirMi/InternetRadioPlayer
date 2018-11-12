@@ -4,12 +4,15 @@ import android.content.Context
 import com.google.gson.Gson
 import com.google.gson.GsonBuilder
 import io.github.vladimirmi.internetradioplayer.data.db.StationsDatabase
+import io.github.vladimirmi.internetradioplayer.data.db.SuggestionsDatabase
+import io.github.vladimirmi.internetradioplayer.data.repository.SearchRepository
 import io.github.vladimirmi.internetradioplayer.data.repository.StationListRepository
 import io.github.vladimirmi.internetradioplayer.data.service.LoadControl
 import io.github.vladimirmi.internetradioplayer.data.source.StationSource
 import io.github.vladimirmi.internetradioplayer.data.utils.ShortcutHelper
 import io.github.vladimirmi.internetradioplayer.data.utils.StationParser
 import io.github.vladimirmi.internetradioplayer.domain.interactor.PlayerControlsInteractor
+import io.github.vladimirmi.internetradioplayer.domain.interactor.SearchInteractor
 import io.github.vladimirmi.internetradioplayer.domain.interactor.StationInteractor
 import okhttp3.OkHttpClient
 import toothpick.config.Module
@@ -28,8 +31,11 @@ class AppModule(context: Context) : Module() {
         val gson = GsonBuilder().setPrettyPrinting().create()
         bind(Gson::class.java).toInstance(gson)
 
-        val db = StationsDatabase.newInstance(context)
-        bind(StationsDatabase::class.java).toInstance(db)
+        val stationsDatabase = StationsDatabase.newInstance(context)
+        bind(StationsDatabase::class.java).toInstance(stationsDatabase)
+
+        val suggestionsDatabase = SuggestionsDatabase.newInstance(context)
+        bind(SuggestionsDatabase::class.java).toInstance(suggestionsDatabase)
 
         bind(StationParser::class.java).singletonInScope()
 
@@ -38,10 +44,11 @@ class AppModule(context: Context) : Module() {
         bind(StationSource::class.java).singletonInScope()
 
         bind(StationListRepository::class.java).singletonInScope()
+        bind(SearchRepository::class.java).singletonInScope()
 
         bind(StationInteractor::class.java).singletonInScope()
-
         bind(PlayerControlsInteractor::class.java).singletonInScope()
+        bind(SearchInteractor::class.java).singletonInScope()
 
         bind(LoadControl::class.java).singletonInScope()
     }

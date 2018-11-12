@@ -1,8 +1,10 @@
 package io.github.vladimirmi.internetradioplayer.presentation.search
 
 import android.view.View
+import androidx.recyclerview.widget.LinearLayoutManager
 import io.github.vladimirmi.internetradioplayer.R
 import io.github.vladimirmi.internetradioplayer.di.Scopes
+import io.github.vladimirmi.internetradioplayer.domain.model.Suggestion
 import io.github.vladimirmi.internetradioplayer.presentation.base.BaseFragment
 import kotlinx.android.synthetic.main.fragment_search.*
 import timber.log.Timber
@@ -14,10 +16,11 @@ import android.widget.SearchView as SearchViewAndroid
  */
 
 class SearchFragment : BaseFragment<SearchPresenter, SearchView>(), SearchView,
-        SearchViewAndroid.OnQueryTextListener, SearchViewAndroid.OnSuggestionListener,
-        View.OnClickListener, SearchViewAndroid.OnCloseListener {
+        SearchViewAndroid.OnQueryTextListener, View.OnFocusChangeListener {
 
     override val layout = R.layout.fragment_search
+
+    private val adapter = SearchSuggestionsAdapter()
 
     override fun providePresenter(): SearchPresenter {
         return Toothpick.openScopes(Scopes.ROOT_ACTIVITY, this)
@@ -29,38 +32,33 @@ class SearchFragment : BaseFragment<SearchPresenter, SearchView>(), SearchView,
     override fun setupView(view: View) {
         searchView.setIconifiedByDefault(false)
 
+        searchView.isSubmitButtonEnabled = true
         searchView.setOnQueryTextListener(this)
-        searchView.setOnSuggestionListener(this)
-        searchView.setOnSearchClickListener(this)
-        searchView.setOnCloseListener(this)
+        searchView.setOnQueryTextFocusChangeListener(this)
+
+        suggestionsRv.layoutManager = LinearLayoutManager(context)
+        suggestionsRv.adapter = adapter
     }
 
-    override fun onQueryTextSubmit(query: String?): Boolean {
+    override fun onQueryTextSubmit(query: String): Boolean {
         Timber.e("onQueryTextSubmit: $query")
+        presenter.search(query)
+
         return false
     }
 
-    override fun onQueryTextChange(newText: String?): Boolean {
+    override fun onQueryTextChange(newText: String): Boolean {
         Timber.e("onQueryTextChange: $newText")
-        return false
+        presenter.querySuggestions(newText)
+
+        return true
     }
 
-    override fun onSuggestionSelect(position: Int): Boolean {
-        Timber.e("onSuggestionSelect: $position")
-        return false
+    override fun onFocusChange(v: View?, hasFocus: Boolean) {
+        Timber.e("onFocusChange: hasFocus $hasFocus")
     }
 
-    override fun onSuggestionClick(position: Int): Boolean {
-        Timber.e("onSuggestionClick: $position")
-        return false
-    }
-
-    override fun onClick(v: View?) {
-        Timber.e("onClick: ")
-    }
-
-    override fun onClose(): Boolean {
-        Timber.e("onClose: ")
-        return false
+    override fun setSuggestions(list: List<Suggestion>) {
+        adapter.setData(list)
     }
 }

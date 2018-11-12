@@ -21,6 +21,7 @@ class StationListRepository
                     private val preferences: Preferences,
                     private val db: StationsDatabase) {
 
+    private val dao = db.stationDao()
 
     fun saveCurrentStationId(id: String) {
         preferences.currentStationId = id
@@ -29,18 +30,18 @@ class StationListRepository
     fun getCurrentStationId() = preferences.currentStationId
 
     fun getAllStations(): Single<List<Station>> {
-        return db.stationDao().getAllStations()
+        return dao.getAllStations()
                 .toObservable()
                 .flatMapIterable { it }
                 .flatMapSingle { station ->
-                    db.stationDao().getStationGenres(station.id)
+                    dao.getStationGenres(station.id)
                             .map { station.apply { genres = it.map(Genre::name) } }
                 }.toList()
     }
 
-    fun getAllGroups(): Single<List<Group>> = db.stationDao().getAllGroups()
+    fun getAllGroups(): Single<List<Group>> = dao.getAllGroups()
 
-    fun getStationGenres(id: String): Single<List<Genre>> = db.stationDao().getStationGenres(id)
+    fun getStationGenres(id: String): Single<List<Genre>> = dao.getStationGenres(id)
 
     fun createStation(uri: Uri): Single<Station> {
         return Single.fromCallable {
@@ -50,7 +51,7 @@ class StationListRepository
 
     fun addGroup(group: Group): Completable {
         return Completable.fromCallable {
-            db.stationDao().insertGroup(group)
+            dao.insertGroup(group)
         }
     }
 
@@ -61,35 +62,35 @@ class StationListRepository
     fun updateGroups(groups: List<Group>): Completable {
         return Completable.fromCallable {
             db.runInTransaction {
-                groups.forEach { db.stationDao().updateGroup(it) }
+                groups.forEach { dao.updateGroup(it) }
             }
         }
     }
 
     fun addStation(station: Station): Completable {
         return Completable.fromCallable {
-            val group = db.stationDao().getGroupByName(station.groupName)
+            val group = dao.getGroupByName(station.groupName)
             val newStation = if (station.groupId != group.id) {
                 station.copy(groupId = group.id)
             } else station
 
-            db.stationDao().insertStation(newStation)
+            dao.insertStation(newStation)
             val genres = station.genres.map(::Genre)
-            db.stationDao().insertGenres(genres)
-            db.stationDao().insertStationGenre(genres.map { StationGenreJoin(station.id, it.name) })
+            dao.insertGenres(genres)
+            dao.insertStationGenre(genres.map { StationGenreJoin(station.id, it.name) })
         }
     }
 
     fun removeStation(station: Station): Completable {
         return Completable.fromCallable {
-            db.stationDao().deleteStation(station.id)
+            dao.deleteStation(station.id)
         }
     }
 
     fun updateStations(stations: List<Station>): Completable {
         return Completable.fromCallable {
             db.runInTransaction {
-                stations.forEach { db.stationDao().updateStation(it) }
+                stations.forEach { dao.updateStation(it) }
             }
         }
     }

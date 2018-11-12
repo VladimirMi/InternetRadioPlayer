@@ -190,7 +190,7 @@ class GroupTitleVH(itemView: View) : GroupElementVH(itemView) {
 
     private fun setExpanded(expanded: Boolean) {
         val pointer = if (expanded) R.drawable.ic_collapse else R.drawable.ic_expand
-        itemView.iconIv.setImageResource(pointer)
+        itemView.iconExpandedIv.setImageResource(pointer)
         val bg = if (expanded) R.drawable.shape_item_top else R.drawable.shape_item_single
         itemView.background = ContextCompat.getDrawable(itemView.context, bg)
         setBgColor()

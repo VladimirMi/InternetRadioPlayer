@@ -20,6 +20,11 @@ class SearchSuggestionsAdapter : RecyclerView.Adapter<RecyclerView.ViewHolder>()
 
     private var suggestions: List<Suggestion> = emptyList()
 
+    fun setData(list: List<Suggestion>) {
+        suggestions = list
+        notifyDataSetChanged()
+    }
+
     override fun getItemViewType(position: Int): Int {
         return if (suggestions[position] is RecentSuggestion) RECENT_SUGGESTION
         else REGULAR_SUGGESTION

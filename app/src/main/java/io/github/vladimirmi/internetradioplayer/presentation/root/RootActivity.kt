@@ -1,6 +1,7 @@
 package io.github.vladimirmi.internetradioplayer.presentation.root
 
 import android.annotation.SuppressLint
+import android.app.SearchManager
 import android.content.Intent
 import android.net.Uri
 import android.os.Bundle
@@ -21,6 +22,7 @@ import io.github.vladimirmi.internetradioplayer.navigation.Navigator
 import io.github.vladimirmi.internetradioplayer.presentation.base.BaseActivity
 import kotlinx.android.synthetic.main.activity_root.*
 import ru.terrakok.cicerone.NavigatorHolder
+import timber.log.Timber
 import toothpick.Toothpick
 import javax.inject.Inject
 
@@ -39,6 +41,7 @@ class RootActivity : BaseActivity<RootPresenter, RootView>(), RootView {
     override fun providePresenter(): RootPresenter = Scopes.rootActivity.getInstance(RootPresenter::class.java)
 
     override fun onCreate(savedInstanceState: Bundle?) {
+        Timber.e("onCreate: ")
         setTheme(R.style.AppTheme)
 
         Scopes.rootActivity.apply {
@@ -68,8 +71,10 @@ class RootActivity : BaseActivity<RootPresenter, RootView>(), RootView {
     }
 
     override fun onNewIntent(intent: Intent?) {
+        Timber.e("onNewIntent: ")
         super.onNewIntent(intent)
         this.intent = intent
+        if (isPresenterInitialized) checkIntent()
     }
 
     override fun onDestroy() {
@@ -89,7 +94,14 @@ class RootActivity : BaseActivity<RootPresenter, RootView>(), RootView {
     //region =============== RootView ==============
 
     override fun checkIntent() {
-        if (intent != null) {
+        if (intent == null) return
+        Timber.e("checkIntent: ")
+        if (Intent.ACTION_SEARCH == intent.action) {
+            intent.getStringExtra(SearchManager.QUERY)?.let {
+                //                    search(it)
+                Timber.e("checkIntent: $it")
+            }
+        } else {
             val startPlay = intent.getBooleanExtra(EXTRA_PLAY, false)
             if (intent.hasExtra(PlayerService.EXTRA_STATION_ID)) {
                 //todo legacy
@@ -97,8 +109,8 @@ class RootActivity : BaseActivity<RootPresenter, RootView>(), RootView {
             } else {
                 intent.data?.let { addStation(it, startPlay) }
             }
-            intent = null
         }
+        intent = null
     }
 
     override fun showMessage(resId: Int) {

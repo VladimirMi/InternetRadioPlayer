@@ -68,4 +68,9 @@
         <item name="contentPadding">8dp</item>
     </style>
 
+    <style name="CustomTabLayout" parent="Widget.MaterialComponents.TabLayout.Colored">
+        <item name="tabSelectedTextColor">@color/accentLightColor</item>
+        <item name="tabTextColor">@color/grey_50</item>
+    </style>
+
 </resources>

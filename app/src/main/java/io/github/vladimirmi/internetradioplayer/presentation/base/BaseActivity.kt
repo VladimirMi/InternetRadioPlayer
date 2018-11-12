@@ -73,4 +73,6 @@ abstract class BaseActivity<P : BasePresenter<V>, V : BaseView>
         prepareOptionsMenu(menu)
         return super.onPrepareOptionsMenu(menu)
     }
+
+    protected val isPresenterInitialized get() = this::presenter.isInitialized
 }

@@ -5,6 +5,7 @@ import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentManager
 import androidx.fragment.app.FragmentPagerAdapter
 import io.github.vladimirmi.internetradioplayer.R
+import io.github.vladimirmi.internetradioplayer.presentation.search.SearchFragment
 import io.github.vladimirmi.internetradioplayer.presentation.station.StationFragment
 import io.github.vladimirmi.internetradioplayer.presentation.stationlist.StationListFragment
 
@@ -18,7 +19,7 @@ class MainPagerAdapter(context: Context, fm: FragmentManager) : FragmentPagerAda
 
     override fun getItem(position: Int): Fragment {
         return when (position) {
-            0 -> StationListFragment()
+            0 -> SearchFragment()
             1 -> StationListFragment()
             2 -> StationFragment()
             else -> throw IllegalStateException("Can't find fragment for the position $position")

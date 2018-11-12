@@ -3,6 +3,7 @@
     <color name="red_500">#F44336</color>
     <color name="red_800">#C62828</color>
     <color name="blue_500">#2196F3</color>
+    <color name="teal_200">#80CBC4</color>
     <color name="teal_500">#009688</color>
     <color name="green_100">#c8e6c9</color>
     <color name="green_200">#a5d6a7</color>
@@ -28,6 +29,7 @@
     <color name="primaryTextColor">@color/grey_900</color>
     <color name="secondaryTextColor">@color/grey_600</color>
     <color name="accentColor">@color/teal_500</color>
+    <color name="accentLightColor">@color/teal_200</color>
 
     <color name="shadow">#44212121</color>
     <color name="transparent_grey">#55222222</color>

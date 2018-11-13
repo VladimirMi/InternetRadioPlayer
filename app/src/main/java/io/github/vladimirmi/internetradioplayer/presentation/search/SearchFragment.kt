@@ -1,13 +1,13 @@
 package io.github.vladimirmi.internetradioplayer.presentation.search
 
 import android.graphics.Rect
-import android.os.Handler
 import android.view.View
 import android.view.ViewGroup
 import androidx.recyclerview.widget.LinearLayoutManager
 import io.github.vladimirmi.internetradioplayer.R
 import io.github.vladimirmi.internetradioplayer.di.Scopes
 import io.github.vladimirmi.internetradioplayer.domain.model.Suggestion
+import io.github.vladimirmi.internetradioplayer.extensions.waitForLayout
 import io.github.vladimirmi.internetradioplayer.presentation.base.BaseFragment
 import kotlinx.android.synthetic.main.fragment_search.*
 import toothpick.Toothpick
@@ -67,16 +67,21 @@ class SearchFragment : BaseFragment<SearchPresenter, SearchView>(), SearchView,
 
     private fun adjustSuggestionsRecyclerHeight(keyboardDisplayed: Boolean) {
         if (keyboardDisplayed) {
-            Handler().postDelayed({
-                val rect = Rect()
+            val rect = Rect()
+            suggestionsRv.getWindowVisibleDisplayFrame(rect)
+            constraintLayout.waitForLayout {
+                val oldVisibleHeight = rect.bottom - rect.top
                 suggestionsRv.getWindowVisibleDisplayFrame(rect)
+                val newVisibleHeight = rect.bottom - rect.top
+                if (oldVisibleHeight == newVisibleHeight) return@waitForLayout false
                 val xy = IntArray(2)
                 suggestionsRv.getLocationInWindow(xy)
 
                 val lp = suggestionsRv.layoutParams
                 lp.height = rect.bottom - xy[1]
                 suggestionsRv.layoutParams = lp
-            }, 500) // wait keyboard animation
+                return@waitForLayout true
+            }
         } else {
             val lp = suggestionsRv.layoutParams
             lp.height = ViewGroup.LayoutParams.WRAP_CONTENT

@@ -3,6 +3,16 @@ apply plugin: 'kotlin-android'
 apply plugin: 'kotlin-android-extensions'
 apply plugin: 'kotlin-kapt'
 
+def secretsProperties = new Properties()
+ext {
+    file = new File(rootDir, "secrets.properties")
+    if (file.exists()) {
+        secretsProperties.load(new FileInputStream(file))
+    } else {
+        secretsProperties.put("partnerToken", "1234567890")
+    }
+}
+
 ext.versionMajor = 1
 ext.versionMinor = 1
 ext.versionPatch = 1
@@ -23,6 +33,7 @@ android {
                 arguments = [toothpick_registry_package_name: 'io.github.vladimirmi.internetradioplayer']
             }
         }
+        buildConfigField("String", "PARTNER_TOKEN", "\"${secretsProperties['partnerToken']}\"")
     }
     compileOptions {
         sourceCompatibility JavaVersion.VERSION_1_8
@@ -71,8 +82,11 @@ dependencies {
     kapt 'androidx.room:room-compiler:' + ROOM_VERSION
     implementation 'androidx.room:room-rxjava2:' + ROOM_VERSION
     //Net
+    implementation "com.squareup.retrofit2:retrofit:2.3.0"
+    implementation "com.squareup.retrofit2:converter-gson:2.3.0"
     implementation "com.squareup.okhttp3:okhttp:3.11.0"
-    implementation "com.google.code.gson:gson:2.8.5"
+    implementation "com.jakewharton.retrofit:retrofit2-rxjava2-adapter:1.0.0"
+    implementation "com.squareup.okhttp3:logging-interceptor:3.9.0"
     //Rx
     implementation "io.reactivex.rxjava2:rxjava:2.2.3"
     implementation "io.reactivex.rxjava2:rxkotlin:2.3.0"

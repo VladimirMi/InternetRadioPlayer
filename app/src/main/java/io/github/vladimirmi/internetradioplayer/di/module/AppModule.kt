@@ -5,6 +5,9 @@ import com.google.gson.Gson
 import com.google.gson.GsonBuilder
 import io.github.vladimirmi.internetradioplayer.data.db.StationsDatabase
 import io.github.vladimirmi.internetradioplayer.data.db.SuggestionsDatabase
+import io.github.vladimirmi.internetradioplayer.data.net.UberStationsService
+import io.github.vladimirmi.internetradioplayer.data.net.createClient
+import io.github.vladimirmi.internetradioplayer.data.net.getUberStationsService
 import io.github.vladimirmi.internetradioplayer.data.repository.SearchRepository
 import io.github.vladimirmi.internetradioplayer.data.repository.StationListRepository
 import io.github.vladimirmi.internetradioplayer.data.service.LoadControl
@@ -15,6 +18,7 @@ import io.github.vladimirmi.internetradioplayer.domain.interactor.PlayerControls
 import io.github.vladimirmi.internetradioplayer.domain.interactor.SearchInteractor
 import io.github.vladimirmi.internetradioplayer.domain.interactor.StationInteractor
 import okhttp3.OkHttpClient
+import retrofit2.converter.gson.GsonConverterFactory
 import toothpick.config.Module
 
 /**
@@ -28,8 +32,15 @@ class AppModule(context: Context) : Module() {
 
         bind(OkHttpClient::class.java).toInstance(OkHttpClient())
 
-        val gson = GsonBuilder().setPrettyPrinting().create()
+        val gson = GsonBuilder().create()
+        val gsonConverterFactory = GsonConverterFactory.create(gson)
+        val httpClient = OkHttpClient.Builder().createClient()
+
+
         bind(Gson::class.java).toInstance(gson)
+        bind(OkHttpClient::class.java).toInstance(httpClient)
+        bind(UberStationsService::class.java)
+                .toInstance(httpClient.getUberStationsService(gsonConverterFactory))
 
         val stationsDatabase = StationsDatabase.newInstance(context)
         bind(StationsDatabase::class.java).toInstance(stationsDatabase)

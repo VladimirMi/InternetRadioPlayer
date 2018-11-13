@@ -3,6 +3,7 @@ package io.github.vladimirmi.internetradioplayer.presentation.search
 import android.graphics.Rect
 import android.view.View
 import android.view.ViewGroup
+import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.LinearLayoutManager
 import io.github.vladimirmi.internetradioplayer.R
 import io.github.vladimirmi.internetradioplayer.di.Scopes
@@ -35,8 +36,10 @@ class SearchFragment : BaseFragment<SearchPresenter, SearchView>(), SearchView,
     }
 
     override fun setupView(view: View) {
-        suggestionsRv.layoutManager = LinearLayoutManager(context)
+        val lm = LinearLayoutManager(context)
+        suggestionsRv.layoutManager = lm
         suggestionsRv.adapter = suggestionsAdapter
+        suggestionsRv.addItemDecoration(DividerItemDecoration(suggestionsRv.context, lm.orientation))
 
         searchView.setIconifiedByDefault(false)
         searchView.setOnQueryTextFocusChangeListener(this)

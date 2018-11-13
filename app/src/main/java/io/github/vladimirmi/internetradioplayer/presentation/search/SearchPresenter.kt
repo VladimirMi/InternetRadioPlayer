@@ -19,6 +19,7 @@ class SearchPresenter
 
 
     fun setSearchViewObservable(observable: Observable<SearchEvent>) {
+
         observable.filter { it is SearchEvent.Change }
                 .flatMapSingle { searchInteractor.queryRecentSuggestions(it.query) }
                 .observeOn(AndroidSchedulers.mainThread())

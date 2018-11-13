@@ -2,7 +2,7 @@ package io.github.vladimirmi.internetradioplayer.data.repository
 
 import io.github.vladimirmi.internetradioplayer.data.db.SuggestionsDatabase
 import io.github.vladimirmi.internetradioplayer.data.db.entity.SuggestionEntity
-import io.github.vladimirmi.internetradioplayer.domain.model.RecentSuggestion
+import io.github.vladimirmi.internetradioplayer.data.net.UberStationsService
 import io.github.vladimirmi.internetradioplayer.domain.model.Suggestion
 import io.reactivex.Completable
 import io.reactivex.Single
@@ -13,7 +13,8 @@ import javax.inject.Inject
  */
 
 class SearchRepository
-@Inject constructor(db: SuggestionsDatabase) {
+@Inject constructor(db: SuggestionsDatabase,
+                    private val uberStationsService: UberStationsService) {
 
     private val dao = db.suggestionsDao()
 
@@ -25,7 +26,11 @@ class SearchRepository
 
     fun getRecentSuggestions(query: String): Single<List<Suggestion>> {
         return dao.getSuggestions("%$query%")
-                .map { list -> list.map { RecentSuggestion(it.value) } }
+                .map { list -> list.map { Suggestion.Recent(it.value) } }
     }
 
+    fun getRegularSuggestions(query: String): Single<List<Suggestion>> {
+        return uberStationsService.getSuggestions("*$query*")
+                .map { presearch -> presearch.result.map { Suggestion.Regular(it.keyword) } }
+    }
 }

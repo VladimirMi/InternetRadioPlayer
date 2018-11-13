@@ -14,7 +14,7 @@ import io.github.vladimirmi.internetradioplayer.di.Scopes
 import io.github.vladimirmi.internetradioplayer.domain.interactor.StationInteractor
 import io.github.vladimirmi.internetradioplayer.extensions.ioToMain
 import io.github.vladimirmi.internetradioplayer.extensions.startActivitySafe
-import io.github.vladimirmi.internetradioplayer.extensions.subscribeByEx
+import io.github.vladimirmi.internetradioplayer.extensions.subscribeX
 import io.github.vladimirmi.internetradioplayer.navigation.Router
 import io.github.vladimirmi.internetradioplayer.presentation.base.BackPressListener
 import io.github.vladimirmi.internetradioplayer.presentation.base.ToolbarBuilder
@@ -82,7 +82,7 @@ class SettingsFragment : PreferenceFragmentCompat(), BackPressListener {
                     .andThen(Scopes.app.getInstance(StationInteractor::class.java).initStations())
                     .ioToMain()
                     .doOnComplete { router.exit() }
-                    .subscribeByEx()
+                    .subscribeX()
         }
     }
 

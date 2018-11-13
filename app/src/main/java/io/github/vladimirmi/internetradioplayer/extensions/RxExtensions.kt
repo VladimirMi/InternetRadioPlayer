@@ -38,12 +38,18 @@ val errorHandler: (Throwable) -> Unit = {
     }
 }
 
-fun <T : Any> Single<T>.subscribeByEx(
+fun <T : Any> Single<T>.subscribeX(
         onError: (Throwable) -> Unit = errorHandler,
         onSuccess: (T) -> Unit = {}
 ): Disposable = subscribe(onSuccess, onError)
 
-fun Completable.subscribeByEx(
+fun Completable.subscribeX(
         onError: (Throwable) -> Unit = errorHandler,
         onComplete: () -> Unit = {}
 ): Disposable = subscribe(onComplete, onError)
+
+fun <T : Any> Observable<T>.subscribeX(
+        onError: (Throwable) -> Unit = errorHandler,
+        onNext: (T) -> Unit = {},
+        onComplete: () -> Unit = {}
+): Disposable = subscribe(onNext, onError, onComplete)

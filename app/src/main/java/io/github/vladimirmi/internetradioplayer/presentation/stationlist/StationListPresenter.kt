@@ -6,7 +6,7 @@ import io.github.vladimirmi.internetradioplayer.data.db.entity.Station
 import io.github.vladimirmi.internetradioplayer.domain.interactor.PlayerControlsInteractor
 import io.github.vladimirmi.internetradioplayer.domain.interactor.StationInteractor
 import io.github.vladimirmi.internetradioplayer.domain.model.FlatStationsList
-import io.github.vladimirmi.internetradioplayer.extensions.subscribeByEx
+import io.github.vladimirmi.internetradioplayer.extensions.subscribeX
 import io.github.vladimirmi.internetradioplayer.navigation.Router
 import io.github.vladimirmi.internetradioplayer.presentation.base.BasePresenter
 import io.github.vladimirmi.internetradioplayer.presentation.base.MenuItemHolder
@@ -59,14 +59,14 @@ class StationListPresenter
     fun selectGroup(id: String) {
         interactor.expandOrCollapseGroup(id)
                 .subscribeOn(Schedulers.io())
-                .subscribeByEx()
+                .subscribeX()
                 .addTo(viewSubs)
     }
 
     fun removeStation() {
         interactor.removeStation(interactor.currentStation.id)
                 .subscribeOn(Schedulers.io())
-                .subscribeByEx()
+                .subscribeX()
                 .addTo(viewSubs)
     }
 
@@ -79,7 +79,7 @@ class StationListPresenter
     fun moveGroupElements(stations: FlatStationsList) {
         interactor.moveGroupElements(stations)
                 .subscribeOn(Schedulers.io())
-                .subscribeByEx()
+                .subscribeX()
                 .addTo(viewSubs)
     }
 }

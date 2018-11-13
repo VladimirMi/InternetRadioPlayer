@@ -3,9 +3,9 @@ package io.github.vladimirmi.internetradioplayer.presentation.search
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.RecyclerView
 import io.github.vladimirmi.internetradioplayer.R
-import io.github.vladimirmi.internetradioplayer.domain.model.RecentSuggestion
 import io.github.vladimirmi.internetradioplayer.domain.model.Suggestion
 import kotlinx.android.synthetic.main.item_suggestion.view.*
 
@@ -21,13 +21,20 @@ class SearchSuggestionsAdapter(private val callback: SearchSuggestionsAdapter.Ca
 
     private var suggestions: List<Suggestion> = emptyList()
 
-    fun setData(list: List<Suggestion>) {
+    fun addRecentSuggestions(list: List<Suggestion>) {
+        getDiffResult(list).dispatchUpdatesTo(this)
         suggestions = list
-        notifyDataSetChanged()
+    }
+
+    fun addRegularSuggestions(list: List<Suggestion>) {
+        val newList = ArrayList(suggestions)
+        newList.addAll(list)
+        getDiffResult(newList).dispatchUpdatesTo(this)
+        suggestions = newList
     }
 
     override fun getItemViewType(position: Int): Int {
-        return if (suggestions[position] is RecentSuggestion) RECENT_SUGGESTION
+        return if (suggestions[position] is Suggestion.Recent) RECENT_SUGGESTION
         else REGULAR_SUGGESTION
     }
 
@@ -49,6 +56,26 @@ class SearchSuggestionsAdapter(private val callback: SearchSuggestionsAdapter.Ca
 
     override fun getItemCount(): Int {
         return suggestions.size
+    }
+
+    private fun getDiffResult(new: List<Suggestion>): DiffUtil.DiffResult {
+        return DiffUtil.calculateDiff(object : DiffUtil.Callback() {
+            override fun getOldListSize(): Int {
+                return suggestions.size
+            }
+
+            override fun getNewListSize(): Int {
+                return new.size
+            }
+
+            override fun areItemsTheSame(oldItemPosition: Int, newItemPosition: Int): Boolean {
+                return suggestions[oldItemPosition] == new[newItemPosition]
+            }
+
+            override fun areContentsTheSame(oldItemPosition: Int, newItemPosition: Int): Boolean {
+                return true
+            }
+        })
     }
 
     interface Callback {

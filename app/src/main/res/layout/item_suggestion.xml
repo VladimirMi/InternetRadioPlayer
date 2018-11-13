@@ -30,12 +30,14 @@
         android:layout_height="wrap_content"
         android:layout_marginStart="16dp"
         android:layout_marginEnd="16dp"
+        android:ellipsize="end"
         android:gravity="center_vertical"
+        android:maxLines="1"
         android:textSize="18sp"
         app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintStart_toEndOf="@+id/iconIv"
         app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toEndOf="@+id/iconIv"
         app:layout_constraintTop_toTopOf="parent"
-        tools:text="Suggestion"
+        tools:text="Ecce.Eheu, regius lanista!Audax acipenser aliquando resuscitabos indictio est.Est peritus castor, cesaris."
         />
 </androidx.constraintlayout.widget.ConstraintLayout>

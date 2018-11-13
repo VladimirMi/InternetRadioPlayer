@@ -7,8 +7,11 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import io.github.vladimirmi.internetradioplayer.R
 import io.github.vladimirmi.internetradioplayer.di.Scopes
 import io.github.vladimirmi.internetradioplayer.domain.model.Suggestion
+import io.github.vladimirmi.internetradioplayer.extensions.visible
 import io.github.vladimirmi.internetradioplayer.extensions.waitForLayout
 import io.github.vladimirmi.internetradioplayer.presentation.base.BaseFragment
+import io.reactivex.Observable
+import io.reactivex.disposables.Disposables
 import kotlinx.android.synthetic.main.fragment_search.*
 import toothpick.Toothpick
 import androidx.appcompat.widget.SearchView as SearchViewAndroid
@@ -18,7 +21,7 @@ import androidx.appcompat.widget.SearchView as SearchViewAndroid
  */
 
 class SearchFragment : BaseFragment<SearchPresenter, SearchView>(), SearchView,
-        SearchViewAndroid.OnQueryTextListener, View.OnFocusChangeListener, SearchSuggestionsAdapter.Callback {
+        View.OnFocusChangeListener, SearchSuggestionsAdapter.Callback {
 
     override val layout = R.layout.fragment_search
 
@@ -34,39 +37,60 @@ class SearchFragment : BaseFragment<SearchPresenter, SearchView>(), SearchView,
     override fun setupView(view: View) {
         suggestionsRv.layoutManager = LinearLayoutManager(context)
         suggestionsRv.adapter = suggestionsAdapter
-        view.requestFocus()
 
         searchView.setIconifiedByDefault(false)
-        searchView.setOnQueryTextListener(this)
         searchView.setOnQueryTextFocusChangeListener(this)
+        searchView.isSubmitButtonEnabled = true
+        view.requestFocus()
     }
 
-    override fun onQueryTextSubmit(query: String): Boolean {
-        presenter.search(query)
-        constraintLayout.requestFocus()
-        return false
-    }
-
-    override fun onQueryTextChange(newText: String): Boolean {
-        presenter.querySuggestions(newText)
-        return true
-    }
-
-    override fun onFocusChange(v: View?, hasFocus: Boolean) {
-        adjustSuggestionsRecyclerHeight(hasFocus)
-        if (hasFocus) {
-            presenter.querySuggestions(searchView.query.toString())
-        } else {
-            suggestionsAdapter.setData(emptyList())
-        }
+    override fun onStart() {
+        super.onStart()
+        presenter.setSearchViewObservable(getSearchViewObservable())
     }
 
     override fun onSuggestionSelected(suggestion: Suggestion) {
         searchView.setQuery(suggestion.value, false)
     }
 
-    override fun setSuggestions(list: List<Suggestion>) {
-        suggestionsAdapter.setData(list)
+    override fun addRecentSuggestions(list: List<Suggestion>) {
+        suggestionsAdapter.addRecentSuggestions(list)
+    }
+
+    override fun addRegularSuggestions(list: List<Suggestion>) {
+        suggestionsAdapter.addRegularSuggestions(list)
+    }
+
+    override fun onFocusChange(v: View?, hasFocus: Boolean) {
+        adjustSuggestionsRecyclerHeight(hasFocus)
+        if (hasFocus) {
+            suggestionsRv.visible(true)
+        } else {
+            suggestionsRv.visible(false)
+        }
+    }
+
+    private fun getSearchViewObservable(): Observable<SearchEvent> {
+        return Observable.create<SearchEvent> { e ->
+            var queryListener: SearchViewAndroid.OnQueryTextListener? = object : SearchViewAndroid.OnQueryTextListener {
+                override fun onQueryTextSubmit(query: String): Boolean {
+                    if (!e.isDisposed) e.onNext(SearchEvent.Submit(query))
+                    constraintLayout.requestFocus()
+                    return false
+                }
+
+                override fun onQueryTextChange(newText: String): Boolean {
+                    if (!e.isDisposed) e.onNext(SearchEvent.Change(newText))
+                    return true
+                }
+            }
+
+            if (!e.isDisposed) e.onNext(SearchEvent.Change(searchView.query.toString()))
+            searchView.setOnQueryTextListener(queryListener)
+            e.setDisposable(Disposables.fromAction {
+                queryListener = null; searchView.setOnQueryTextListener(null)
+            })
+        }.share()
     }
 
     private fun adjustSuggestionsRecyclerHeight(keyboardDisplayed: Boolean) {

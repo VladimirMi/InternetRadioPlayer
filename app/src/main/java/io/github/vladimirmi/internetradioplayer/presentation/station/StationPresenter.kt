@@ -5,7 +5,7 @@ import io.github.vladimirmi.internetradioplayer.R
 import io.github.vladimirmi.internetradioplayer.domain.interactor.PlayerControlsInteractor
 import io.github.vladimirmi.internetradioplayer.domain.interactor.StationInteractor
 import io.github.vladimirmi.internetradioplayer.extensions.ioToMain
-import io.github.vladimirmi.internetradioplayer.extensions.subscribeByEx
+import io.github.vladimirmi.internetradioplayer.extensions.subscribeX
 import io.github.vladimirmi.internetradioplayer.navigation.Router
 import io.github.vladimirmi.internetradioplayer.presentation.base.BasePresenter
 import io.github.vladimirmi.internetradioplayer.presentation.base.MenuItemHolder
@@ -54,7 +54,7 @@ class StationPresenter
     fun removeStation() {
         interactor.removeStation(interactor.currentStation.id)
                 .ioToMain()
-                .subscribeByEx(onComplete = {
+                .subscribeX(onComplete = {
                     controlsInteractor.stop()
                     Timber.e("removeStation: ")
 //                    if (interactor.haveStations()) router.exit()
@@ -66,7 +66,7 @@ class StationPresenter
     fun edit(stationInfo: StationInfo) {
         interactor.updateCurrentStation(stationInfo.stationName, stationInfo.groupName)
                 .ioToMain()
-                .subscribeByEx(onComplete = { viewMode() })
+                .subscribeX(onComplete = { viewMode() })
                 .addTo(viewSubs)
     }
 
@@ -79,7 +79,7 @@ class StationPresenter
     fun create(stationInfo: StationInfo) {
         interactor.addCurrentStation(stationInfo.stationName, stationInfo.groupName)
                 .ioToMain()
-                .subscribeByEx(
+                .subscribeX(
                         onComplete = {
                             view?.showMessage(R.string.toast_add_success)
                             viewMode()

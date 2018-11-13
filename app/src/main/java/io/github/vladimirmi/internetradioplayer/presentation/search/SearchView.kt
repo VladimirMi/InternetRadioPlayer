@@ -9,5 +9,7 @@ import io.github.vladimirmi.internetradioplayer.presentation.base.BaseView
 
 interface SearchView : BaseView {
 
-    fun setSuggestions(list: List<Suggestion>)
+    fun addRecentSuggestions(list: List<Suggestion>)
+
+    fun addRegularSuggestions(list: List<Suggestion>)
 }

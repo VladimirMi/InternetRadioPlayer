@@ -6,7 +6,7 @@ import io.github.vladimirmi.internetradioplayer.R
 import io.github.vladimirmi.internetradioplayer.domain.interactor.PlayerControlsInteractor
 import io.github.vladimirmi.internetradioplayer.domain.interactor.StationInteractor
 import io.github.vladimirmi.internetradioplayer.extensions.ioToMain
-import io.github.vladimirmi.internetradioplayer.extensions.subscribeByEx
+import io.github.vladimirmi.internetradioplayer.extensions.subscribeX
 import io.github.vladimirmi.internetradioplayer.navigation.Router
 import io.github.vladimirmi.internetradioplayer.presentation.base.BasePresenter
 import io.reactivex.rxkotlin.addTo
@@ -30,7 +30,7 @@ class RootPresenter
 
         stationInteractor.initStations()
                 .ioToMain()
-                .subscribeByEx(onComplete = {
+                .subscribeX(onComplete = {
                     view.checkIntent()
                 })
                 .addTo(dataSubs)
@@ -66,7 +66,7 @@ class RootPresenter
                 .ioToMain()
                 .doOnSubscribe { view?.showLoadingIndicator(true) }
                 .doFinally { view?.showLoadingIndicator(false) }
-                .subscribeByEx(onSuccess = {
+                .subscribeX(onSuccess = {
                     Timber.e("addStation: ${it.name}")
 //                    router.showStationSlide(stationInteractor.currentStation.id)
                 }).addTo(viewSubs)

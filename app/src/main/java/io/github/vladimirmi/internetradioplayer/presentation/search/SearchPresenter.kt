@@ -1,10 +1,12 @@
 package io.github.vladimirmi.internetradioplayer.presentation.search
 
 import io.github.vladimirmi.internetradioplayer.domain.interactor.SearchInteractor
-import io.github.vladimirmi.internetradioplayer.extensions.ioToMain
-import io.github.vladimirmi.internetradioplayer.extensions.subscribeByEx
+import io.github.vladimirmi.internetradioplayer.extensions.subscribeX
 import io.github.vladimirmi.internetradioplayer.presentation.base.BasePresenter
+import io.reactivex.Observable
+import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.rxkotlin.addTo
+import java.util.concurrent.TimeUnit
 import javax.inject.Inject
 
 /**
@@ -15,17 +17,24 @@ class SearchPresenter
 @Inject constructor(private val searchInteractor: SearchInteractor)
     : BasePresenter<SearchView>() {
 
-    fun search(query: String) {
-        searchInteractor.saveQuery(query)
-                .ioToMain()
-                .subscribeByEx {}
-                .addTo(dataSubs)
-    }
 
-    fun querySuggestions(query: String) {
-        searchInteractor.querySuggestions(query)
-                .ioToMain()
-                .subscribeByEx { view?.setSuggestions(it) }
+    fun setSearchViewObservable(observable: Observable<SearchEvent>) {
+        observable.filter { it is SearchEvent.Change }
+                .flatMapSingle { searchInteractor.queryRecentSuggestions(it.query) }
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribeX(onNext = { view?.addRecentSuggestions(it) })
+                .addTo(viewSubs)
+
+        observable.filter { it is SearchEvent.Change && it.query.isNotEmpty() }
+                .debounce(500, TimeUnit.MILLISECONDS)
+                .switchMapSingle { searchInteractor.queryRegularSuggestions(it.query) }
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribeX(onNext = { view?.addRegularSuggestions(it) })
+                .addTo(viewSubs)
+
+        observable.filter { it is SearchEvent.Submit }
+                .flatMapCompletable { searchInteractor.saveQuery(it.query) }
+                .subscribeX {}
                 .addTo(viewSubs)
     }
 }

@@ -16,7 +16,8 @@ import kotlinx.android.synthetic.main.item_suggestion.view.*
 private const val RECENT_SUGGESTION = 0
 private const val REGULAR_SUGGESTION = 1
 
-class SearchSuggestionsAdapter : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
+class SearchSuggestionsAdapter(private val callback: SearchSuggestionsAdapter.Callback)
+    : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
 
     private var suggestions: List<Suggestion> = emptyList()
 
@@ -40,37 +41,38 @@ class SearchSuggestionsAdapter : RecyclerView.Adapter<RecyclerView.ViewHolder>()
     }
 
     override fun onBindViewHolder(holder: RecyclerView.ViewHolder, position: Int) {
-        when (holder) {
-            is RecentSuggestionVH -> setupRecentVH(holder, position)
-            is RegularSuggestionVH -> setupRegularVH(holder, position)
-        }
+        holder as SuggestionVH
+        val suggestion = suggestions[position]
+        holder.bind(suggestion)
+        holder.itemView.setOnClickListener { callback.onSuggestionSelected(suggestion) }
     }
 
     override fun getItemCount(): Int {
         return suggestions.size
     }
 
-    private fun setupRegularVH(holder: RegularSuggestionVH, position: Int) {
-        holder.bind(suggestions[position])
-    }
-
-    private fun setupRecentVH(holder: RecentSuggestionVH, position: Int) {
-        holder.bind(suggestions[position])
+    interface Callback {
+        fun onSuggestionSelected(suggestion: Suggestion)
     }
 }
 
-class RecentSuggestionVH(itemView: View) : RecyclerView.ViewHolder(itemView) {
+open class SuggestionVH(itemView: View) : RecyclerView.ViewHolder(itemView) {
 
     fun bind(suggestion: Suggestion) {
         itemView.suggestionTv.text = suggestion.value
+    }
+}
+
+class RecentSuggestionVH(itemView: View) : SuggestionVH(itemView) {
+
+    init {
         itemView.iconIv.setImageResource(R.drawable.ic_history)
     }
 }
 
-class RegularSuggestionVH(itemView: View) : RecyclerView.ViewHolder(itemView) {
+class RegularSuggestionVH(itemView: View) : SuggestionVH(itemView) {
 
-    fun bind(suggestion: Suggestion) {
-        itemView.suggestionTv.text = suggestion.value
+    init {
         itemView.iconIv.setImageResource(R.drawable.ic_search)
     }
 }

@@ -13,17 +13,16 @@ import kotlinx.android.synthetic.main.fragment_search.*
 import toothpick.Toothpick
 import androidx.appcompat.widget.SearchView as SearchViewAndroid
 
-
 /**
  * Created by Vladimir Mikhalev 12.11.2018.
  */
 
 class SearchFragment : BaseFragment<SearchPresenter, SearchView>(), SearchView,
-        SearchViewAndroid.OnQueryTextListener, View.OnFocusChangeListener {
+        SearchViewAndroid.OnQueryTextListener, View.OnFocusChangeListener, SearchSuggestionsAdapter.Callback {
 
     override val layout = R.layout.fragment_search
 
-    private val suggestionsAdapter = SearchSuggestionsAdapter()
+    private val suggestionsAdapter = SearchSuggestionsAdapter(this)
 
     override fun providePresenter(): SearchPresenter {
         return Toothpick.openScopes(Scopes.ROOT_ACTIVITY, this)
@@ -44,6 +43,7 @@ class SearchFragment : BaseFragment<SearchPresenter, SearchView>(), SearchView,
 
     override fun onQueryTextSubmit(query: String): Boolean {
         presenter.search(query)
+        constraintLayout.requestFocus()
         return false
     }
 
@@ -59,6 +59,10 @@ class SearchFragment : BaseFragment<SearchPresenter, SearchView>(), SearchView,
         } else {
             suggestionsAdapter.setData(emptyList())
         }
+    }
+
+    override fun onSuggestionSelected(suggestion: Suggestion) {
+        searchView.setQuery(suggestion.value, false)
     }
 
     override fun setSuggestions(list: List<Suggestion>) {

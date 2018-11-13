@@ -1,5 +1,7 @@
 package io.github.vladimirmi.internetradioplayer.extensions
 
+import android.os.Handler
+import android.os.Looper
 import android.text.Editable
 import android.text.TextWatcher
 import android.view.View
@@ -13,6 +15,15 @@ import androidx.dynamicanimation.animation.SpringForce
 /**
  * Created by Vladimir Mikhalev 17.11.2017.
  */
+
+fun runOnUiThread(action: () -> Unit) {
+    val mainLooper = Looper.getMainLooper()
+    if (Thread.currentThread().id != mainLooper.thread.id) {
+        Handler(mainLooper).post(action)
+    } else {
+        action.invoke()
+    }
+}
 
 inline fun View.waitForMeasure(crossinline block: () -> Unit) {
     if (width > 0 && height > 0) {

@@ -22,6 +22,7 @@
         <activity
             android:name="io.github.vladimirmi.internetradioplayer.presentation.root.RootActivity"
             android:launchMode="singleInstance"
+            android:windowSoftInputMode="adjustPan"
             android:theme="@style/AppTheme.Splash">
 
             <intent-filter>

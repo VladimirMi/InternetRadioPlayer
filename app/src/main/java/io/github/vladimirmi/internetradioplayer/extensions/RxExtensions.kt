@@ -31,10 +31,10 @@ fun Completable.ioToMain(): Completable {
 
 val errorHandler: (Throwable) -> Unit = {
     if (it is MessageException) {
-        Toast.makeText(Scopes.context, it.resId, Toast.LENGTH_SHORT).show()
+        runOnUiThread { Toast.makeText(Scopes.context, it.resId, Toast.LENGTH_SHORT).show() }
     } else {
         Timber.e(it)
-        Toast.makeText(Scopes.context, it.message, Toast.LENGTH_SHORT).show()
+        runOnUiThread { Toast.makeText(Scopes.context, it.message, Toast.LENGTH_SHORT).show() }
     }
 }
 

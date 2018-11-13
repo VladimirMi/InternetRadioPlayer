@@ -18,7 +18,7 @@ class SearchPresenter
     fun search(query: String) {
         searchInteractor.saveQuery(query)
                 .ioToMain()
-                .subscribe()
+                .subscribeByEx {}
                 .addTo(dataSubs)
     }
 

@@ -27,8 +27,8 @@ class SearchPresenter
                 .addTo(viewSubs)
 
         observable.filter { it is SearchEvent.Change && it.query.isNotEmpty() }
-                .debounce(500, TimeUnit.MILLISECONDS)
-                .switchMapSingle { searchInteractor.queryRegularSuggestions(it.query) }
+                .debounce(1000, TimeUnit.MILLISECONDS)
+                .flatMapSingle { searchInteractor.queryRegularSuggestions(it.query) }
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribeX(onNext = { view?.addRegularSuggestions(it) })
                 .addTo(viewSubs)

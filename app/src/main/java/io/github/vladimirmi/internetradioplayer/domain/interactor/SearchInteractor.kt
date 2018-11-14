@@ -5,7 +5,6 @@ import io.github.vladimirmi.internetradioplayer.domain.model.Suggestion
 import io.reactivex.Completable
 import io.reactivex.Single
 import io.reactivex.schedulers.Schedulers
-import timber.log.Timber
 import javax.inject.Inject
 
 /**
@@ -16,19 +15,17 @@ class SearchInteractor
 @Inject constructor(private val searchRepository: SearchRepository) {
 
     fun saveQuery(query: String): Completable {
-        Timber.e("saveQuery: $query")
         return searchRepository.saveQuery(query)
                 .subscribeOn(Schedulers.io())
     }
 
     fun queryRecentSuggestions(query: String): Single<List<Suggestion>> {
-        Timber.e("queryRecentSuggestions: $query")
         return searchRepository.getRecentSuggestions(query)
+                .map { it.asReversed() }
                 .subscribeOn(Schedulers.io())
     }
 
     fun queryRegularSuggestions(query: String): Single<List<Suggestion>> {
-        Timber.e("queryRegularSuggestions: $query")
         return searchRepository.getRegularSuggestions(query)
                 .subscribeOn(Schedulers.io())
     }

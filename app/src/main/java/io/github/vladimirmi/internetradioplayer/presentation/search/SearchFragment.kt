@@ -40,11 +40,10 @@ class SearchFragment : BaseFragment<SearchPresenter, SearchView>(), SearchView,
         suggestionsRv.layoutManager = lm
         suggestionsRv.adapter = suggestionsAdapter
         suggestionsRv.addItemDecoration(DividerItemDecoration(suggestionsRv.context, lm.orientation))
+        suggestionsRv.visible(false)
 
         searchView.setIconifiedByDefault(false)
         searchView.setOnQueryTextFocusChangeListener(this)
-        searchView.isSubmitButtonEnabled = true
-        view.requestFocus()
     }
 
     override fun onStart() {
@@ -58,6 +57,7 @@ class SearchFragment : BaseFragment<SearchPresenter, SearchView>(), SearchView,
 
     override fun addRecentSuggestions(list: List<Suggestion>) {
         suggestionsAdapter.addRecentSuggestions(list)
+        suggestionsRv.scrollToPosition(0)
     }
 
     override fun addRegularSuggestions(list: List<Suggestion>) {
@@ -66,11 +66,7 @@ class SearchFragment : BaseFragment<SearchPresenter, SearchView>(), SearchView,
 
     override fun onFocusChange(v: View?, hasFocus: Boolean) {
         adjustSuggestionsRecyclerHeight(hasFocus)
-        if (hasFocus) {
-            suggestionsRv.visible(true)
-        } else {
-            suggestionsRv.visible(false)
-        }
+        suggestionsRv.visible(hasFocus)
     }
 
     private fun getSearchViewObservable(): Observable<SearchEvent> {

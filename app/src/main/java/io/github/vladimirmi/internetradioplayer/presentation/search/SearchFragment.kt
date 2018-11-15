@@ -6,6 +6,7 @@ import android.view.ViewGroup
 import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.LinearLayoutManager
 import io.github.vladimirmi.internetradioplayer.R
+import io.github.vladimirmi.internetradioplayer.data.net.model.StationSearchRes
 import io.github.vladimirmi.internetradioplayer.di.Scopes
 import io.github.vladimirmi.internetradioplayer.domain.model.Suggestion
 import io.github.vladimirmi.internetradioplayer.extensions.visible
@@ -27,6 +28,7 @@ class SearchFragment : BaseFragment<SearchPresenter, SearchView>(), SearchView,
     override val layout = R.layout.fragment_search
 
     private val suggestionsAdapter = SearchSuggestionsAdapter(this)
+    private val stationsAdapter = SearchStationsAdapter()
 
     override fun providePresenter(): SearchPresenter {
         return Toothpick.openScopes(Scopes.ROOT_ACTIVITY, this)
@@ -36,14 +38,26 @@ class SearchFragment : BaseFragment<SearchPresenter, SearchView>(), SearchView,
     }
 
     override fun setupView(view: View) {
-        val lm = LinearLayoutManager(context)
-        suggestionsRv.layoutManager = lm
-        suggestionsRv.adapter = suggestionsAdapter
-        suggestionsRv.addItemDecoration(DividerItemDecoration(suggestionsRv.context, lm.orientation))
-        suggestionsRv.visible(false)
+        setupSuggestions()
+        setupStations()
 
         searchView.setIconifiedByDefault(false)
         searchView.setOnQueryTextFocusChangeListener(this)
+    }
+
+    private fun setupStations() {
+        val lm = LinearLayoutManager(context)
+        stationsRv.layoutManager = lm
+        stationsRv.adapter = stationsAdapter
+        stationsRv.addItemDecoration(DividerItemDecoration(context, lm.orientation))
+    }
+
+    private fun setupSuggestions() {
+        val lm = LinearLayoutManager(context)
+        suggestionsRv.layoutManager = lm
+        suggestionsRv.adapter = suggestionsAdapter
+        suggestionsRv.addItemDecoration(DividerItemDecoration(context, lm.orientation))
+        suggestionsRv.visible(false)
     }
 
     override fun onStart() {
@@ -55,6 +69,11 @@ class SearchFragment : BaseFragment<SearchPresenter, SearchView>(), SearchView,
         searchView.setQuery(suggestion.value, false)
     }
 
+    override fun onFocusChange(v: View?, hasFocus: Boolean) {
+        adjustSuggestionsRecyclerHeight(hasFocus)
+        suggestionsRv.visible(hasFocus)
+    }
+
     override fun addRecentSuggestions(list: List<Suggestion>) {
         suggestionsAdapter.addRecentSuggestions(list)
         suggestionsRv.scrollToPosition(0)
@@ -64,9 +83,8 @@ class SearchFragment : BaseFragment<SearchPresenter, SearchView>(), SearchView,
         suggestionsAdapter.addRegularSuggestions(list)
     }
 
-    override fun onFocusChange(v: View?, hasFocus: Boolean) {
-        adjustSuggestionsRecyclerHeight(hasFocus)
-        suggestionsRv.visible(hasFocus)
+    override fun setStations(stations: List<StationSearchRes>) {
+        stationsAdapter.stations = stations
     }
 
     private fun getSearchViewObservable(): Observable<SearchEvent> {

@@ -3,6 +3,7 @@ package io.github.vladimirmi.internetradioplayer.data.repository
 import io.github.vladimirmi.internetradioplayer.data.db.SuggestionsDatabase
 import io.github.vladimirmi.internetradioplayer.data.db.entity.SuggestionEntity
 import io.github.vladimirmi.internetradioplayer.data.net.UberStationsService
+import io.github.vladimirmi.internetradioplayer.data.net.model.StationSearchRes
 import io.github.vladimirmi.internetradioplayer.domain.model.Suggestion
 import io.reactivex.Completable
 import io.reactivex.Single
@@ -31,6 +32,11 @@ class SearchRepository
 
     fun getRegularSuggestions(query: String): Single<List<Suggestion>> {
         return uberStationsService.getSuggestions("*$query*")
-                .map { presearch -> presearch.result.map { Suggestion.Regular(it.keyword) } }
+                .map { suggestions -> suggestions.result.map { Suggestion.Regular(it.keyword) } }
+    }
+
+    fun searchStations(query: String): Single<List<StationSearchRes>> {
+        return uberStationsService.searchStations(query)
+                .map { it.result }
     }
 }

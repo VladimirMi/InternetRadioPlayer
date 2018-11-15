@@ -1,8 +1,10 @@
 package io.github.vladimirmi.internetradioplayer.domain.interactor
 
+import io.github.vladimirmi.internetradioplayer.R
+import io.github.vladimirmi.internetradioplayer.data.net.model.StationSearchRes
 import io.github.vladimirmi.internetradioplayer.data.repository.SearchRepository
 import io.github.vladimirmi.internetradioplayer.domain.model.Suggestion
-import io.reactivex.Completable
+import io.github.vladimirmi.internetradioplayer.extensions.MessageResException
 import io.reactivex.Single
 import io.reactivex.schedulers.Schedulers
 import javax.inject.Inject
@@ -14,11 +16,6 @@ import javax.inject.Inject
 class SearchInteractor
 @Inject constructor(private val searchRepository: SearchRepository) {
 
-    fun saveQuery(query: String): Completable {
-        return searchRepository.saveQuery(query)
-                .subscribeOn(Schedulers.io())
-    }
-
     fun queryRecentSuggestions(query: String): Single<List<Suggestion>> {
         return searchRepository.getRecentSuggestions(query)
                 .map { it.asReversed() }
@@ -27,6 +24,15 @@ class SearchInteractor
 
     fun queryRegularSuggestions(query: String): Single<List<Suggestion>> {
         return searchRepository.getRegularSuggestions(query)
+                .subscribeOn(Schedulers.io())
+    }
+
+    fun searchStations(query: String): Single<List<StationSearchRes>> {
+        //todo change string
+        if (query.length < 3) return Single.error(MessageResException(R.string.toast_name_empty_error))
+
+        return searchRepository.saveQuery(query)
+                .andThen(searchRepository.searchStations(query))
                 .subscribeOn(Schedulers.io())
     }
 }

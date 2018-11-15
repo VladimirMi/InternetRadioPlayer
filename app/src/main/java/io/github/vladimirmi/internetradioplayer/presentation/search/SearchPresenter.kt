@@ -34,8 +34,10 @@ class SearchPresenter
                 .addTo(viewSubs)
 
         observable.filter { it is SearchEvent.Submit }
-                .flatMapCompletable { searchInteractor.saveQuery(it.query) }
-                .subscribeX {}
+                .flatMapSingle { searchInteractor.searchStations(it.query) }
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribeX(onNext = { view?.setStations(it) })
                 .addTo(viewSubs)
+
     }
 }

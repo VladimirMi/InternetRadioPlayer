@@ -5,7 +5,7 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
-    android:layout_height="48dp"
+    android:layout_height="56dp"
     android:layout_marginLeft="8dp"
     android:layout_marginRight="8dp"
     android:foreground="?android:attr/selectableItemBackground"
@@ -13,8 +13,8 @@
 
     <ImageView
         android:id="@+id/iconIv"
-        android:layout_width="48dp"
-        android:layout_height="48dp"
+        android:layout_width="56dp"
+        android:layout_height="56dp"
         android:contentDescription="@string/desc_station_icon"
         tools:src="@drawable/ic_station_1"
         />
@@ -34,7 +34,7 @@
         />
 
     <TextView
-        android:id="@+id/genresTv"
+        android:id="@+id/subtitleTv"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_marginStart="8dp"

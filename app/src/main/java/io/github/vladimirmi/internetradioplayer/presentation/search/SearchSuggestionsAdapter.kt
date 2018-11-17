@@ -13,9 +13,6 @@ import kotlinx.android.synthetic.main.item_suggestion.view.*
  * Created by Vladimir Mikhalev 12.11.2018.
  */
 
-private const val RECENT_SUGGESTION = 0
-private const val REGULAR_SUGGESTION = 1
-
 class SearchSuggestionsAdapter(private val callback: SearchSuggestionsAdapter.Callback)
     : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
 
@@ -33,18 +30,10 @@ class SearchSuggestionsAdapter(private val callback: SearchSuggestionsAdapter.Ca
         suggestions = newList
     }
 
-    override fun getItemViewType(position: Int): Int {
-        return if (suggestions[position] is Suggestion.Recent) RECENT_SUGGESTION
-        else REGULAR_SUGGESTION
-    }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): RecyclerView.ViewHolder {
         val inflater = LayoutInflater.from(parent.context)
-        return when (viewType) {
-            RECENT_SUGGESTION -> RecentSuggestionVH(inflater.inflate(R.layout.item_suggestion, parent, false))
-            REGULAR_SUGGESTION -> RegularSuggestionVH(inflater.inflate(R.layout.item_suggestion, parent, false))
-            else -> throw IllegalStateException("Unknown view type")
-        }
+        return SuggestionVH(inflater.inflate(R.layout.item_suggestion, parent, false))
     }
 
     override fun onBindViewHolder(holder: RecyclerView.ViewHolder, position: Int) {
@@ -87,19 +76,10 @@ open class SuggestionVH(itemView: View) : RecyclerView.ViewHolder(itemView) {
 
     fun bind(suggestion: Suggestion) {
         itemView.suggestionTv.text = suggestion.value
+        itemView.iconIv.setImageResource(
+                if (suggestion is Suggestion.Recent) R.drawable.ic_history
+                else R.drawable.ic_search
+        )
     }
-}
 
-class RecentSuggestionVH(itemView: View) : SuggestionVH(itemView) {
-
-    init {
-        itemView.iconIv.setImageResource(R.drawable.ic_history)
-    }
-}
-
-class RegularSuggestionVH(itemView: View) : SuggestionVH(itemView) {
-
-    init {
-        itemView.iconIv.setImageResource(R.drawable.ic_search)
-    }
 }

@@ -8,4 +8,5 @@ import androidx.room.PrimaryKey
  */
 
 @Entity
-class SuggestionEntity(@PrimaryKey val value: String)
+class SuggestionEntity(@PrimaryKey val value: String,
+                       val lastModified: Long)

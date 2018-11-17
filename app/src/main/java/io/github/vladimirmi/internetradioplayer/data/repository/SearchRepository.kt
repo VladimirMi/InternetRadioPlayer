@@ -21,7 +21,7 @@ class SearchRepository
 
     fun saveQuery(query: String): Completable {
         return Completable.fromCallable {
-            dao.insert(SuggestionEntity(query))
+            dao.insert(SuggestionEntity(query, System.currentTimeMillis()))
         }
     }
 

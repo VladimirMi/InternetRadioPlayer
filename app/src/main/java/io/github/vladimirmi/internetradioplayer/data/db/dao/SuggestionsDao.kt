@@ -14,9 +14,9 @@ import io.reactivex.Single
 @Dao
 interface SuggestionsDao {
 
-    @Insert(onConflict = OnConflictStrategy.IGNORE)
+    @Insert(onConflict = OnConflictStrategy.REPLACE)
     fun insert(suggestion: SuggestionEntity)
 
-    @Query("SELECT * FROM suggestionentity WHERE value LIKE :query")
+    @Query("SELECT * FROM suggestionentity WHERE value LIKE :query ORDER BY lastModified ASC")
     fun getSuggestions(query: String): Single<List<SuggestionEntity>>
 }

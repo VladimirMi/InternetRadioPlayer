@@ -5,7 +5,7 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
-    android:layout_height="56dp"
+    android:layout_height="64dp"
     android:layout_marginLeft="8dp"
     android:layout_marginRight="8dp"
     android:foreground="?android:attr/selectableItemBackground"
@@ -13,9 +13,10 @@
 
     <ImageView
         android:id="@+id/iconIv"
-        android:layout_width="56dp"
-        android:layout_height="56dp"
+        android:layout_width="64dp"
+        android:layout_height="64dp"
         android:contentDescription="@string/desc_station_icon"
+        android:visibility="gone"
         tools:src="@drawable/ic_station_1"
         />
 
@@ -27,10 +28,13 @@
         android:layout_marginLeft="8dp"
         android:layout_marginTop="4dp"
         android:layout_marginRight="8dp"
+        android:ellipsize="end"
+        android:maxLines="1"
+        android:textStyle="bold"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toEndOf="@+id/iconIv"
         app:layout_constraintTop_toTopOf="parent"
-        tools:text="Item name"
+        tools:text="Speciess favere! A falsis, epos bassus pes."
         />
 
     <TextView
@@ -40,7 +44,10 @@
         android:layout_marginStart="8dp"
         android:layout_marginEnd="8dp"
         android:layout_marginBottom="4dp"
-        android:textAppearance="@style/TextAppearance.AppCompat.Caption"
+        android:ellipsize="end"
+        android:maxLines="1"
+        android:textAppearance="@style/TextAppearance.AppCompat.Subhead"
+        android:textColor="@color/secondaryTextColor"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toStartOf="@+id/bitrateTv"
         app:layout_constraintStart_toEndOf="@+id/iconIv"

@@ -9,6 +9,7 @@ import io.github.vladimirmi.internetradioplayer.R
 import io.github.vladimirmi.internetradioplayer.data.net.model.StationSearchRes
 import io.github.vladimirmi.internetradioplayer.di.Scopes
 import io.github.vladimirmi.internetradioplayer.domain.model.Suggestion
+import io.github.vladimirmi.internetradioplayer.extensions.dp
 import io.github.vladimirmi.internetradioplayer.extensions.visible
 import io.github.vladimirmi.internetradioplayer.extensions.waitForLayout
 import io.github.vladimirmi.internetradioplayer.presentation.base.BaseFragment
@@ -66,7 +67,7 @@ class SearchFragment : BaseFragment<SearchPresenter, SearchView>(), SearchView,
     }
 
     override fun onSuggestionSelected(suggestion: Suggestion) {
-        searchView.setQuery(suggestion.value, false)
+        searchView.setQuery(suggestion.value, true)
     }
 
     override fun onFocusChange(v: View?, hasFocus: Boolean) {
@@ -92,9 +93,15 @@ class SearchFragment : BaseFragment<SearchPresenter, SearchView>(), SearchView,
         return Observable.create<SearchEvent> { e ->
             var queryListener: SearchViewAndroid.OnQueryTextListener? = object : SearchViewAndroid.OnQueryTextListener {
                 override fun onQueryTextSubmit(query: String): Boolean {
-                    if (!e.isDisposed) e.onNext(SearchEvent.Submit(query))
-                    constraintLayout.requestFocus()
-                    return false
+                    val q = query.trim()
+                    return if (q.length < 3) {
+                        showMessage(R.string.toast_add_error)
+                        true
+                    } else {
+                        if (!e.isDisposed) e.onNext(SearchEvent.Submit(q))
+                        searchView.clearFocus()
+                        false
+                    }
                 }
 
                 override fun onQueryTextChange(newText: String): Boolean {
@@ -135,10 +142,10 @@ class SearchFragment : BaseFragment<SearchPresenter, SearchView>(), SearchView,
         val visibleRect = rect ?: Rect().also {
             suggestionsRv.getWindowVisibleDisplayFrame(it)
         }
-
         val xy = IntArray(2)
         suggestionsRv.getLocationInWindow(xy)
-        val maxHeight = visibleRect.bottom - xy[1]
+        val marginBottom = 8 * context!!.dp
+        val maxHeight = visibleRect.bottom - xy[1] - marginBottom
 
         val heightSpec = View.MeasureSpec.makeMeasureSpec(maxHeight, View.MeasureSpec.AT_MOST)
         val widthSpec = View.MeasureSpec.makeMeasureSpec(0, View.MeasureSpec.UNSPECIFIED)

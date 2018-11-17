@@ -76,11 +76,12 @@ class SearchFragment : BaseFragment<SearchPresenter, SearchView>(), SearchView,
 
     override fun addRecentSuggestions(list: List<Suggestion>) {
         suggestionsAdapter.addRecentSuggestions(list)
-        suggestionsRv.scrollToPosition(0)
+        adjustSuggestionsRecyclerHeight()
     }
 
     override fun addRegularSuggestions(list: List<Suggestion>) {
         suggestionsAdapter.addRegularSuggestions(list)
+        adjustSuggestionsRecyclerHeight()
     }
 
     override fun setStations(stations: List<StationSearchRes>) {
@@ -119,12 +120,8 @@ class SearchFragment : BaseFragment<SearchPresenter, SearchView>(), SearchView,
                 suggestionsRv.getWindowVisibleDisplayFrame(rect)
                 val newVisibleHeight = rect.bottom - rect.top
                 if (oldVisibleHeight == newVisibleHeight) return@waitForLayout false
-                val xy = IntArray(2)
-                suggestionsRv.getLocationInWindow(xy)
 
-                val lp = suggestionsRv.layoutParams
-                lp.height = rect.bottom - xy[1]
-                suggestionsRv.layoutParams = lp
+                adjustSuggestionsRecyclerHeight(rect)
                 return@waitForLayout true
             }
         } else {
@@ -132,5 +129,23 @@ class SearchFragment : BaseFragment<SearchPresenter, SearchView>(), SearchView,
             lp.height = ViewGroup.LayoutParams.WRAP_CONTENT
             suggestionsRv.layoutParams = lp
         }
+    }
+
+    private fun adjustSuggestionsRecyclerHeight(rect: Rect? = null) {
+        val visibleRect = rect ?: Rect().also {
+            suggestionsRv.getWindowVisibleDisplayFrame(it)
+        }
+
+        val xy = IntArray(2)
+        suggestionsRv.getLocationInWindow(xy)
+        val maxHeight = visibleRect.bottom - xy[1]
+
+        val heightSpec = View.MeasureSpec.makeMeasureSpec(maxHeight, View.MeasureSpec.AT_MOST)
+        val widthSpec = View.MeasureSpec.makeMeasureSpec(0, View.MeasureSpec.UNSPECIFIED)
+        suggestionsRv.measure(widthSpec, heightSpec)
+
+        val lp = suggestionsRv.layoutParams
+        lp.height = suggestionsRv.measuredHeight
+        suggestionsRv.layoutParams = lp
     }
 }

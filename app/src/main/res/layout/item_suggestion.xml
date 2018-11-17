@@ -6,7 +6,6 @@
     android:layout_width="match_parent"
     android:layout_height="48dp"
     android:foreground="?android:attr/selectableItemBackground"
-    tools:ignore="UnusedAttribute"
     >
 
     <ImageView
@@ -25,7 +24,6 @@
 
     <TextView
         android:id="@+id/suggestionTv"
-        style="@style/TextAppearance.AppCompat.Title"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_marginStart="16dp"
@@ -33,7 +31,8 @@
         android:ellipsize="end"
         android:gravity="center_vertical"
         android:maxLines="1"
-        android:textSize="18sp"
+        android:textSize="16sp"
+        android:textColor="@color/black"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toEndOf="@+id/iconIv"

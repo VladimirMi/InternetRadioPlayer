@@ -2,17 +2,25 @@
 <androidx.constraintlayout.widget.ConstraintLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/constraintLayout"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:focusableInTouchMode="true"
+    android:padding="8dp"
     >
 
     <androidx.appcompat.widget.SearchView
         android:id="@+id/searchView"
+        style="@style/Base.Widget.AppCompat.SearchView"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:background="@drawable/bg_search_view"
         android:iconifiedByDefault="false"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:queryBackground="@null"
         />
 
     <androidx.recyclerview.widget.RecyclerView
@@ -21,13 +29,16 @@
         android:layout_height="0dp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintTop_toBottomOf="@id/searchView"
+        tools:listitem="@layout/item_station"
         />
 
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/suggestionsRv"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:background="@drawable/bg_suggestions"
         app:layout_constraintTop_toBottomOf="@id/searchView"
+        tools:listitem="@layout/item_suggestion"
         />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

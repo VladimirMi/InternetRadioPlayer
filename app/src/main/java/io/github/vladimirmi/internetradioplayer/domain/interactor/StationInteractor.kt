@@ -239,10 +239,10 @@ class StationInteractor
     private fun validate(stationName: String, adding: Boolean = false): Completable? {
         return when {
             adding && containsStation { it.name == stationName } -> {
-                Completable.error(MessageResException(R.string.toast_name_exists_error))
+                Completable.error(MessageResException(R.string.msg_name_exists_error))
             }
             stationName.isBlank() -> {
-                Completable.error(MessageResException(R.string.toast_name_empty_error))
+                Completable.error(MessageResException(R.string.msg_name_empty_error))
             }
             else -> null
         }

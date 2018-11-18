@@ -81,7 +81,7 @@ class RootPresenter
 //            router.showStationReplace(station.id)
             if (startPlay) controlsInteractor.play()
         } else {
-            view?.showMessage(R.string.toast_shortcut_remove)
+            view?.showMessage(R.string.msg_shortcut_remove)
         }
     }
 

@@ -2,14 +2,15 @@
     <string name="app_name" translatable="false">Radio Player</string>
     <string name="full_app_name" translatable="false">Internet Radio Player</string>
 
-    <string name="toast_add_success">Station added</string>
-    <string name="toast_add_error">Could not add station</string>
-    <string name="toast_net_error">No connection</string>
-    <string name="toast_remove_success">Station deleted</string>
-    <string name="toast_add_shortcut_success">Station shortcut added</string>
-    <string name="toast_shortcut_remove">Station was removed. Remove the shortcut manually</string>
-    <string name="toast_name_empty_error">Station name can not be empty</string>
-    <string name="toast_name_exists_error">Station with the given name already exists</string>
+    <string name="msg_add_success">Station added</string>
+    <string name="msg_add_error">Could not add station</string>
+    <string name="msg_net_error">No connection</string>
+    <string name="msg_remove_success">Station deleted</string>
+    <string name="msg_add_shortcut_success">Station shortcut added</string>
+    <string name="msg_shortcut_remove">Station was removed. Remove the shortcut manually</string>
+    <string name="msg_name_empty_error">Station name can not be empty</string>
+    <string name="msg_name_exists_error">Station with the given name already exists</string>
+    <string name="msg_text_short">Text too short</string>
 
     <string name="dialog_remove_message">Are you sure you want to delete the station?</string>
     <string name="dialog_goto_message">Go to the link?</string>
@@ -42,7 +43,6 @@
     <string name="desc_play_pause_button">play/pause button</string>
     <string name="desc_skip_previous_button">skip previous button</string>
     <string name="desc_skip_next_button">skip next button</string>
-    <string name="desc_search_history">recent suggestion</string>
 
     <string name="tabs_search">Search</string>
     <string name="tabs_stations">Stations</string>

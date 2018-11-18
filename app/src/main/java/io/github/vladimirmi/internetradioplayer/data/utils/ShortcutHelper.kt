@@ -30,7 +30,7 @@ class ShortcutHelper
                 .setLongLabel(label)
                 .setIcon(IconCompat.createWithBitmap(station.icon.getBitmap(context, withBackground = true)))
                 .setIntent(createShortcutIntent(station, startPlay))
-                .setDisabledMessage(context.getString(R.string.toast_shortcut_remove))
+                .setDisabledMessage(context.getString(R.string.msg_shortcut_remove))
                 .build()
 
         return ShortcutManagerCompat.requestPinShortcut(context, info, null)
@@ -42,7 +42,7 @@ class ShortcutHelper
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
             val shortcutManager = context.getSystemService(ShortcutManager::class.java)
             shortcutManager.disableShortcuts(listOf(station.id),
-                    context.getString(R.string.toast_shortcut_remove))
+                    context.getString(R.string.msg_shortcut_remove))
         } else {
             //todo valid startPlay
             val removeIntent = Intent().apply {

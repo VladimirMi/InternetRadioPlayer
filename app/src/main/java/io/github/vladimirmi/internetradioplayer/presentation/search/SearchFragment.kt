@@ -95,7 +95,7 @@ class SearchFragment : BaseFragment<SearchPresenter, SearchView>(), SearchView,
                 override fun onQueryTextSubmit(query: String): Boolean {
                     val q = query.trim()
                     return if (q.length < 3) {
-                        showMessage(R.string.toast_add_error)
+                        showMessage(R.string.msg_text_short)
                         true
                     } else {
                         if (!e.isDisposed) e.onNext(SearchEvent.Submit(q))

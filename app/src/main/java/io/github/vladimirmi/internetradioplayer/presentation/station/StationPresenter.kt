@@ -81,7 +81,7 @@ class StationPresenter
                 .ioToMain()
                 .subscribeX(
                         onComplete = {
-                            view?.showMessage(R.string.toast_add_success)
+                            view?.showMessage(R.string.msg_add_success)
                             viewMode()
                             Timber.e("create: ${stationInfo.stationName}")
 //                            router.newRootScreen(Router.STATIONS_LIST_SCREEN)
@@ -142,7 +142,7 @@ class StationPresenter
 
     fun addShortcut(startPlay: Boolean) {
         if (interactor.addCurrentShortcut(startPlay)) {
-            view?.showMessage(R.string.toast_add_shortcut_success)
+            view?.showMessage(R.string.msg_add_shortcut_success)
         }
     }
 

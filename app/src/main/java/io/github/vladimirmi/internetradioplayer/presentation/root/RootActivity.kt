@@ -5,6 +5,8 @@ import android.content.Intent
 import android.net.Uri
 import android.os.Bundle
 import android.view.MenuItem
+import android.view.View
+import androidx.drawerlayout.widget.DrawerLayout
 import com.google.android.material.snackbar.Snackbar
 import io.github.vladimirmi.internetradioplayer.R
 import io.github.vladimirmi.internetradioplayer.data.service.PlayerService
@@ -52,11 +54,16 @@ class RootActivity : BaseActivity<RootPresenter, RootView>(), RootView {
         navigationView.setNavigationItemSelectedListener { menuItem ->
             menuItem.isChecked = true
             drawerLayout.closeDrawers()
-            when {
-                menuItem.groupId == R.id.menu_group_main -> presenter.openMainScreen(menuItem.itemId)
-                menuItem.itemId == R.id.menu_item_exit -> presenter.exitApp()
-                menuItem.itemId == R.id.menu_item_settings -> presenter.openSettings()
-            }
+            drawerLayout.addDrawerListener(object : DrawerLayout.SimpleDrawerListener() {
+                override fun onDrawerClosed(drawerView: View) {
+                    when {
+                        menuItem.groupId == R.id.menu_group_main -> presenter.openMainScreen(menuItem.itemId)
+                        menuItem.itemId == R.id.menu_item_exit -> presenter.exitApp()
+                        menuItem.itemId == R.id.menu_item_settings -> presenter.openSettings()
+                    }
+                    drawerLayout.removeDrawerListener(this)
+                }
+            })
             true
         }
     }

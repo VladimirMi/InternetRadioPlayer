@@ -8,6 +8,7 @@ import androidx.interpolator.view.animation.FastOutSlowInInterpolator
 import androidx.transition.Slide
 import androidx.transition.TransitionManager
 import androidx.transition.Visibility
+import androidx.viewpager.widget.ViewPager
 import io.github.vladimirmi.internetradioplayer.R
 import io.github.vladimirmi.internetradioplayer.data.utils.MAIN_PAGE_ID_KEY
 import io.github.vladimirmi.internetradioplayer.di.Scopes
@@ -45,6 +46,12 @@ class MainFragment : BaseFragment<MainPresenter, MainView>(), MainView {
         mainTl.setupWithViewPager(mainPager)
         val pageId = arguments?.getInt(MAIN_PAGE_ID_KEY) ?: 0
         setPage(pageId)
+
+        mainPager.addOnPageChangeListener(object : ViewPager.SimpleOnPageChangeListener() {
+            override fun onPageSelected(position: Int) {
+                presenter.selectPage(position)
+            }
+        })
     }
 
     override fun setPage(pageId: Int) {

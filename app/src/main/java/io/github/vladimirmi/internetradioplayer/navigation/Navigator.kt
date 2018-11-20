@@ -10,7 +10,7 @@ import io.github.vladimirmi.internetradioplayer.presentation.main.MainView
 import io.github.vladimirmi.internetradioplayer.presentation.root.RootActivity
 import io.github.vladimirmi.internetradioplayer.presentation.settings.SettingsFragment
 import ru.terrakok.cicerone.android.SupportAppNavigator
-import ru.terrakok.cicerone.commands.Command
+import ru.terrakok.cicerone.commands.*
 
 /**
  * Created by Vladimir Mikhalev 03.12.2017.
@@ -63,11 +63,11 @@ class Navigator(private val activity: RootActivity, containerId: Int)
             nextFragment: Fragment?,
             fragmentTransaction: FragmentTransaction) {
 
-//        when (command) {
-//            is Forward -> forwardTransition(fragmentTransaction)
-//            is Back, is BackTo -> backTransition(fragmentTransaction)
-//            is Replace -> replaceTransition(fragmentTransaction)
-//        }
+        when (command) {
+            is Forward -> forwardTransition(fragmentTransaction)
+            is Back, is BackTo -> backTransition(fragmentTransaction)
+            is Replace -> replaceTransition(fragmentTransaction)
+        }
     }
 
     private fun backTransition(fragmentTransaction: FragmentTransaction) {

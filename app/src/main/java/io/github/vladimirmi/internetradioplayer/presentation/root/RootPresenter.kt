@@ -3,6 +3,7 @@ package io.github.vladimirmi.internetradioplayer.presentation.root
 import android.annotation.SuppressLint
 import android.net.Uri
 import io.github.vladimirmi.internetradioplayer.R
+import io.github.vladimirmi.internetradioplayer.domain.interactor.MainInteractor
 import io.github.vladimirmi.internetradioplayer.domain.interactor.PlayerControlsInteractor
 import io.github.vladimirmi.internetradioplayer.domain.interactor.StationInteractor
 import io.github.vladimirmi.internetradioplayer.extensions.ioToMain
@@ -20,14 +21,16 @@ import javax.inject.Inject
 class RootPresenter
 @Inject constructor(private val router: Router,
                     private val controlsInteractor: PlayerControlsInteractor,
-                    private val stationInteractor: StationInteractor)
+                    private val stationInteractor: StationInteractor,
+                    private val mainInteractor: MainInteractor)
     : BasePresenter<RootView>() {
 
 
     override fun onFirstAttach(view: RootView) {
         controlsInteractor.connect()
-        router.newRootScreen(Router.MAIN_SCREEN, R.id.menu_item_player)
-        view.setCheckedDrawerItem(R.id.menu_item_player)
+        val pageId = mainInteractor.getMainPageId()
+        router.newRootScreen(Router.MAIN_SCREEN, pageId)
+        view.setCheckedDrawerItem(pageId)
 
         stationInteractor.initStations()
                 .ioToMain()

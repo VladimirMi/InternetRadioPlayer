@@ -4,6 +4,9 @@ import android.os.Bundle
 import android.view.Gravity
 import android.view.View
 import android.view.ViewGroup
+import androidx.appcompat.app.ActionBarDrawerToggle
+import androidx.appcompat.app.AppCompatActivity
+import androidx.drawerlayout.widget.DrawerLayout
 import androidx.interpolator.view.animation.FastOutSlowInInterpolator
 import androidx.transition.Slide
 import androidx.transition.TransitionManager
@@ -52,6 +55,25 @@ class MainFragment : BaseFragment<MainPresenter, MainView>(), MainView {
                 presenter.selectPage(position)
             }
         })
+        setupToolbar()
+    }
+
+    private lateinit var toggle: ActionBarDrawerToggle
+
+    private fun setupToolbar() {
+        (activity as AppCompatActivity).setSupportActionBar(toolbar)
+
+        val drawer = findDrawer(toolbar) ?: return
+        toggle = ActionBarDrawerToggle(activity, drawer, toolbar, R.string.desc_expand_collapse,
+                R.string.desc_favorite)
+        drawer.addDrawerListener(toggle)
+        toggle.syncState()
+    }
+
+    private fun findDrawer(view: View?): DrawerLayout? {
+        if (view == null) return null
+        if (view is DrawerLayout) return view
+        return findDrawer(view.parent as? View)
     }
 
     override fun setPage(pageId: Int) {

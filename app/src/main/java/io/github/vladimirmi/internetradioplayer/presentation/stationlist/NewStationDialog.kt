@@ -1,4 +1,4 @@
-package io.github.vladimirmi.internetradioplayer.presentation.getstarted
+package io.github.vladimirmi.internetradioplayer.presentation.stationlist
 
 import android.annotation.SuppressLint
 import android.net.Uri

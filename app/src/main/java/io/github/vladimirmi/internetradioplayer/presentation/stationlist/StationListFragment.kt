@@ -8,7 +8,6 @@ import io.github.vladimirmi.internetradioplayer.data.db.entity.Station
 import io.github.vladimirmi.internetradioplayer.di.Scopes
 import io.github.vladimirmi.internetradioplayer.domain.model.FlatStationsList
 import io.github.vladimirmi.internetradioplayer.presentation.base.BaseFragment
-import io.github.vladimirmi.internetradioplayer.presentation.getstarted.NewStationDialog
 import kotlinx.android.synthetic.main.fragment_stations_list.*
 import toothpick.Toothpick
 

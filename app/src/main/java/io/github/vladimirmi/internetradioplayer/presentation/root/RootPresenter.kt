@@ -26,7 +26,8 @@ class RootPresenter
 
     override fun onFirstAttach(view: RootView) {
         controlsInteractor.connect()
-        setupRootScreen()
+        router.newRootScreen(Router.MAIN_SCREEN, R.id.menu_item_player)
+        view.setCheckedDrawerItem(R.id.menu_item_player)
 
         stationInteractor.initStations()
                 .ioToMain()
@@ -76,6 +77,10 @@ class RootPresenter
         }
     }
 
+    fun openMainScreen(page: Int) {
+        router.navigateTo(Router.MAIN_SCREEN, page)
+    }
+
     fun openSettings() {
         router.navigateTo(Router.SETTINGS_SCREEN)
     }
@@ -83,15 +88,5 @@ class RootPresenter
     fun exitApp() {
         controlsInteractor.stop()
         router.finishChain()
-    }
-
-    private fun setupRootScreen() {
-        Timber.e("setupRootScreen: ")
-        router.newRootScreen(Router.MAIN_SCREEN)
-//        if (stationInteractor.haveStations()) {
-//            router.newRootScreen(Router.STATIONS_LIST_SCREEN)
-//        } else {
-//            router.newRootScreen(Router.GET_STARTED_SCREEN)
-//        }
     }
 }

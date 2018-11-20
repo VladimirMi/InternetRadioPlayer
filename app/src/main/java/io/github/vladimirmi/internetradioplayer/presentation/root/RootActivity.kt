@@ -35,7 +35,6 @@ class RootActivity : BaseActivity<RootPresenter, RootView>(), RootView {
     override fun providePresenter(): RootPresenter = Scopes.rootActivity.getInstance(RootPresenter::class.java)
 
     override fun onCreate(savedInstanceState: Bundle?) {
-        Timber.e("onCreate: ")
         setTheme(R.style.AppTheme)
 
         Scopes.rootActivity.apply {
@@ -50,7 +49,16 @@ class RootActivity : BaseActivity<RootPresenter, RootView>(), RootView {
     }
 
     override fun setupView() {
-
+        navigationView.setNavigationItemSelectedListener { menuItem ->
+            menuItem.isChecked = true
+            drawerLayout.closeDrawers()
+            when {
+                menuItem.groupId == R.id.menu_group_main -> presenter.openMainScreen(menuItem.itemId)
+                menuItem.itemId == R.id.menu_item_exit -> presenter.exitApp()
+                menuItem.itemId == R.id.menu_item_settings -> presenter.openSettings()
+            }
+            true
+        }
     }
 
     override fun onResumeFragments() {
@@ -108,11 +116,13 @@ class RootActivity : BaseActivity<RootPresenter, RootView>(), RootView {
         loadingPb.visible(visible)
     }
 
+    override fun setCheckedDrawerItem(itemId: Int) {
+        navigationView.setCheckedItem(itemId)
+    }
+
     fun addStation(uri: Uri, startPlay: Boolean = false) {
         presenter.addStation(uri, startPlay)
     }
 
     //endregion
-
-
 }

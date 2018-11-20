@@ -1,5 +1,6 @@
 package io.github.vladimirmi.internetradioplayer.presentation.main
 
+import android.os.Bundle
 import android.view.Gravity
 import android.view.View
 import android.view.ViewGroup
@@ -8,6 +9,7 @@ import androidx.transition.Slide
 import androidx.transition.TransitionManager
 import androidx.transition.Visibility
 import io.github.vladimirmi.internetradioplayer.R
+import io.github.vladimirmi.internetradioplayer.data.utils.MAIN_PAGE_ID_KEY
 import io.github.vladimirmi.internetradioplayer.di.Scopes
 import io.github.vladimirmi.internetradioplayer.extensions.visible
 import io.github.vladimirmi.internetradioplayer.presentation.base.BaseFragment
@@ -23,6 +25,14 @@ class MainFragment : BaseFragment<MainPresenter, MainView>(), MainView {
 
     override val layout = R.layout.fragment_main
 
+    companion object {
+        fun newInstance(page: Int): MainFragment {
+            return MainFragment().apply {
+                arguments = Bundle().apply { putInt(MAIN_PAGE_ID_KEY, page) }
+            }
+        }
+    }
+
     override fun providePresenter(): MainPresenter {
         return Toothpick.openScopes(Scopes.ROOT_ACTIVITY, this)
                 .getInstance(MainPresenter::class.java).also {
@@ -33,6 +43,17 @@ class MainFragment : BaseFragment<MainPresenter, MainView>(), MainView {
     override fun setupView(view: View) {
         mainPager.adapter = MainPagerAdapter(context!!, childFragmentManager)
         mainTl.setupWithViewPager(mainPager)
+        val pageId = arguments?.getInt(MAIN_PAGE_ID_KEY) ?: 0
+        setPage(pageId)
+    }
+
+    override fun setPage(pageId: Int) {
+        val page = when (pageId) {
+            R.id.menu_item_search -> 0
+            R.id.menu_item_stations -> 1
+            else -> 2
+        }
+        mainPager.setCurrentItem(page, true)
     }
 
     override fun showControls(visible: Boolean) {

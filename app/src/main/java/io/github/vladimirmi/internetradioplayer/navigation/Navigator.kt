@@ -6,23 +6,51 @@ import androidx.fragment.app.FragmentTransaction
 import io.github.vladimirmi.internetradioplayer.R
 import io.github.vladimirmi.internetradioplayer.presentation.iconpicker.IconPickerFragment
 import io.github.vladimirmi.internetradioplayer.presentation.main.MainFragment
+import io.github.vladimirmi.internetradioplayer.presentation.main.MainView
 import io.github.vladimirmi.internetradioplayer.presentation.root.RootActivity
 import io.github.vladimirmi.internetradioplayer.presentation.settings.SettingsFragment
 import ru.terrakok.cicerone.android.SupportAppNavigator
-import ru.terrakok.cicerone.commands.*
+import ru.terrakok.cicerone.commands.Command
 
 /**
  * Created by Vladimir Mikhalev 03.12.2017.
  */
 
-class Navigator(activity: RootActivity, containerId: Int)
+class Navigator(private val activity: RootActivity, containerId: Int)
     : SupportAppNavigator(activity, containerId) {
+
+    private var currentKey = currentKeyFromBackStack(activity)
+
+    private fun currentKeyFromBackStack(activity: RootActivity): String {
+        return with(activity.supportFragmentManager) {
+            if (backStackEntryCount > 0) {
+                getBackStackEntryAt(backStackEntryCount - 1).name!!
+            } else ""
+        }
+    }
+
+    init {
+        activity.supportFragmentManager.addOnBackStackChangedListener {
+            currentKey = currentKeyFromBackStack(activity)
+        }
+    }
 
     override fun createActivityIntent(context: Context, screenKey: String, data: Any?) = null
 
     override fun createFragment(screenKey: String, data: Any?): Fragment? {
         return when (screenKey) {
-            Router.MAIN_SCREEN -> MainFragment()
+            Router.MAIN_SCREEN -> {
+                val pageId = data as? Int ?: 0
+                val fragments = activity.supportFragmentManager.fragments
+                if (fragments.size > 0) {
+                    val fragment = fragments[fragments.size - 1]
+                    if (fragment is MainView) {
+                        fragment.setPage(pageId)
+                        return null
+                    }
+                }
+                return MainFragment.newInstance(pageId)
+            }
             Router.ICON_PICKER_SCREEN -> IconPickerFragment()
             Router.SETTINGS_SCREEN -> SettingsFragment()
             else -> null
@@ -34,11 +62,12 @@ class Navigator(activity: RootActivity, containerId: Int)
             currentFragment: Fragment?,
             nextFragment: Fragment?,
             fragmentTransaction: FragmentTransaction) {
-        when (command) {
-            is Forward -> forwardTransition(fragmentTransaction)
-            is Back, is BackTo -> backTransition(fragmentTransaction)
-            is Replace -> replaceTransition(fragmentTransaction)
-        }
+
+//        when (command) {
+//            is Forward -> forwardTransition(fragmentTransaction)
+//            is Back, is BackTo -> backTransition(fragmentTransaction)
+//            is Replace -> replaceTransition(fragmentTransaction)
+//        }
     }
 
     private fun backTransition(fragmentTransaction: FragmentTransaction) {
@@ -54,5 +83,9 @@ class Navigator(activity: RootActivity, containerId: Int)
     private fun replaceTransition(fragmentTransaction: androidx.fragment.app.FragmentTransaction?) {
         fragmentTransaction?.setCustomAnimations(android.R.anim.fade_in, android.R.anim.fade_out,
                 android.R.anim.fade_in, android.R.anim.fade_out)
+    }
+
+    override fun unknownScreen(command: Command?) {
+        //do nothing
     }
 }

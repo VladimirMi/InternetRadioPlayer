@@ -99,7 +99,7 @@ class StationPresenter
         when {
             interactor.createMode -> view?.openCancelCreateDialog()
             editMode -> view?.cancelEdit()
-            else -> router.backTo(null)
+            else -> return false
         }
         return true
     }

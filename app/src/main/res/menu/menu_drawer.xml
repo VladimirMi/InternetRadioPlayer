@@ -1,19 +1,29 @@
 <?xml version="1.0" encoding="utf-8"?>
 <menu xmlns:android="http://schemas.android.com/apk/res/android">
     <group
-        android:id="@+id/menu_group_tabs"
+        android:id="@+id/menu_group_main"
         android:checkableBehavior="single">
 
-        <item android:title="@string/tabs_search"/>
-        <item android:title="@string/tabs_stations"/>
-        <item android:title="@string/tabs_player"/>
+        <item
+            android:id="@+id/menu_item_search"
+            android:title="@string/tabs_search"/>
+        <item
+            android:id="@+id/menu_item_stations"
+            android:title="@string/tabs_stations"/>
+        <item
+            android:id="@+id/menu_item_player"
+            android:title="@string/tabs_player"/>
     </group>
 
     <group
         android:id="@+id/menu_group_second"
         android:checkableBehavior="single">
 
-        <item android:title="@string/menu_settings"/>
-        <item android:title="@string/menu_exit"/>
+        <item
+            android:id="@+id/menu_item_settings"
+            android:title="@string/menu_settings"/>
+        <item
+            android:id="@+id/menu_item_exit"
+            android:title="@string/menu_exit"/>
     </group>
 </menu>

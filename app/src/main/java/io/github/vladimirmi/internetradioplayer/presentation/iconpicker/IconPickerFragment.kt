@@ -4,7 +4,6 @@ import android.view.View
 import io.github.vladimirmi.internetradioplayer.R
 import io.github.vladimirmi.internetradioplayer.di.Scopes
 import io.github.vladimirmi.internetradioplayer.presentation.base.BaseFragment
-import io.github.vladimirmi.internetradioplayer.presentation.root.RootView
 import kotlinx.android.synthetic.main.fragment_icon_picker.*
 import toothpick.Toothpick
 
@@ -56,6 +55,5 @@ class IconPickerFragment : BaseFragment<IconPickerPresenter, IconPickerView>(), 
     override fun handleBackPressed() = presenter.onBackPressed()
 
     override fun showControls(visible: Boolean) {
-        (activity as RootView).showControls(visible)
     }
 }

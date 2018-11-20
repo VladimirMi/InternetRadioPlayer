@@ -1,7 +1,6 @@
 package io.github.vladimirmi.internetradioplayer.presentation.base
 
 import android.os.Bundle
-import android.view.Menu
 import android.view.View
 import androidx.appcompat.app.AppCompatActivity
 import com.google.android.material.snackbar.Snackbar
@@ -11,7 +10,7 @@ import com.google.android.material.snackbar.Snackbar
  */
 
 abstract class BaseActivity<P : BasePresenter<V>, V : BaseView>
-    : AppCompatActivity(), BaseView, ToolbarView by ToolbarViewImpl() {
+    : AppCompatActivity(), BaseView {
 
     lateinit var presenter: P
     protected val activityView: View by lazy {
@@ -29,7 +28,6 @@ abstract class BaseActivity<P : BasePresenter<V>, V : BaseView>
         setContentView(layout)
         presenter = providePresenter()
         setupView()
-        setToolbarHost(this)
     }
 
     override fun onStart() {
@@ -40,7 +38,6 @@ abstract class BaseActivity<P : BasePresenter<V>, V : BaseView>
 
     override fun onStop() {
         presenter.detachView()
-        dismissToolbarMenu()
         super.onStop()
     }
 
@@ -66,12 +63,7 @@ abstract class BaseActivity<P : BasePresenter<V>, V : BaseView>
     }
 
     override fun buildToolbar(builder: ToolbarBuilder) {
-        builder.build(this)
-    }
 
-    override fun onPrepareOptionsMenu(menu: Menu): Boolean {
-        prepareOptionsMenu(menu)
-        return super.onPrepareOptionsMenu(menu)
     }
 
     protected val isPresenterInitialized get() = this::presenter.isInitialized

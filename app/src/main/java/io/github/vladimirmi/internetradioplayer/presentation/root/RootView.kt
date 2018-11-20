@@ -10,7 +10,5 @@ interface RootView : BaseView {
 
     fun checkIntent()
 
-    fun showControls(visible: Boolean)
-
     fun showLoadingIndicator(visible: Boolean)
 }

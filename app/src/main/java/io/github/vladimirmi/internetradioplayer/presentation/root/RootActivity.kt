@@ -4,12 +4,7 @@ import android.annotation.SuppressLint
 import android.content.Intent
 import android.net.Uri
 import android.os.Bundle
-import android.view.Gravity
 import android.view.MenuItem
-import androidx.interpolator.view.animation.FastOutSlowInInterpolator
-import androidx.transition.Slide
-import androidx.transition.TransitionManager
-import androidx.transition.Visibility
 import com.google.android.material.snackbar.Snackbar
 import io.github.vladimirmi.internetradioplayer.R
 import io.github.vladimirmi.internetradioplayer.data.service.PlayerService
@@ -55,7 +50,7 @@ class RootActivity : BaseActivity<RootPresenter, RootView>(), RootView {
     }
 
     override fun setupView() {
-        setSupportActionBar(toolbar)
+
     }
 
     override fun onResumeFragments() {
@@ -108,12 +103,6 @@ class RootActivity : BaseActivity<RootPresenter, RootView>(), RootView {
         Snackbar.make(activityView, resId, Snackbar.LENGTH_LONG).show()
     }
 
-    override fun showControls(visible: Boolean) {
-        val slide = createSlideTransition()
-        slide.mode = if (visible) Visibility.MODE_IN else Visibility.MODE_OUT
-        TransitionManager.beginDelayedTransition(root, slide)
-        playerControlsFr.view?.visible(visible)
-    }
 
     override fun showLoadingIndicator(visible: Boolean) {
         loadingPb.visible(visible)
@@ -125,12 +114,5 @@ class RootActivity : BaseActivity<RootPresenter, RootView>(), RootView {
 
     //endregion
 
-    private fun createSlideTransition(): Slide {
-        val slide = Slide()
-        slide.slideEdge = Gravity.BOTTOM
-        slide.duration = 300
-        slide.addTarget(R.id.playerControlsFr)
-        slide.interpolator = FastOutSlowInInterpolator()
-        return slide
-    }
+
 }

@@ -17,9 +17,6 @@ import io.github.vladimirmi.internetradioplayer.extensions.startActivitySafe
 import io.github.vladimirmi.internetradioplayer.extensions.subscribeX
 import io.github.vladimirmi.internetradioplayer.navigation.Router
 import io.github.vladimirmi.internetradioplayer.presentation.base.BackPressListener
-import io.github.vladimirmi.internetradioplayer.presentation.base.ToolbarBuilder
-import io.github.vladimirmi.internetradioplayer.presentation.base.ToolbarView
-import io.github.vladimirmi.internetradioplayer.presentation.root.RootView
 import io.github.vladimirmi.internetradioplayer.ui.SeekBarDialogPreference
 
 /**
@@ -35,8 +32,8 @@ class SettingsFragment : PreferenceFragmentCompat(), BackPressListener {
 
     override fun onResume() {
         super.onResume()
-        (activity as RootView).showControls(false)
-        ToolbarBuilder.exit().build(activity as ToolbarView)
+//        (activity as RootView).showControls(false)
+//        ToolbarBuilder.exit().build(activity as ToolbarView)
     }
 
     override fun onCreatePreferences(savedInstanceState: Bundle?, rootKey: String?) {
@@ -87,7 +84,6 @@ class SettingsFragment : PreferenceFragmentCompat(), BackPressListener {
     }
 
     override fun handleBackPressed(): Boolean {
-        (activity as RootView).showControls(true)
         return false
     }
 }

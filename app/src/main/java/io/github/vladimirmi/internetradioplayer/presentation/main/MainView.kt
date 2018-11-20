@@ -8,4 +8,5 @@ import io.github.vladimirmi.internetradioplayer.presentation.base.BaseView
 
 interface MainView : BaseView {
 
+    fun showControls(visible: Boolean)
 }

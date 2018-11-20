@@ -62,7 +62,7 @@ abstract class BaseFragment<P : BasePresenter<V>, V : BaseView> : Fragment(), Ba
     }
 
     override fun buildToolbar(builder: ToolbarBuilder) {
-        builder.build(activity as ToolbarView)
+
     }
 
     override fun showMessage(resId: Int) {

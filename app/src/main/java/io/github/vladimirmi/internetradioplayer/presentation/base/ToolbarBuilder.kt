@@ -69,16 +69,16 @@ class ToolbarBuilder {
         return this
     }
 
-    fun build(toolbarView: ToolbarView) {
-        toolbarView.setToolbarVisible(isToolbarVisible)
-        if (title.isNotBlank()) {
-            toolbarView.setToolbarTitle(title)
-        } else {
-            toolbarView.setToolbarTitle(titleId)
-        }
-        toolbarView.enableBackNavigation(backNavEnabled)
-        toolbarView.setMenu(menuHolder.sorted())
-    }
+//    fun build(toolbarView: ToolbarView) {
+//        toolbarView.setToolbarVisible(isToolbarVisible)
+//        if (title.isNotBlank()) {
+//            toolbarView.setToolbarTitle(title)
+//        } else {
+//            toolbarView.setToolbarTitle(titleId)
+//        }
+//        toolbarView.enableBackNavigation(backNavEnabled)
+//        toolbarView.setMenu(menuHolder.sorted())
+//    }
 }
 
 class MenuHolder {

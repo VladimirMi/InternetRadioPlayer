@@ -30,21 +30,12 @@ class RootPresenter
 
         stationInteractor.initStations()
                 .ioToMain()
-                .subscribeX(onComplete = {
-                    view.checkIntent()
-                })
+                .subscribeX(onComplete = { view.checkIntent() })
                 .addTo(dataSubs)
     }
 
     override fun onAttach(view: RootView) {
         if (!isFirstAttach) view.checkIntent()
-
-        stationInteractor.currentStationObs
-                .map { !it.isNull() }
-                .distinctUntilChanged()
-                .ioToMain()
-                .subscribe(view::showControls)
-                .addTo(viewSubs)
     }
 
     override fun onDestroy() {

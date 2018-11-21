@@ -29,8 +29,7 @@ class RootPresenter
     override fun onFirstAttach(view: RootView) {
         controlsInteractor.connect()
         val pageId = mainInteractor.getMainPageId()
-        router.newRootScreen(Router.MAIN_SCREEN, pageId)
-        view.setCheckedDrawerItem(pageId)
+        router.newRootScreen(pageId)
 
         stationInteractor.initStations()
                 .ioToMain()
@@ -80,16 +79,20 @@ class RootPresenter
         }
     }
 
-    fun openMainScreen(page: Int) {
-        router.navigateTo(Router.MAIN_SCREEN, page)
-    }
-
-    fun openSettings() {
-        router.navigateTo(Router.SETTINGS_SCREEN)
+    fun navigateTo(navId: Int) {
+        when (navId) {
+            R.id.nav_exit -> exitApp()
+            R.id.nav_settings -> router.navigateTo(navId)
+            else -> router.replaceScreen(navId)
+        }
     }
 
     fun exitApp() {
         controlsInteractor.stop()
         router.finishChain()
+    }
+
+    fun openSettings() {
+        Timber.e("openSettings: ")
     }
 }

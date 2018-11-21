@@ -11,45 +11,50 @@ import io.github.vladimirmi.internetradioplayer.presentation.root.RootActivity
 import io.github.vladimirmi.internetradioplayer.presentation.settings.SettingsFragment
 import ru.terrakok.cicerone.android.SupportAppNavigator
 import ru.terrakok.cicerone.commands.*
+import timber.log.Timber
+import java.util.*
 
 /**
  * Created by Vladimir Mikhalev 03.12.2017.
  */
 
-class Navigator(private val activity: RootActivity, containerId: Int)
+class Navigator(private val activity: RootActivity, private val containerId: Int)
     : SupportAppNavigator(activity, containerId) {
 
-    private var currentKey = currentKeyFromBackStack(activity)
+    var navigationIdListener: ((Int) -> Unit)? = null
 
-    private fun currentKeyFromBackStack(activity: RootActivity): String {
-        return with(activity.supportFragmentManager) {
-            if (backStackEntryCount > 0) {
-                getBackStackEntryAt(backStackEntryCount - 1).name!!
-            } else ""
+    private val screenStack = LinkedList<String>()
+
+    private val currScreenKeyFromBackStack: String
+        get() {
+            return with(activity.supportFragmentManager) {
+                if (backStackEntryCount > 0) {
+                    getBackStackEntryAt(backStackEntryCount - 1).name!!
+                } else Router.ROOT_SCREEN
+            }
         }
-    }
+
 
     init {
         activity.supportFragmentManager.addOnBackStackChangedListener {
-            currentKey = currentKeyFromBackStack(activity)
+            applyToStack(BackStackScreenNameChange(currScreenKeyFromBackStack.screenName))
+            notifyNavigationListener()
         }
     }
 
     override fun createActivityIntent(context: Context, screenKey: String, data: Any?) = null
 
     override fun createFragment(screenKey: String, data: Any?): Fragment? {
-        return when (screenKey) {
+        val screenName = screenKey.screenName
+        return when (screenName) {
             Router.MAIN_SCREEN -> {
-                val pageId = data as? Int ?: 0
-                val fragments = activity.supportFragmentManager.fragments
-                if (fragments.size > 0) {
-                    val fragment = fragments[fragments.size - 1]
-                    if (fragment is MainView) {
-                        fragment.setPage(pageId)
-                        return null
-                    }
+                val navId = screenKey.navId
+                val fragment = getCurrentFragment()
+                if (fragment is MainView) {
+                    fragment.setPageId(navId)
+                    return null
                 }
-                return MainFragment.newInstance(pageId)
+                return MainFragment.newInstance(navId)
             }
             Router.ICON_PICKER_SCREEN -> IconPickerFragment()
             Router.SETTINGS_SCREEN -> SettingsFragment()
@@ -70,6 +75,59 @@ class Navigator(private val activity: RootActivity, containerId: Int)
         }
     }
 
+    override fun applyCommands(commands: Array<out Command>?) {
+        super.applyCommands(commands)
+        notifyNavigationListener()
+    }
+
+    override fun applyCommand(command: Command?) {
+        var newCommand = command
+        val curScreenKey: String? = screenStack.peek()
+        if (curScreenKey?.screenName == Router.SETTINGS_SCREEN && command is Replace
+                && command.screenKey.screenName == Router.MAIN_SCREEN) {
+            newCommand = Back()
+        }
+        super.applyCommand(newCommand)
+        applyToStack(newCommand)
+    }
+
+    override fun unknownScreen(command: Command?) {
+        //no-op
+    }
+
+    private fun notifyNavigationListener() {
+        Timber.d("notifyNavigationListener: $screenStack")
+        val navId = screenStack.peek()?.navId
+        if (navId != null) navigationIdListener?.invoke(navId)
+    }
+
+    private fun applyToStack(command: Command?) {
+        when (command) {
+            is Forward -> {
+                screenStack.push(command.screenKey)
+            }
+            is Back -> screenStack.poll()
+            is Replace -> {
+                screenStack.poll()
+                screenStack.push(command.screenKey)
+            }
+            is BackTo -> {
+                while (screenStack.peek() != command.screenKey) {
+                    screenStack.poll()
+                }
+            }
+            is BackStackScreenNameChange -> {
+                while (screenStack.peek()?.screenName != command.screenName) {
+                    screenStack.poll()
+                }
+            }
+        }
+    }
+
+    private fun getCurrentFragment(): Fragment? {
+        return activity.supportFragmentManager.findFragmentById(containerId)
+    }
+
     private fun backTransition(fragmentTransaction: FragmentTransaction) {
         fragmentTransaction.setCustomAnimations(R.anim.slide_in_left, R.anim.slide_out_right,
                 R.anim.slide_in_right, R.anim.slide_out_left)
@@ -85,7 +143,11 @@ class Navigator(private val activity: RootActivity, containerId: Int)
                 android.R.anim.fade_in, android.R.anim.fade_out)
     }
 
-    override fun unknownScreen(command: Command?) {
-        //do nothing
-    }
+    private val String.screenName
+        get() = this.substringBefore(Router.DELIMITER)
+
+    private val String.navId
+        get() = this.substringAfter(Router.DELIMITER).toInt()
+
+    private class BackStackScreenNameChange(val screenName: String) : Command
 }

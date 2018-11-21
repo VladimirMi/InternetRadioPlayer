@@ -48,7 +48,7 @@ class MainFragment : BaseFragment<MainPresenter, MainView>(), MainView {
         mainPager.adapter = MainPagerAdapter(context!!, childFragmentManager)
         mainTl.setupWithViewPager(mainPager)
         val pageId = arguments?.getInt(MAIN_PAGE_ID_KEY) ?: 0
-        setPage(pageId)
+        setPageId(pageId)
 
         mainPager.addOnPageChangeListener(object : ViewPager.SimpleOnPageChangeListener() {
             override fun onPageSelected(position: Int) {
@@ -76,10 +76,11 @@ class MainFragment : BaseFragment<MainPresenter, MainView>(), MainView {
         return findDrawer(view.parent as? View)
     }
 
-    override fun setPage(pageId: Int) {
+    override fun setPageId(pageId: Int) {
+        arguments = Bundle().apply { putInt(MAIN_PAGE_ID_KEY, pageId) }
         val page = when (pageId) {
-            R.id.menu_item_search -> 0
-            R.id.menu_item_stations -> 1
+            R.id.nav_search -> 0
+            R.id.nav_stations -> 1
             else -> 2
         }
         mainPager.setCurrentItem(page, true)

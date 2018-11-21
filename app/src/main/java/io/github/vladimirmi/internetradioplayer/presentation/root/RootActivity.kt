@@ -1,6 +1,5 @@
 package io.github.vladimirmi.internetradioplayer.presentation.root
 
-import android.annotation.SuppressLint
 import android.content.Intent
 import android.net.Uri
 import android.os.Bundle
@@ -56,11 +55,7 @@ class RootActivity : BaseActivity<RootPresenter, RootView>(), RootView {
             drawerLayout.closeDrawers()
             drawerLayout.addDrawerListener(object : DrawerLayout.SimpleDrawerListener() {
                 override fun onDrawerClosed(drawerView: View) {
-                    when {
-                        menuItem.groupId == R.id.menu_group_main -> presenter.openMainScreen(menuItem.itemId)
-                        menuItem.itemId == R.id.menu_item_exit -> presenter.exitApp()
-                        menuItem.itemId == R.id.menu_item_settings -> presenter.openSettings()
-                    }
+                    presenter.navigateTo(menuItem.itemId)
                     drawerLayout.removeDrawerListener(this)
                 }
             })
@@ -68,19 +63,20 @@ class RootActivity : BaseActivity<RootPresenter, RootView>(), RootView {
         }
     }
 
-    override fun onResumeFragments() {
-        super.onResumeFragments()
+    override fun onStart() {
         navigatorHolder.setNavigator(navigator)
+        navigator.navigationIdListener = { navigationView.setCheckedItem(it) }
+        super.onStart()
     }
 
-    @SuppressLint("RestrictedApi")
-    override fun onPause() {
+    override fun onStop() {
+        navigator.navigationIdListener = null
         navigatorHolder.removeNavigator()
-        super.onPause()
+        super.onStop()
     }
 
     override fun onNewIntent(intent: Intent?) {
-        Timber.e("onNewIntent: ")
+        Timber.e("onNewIntent: $intent")
         super.onNewIntent(intent)
         this.intent = intent
         if (isPresenterInitialized) checkIntent()
@@ -124,7 +120,8 @@ class RootActivity : BaseActivity<RootPresenter, RootView>(), RootView {
     }
 
     override fun setCheckedDrawerItem(itemId: Int) {
-        navigationView.setCheckedItem(itemId)
+//        navigationView.setCheckedItem(itemId)
+        Timber.e("setCheckedDrawerItem: ")
     }
 
     fun addStation(uri: Uri, startPlay: Boolean = false) {

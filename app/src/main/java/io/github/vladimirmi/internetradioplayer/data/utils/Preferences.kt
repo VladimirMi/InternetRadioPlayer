@@ -25,6 +25,6 @@ class Preferences
     var currentStationId: String by Preference(sharedPreferences, CURRENT_STATION_ID_KEY, "")
     var initialBufferLength: Int by Preference(sharedPreferences, INITIAL_BUFFER_LENGTH_KEY, 3)
     var bufferLength: Int by Preference(sharedPreferences, BUFFER_LENGTH_KEY, 6)
-    var mainPageId: Int by Preference(sharedPreferences, MAIN_PAGE_ID_KEY, R.id.menu_item_search)
+    var mainPageId: Int by Preference(sharedPreferences, MAIN_PAGE_ID_KEY, R.id.nav_search)
 
 }

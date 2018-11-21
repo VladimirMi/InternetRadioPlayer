@@ -49,9 +49,10 @@ abstract class BaseActivity<P : BasePresenter<V>, V : BaseView>
     }
 
     override fun onBackPressed() {
-        if (!handleBackPressed()) {
-            super.onBackPressed()
+        if (handleBackPressed()) {
+            return
         }
+        super.onBackPressed()
     }
 
     override fun handleBackPressed(): Boolean {

@@ -10,5 +10,5 @@ interface MainView : BaseView {
 
     fun showControls(visible: Boolean)
 
-    fun setPage(page: Int)
+    fun setPageId(page: Int)
 }

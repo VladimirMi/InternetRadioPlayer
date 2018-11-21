@@ -16,6 +16,7 @@ import io.github.vladimirmi.internetradioplayer.presentation.base.BaseFragment
 import io.reactivex.Observable
 import io.reactivex.disposables.Disposables
 import kotlinx.android.synthetic.main.fragment_search.*
+import timber.log.Timber
 import toothpick.Toothpick
 import androidx.appcompat.widget.SearchView as SearchViewAndroid
 
@@ -47,10 +48,19 @@ class SearchFragment : BaseFragment<SearchPresenter, SearchView>(), SearchView,
     }
 
     private fun setupStations() {
+        Timber.e("setupStations: $parentFragment")
         val lm = LinearLayoutManager(context)
         stationsRv.layoutManager = lm
         stationsRv.adapter = stationsAdapter
         stationsRv.addItemDecoration(DividerItemDecoration(context, lm.orientation))
+        stationsAdapter.onAddToFavListener = {
+            Timber.e("add to fav: ${it.callsign}")
+        }
+
+        stationsAdapter.onItemClickListener = {
+            stationsAdapter.selectStation(it)
+            Timber.e("item click: ${it.callsign}")
+        }
     }
 
     private fun setupSuggestions() {

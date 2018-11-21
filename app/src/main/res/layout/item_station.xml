@@ -31,7 +31,7 @@
         android:ellipsize="end"
         android:maxLines="1"
         android:textStyle="bold"
-        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintEnd_toStartOf="@id/addToFav"
         app:layout_constraintStart_toEndOf="@+id/iconIv"
         app:layout_constraintTop_toTopOf="parent"
         tools:text="Speciess favere! A falsis, epos bassus pes."
@@ -49,22 +49,21 @@
         android:textAppearance="@style/TextAppearance.AppCompat.Subhead"
         android:textColor="@color/secondaryTextColor"
         app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toStartOf="@+id/bitrateTv"
+        app:layout_constraintEnd_toStartOf="@+id/addToFav"
         app:layout_constraintStart_toEndOf="@+id/iconIv"
         tools:text="Music, Country"
         />
 
-    <TextView
-        android:id="@+id/bitrateTv"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
+    <ImageView
+        android:id="@+id/addToFav"
+        android:layout_width="42dp"
+        android:layout_height="42dp"
         android:layout_marginEnd="8dp"
         android:layout_marginRight="8dp"
-        android:layout_marginBottom="4dp"
-        android:textAppearance="@style/TextAppearance.AppCompat.Caption"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        tools:text="128kbps"
+        app:layout_constraintTop_toTopOf="parent"
+        android:background="@drawable/ic_star"
         />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

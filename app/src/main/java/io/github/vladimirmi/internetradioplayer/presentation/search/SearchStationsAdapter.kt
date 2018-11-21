@@ -7,6 +7,8 @@ import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
 import io.github.vladimirmi.internetradioplayer.R
 import io.github.vladimirmi.internetradioplayer.data.net.model.StationSearchRes
+import io.github.vladimirmi.internetradioplayer.extensions.color
+import io.github.vladimirmi.internetradioplayer.extensions.visible
 import kotlinx.android.synthetic.main.item_station.view.*
 
 /**
@@ -14,6 +16,11 @@ import kotlinx.android.synthetic.main.item_station.view.*
  */
 
 class SearchStationsAdapter : RecyclerView.Adapter<SearchStationVH>() {
+
+    private var selectedStation: StationSearchRes? = null
+
+    var onItemClickListener: ((StationSearchRes) -> Unit)? = null
+    var onAddToFavListener: ((StationSearchRes) -> Unit)? = null
 
     var stations: List<StationSearchRes> = ArrayList()
         set(value) {
@@ -28,11 +35,23 @@ class SearchStationsAdapter : RecyclerView.Adapter<SearchStationVH>() {
     }
 
     override fun onBindViewHolder(holder: SearchStationVH, position: Int) {
-        holder.bind(stations[position])
+        val station = stations[position]
+        holder.bind(station)
+        holder.select(station.id == selectedStation?.id)
+        holder.itemView.setOnClickListener { onItemClickListener?.invoke(station) }
+        holder.itemView.addToFav?.setOnClickListener { onAddToFavListener?.invoke(station) }
     }
 
     override fun getItemCount(): Int {
         return stations.size
+    }
+
+    fun selectStation(station: StationSearchRes) {
+        val oldPos = stations.indexOf(selectedStation)
+        val newPos = stations.indexOf(station)
+        selectedStation = station
+        notifyItemChanged(oldPos)
+        notifyItemChanged(newPos)
     }
 }
 
@@ -42,5 +61,11 @@ class SearchStationVH(itemView: View) : RecyclerView.ViewHolder(itemView) {
     fun bind(res: StationSearchRes) {
         itemView.titleTv.text = res.callsign
         itemView.subtitleTv.text = "${res.artist} - ${res.title}"
+    }
+
+    fun select(selected: Boolean) {
+        val bg = itemView.context.color(if (selected) R.color.grey_300 else R.color.grey_50)
+        itemView.setBackgroundColor(bg)
+        itemView.addToFav.visible(selected)
     }
 }

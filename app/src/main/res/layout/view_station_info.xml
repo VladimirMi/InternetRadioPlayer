@@ -1,76 +1,87 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout
+<androidx.constraintlayout.widget.ConstraintLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:orientation="vertical"
     >
 
-    <androidx.cardview.widget.CardView
-        style="@style/CustomCard"
-        android:layout_margin="8dp"
-        >
-
-        <GridLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:columnCount="2"
-            android:rowCount="2"
-            >
-
-            <TextView
-                android:id="@+id/titleLabelTv"
-                style="@style/CustomText.Label"
-                android:labelFor="@id/titleEt"
-                android:text="@string/station_title"
-                />
-
-            <EditText
-                android:id="@+id/titleEt"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_gravity="fill_horizontal"
-                android:fontFamily="sans-serif-condensed"
-                android:hint="@string/station_title"
-                android:inputType="textNoSuggestions"
-                android:textAppearance="@style/TextAppearance.AppCompat.Title"
-                tools:text="Title - Sunt vitaes reperire emeritis, neuter fluctuies."
-                />
-
-
-            <TextView
-                android:id="@+id/groupLabelTv"
-                style="@style/CustomText.Label"
-                android:layout_width="wrap_content"
-                android:labelFor="@id/groupEt"
-                android:text="@string/station_folder"
-                />
-
-            <EditText
-                android:id="@+id/groupEt"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_gravity="fill_horizontal"
-                android:fontFamily="sans-serif-condensed"
-                android:hint="@string/station_folder"
-                android:imeOptions="actionDone"
-                android:inputType="textNoSuggestions"
-                android:textAppearance="@style/TextAppearance.AppCompat.Subhead"
-                tools:text="Rock"
-                />
-
-        </GridLayout>
-
-    </androidx.cardview.widget.CardView>
-
-
-    <include
-        android:id="@+id/detail_info"
-        layout="@layout/view_station_detail_info"
-        android:layout_width="match_parent"
+    <TextView
+        android:id="@+id/titleEt"
+        android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:layout_margin="8dp"
+        android:textAppearance="@style/TextAppearance.MaterialComponents.Headline5"
+        app:layout_constraintEnd_toStartOf="@+id/editTitleBt"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        tools:text="Station name"
         />
 
-</LinearLayout>
+    <ImageButton
+        android:id="@+id/editTitleBt"
+        android:layout_width="28dp"
+        android:layout_height="28dp"
+        android:background="@drawable/ic_edit"
+        android:contentDescription="@string/desc_edit_title_button"
+        app:layout_constraintBottom_toBottomOf="@+id/titleEt"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="@+id/titleEt"
+        />
+
+    <TextView
+        android:id="@+id/genreTv"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="8dp"
+        android:textAppearance="@style/TextAppearance.MaterialComponents.Subtitle1"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/titleEt"
+        tools:text="Genres"
+        />
+
+    <Spinner
+        android:id="@+id/groupSpinner"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="8dp"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/genreTv"
+        />
+
+    <TextView
+        android:id="@+id/specsTv"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="8dp"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/groupSpinner"
+        tools:text="MP3, 44kHz 2ch, 192kbps"
+        />
+
+    <ImageButton
+        android:id="@+id/favoriteBt"
+        android:layout_width="40dp"
+        android:layout_height="40dp"
+        android:layout_marginTop="16dp"
+        android:background="@drawable/ic_star"
+        android:contentDescription="@string/desc_add_remove_favorite"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/specsTv"
+        />
+
+    <ImageButton
+        android:id="@+id/labelBt"
+        android:layout_width="40dp"
+        android:layout_height="40dp"
+        android:layout_marginTop="17dp"
+        android:layout_marginEnd="24dp"
+        android:layout_marginRight="24dp"
+        android:background="@drawable/ic_label"
+        android:contentDescription="@string/desc_create_shortcut_button"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toStartOf="@+id/favoriteBt"
+        app:layout_constraintTop_toBottomOf="@+id/specsTv"
+        />
+
+</androidx.constraintlayout.widget.ConstraintLayout>

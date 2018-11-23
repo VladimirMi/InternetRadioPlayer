@@ -102,6 +102,10 @@
     <string name="second">%1$d second</string>
     <string name="seconds">%1$d seconds</string>
     <string name="chooser_backup">Save with</string>
+    <string name="desc_stop_button">stop button</string>
+    <string name="desc_edit_title_button">edit title button</string>
+    <string name="desc_add_remove_favorite">add/remove favorite</string>
+    <string name="desc_create_shortcut_button">create shortcut button</string>
 
     <plurals name="plural_second">
         <item quantity="one">@string/second</item>

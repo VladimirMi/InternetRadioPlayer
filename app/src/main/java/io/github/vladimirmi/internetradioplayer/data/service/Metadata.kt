@@ -4,7 +4,6 @@ import android.content.Context
 import android.graphics.Bitmap
 import android.support.v4.media.MediaMetadataCompat
 import io.github.vladimirmi.internetradioplayer.data.db.entity.Station
-import io.github.vladimirmi.internetradioplayer.extensions.getBitmap
 
 /**
  * Created by Vladimir Mikhalev 01.02.2018.
@@ -40,7 +39,7 @@ fun MediaMetadataCompat.setArtistTitle(metadata: String): MediaMetadataCompat {
 fun MediaMetadataCompat.setStation(station: Station, context: Context): MediaMetadataCompat {
     return MediaMetadataCompat.Builder(this)
             .putString(MediaMetadataCompat.METADATA_KEY_ALBUM, station.name)
-            .putBitmap(MediaMetadataCompat.METADATA_KEY_ALBUM_ART, station.icon.getBitmap(context, true))
+//            .putBitmap(MediaMetadataCompat.METADATA_KEY_ALBUM_ART, station.icon.getBitmap(context, true))
             .build()
 }
 

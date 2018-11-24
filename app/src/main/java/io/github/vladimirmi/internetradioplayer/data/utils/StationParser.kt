@@ -103,20 +103,12 @@ class StationParser
         return Station(
                 name = headers[HEADER_NAME] ?: name,
                 uri = url.toString(),
+                genre = headers[HEADER_GENRE],
                 url = headers[HEADER_URL],
-                bitrate = headers[HEADER_BITRATE]?.toInt(),
-                sample = headers[HEADER_SAMPLE]?.toInt()).also {
-            it.genres = ArrayList(parseGenres(headers[HEADER_GENRE]))
-        }
-    }
-
-    private fun parseGenres(genres: String?): Set<String> {
-        if (genres == null) return emptySet()
-        return if (genres.contains(',')) {
-            genres.split(',').asSequence().map { it.trim() }.toSet()
-        } else {
-            genres.split(' ').asSequence().map { it.trim() }.toSet()
-        }
+                format = null,
+                bitrate = headers[HEADER_BITRATE],
+                sample = headers[HEADER_SAMPLE]
+        )
     }
 
     private fun String.parsePls(name: String = ""): Station {
@@ -154,7 +146,7 @@ class StationParser
                 !line.startsWith("#EXT", true) -> url = try {
                     URL(line)
                 } catch (e: MalformedURLException) {
-                    Timber.w(e.message)
+                    Timber.w(e)
                     url
                 }
             }

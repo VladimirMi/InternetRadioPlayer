@@ -1,4 +1,4 @@
-package io.github.vladimirmi.internetradioplayer.presentation.station
+package io.github.vladimirmi.internetradioplayer.presentation.player
 
 import io.github.vladimirmi.internetradioplayer.R
 import io.github.vladimirmi.internetradioplayer.presentation.base.BaseDialogFragment
@@ -14,7 +14,7 @@ open class RemoveDialog : BaseDialogFragment() {
     }
 
     override fun onPositive() {
-        (parentFragment as StationFragment).presenter.removeStation()
+        (parentFragment as PlayerFragment).presenter.removeStation()
     }
 
     override fun onNegative() {

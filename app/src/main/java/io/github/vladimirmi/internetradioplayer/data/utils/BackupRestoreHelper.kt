@@ -6,7 +6,6 @@ import android.util.Xml
 import androidx.core.content.FileProvider
 import io.github.vladimirmi.internetradioplayer.BuildConfig
 import io.github.vladimirmi.internetradioplayer.data.db.entity.Group
-import io.github.vladimirmi.internetradioplayer.data.db.entity.Icon
 import io.github.vladimirmi.internetradioplayer.data.db.entity.Station
 import io.github.vladimirmi.internetradioplayer.data.repository.StationListRepository
 import io.github.vladimirmi.internetradioplayer.domain.interactor.StationInteractor
@@ -37,15 +36,13 @@ private const val GROUP_TAG = "group"
 
 private const val VERSION_ATTR = "version"
 private const val NAME_ATTR = "name"
+private const val GENRE_ATTR = "genre"
 private const val GROUP_ATTR = "group"
 private const val URI_ATTR = "streamUri"
 private const val URL_ATTR = "url"
+private const val FORMAT_ATTR = "format"
 private const val BITRATE_ATTR = "bitrate"
 private const val SAMPLE_ATTR = "sample"
-private const val ICON_RES_ATTR = "icon_res"
-private const val ICON_BG_ATTR = "icon_bg"
-private const val ICON_FG_ATTR = "icon_fg"
-private const val GENRES_ATTR = "genres"
 private const val ORDER_ATTR = "order"
 private const val EXPANDED_ATTR = "expanded"
 
@@ -89,14 +86,12 @@ class BackupRestoreHelper
                 serializer.attribute(ns, NAME_ATTR, name)
                 serializer.attribute(ns, GROUP_ATTR, group)
                 serializer.attribute(ns, URI_ATTR, uri)
-                url?.let { serializer.attribute(ns, URL_ATTR, url) }
-                bitrate?.let { serializer.attribute(ns, BITRATE_ATTR, bitrate.toString()) }
-                sample?.let { serializer.attribute(ns, SAMPLE_ATTR, sample.toString()) }
-                serializer.attribute(ns, GENRES_ATTR, genres.joinToString())
+                genre?.let { serializer.attribute(ns, GENRE_ATTR, it) }
+                url?.let { serializer.attribute(ns, URL_ATTR, it) }
+                format?.let { serializer.attribute(ns, FORMAT_ATTR, it) }
+                bitrate?.let { serializer.attribute(ns, BITRATE_ATTR, it) }
+                sample?.let { serializer.attribute(ns, SAMPLE_ATTR, it) }
                 serializer.attribute(ns, ORDER_ATTR, order.toString())
-                serializer.attribute(ns, ICON_RES_ATTR, icon.res.toString())
-                serializer.attribute(ns, ICON_BG_ATTR, icon.bg.toString())
-                serializer.attribute(ns, ICON_FG_ATTR, icon.fg.toString())
             }
             serializer.endTag(ns, STATION_TAG)
         }
@@ -152,22 +147,18 @@ class BackupRestoreHelper
             if (parser.eventType == XmlPullParser.START_TAG && parser.name == STATION_TAG) {
                 val station = Station(
                         id = UUID.randomUUID().toString(),
-                        groupId = Group.DEFAULT_ID,
                         name = parser.getAttributeValue(ns, NAME_ATTR),
                         uri = parser.getAttributeValue(ns, URI_ATTR),
                         url = parser.getAttributeValue(ns, URL_ATTR),
-                        bitrate = parser.getAttributeValue(ns, BITRATE_ATTR)?.toInt(),
-                        sample = parser.getAttributeValue(ns, SAMPLE_ATTR)?.toInt(),
+                        genre = parser.getAttributeValue(ns, GENRE_ATTR),
+                        format = parser.getAttributeValue(ns, FORMAT_ATTR),
+                        bitrate = parser.getAttributeValue(ns, BITRATE_ATTR),
+                        sample = parser.getAttributeValue(ns, SAMPLE_ATTR),
                         order = parser.getAttributeValue(ns, ORDER_ATTR).toInt(),
-                        icon = Icon(
-                                res = parser.getAttributeValue(ns, ICON_RES_ATTR).toInt(),
-                                bg = parser.getAttributeValue(ns, ICON_BG_ATTR).toInt(),
-                                fg = parser.getAttributeValue(ns, ICON_FG_ATTR).toInt()
-                        )
+                        groupId = Group.DEFAULT_ID
                 )
-                station.genres = parser.getAttributeValue(ns, GENRES_ATTR)
-                        .split(',').map { it.trim() }
-                station.groupName = parser.getAttributeValue(ns, GROUP_ATTR)
+
+                //todo parse group name
                 list.add(station)
             }
         }

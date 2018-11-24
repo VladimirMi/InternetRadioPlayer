@@ -1,4 +1,4 @@
-package io.github.vladimirmi.internetradioplayer.presentation.station
+package io.github.vladimirmi.internetradioplayer.presentation.player
 
 import android.annotation.SuppressLint
 import android.view.LayoutInflater
@@ -23,7 +23,7 @@ class AddShortcutDialog : BaseDialogFragment() {
     }
 
     override fun onPositive() {
-        (parentFragment as StationFragment).presenter.addShortcut(dialogView!!.checkbox.isChecked)
+        (parentFragment as PlayerFragment).presenter.addShortcut(dialogView!!.checkbox.isChecked)
     }
 
     override fun onNegative() {

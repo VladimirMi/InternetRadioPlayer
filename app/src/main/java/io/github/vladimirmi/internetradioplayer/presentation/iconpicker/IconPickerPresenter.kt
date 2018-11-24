@@ -1,5 +1,6 @@
 package io.github.vladimirmi.internetradioplayer.presentation.iconpicker
 
+import io.github.vladimirmi.internetradioplayer.data.db.entity.Icon
 import io.github.vladimirmi.internetradioplayer.domain.interactor.StationInteractor
 import io.github.vladimirmi.internetradioplayer.navigation.Router
 import io.github.vladimirmi.internetradioplayer.presentation.base.BasePresenter
@@ -15,7 +16,7 @@ class IconPickerPresenter
                     private val router: Router)
     : BasePresenter<IconPickerView>() {
 
-    var currentIcon = interactor.currentStation.icon
+    var currentIcon = Icon.randomIcon()
 
     override fun onFirstAttach(view: IconPickerView) {
         view.buildToolbar(ToolbarBuilder.standard()
@@ -28,7 +29,7 @@ class IconPickerPresenter
     }
 
     fun saveIcon() {
-        interactor.currentStation = interactor.currentStation.copy(icon = currentIcon)
+//        interactor.currentStation = interactor.currentStation.copy(icon = currentIcon)
         exit()
     }
 

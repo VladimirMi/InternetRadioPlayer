@@ -5,16 +5,14 @@ import androidx.room.Database
 import androidx.room.Room
 import androidx.room.RoomDatabase
 import io.github.vladimirmi.internetradioplayer.data.db.dao.StationDao
-import io.github.vladimirmi.internetradioplayer.data.db.entity.Genre
 import io.github.vladimirmi.internetradioplayer.data.db.entity.Group
 import io.github.vladimirmi.internetradioplayer.data.db.entity.Station
-import io.github.vladimirmi.internetradioplayer.data.db.entity.StationGenreJoin
 
 /**
  * Created by Vladimir Mikhalev 28.08.2018.
  */
 
-@Database(entities = [Station::class, Genre::class, StationGenreJoin::class, Group::class],
+@Database(entities = [Station::class, Group::class],
         version = 1, exportSchema = false)
 abstract class StationsDatabase : RoomDatabase() {
 

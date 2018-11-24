@@ -83,6 +83,8 @@
         app:layout_constraintStart_toEndOf="@id/stopBt"
         app:layout_constraintEnd_toStartOf="@id/nextBt"
         app:layout_constraintBottom_toBottomOf="parent"
+        app:pb_pauseColor="@color/primaryColor"
+        app:pb_playColor="@color/primaryColor"
         />
 
     <ImageButton

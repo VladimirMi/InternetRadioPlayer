@@ -64,9 +64,6 @@
     <string name="station_title_information">Information:</string>
     <string name="station_genre">Genres:</string>
 
-    <string name="unit_sample_rate" translatable="false">%1$d\Hz</string>
-    <string name="unit_bitrate" translatable="false">%1$d\kbps</string>
-
     <string name="icon_icon">Icon</string>
     <string name="icon_favicon">Web site icon</string>
     <string name="icon_text">Text</string>

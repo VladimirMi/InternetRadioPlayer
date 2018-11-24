@@ -7,7 +7,6 @@ import java.util.*
  * Created by Vladimir Mikhalev 28.08.2018.
  */
 
-//todo create group_id index
 @Entity(foreignKeys = [ForeignKey(
         entity = Group::class,
         parentColumns = ["id"],
@@ -19,27 +18,39 @@ data class Station(
         @PrimaryKey val id: String,
         val name: String,
         val uri: String,
+        val genre: String?,
         val url: String?,
-        val bitrate: Int?,
-        val sample: Int?,
+        val format: String?,
+        val bitrate: String?,
+        val sample: String?,
         val order: Int,
-        @Embedded(prefix = "icon_") val icon: Icon,
         @ColumnInfo(name = "group_id") val groupId: String
 ) {
 
-    @Ignore var genres: List<String> = listOf()
-    @Ignore var groupName: String = Group.DEFAULT_NAME
-
-    @Ignore constructor(name: String,
-                        uri: String,
-                        url: String?,
-                        bitrate: Int?,
-                        sample: Int?)
-            : this(UUID.randomUUID().toString(), name, uri, url, bitrate, sample,
-            0, Icon.randomIcon(), Group.DEFAULT_ID)
+    @Ignore
+    constructor(name: String,
+                uri: String,
+                genre: String?,
+                url: String?,
+                format: String?,
+                bitrate: String?,
+                sample: String?)
+            : this(UUID.randomUUID().toString(),
+            name, uri, genre, url, format, bitrate, sample,
+            0, Group.DEFAULT_ID)
 
     companion object {
-        fun nullObj() = Station("", "", "", 0, 0) //empty uri not valid (can't be)
+        fun nullObj() = Station("", "", null, null, null, null, null) //empty uri not valid (can't be)
+    }
+
+    @Ignore val specs: String
+
+    init {
+        val sb = StringBuilder()
+        format?.let { sb.append(it); sb.append(", ") }
+        sample?.let { sb.append(it); sb.append(", ") }
+        bitrate?.let { sb.append(it) }
+        specs = sb.toString()
     }
 
     fun isNull() = uri.isEmpty()

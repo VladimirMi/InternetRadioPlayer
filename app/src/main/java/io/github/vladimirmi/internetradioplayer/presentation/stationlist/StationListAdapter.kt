@@ -12,7 +12,10 @@ import io.github.vladimirmi.internetradioplayer.R
 import io.github.vladimirmi.internetradioplayer.data.db.entity.Group
 import io.github.vladimirmi.internetradioplayer.data.db.entity.Station
 import io.github.vladimirmi.internetradioplayer.domain.model.FlatStationsList
-import io.github.vladimirmi.internetradioplayer.extensions.*
+import io.github.vladimirmi.internetradioplayer.extensions.color
+import io.github.vladimirmi.internetradioplayer.extensions.dp
+import io.github.vladimirmi.internetradioplayer.extensions.setTintExt
+import io.github.vladimirmi.internetradioplayer.extensions.visible
 import io.github.vladimirmi.internetradioplayer.ui.FixedOutlineProvider
 import kotlinx.android.synthetic.main.item_group_item.view.*
 import kotlinx.android.synthetic.main.item_group_title.view.*
@@ -204,7 +207,6 @@ class GroupItemVH(itemView: View) : GroupElementVH(itemView) {
 
     fun bind(station: Station) {
         itemView.name.text = station.name
-        itemView.iconIv.setImageBitmap(station.icon.getBitmap(itemView.context))
     }
 
     fun changeBackground(lastStationInGroup: Boolean, firstInList: Boolean) {

@@ -1,4 +1,4 @@
-package io.github.vladimirmi.internetradioplayer.presentation.station
+package io.github.vladimirmi.internetradioplayer.presentation.player
 
 import android.content.Intent
 import android.os.Bundle

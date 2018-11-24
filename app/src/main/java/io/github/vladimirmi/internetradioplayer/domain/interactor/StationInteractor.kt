@@ -6,11 +6,9 @@ import io.github.vladimirmi.internetradioplayer.R
 import io.github.vladimirmi.internetradioplayer.data.db.entity.Group
 import io.github.vladimirmi.internetradioplayer.data.db.entity.Station
 import io.github.vladimirmi.internetradioplayer.data.repository.StationListRepository
-import io.github.vladimirmi.internetradioplayer.data.utils.AppMigrationHelper
 import io.github.vladimirmi.internetradioplayer.data.utils.ShortcutHelper
 import io.github.vladimirmi.internetradioplayer.domain.model.FlatStationsList
 import io.github.vladimirmi.internetradioplayer.extensions.MessageResException
-import io.github.vladimirmi.internetradioplayer.presentation.station.StationInfo
 import io.reactivex.Completable
 import io.reactivex.Observable
 import io.reactivex.Single
@@ -24,8 +22,7 @@ import javax.inject.Inject
 
 class StationInteractor
 @Inject constructor(private val stationRepository: StationListRepository,
-                    private val shortcutHelper: ShortcutHelper,
-                    private val migrationHelper: AppMigrationHelper) {
+                    private val shortcutHelper: ShortcutHelper) {
 
     val groups = arrayListOf<Group>()
 
@@ -48,8 +45,7 @@ class StationInteractor
     private var stationsList = FlatStationsList()
 
     fun initStations(): Completable {
-        return migrationHelper.tryMigrate()
-                .andThen(buildGroupsList()).doOnComplete {
+        return buildGroupsList().doOnComplete {
                     val savedCurrentStation = getStation(stationRepository.getCurrentStationId())
                     currentStation = savedCurrentStation ?: stationsList.getFirstStation() ?: Station.nullObj()
                 }
@@ -61,7 +57,6 @@ class StationInteractor
             val map = stations.groupBy { it.groupId }
             groups.forEach { group ->
                 val groupStations = map[group.id]
-                groupStations?.forEach { it.groupName = group.name }
                 groupStations?.let { group.stations = groupStations.toMutableList() }
             }
             groups
@@ -138,8 +133,6 @@ class StationInteractor
 
         return addGroup(groupName).flatMapCompletable { group ->
             val newStation = currentStation.copy(groupId = group.id, order = group.stations.size)
-            newStation.genres = currentStation.genres
-            newStation.groupName = groupName
             stationRepository.addStation(newStation).doOnComplete {
                 group.stations.add(newStation)
                 currentStation = newStation
@@ -154,7 +147,6 @@ class StationInteractor
         return addGroup(groupName).flatMapCompletable { group ->
             val order = if (currentStation.groupId != group.id) group.stations.size else currentStation.order
             val newStation = currentStation.copy(name = stationName, groupId = group.id, order = order)
-            newStation.groupName = groupName
             stationRepository.updateStations(listOf(newStation))
                     .doOnComplete { currentStation = newStation }
             //todo optimize
@@ -197,15 +189,6 @@ class StationInteractor
                     groups[i] = newGroup
                     buildStationsList()
                 }
-    }
-
-    fun stationChanged(stationInfo: StationInfo): Boolean {
-        return when {
-            currentStation.icon != previousWhenEdit!!.icon -> true
-            stationInfo.stationName != previousWhenEdit!!.name -> true
-            stationInfo.groupName != previousWhenEdit!!.groupName -> true
-            else -> false
-        }
     }
 
     fun moveGroupElements(stations: FlatStationsList): Completable {

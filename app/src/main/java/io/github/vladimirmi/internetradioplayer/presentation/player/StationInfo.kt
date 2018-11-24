@@ -1,4 +1,4 @@
-package io.github.vladimirmi.internetradioplayer.presentation.station
+package io.github.vladimirmi.internetradioplayer.presentation.player
 
 /**
  * Created by Vladimir Mikhalev 12.09.2018.

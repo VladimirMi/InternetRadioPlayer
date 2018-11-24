@@ -2,10 +2,8 @@ package io.github.vladimirmi.internetradioplayer.data.repository
 
 import android.net.Uri
 import io.github.vladimirmi.internetradioplayer.data.db.StationsDatabase
-import io.github.vladimirmi.internetradioplayer.data.db.entity.Genre
 import io.github.vladimirmi.internetradioplayer.data.db.entity.Group
 import io.github.vladimirmi.internetradioplayer.data.db.entity.Station
-import io.github.vladimirmi.internetradioplayer.data.db.entity.StationGenreJoin
 import io.github.vladimirmi.internetradioplayer.data.utils.Preferences
 import io.github.vladimirmi.internetradioplayer.data.utils.StationParser
 import io.reactivex.Completable
@@ -33,15 +31,10 @@ class StationListRepository
         return dao.getAllStations()
                 .toObservable()
                 .flatMapIterable { it }
-                .flatMapSingle { station ->
-                    dao.getStationGenres(station.id)
-                            .map { station.apply { genres = it.map(Genre::name) } }
-                }.toList()
+                .toList()
     }
 
     fun getAllGroups(): Single<List<Group>> = dao.getAllGroups()
-
-    fun getStationGenres(id: String): Single<List<Genre>> = dao.getStationGenres(id)
 
     fun createStation(uri: Uri): Single<Station> {
         return Single.fromCallable {
@@ -68,17 +61,18 @@ class StationListRepository
     }
 
     fun addStation(station: Station): Completable {
-        return Completable.fromCallable {
-            val group = dao.getGroupByName(station.groupName)
-            val newStation = if (station.groupId != group.id) {
-                station.copy(groupId = group.id)
-            } else station
-
-            dao.insertStation(newStation)
-            val genres = station.genres.map(::Genre)
-            dao.insertGenres(genres)
-            dao.insertStationGenre(genres.map { StationGenreJoin(station.id, it.name) })
-        }
+//        return Completable.fromCallable {
+//            val group = dao.getGroupByName(station.groupName)
+//            val newStation = if (station.groupId != group.id) {
+//                station.copy(groupId = group.id)
+//            } else station
+//
+//            dao.insertStation(newStation)
+//            val genres = station.genres.map(::Genre)
+//            dao.insertGenres(genres)
+//            dao.insertStationGenre(genres.map { StationGenreJoin(station.id, it.name) })
+//        }
+        return Completable.complete()
     }
 
     fun removeStation(station: Station): Completable {

@@ -1,4 +1,4 @@
-package io.github.vladimirmi.internetradioplayer.presentation.station
+package io.github.vladimirmi.internetradioplayer.presentation.player
 
 import io.github.vladimirmi.internetradioplayer.R
 import io.github.vladimirmi.internetradioplayer.presentation.base.BaseDialogFragment
@@ -14,7 +14,7 @@ class CancelCreateDialog : BaseDialogFragment() {
     }
 
     override fun onPositive() {
-        (parentFragment as StationFragment).presenter.cancelCreate()
+        (parentFragment as PlayerFragment).presenter.cancelCreate()
     }
 
     override fun onNegative() {

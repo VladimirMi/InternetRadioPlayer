@@ -12,6 +12,7 @@ import androidx.core.content.ContextCompat
 import io.github.vladimirmi.internetradioplayer.R
 import io.github.vladimirmi.internetradioplayer.data.db.entity.Station
 import io.github.vladimirmi.internetradioplayer.di.Scopes
+import io.github.vladimirmi.internetradioplayer.extensions.visible
 import io.github.vladimirmi.internetradioplayer.presentation.base.BaseFragment
 import kotlinx.android.synthetic.main.view_station_info.*
 import toothpick.Toothpick
@@ -50,9 +51,13 @@ class PlayerFragment : BaseFragment<PlayerPresenter, PlayerView>(), PlayerView {
 
     override fun setStation(station: Station) {
         titleEt.setText(station.name)
-        genreTv.text = station.genre
-        specsTv.text = station.specs
+        genreTv.setTextOrHide(station.genre)
+        specsTv.setTextOrHide(station.specs)
 
+        setupGroupSpinner()
+    }
+
+    private fun setupGroupSpinner() {
         val adapter = ArrayAdapter<String>(context!!, android.R.layout.simple_spinner_item)
         adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
         adapter.addAll("New folder...", "Other")
@@ -100,6 +105,15 @@ class PlayerFragment : BaseFragment<PlayerPresenter, PlayerView>(), PlayerView {
 
     private fun openLink(it: TextView) {
 
+    }
+
+    private fun TextView.setTextOrHide(text: String?) {
+        if (text == null || text.isBlank()) {
+            visible(false)
+        } else {
+            visible(true)
+            this.text = text
+        }
     }
 
     private fun EditText.setEditable(enable: Boolean) {

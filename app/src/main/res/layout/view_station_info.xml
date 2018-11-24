@@ -54,14 +54,24 @@
         tools:text="Genres"
         />
 
-    <Spinner
-        android:id="@+id/groupSpinner"
+    <FrameLayout
+        android:id="@+id/groupSpinnerWrapper"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginTop="8dp"
+        android:layout_margin="4dp"
+        android:padding="4dp"
+        android:background="@drawable/bg_suggestions"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/genreTv"
-        />
+        >
+
+        <Spinner
+            android:id="@+id/groupSpinner"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:spinnerMode="dropdown"
+            />
+    </FrameLayout>
 
     <TextView
         android:id="@+id/specsTv"
@@ -74,7 +84,7 @@
         android:layout_marginRight="8dp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/groupSpinner"
+        app:layout_constraintTop_toBottomOf="@+id/groupSpinnerWrapper"
         tools:text="MP3, 44kHz 2ch, 192kbps"
         />
 

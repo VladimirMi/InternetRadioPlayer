@@ -15,6 +15,4 @@ interface StationListView : BaseView {
     fun selectStation(station: Station)
 
     fun setPlaying(playing: Boolean)
-
-    fun openAddStationDialog()
 }

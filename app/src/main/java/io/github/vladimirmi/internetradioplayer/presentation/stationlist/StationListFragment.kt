@@ -11,6 +11,7 @@ import io.github.vladimirmi.internetradioplayer.presentation.base.BaseFragment
 import kotlinx.android.synthetic.main.fragment_stations_list.*
 import toothpick.Toothpick
 
+
 /**
  * Created by Vladimir Mikhalev 30.09.2017.
  */
@@ -73,10 +74,6 @@ class StationListFragment : BaseFragment<StationListPresenter, StationListView>(
 
     override fun setPlaying(playing: Boolean) {
         adapter.setPlaying(playing)
-    }
-
-    override fun openAddStationDialog() {
-        NewStationDialog().show(childFragmentManager, "new_station_dialog")
     }
 
     override fun showMessage(resId: Int) {

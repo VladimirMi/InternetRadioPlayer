@@ -1,4 +1,4 @@
-package io.github.vladimirmi.internetradioplayer.presentation.stationlist
+package io.github.vladimirmi.internetradioplayer.presentation.main
 
 import android.annotation.SuppressLint
 import android.net.Uri
@@ -25,8 +25,7 @@ class NewStationDialog : BaseDialogFragment() {
     }
 
     override fun onPositive() {
-        (parentFragment?.activity as? RootActivity)
-                ?.addStation(Uri.parse(dialogView!!.linkEt.text.toString()))
+        (activity as? RootActivity)?.addStation(Uri.parse(dialogView!!.linkEt.text.toString()))
     }
 
     override fun onNegative() {

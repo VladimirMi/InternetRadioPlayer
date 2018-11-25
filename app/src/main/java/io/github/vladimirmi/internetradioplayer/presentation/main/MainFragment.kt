@@ -1,11 +1,12 @@
 package io.github.vladimirmi.internetradioplayer.presentation.main
 
+import android.annotation.SuppressLint
 import android.os.Bundle
-import android.view.Gravity
-import android.view.View
-import android.view.ViewGroup
+import android.view.*
 import androidx.appcompat.app.ActionBarDrawerToggle
 import androidx.appcompat.app.AppCompatActivity
+import androidx.appcompat.view.menu.MenuBuilder
+import androidx.core.content.ContextCompat
 import androidx.drawerlayout.widget.DrawerLayout
 import androidx.interpolator.view.animation.FastOutSlowInInterpolator
 import androidx.transition.Slide
@@ -58,13 +59,28 @@ class MainFragment : BaseFragment<MainPresenter, MainView>(), MainView {
         setupToolbar()
     }
 
-    private lateinit var toggle: ActionBarDrawerToggle
+    @SuppressLint("RestrictedApi")
+    override fun onPrepareOptionsMenu(menu: Menu) {
+        menu.clear()
+        val item = menu.add(0, R.string.menu_add_station, 0, R.string.menu_add_station)
+        item.setShowAsAction(MenuItem.SHOW_AS_ACTION_NEVER)
+        item.icon = ContextCompat.getDrawable(context!!, R.drawable.ic_add)
+        if (menu is MenuBuilder) menu.setOptionalIconsVisible(true)
+    }
+
+    override fun onOptionsItemSelected(item: MenuItem): Boolean {
+        when (item.itemId) {
+            R.string.menu_add_station -> openAddStationDialog()
+            else -> return false
+        }
+        return true
+    }
 
     private fun setupToolbar() {
         (activity as AppCompatActivity).setSupportActionBar(toolbar)
 
         val drawer = findDrawer(toolbar) ?: return
-        toggle = ActionBarDrawerToggle(activity, drawer, toolbar, R.string.desc_expand_collapse,
+        val toggle = ActionBarDrawerToggle(activity, drawer, toolbar, R.string.desc_expand_collapse,
                 R.string.desc_favorite)
         drawer.addDrawerListener(toggle)
         toggle.syncState()
@@ -91,6 +107,10 @@ class MainFragment : BaseFragment<MainPresenter, MainView>(), MainView {
         slide.mode = if (visible) Visibility.MODE_IN else Visibility.MODE_OUT
         TransitionManager.beginDelayedTransition(view as ViewGroup, slide)
         playerControlsFr.view?.visible(visible)
+    }
+
+    private fun openAddStationDialog() {
+        NewStationDialog().show(childFragmentManager, "new_station_dialog")
     }
 
     private fun createSlideTransition(): Slide {

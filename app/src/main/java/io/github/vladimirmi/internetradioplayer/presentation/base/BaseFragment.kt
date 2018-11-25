@@ -23,6 +23,7 @@ abstract class BaseFragment<P : BasePresenter<V>, V : BaseView> : Fragment(), Ba
     override fun onCreate(@Nullable savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         presenter = providePresenter()
+        setHasOptionsMenu(true)
     }
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {

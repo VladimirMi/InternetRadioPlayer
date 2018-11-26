@@ -3,8 +3,9 @@ package io.github.vladimirmi.internetradioplayer.presentation.root
 import android.annotation.SuppressLint
 import android.net.Uri
 import io.github.vladimirmi.internetradioplayer.R
+import io.github.vladimirmi.internetradioplayer.domain.interactor.FavoriteListInteractor
 import io.github.vladimirmi.internetradioplayer.domain.interactor.MainInteractor
-import io.github.vladimirmi.internetradioplayer.domain.interactor.PlayerControlsInteractor
+import io.github.vladimirmi.internetradioplayer.domain.interactor.PlayerInteractor
 import io.github.vladimirmi.internetradioplayer.domain.interactor.StationInteractor
 import io.github.vladimirmi.internetradioplayer.extensions.ioToMain
 import io.github.vladimirmi.internetradioplayer.extensions.subscribeX
@@ -20,18 +21,19 @@ import javax.inject.Inject
 
 class RootPresenter
 @Inject constructor(private val router: Router,
-                    private val controlsInteractor: PlayerControlsInteractor,
+                    private val playerInteractor: PlayerInteractor,
                     private val stationInteractor: StationInteractor,
+                    private val favoriteListInteractor: FavoriteListInteractor,
                     private val mainInteractor: MainInteractor)
     : BasePresenter<RootView>() {
 
 
     override fun onFirstAttach(view: RootView) {
-        controlsInteractor.connect()
+        playerInteractor.connect()
         val pageId = mainInteractor.getMainPageId()
         router.newRootScreen(pageId)
 
-        stationInteractor.initStations()
+        favoriteListInteractor.initFavoriteList()
                 .ioToMain()
                 .subscribeX(onComplete = { view.checkIntent() })
                 .addTo(dataSubs)
@@ -42,19 +44,19 @@ class RootPresenter
     }
 
     override fun onDestroy() {
-        controlsInteractor.disconnect()
+        playerInteractor.disconnect()
     }
 
     @SuppressLint("CheckResult")
     fun addStation(uri: Uri, startPlay: Boolean) {
-        val station = stationInteractor.getStation { it.uri == uri.toString() }
-        if (station != null) {
-            stationInteractor.currentStation = station
-//            router.showStationReplace(station.id)
-            Timber.e("addStation: existed ${station.name}")
-            if (startPlay) controlsInteractor.play()
-            return
-        }
+//        val station = stationInteractor.getStation { it.uri == uri.toString() }
+//        if (station != null) {
+//            stationInteractor.currentStation = station
+////            router.showStationReplace(station.id)
+//            Timber.e("addStation: existed ${station.name}")
+//            if (startPlay) playerInteractor.play()
+//            return
+//        }
 
         stationInteractor.createStation(uri)
                 .ioToMain()
@@ -62,21 +64,21 @@ class RootPresenter
                 .doFinally { view?.showLoadingIndicator(false) }
                 .subscribeX(onSuccess = {
                     Timber.e("addStation: ${it.name}")
-//                    router.showStationSlide(stationInteractor.currentStation.id)
+//                    router.showStationSlide(stationInteractor.station.id)
                 }).addTo(viewSubs)
     }
 
     @SuppressLint("CheckResult")
     fun showStation(id: String, startPlay: Boolean) {
-        val station = stationInteractor.getStation { it.id == id }
-        if (station != null) {
-            stationInteractor.currentStation = station
-            Timber.e("showStation: ${station.name}")
-//            router.showStationReplace(station.id)
-            if (startPlay) controlsInteractor.play()
-        } else {
-            view?.showMessage(R.string.msg_shortcut_remove)
-        }
+//        val station = stationInteractor.getStation { it.id == id }
+//        if (station != null) {
+//            stationInteractor.currentStation = station
+//            Timber.e("showStation: ${station.name}")
+////            router.showStationReplace(station.id)
+//            if (startPlay) playerInteractor.play()
+//        } else {
+//            view?.showMessage(R.string.msg_shortcut_remove)
+//        }
     }
 
     fun navigateTo(navId: Int) {
@@ -88,7 +90,7 @@ class RootPresenter
     }
 
     fun exitApp() {
-        controlsInteractor.stop()
+        playerInteractor.stop()
         router.finishChain()
     }
 

@@ -2,16 +2,13 @@ package io.github.vladimirmi.internetradioplayer.presentation.stationlist
 
 import android.support.v4.media.session.PlaybackStateCompat
 import io.github.vladimirmi.internetradioplayer.data.db.entity.Station
-import io.github.vladimirmi.internetradioplayer.domain.interactor.PlayerControlsInteractor
+import io.github.vladimirmi.internetradioplayer.domain.interactor.PlayerInteractor
 import io.github.vladimirmi.internetradioplayer.domain.interactor.StationInteractor
 import io.github.vladimirmi.internetradioplayer.domain.model.FlatStationsList
-import io.github.vladimirmi.internetradioplayer.extensions.subscribeX
 import io.github.vladimirmi.internetradioplayer.navigation.Router
 import io.github.vladimirmi.internetradioplayer.presentation.base.BasePresenter
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.rxkotlin.addTo
-import io.reactivex.rxkotlin.subscribeBy
-import io.reactivex.schedulers.Schedulers
 import timber.log.Timber
 import javax.inject.Inject
 
@@ -21,42 +18,42 @@ import javax.inject.Inject
 
 class StationListPresenter
 @Inject constructor(private val interactor: StationInteractor,
-                    private val controlsInteractor: PlayerControlsInteractor,
+                    private val playerInteractor: PlayerInteractor,
                     private val router: Router)
     : BasePresenter<StationListView>() {
 
     override fun onAttach(view: StationListView) {
-        interactor.stationsListObs
-                .observeOn(AndroidSchedulers.mainThread())
-                .subscribeBy { view.setStations(it) }
-                .addTo(viewSubs)
+//        interactor.stationsListObs
+//                .observeOn(AndroidSchedulers.mainThread())
+//                .subscribeBy { view.setStations(it) }
+//                .addTo(viewSubs)
 
-        interactor.currentStationObs
+        interactor.stationObs
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe { view.selectStation(it) }
                 .addTo(viewSubs)
 
-        controlsInteractor.playbackStateObs
+        playerInteractor.playbackStateObs
                 .subscribe { view.setPlaying(it.state == PlaybackStateCompat.STATE_PLAYING) }
                 .addTo(viewSubs)
     }
 
     fun selectStation(station: Station) {
-        interactor.currentStation = station
+//        interactor.currentStation = station
     }
 
     fun selectGroup(id: String) {
-        interactor.expandOrCollapseGroup(id)
-                .subscribeOn(Schedulers.io())
-                .subscribeX()
-                .addTo(viewSubs)
+//        interactor.expandOrCollapseGroup(id)
+//                .subscribeOn(Schedulers.io())
+//                .subscribeX()
+//                .addTo(viewSubs)
     }
 
     fun removeStation() {
-        interactor.removeStation(interactor.currentStation.id)
-                .subscribeOn(Schedulers.io())
-                .subscribeX()
-                .addTo(viewSubs)
+//        interactor.removeStation(interactor.currentStation.id)
+//                .subscribeOn(Schedulers.io())
+//                .subscribeX()
+//                .addTo(viewSubs)
     }
 
     fun showStation(station: Station) {
@@ -66,10 +63,10 @@ class StationListPresenter
     }
 
     fun moveGroupElements(stations: FlatStationsList) {
-        interactor.moveGroupElements(stations)
-                .subscribeOn(Schedulers.io())
-                .subscribeX()
-                .addTo(viewSubs)
+//        interactor.moveGroupElements(stations)
+//                .subscribeOn(Schedulers.io())
+//                .subscribeX()
+//                .addTo(viewSubs)
     }
 }
 

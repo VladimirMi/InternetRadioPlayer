@@ -80,6 +80,10 @@ class FlatStationsList(private val flatList: MutableList<Any> = arrayListOf()) {
         return position == flatList.size - 1 || isGroup(position + 1)
     }
 
+    fun findStation(predicate: (Station) -> Boolean): Station? {
+        return flatList.find { it is Station && predicate(it) } as? Station
+    }
+
     fun positionOfStation(id: String): Int {
         return flatList.indexOfFirst { it is Station && it.id == id }
     }

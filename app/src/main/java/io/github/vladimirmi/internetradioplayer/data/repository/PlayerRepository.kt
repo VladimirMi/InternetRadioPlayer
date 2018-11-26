@@ -1,5 +1,6 @@
 package io.github.vladimirmi.internetradioplayer.data.repository
 
+import android.annotation.SuppressLint
 import android.content.ComponentName
 import android.content.Context
 import android.os.Bundle
@@ -18,7 +19,7 @@ import javax.inject.Inject
  * Created by Vladimir Mikhalev 13.10.2017.
  */
 
-class MediaController
+class PlayerRepository
 @Inject constructor(context: Context) {
 
     private lateinit var mediaBrowser: MediaBrowserCompat
@@ -39,7 +40,7 @@ class MediaController
                 }
                 connected.accept(true)
             } catch (e: RemoteException) {
-                Timber.e(e, e.message)
+                Timber.e(e)
             }
         }
 
@@ -83,9 +84,9 @@ class MediaController
         connected.accept(false)
     }
 
+    @SuppressLint("CheckResult")
     fun play() {
-        connected.filter { it }.first(true)
-                .subscribeBy { controller?.transportControls?.play() }
+        connected.filter { it }.first(true).subscribeBy { controller?.transportControls?.play() }
     }
 
     fun pause() {

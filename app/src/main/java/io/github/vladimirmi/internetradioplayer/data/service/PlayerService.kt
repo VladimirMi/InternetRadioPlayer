@@ -60,7 +60,7 @@ class PlayerService : MediaBrowserServiceCompat(), SessionCallback.Interface {
         playback = Playback(this, playerCallback)
         notification = MediaNotification(this, session)
 
-        stationInteractor.currentStationObs
+        stationInteractor.stationObs
                 .subscribe { handleCurrentStation(it) }
                 .addTo(subs)
     }
@@ -134,7 +134,7 @@ class PlayerService : MediaBrowserServiceCompat(), SessionCallback.Interface {
 
 
     private fun playCurrent() {
-        val station = stationInteractor.currentStation
+        val station = stationInteractor.station
         playingStationId = station.id
         playback.play(station.uri.toUri())
     }
@@ -159,16 +159,13 @@ class PlayerService : MediaBrowserServiceCompat(), SessionCallback.Interface {
     }
 
     override fun onSkipToPreviousCommand() {
-        //todo refactor (remove player mode)
-        if (stationInteractor.createMode || stationInteractor.previousWhenEdit != null) return
-        val changed = stationInteractor.previousStation()
-        if (changed) session.sendSessionEvent(EVENT_SESSION_PREVIOUS, null)
+//        val changed = stationInteractor.previousStation()
+//        if (changed) session.sendSessionEvent(EVENT_SESSION_PREVIOUS, null)
     }
 
     override fun onSkipToNextCommand() {
-        if (stationInteractor.createMode || stationInteractor.previousWhenEdit != null) return
-        val changed = stationInteractor.nextStation()
-        if (changed) session.sendSessionEvent(EVENT_SESSION_NEXT, null)
+//        val changed = stationInteractor.nextStation()
+//        if (changed) session.sendSessionEvent(EVENT_SESSION_NEXT, null)
     }
 
     //endregion

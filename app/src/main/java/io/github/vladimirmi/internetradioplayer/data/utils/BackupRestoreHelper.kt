@@ -7,7 +7,7 @@ import androidx.core.content.FileProvider
 import io.github.vladimirmi.internetradioplayer.BuildConfig
 import io.github.vladimirmi.internetradioplayer.data.db.entity.Group
 import io.github.vladimirmi.internetradioplayer.data.db.entity.Station
-import io.github.vladimirmi.internetradioplayer.data.repository.StationListRepository
+import io.github.vladimirmi.internetradioplayer.data.repository.FavoriteListRepository
 import io.github.vladimirmi.internetradioplayer.domain.interactor.StationInteractor
 import io.github.vladimirmi.internetradioplayer.extensions.clear
 import io.reactivex.Completable
@@ -48,7 +48,7 @@ private const val EXPANDED_ATTR = "expanded"
 
 class BackupRestoreHelper
 @Inject constructor(private val interactor: StationInteractor,
-                    private val repository: StationListRepository,
+                    private val repository: FavoriteListRepository,
                     private val context: Context) {
 
     private val ns: String? = null
@@ -56,7 +56,8 @@ class BackupRestoreHelper
     fun createBackup(): Uri {
         val file = File(context.cacheDir, BACKUP_NAME)
         if (file.exists()) file.clear()
-        file.writeText(createXml(interactor.groups))
+        //fixme
+//        file.writeText(createXml(interactor.groups))
 
         return FileProvider.getUriForFile(context, "${BuildConfig.APPLICATION_ID}.fileprovider", file)
     }

@@ -11,7 +11,6 @@ import io.github.vladimirmi.internetradioplayer.data.utils.BACKUP_TYPE
 import io.github.vladimirmi.internetradioplayer.data.utils.BackupRestoreHelper
 import io.github.vladimirmi.internetradioplayer.data.utils.PREFERENCES_NAME
 import io.github.vladimirmi.internetradioplayer.di.Scopes
-import io.github.vladimirmi.internetradioplayer.domain.interactor.StationInteractor
 import io.github.vladimirmi.internetradioplayer.extensions.ioToMain
 import io.github.vladimirmi.internetradioplayer.extensions.startActivitySafe
 import io.github.vladimirmi.internetradioplayer.extensions.subscribeX
@@ -75,8 +74,9 @@ class SettingsFragment : PreferenceFragmentCompat(), BackPressListener {
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         if (requestCode == PICK_BACKUP_REQUEST_CODE && resultCode == Activity.RESULT_OK
                 && data?.data != null) {
+            //fixme
             backupRestoreHelper.restoreBackup(context!!.contentResolver.openInputStream(data.data!!)!!)
-                    .andThen(Scopes.app.getInstance(StationInteractor::class.java).initStations())
+//                    .andThen(Scopes.app.getInstance(StationInteractor::class.java).initStations())
                     .ioToMain()
                     .doOnComplete { router.exit() }
                     .subscribeX()

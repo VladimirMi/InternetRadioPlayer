@@ -1,12 +1,12 @@
 package io.github.vladimirmi.internetradioplayer.data.repository
 
-import android.net.Uri
+import com.jakewharton.rxrelay2.BehaviorRelay
 import io.github.vladimirmi.internetradioplayer.data.db.StationsDatabase
 import io.github.vladimirmi.internetradioplayer.data.db.entity.Group
 import io.github.vladimirmi.internetradioplayer.data.db.entity.Station
-import io.github.vladimirmi.internetradioplayer.data.utils.Preferences
-import io.github.vladimirmi.internetradioplayer.data.utils.StationParser
+import io.github.vladimirmi.internetradioplayer.domain.model.FlatStationsList
 import io.reactivex.Completable
+import io.reactivex.Observable
 import io.reactivex.Single
 import javax.inject.Inject
 
@@ -14,18 +14,23 @@ import javax.inject.Inject
  * Created by Vladimir Mikhalev 30.09.2017.
  */
 
-class StationListRepository
-@Inject constructor(private val stationParser: StationParser,
-                    private val preferences: Preferences,
-                    private val db: StationsDatabase) {
+class FavoriteListRepository
+@Inject constructor(private val db: StationsDatabase) {
 
     private val dao = db.stationDao()
 
-    fun saveCurrentStationId(id: String) {
-        preferences.currentStationId = id
+    private val _stationsListObs = BehaviorRelay.createDefault(FlatStationsList())
+    val stationsListObs: Observable<FlatStationsList> get() = _stationsListObs
+    private val list: FlatStationsList
+        get() = _stationsListObs.value!!
+
+    fun initStationsList(): Completable {
+        return Completable.complete()
     }
 
-    fun getCurrentStationId() = preferences.currentStationId
+    fun findStation(predicate: (Station) -> Boolean): Station? {
+        return list.findStation(predicate)
+    }
 
     fun getAllStations(): Single<List<Station>> {
         return dao.getAllStations()
@@ -36,11 +41,6 @@ class StationListRepository
 
     fun getAllGroups(): Single<List<Group>> = dao.getAllGroups()
 
-    fun createStation(uri: Uri): Single<Station> {
-        return Single.fromCallable {
-            stationParser.parseFromUri(uri)
-        }
-    }
 
     fun addGroup(group: Group): Completable {
         return Completable.fromCallable {

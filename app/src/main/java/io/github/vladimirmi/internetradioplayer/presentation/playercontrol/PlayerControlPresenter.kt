@@ -5,9 +5,8 @@ import android.support.v4.media.session.PlaybackStateCompat
 import android.support.v4.media.session.PlaybackStateCompat.*
 import io.github.vladimirmi.internetradioplayer.R
 import io.github.vladimirmi.internetradioplayer.data.service.*
-import io.github.vladimirmi.internetradioplayer.domain.interactor.PlayerControlsInteractor
+import io.github.vladimirmi.internetradioplayer.domain.interactor.PlayerInteractor
 import io.github.vladimirmi.internetradioplayer.domain.interactor.StationInteractor
-import io.github.vladimirmi.internetradioplayer.domain.model.PlayerMode
 import io.github.vladimirmi.internetradioplayer.navigation.Router
 import io.github.vladimirmi.internetradioplayer.presentation.base.BasePresenter
 import io.reactivex.android.schedulers.AndroidSchedulers
@@ -21,30 +20,25 @@ import javax.inject.Inject
  */
 
 class PlayerControlPresenter
-@Inject constructor(private val controlsInteractor: PlayerControlsInteractor,
+@Inject constructor(private val playerInteractor: PlayerInteractor,
                     private val stationInteractor: StationInteractor,
                     private val router: Router)
     : BasePresenter<PlayerControlView>() {
 
     override fun onFirstAttach(view: PlayerControlView) {
-        controlsInteractor.playbackStateObs
+        playerInteractor.playbackStateObs
                 .subscribe { handleState(it) }
                 .addTo(viewSubs)
 
-        controlsInteractor.sessionEventObs
-                .subscribe { handleSessionEvent(it) }
-                .addTo(viewSubs)
+//        playerInteractor.sessionEventObs
+//                .subscribe { handleSessionEvent(it) }
+//                .addTo(viewSubs)
 
-        controlsInteractor.playbackMetaData
+        playerInteractor.playbackMetaData
                 .subscribeBy { handleMetadata(it) }
                 .addTo(viewSubs)
 
-        controlsInteractor.playerModeObs
-                .observeOn(AndroidSchedulers.mainThread())
-                .subscribe { handlePlayerMode(it) }
-                .addTo(viewSubs)
-
-        stationInteractor.currentStationObs
+        stationInteractor.stationObs
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe { view.setStation(it) }
                 .addTo(viewSubs)
@@ -70,25 +64,18 @@ class PlayerControlPresenter
             PlayerService.EVENT_SESSION_PREVIOUS -> {
                 view?.showPrevious()
                 Timber.e("handleSessionEvent: previous")
-//                router.skipToPrevious(stationInteractor.currentStation.id)
+//                router.skipToPrevious(stationInteractor.station.id)
             }
             PlayerService.EVENT_SESSION_NEXT -> {
                 view?.showNext()
                 Timber.e("handleSessionEvent: next")
-//                router.skipToNext(stationInteractor.currentStation.id)
+//                router.skipToNext(stationInteractor.station.id)
             }
         }
     }
 
-    private fun handlePlayerMode(mode: PlayerMode) {
-        when (mode) {
-            PlayerMode.NORMAL_MODE -> view?.enableEditMode(false)
-            PlayerMode.EDIT_MODE -> view?.enableEditMode(true)
-        }
-    }
-
     fun playPause() {
-        with(controlsInteractor) {
+        with(playerInteractor) {
             if (!isPlaying && !isNetAvail) {
                 view?.showMessage(R.string.msg_net_error)
             } else {
@@ -99,15 +86,15 @@ class PlayerControlPresenter
 
     fun showStation() {
         Timber.e("showStation: ")
-//        router.showStationSlide(stationInteractor.currentStation.id)
+//        router.showStationSlide(stationInteractor.station.id)
     }
 
     fun skipToPrevious() {
-        controlsInteractor.skipToPrevious()
+        playerInteractor.skipToPrevious()
     }
 
     fun skipToNext() {
-        controlsInteractor.skipToNext()
+        playerInteractor.skipToNext()
     }
 
     fun changeIcon() {

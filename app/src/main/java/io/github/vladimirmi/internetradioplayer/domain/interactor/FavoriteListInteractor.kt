@@ -1,12 +1,14 @@
 package io.github.vladimirmi.internetradioplayer.domain.interactor
 
 import io.reactivex.Completable
+import javax.inject.Inject
 
 /**
  * Created by Vladimir Mikhalev 25.11.2018.
  */
 
-class FavoriteListInteractor {
+class FavoriteListInteractor
+@Inject constructor() {
 
     fun initFavoriteList(): Completable {
         return Completable.complete()

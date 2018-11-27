@@ -17,12 +17,12 @@
         android:layout_marginRight="16dp"
         android:layout_marginLeft="16dp"
         android:layout_marginTop="16dp"
-        android:minHeight="200dp"
-        app:strokeColor="@color/black"
+        app:strokeColor="@color/primaryColor"
         app:strokeWidth="1dp"
         app:cardElevation="4dp"
         app:cardCornerRadius="8dp"
         app:contentPadding="8dp"
+        app:cardBackgroundColor="@color/primaryLightColor"
         >
 
         <include layout="@layout/view_station_info"/>
@@ -37,7 +37,7 @@
         android:layout_marginLeft="16dp"
         android:layout_marginEnd="16dp"
         android:layout_marginRight="16dp"
-        android:layout_marginBottom="16dp"
+        android:layout_marginBottom="32dp"
         android:ellipsize="marquee"
         android:marqueeRepeatLimit="marquee_forever"
         android:singleLine="true"
@@ -60,6 +60,7 @@
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toStartOf="@id/stopBt"
         app:layout_constraintStart_toStartOf="parent"
+        android:foreground="?actionBarItemBackground"
         />
 
     <ImageButton
@@ -72,6 +73,7 @@
         app:layout_constraintEnd_toStartOf="@id/playPauseBt"
         app:layout_constraintStart_toEndOf="@id/previousBt"
         android:contentDescription="@string/desc_stop_button"
+        android:foreground="?actionBarItemBackground"
         />
 
     <io.github.vladimirmi.playerbutton.PlayerButton
@@ -85,6 +87,7 @@
         app:layout_constraintBottom_toBottomOf="parent"
         app:pb_pauseColor="@color/primaryColor"
         app:pb_playColor="@color/primaryColor"
+        android:foreground="?actionBarItemBackground"
         />
 
     <ImageButton
@@ -99,5 +102,6 @@
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toEndOf="@id/playPauseBt"
+        android:foreground="?actionBarItemBackground"
         />
 </androidx.constraintlayout.widget.ConstraintLayout>

@@ -17,9 +17,5 @@ class RootActivityModule : Module() {
         bind(Router::class.java).toInstance(cicerone.router)
 
         bind(NavigatorHolder::class.java).toInstance(cicerone.navigatorHolder)
-
-        bind(PlayerRepository::class.java).singletonInScope()
-
-        bind(RootPresenter::class.java).singletonInScope()
     }
 }

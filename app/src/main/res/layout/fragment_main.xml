@@ -38,19 +38,10 @@
         android:id="@+id/mainPager"
         android:layout_width="match_parent"
         android:layout_height="0dp"
-        app:layout_constraintBottom_toTopOf="@id/playerControlsFr"
+        app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintRight_toRightOf="parent"
         app:layout_constraintTop_toBottomOf="@id/appbar"
-        />
-
-    <fragment
-        android:id="@+id/playerControlsFr"
-        android:name="io.github.vladimirmi.internetradioplayer.presentation.playercontrol.PlayerControlFragment"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        app:layout_constraintBottom_toBottomOf="parent"
-        tools:layout="@layout/fragment_player_controls"
         />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

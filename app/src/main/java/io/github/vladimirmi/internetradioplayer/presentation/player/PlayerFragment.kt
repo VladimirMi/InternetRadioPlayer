@@ -1,10 +1,14 @@
 package io.github.vladimirmi.internetradioplayer.presentation.player
 
+import android.text.InputType
 import android.text.Spannable
 import android.text.SpannableString
 import android.text.style.ForegroundColorSpan
 import android.text.style.URLSpan
+import android.util.TypedValue
 import android.view.View
+import android.view.inputmethod.EditorInfo
+import android.view.inputmethod.InputMethodManager
 import android.widget.ArrayAdapter
 import android.widget.EditText
 import android.widget.TextView
@@ -12,8 +16,9 @@ import androidx.core.content.ContextCompat
 import io.github.vladimirmi.internetradioplayer.R
 import io.github.vladimirmi.internetradioplayer.data.db.entity.Station
 import io.github.vladimirmi.internetradioplayer.di.Scopes
-import io.github.vladimirmi.internetradioplayer.extensions.visible
+import io.github.vladimirmi.internetradioplayer.extensions.*
 import io.github.vladimirmi.internetradioplayer.presentation.base.BaseFragment
+import kotlinx.android.synthetic.main.fragment_player.*
 import kotlinx.android.synthetic.main.view_station_info.*
 import toothpick.Toothpick
 
@@ -36,25 +41,33 @@ class PlayerFragment : BaseFragment<PlayerPresenter, PlayerView>(), PlayerView {
     }
 
     override fun setupView(view: View) {
+        titleEt.setEditable(false)
+        setupGroupSpinner()
+        editTitleBt.setOnClickListener { changeTitleEditable() }
         // save default edit text background
-//        val typedValue = TypedValue()
-//        activity?.theme?.resolveAttribute(android.R.attr.editTextBackground, typedValue, true)
-//        editTextBg = typedValue.resourceId
+        val typedValue = TypedValue()
+        activity?.theme?.resolveAttribute(android.R.attr.editTextBackground, typedValue, true)
+        editTextBg = typedValue.resourceId
 
         // set appropriate action on the multiline text
-//        titleTil.imeOptions = EditorInfo.IME_ACTION_NEXT
-//        titleTil.setRawInputType(InputType.TYPE_CLASS_TEXT)
+        titleEt.imeOptions = EditorInfo.IME_ACTION_NEXT
+        titleEt.setRawInputType(InputType.TYPE_CLASS_TEXT)
+
+        metadataTv.isSelected = true
+        playPauseBt.setOnClickListener { presenter.playPause() }
+        playPauseBt.setManualMode(true)
+        previousBt.setOnClickListener { presenter.skipToPrevious() }
+        nextBt.setOnClickListener { presenter.skipToNext() }
+//        bufferingPb.indeterminateDrawable.mutate().setTintExt(context!!.color(R.color.pause_button))
     }
 
-
     //region =============== PlayerView ==============
+
 
     override fun setStation(station: Station) {
         titleEt.setText(station.name)
         genreTv.setTextOrHide(station.genre)
         specsTv.setTextOrHide(station.specs)
-
-        setupGroupSpinner()
     }
 
     private fun setupGroupSpinner() {
@@ -65,21 +78,6 @@ class PlayerFragment : BaseFragment<PlayerPresenter, PlayerView>(), PlayerView {
         groupSpinner.setSelection(1)
     }
 
-    override fun setEditMode(editMode: Boolean) {
-//        titleTil.setEditable(editMode)
-//        val groupVisible = groupEt.text.isNotBlank() || editMode
-//        groupLabelTv.visible(groupVisible)
-//        groupEt.visible(groupVisible)
-//        groupEt.setEditable(editMode)
-//
-//        if (editMode) {
-//            titleTil.requestFocus()
-//            titleTil.setSelection(titleTil.text.length)
-//        } else {
-//            context!!.inputMethodManager.hideSoftInputFromWindow(view?.windowToken, 0)
-//        }
-    }
-
     override fun openLinkDialog(url: String) {
         LinkDialog.newInstance(url).show(childFragmentManager, "link_dialog")
     }
@@ -88,7 +86,47 @@ class PlayerFragment : BaseFragment<PlayerPresenter, PlayerView>(), PlayerView {
         AddShortcutDialog().show(childFragmentManager, "add_shortcut_dialog")
     }
 
+    override fun showStopped() {
+        playPauseBt.isPlaying = false
+//        bufferingPb.visible(false)
+    }
+
+    override fun showPlaying() {
+        playPauseBt.isPlaying = true
+//        bufferingPb.visible(false)
+    }
+
+    override fun showBuffering() {
+        playPauseBt.isPlaying = true
+//        bufferingPb.visible(true)
+    }
+
+    override fun showNext() {
+        nextBt.bounceXAnimation(200f).start()
+    }
+
+    override fun showPrevious() {
+        previousBt.bounceXAnimation(-200f).start()
+    }
+
+    override fun setMetadata(metadata: String) {
+        metadataTv.text = metadata
+    }
+
     //endregion
+
+    private fun changeTitleEditable() {
+        val enabled = titleEt.isClickable
+        titleEt.setEditable(!enabled)
+        editTitleIv.setImageResource(if (enabled) R.drawable.ic_edit else R.drawable.ic_submit)
+        if (enabled) {
+            context!!.inputMethodManager.hideSoftInputFromWindow(view?.windowToken, 0)
+        } else {
+            titleEt.setSelection(titleEt.length())
+            titleEt.requestFocus()
+            context!!.inputMethodManager.showSoftInput(titleEt, InputMethodManager.SHOW_IMPLICIT)
+        }
+    }
 
     private fun TextView.linkStyle(enable: Boolean) {
         val string = text.toString()
@@ -103,10 +141,6 @@ class PlayerFragment : BaseFragment<PlayerPresenter, PlayerView>(), PlayerView {
         }
     }
 
-    private fun openLink(it: TextView) {
-
-    }
-
     private fun TextView.setTextOrHide(text: String?) {
         if (text == null || text.isBlank()) {
             visible(false)
@@ -117,12 +151,10 @@ class PlayerFragment : BaseFragment<PlayerPresenter, PlayerView>(), PlayerView {
     }
 
     private fun EditText.setEditable(enable: Boolean) {
-        isFocusable = enable
         isClickable = enable
+        isFocusable = enable
         isFocusableInTouchMode = enable
         isCursorVisible = enable
-
-        if (enable) setBackgroundResource(editTextBg)
-        else setBackgroundResource(0)
+        setBackgroundResource(if (enable) editTextBg else 0)
     }
 }

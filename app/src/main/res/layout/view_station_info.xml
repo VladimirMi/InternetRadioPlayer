@@ -17,26 +17,36 @@
         android:layout_marginTop="8dp"
         android:layout_marginEnd="8dp"
         android:layout_marginRight="8dp"
-        android:background="@null"
         android:hint="@string/station_title"
         android:inputType="textNoSuggestions"
-        android:textAppearance="@style/TextAppearance.MaterialComponents.Headline5"
+        android:text="Station title"
+        android:textAppearance="@style/TextAppearance.AppCompat.Title"
         app:layout_constraintEnd_toStartOf="@+id/editTitleBt"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        tools:text="Station title"
         />
 
-    <ImageButton
+    <FrameLayout
         android:id="@+id/editTitleBt"
-        android:layout_width="28dp"
-        android:layout_height="28dp"
-        android:background="@drawable/ic_edit"
-        android:contentDescription="@string/desc_edit_title_button"
+        android:layout_width="40dp"
+        android:layout_height="40dp"
+        android:clickable="true"
+        android:focusable="true"
+        android:foreground="?actionBarItemBackground"
         app:layout_constraintBottom_toBottomOf="@+id/titleEt"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toTopOf="@+id/titleEt"
-        />
+        >
+
+        <ImageView
+            android:id="@+id/editTitleIv"
+            android:layout_width="24dp"
+            android:layout_height="24dp"
+            android:layout_gravity="center"
+            android:contentDescription="@string/desc_edit_title_button"
+            android:src="@drawable/ic_edit"
+            />
+    </FrameLayout>
 
     <TextView
         android:id="@+id/genreTv"
@@ -44,14 +54,30 @@
         android:layout_height="wrap_content"
         android:layout_marginStart="8dp"
         android:layout_marginLeft="8dp"
-        android:layout_marginTop="8dp"
         android:layout_marginEnd="8dp"
         android:layout_marginRight="8dp"
-        android:textAppearance="@style/TextAppearance.MaterialComponents.Subtitle1"
+        android:padding="4dp"
+        android:text="Genres"
+        android:textAppearance="@style/TextAppearance.AppCompat.Subhead"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/titleEt"
-        tools:text="Genres"
+        />
+
+
+    <TextView
+        android:id="@+id/specsTv"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="8dp"
+        android:layout_marginLeft="8dp"
+        android:layout_marginEnd="8dp"
+        android:layout_marginRight="8dp"
+        android:padding="4dp"
+        android:text="MP3, 44kHz 2ch, 192kbps"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/genreTv"
         />
 
     <FrameLayout
@@ -59,10 +85,12 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_margin="4dp"
-        android:padding="4dp"
-        android:background="@drawable/bg_suggestions"
+        android:paddingTop="4dp"
+        android:paddingBottom="4dp"
+        android:background="@drawable/btn_tag"
+        app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/genreTv"
+        app:layout_constraintTop_toBottomOf="@+id/specsTv"
         >
 
         <Spinner
@@ -73,21 +101,6 @@
             />
     </FrameLayout>
 
-    <TextView
-        android:id="@+id/specsTv"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="8dp"
-        android:layout_marginLeft="8dp"
-        android:layout_marginTop="8dp"
-        android:layout_marginEnd="8dp"
-        android:layout_marginRight="8dp"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/groupSpinnerWrapper"
-        tools:text="MP3, 44kHz 2ch, 192kbps"
-        />
-
     <ImageButton
         android:id="@+id/favoriteBt"
         android:layout_width="40dp"
@@ -95,8 +108,9 @@
         android:layout_marginTop="16dp"
         android:background="@drawable/ic_star"
         android:contentDescription="@string/desc_add_remove_favorite"
+        android:foreground="?actionBarItemBackground"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/specsTv"
+        app:layout_constraintTop_toBottomOf="@+id/groupSpinnerWrapper"
         />
 
     <ImageButton
@@ -108,9 +122,10 @@
         android:layout_marginRight="24dp"
         android:background="@drawable/ic_label"
         android:contentDescription="@string/desc_create_shortcut_button"
+        android:foreground="?actionBarItemBackground"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toStartOf="@+id/favoriteBt"
-        app:layout_constraintTop_toBottomOf="@+id/specsTv"
+        app:layout_constraintTop_toBottomOf="@+id/groupSpinnerWrapper"
         />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

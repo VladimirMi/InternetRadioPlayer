@@ -106,7 +106,7 @@ class MainFragment : BaseFragment<MainPresenter, MainView>(), MainView {
         val slide = createSlideTransition()
         slide.mode = if (visible) Visibility.MODE_IN else Visibility.MODE_OUT
         TransitionManager.beginDelayedTransition(view as ViewGroup, slide)
-        playerControlsFr.view?.visible(visible)
+//        playerControlsFr.view?.visible(visible)
     }
 
     private fun openAddStationDialog() {
@@ -117,7 +117,7 @@ class MainFragment : BaseFragment<MainPresenter, MainView>(), MainView {
         val slide = Slide()
         slide.slideEdge = Gravity.BOTTOM
         slide.duration = 300
-        slide.addTarget(R.id.playerControlsFr)
+//        slide.addTarget(R.id.playerControlsFr)
         slide.interpolator = FastOutSlowInInterpolator()
         return slide
     }

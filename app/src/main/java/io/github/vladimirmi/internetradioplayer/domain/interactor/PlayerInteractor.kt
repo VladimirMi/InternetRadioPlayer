@@ -16,7 +16,8 @@ class PlayerInteractor
                     private val networkChecker: NetworkChecker) {
 
     val playbackStateObs: Observable<PlaybackStateCompat> get() = player.playbackState
-    val playbackMetaData: Observable<MediaMetadataCompat> get() = player.playbackMetaData
+    val metadataObs: Observable<MediaMetadataCompat> get() = player.metadata
+    val sessionEventObs: Observable<String> get() = player.sessionEvent
 
     val isPlaying: Boolean
         get() = with(player.playbackState) {

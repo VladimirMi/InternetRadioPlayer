@@ -26,7 +26,7 @@ class PlayerRepository
     private var controller: MediaControllerCompat? = null
 
     val playbackState: BehaviorRelay<PlaybackStateCompat> = BehaviorRelay.create()
-    val playbackMetaData: BehaviorRelay<MediaMetadataCompat> = BehaviorRelay.create()
+    val metadata: BehaviorRelay<MediaMetadataCompat> = BehaviorRelay.create()
     val sessionEvent: BehaviorRelay<String> = BehaviorRelay.create()
     private val connected = BehaviorRelay.createDefault(false)
 
@@ -61,7 +61,7 @@ class PlayerRepository
         }
 
         override fun onMetadataChanged(metadata: MediaMetadataCompat) {
-            playbackMetaData.accept(metadata)
+            this@PlayerRepository.metadata.accept(metadata)
         }
 
         override fun onSessionEvent(event: String, extras: Bundle) {

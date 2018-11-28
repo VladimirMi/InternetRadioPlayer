@@ -1,6 +1,12 @@
 package io.github.vladimirmi.internetradioplayer.domain.interactor
 
+import io.github.vladimirmi.internetradioplayer.data.db.entity.Group
+import io.github.vladimirmi.internetradioplayer.data.db.entity.Station
+import io.github.vladimirmi.internetradioplayer.data.repository.FavoriteListRepository
 import io.reactivex.Completable
+import io.reactivex.Single
+import io.reactivex.rxkotlin.Singles
+import io.reactivex.schedulers.Schedulers
 import javax.inject.Inject
 
 /**
@@ -8,81 +14,50 @@ import javax.inject.Inject
  */
 
 class FavoriteListInteractor
-@Inject constructor() {
+@Inject constructor(private val favoriteListRepository: FavoriteListRepository) {
 
     fun initFavoriteList(): Completable {
-        return Completable.complete()
-//        return buildGroupsList().doOnComplete {
-//            val savedCurrentStation = getStation(stationRepository.getCurrentStationId())
-//            station = savedCurrentStation ?: stationsList.getFirstStation() ?: Station.nullObj()
-//        }
+        return Singles.zip(favoriteListRepository.getAllGroups(), favoriteListRepository.getAllStations())
+        { groups, stations ->
+            val map = stations.groupBy { it.groupId }
+            groups.forEach { group -> group.stations = map[group.id]!! }
+            groups
+        }.flatMapCompletable { groups ->
+            val groupUpdates = arrayListOf<Group>()
+            val stationUpdates = arrayListOf<Station>()
+
+            groups.forEachIndexed { i, group ->
+                if (group.order != i) groupUpdates.add(group.copy(order = i))
+                group.stations.forEachIndexed { j, station ->
+                    if (station.order != j) stationUpdates.add(station.copy(order = j))
+                }
+            }
+            if (groupUpdates.isNotEmpty() || stationUpdates.isNotEmpty()) {
+                favoriteListRepository.updateGroups(groupUpdates)
+                        .andThen(favoriteListRepository.updateStations(stationUpdates))
+                        .andThen(initFavoriteList())
+            } else {
+                favoriteListRepository.initStationsList(groups)
+            }
+        }
     }
 
-//    private fun buildGroupsList(): Completable {
-//        return Singles.zip(stationRepository.getAllGroups(), stationRepository.getAllStations())
-//        { groups, stations ->
-//            val map = stations.groupBy { it.groupId }
-//            groups.forEach { group ->
-//                val groupStations = map[group.id]
-//                groupStations?.let { group.stations = groupStations.toMutableList() }
-//            }
-//            groups
-//        }.flatMapCompletable { groups ->
-//            //todo optimize
-//            val groupUpdates = arrayListOf<Group>()
-//            val stationUpdates = arrayListOf<Station>()
-//
-//            groups.forEachIndexed { i, group ->
-//                if (group.order != i) groupUpdates.add(group.copy(order = i))
-//                group.stations.forEachIndexed { j, station ->
-//                    if (station.order != j) stationUpdates.add(station.copy(order = j))
-//                }
-//            }
-//            if (groupUpdates.isNotEmpty() || stationUpdates.isNotEmpty()) {
-//                stationRepository.updateGroups(groupUpdates)
-//                        .andThen(stationRepository.updateStations(stationUpdates))
-//                        .andThen(buildGroupsList())
-//            } else {
-//                Completable.fromCallable {
-//                    this.groups.clear()
-//                    this.groups.addAll(groups)
-//                    buildStationsList()
-//                }
-//            }
-//        }
-//    }
+    fun isFavorite(station: Station): Boolean {
+        return favoriteListRepository.findStation { it.id == station.id } != null
+    }
 
-//    private fun buildStationsList() {
-//        //todo optimize
-//        stationsList = FlatStationsList.createFrom(groups)
-//        _stationsListObs.accept(stationsList)
-//    }
+    fun createGroup(groupName: String): Completable {
+        return Single.just(favoriteListRepository.groups)
+                .map { groups -> groups.find { groupName == it.name } }
+                .ignoreElement()
+                .onErrorResumeNext {
+                    val group = if (groupName == Group.DEFAULT_NAME) Group.default()
+                    else Group(groupName, favoriteListRepository.groups.size)
 
+                    favoriteListRepository.addGroup(group)
+                }.subscribeOn(Schedulers.io())
+    }
 
-//    fun addCurrentStation(stationName: String, groupName: String): Completable {
-//        validate(stationName, adding = true)?.let { return it }
-//
-//        return addGroup(groupName).flatMapCompletable { group ->
-//            val newStation = station.copy(groupId = group.id, order = group.stations.size)
-//            stationRepository.addStation(newStation).doOnComplete {
-//                group.stations.add(newStation)
-//                station = newStation
-//                buildStationsList()
-//            }
-//        }
-//    }
-
-//    fun updateCurrentStation(stationName: String, groupName: String): Completable {
-//        validate(stationName)?.let { return it }
-//
-//        return addGroup(groupName).flatMapCompletable { group ->
-//            val order = if (station.groupId != group.id) group.stations.size else station.order
-//            val newStation = station.copy(name = stationName, groupId = group.id, order = order)
-//            stationRepository.updateStations(listOf(newStation))
-//                    .doOnComplete { station = newStation }
-//            //todo optimize
-//        }.andThen(buildGroupsList())
-//    }
 
 //    fun removeStation(id: String): Completable {
 //        val station = getStation(id)
@@ -131,19 +106,6 @@ class FavoriteListInteractor
 //
 //        return updateGroups.andThen(updateStations).andThen(buildGroupsList())
 //                .doOnComplete { station = getStation(station.id) ?: Station.nullObj() }
-//    }
-
-//    private fun addGroup(name: String): Single<Group> {
-//        groups.find { it.name == name }?.let { return Single.just(it) }
-//
-//        val group = if (name == Group.DEFAULT_NAME) Group.default() else Group(name, groups.size)
-//
-//        return stationRepository.addGroup(group)
-//                .andThen(Single.fromCallable {
-//                    groups.add(group)
-//                    buildStationsList()
-//                    group
-//                })
 //    }
 
 //    private fun containsStation(predicate: (Station) -> Boolean): Boolean {

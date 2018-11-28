@@ -16,6 +16,7 @@ import io.github.vladimirmi.internetradioplayer.data.db.entity.Station
         version = 1, exportSchema = false)
 abstract class StationsDatabase : RoomDatabase() {
 
+    //todo rename dao to favorites
     abstract fun stationDao(): StationDao
 
     companion object {

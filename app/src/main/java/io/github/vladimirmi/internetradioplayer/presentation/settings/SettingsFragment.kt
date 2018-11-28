@@ -11,7 +11,6 @@ import io.github.vladimirmi.internetradioplayer.data.utils.BACKUP_TYPE
 import io.github.vladimirmi.internetradioplayer.data.utils.BackupRestoreHelper
 import io.github.vladimirmi.internetradioplayer.data.utils.PREFERENCES_NAME
 import io.github.vladimirmi.internetradioplayer.di.Scopes
-import io.github.vladimirmi.internetradioplayer.extensions.ioToMain
 import io.github.vladimirmi.internetradioplayer.extensions.startActivitySafe
 import io.github.vladimirmi.internetradioplayer.extensions.subscribeX
 import io.github.vladimirmi.internetradioplayer.navigation.Router
@@ -77,7 +76,6 @@ class SettingsFragment : PreferenceFragmentCompat(), BackPressListener {
             //fixme
             backupRestoreHelper.restoreBackup(context!!.contentResolver.openInputStream(data.data!!)!!)
 //                    .andThen(Scopes.app.getInstance(StationInteractor::class.java).initStations())
-                    .ioToMain()
                     .doOnComplete { router.exit() }
                     .subscribeX()
         }

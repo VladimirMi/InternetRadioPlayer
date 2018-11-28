@@ -8,6 +8,7 @@ import io.github.vladimirmi.internetradioplayer.BuildConfig
 import io.github.vladimirmi.internetradioplayer.data.db.entity.Group
 import io.github.vladimirmi.internetradioplayer.data.db.entity.Station
 import io.github.vladimirmi.internetradioplayer.data.repository.FavoriteListRepository
+import io.github.vladimirmi.internetradioplayer.data.repository.StationRepository
 import io.github.vladimirmi.internetradioplayer.domain.interactor.StationInteractor
 import io.github.vladimirmi.internetradioplayer.extensions.clear
 import io.reactivex.Completable
@@ -48,6 +49,7 @@ private const val EXPANDED_ATTR = "expanded"
 
 class BackupRestoreHelper
 @Inject constructor(private val interactor: StationInteractor,
+                    private val stationRepository: StationRepository,
                     private val repository: FavoriteListRepository,
                     private val context: Context) {
 
@@ -138,7 +140,7 @@ class BackupRestoreHelper
                     Completable.merge(groups.map { repository.addGroup(it) })
                 })
                 .andThen(Completable.defer {
-                    Completable.merge(stations.map { repository.addStation(it) })
+                    Completable.merge(stations.map { stationRepository.addToFavorite(it) })
                 })
     }
 

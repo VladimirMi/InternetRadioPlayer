@@ -1,4 +1,4 @@
-package io.github.vladimirmi.internetradioplayer.presentation.stationlist
+package io.github.vladimirmi.internetradioplayer.presentation.favoritelist
 
 import io.github.vladimirmi.internetradioplayer.data.db.entity.Station
 import io.github.vladimirmi.internetradioplayer.domain.model.FlatStationsList

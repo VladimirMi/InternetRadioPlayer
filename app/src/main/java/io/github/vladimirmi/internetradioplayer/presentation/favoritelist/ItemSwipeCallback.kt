@@ -1,4 +1,4 @@
-package io.github.vladimirmi.internetradioplayer.presentation.stationlist
+package io.github.vladimirmi.internetradioplayer.presentation.favoritelist
 
 import android.content.Context
 import android.graphics.Canvas

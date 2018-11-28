@@ -9,6 +9,7 @@ import android.util.TypedValue
 import android.view.View
 import android.view.inputmethod.EditorInfo
 import android.view.inputmethod.InputMethodManager
+import android.widget.AdapterView
 import android.widget.ArrayAdapter
 import android.widget.EditText
 import android.widget.TextView
@@ -18,6 +19,7 @@ import io.github.vladimirmi.internetradioplayer.data.db.entity.Station
 import io.github.vladimirmi.internetradioplayer.di.Scopes
 import io.github.vladimirmi.internetradioplayer.extensions.*
 import io.github.vladimirmi.internetradioplayer.presentation.base.BaseFragment
+import io.github.vladimirmi.internetradioplayer.presentation.favoritelist.NewGroupDialog
 import kotlinx.android.synthetic.main.fragment_player.*
 import kotlinx.android.synthetic.main.view_station_info.*
 import toothpick.Toothpick
@@ -27,7 +29,7 @@ import toothpick.Toothpick
  * Created by Vladimir Mikhalev 18.11.2017.
  */
 
-class PlayerFragment : BaseFragment<PlayerPresenter, PlayerView>(), PlayerView {
+class PlayerFragment : BaseFragment<PlayerPresenter, PlayerView>(), PlayerView, NewGroupDialog.Callback {
 
     override val layout = R.layout.fragment_player
 
@@ -53,6 +55,8 @@ class PlayerFragment : BaseFragment<PlayerPresenter, PlayerView>(), PlayerView {
         titleEt.imeOptions = EditorInfo.IME_ACTION_NEXT
         titleEt.setRawInputType(InputType.TYPE_CLASS_TEXT)
 
+        favoriteBt.setOnClickListener { presenter.changeFavorite() }
+
         metadataTv.isSelected = true
         playPauseBt.setOnClickListener { presenter.playPause() }
         playPauseBt.setManualMode(true)
@@ -63,11 +67,15 @@ class PlayerFragment : BaseFragment<PlayerPresenter, PlayerView>(), PlayerView {
 
     //region =============== PlayerView ==============
 
-
     override fun setStation(station: Station) {
         titleEt.setText(station.name)
         genreTv.setTextOrHide(station.genre)
         specsTv.setTextOrHide(station.specs)
+    }
+
+    override fun setFavorite(isFavorite: Boolean) {
+        val tint = if (isFavorite) R.color.primaryColor else R.color.accentColor
+        favoriteBt.background.setTintExt(context!!.color(tint))
     }
 
     private fun setupGroupSpinner() {
@@ -76,6 +84,14 @@ class PlayerFragment : BaseFragment<PlayerPresenter, PlayerView>(), PlayerView {
         adapter.addAll("New folder...", "Other")
         groupSpinner.adapter = adapter
         groupSpinner.setSelection(1)
+        groupSpinner.onItemSelectedListener = object : AdapterView.OnItemSelectedListener {
+            override fun onNothingSelected(parent: AdapterView<*>?) {
+            }
+
+            override fun onItemSelected(parent: AdapterView<*>?, view: View?, position: Int, id: Long) {
+                presenter.selectGroup(position, adapter.getItem(position)!!)
+            }
+        }
     }
 
     override fun openLinkDialog(url: String) {
@@ -84,6 +100,14 @@ class PlayerFragment : BaseFragment<PlayerPresenter, PlayerView>(), PlayerView {
 
     override fun openAddShortcutDialog() {
         AddShortcutDialog().show(childFragmentManager, "add_shortcut_dialog")
+    }
+
+    override fun openNewGroupDialog() {
+        NewGroupDialog().show(childFragmentManager, "new_group_dialog")
+    }
+
+    override fun onNewGroupCreate(group: String) {
+        presenter.createGroup(group)
     }
 
     override fun showStopped() {

@@ -4,6 +4,7 @@ import android.support.v4.media.MediaMetadataCompat
 import android.support.v4.media.session.PlaybackStateCompat
 import io.github.vladimirmi.internetradioplayer.R
 import io.github.vladimirmi.internetradioplayer.data.service.*
+import io.github.vladimirmi.internetradioplayer.domain.interactor.FavoriteListInteractor
 import io.github.vladimirmi.internetradioplayer.domain.interactor.PlayerInteractor
 import io.github.vladimirmi.internetradioplayer.domain.interactor.StationInteractor
 import io.github.vladimirmi.internetradioplayer.extensions.subscribeX
@@ -19,6 +20,7 @@ import javax.inject.Inject
 
 class PlayerPresenter
 @Inject constructor(private val stationInteractor: StationInteractor,
+                    private val favoriteListInteractor: FavoriteListInteractor,
                     private val playerInteractor: PlayerInteractor,
                     private val router: Router)
     : BasePresenter<PlayerView>() {
@@ -33,7 +35,6 @@ class PlayerPresenter
                 .subscribeX(onNext = { handleState(it) })
                 .addTo(viewSubs)
 
-
         playerInteractor.metadataObs
                 .subscribeX(onNext = { handleMetadata(it) })
                 .addTo(viewSubs)
@@ -43,46 +44,33 @@ class PlayerPresenter
                 .addTo(viewSubs)
     }
 
-    fun removeStation() {
-//        stationInteractor.removeStation(stationInteractor.currentStation.id)
-//                .ioToMain()
-//                .subscribeX(onComplete = {
-//                    playerInteractor.stop()
-//                    Timber.e("removeStation: ")
-////                    if (interactor.haveStations()) router.exit()
-////                    else router.newRootScreen(Router.GET_STARTED_SCREEN)
-//                })
-//                .addTo(dataSubs)
+    fun changeFavorite() {
+        val isFavorite = favoriteListInteractor.isFavorite(stationInteractor.station)
+        val changeFavorite = if (isFavorite) stationInteractor.removeFromFavorite()
+        else stationInteractor.addToFavorite()
+        changeFavorite.observeOn(AndroidSchedulers.mainThread())
+                .subscribeX(onComplete = { view?.setFavorite(!isFavorite) })
+                .addTo(viewSubs)
     }
 
-    fun edit(stationInfo: StationInfo) {
-//        stationInteractor.updateCurrentStation(stationInfo.stationName, stationInfo.groupName)
-//                .ioToMain()
-//                .subscribeX(onComplete = {})
-//                .addTo(viewSubs)
+    fun selectGroup(position: Int, group: String) {
+        if (position == 0) view?.openNewGroupDialog()
+        else stationInteractor.changeGroup(group)
+                .subscribeX()
+                .addTo(viewSubs)
     }
 
-    fun cancelEdit() {
-//        stationInteractor.currentStation = stationInteractor.previousWhenEdit!!
-//        view?.setStation(stationInteractor.currentStation)
+    fun createGroup(groupName: String) {
+        favoriteListInteractor.createGroup(groupName)
+                .andThen(stationInteractor.changeGroup(groupName))
+                .subscribeX()
+                .addTo(viewSubs)
     }
 
-    fun create(stationInfo: StationInfo) {
-//        stationInteractor.addCurrentStation(stationInfo.stationName, stationInfo.groupName)
-//                .ioToMain()
-//                .subscribeX(
-//                        onComplete = {
-//                            view?.showMessage(R.string.msg_add_success)
-//                            Timber.e("create: ${stationInfo.stationName}")
-////                            router.newRootScreen(Router.STATIONS_LIST_SCREEN)
-//                        })
-//                .addTo(viewSubs)
+
+    fun editStationTitle(title: String) {
     }
 
-    fun cancelCreate() {
-//        stationInteractor.currentStation = stationInteractor.previousWhenEdit!!
-//        router.exit()
-    }
 
     fun addShortcut(startPlay: Boolean) {
         if (stationInteractor.addCurrentShortcut(startPlay)) {

@@ -1,4 +1,4 @@
-package io.github.vladimirmi.internetradioplayer.presentation.stationlist
+package io.github.vladimirmi.internetradioplayer.presentation.favoritelist
 
 import android.view.View
 import android.widget.Toast

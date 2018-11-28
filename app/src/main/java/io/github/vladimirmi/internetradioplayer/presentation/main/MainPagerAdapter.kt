@@ -5,9 +5,9 @@ import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentManager
 import androidx.fragment.app.FragmentPagerAdapter
 import io.github.vladimirmi.internetradioplayer.R
+import io.github.vladimirmi.internetradioplayer.presentation.favoritelist.StationListFragment
 import io.github.vladimirmi.internetradioplayer.presentation.player.PlayerFragment
 import io.github.vladimirmi.internetradioplayer.presentation.search.SearchFragment
-import io.github.vladimirmi.internetradioplayer.presentation.stationlist.StationListFragment
 
 /**
  * Created by Vladimir Mikhalev 11.11.2018.

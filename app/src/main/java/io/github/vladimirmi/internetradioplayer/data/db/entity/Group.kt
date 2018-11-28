@@ -19,7 +19,7 @@ data class Group(@PrimaryKey
                  val expanded: Boolean,
                  val order: Int) {
 
-    @Ignore var stations: MutableList<Station> = arrayListOf()
+    @Ignore var stations: List<Station> = arrayListOf()
 
     @Ignore
     constructor(name: String, order: Int) : this(UUID.randomUUID().toString(), name, true, order)

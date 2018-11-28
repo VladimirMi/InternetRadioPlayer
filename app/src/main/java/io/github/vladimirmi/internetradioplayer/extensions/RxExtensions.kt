@@ -5,29 +5,12 @@ import io.github.vladimirmi.internetradioplayer.di.Scopes
 import io.reactivex.Completable
 import io.reactivex.Observable
 import io.reactivex.Single
-import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.disposables.Disposable
-import io.reactivex.schedulers.Schedulers
 import timber.log.Timber
 
 /**
  * Created by Vladimir Mikhalev 14.11.2017.
  */
-
-fun <T : Any> Observable<T>.ioToMain(): Observable<T> {
-    return subscribeOn(Schedulers.io())
-            .observeOn(AndroidSchedulers.mainThread())
-}
-
-fun <T : Any> Single<T>.ioToMain(): Single<T> {
-    return subscribeOn(Schedulers.io())
-            .observeOn(AndroidSchedulers.mainThread())
-}
-
-fun Completable.ioToMain(): Completable {
-    return subscribeOn(Schedulers.io())
-            .observeOn(AndroidSchedulers.mainThread())
-}
 
 val errorHandler: (Throwable) -> Unit = {
     if (it is MessageResException) {

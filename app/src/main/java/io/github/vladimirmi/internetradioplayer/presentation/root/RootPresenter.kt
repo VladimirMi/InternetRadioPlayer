@@ -7,10 +7,10 @@ import io.github.vladimirmi.internetradioplayer.domain.interactor.FavoriteListIn
 import io.github.vladimirmi.internetradioplayer.domain.interactor.MainInteractor
 import io.github.vladimirmi.internetradioplayer.domain.interactor.PlayerInteractor
 import io.github.vladimirmi.internetradioplayer.domain.interactor.StationInteractor
-import io.github.vladimirmi.internetradioplayer.extensions.ioToMain
 import io.github.vladimirmi.internetradioplayer.extensions.subscribeX
 import io.github.vladimirmi.internetradioplayer.navigation.Router
 import io.github.vladimirmi.internetradioplayer.presentation.base.BasePresenter
+import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.rxkotlin.addTo
 import timber.log.Timber
 import javax.inject.Inject
@@ -34,7 +34,7 @@ class RootPresenter
         router.newRootScreen(pageId)
 
         favoriteListInteractor.initFavoriteList()
-                .ioToMain()
+                .observeOn(AndroidSchedulers.mainThread())
                 .subscribeX(onComplete = { view.checkIntent() })
                 .addTo(dataSubs)
     }
@@ -59,7 +59,7 @@ class RootPresenter
 //        }
 
         stationInteractor.createStation(uri)
-                .ioToMain()
+                .observeOn(AndroidSchedulers.mainThread())
                 .doOnSubscribe { view?.showLoadingIndicator(true) }
                 .doFinally { view?.showLoadingIndicator(false) }
                 .subscribeX(onSuccess = {

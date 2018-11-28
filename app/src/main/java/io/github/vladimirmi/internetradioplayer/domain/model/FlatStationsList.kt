@@ -44,7 +44,7 @@ class FlatStationsList(private val flatList: MutableList<Any> = arrayListOf()) {
         return if (isGroup(position)) getGroup(position).id else getStation(position).id
     }
 
-    fun getPreviousFrom(id: String): Station? {
+    fun getPreviousStationFrom(id: String): Station? {
         var previous: Station? = null
         for (element in flatList) {
             if (element is Group) continue
@@ -56,7 +56,7 @@ class FlatStationsList(private val flatList: MutableList<Any> = arrayListOf()) {
         return if (previous?.id == id) null else previous
     }
 
-    fun getNextFrom(id: String): Station? {
+    fun getNextStationFrom(id: String): Station? {
         var next: Station? = null
         for (i in flatList.size - 1 downTo 0) {
             val element = flatList[i]

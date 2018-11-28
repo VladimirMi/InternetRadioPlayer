@@ -21,15 +21,25 @@ class FavoriteListRepository
 
     private val _stationsListObs = BehaviorRelay.createDefault(FlatStationsList())
     val stationsListObs: Observable<FlatStationsList> get() = _stationsListObs
-    private val list: FlatStationsList
+    var groups: List<Group> = ArrayList()
+        private set
+    private var list: FlatStationsList
         get() = _stationsListObs.value!!
+        set(value) = _stationsListObs.accept(value)
 
-    fun initStationsList(): Completable {
-        return Completable.complete()
+    fun initStationsList(groups: List<Group>): Completable {
+        return Completable.fromAction {
+            this.groups = groups
+            this.list = FlatStationsList.createFrom(groups)
+        }
     }
 
     fun findStation(predicate: (Station) -> Boolean): Station? {
         return list.findStation(predicate)
+    }
+
+    fun findGroup(predicate: (Group) -> Boolean): Group? {
+        return groups.find(predicate)
     }
 
     fun getAllStations(): Single<List<Station>> {
@@ -40,7 +50,6 @@ class FavoriteListRepository
     }
 
     fun getAllGroups(): Single<List<Group>> = dao.getAllGroups()
-
 
     fun addGroup(group: Group): Completable {
         return Completable.fromCallable {
@@ -57,27 +66,6 @@ class FavoriteListRepository
             db.runInTransaction {
                 groups.forEach { dao.updateGroup(it) }
             }
-        }
-    }
-
-    fun addStation(station: Station): Completable {
-//        return Completable.fromCallable {
-//            val group = dao.getGroupByName(station.groupName)
-//            val newStation = if (station.groupId != group.id) {
-//                station.copy(groupId = group.id)
-//            } else station
-//
-//            dao.insertStation(newStation)
-//            val genres = station.genres.map(::Genre)
-//            dao.insertGenres(genres)
-//            dao.insertStationGenre(genres.map { StationGenreJoin(station.id, it.name) })
-//        }
-        return Completable.complete()
-    }
-
-    fun removeStation(station: Station): Completable {
-        return Completable.fromCallable {
-            dao.deleteStation(station.id)
         }
     }
 

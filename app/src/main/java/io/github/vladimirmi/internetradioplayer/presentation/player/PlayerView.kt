@@ -15,10 +15,19 @@ interface PlayerView : BaseView {
 
     fun openAddShortcutDialog()
 
+    fun openNewGroupDialog()
+
+    fun setFavorite(isFavorite: Boolean)
+
     fun setMetadata(metadata: String)
+
     fun showStopped()
+
     fun showBuffering()
+
     fun showPlaying()
+
     fun showPrevious()
+
     fun showNext()
 }

@@ -4,6 +4,7 @@ import io.github.vladimirmi.internetradioplayer.data.db.entity.Group
 import io.github.vladimirmi.internetradioplayer.data.db.entity.Station
 import io.github.vladimirmi.internetradioplayer.data.repository.FavoriteListRepository
 import io.github.vladimirmi.internetradioplayer.data.repository.StationRepository
+import io.github.vladimirmi.internetradioplayer.domain.model.FlatStationsList
 import io.reactivex.Completable
 import io.reactivex.Observable
 import io.reactivex.Single
@@ -18,8 +19,11 @@ class FavoriteListInteractor
 @Inject constructor(private val favoriteListRepository: FavoriteListRepository,
                     private val stationRepository: StationRepository) {
 
+    val stationsListObs: Observable<FlatStationsList>
+        get() = favoriteListRepository.stationsListObs
+
     fun initFavoriteList(): Completable {
-        return Singles.zip(favoriteListRepository.getAllGroups(), stationRepository.getAllStations())
+        return Singles.zip(favoriteListRepository.getAllGroups(), stationRepository.getFavoriteStations())
         { groups, stations ->
             val map = stations.groupBy { it.groupId }
             groups.forEach { group -> group.stations = map[group.id] ?: emptyList() }

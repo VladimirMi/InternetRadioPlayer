@@ -38,8 +38,9 @@ class StationRepository
         }.subscribeOn(Schedulers.io())
     }
 
-    fun getAllStations(): Single<List<Station>> {
-        return dao.getAllStations().subscribeOn(Schedulers.io())
+    fun getFavoriteStations(): Single<List<Station>> {
+        return dao.getFavoriteStations()
+                .subscribeOn(Schedulers.io())
     }
 
     fun addToFavorite(station: Station): Completable {
@@ -62,11 +63,9 @@ class StationRepository
         }.subscribeOn(Schedulers.io())
     }
 
-    fun saveCurrentStationId(id: String) {
-        preferences.currentStationId = id
-    }
-
     fun getCurrentStationId() = preferences.currentStationId
 
-
+    private fun saveCurrentStationId(id: String) {
+        preferences.currentStationId = id
+    }
 }

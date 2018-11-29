@@ -22,7 +22,11 @@ class StationInteractor
                     private val shortcutHelper: ShortcutHelper) {
 
     val stationObs: Observable<Station> get() = stationRepository.stationObs
-    val station get() = stationRepository.station
+    var station
+        get() = stationRepository.station
+        set(value) {
+            stationRepository.station = value
+        }
 
     fun addCurrentShortcut(startPlay: Boolean): Boolean {
         return shortcutHelper.pinShortcut(station, startPlay)

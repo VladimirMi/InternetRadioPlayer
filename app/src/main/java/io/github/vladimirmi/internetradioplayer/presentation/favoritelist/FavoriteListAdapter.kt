@@ -6,7 +6,6 @@ import android.view.View
 import android.view.ViewGroup
 import android.view.ViewOutlineProvider
 import androidx.core.content.ContextCompat
-import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.RecyclerView
 import io.github.vladimirmi.internetradioplayer.R
 import io.github.vladimirmi.internetradioplayer.data.db.entity.Group
@@ -36,31 +35,9 @@ class StationListAdapter(private val callback: StationItemCallback)
 
     private var stations = FlatStationsList()
     private var selectedStation = Station.nullObj()
-    private var playing = false
 
     fun setData(data: FlatStationsList) {
-        val diffResult = DiffUtil.calculateDiff(object : DiffUtil.Callback() {
-            override fun getOldListSize(): Int {
-                return stations.size
-            }
-
-            override fun getNewListSize(): Int {
-                return data.size
-            }
-
-            override fun areItemsTheSame(oldItemPosition: Int, newItemPosition: Int): Boolean {
-                return stations.getId(oldItemPosition) == data.getId(newItemPosition)
-            }
-
-            override fun areContentsTheSame(oldItemPosition: Int, newItemPosition: Int): Boolean {
-                if (data.isGroup(newItemPosition)) {
-                    if (data.getGroup(newItemPosition).expanded != stations.getGroup(oldItemPosition).expanded) {
-                        return false
-                    }
-                }
-                return true
-            }
-        })
+        val diffResult = FavoriteListDiff(stations, data).calc()
         stations = data
         diffResult.dispatchUpdatesTo(this)
     }
@@ -76,11 +53,6 @@ class StationListAdapter(private val callback: StationItemCallback)
 
     fun selectStation(station: Station) {
         selectedStation = station
-        notifyItemRangeChanged(0, itemCount, PAYLOAD_SELECTED_CHANGE)
-    }
-
-    fun setPlaying(playing: Boolean) {
-        this.playing = playing
         notifyItemRangeChanged(0, itemCount, PAYLOAD_SELECTED_CHANGE)
     }
 
@@ -118,9 +90,9 @@ class StationListAdapter(private val callback: StationItemCallback)
             if (holder is GroupTitleVH) {
                 val group = stations.getGroup(position)
                 val selected = !group.expanded && group.id == selectedStation.groupId
-                holder.select(selected, playing)
+                holder.select(selected)
             } else {
-                holder.select(stations.getStation(position).id == selectedStation.id, playing)
+                holder.select(stations.getStation(position).id == selectedStation.id)
             }
         } else if (payloads.contains(PAYLOAD_BACKGROUND_CHANGE)) {
             holder.setMargins(position == 0 || holder is GroupTitleVH, position == itemCount - 1)
@@ -145,7 +117,7 @@ class StationListAdapter(private val callback: StationItemCallback)
         holder.bind(group)
         holder.itemView.setOnClickListener { callback.onGroupSelected(group.id) }
         val selected = !group.expanded && group.id == selectedStation.groupId
-        holder.select(selected, playing)
+        holder.select(selected)
     }
 
     private fun setupGroupItemVH(position: Int, holder: GroupItemVH) {
@@ -153,7 +125,8 @@ class StationListAdapter(private val callback: StationItemCallback)
 
         holder.bind(station)
         holder.changeBackground(stations.isLastStationInGroup(position), position == 0)
-        holder.select(station.id == selectedStation.id, playing)
+        holder.changeBackground(stations, position)
+        holder.select(station.id == selectedStation.id)
         holder.itemView.setOnClickListener { callback.onItemSelected(station) }
     }
 
@@ -163,9 +136,8 @@ class StationListAdapter(private val callback: StationItemCallback)
 open class GroupElementVH(itemView: View) : RecyclerView.ViewHolder(itemView) {
     private var colorId = R.color.grey_50
 
-    fun select(selected: Boolean, playing: Boolean) {
+    fun select(selected: Boolean) {
         colorId = when {
-            selected && playing -> R.color.green_200
             selected -> R.color.grey_300
             else -> R.color.grey_50
         }
@@ -207,6 +179,22 @@ class GroupItemVH(itemView: View) : GroupElementVH(itemView) {
 
     fun bind(station: Station) {
         itemView.name.text = station.name
+    }
+
+    fun changeBackground(stations: FlatStationsList, position: Int) {
+        var middle = false
+        val bg = if (position == 0 && stations.size > 1) {
+            R.drawable.shape_item_top
+        } else if (stations.isLastStationInGroup(position) && stations.size > 1) {
+            R.drawable.shape_item_bottom
+        } else {
+            middle = true
+            R.drawable.shape_item_middle
+        }
+        itemView.background = ContextCompat.getDrawable(itemView.context, bg)
+        setBgColor()
+        if (Build.VERSION.SDK_INT < 21) return
+        itemView.outlineProvider = if (middle) fixedOutline else defaultOutline
     }
 
     fun changeBackground(lastStationInGroup: Boolean, firstInList: Boolean) {

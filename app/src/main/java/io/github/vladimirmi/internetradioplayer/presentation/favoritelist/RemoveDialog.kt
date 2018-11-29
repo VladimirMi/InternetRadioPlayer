@@ -14,7 +14,7 @@ open class RemoveDialog : BaseDialogFragment() {
     }
 
     override fun onPositive() {
-        (parentFragment as StationListFragment).presenter.removeStation()
+        (parentFragment as FavoriteListFragment).presenter.removeStation()
     }
 
     override fun onNegative() {

@@ -1,7 +1,6 @@
 package io.github.vladimirmi.internetradioplayer.presentation.favoritelist
 
 import android.view.View
-import android.widget.Toast
 import androidx.recyclerview.widget.ItemTouchHelper
 import io.github.vladimirmi.internetradioplayer.R
 import io.github.vladimirmi.internetradioplayer.data.db.entity.Station
@@ -16,7 +15,7 @@ import toothpick.Toothpick
  * Created by Vladimir Mikhalev 30.09.2017.
  */
 
-class StationListFragment : BaseFragment<StationListPresenter, StationListView>(), StationListView,
+class FavoriteListFragment : BaseFragment<FavoriteListPresenter, StationListView>(), StationListView,
         StationItemCallback {
 
     override val layout = R.layout.fragment_stations_list
@@ -25,10 +24,6 @@ class StationListFragment : BaseFragment<StationListPresenter, StationListView>(
 
     private val itemTouchHelper by lazy {
         ItemTouchHelper(object : ItemSwipeCallback(context!!) {
-            override fun onSwiped(viewHolder: androidx.recyclerview.widget.RecyclerView.ViewHolder, direction: Int) {
-                val station = adapter.getStation(viewHolder.adapterPosition) ?: return
-                presenter.showStation(station)
-            }
 
             override fun onMove(recyclerView: androidx.recyclerview.widget.RecyclerView, viewHolder: androidx.recyclerview.widget.RecyclerView.ViewHolder,
                                 target: androidx.recyclerview.widget.RecyclerView.ViewHolder): Boolean {
@@ -47,9 +42,9 @@ class StationListFragment : BaseFragment<StationListPresenter, StationListView>(
     }
 
 
-    override fun providePresenter(): StationListPresenter {
+    override fun providePresenter(): FavoriteListPresenter {
         return Toothpick.openScopes(Scopes.ROOT_ACTIVITY, this)
-                .getInstance(StationListPresenter::class.java).also {
+                .getInstance(FavoriteListPresenter::class.java).also {
                     Toothpick.closeScope(this)
                 }
     }
@@ -70,14 +65,6 @@ class StationListFragment : BaseFragment<StationListPresenter, StationListView>(
         adapter.selectStation(station)
         val position = adapter.getPosition(station)
         if (position != -1) media_recycler.scrollToPosition(position)
-    }
-
-    override fun setPlaying(playing: Boolean) {
-        adapter.setPlaying(playing)
-    }
-
-    override fun showMessage(resId: Int) {
-        Toast.makeText(context, resId, Toast.LENGTH_SHORT).show()
     }
 
     //endregion

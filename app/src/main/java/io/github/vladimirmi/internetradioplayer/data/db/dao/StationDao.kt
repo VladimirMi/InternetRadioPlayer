@@ -13,7 +13,7 @@ import io.reactivex.Single
 interface StationDao {
 
     @Query("SELECT * FROM station ORDER BY `order` ASC")
-    fun getAllStations(): Single<List<Station>>
+    fun getFavoriteStations(): Single<List<Station>>
 
     @Query("SELECT * FROM `group` ORDER BY `order` ASC")
     fun getAllGroups(): Single<List<Group>>

@@ -35,7 +35,7 @@ class RootPresenter
 
         favoriteListInteractor.initFavoriteList()
                 .observeOn(AndroidSchedulers.mainThread())
-                .subscribeX(onComplete = { view.checkIntent() })
+                .subscribeX { view.checkIntent() }
                 .addTo(dataSubs)
     }
 

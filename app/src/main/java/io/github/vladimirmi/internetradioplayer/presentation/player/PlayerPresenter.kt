@@ -11,6 +11,7 @@ import io.github.vladimirmi.internetradioplayer.extensions.subscribeX
 import io.github.vladimirmi.internetradioplayer.navigation.Router
 import io.github.vladimirmi.internetradioplayer.presentation.base.BasePresenter
 import io.reactivex.android.schedulers.AndroidSchedulers
+import io.reactivex.rxkotlin.Observables
 import io.reactivex.rxkotlin.addTo
 import javax.inject.Inject
 
@@ -26,11 +27,39 @@ class PlayerPresenter
     : BasePresenter<PlayerView>() {
 
     override fun onAttach(view: PlayerView) {
+        setupStation()
+        setupGroups()
+        setupPlayer()
+    }
+
+    private fun setupStation() {
         stationInteractor.stationObs
                 .observeOn(AndroidSchedulers.mainThread())
-                .subscribeX(onNext = { view.setStation(it) })
+                .subscribeX(onNext = {
+                    view?.setStation(it)
+                    view?.setFavorite(favoriteListInteractor.isFavorite(it))
+                })
                 .addTo(viewSubs)
+    }
 
+    private fun setupGroups() {
+        val groupObs = stationInteractor.stationObs
+                .flatMapSingle { favoriteListInteractor.getGroup(it.id) }
+                .map { it.name }
+                .observeOn(AndroidSchedulers.mainThread())
+
+        val groupsObs = favoriteListInteractor.getGroupsObs()
+                .map { groups -> groups.map { it.name } }
+                .observeOn(AndroidSchedulers.mainThread())
+
+        Observables.combineLatest(groupsObs, groupObs) { list, group ->
+            view?.setGroups(list)
+            list.indexOf(group) + 1 //new folder... option offset
+        }.subscribeX(onNext = { view?.setGroup(it) })
+                .addTo(viewSubs)
+    }
+
+    private fun setupPlayer() {
         playerInteractor.playbackStateObs
                 .subscribeX(onNext = { handleState(it) })
                 .addTo(viewSubs)

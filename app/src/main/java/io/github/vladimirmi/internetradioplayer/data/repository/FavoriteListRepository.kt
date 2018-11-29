@@ -3,11 +3,11 @@ package io.github.vladimirmi.internetradioplayer.data.repository
 import com.jakewharton.rxrelay2.BehaviorRelay
 import io.github.vladimirmi.internetradioplayer.data.db.StationsDatabase
 import io.github.vladimirmi.internetradioplayer.data.db.entity.Group
-import io.github.vladimirmi.internetradioplayer.data.db.entity.Station
 import io.github.vladimirmi.internetradioplayer.domain.model.FlatStationsList
 import io.reactivex.Completable
 import io.reactivex.Observable
 import io.reactivex.Single
+import io.reactivex.schedulers.Schedulers
 import javax.inject.Inject
 
 /**
@@ -23,7 +23,7 @@ class FavoriteListRepository
     val stationsListObs: Observable<FlatStationsList> get() = _stationsListObs
     var groups: List<Group> = ArrayList()
         private set
-    private var list: FlatStationsList
+    var list: FlatStationsList
         get() = _stationsListObs.value!!
         set(value) = _stationsListObs.accept(value)
 
@@ -34,27 +34,14 @@ class FavoriteListRepository
         }
     }
 
-    fun findStation(predicate: (Station) -> Boolean): Station? {
-        return list.findStation(predicate)
+    fun getAllGroups(): Single<List<Group>> {
+        return dao.getAllGroups().subscribeOn(Schedulers.io())
     }
-
-    fun findGroup(predicate: (Group) -> Boolean): Group? {
-        return groups.find(predicate)
-    }
-
-    fun getAllStations(): Single<List<Station>> {
-        return dao.getAllStations()
-                .toObservable()
-                .flatMapIterable { it }
-                .toList()
-    }
-
-    fun getAllGroups(): Single<List<Group>> = dao.getAllGroups()
 
     fun addGroup(group: Group): Completable {
         return Completable.fromCallable {
             dao.insertGroup(group)
-        }
+        }.subscribeOn(Schedulers.io())
     }
 
     fun removeGroup(group: Group): Completable {
@@ -66,14 +53,6 @@ class FavoriteListRepository
             db.runInTransaction {
                 groups.forEach { dao.updateGroup(it) }
             }
-        }
-    }
-
-    fun updateStations(stations: List<Station>): Completable {
-        return Completable.fromCallable {
-            db.runInTransaction {
-                stations.forEach { dao.updateStation(it) }
-            }
-        }
+        }.subscribeOn(Schedulers.io())
     }
 }

@@ -30,4 +30,8 @@ interface PlayerView : BaseView {
     fun showPrevious()
 
     fun showNext()
+
+    fun setGroups(list: List<String>)
+
+    fun setGroup(position: Int)
 }

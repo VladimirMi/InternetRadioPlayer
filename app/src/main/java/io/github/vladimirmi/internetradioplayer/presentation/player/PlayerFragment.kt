@@ -15,6 +15,7 @@ import android.widget.EditText
 import android.widget.TextView
 import androidx.core.content.ContextCompat
 import io.github.vladimirmi.internetradioplayer.R
+import io.github.vladimirmi.internetradioplayer.data.db.entity.Group
 import io.github.vladimirmi.internetradioplayer.data.db.entity.Station
 import io.github.vladimirmi.internetradioplayer.di.Scopes
 import io.github.vladimirmi.internetradioplayer.extensions.*
@@ -34,6 +35,7 @@ class PlayerFragment : BaseFragment<PlayerPresenter, PlayerView>(), PlayerView, 
     override val layout = R.layout.fragment_player
 
     private var editTextBg: Int = 0
+    private lateinit var adapter: ArrayAdapter<String>
 
     override fun providePresenter(): PlayerPresenter {
         return Toothpick.openScopes(Scopes.ROOT_ACTIVITY, this)
@@ -65,6 +67,21 @@ class PlayerFragment : BaseFragment<PlayerPresenter, PlayerView>(), PlayerView, 
 //        bufferingPb.indeterminateDrawable.mutate().setTintExt(context!!.color(R.color.pause_button))
     }
 
+    private fun setupGroupSpinner() {
+        adapter = ArrayAdapter(context!!, android.R.layout.simple_spinner_item)
+        adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
+        groupSpinner.adapter = adapter
+        groupSpinner.onItemSelectedListener = object : AdapterView.OnItemSelectedListener {
+            override fun onNothingSelected(parent: AdapterView<*>?) {
+            }
+
+            override fun onItemSelected(parent: AdapterView<*>?, view: View?, position: Int, id: Long) {
+                val groupName = Group.getDbName(adapter.getItem(position)!!, context!!)
+                presenter.selectGroup(position, groupName)
+            }
+        }
+    }
+
     //region =============== PlayerView ==============
 
     override fun setStation(station: Station) {
@@ -74,24 +91,18 @@ class PlayerFragment : BaseFragment<PlayerPresenter, PlayerView>(), PlayerView, 
     }
 
     override fun setFavorite(isFavorite: Boolean) {
-        val tint = if (isFavorite) R.color.primaryColor else R.color.accentColor
+        val tint = if (isFavorite) R.color.accentColor else R.color.primaryColor
         favoriteBt.background.setTintExt(context!!.color(tint))
     }
 
-    private fun setupGroupSpinner() {
-        val adapter = ArrayAdapter<String>(context!!, android.R.layout.simple_spinner_item)
-        adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
-        adapter.addAll("New folder...", "Other")
-        groupSpinner.adapter = adapter
-        groupSpinner.setSelection(1)
-        groupSpinner.onItemSelectedListener = object : AdapterView.OnItemSelectedListener {
-            override fun onNothingSelected(parent: AdapterView<*>?) {
-            }
+    override fun setGroups(list: List<String>) {
+        adapter.clear()
+        adapter.add("New folder...")
+        adapter.addAll(list.map { Group.getViewName(it, context!!) })
+    }
 
-            override fun onItemSelected(parent: AdapterView<*>?, view: View?, position: Int, id: Long) {
-                presenter.selectGroup(position, adapter.getItem(position)!!)
-            }
-        }
+    override fun setGroup(position: Int) {
+        groupSpinner.setSelection(position)
     }
 
     override fun openLinkDialog(url: String) {

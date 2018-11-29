@@ -9,6 +9,7 @@ import io.github.vladimirmi.internetradioplayer.data.utils.StationParser
 import io.reactivex.Completable
 import io.reactivex.Observable
 import io.reactivex.Single
+import io.reactivex.schedulers.Schedulers
 import javax.inject.Inject
 
 /**
@@ -34,25 +35,31 @@ class StationRepository
     fun createStation(uri: Uri): Single<Station> {
         return Single.fromCallable {
             stationParser.parseFromUri(uri)
-        }
+        }.subscribeOn(Schedulers.io())
+    }
+
+    fun getAllStations(): Single<List<Station>> {
+        return dao.getAllStations().subscribeOn(Schedulers.io())
     }
 
     fun addToFavorite(station: Station): Completable {
         return Completable.fromCallable {
             dao.insertStation(station)
-        }
+        }.subscribeOn(Schedulers.io())
     }
 
     fun removeFromFavorite(station: Station): Completable {
         return Completable.fromCallable {
             dao.deleteStation(station.id)
-        }
+        }.subscribeOn(Schedulers.io())
     }
 
-    fun updateStation(station: Station): Completable {
+    fun updateStations(stations: List<Station>): Completable {
         return Completable.fromCallable {
-            dao.updateStation(station)
-        }
+            db.runInTransaction {
+                stations.forEach { dao.updateStation(it) }
+            }
+        }.subscribeOn(Schedulers.io())
     }
 
     fun saveCurrentStationId(id: String) {

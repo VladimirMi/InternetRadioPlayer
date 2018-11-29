@@ -3,10 +3,11 @@ package io.github.vladimirmi.internetradioplayer.domain.interactor
 import io.github.vladimirmi.internetradioplayer.data.db.entity.Group
 import io.github.vladimirmi.internetradioplayer.data.db.entity.Station
 import io.github.vladimirmi.internetradioplayer.data.repository.FavoriteListRepository
+import io.github.vladimirmi.internetradioplayer.data.repository.StationRepository
 import io.reactivex.Completable
+import io.reactivex.Observable
 import io.reactivex.Single
 import io.reactivex.rxkotlin.Singles
-import io.reactivex.schedulers.Schedulers
 import javax.inject.Inject
 
 /**
@@ -14,13 +15,14 @@ import javax.inject.Inject
  */
 
 class FavoriteListInteractor
-@Inject constructor(private val favoriteListRepository: FavoriteListRepository) {
+@Inject constructor(private val favoriteListRepository: FavoriteListRepository,
+                    private val stationRepository: StationRepository) {
 
     fun initFavoriteList(): Completable {
-        return Singles.zip(favoriteListRepository.getAllGroups(), favoriteListRepository.getAllStations())
+        return Singles.zip(favoriteListRepository.getAllGroups(), stationRepository.getAllStations())
         { groups, stations ->
             val map = stations.groupBy { it.groupId }
-            groups.forEach { group -> group.stations = map[group.id]!! }
+            groups.forEach { group -> group.stations = map[group.id] ?: emptyList() }
             groups
         }.flatMapCompletable { groups ->
             val groupUpdates = arrayListOf<Group>()
@@ -34,7 +36,7 @@ class FavoriteListInteractor
             }
             if (groupUpdates.isNotEmpty() || stationUpdates.isNotEmpty()) {
                 favoriteListRepository.updateGroups(groupUpdates)
-                        .andThen(favoriteListRepository.updateStations(stationUpdates))
+                        .andThen(stationRepository.updateStations(stationUpdates))
                         .andThen(initFavoriteList())
             } else {
                 favoriteListRepository.initStationsList(groups)
@@ -43,19 +45,42 @@ class FavoriteListInteractor
     }
 
     fun isFavorite(station: Station): Boolean {
-        return favoriteListRepository.findStation { it.id == station.id } != null
+        return favoriteListRepository.list.findStation { it.id == station.id } != null
     }
 
     fun createGroup(groupName: String): Completable {
+//        val group = favoriteListRepository.groups.find { groupName == it.name }
+//        return if (group == null) {
+//            val newGroup = if (groupName == Group.DEFAULT_NAME) Group.default()
+//            else Group(groupName)
+//            favoriteListRepository.addGroup(newGroup)
+//                    .andThen(initFavoriteList())
+//        } else {
+//            Completable.complete()
+//        }
         return Single.just(favoriteListRepository.groups)
                 .map { groups -> groups.find { groupName == it.name } }
                 .ignoreElement()
                 .onErrorResumeNext {
                     val group = if (groupName == Group.DEFAULT_NAME) Group.default()
-                    else Group(groupName, favoriteListRepository.groups.size)
+                    else Group(groupName)
 
                     favoriteListRepository.addGroup(group)
-                }.subscribeOn(Schedulers.io())
+                }.andThen(initFavoriteList())
+    }
+
+    fun getGroup(id: String): Single<Group> {
+        return Single.just(favoriteListRepository.groups.find { it.id == id } ?: Group.nullObj())
+                .flatMap {
+                    if (it.isNull()) createGroup(Group.DEFAULT_NAME)
+                            .andThen(getGroup(Group.DEFAULT_ID))
+                    else Single.just(it)
+                }
+    }
+
+    fun getGroupsObs(): Observable<List<Group>> {
+        return favoriteListRepository.stationsListObs
+                .map { favoriteListRepository.groups }
     }
 
 

@@ -8,7 +8,6 @@ import io.github.vladimirmi.internetradioplayer.data.utils.ShortcutHelper
 import io.reactivex.Completable
 import io.reactivex.Observable
 import io.reactivex.Single
-import io.reactivex.schedulers.Schedulers
 import javax.inject.Inject
 
 
@@ -32,28 +31,28 @@ class StationInteractor
     fun createStation(uri: Uri): Single<Station> {
         return stationRepository.createStation(uri)
                 .doOnSuccess { newStation ->
-                    val favoriteStation = favoriteListRepository.findStation { it.uri == newStation.uri }
+                    val favoriteStation = favoriteListRepository.list.findStation { it.uri == newStation.uri }
                     stationRepository.station = favoriteStation ?: newStation
-                }.subscribeOn(Schedulers.io())
+                }
     }
 
     fun addToFavorite(): Completable {
         return stationRepository.addToFavorite(station)
                 .andThen(favoriteListInteractor.initFavoriteList())
-                .subscribeOn(Schedulers.io())
     }
 
     fun removeFromFavorite(): Completable {
         return stationRepository.removeFromFavorite(station)
                 .andThen(favoriteListInteractor.initFavoriteList())
-                .subscribeOn(Schedulers.io())
     }
 
     fun changeGroup(groupName: String): Completable {
-        return Single.just(favoriteListRepository.findGroup { it.name == groupName })
-                .flatMapCompletable { stationRepository.updateStation(station.copy(groupId = it.id)) }
+        return Single.just(favoriteListRepository.groups.find { it.name == groupName })
+                .flatMapCompletable {
+                    if (it.id == station.groupId) Completable.complete()
+                    else stationRepository.updateStations(listOf(station.copy(groupId = it.id)))
+                }
                 .andThen(favoriteListInteractor.initFavoriteList())
-                .subscribeOn(Schedulers.io())
     }
 }
 

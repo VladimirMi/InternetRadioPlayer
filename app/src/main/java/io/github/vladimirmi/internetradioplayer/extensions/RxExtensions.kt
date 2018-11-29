@@ -33,6 +33,6 @@ fun Completable.subscribeX(
 
 fun <T : Any> Observable<T>.subscribeX(
         onError: (Throwable) -> Unit = errorHandler,
-        onNext: (T) -> Unit = {},
-        onComplete: () -> Unit = {}
+        onComplete: () -> Unit = {},
+        onNext: (T) -> Unit = {}
 ): Disposable = subscribe(onNext, onError, onComplete)

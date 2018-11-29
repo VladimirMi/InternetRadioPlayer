@@ -13,6 +13,7 @@ import io.github.vladimirmi.internetradioplayer.presentation.base.BasePresenter
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.rxkotlin.Observables
 import io.reactivex.rxkotlin.addTo
+import timber.log.Timber
 import javax.inject.Inject
 
 /**
@@ -44,7 +45,7 @@ class PlayerPresenter
 
     private fun setupGroups() {
         val groupObs = stationInteractor.stationObs
-                .flatMapSingle { favoriteListInteractor.getGroup(it.id) }
+                .flatMapSingle { favoriteListInteractor.getGroup(it.groupId) }
                 .map { it.name }
                 .observeOn(AndroidSchedulers.mainThread())
 
@@ -54,7 +55,7 @@ class PlayerPresenter
 
         Observables.combineLatest(groupsObs, groupObs) { list, group ->
             view?.setGroups(list)
-            list.indexOf(group) + 1 //new folder... option offset
+            list.indexOf(group) + 1 //new folder option offset
         }.subscribeX(onNext = { view?.setGroup(it) })
                 .addTo(viewSubs)
     }
@@ -83,6 +84,7 @@ class PlayerPresenter
     }
 
     fun selectGroup(position: Int, group: String) {
+        Timber.e("selectGroup: $position $group")
         if (position == 0) view?.openNewGroupDialog()
         else stationInteractor.changeGroup(group)
                 .subscribeX()
@@ -98,8 +100,10 @@ class PlayerPresenter
 
 
     fun editStationTitle(title: String) {
+        stationInteractor.editStationTitle(title)
+                .subscribeX()
+                .addTo(viewSubs)
     }
-
 
     fun addShortcut(startPlay: Boolean) {
         if (stationInteractor.addCurrentShortcut(startPlay)) {

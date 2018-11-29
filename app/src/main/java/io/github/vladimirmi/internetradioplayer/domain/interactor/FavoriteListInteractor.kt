@@ -2,7 +2,7 @@ package io.github.vladimirmi.internetradioplayer.domain.interactor
 
 import io.github.vladimirmi.internetradioplayer.data.db.entity.Group
 import io.github.vladimirmi.internetradioplayer.data.db.entity.Station
-import io.github.vladimirmi.internetradioplayer.data.repository.FavoriteListRepository
+import io.github.vladimirmi.internetradioplayer.data.repository.GroupListRepository
 import io.github.vladimirmi.internetradioplayer.data.repository.StationRepository
 import io.github.vladimirmi.internetradioplayer.domain.model.FlatStationsList
 import io.reactivex.Completable
@@ -16,14 +16,14 @@ import javax.inject.Inject
  */
 
 class FavoriteListInteractor
-@Inject constructor(private val favoriteListRepository: FavoriteListRepository,
+@Inject constructor(private val groupListRepository: GroupListRepository,
                     private val stationRepository: StationRepository) {
 
     val stationsListObs: Observable<FlatStationsList>
-        get() = favoriteListRepository.stationsListObs
+        get() = groupListRepository.stationsListObs
 
     fun initFavoriteList(): Completable {
-        return Singles.zip(favoriteListRepository.getAllGroups(), stationRepository.getFavoriteStations())
+        return Singles.zip(groupListRepository.getAllGroups(), stationRepository.getFavoriteStations())
         { groups, stations ->
             val map = stations.groupBy { it.groupId }
             groups.forEach { group -> group.stations = map[group.id] ?: emptyList() }
@@ -39,42 +39,42 @@ class FavoriteListInteractor
                 }
             }
             if (groupUpdates.isNotEmpty() || stationUpdates.isNotEmpty()) {
-                favoriteListRepository.updateGroups(groupUpdates)
+                groupListRepository.updateGroups(groupUpdates)
                         .andThen(stationRepository.updateStations(stationUpdates))
                         .andThen(initFavoriteList())
             } else {
-                favoriteListRepository.initStationsList(groups)
+                groupListRepository.initStationsList(groups)
             }
         }
     }
 
     fun isFavorite(station: Station): Boolean {
-        return favoriteListRepository.list.findStation { it.id == station.id } != null
+        return groupListRepository.list.findStation { it.id == station.id } != null
     }
 
     fun createGroup(groupName: String): Completable {
-//        val group = favoriteListRepository.groups.find { groupName == it.name }
+//        val group = groupListRepository.groups.find { groupName == it.name }
 //        return if (group == null) {
 //            val newGroup = if (groupName == Group.DEFAULT_NAME) Group.default()
 //            else Group(groupName)
-//            favoriteListRepository.addGroup(newGroup)
+//            groupListRepository.addGroup(newGroup)
 //                    .andThen(initFavoriteList())
 //        } else {
 //            Completable.complete()
 //        }
-        return Single.just(favoriteListRepository.groups)
+        return Single.just(groupListRepository.groups)
                 .map { groups -> groups.find { groupName == it.name } }
                 .ignoreElement()
                 .onErrorResumeNext {
                     val group = if (groupName == Group.DEFAULT_NAME) Group.default()
                     else Group(groupName)
 
-                    favoriteListRepository.addGroup(group)
+                    groupListRepository.addGroup(group)
                 }.andThen(initFavoriteList())
     }
 
     fun getGroup(id: String): Single<Group> {
-        return Single.just(favoriteListRepository.groups.find { it.id == id } ?: Group.nullObj())
+        return Single.just(groupListRepository.groups.find { it.id == id } ?: Group.nullObj())
                 .flatMap {
                     if (it.isNull()) createGroup(Group.DEFAULT_NAME)
                             .andThen(getGroup(Group.DEFAULT_ID))
@@ -83,8 +83,8 @@ class FavoriteListInteractor
     }
 
     fun getGroupsObs(): Observable<List<Group>> {
-        return favoriteListRepository.stationsListObs
-                .map { favoriteListRepository.groups }
+        return groupListRepository.stationsListObs
+                .map { groupListRepository.groups }
     }
 
 

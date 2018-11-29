@@ -18,6 +18,7 @@
         android:layout_marginEnd="8dp"
         android:layout_marginRight="8dp"
         android:hint="@string/station_title"
+        android:imeOptions="actionDone"
         android:inputType="textNoSuggestions"
         android:text="Station title"
         android:textAppearance="@style/TextAppearance.AppCompat.Title"

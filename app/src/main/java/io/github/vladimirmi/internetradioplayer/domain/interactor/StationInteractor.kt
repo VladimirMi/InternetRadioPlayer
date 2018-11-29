@@ -2,12 +2,13 @@ package io.github.vladimirmi.internetradioplayer.domain.interactor
 
 import android.net.Uri
 import io.github.vladimirmi.internetradioplayer.data.db.entity.Station
-import io.github.vladimirmi.internetradioplayer.data.repository.FavoriteListRepository
+import io.github.vladimirmi.internetradioplayer.data.repository.GroupListRepository
 import io.github.vladimirmi.internetradioplayer.data.repository.StationRepository
 import io.github.vladimirmi.internetradioplayer.data.utils.ShortcutHelper
 import io.reactivex.Completable
 import io.reactivex.Observable
 import io.reactivex.Single
+import io.reactivex.rxkotlin.toCompletable
 import javax.inject.Inject
 
 
@@ -17,7 +18,7 @@ import javax.inject.Inject
 
 class StationInteractor
 @Inject constructor(private val stationRepository: StationRepository,
-                    private val favoriteListRepository: FavoriteListRepository,
+                    private val groupListRepository: GroupListRepository,
                     private val favoriteListInteractor: FavoriteListInteractor,
                     private val shortcutHelper: ShortcutHelper) {
 
@@ -35,8 +36,8 @@ class StationInteractor
     fun createStation(uri: Uri): Single<Station> {
         return stationRepository.createStation(uri)
                 .doOnSuccess { newStation ->
-                    val favoriteStation = favoriteListRepository.list.findStation { it.uri == newStation.uri }
-                    stationRepository.station = favoriteStation ?: newStation
+                    val favoriteStation = groupListRepository.list.findStation { it.uri == newStation.uri }
+                    station = favoriteStation ?: newStation
                 }
     }
 
@@ -51,12 +52,24 @@ class StationInteractor
     }
 
     fun changeGroup(groupName: String): Completable {
-        return Single.just(favoriteListRepository.groups.find { it.name == groupName })
+        return Single.just(groupListRepository.groups.find { it.name == groupName })
                 .flatMapCompletable {
                     if (it.id == station.groupId) Completable.complete()
-                    else stationRepository.updateStations(listOf(station.copy(groupId = it.id)))
+                    else {
+                        val newStation = station.copy(groupId = it.id)
+                        stationRepository.updateStations(listOf(newStation))
+                                .andThen({ station = newStation }.toCompletable())
+                    }
                 }
                 .andThen(favoriteListInteractor.initFavoriteList())
+    }
+
+    fun editStationTitle(title: String): Completable {
+        if (title == station.name) return Completable.complete()
+        val newStation = station.copy(name = title)
+        return stationRepository.updateStations(listOf(newStation))
+                .andThen({ station = newStation }.toCompletable())
+                .andThen(favoriteListInteractor.initFavoriteList()) //todo if favorite
     }
 }
 

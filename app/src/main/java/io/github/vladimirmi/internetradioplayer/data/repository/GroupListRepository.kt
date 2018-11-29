@@ -14,7 +14,7 @@ import javax.inject.Inject
  * Created by Vladimir Mikhalev 30.09.2017.
  */
 
-class FavoriteListRepository
+class GroupListRepository
 @Inject constructor(private val db: StationsDatabase) {
 
     private val dao = db.stationDao()

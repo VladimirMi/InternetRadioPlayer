@@ -1,6 +1,6 @@
 package io.github.vladimirmi.internetradioplayer.presentation.player
 
-import android.text.InputType
+import android.os.Handler
 import android.text.Spannable
 import android.text.SpannableString
 import android.text.style.ForegroundColorSpan
@@ -36,6 +36,7 @@ class PlayerFragment : BaseFragment<PlayerPresenter, PlayerView>(), PlayerView, 
 
     private var editTextBg: Int = 0
     private lateinit var adapter: ArrayAdapter<String>
+    private var blockSpinnerSelectionListener = false
 
     override fun providePresenter(): PlayerPresenter {
         return Toothpick.openScopes(Scopes.ROOT_ACTIVITY, this)
@@ -45,17 +46,8 @@ class PlayerFragment : BaseFragment<PlayerPresenter, PlayerView>(), PlayerView, 
     }
 
     override fun setupView(view: View) {
-        titleEt.setEditable(false)
+        setupTitle()
         setupGroupSpinner()
-        editTitleBt.setOnClickListener { changeTitleEditable() }
-        // save default edit text background
-        val typedValue = TypedValue()
-        activity?.theme?.resolveAttribute(android.R.attr.editTextBackground, typedValue, true)
-        editTextBg = typedValue.resourceId
-
-        // set appropriate action on the multiline text
-        titleEt.imeOptions = EditorInfo.IME_ACTION_NEXT
-        titleEt.setRawInputType(InputType.TYPE_CLASS_TEXT)
 
         favoriteBt.setOnClickListener { presenter.changeFavorite() }
 
@@ -67,6 +59,21 @@ class PlayerFragment : BaseFragment<PlayerPresenter, PlayerView>(), PlayerView, 
 //        bufferingPb.indeterminateDrawable.mutate().setTintExt(context!!.color(R.color.pause_button))
     }
 
+    private fun setupTitle() {
+        val typedValue = TypedValue() // save default edit text background
+        activity?.theme?.resolveAttribute(android.R.attr.editTextBackground, typedValue, true)
+        editTextBg = typedValue.resourceId
+
+        titleEt.setEditable(false)
+        editTitleBt.setOnClickListener { changeTitleEditable() }
+        titleEt.setOnEditorActionListener { _, actionId, _ ->
+            if (actionId == EditorInfo.IME_ACTION_DONE) {
+                changeTitleEditable()
+                true
+            } else false
+        }
+    }
+
     private fun setupGroupSpinner() {
         adapter = ArrayAdapter(context!!, android.R.layout.simple_spinner_item)
         adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
@@ -76,6 +83,7 @@ class PlayerFragment : BaseFragment<PlayerPresenter, PlayerView>(), PlayerView, 
             }
 
             override fun onItemSelected(parent: AdapterView<*>?, view: View?, position: Int, id: Long) {
+                if (blockSpinnerSelectionListener) return
                 val groupName = Group.getDbName(adapter.getItem(position)!!, context!!)
                 presenter.selectGroup(position, groupName)
             }
@@ -102,7 +110,9 @@ class PlayerFragment : BaseFragment<PlayerPresenter, PlayerView>(), PlayerView, 
     }
 
     override fun setGroup(position: Int) {
+        blockSpinnerSelectionListener = true
         groupSpinner.setSelection(position)
+        Handler().postDelayed({ blockSpinnerSelectionListener = false }, 100)
     }
 
     override fun openLinkDialog(url: String) {
@@ -156,6 +166,7 @@ class PlayerFragment : BaseFragment<PlayerPresenter, PlayerView>(), PlayerView, 
         editTitleIv.setImageResource(if (enabled) R.drawable.ic_edit else R.drawable.ic_submit)
         if (enabled) {
             context!!.inputMethodManager.hideSoftInputFromWindow(view?.windowToken, 0)
+            presenter.editStationTitle(titleEt.text.toString())
         } else {
             titleEt.setSelection(titleEt.length())
             titleEt.requestFocus()

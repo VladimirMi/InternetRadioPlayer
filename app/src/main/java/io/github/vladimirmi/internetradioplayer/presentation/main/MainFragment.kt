@@ -16,7 +16,6 @@ import androidx.viewpager.widget.ViewPager
 import io.github.vladimirmi.internetradioplayer.R
 import io.github.vladimirmi.internetradioplayer.data.utils.MAIN_PAGE_ID_KEY
 import io.github.vladimirmi.internetradioplayer.di.Scopes
-import io.github.vladimirmi.internetradioplayer.extensions.visible
 import io.github.vladimirmi.internetradioplayer.presentation.base.BaseFragment
 import kotlinx.android.synthetic.main.fragment_main.*
 import toothpick.Toothpick
@@ -47,6 +46,7 @@ class MainFragment : BaseFragment<MainPresenter, MainView>(), MainView {
 
     override fun setupView(view: View) {
         mainPager.adapter = MainPagerAdapter(context!!, childFragmentManager)
+        mainPager.offscreenPageLimit = 3
         mainTl.setupWithViewPager(mainPager)
         val pageId = arguments?.getInt(MAIN_PAGE_ID_KEY) ?: 0
         setPageId(pageId)

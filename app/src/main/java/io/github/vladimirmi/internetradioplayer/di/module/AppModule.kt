@@ -8,7 +8,7 @@ import io.github.vladimirmi.internetradioplayer.data.db.SuggestionsDatabase
 import io.github.vladimirmi.internetradioplayer.data.net.UberStationsService
 import io.github.vladimirmi.internetradioplayer.data.net.createClient
 import io.github.vladimirmi.internetradioplayer.data.net.getUberStationsService
-import io.github.vladimirmi.internetradioplayer.data.repository.FavoriteListRepository
+import io.github.vladimirmi.internetradioplayer.data.repository.GroupListRepository
 import io.github.vladimirmi.internetradioplayer.data.repository.PlayerRepository
 import io.github.vladimirmi.internetradioplayer.data.repository.SearchRepository
 import io.github.vladimirmi.internetradioplayer.data.repository.StationRepository
@@ -54,7 +54,7 @@ class AppModule(context: Context) : Module() {
         bind(StationSource::class.java).singletonInScope()
 
         bind(SearchRepository::class.java).singletonInScope()
-        bind(FavoriteListRepository::class.java).singletonInScope()
+        bind(GroupListRepository::class.java).singletonInScope()
         bind(StationRepository::class.java).singletonInScope()
         bind(PlayerRepository::class.java).singletonInScope()
 

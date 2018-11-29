@@ -48,7 +48,6 @@ class SearchFragment : BaseFragment<SearchPresenter, SearchView>(), SearchView,
     }
 
     private fun setupStations() {
-        Timber.e("setupStations: $parentFragment")
         val lm = LinearLayoutManager(context)
         stationsRv.layoutManager = lm
         stationsRv.adapter = stationsAdapter

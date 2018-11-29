@@ -7,7 +7,7 @@ import androidx.core.content.FileProvider
 import io.github.vladimirmi.internetradioplayer.BuildConfig
 import io.github.vladimirmi.internetradioplayer.data.db.entity.Group
 import io.github.vladimirmi.internetradioplayer.data.db.entity.Station
-import io.github.vladimirmi.internetradioplayer.data.repository.FavoriteListRepository
+import io.github.vladimirmi.internetradioplayer.data.repository.GroupListRepository
 import io.github.vladimirmi.internetradioplayer.data.repository.StationRepository
 import io.github.vladimirmi.internetradioplayer.domain.interactor.StationInteractor
 import io.github.vladimirmi.internetradioplayer.extensions.clear
@@ -50,7 +50,7 @@ private const val EXPANDED_ATTR = "expanded"
 class BackupRestoreHelper
 @Inject constructor(private val interactor: StationInteractor,
                     private val stationRepository: StationRepository,
-                    private val repository: FavoriteListRepository,
+                    private val repository: GroupListRepository,
                     private val context: Context) {
 
     private val ns: String? = null

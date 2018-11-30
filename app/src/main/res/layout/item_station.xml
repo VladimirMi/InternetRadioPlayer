@@ -31,7 +31,7 @@
         android:ellipsize="end"
         android:maxLines="1"
         android:textStyle="bold"
-        app:layout_constraintEnd_toStartOf="@id/addToFav"
+        app:layout_constraintEnd_toStartOf="@id/favoriteBt"
         app:layout_constraintStart_toEndOf="@+id/iconIv"
         app:layout_constraintTop_toTopOf="parent"
         tools:text="Speciess favere! A falsis, epos bassus pes."
@@ -49,13 +49,13 @@
         android:textAppearance="@style/TextAppearance.AppCompat.Subhead"
         android:textColor="@color/secondaryTextColor"
         app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toStartOf="@+id/addToFav"
+        app:layout_constraintEnd_toStartOf="@+id/favoriteBt"
         app:layout_constraintStart_toEndOf="@+id/iconIv"
         tools:text="Music, Country"
         />
 
     <ImageView
-        android:id="@+id/addToFav"
+        android:id="@+id/favoriteBt"
         android:layout_width="42dp"
         android:layout_height="42dp"
         android:layout_marginEnd="8dp"

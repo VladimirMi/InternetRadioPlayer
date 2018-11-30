@@ -49,7 +49,7 @@ class PlayerFragment : BaseFragment<PlayerPresenter, PlayerView>(), PlayerView, 
         setupTitle()
         setupGroupSpinner()
 
-        favoriteBt.setOnClickListener { presenter.changeFavorite() }
+        favoriteBt.setOnClickListener { presenter.switchFavorite() }
 
         metadataTv.isSelected = true
         playPauseBt.setOnClickListener { presenter.playPause() }

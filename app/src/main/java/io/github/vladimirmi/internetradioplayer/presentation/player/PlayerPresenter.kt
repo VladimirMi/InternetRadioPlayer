@@ -8,7 +8,6 @@ import io.github.vladimirmi.internetradioplayer.domain.interactor.FavoriteListIn
 import io.github.vladimirmi.internetradioplayer.domain.interactor.PlayerInteractor
 import io.github.vladimirmi.internetradioplayer.domain.interactor.StationInteractor
 import io.github.vladimirmi.internetradioplayer.extensions.subscribeX
-import io.github.vladimirmi.internetradioplayer.navigation.Router
 import io.github.vladimirmi.internetradioplayer.presentation.base.BasePresenter
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.rxkotlin.Observables
@@ -23,8 +22,7 @@ import javax.inject.Inject
 class PlayerPresenter
 @Inject constructor(private val stationInteractor: StationInteractor,
                     private val favoriteListInteractor: FavoriteListInteractor,
-                    private val playerInteractor: PlayerInteractor,
-                    private val router: Router)
+                    private val playerInteractor: PlayerInteractor)
     : BasePresenter<PlayerView>() {
 
     override fun onAttach(view: PlayerView) {
@@ -74,7 +72,7 @@ class PlayerPresenter
                 .addTo(viewSubs)
     }
 
-    fun changeFavorite() {
+    fun switchFavorite() {
         val isFavorite = favoriteListInteractor.isFavorite(stationInteractor.station)
         val changeFavorite = if (isFavorite) stationInteractor.removeFromFavorite()
         else stationInteractor.addToFavorite()

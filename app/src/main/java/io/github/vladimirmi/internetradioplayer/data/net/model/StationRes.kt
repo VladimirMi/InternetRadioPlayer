@@ -8,6 +8,13 @@ import io.github.vladimirmi.internetradioplayer.data.db.entity.Station
  */
 const val URI_BASE = "http://stream.dar.fm/"
 
+class StationsResult(
+        val success: Boolean,
+        val result: List<StationsRes>
+)
+
+class StationsRes(val stations: List<StationRes>)
+
 class StationRes(
         @SerializedName("station_id") val id: Int,
         @SerializedName("callsign") val name: String,
@@ -27,8 +34,9 @@ class StationRes(
         @SerializedName("slogan") val slogan: String
 ) {
 
+    val uri get() = "$URI_BASE$id"
+
     fun toStation(): Station {
-        val uri = URI_BASE + id
         return Station(name = name, uri = uri, genre = genre,
                 url = websiteUrl, encoding = encoding,
                 bitrate = null, sample = null)

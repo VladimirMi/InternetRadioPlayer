@@ -1,12 +1,13 @@
 package io.github.vladimirmi.internetradioplayer.domain.interactor
 
+import io.github.vladimirmi.internetradioplayer.data.db.entity.Station
 import io.github.vladimirmi.internetradioplayer.data.net.model.StationSearchRes
+import io.github.vladimirmi.internetradioplayer.data.repository.GroupListRepository
 import io.github.vladimirmi.internetradioplayer.data.repository.SearchRepository
 import io.github.vladimirmi.internetradioplayer.data.repository.StationRepository
 import io.github.vladimirmi.internetradioplayer.domain.model.Suggestion
 import io.reactivex.Completable
 import io.reactivex.Single
-import io.reactivex.rxkotlin.toCompletable
 import javax.inject.Inject
 
 /**
@@ -15,7 +16,8 @@ import javax.inject.Inject
 
 class SearchInteractor
 @Inject constructor(private val searchRepository: SearchRepository,
-                    private val stationRepository: StationRepository) {
+                    private val stationRepository: StationRepository,
+                    private val groupListRepository: GroupListRepository) {
 
     fun queryRecentSuggestions(query: String): Single<out List<Suggestion>> {
         return searchRepository.getRecentSuggestions(query)
@@ -33,6 +35,11 @@ class SearchInteractor
 
     fun selectUberStation(id: Int): Completable {
         return searchRepository.getStation(id)
-                .flatMapCompletable { { stationRepository.station = it.toStation() }.toCompletable() }
+                .map { it.result[0].stations[0] }
+                .doOnSuccess { station ->
+                    val newStation: Station = groupListRepository.list.findStation { it.uri == station.uri }
+                            ?: station.toStation()
+                    stationRepository.station = newStation
+                }.ignoreElement()
     }
 }

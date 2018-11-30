@@ -44,11 +44,13 @@ class StationInteractor
     fun addToFavorite(): Completable {
         return stationRepository.addToFavorite(station)
                 .andThen(favoriteListInteractor.initFavoriteList())
+                .andThen({ station = station }.toCompletable())
     }
 
     fun removeFromFavorite(): Completable {
         return stationRepository.removeFromFavorite(station)
                 .andThen(favoriteListInteractor.initFavoriteList())
+                .andThen({ station = station }.toCompletable())
     }
 
     fun changeGroup(groupName: String): Completable {

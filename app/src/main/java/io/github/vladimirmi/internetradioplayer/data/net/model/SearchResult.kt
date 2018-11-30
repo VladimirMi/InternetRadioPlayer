@@ -17,5 +17,5 @@ class StationSearchRes(
         val title: String
 ) {
 
-    val uri = URI_BASE + id
+    val uri get() = "$URI_BASE$id"
 }

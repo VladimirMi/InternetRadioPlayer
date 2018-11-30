@@ -6,8 +6,10 @@ import android.view.ViewGroup
 import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.LinearLayoutManager
 import io.github.vladimirmi.internetradioplayer.R
+import io.github.vladimirmi.internetradioplayer.data.db.entity.Station
 import io.github.vladimirmi.internetradioplayer.data.net.model.StationSearchRes
 import io.github.vladimirmi.internetradioplayer.di.Scopes
+import io.github.vladimirmi.internetradioplayer.domain.model.FlatStationsList
 import io.github.vladimirmi.internetradioplayer.domain.model.Suggestion
 import io.github.vladimirmi.internetradioplayer.extensions.dp
 import io.github.vladimirmi.internetradioplayer.extensions.visible
@@ -16,7 +18,6 @@ import io.github.vladimirmi.internetradioplayer.presentation.base.BaseFragment
 import io.reactivex.Observable
 import io.reactivex.disposables.Disposables
 import kotlinx.android.synthetic.main.fragment_search.*
-import timber.log.Timber
 import toothpick.Toothpick
 import androidx.appcompat.widget.SearchView as SearchViewAndroid
 
@@ -52,14 +53,9 @@ class SearchFragment : BaseFragment<SearchPresenter, SearchView>(), SearchView,
         stationsRv.layoutManager = lm
         stationsRv.adapter = stationsAdapter
         stationsRv.addItemDecoration(DividerItemDecoration(context, lm.orientation))
-        stationsAdapter.onAddToFavListener = {
-            Timber.e("add to fav: ${it.callsign}")
-            presenter.addToFavorite(it)
-        }
 
-        stationsAdapter.onItemClickListener = {
-            presenter.selectStation(it)
-        }
+        stationsAdapter.onAddToFavListener = { presenter.switchFavorite() }
+        stationsAdapter.onItemClickListener = { presenter.selectStation(it) }
     }
 
     private fun setupSuggestions() {
@@ -84,6 +80,8 @@ class SearchFragment : BaseFragment<SearchPresenter, SearchView>(), SearchView,
         suggestionsRv.visible(hasFocus)
     }
 
+    //region =============== SearchView ==============
+
     override fun addRecentSuggestions(list: List<Suggestion>) {
         suggestionsAdapter.addRecentSuggestions(list)
         adjustSuggestionsRecyclerHeight()
@@ -98,9 +96,15 @@ class SearchFragment : BaseFragment<SearchPresenter, SearchView>(), SearchView,
         stationsAdapter.stations = stations
     }
 
-    override fun selectStation(station: StationSearchRes) {
+    override fun setFavorites(favorites: FlatStationsList) {
+        stationsAdapter.setFavorites(favorites)
+    }
+
+    override fun selectStation(station: Station) {
         stationsAdapter.selectStation(station)
     }
+
+    //endregion
 
     private fun getSearchViewObservable(): Observable<SearchEvent> {
         return Observable.create<SearchEvent> { e ->

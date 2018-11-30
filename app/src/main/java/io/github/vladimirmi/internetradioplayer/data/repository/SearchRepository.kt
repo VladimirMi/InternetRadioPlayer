@@ -3,8 +3,8 @@ package io.github.vladimirmi.internetradioplayer.data.repository
 import io.github.vladimirmi.internetradioplayer.data.db.SuggestionsDatabase
 import io.github.vladimirmi.internetradioplayer.data.db.entity.SuggestionEntity
 import io.github.vladimirmi.internetradioplayer.data.net.UberStationsService
-import io.github.vladimirmi.internetradioplayer.data.net.model.StationRes
 import io.github.vladimirmi.internetradioplayer.data.net.model.StationSearchRes
+import io.github.vladimirmi.internetradioplayer.data.net.model.StationsResult
 import io.github.vladimirmi.internetradioplayer.domain.model.Suggestion
 import io.reactivex.Completable
 import io.reactivex.Single
@@ -45,7 +45,7 @@ class SearchRepository
                 .subscribeOn(Schedulers.io())
     }
 
-    fun getStation(id: Int): Single<StationRes> {
+    fun getStation(id: Int): Single<StationsResult> {
         return uberStationsService.getStation(id)
                 .subscribeOn(Schedulers.io())
 

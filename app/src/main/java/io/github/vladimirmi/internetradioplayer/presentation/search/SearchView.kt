@@ -15,4 +15,6 @@ interface SearchView : BaseView {
     fun addRegularSuggestions(list: List<Suggestion>)
 
     fun setStations(stations: List<StationSearchRes>)
+
+    fun selectStation(station: StationSearchRes)
 }

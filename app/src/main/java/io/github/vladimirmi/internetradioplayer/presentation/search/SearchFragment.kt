@@ -54,11 +54,11 @@ class SearchFragment : BaseFragment<SearchPresenter, SearchView>(), SearchView,
         stationsRv.addItemDecoration(DividerItemDecoration(context, lm.orientation))
         stationsAdapter.onAddToFavListener = {
             Timber.e("add to fav: ${it.callsign}")
+            presenter.addToFavorite(it)
         }
 
         stationsAdapter.onItemClickListener = {
-            stationsAdapter.selectStation(it)
-            Timber.e("item click: ${it.callsign}")
+            presenter.selectStation(it)
         }
     }
 
@@ -96,6 +96,10 @@ class SearchFragment : BaseFragment<SearchPresenter, SearchView>(), SearchView,
 
     override fun setStations(stations: List<StationSearchRes>) {
         stationsAdapter.stations = stations
+    }
+
+    override fun selectStation(station: StationSearchRes) {
+        stationsAdapter.selectStation(station)
     }
 
     private fun getSearchViewObservable(): Observable<SearchEvent> {

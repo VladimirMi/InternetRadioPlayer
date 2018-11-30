@@ -105,7 +105,7 @@ class StationParser
                 uri = url.toString(),
                 genre = headers[HEADER_GENRE],
                 url = headers[HEADER_URL],
-                format = null,
+                encoding = null,
                 bitrate = headers[HEADER_BITRATE],
                 sample = headers[HEADER_SAMPLE]
         )

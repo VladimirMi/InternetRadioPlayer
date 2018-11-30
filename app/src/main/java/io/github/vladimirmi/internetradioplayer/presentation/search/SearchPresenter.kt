@@ -1,5 +1,6 @@
 package io.github.vladimirmi.internetradioplayer.presentation.search
 
+import io.github.vladimirmi.internetradioplayer.data.net.model.StationSearchRes
 import io.github.vladimirmi.internetradioplayer.domain.interactor.SearchInteractor
 import io.github.vladimirmi.internetradioplayer.extensions.subscribeX
 import io.github.vladimirmi.internetradioplayer.presentation.base.BasePresenter
@@ -16,7 +17,6 @@ import javax.inject.Inject
 class SearchPresenter
 @Inject constructor(private val searchInteractor: SearchInteractor)
     : BasePresenter<SearchView>() {
-
 
     fun setSearchViewObservable(observable: Observable<SearchEvent>) {
 
@@ -39,5 +39,15 @@ class SearchPresenter
                 .subscribeX(onNext = { view?.setStations(it) })
                 .addTo(viewSubs)
 
+    }
+
+    fun selectStation(station: StationSearchRes) {
+        searchInteractor.selectUberStation(station.id)
+                .subscribeX(onComplete = { view?.selectStation(station) })
+                .addTo(viewSubs)
+    }
+
+    fun addToFavorite(station: StationSearchRes) {
+        TODO("not implemented")
     }
 }

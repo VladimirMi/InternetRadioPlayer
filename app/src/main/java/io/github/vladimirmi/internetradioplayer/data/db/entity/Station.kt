@@ -20,7 +20,7 @@ data class Station(
         val uri: String,
         val genre: String?,
         val url: String?,
-        val format: String?,
+        val encoding: String?,
         val bitrate: String?,
         val sample: String?,
         val order: Int,
@@ -32,11 +32,11 @@ data class Station(
                 uri: String,
                 genre: String?,
                 url: String?,
-                format: String?,
+                encoding: String?,
                 bitrate: String?,
                 sample: String?)
             : this(UUID.randomUUID().toString(),
-            name, uri, genre, url, format, bitrate, sample,
+            name, uri, genre, url, encoding, bitrate, sample,
             0, Group.DEFAULT_ID)
 
     companion object {
@@ -46,8 +46,9 @@ data class Station(
     @Ignore val specs: String
 
     init {
+        //todo add Hz, kbps, check empty
         val sb = StringBuilder()
-        format?.let { sb.append(it); sb.append(", ") }
+        encoding?.let { sb.append(it); sb.append(", ") }
         sample?.let { sb.append(it); sb.append(", ") }
         bitrate?.let { sb.append(it) }
         specs = sb.toString()

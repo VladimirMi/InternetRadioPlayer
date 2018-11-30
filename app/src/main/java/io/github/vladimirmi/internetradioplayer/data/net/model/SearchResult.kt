@@ -15,4 +15,7 @@ class StationSearchRes(
         val band: String,
         val artist: String,
         val title: String
-)
+) {
+
+    val uri = URI_BASE + id
+}

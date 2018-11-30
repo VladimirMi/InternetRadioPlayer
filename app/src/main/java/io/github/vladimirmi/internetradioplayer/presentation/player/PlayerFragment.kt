@@ -23,6 +23,7 @@ import io.github.vladimirmi.internetradioplayer.presentation.base.BaseFragment
 import io.github.vladimirmi.internetradioplayer.presentation.favoritelist.NewGroupDialog
 import kotlinx.android.synthetic.main.fragment_player.*
 import kotlinx.android.synthetic.main.view_station_info.*
+import timber.log.Timber
 import toothpick.Toothpick
 
 
@@ -88,6 +89,12 @@ class PlayerFragment : BaseFragment<PlayerPresenter, PlayerView>(), PlayerView, 
                 presenter.selectGroup(position, groupName)
             }
         }
+    }
+
+    override fun setUserVisibleHint(isVisibleToUser: Boolean) {
+        super.setUserVisibleHint(isVisibleToUser)
+        Timber.e("setUserVisibleHint: $isVisibleToUser")
+        if (!isVisibleToUser && view != null) changeTitleEditable(false)
     }
 
     //region =============== PlayerView ==============
@@ -160,8 +167,8 @@ class PlayerFragment : BaseFragment<PlayerPresenter, PlayerView>(), PlayerView, 
 
     //endregion
 
-    private fun changeTitleEditable() {
-        val enabled = titleEt.isClickable
+    private fun changeTitleEditable(enable: Boolean? = null) {
+        val enabled = enable?.not() ?: titleEt.isClickable
         titleEt.setEditable(!enabled)
         editTitleIv.setImageResource(if (enabled) R.drawable.ic_edit else R.drawable.ic_submit)
         if (enabled) {

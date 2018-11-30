@@ -23,7 +23,6 @@ import io.github.vladimirmi.internetradioplayer.presentation.base.BaseFragment
 import io.github.vladimirmi.internetradioplayer.presentation.favoritelist.NewGroupDialog
 import kotlinx.android.synthetic.main.fragment_player.*
 import kotlinx.android.synthetic.main.view_station_info.*
-import timber.log.Timber
 import toothpick.Toothpick
 
 
@@ -93,7 +92,6 @@ class PlayerFragment : BaseFragment<PlayerPresenter, PlayerView>(), PlayerView, 
 
     override fun setUserVisibleHint(isVisibleToUser: Boolean) {
         super.setUserVisibleHint(isVisibleToUser)
-        Timber.e("setUserVisibleHint: $isVisibleToUser")
         if (!isVisibleToUser && view != null) changeTitleEditable(false)
     }
 
@@ -112,6 +110,7 @@ class PlayerFragment : BaseFragment<PlayerPresenter, PlayerView>(), PlayerView, 
 
     override fun setGroups(list: List<String>) {
         adapter.clear()
+        //todo to strings
         adapter.add("New folder...")
         adapter.addAll(list.map { Group.getViewName(it, context!!) })
     }

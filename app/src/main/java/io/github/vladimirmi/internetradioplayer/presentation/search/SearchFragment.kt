@@ -80,6 +80,12 @@ class SearchFragment : BaseFragment<SearchPresenter, SearchView>(), SearchView,
         suggestionsRv.visible(hasFocus)
     }
 
+    override fun setUserVisibleHint(isVisibleToUser: Boolean) {
+        super.setUserVisibleHint(isVisibleToUser)
+        if (!isVisibleToUser && view != null) searchView.clearFocus()
+    }
+
+
     //region =============== SearchView ==============
 
     override fun addRecentSuggestions(list: List<Suggestion>) {

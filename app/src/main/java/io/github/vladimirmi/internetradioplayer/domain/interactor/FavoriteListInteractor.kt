@@ -49,7 +49,7 @@ class FavoriteListInteractor
     }
 
     fun isFavorite(station: Station): Boolean {
-        return groupListRepository.list.findStation { it.id == station.id } != null
+        return groupListRepository.stations.findStation { it.id == station.id } != null
     }
 
     fun createGroup(groupName: String): Completable {

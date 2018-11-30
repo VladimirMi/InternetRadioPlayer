@@ -36,15 +36,16 @@ class StationInteractor
     fun createStation(uri: Uri): Single<Station> {
         return stationRepository.createStation(uri)
                 .doOnSuccess { newStation ->
-                    val favoriteStation = groupListRepository.list.findStation { it.uri == newStation.uri }
+                    val favoriteStation = groupListRepository.stations.findStation { it.uri == newStation.uri }
                     station = favoriteStation ?: newStation
                 }
     }
 
     fun addToFavorite(): Completable {
-        return stationRepository.addToFavorite(station)
+        val newStation = station.copy(order = groupListRepository.stations.size)
+        return stationRepository.addToFavorite(newStation)
                 .andThen(favoriteListInteractor.initFavoriteList())
-                .andThen({ station = station }.toCompletable())
+                .andThen({ station = newStation }.toCompletable())
     }
 
     fun removeFromFavorite(): Completable {

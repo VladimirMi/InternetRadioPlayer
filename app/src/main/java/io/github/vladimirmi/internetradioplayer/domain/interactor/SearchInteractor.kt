@@ -37,7 +37,7 @@ class SearchInteractor
         return searchRepository.getStation(id)
                 .map { it.result[0].stations[0] }
                 .doOnSuccess { station ->
-                    val newStation: Station = groupListRepository.list.findStation { it.uri == station.uri }
+                    val newStation: Station = groupListRepository.stations.findStation { it.uri == station.uri }
                             ?: station.toStation()
                     stationRepository.station = newStation
                 }.ignoreElement()

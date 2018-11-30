@@ -23,14 +23,14 @@ class GroupListRepository
     val stationsListObs: Observable<FlatStationsList> get() = _stationsListObs
     var groups: List<Group> = ArrayList()
         private set
-    var list: FlatStationsList
+    var stations: FlatStationsList
         get() = _stationsListObs.value!!
         set(value) = _stationsListObs.accept(value)
 
     fun initStationsList(groups: List<Group>): Completable {
         return Completable.fromAction {
             this.groups = groups
-            this.list = FlatStationsList.createFrom(groups)
+            this.stations = FlatStationsList.createFrom(groups)
         }
     }
 

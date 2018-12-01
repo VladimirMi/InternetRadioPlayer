@@ -22,7 +22,7 @@
 
     <color name="black">#000000</color>
     <color name="white">#ffffff</color>
-    <color name="transparent">#0fff</color>
+    <color name="transparent">#00ffffff</color>
 
     <color name="primaryColor">@color/grey_600</color>
     <color name="primaryDarkColor">@color/grey_800</color>
@@ -32,7 +32,7 @@
     <color name="accentColor">@color/teal_500</color>
     <color name="accentLightColor">@color/teal_200</color>
 
-    <color name="shadow">#44212121</color>
+    <color name="shadow">#44616161</color>
     <color name="transparent_grey">#55222222</color>
 
     <color name="play_button">#4caf50</color>

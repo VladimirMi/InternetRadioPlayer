@@ -8,7 +8,7 @@
             android:id="@+id/nav_search"
             android:title="@string/tabs_search"/>
         <item
-            android:id="@+id/nav_stations"
+            android:id="@+id/nav_favorites"
             android:title="@string/tabs_stations"/>
         <item
             android:id="@+id/nav_player"

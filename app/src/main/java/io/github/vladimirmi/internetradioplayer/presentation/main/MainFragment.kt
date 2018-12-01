@@ -2,22 +2,23 @@ package io.github.vladimirmi.internetradioplayer.presentation.main
 
 import android.annotation.SuppressLint
 import android.os.Bundle
-import android.view.*
+import android.view.Menu
+import android.view.MenuItem
+import android.view.View
 import androidx.appcompat.app.ActionBarDrawerToggle
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.view.menu.MenuBuilder
+import androidx.constraintlayout.widget.ConstraintSet
 import androidx.core.content.ContextCompat
 import androidx.drawerlayout.widget.DrawerLayout
-import androidx.interpolator.view.animation.FastOutSlowInInterpolator
-import androidx.transition.Slide
-import androidx.transition.TransitionManager
-import androidx.transition.Visibility
 import androidx.viewpager.widget.ViewPager
 import io.github.vladimirmi.internetradioplayer.R
 import io.github.vladimirmi.internetradioplayer.data.utils.MAIN_PAGE_ID_KEY
 import io.github.vladimirmi.internetradioplayer.di.Scopes
+import io.github.vladimirmi.internetradioplayer.extensions.waitForMeasure
 import io.github.vladimirmi.internetradioplayer.presentation.base.BaseFragment
 import kotlinx.android.synthetic.main.fragment_main.*
+import kotlinx.android.synthetic.main.view_controls_simple.*
 import toothpick.Toothpick
 
 
@@ -28,6 +29,8 @@ import toothpick.Toothpick
 class MainFragment : BaseFragment<MainPresenter, MainView>(), MainView {
 
     override val layout = R.layout.fragment_main
+    private var prevPage = PAGE_SEARCH
+    private var controlsVisible = false
 
     companion object {
         fun newInstance(page: Int): MainFragment {
@@ -55,8 +58,27 @@ class MainFragment : BaseFragment<MainPresenter, MainView>(), MainView {
             override fun onPageSelected(position: Int) {
                 presenter.selectPage(position)
             }
+
+            override fun onPageScrolled(position: Int, positionOffset: Float, positionOffsetPixels: Int) {
+                val visibility = Math.min(1f, Math.abs(PAGE_PLAYER - (position + positionOffset)))
+                showControls(visibility)
+            }
         })
         setupToolbar()
+
+        sPlayPauseBt.setManualMode(true)
+        sPlayPauseBt.setOnClickListener { presenter.playPause() }
+    }
+
+    private fun showControls(visibility: Float) {
+        simpleControlsContainer.waitForMeasure {
+            val set = ConstraintSet()
+            set.clone(mainCl)
+            set.setMargin(R.id.mainPager, ConstraintSet.BOTTOM,
+                    (simpleControlsContainer.height * visibility).toInt())
+            set.applyTo(mainCl)
+            controlsVisible = visibility > 0
+        }
     }
 
     @SuppressLint("RestrictedApi")
@@ -92,33 +114,42 @@ class MainFragment : BaseFragment<MainPresenter, MainView>(), MainView {
         return findDrawer(view.parent as? View)
     }
 
+    //region =============== MainView ==============
+
     override fun setPageId(pageId: Int) {
         arguments = Bundle().apply { putInt(MAIN_PAGE_ID_KEY, pageId) }
         val page = when (pageId) {
-            R.id.nav_search -> 0
-            R.id.nav_stations -> 1
-            else -> 2
+            R.id.nav_search -> PAGE_SEARCH
+            R.id.nav_favorites -> PAGE_FAVORITES
+            else -> PAGE_PLAYER
         }
+        prevPage = page
         mainPager.setCurrentItem(page, true)
     }
 
-    override fun showControls(visible: Boolean) {
-        val slide = createSlideTransition()
-        slide.mode = if (visible) Visibility.MODE_IN else Visibility.MODE_OUT
-        TransitionManager.beginDelayedTransition(view as ViewGroup, slide)
-//        playerControlsFr.view?.visible(visible)
+
+    override fun showStopped() {
+        sPlayPauseBt.setPlaying(false, controlsVisible)
+//        bufferingPb.visible(false)
     }
+
+    override fun showPlaying() {
+        sPlayPauseBt.setPlaying(true, controlsVisible)
+//        bufferingPb.visible(false)
+    }
+
+    override fun showBuffering() {
+        sPlayPauseBt.setPlaying(true, controlsVisible)
+//        bufferingPb.visible(true)
+    }
+
+    override fun setMetadata(metadata: String) {
+        sMetadataTv.text = metadata
+    }
+
+    //endregion
 
     private fun openAddStationDialog() {
         NewStationDialog().show(childFragmentManager, "new_station_dialog")
-    }
-
-    private fun createSlideTransition(): Slide {
-        val slide = Slide()
-        slide.slideEdge = Gravity.BOTTOM
-        slide.duration = 300
-//        slide.addTarget(R.id.playerControlsFr)
-        slide.interpolator = FastOutSlowInInterpolator()
-        return slide
     }
 }

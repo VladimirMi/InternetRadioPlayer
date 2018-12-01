@@ -92,7 +92,10 @@ class PlayerFragment : BaseFragment<PlayerPresenter, PlayerView>(), PlayerView, 
 
     override fun setUserVisibleHint(isVisibleToUser: Boolean) {
         super.setUserVisibleHint(isVisibleToUser)
-        if (!isVisibleToUser && view != null) changeTitleEditable(false)
+//        Timber.e("setUserVisibleHint: $isVisibleToUser $view")
+        if (view != null) {
+            if (!isVisibleToUser) changeTitleEditable(false)
+        }
     }
 
     //region =============== PlayerView ==============
@@ -138,17 +141,17 @@ class PlayerFragment : BaseFragment<PlayerPresenter, PlayerView>(), PlayerView, 
     }
 
     override fun showStopped() {
-        playPauseBt.isPlaying = false
+        playPauseBt.setPlaying(false, userVisibleHint)
 //        bufferingPb.visible(false)
     }
 
     override fun showPlaying() {
-        playPauseBt.isPlaying = true
+        playPauseBt.setPlaying(true, userVisibleHint)
 //        bufferingPb.visible(false)
     }
 
     override fun showBuffering() {
-        playPauseBt.isPlaying = true
+        playPauseBt.setPlaying(true, userVisibleHint)
 //        bufferingPb.visible(true)
     }
 

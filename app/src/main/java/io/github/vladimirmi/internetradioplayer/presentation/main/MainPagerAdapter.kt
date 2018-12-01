@@ -13,6 +13,10 @@ import io.github.vladimirmi.internetradioplayer.presentation.search.SearchFragme
  * Created by Vladimir Mikhalev 11.11.2018.
  */
 
+const val PAGE_SEARCH = 0
+const val PAGE_FAVORITES = 1
+const val PAGE_PLAYER = 2
+
 class MainPagerAdapter(context: Context, fm: FragmentManager) : FragmentPagerAdapter(fm) {
 
     private val tabTitles = context.resources.getStringArray(R.array.uber_stations_tabs)

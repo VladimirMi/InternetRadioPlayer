@@ -3,14 +3,11 @@ package io.github.vladimirmi.playerbutton;
 import android.content.Context;
 import android.content.res.TypedArray;
 import android.graphics.drawable.Animatable;
-import android.graphics.drawable.Drawable;
 import android.util.AttributeSet;
 
 import androidx.annotation.ColorInt;
-import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.core.content.ContextCompat;
-import androidx.core.graphics.drawable.DrawableCompat;
 import androidx.vectordrawable.graphics.drawable.AnimatedVectorDrawableCompat;
 
 
@@ -49,7 +46,7 @@ public class PlayerButton extends androidx.appcompat.widget.AppCompatImageButton
     }
 
     private void init() {
-        setDrawable(true);
+        setImageDrawable(getAnimatedDrawable(false));
         super.setOnClickListener(v -> {
             if (listener != null) listener.onClick(v);
             if (!isManualMode) setPlaying(!isPlaying);
@@ -66,16 +63,27 @@ public class PlayerButton extends androidx.appcompat.widget.AppCompatImageButton
     }
 
     /**
-     * Set playing mode. Animate if needed
+     * Set playing mode. Animate by default
      *
-     * @param isPlaying {@code true} - playing mode, {@code false} - paused mode
+     * @param play {@code true} - playing mode, {@code false} - paused mode
      */
-    public void setPlaying(boolean isPlaying) {
-        if (this.isPlaying != isPlaying) {
-            setDrawable(false);
+    public void setPlaying(boolean play) {
+        setPlaying(play, true);
+    }
+
+    /**
+     * Set playing mode
+     *
+     * @param play    {@code true} - playing mode, {@code false} - paused mode
+     * @param animate animate changes
+     */
+    public void setPlaying(boolean play, boolean animate) {
+        if (isPlaying == play) return;
+        isPlaying = play;
+        setImageDrawable(getAnimatedDrawable(animate));
+        if (animate) {
             ((Animatable) getDrawable()).start();
         }
-        this.isPlaying = isPlaying;
     }
 
     /**
@@ -87,21 +95,12 @@ public class PlayerButton extends androidx.appcompat.widget.AppCompatImageButton
         this.isManualMode = isManualMode;
     }
 
-    private void setDrawable(boolean init) {
-        AnimatedVectorDrawableCompat drawable = getNextDrawable();
-        if (drawable != null) {
-            tintDrawable(drawable, isPlaying || init ? playColor : pauseColor);
-            setImageDrawable(drawable);
-        }
-    }
 
-    private AnimatedVectorDrawableCompat getNextDrawable() {
-        int resId = isPlaying ? R.drawable.pause_to_play_animation : R.drawable.play_to_pause_animation;
-        return AnimatedVectorDrawableCompat.create(getContext(), resId);
-    }
-
-    private void tintDrawable(@NonNull Drawable drawable, @ColorInt int color) {
-        Drawable wrapped = DrawableCompat.wrap(drawable).mutate();
-        DrawableCompat.setTint(wrapped, color);
+    private AnimatedVectorDrawableCompat getAnimatedDrawable(boolean animate) {
+        int resId = isPlaying == animate ? R.drawable.play_to_pause_animation : R.drawable.pause_to_play_animation;
+        AnimatedVectorDrawableCompat drawable = AnimatedVectorDrawableCompat.create(getContext(), resId);
+        //noinspection ConstantConditions
+        drawable.setTint(isPlaying ? pauseColor : playColor);
+        return drawable;
     }
 }

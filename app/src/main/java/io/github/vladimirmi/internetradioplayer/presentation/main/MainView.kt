@@ -8,7 +8,13 @@ import io.github.vladimirmi.internetradioplayer.presentation.base.BaseView
 
 interface MainView : BaseView {
 
-    fun showControls(visible: Boolean)
+    fun setPageId(pageId: Int)
 
-    fun setPageId(page: Int)
+    fun setMetadata(metadata: String)
+
+    fun showStopped()
+
+    fun showBuffering()
+
+    fun showPlaying()
 }

@@ -58,7 +58,7 @@ class PlayerPresenter
                 .addTo(viewSubs)
     }
 
-    private fun setupPlayer() {
+    fun setupPlayer() {
         playerInteractor.playbackStateObs
                 .subscribeX(onNext = { handleState(it) })
                 .addTo(viewSubs)
@@ -89,13 +89,13 @@ class PlayerPresenter
                 .addTo(viewSubs)
     }
 
+
     fun createGroup(groupName: String) {
         favoriteListInteractor.createGroup(groupName)
                 .andThen(stationInteractor.changeGroup(groupName))
                 .subscribeX()
                 .addTo(viewSubs)
     }
-
 
     fun editStationTitle(title: String) {
         stationInteractor.editStationTitle(title)

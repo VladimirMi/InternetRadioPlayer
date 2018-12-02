@@ -27,8 +27,8 @@ private const val GROUP_TITLE = 0
 private const val GROUP_ITEM = 1
 private const val PAYLOAD_SELECTED_CHANGE = "PAYLOAD_SELECTED_CHANGE"
 private const val PAYLOAD_BACKGROUND_CHANGE = "PAYLOAD_BACKGROUND_CHANGE"
-private val defaultOutline = if (Build.VERSION.SDK_INT >= 21) ViewOutlineProvider.BACKGROUND else null
-private val fixedOutline = if (Build.VERSION.SDK_INT >= 21) FixedOutlineProvider() else null
+val defaultOutline = if (Build.VERSION.SDK_INT >= 21) ViewOutlineProvider.BACKGROUND else null
+val fixedOutline = if (Build.VERSION.SDK_INT >= 21) FixedOutlineProvider() else null
 
 class StationListAdapter(private val callback: StationItemCallback)
     : RecyclerView.Adapter<RecyclerView.ViewHolder>() {

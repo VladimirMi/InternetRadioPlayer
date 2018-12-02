@@ -8,6 +8,7 @@
     android:layout_height="64dp"
     android:layout_marginLeft="8dp"
     android:layout_marginRight="8dp"
+    android:elevation="2dp"
     android:foreground="?android:attr/selectableItemBackground"
     >
 
@@ -64,6 +65,17 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toTopOf="parent"
         android:background="@drawable/ic_star"
+        android:contentDescription="@string/desc_add_remove_favorite"
+        />
+
+    <View
+        android:id="@+id/dilimeter"
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:layout_gravity="bottom"
+        android:background="@color/grey_300"
+        app:layout_constraintBottom_toBottomOf="parent"
+        tools:ignore="ContentDescription"
         />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

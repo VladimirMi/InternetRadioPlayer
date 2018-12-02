@@ -7,14 +7,18 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:focusableInTouchMode="true"
-    android:padding="8dp"
     >
 
     <androidx.cardview.widget.CardView
         android:id="@+id/searchCv"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        app:cardUseCompatPadding="true"
+        android:layout_marginLeft="8dp"
+        android:layout_marginTop="8dp"
+        android:layout_marginRight="8dp"
+        app:layout_constraintEnd_toStartOf="@+id/stationsRv"
+        app:layout_constraintStart_toEndOf="@+id/stationsRv"
+        app:layout_constraintTop_toTopOf="parent"
         >
 
         <LinearLayout
@@ -30,17 +34,18 @@
                 android:layout_height="48dp"
                 android:background="@color/primaryLightColor"
                 android:iconifiedByDefault="false"
-                app:queryHint="@string/tabs_search"
                 app:queryBackground="@null"
+                app:queryHint="@string/tabs_search"
                 />
 
             <androidx.recyclerview.widget.RecyclerView
                 android:id="@+id/suggestionsRv"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:overScrollMode="never"
                 app:layout_constraintTop_toBottomOf="@id/searchView"
                 tools:listitem="@layout/item_suggestion"
-                android:overScrollMode="never"
+                tools:visibility="gone"
                 />
         </LinearLayout>
 
@@ -49,9 +54,11 @@
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/stationsRv"
         android:layout_width="match_parent"
-        android:layout_height="0dp"
-        android:layout_marginTop="56dp"
+        android:layout_height="match_parent"
+        android:clipToPadding="false"
         android:overScrollMode="never"
+        android:paddingTop="60dp"
+        android:paddingBottom="8dp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"

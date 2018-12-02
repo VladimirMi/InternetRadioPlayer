@@ -52,7 +52,6 @@ class SearchFragment : BaseFragment<SearchPresenter, SearchView>(), SearchView,
         val lm = LinearLayoutManager(context)
         stationsRv.layoutManager = lm
         stationsRv.adapter = stationsAdapter
-        stationsRv.addItemDecoration(DividerItemDecoration(context, lm.orientation))
 
         stationsAdapter.onAddToFavListener = { presenter.switchFavorite() }
         stationsAdapter.onItemClickListener = { presenter.selectStation(it) }

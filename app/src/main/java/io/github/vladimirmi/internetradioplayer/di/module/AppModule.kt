@@ -3,15 +3,13 @@ package io.github.vladimirmi.internetradioplayer.di.module
 import android.content.Context
 import com.google.gson.Gson
 import com.google.gson.GsonBuilder
+import io.github.vladimirmi.internetradioplayer.data.db.HistoryDatabase
 import io.github.vladimirmi.internetradioplayer.data.db.StationsDatabase
 import io.github.vladimirmi.internetradioplayer.data.db.SuggestionsDatabase
 import io.github.vladimirmi.internetradioplayer.data.net.UberStationsService
 import io.github.vladimirmi.internetradioplayer.data.net.createClient
 import io.github.vladimirmi.internetradioplayer.data.net.getUberStationsService
-import io.github.vladimirmi.internetradioplayer.data.repository.GroupListRepository
-import io.github.vladimirmi.internetradioplayer.data.repository.PlayerRepository
-import io.github.vladimirmi.internetradioplayer.data.repository.SearchRepository
-import io.github.vladimirmi.internetradioplayer.data.repository.StationRepository
+import io.github.vladimirmi.internetradioplayer.data.repository.*
 import io.github.vladimirmi.internetradioplayer.data.service.LoadControl
 import io.github.vladimirmi.internetradioplayer.data.source.StationSource
 import io.github.vladimirmi.internetradioplayer.data.utils.ShortcutHelper
@@ -47,6 +45,9 @@ class AppModule(context: Context) : Module() {
         val suggestionsDatabase = SuggestionsDatabase.newInstance(context)
         bind(SuggestionsDatabase::class.java).toInstance(suggestionsDatabase)
 
+        val historyDatabase = HistoryDatabase.newInstance(context)
+        bind(HistoryDatabase::class.java).toInstance(historyDatabase)
+
         bind(StationParser::class.java).singletonInScope()
 
         bind(ShortcutHelper::class.java).singletonInScope()
@@ -57,12 +58,14 @@ class AppModule(context: Context) : Module() {
         bind(GroupListRepository::class.java).singletonInScope()
         bind(StationRepository::class.java).singletonInScope()
         bind(PlayerRepository::class.java).singletonInScope()
+        bind(HistoryRepository::class.java).singletonInScope()
 
         bind(MainInteractor::class.java).singletonInScope()
         bind(SearchInteractor::class.java).singletonInScope()
         bind(FavoriteListInteractor::class.java).singletonInScope()
         bind(StationInteractor::class.java).singletonInScope()
         bind(PlayerInteractor::class.java).singletonInScope()
+        bind(HistoryInteractor::class.java).singletonInScope()
 
         bind(LoadControl::class.java).singletonInScope()
     }

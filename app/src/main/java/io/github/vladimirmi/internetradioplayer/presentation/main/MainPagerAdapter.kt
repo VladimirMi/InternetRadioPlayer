@@ -6,6 +6,7 @@ import androidx.fragment.app.FragmentManager
 import androidx.fragment.app.FragmentPagerAdapter
 import io.github.vladimirmi.internetradioplayer.R
 import io.github.vladimirmi.internetradioplayer.presentation.favoritelist.FavoriteListFragment
+import io.github.vladimirmi.internetradioplayer.presentation.history.HistoryFragment
 import io.github.vladimirmi.internetradioplayer.presentation.player.PlayerFragment
 import io.github.vladimirmi.internetradioplayer.presentation.search.SearchFragment
 
@@ -16,6 +17,7 @@ import io.github.vladimirmi.internetradioplayer.presentation.search.SearchFragme
 const val PAGE_SEARCH = 0
 const val PAGE_FAVORITES = 1
 const val PAGE_PLAYER = 2
+const val PAGE_HISTORY = 3
 
 class MainPagerAdapter(context: Context, fm: FragmentManager) : FragmentPagerAdapter(fm) {
 
@@ -26,12 +28,13 @@ class MainPagerAdapter(context: Context, fm: FragmentManager) : FragmentPagerAda
             0 -> SearchFragment()
             1 -> FavoriteListFragment()
             2 -> PlayerFragment()
+            3 -> HistoryFragment()
             else -> throw IllegalStateException("Can't find fragment for the position $position")
         }
     }
 
     override fun getCount(): Int {
-        return 3
+        return tabTitles.size
     }
 
     override fun getPageTitle(position: Int): CharSequence? {

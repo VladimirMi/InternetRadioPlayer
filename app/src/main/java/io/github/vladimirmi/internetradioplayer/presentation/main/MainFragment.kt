@@ -121,7 +121,8 @@ class MainFragment : BaseFragment<MainPresenter, MainView>(), MainView {
         val page = when (pageId) {
             R.id.nav_search -> PAGE_SEARCH
             R.id.nav_favorites -> PAGE_FAVORITES
-            else -> PAGE_PLAYER
+            R.id.nav_player -> PAGE_PLAYER
+            else -> PAGE_HISTORY
         }
         prevPage = page
         mainPager.setCurrentItem(page, true)

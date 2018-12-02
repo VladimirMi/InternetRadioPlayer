@@ -11,7 +11,6 @@ import io.github.vladimirmi.internetradioplayer.presentation.root.RootActivity
 import io.github.vladimirmi.internetradioplayer.presentation.settings.SettingsFragment
 import ru.terrakok.cicerone.android.SupportAppNavigator
 import ru.terrakok.cicerone.commands.*
-import timber.log.Timber
 import java.util.*
 
 /**
@@ -96,7 +95,6 @@ class Navigator(private val activity: RootActivity, private val containerId: Int
     }
 
     private fun notifyNavigationListener() {
-        Timber.d("notifyNavigationListener: $screenStack")
         val navId = screenStack.peek()?.navId
         if (navId != null) navigationIdListener?.invoke(navId)
     }

@@ -43,7 +43,8 @@ class MainPresenter
         val pageId = when (position) {
             0 -> R.id.nav_search
             1 -> R.id.nav_favorites
-            else -> R.id.nav_player
+            2 -> R.id.nav_player
+            else -> R.id.nav_history
         }
         mainInteractor.saveMainPageId(pageId)
         router.replaceScreen(pageId)

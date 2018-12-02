@@ -13,6 +13,9 @@
         <item
             android:id="@+id/nav_player"
             android:title="@string/tabs_player"/>
+        <item
+            android:id="@+id/nav_history"
+            android:title="@string/tabs_history"/>
     </group>
 
     <group

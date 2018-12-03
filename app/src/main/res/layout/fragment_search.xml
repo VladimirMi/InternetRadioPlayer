@@ -66,5 +66,4 @@
         tools:listitem="@layout/item_station"
         />
 
-
 </androidx.constraintlayout.widget.ConstraintLayout>

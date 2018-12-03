@@ -68,6 +68,7 @@ class MainFragment : BaseFragment<MainPresenter, MainView>(), MainView {
 
         sPlayPauseBt.setManualMode(true)
         sPlayPauseBt.setOnClickListener { presenter.playPause() }
+        sMetadataTv.isSelected = true
     }
 
     private fun showControls(visibility: Float) {

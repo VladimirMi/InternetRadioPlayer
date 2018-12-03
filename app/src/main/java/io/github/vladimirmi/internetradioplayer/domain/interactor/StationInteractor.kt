@@ -45,13 +45,13 @@ class StationInteractor
         val newStation = station.copy(order = groupListRepository.stations.size)
         return stationRepository.addToFavorite(newStation)
                 .andThen(favoriteListInteractor.initFavoriteList())
-                .andThen({ station = newStation }.toCompletable())
+                .andThen(setStation(newStation))
     }
 
     fun removeFromFavorite(): Completable {
         return stationRepository.removeFromFavorite(station)
                 .andThen(favoriteListInteractor.initFavoriteList())
-                .andThen({ station = station }.toCompletable())
+                .andThen(setStation(station))
     }
 
     fun changeGroup(groupName: String): Completable {
@@ -61,7 +61,7 @@ class StationInteractor
                     else {
                         val newStation = station.copy(groupId = it.id)
                         stationRepository.updateStations(listOf(newStation))
-                                .andThen({ station = newStation }.toCompletable())
+                                .andThen(setStation(newStation))
                     }
                 }
                 .andThen(favoriteListInteractor.initFavoriteList())
@@ -71,8 +71,16 @@ class StationInteractor
         if (title == station.name) return Completable.complete()
         val newStation = station.copy(name = title)
         return stationRepository.updateStations(listOf(newStation))
-                .andThen({ station = newStation }.toCompletable())
-                .andThen(favoriteListInteractor.initFavoriteList()) //todo if favorite
+                .andThen(setStation(newStation))
+                .andThen(if (favoriteListInteractor.isFavorite(newStation)) {
+                    favoriteListInteractor.initFavoriteList()
+                } else {
+                    Completable.complete()
+                })
+    }
+
+    private fun setStation(station: Station): Completable {
+        return { this.station = station }.toCompletable()
     }
 }
 

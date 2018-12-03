@@ -1,6 +1,9 @@
 package io.github.vladimirmi.internetradioplayer.domain.interactor
 
+import io.github.vladimirmi.internetradioplayer.data.db.entity.Station
 import io.github.vladimirmi.internetradioplayer.data.repository.HistoryRepository
+import io.github.vladimirmi.internetradioplayer.extensions.subscribeX
+import io.reactivex.Observable
 import javax.inject.Inject
 
 /**
@@ -9,6 +12,14 @@ import javax.inject.Inject
 
 class HistoryInteractor
 @Inject constructor(private val historyRepository: HistoryRepository) {
+
+    fun getHistoryObs(): Observable<List<Station>> {
+        return historyRepository.getHistoryObs()
+    }
+
+    fun createHistory(station: Station) {
+        historyRepository.createHistory(station).subscribeX()
+    }
 
 
 }

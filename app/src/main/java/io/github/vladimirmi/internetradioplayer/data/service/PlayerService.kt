@@ -11,6 +11,7 @@ import io.github.vladimirmi.internetradioplayer.R
 import io.github.vladimirmi.internetradioplayer.data.db.entity.Station
 import io.github.vladimirmi.internetradioplayer.data.utils.ExponentialBackoff
 import io.github.vladimirmi.internetradioplayer.di.Scopes
+import io.github.vladimirmi.internetradioplayer.domain.interactor.HistoryInteractor
 import io.github.vladimirmi.internetradioplayer.domain.interactor.StationInteractor
 import io.github.vladimirmi.internetradioplayer.extensions.errorHandler
 import io.github.vladimirmi.internetradioplayer.extensions.toUri
@@ -35,6 +36,7 @@ class PlayerService : MediaBrowserServiceCompat(), SessionCallback.Interface {
     }
 
     @Inject lateinit var stationInteractor: StationInteractor
+    @Inject lateinit var historyInteractor: HistoryInteractor
 
     private val subs = CompositeDisposable()
     private lateinit var session: MediaSessionCompat
@@ -137,6 +139,7 @@ class PlayerService : MediaBrowserServiceCompat(), SessionCallback.Interface {
         val station = stationInteractor.station
         playingStationId = station.id
         playback.play(station.uri.toUri())
+        historyInteractor.createHistory(station)
     }
 
     //region =============== SessionCallback ==============

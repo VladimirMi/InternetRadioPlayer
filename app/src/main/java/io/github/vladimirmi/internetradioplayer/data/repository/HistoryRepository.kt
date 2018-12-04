@@ -11,7 +11,7 @@ import javax.inject.Inject
 /**
  * Created by Vladimir Mikhalev 02.12.2018.
  */
-private const val HISTORY_LIMIT = 5
+private const val HISTORY_LIMIT = 50
 
 class HistoryRepository
 @Inject constructor(private val db: HistoryDatabase) {
@@ -23,7 +23,7 @@ class HistoryRepository
     fun getHistoryObs(): Observable<List<Station>> {
         return dao.getHistory()
                 .map { history ->
-                    if (history.isNotEmpty()) oldestEntry = history.first()
+                    if (history.isNotEmpty()) oldestEntry = history.last()
                     historySize = history.size
                     history.map { it.station }
                 }

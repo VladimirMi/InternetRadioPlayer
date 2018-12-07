@@ -43,6 +43,7 @@ class SearchFragment : BaseFragment<SearchPresenter, SearchView>(), SearchView,
         setupSearchView()
         setupSuggestions()
         setupStations()
+        setupSwipeToRefresh()
     }
 
     private fun setupSearchView() {
@@ -78,6 +79,13 @@ class SearchFragment : BaseFragment<SearchPresenter, SearchView>(), SearchView,
         suggestionsRv.adapter = suggestionsAdapter
         suggestionsRv.addItemDecoration(DividerItemDecoration(context, lm.orientation))
         suggestionsRv.visible(false)
+    }
+
+    private fun setupSwipeToRefresh() {
+        swipeToRefresh.setOnRefreshListener {
+            presenter.submitSearch(searchView.query.toString())
+            swipeToRefresh.isRefreshing = false
+        }
     }
 
     override fun onSuggestionSelected(suggestion: Suggestion) {

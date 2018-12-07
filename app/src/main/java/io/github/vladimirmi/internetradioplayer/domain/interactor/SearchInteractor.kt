@@ -1,11 +1,13 @@
 package io.github.vladimirmi.internetradioplayer.domain.interactor
 
+import io.github.vladimirmi.internetradioplayer.R
 import io.github.vladimirmi.internetradioplayer.data.db.entity.Station
 import io.github.vladimirmi.internetradioplayer.data.net.model.StationSearchRes
 import io.github.vladimirmi.internetradioplayer.data.repository.GroupListRepository
 import io.github.vladimirmi.internetradioplayer.data.repository.SearchRepository
 import io.github.vladimirmi.internetradioplayer.data.repository.StationRepository
 import io.github.vladimirmi.internetradioplayer.domain.model.Suggestion
+import io.github.vladimirmi.internetradioplayer.extensions.MessageResException
 import io.reactivex.Completable
 import io.reactivex.Single
 import javax.inject.Inject
@@ -20,17 +22,20 @@ class SearchInteractor
                     private val groupListRepository: GroupListRepository) {
 
     fun queryRecentSuggestions(query: String): Single<out List<Suggestion>> {
-        return searchRepository.getRecentSuggestions(query)
+        return searchRepository.getRecentSuggestions(query.trim())
                 .map { it.asReversed() }
     }
 
     fun queryRegularSuggestions(query: String): Single<out List<Suggestion>> {
-        return searchRepository.getRegularSuggestions(query)
+        return searchRepository.getRegularSuggestions(query.trim())
     }
 
     fun searchStations(query: String): Single<List<StationSearchRes>> {
-        return searchRepository.saveQuery(query)
-                .andThen(searchRepository.searchStations(query))
+        val q = query.trim()
+        if (q.length < 3) return Single.error(MessageResException(R.string.msg_text_short))
+
+        return searchRepository.saveQuery(q)
+                .andThen(searchRepository.searchStations(q))
     }
 
     fun selectUberStation(id: Int): Completable {

@@ -15,8 +15,6 @@ import io.github.vladimirmi.internetradioplayer.extensions.dp
 import io.github.vladimirmi.internetradioplayer.extensions.visible
 import io.github.vladimirmi.internetradioplayer.extensions.waitForLayout
 import io.github.vladimirmi.internetradioplayer.presentation.base.BaseFragment
-import io.reactivex.Observable
-import io.reactivex.disposables.Disposables
 import kotlinx.android.synthetic.main.fragment_search.*
 import toothpick.Toothpick
 import androidx.appcompat.widget.SearchView as SearchViewAndroid
@@ -33,6 +31,7 @@ class SearchFragment : BaseFragment<SearchPresenter, SearchView>(), SearchView,
     private val suggestionsAdapter = SearchSuggestionsAdapter(this)
     private val stationsAdapter = SearchStationsAdapter()
 
+
     override fun providePresenter(): SearchPresenter {
         return Toothpick.openScopes(Scopes.ROOT_ACTIVITY, this)
                 .getInstance(SearchPresenter::class.java).also {
@@ -41,11 +40,27 @@ class SearchFragment : BaseFragment<SearchPresenter, SearchView>(), SearchView,
     }
 
     override fun setupView(view: View) {
+        setupSearchView()
         setupSuggestions()
         setupStations()
+    }
 
+    private fun setupSearchView() {
         searchView.setIconifiedByDefault(false)
         searchView.setOnQueryTextFocusChangeListener(this)
+
+        searchView.setOnQueryTextListener(object : SearchViewAndroid.OnQueryTextListener {
+            override fun onQueryTextSubmit(query: String): Boolean {
+                presenter.submitSearch(query)
+//                searchView.clearFocus()
+                return true
+            }
+
+            override fun onQueryTextChange(newText: String): Boolean {
+                presenter.changeQuery(newText)
+                return true
+            }
+        })
     }
 
     private fun setupStations() {
@@ -65,11 +80,6 @@ class SearchFragment : BaseFragment<SearchPresenter, SearchView>(), SearchView,
         suggestionsRv.visible(false)
     }
 
-    override fun onStart() {
-        super.onStart()
-        presenter.setSearchViewObservable(getSearchViewObservable())
-    }
-
     override fun onSuggestionSelected(suggestion: Suggestion) {
         searchView.setQuery(suggestion.value, true)
     }
@@ -83,7 +93,6 @@ class SearchFragment : BaseFragment<SearchPresenter, SearchView>(), SearchView,
         super.setUserVisibleHint(isVisibleToUser)
         if (!isVisibleToUser && view != null) searchView.clearFocus()
     }
-
 
     //region =============== SearchView ==============
 
@@ -110,35 +119,6 @@ class SearchFragment : BaseFragment<SearchPresenter, SearchView>(), SearchView,
     }
 
     //endregion
-
-    private fun getSearchViewObservable(): Observable<SearchEvent> {
-        return Observable.create<SearchEvent> { e ->
-            var queryListener: SearchViewAndroid.OnQueryTextListener? = object : SearchViewAndroid.OnQueryTextListener {
-                override fun onQueryTextSubmit(query: String): Boolean {
-                    val q = query.trim()
-                    return if (q.length < 3) {
-                        showMessage(R.string.msg_text_short)
-                        true
-                    } else {
-                        if (!e.isDisposed) e.onNext(SearchEvent.Submit(q))
-                        searchView.clearFocus()
-                        false
-                    }
-                }
-
-                override fun onQueryTextChange(newText: String): Boolean {
-                    if (!e.isDisposed) e.onNext(SearchEvent.Change(newText))
-                    return true
-                }
-            }
-
-            if (!e.isDisposed) e.onNext(SearchEvent.Change(searchView.query.toString()))
-            searchView.setOnQueryTextListener(queryListener)
-            e.setDisposable(Disposables.fromAction {
-                queryListener = null; searchView.setOnQueryTextListener(null)
-            })
-        }.share()
-    }
 
     private fun adjustSuggestionsRecyclerHeight(keyboardDisplayed: Boolean) {
         if (keyboardDisplayed) {

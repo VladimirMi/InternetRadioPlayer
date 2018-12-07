@@ -3,6 +3,7 @@ package io.github.vladimirmi.internetradioplayer.extensions
 import android.widget.Toast
 import io.github.vladimirmi.internetradioplayer.di.Scopes
 import io.reactivex.Completable
+import io.reactivex.Maybe
 import io.reactivex.Observable
 import io.reactivex.Single
 import io.reactivex.disposables.Disposable
@@ -32,6 +33,12 @@ fun Completable.subscribeX(
 ): Disposable = subscribe(onComplete, onError)
 
 fun <T : Any> Observable<T>.subscribeX(
+        onError: (Throwable) -> Unit = errorHandler,
+        onComplete: () -> Unit = {},
+        onNext: (T) -> Unit = {}
+): Disposable = subscribe(onNext, onError, onComplete)
+
+fun <T : Any> Maybe<T>.subscribeX(
         onError: (Throwable) -> Unit = errorHandler,
         onComplete: () -> Unit = {},
         onNext: (T) -> Unit = {}

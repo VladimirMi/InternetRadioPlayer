@@ -13,11 +13,6 @@
         android:id="@+id/searchCv"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginLeft="8dp"
-        android:layout_marginTop="8dp"
-        android:layout_marginRight="8dp"
-        app:layout_constraintEnd_toStartOf="@+id/stationsRv"
-        app:layout_constraintStart_toEndOf="@+id/stationsRv"
         app:layout_constraintTop_toTopOf="parent"
         >
 
@@ -64,7 +59,7 @@
             android:layout_height="match_parent"
             android:clipToPadding="false"
             android:overScrollMode="never"
-            android:paddingTop="60dp"
+            android:paddingTop="52dp"
             android:paddingBottom="8dp"
             tools:listitem="@layout/item_station"
             />

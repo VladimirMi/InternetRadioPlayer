@@ -90,6 +90,16 @@ class FavoriteListInteractor
                 }
     }
 
+    fun moveGroupElements(stations: FlatStationsList): Completable {
+        val updateGroups = Single.fromCallable { groupListRepository.stations.getGroupDifference(stations) }
+                .flatMapCompletable { groupListRepository.updateGroups(it) }
+
+        val updateStations = Single.fromCallable { groupListRepository.stations.getStationDifference(stations) }
+                .flatMapCompletable { stationRepository.updateStations(it) }
+
+        return updateGroups.andThen(updateStations).andThen(initFavoriteList())
+    }
+
 
 //    fun removeStation(id: String): Completable {
 //        val station = getStation(id)
@@ -115,17 +125,6 @@ class FavoriteListInteractor
 //        val previous = stationsList.getPreviousFrom(id)
 //        previous?.let { station = it }
 //        return previous != null
-//    }
-
-//    fun moveGroupElements(stations: FlatStationsList): Completable {
-//        val updateGroups = Single.fromCallable { FlatStationsList.createFrom(groups).getGroupUpdatesFrom(stations) }
-//                .flatMapCompletable { stationRepository.updateGroups(it) }
-//
-//        val updateStations = Single.fromCallable { FlatStationsList.createFrom(groups).getStationUpdatesFrom(stations) }
-//                .flatMapCompletable { stationRepository.updateStations(it) }
-//
-//        return updateGroups.andThen(updateStations).andThen(buildGroupsList())
-//                .doOnComplete { station = getStation(station.id) ?: Station.nullObj() }
 //    }
 
 //    private fun containsStation(predicate: (Station) -> Boolean): Boolean {

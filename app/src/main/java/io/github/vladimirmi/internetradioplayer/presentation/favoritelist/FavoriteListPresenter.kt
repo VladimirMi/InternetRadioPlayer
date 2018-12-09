@@ -56,10 +56,9 @@ class FavoriteListPresenter
     }
 
     fun moveGroupElements(stations: FlatStationsList) {
-//        stationInteractor.moveGroupElements(stations)
-//                .subscribeOn(Schedulers.io())
-//                .subscribeX()
-//                .addTo(viewSubs)
+        favoriteListInteractor.moveGroupElements(stations)
+                .subscribeX()
+                .addTo(dataSubs)
     }
 }
 

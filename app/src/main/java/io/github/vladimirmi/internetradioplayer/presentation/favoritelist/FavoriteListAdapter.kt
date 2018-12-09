@@ -58,13 +58,12 @@ class StationListAdapter(private val callback: StationItemCallback)
         notifyItemChanged(to, PAYLOAD_BACKGROUND_CHANGE)
     }
 
-    fun onStartDrag(position: Int) {
-        setData(stations.startMove(position))
+    fun onStartDrag(position: Int): FlatStationsList {
+        return stations.startMove(position)
     }
 
     fun onIdle(): FlatStationsList {
-        stations.endMove()
-        return stations
+        return stations.endMove()
     }
 
     override fun getItemViewType(position: Int): Int =
@@ -158,13 +157,15 @@ class GroupTitleVH(itemView: View) : GroupElementVH(itemView) {
 
     override fun changeBackground(stations: FlatStationsList, position: Int) {
         val group = stations.getGroup(position)
-        val bg = if (group.expanded) R.drawable.shape_item_top else R.drawable.shape_item_single
+        val single = !group.expanded || group.stations.isEmpty()
+
+        val bg = if (single) R.drawable.shape_item_single else R.drawable.shape_item_top
         itemView.background = ContextCompat.getDrawable(itemView.context, bg)
         setBgColor()
         if (Build.VERSION.SDK_INT >= 21) {
             itemView.outlineProvider = defaultOutline
         }
-        setMargins(!group.expanded && position != stations.size - 1)
+        setMargins(single && position != stations.size - 1)
     }
 }
 

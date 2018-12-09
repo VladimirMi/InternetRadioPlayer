@@ -104,13 +104,12 @@ class FlatStationsList(private val flatList: MutableList<Any> = arrayListOf()) {
 
     fun startMove(position: Int): FlatStationsList {
         if (isGroup(position)) {
-            return FlatStationsList(flatList.asSequence().filterIsInstance(Group::class.java)
-                    .toMutableList())
+            return FlatStationsList(getGroups().map { it.apply { stations = emptyList() } }.toMutableList())
         }
-        return this
+        return FlatStationsList.createFrom(getGroups())
     }
 
-    fun endMove() {
+    fun endMove(): FlatStationsList {
         var stationOrder = 0
         var groupOrder = 0
         var groupId = (flatList.find { it is Group } as? Group)?.id ?: Group.DEFAULT_ID
@@ -126,24 +125,25 @@ class FlatStationsList(private val flatList: MutableList<Any> = arrayListOf()) {
                 stationOrder++
             }
         }
+        return this
     }
 
-    fun getGroupUpdatesFrom(stations: FlatStationsList): List<Group> {
-        val updates = arrayListOf<Group>()
+    fun getGroupDifference(stations: FlatStationsList): List<Group> {
+        val diff = arrayListOf<Group>()
         val other = getGroups()
         stations.getGroups().forEachIndexed { index, group ->
-            if (group != other[index]) updates.add(group)
+            if (group != other[index]) diff.add(group)
         }
-        return updates
+        return diff
     }
 
-    fun getStationUpdatesFrom(stations: FlatStationsList): List<Station> {
-        val updates = arrayListOf<Station>()
+    fun getStationDifference(stations: FlatStationsList): List<Station> {
+        val diff = arrayListOf<Station>()
         val other = getStations()
         stations.getStations().forEachIndexed { index, station ->
-            if (station != other[index]) updates.add(station)
+            if (station != other[index]) diff.add(station)
         }
-        return updates
+        return diff
     }
 
     fun getFirstStation(): Station? = flatList.firstOrNull { it is Station } as? Station

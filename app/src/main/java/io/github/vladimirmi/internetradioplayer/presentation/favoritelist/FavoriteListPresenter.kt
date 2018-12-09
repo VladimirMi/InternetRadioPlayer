@@ -37,10 +37,9 @@ class FavoriteListPresenter
     }
 
     fun selectGroup(id: String) {
-//        stationInteractor.expandOrCollapseGroup(id)
-//                .subscribeOn(Schedulers.io())
-//                .subscribeX()
-//                .addTo(viewSubs)
+        favoriteListInteractor.expandOrCollapseGroup(id)
+                .subscribeX()
+                .addTo(dataSubs)
     }
 
     fun removeStation() {

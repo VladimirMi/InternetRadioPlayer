@@ -81,6 +81,15 @@ class FavoriteListInteractor
                 .map { groupListRepository.groups }
     }
 
+    fun expandOrCollapseGroup(id: String): Completable {
+        return getGroup(id)
+                .map { it.copy(expanded = !it.expanded) }
+                .flatMapCompletable {
+                    groupListRepository.updateGroups(listOf(it))
+                            .andThen(initFavoriteList())
+                }
+    }
+
 
 //    fun removeStation(id: String): Completable {
 //        val station = getStation(id)
@@ -106,18 +115,6 @@ class FavoriteListInteractor
 //        val previous = stationsList.getPreviousFrom(id)
 //        previous?.let { station = it }
 //        return previous != null
-//    }
-
-//    fun expandOrCollapseGroup(id: String): Completable {
-//        val i = indexOfGroup(id)
-//        val group = groups[i]
-//        val newGroup = group.copy(expanded = !group.expanded)
-//        newGroup.stations = group.stations
-//        return stationRepository.updateGroups(listOf(newGroup))
-//                .doOnComplete {
-//                    groups[i] = newGroup
-//                    buildStationsList()
-//                }
 //    }
 
 //    fun moveGroupElements(stations: FlatStationsList): Completable {

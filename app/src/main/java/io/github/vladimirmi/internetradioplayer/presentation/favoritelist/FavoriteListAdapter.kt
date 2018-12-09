@@ -164,6 +164,7 @@ class GroupTitleVH(itemView: View) : GroupElementVH(itemView) {
         if (Build.VERSION.SDK_INT >= 21) {
             itemView.outlineProvider = defaultOutline
         }
+        setMargins(!group.expanded && position != stations.size - 1)
     }
 }
 

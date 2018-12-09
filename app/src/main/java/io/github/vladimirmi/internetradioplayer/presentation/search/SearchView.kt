@@ -21,4 +21,6 @@ interface SearchView : BaseView, SearchSuggestionsAdapter.Callback {
     fun setFavorites(favorites: FlatStationsList)
 
     fun selectStation(station: Station)
+
+    fun showLoading(loading: Boolean)
 }

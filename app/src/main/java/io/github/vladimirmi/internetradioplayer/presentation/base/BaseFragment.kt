@@ -70,4 +70,6 @@ abstract class BaseFragment<P : BasePresenter<V>, V : BaseView> : Fragment(), Ba
     }
 
     //endregion
+
+    protected val isPresenterInit: Boolean get() = ::presenter.isInitialized
 }

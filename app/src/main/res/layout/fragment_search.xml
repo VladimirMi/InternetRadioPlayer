@@ -51,6 +51,7 @@
         android:id="@+id/swipeToRefresh"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
+        android:layout_marginTop="48dp"
         >
 
         <androidx.recyclerview.widget.RecyclerView
@@ -59,7 +60,7 @@
             android:layout_height="match_parent"
             android:clipToPadding="false"
             android:overScrollMode="never"
-            android:paddingTop="52dp"
+            android:paddingTop="8dp"
             android:paddingBottom="8dp"
             tools:listitem="@layout/item_station"
             />

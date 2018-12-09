@@ -1,6 +1,7 @@
 package io.github.vladimirmi.internetradioplayer.presentation.search
 
 import android.graphics.Rect
+import android.os.Bundle
 import android.view.View
 import android.view.ViewGroup
 import androidx.recyclerview.widget.DividerItemDecoration
@@ -53,7 +54,6 @@ class SearchFragment : BaseFragment<SearchPresenter, SearchView>(), SearchView,
         searchView.setOnQueryTextListener(object : SearchViewAndroid.OnQueryTextListener {
             override fun onQueryTextSubmit(query: String): Boolean {
                 presenter.submitSearch(query)
-//                searchView.clearFocus()
                 return true
             }
 
@@ -100,6 +100,12 @@ class SearchFragment : BaseFragment<SearchPresenter, SearchView>(), SearchView,
     override fun setUserVisibleHint(isVisibleToUser: Boolean) {
         super.setUserVisibleHint(isVisibleToUser)
         if (!isVisibleToUser && view != null) searchView.clearFocus()
+        if (isPresenterInit) presenter.isViewVisible = isVisibleToUser
+    }
+
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        presenter.isViewVisible = userVisibleHint
     }
 
     //region =============== SearchView ==============
@@ -124,6 +130,11 @@ class SearchFragment : BaseFragment<SearchPresenter, SearchView>(), SearchView,
 
     override fun selectStation(station: Station) {
         stationsAdapter.selectStation(station)
+    }
+
+    override fun showLoading(loading: Boolean) {
+        swipeToRefresh.isRefreshing = loading
+        if (loading) searchView.clearFocus()
     }
 
     //endregion

@@ -1,5 +1,6 @@
 package io.github.vladimirmi.internetradioplayer.presentation.search
 
+import io.github.vladimirmi.internetradioplayer.R
 import io.github.vladimirmi.internetradioplayer.data.net.model.StationSearchRes
 import io.github.vladimirmi.internetradioplayer.domain.interactor.FavoriteListInteractor
 import io.github.vladimirmi.internetradioplayer.domain.interactor.SearchInteractor
@@ -24,13 +25,14 @@ class SearchPresenter
                     private val favoriteListInteractor: FavoriteListInteractor)
     : BasePresenter<SearchView>() {
 
+    var isViewVisible: Boolean = false
     private var searchSub: Disposable? = null
     private var suggestionSub: Disposable? = null
 
     override fun onFirstAttach(view: SearchView) {
         searchInteractor.queryRecentSuggestions("")
                 .filter { it.isNotEmpty() }
-                .map { it.last() }
+                .map { it.first() }
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribeX(onNext = { view.onSuggestionSelected(it) })
                 .addTo(viewSubs)
@@ -71,14 +73,25 @@ class SearchPresenter
 
     fun submitSearch(query: String) {
         searchSub?.dispose()
-        searchSub = Observable.interval(0, 60, TimeUnit.SECONDS)
-                .flatMapSingle { searchInteractor.searchStations(query) }
+
+        searchSub = Observable.interval(0, 60, TimeUnit.SECONDS, AndroidSchedulers.mainThread())
+                .filter { isViewVisible }
+                .map { query.trim() }
+                .doOnNext { if (it.length < 3) view?.showMessage(R.string.msg_text_short) }
+                .filter { it.length > 2 }
+                .doOnNext { view?.showLoading(true) }
+                .flatMapSingle { searchInteractor.searchStations(it) }
                 .observeOn(AndroidSchedulers.mainThread())
-                .subscribeX(onNext = { view?.setStations(it) })
+                .doOnTerminate { view?.showLoading(false) }
+                .subscribeX(onNext = {
+                    view?.setStations(it)
+                    view?.showLoading(false)
+                })
 
     }
 
     fun changeQuery(newText: String) {
+        searchSub?.dispose()
         searchInteractor.queryRecentSuggestions(newText)
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribeX(onSuccess = { view?.addRecentSuggestions(it) })
@@ -86,9 +99,9 @@ class SearchPresenter
 
         suggestionSub?.dispose()
         suggestionSub = Single.just(newText)
-                .delaySubscription(600, TimeUnit.MILLISECONDS)
-                .flatMap(searchInteractor::queryRecentSuggestions)
+                .delaySubscription(500, TimeUnit.MILLISECONDS)
+                .flatMap(searchInteractor::queryRegularSuggestions)
                 .observeOn(AndroidSchedulers.mainThread())
-                .subscribeX(onSuccess = { view?.addRecentSuggestions(it) })
+                .subscribeX(onSuccess = { view?.addRegularSuggestions(it) })
     }
 }

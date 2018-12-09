@@ -50,9 +50,9 @@ class FavoriteListFragment : BaseFragment<FavoriteListPresenter, StationListView
     }
 
     override fun setupView(view: View) {
-        media_recycler.layoutManager = androidx.recyclerview.widget.LinearLayoutManager(context)
-        media_recycler.adapter = adapter
-        itemTouchHelper.attachToRecyclerView(media_recycler)
+        stationsRv.layoutManager = androidx.recyclerview.widget.LinearLayoutManager(context)
+        stationsRv.adapter = adapter
+        itemTouchHelper.attachToRecyclerView(stationsRv)
     }
 
     //region =============== StationListView ==============
@@ -64,7 +64,7 @@ class FavoriteListFragment : BaseFragment<FavoriteListPresenter, StationListView
     override fun selectStation(station: Station) {
         adapter.selectStation(station)
         val position = adapter.getPosition(station)
-        if (position != -1) media_recycler.scrollToPosition(position)
+        if (position != -1) stationsRv.scrollToPosition(position)
     }
 
     //endregion

@@ -32,6 +32,8 @@ class FlatStationsList(private val flatList: MutableList<Any> = arrayListOf()) {
 
     fun isStation(position: Int) = flatList[position] is Station
 
+    operator fun get(position: Int): Any = flatList[position]
+
     fun getGroup(position: Int): Group {
         return flatList[position] as? Group ?: throw IllegalStateException("It is station")
     }
@@ -148,6 +150,6 @@ class FlatStationsList(private val flatList: MutableList<Any> = arrayListOf()) {
 
     fun haveStations() = flatList.any { it is Station }
 
-    private fun getGroups() = flatList.filterIsInstance(Group::class.java)
-    private fun getStations() = flatList.filterIsInstance(Station::class.java)
+    fun getGroups() = flatList.filterIsInstance(Group::class.java)
+    fun getStations() = flatList.filterIsInstance(Station::class.java)
 }

@@ -55,16 +55,16 @@ class StationInteractor
     }
 
     fun changeGroup(groupName: String): Completable {
-        return Single.just(groupListRepository.groups.find { it.name == groupName })
+        return Single.fromCallable { groupListRepository.groups.find { it.name == groupName } }
                 .flatMapCompletable {
                     if (it.id == station.groupId) Completable.complete()
                     else {
                         val newStation = station.copy(groupId = it.id)
                         stationRepository.updateStations(listOf(newStation))
                                 .andThen(setStation(newStation))
+                                .andThen(favoriteListInteractor.initFavoriteList())
                     }
                 }
-                .andThen(favoriteListInteractor.initFavoriteList())
     }
 
     fun editStationTitle(title: String): Completable {

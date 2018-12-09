@@ -25,16 +25,7 @@ class FavoriteListDiff(private val oldList: FlatStationsList,
             }
 
             override fun areContentsTheSame(oldItemPosition: Int, newItemPosition: Int): Boolean {
-                if (newList.isGroup(newItemPosition) && oldList.isGroup(oldItemPosition)) {
-                    if (newList.getGroup(newItemPosition).expanded != oldList.getGroup(oldItemPosition).expanded) {
-                        return false
-                    }
-                } else if (newList.isStation(newItemPosition) && oldList.isStation(oldItemPosition)) {
-                    if (newList.getStation(newItemPosition).name != oldList.getStation(oldItemPosition).name) {
-                        return false
-                    }
-                }
-                return true
+                return oldList[oldItemPosition] == newList[newItemPosition]
             }
         })
     }

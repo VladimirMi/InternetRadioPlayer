@@ -181,10 +181,10 @@ class GroupItemVH(itemView: View) : GroupElementVH(itemView) {
         val single = top && bottom
         val middle = !top && !bottom && !single
         val bg = when {
+            single -> R.drawable.shape_item_single
             top -> R.drawable.shape_item_top
             middle -> R.drawable.shape_item_middle
             bottom -> R.drawable.shape_item_bottom
-            single -> R.drawable.shape_item_single
             else -> throw IllegalStateException()
         }
         itemView.background = ContextCompat.getDrawable(itemView.context, bg)

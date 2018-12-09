@@ -25,7 +25,7 @@ class SearchPresenter
                     private val favoriteListInteractor: FavoriteListInteractor)
     : BasePresenter<SearchView>() {
 
-    var isViewVisible: Boolean = false
+    var regularSearch: Boolean = false
     private var searchSub: Disposable? = null
     private var suggestionSub: Disposable? = null
 
@@ -72,10 +72,11 @@ class SearchPresenter
 
 
     fun submitSearch(query: String) {
+        regularSearch = true
         searchSub?.dispose()
 
         searchSub = Observable.interval(0, 60, TimeUnit.SECONDS, AndroidSchedulers.mainThread())
-                .filter { isViewVisible }
+                .filter { regularSearch }
                 .map { query.trim() }
                 .doOnNext { if (it.length < 3) view?.showMessage(R.string.msg_text_short) }
                 .filter { it.length > 2 }
@@ -92,12 +93,14 @@ class SearchPresenter
 
     fun changeQuery(newText: String) {
         searchSub?.dispose()
+        suggestionSub?.dispose()
+        if (newText.isBlank()) return
+
         searchInteractor.queryRecentSuggestions(newText)
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribeX(onSuccess = { view?.addRecentSuggestions(it) })
                 .addTo(viewSubs)
 
-        suggestionSub?.dispose()
         suggestionSub = Single.just(newText)
                 .delaySubscription(500, TimeUnit.MILLISECONDS)
                 .flatMap(searchInteractor::queryRegularSuggestions)

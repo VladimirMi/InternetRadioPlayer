@@ -8,7 +8,6 @@ import io.github.vladimirmi.internetradioplayer.extensions.subscribeX
 import io.github.vladimirmi.internetradioplayer.presentation.base.BasePresenter
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.rxkotlin.addTo
-import timber.log.Timber
 import javax.inject.Inject
 
 /**
@@ -40,19 +39,6 @@ class FavoriteListPresenter
         favoriteListInteractor.expandOrCollapseGroup(id)
                 .subscribeX()
                 .addTo(dataSubs)
-    }
-
-    fun removeStation() {
-//        stationInteractor.removeStation(stationInteractor.currentStation.id)
-//                .subscribeOn(Schedulers.io())
-//                .subscribeX()
-//                .addTo(viewSubs)
-    }
-
-    fun showStation(station: Station) {
-        Timber.e("showStation: ${station.name}")
-//        selectStation(station)
-//        router.showStationSlide(station.id)
     }
 
     fun moveGroupElements(stations: FlatStationsList) {

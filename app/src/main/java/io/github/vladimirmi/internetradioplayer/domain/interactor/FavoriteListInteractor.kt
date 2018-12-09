@@ -100,21 +100,6 @@ class FavoriteListInteractor
         return updateGroups.andThen(updateStations).andThen(initFavoriteList())
     }
 
-
-//    fun removeStation(id: String): Completable {
-//        val station = getStation(id)
-//                ?: return Completable.error(IllegalStateException("Can not find station with id $id"))
-//
-//        return stationRepository.removeStation(station)
-//                .doOnComplete {
-//                    val changed = if (stationsList.isFirstStation(id)) nextStation(id)
-//                    else previousStation(id)
-//                    if (!changed) station = Station.nullObj()
-//                }
-//                //todo optimize
-//                .andThen(buildGroupsList())
-//    }
-
 //    fun nextStation(id: String = station.id): Boolean {
 //        val next = stationsList.getNextFrom(id)
 //        next?.let { station = it }
@@ -126,26 +111,4 @@ class FavoriteListInteractor
 //        previous?.let { station = it }
 //        return previous != null
 //    }
-
-//    private fun containsStation(predicate: (Station) -> Boolean): Boolean {
-//        return groups.any { it.stations.any(predicate) }
-//    }
-
-//    private fun validate(stationName: String, adding: Boolean = false): Completable? {
-//        return when {
-//            adding && containsStation { it.name == stationName } -> {
-//                Completable.error(MessageResException(R.string.msg_name_exists_error))
-//            }
-//            stationName.isBlank() -> {
-//                Completable.error(MessageResException(R.string.msg_name_empty_error))
-//            }
-//            else -> null
-//        }
-//    }
-
-//    private fun indexOfGroup(groupId: String): Int {
-//        return groups.indexOfFirst { it.id == groupId }
-//    }
-
-
 }

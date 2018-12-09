@@ -12,7 +12,6 @@ import io.github.vladimirmi.internetradioplayer.data.net.model.StationSearchRes
 import io.github.vladimirmi.internetradioplayer.di.Scopes
 import io.github.vladimirmi.internetradioplayer.domain.model.FlatStationsList
 import io.github.vladimirmi.internetradioplayer.domain.model.Suggestion
-import io.github.vladimirmi.internetradioplayer.extensions.dp
 import io.github.vladimirmi.internetradioplayer.extensions.visible
 import io.github.vladimirmi.internetradioplayer.extensions.waitForLayout
 import io.github.vladimirmi.internetradioplayer.presentation.base.BaseFragment
@@ -25,7 +24,7 @@ import androidx.appcompat.widget.SearchView as SearchViewAndroid
  */
 
 class SearchFragment : BaseFragment<SearchPresenter, SearchView>(), SearchView,
-        View.OnFocusChangeListener, SearchSuggestionsAdapter.Callback {
+        SearchSuggestionsAdapter.Callback {
 
     override val layout = R.layout.fragment_search
 
@@ -49,7 +48,11 @@ class SearchFragment : BaseFragment<SearchPresenter, SearchView>(), SearchView,
 
     private fun setupSearchView() {
         searchView.setIconifiedByDefault(false)
-        searchView.setOnQueryTextFocusChangeListener(this)
+        searchView.setOnQueryTextFocusChangeListener { _, hasFocus ->
+            adjustSuggestionsRecyclerHeight(hasFocus)
+            suggestionsRv.visible(hasFocus)
+            presenter.regularSearch = !hasFocus
+        }
 
         searchView.setOnQueryTextListener(object : SearchViewAndroid.OnQueryTextListener {
             override fun onQueryTextSubmit(query: String): Boolean {
@@ -92,20 +95,15 @@ class SearchFragment : BaseFragment<SearchPresenter, SearchView>(), SearchView,
         searchView.setQuery(suggestion.value, true)
     }
 
-    override fun onFocusChange(v: View?, hasFocus: Boolean) {
-        adjustSuggestionsRecyclerHeight(hasFocus)
-        suggestionsRv.visible(hasFocus)
-    }
-
     override fun setUserVisibleHint(isVisibleToUser: Boolean) {
         super.setUserVisibleHint(isVisibleToUser)
         if (!isVisibleToUser && view != null) searchView.clearFocus()
-        if (isPresenterInit) presenter.isViewVisible = isVisibleToUser
+        if (isPresenterInit) presenter.regularSearch = isVisibleToUser
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        presenter.isViewVisible = userVisibleHint
+        presenter.regularSearch = userVisibleHint
     }
 
     //region =============== SearchView ==============
@@ -165,8 +163,7 @@ class SearchFragment : BaseFragment<SearchPresenter, SearchView>(), SearchView,
         }
         val xy = IntArray(2)
         suggestionsRv.getLocationInWindow(xy)
-        val marginBottom = 8 * context!!.dp
-        val maxHeight = visibleRect.bottom - xy[1] - marginBottom
+        val maxHeight = visibleRect.bottom - xy[1]
 
         val heightSpec = View.MeasureSpec.makeMeasureSpec(maxHeight, View.MeasureSpec.AT_MOST)
         val widthSpec = View.MeasureSpec.makeMeasureSpec(0, View.MeasureSpec.UNSPECIFIED)

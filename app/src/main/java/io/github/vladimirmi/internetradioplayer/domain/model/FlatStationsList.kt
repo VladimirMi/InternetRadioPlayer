@@ -150,6 +150,6 @@ class FlatStationsList(private val flatList: MutableList<Any> = arrayListOf()) {
 
     fun haveStations() = flatList.any { it is Station }
 
-    fun getGroups() = flatList.filterIsInstance(Group::class.java)
-    fun getStations() = flatList.filterIsInstance(Station::class.java)
+    private fun getGroups() = flatList.filterIsInstance(Group::class.java)
+    private fun getStations() = flatList.filterIsInstance(Station::class.java)
 }

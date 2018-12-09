@@ -199,5 +199,4 @@ class GroupItemVH(itemView: View) : GroupElementVH(itemView) {
 interface StationItemCallback {
     fun onItemSelected(station: Station)
     fun onGroupSelected(id: String)
-    fun onItemOpened(station: Station)
 }

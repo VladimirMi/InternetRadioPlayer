@@ -79,9 +79,5 @@ class FavoriteListFragment : BaseFragment<FavoriteListPresenter, StationListView
         presenter.selectStation(station)
     }
 
-    override fun onItemOpened(station: Station) {
-        presenter.showStation(station)
-    }
-
     //endregion
 }

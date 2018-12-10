@@ -19,18 +19,25 @@
     <color name="grey_800">#424242</color>
     <color name="grey_900">#212121</color>
     <color name="blue_grey_100">#cfd8dc</color>
+    <color name="blue_grey_200">#b0bec5</color>
+    <color name="blue_grey_500">#607d8b</color>
+    <color name="blue_grey_600">#546e7a</color>
+    <color name="blue_grey_700">#455a64</color>
+    <color name="blue_grey_800">#37474f</color>
 
     <color name="black">#000000</color>
     <color name="white">#ffffff</color>
     <color name="transparent">#00ffffff</color>
 
-    <color name="primaryColor">@color/grey_600</color>
-    <color name="primaryDarkColor">@color/grey_800</color>
-    <color name="primaryLightColor">@color/blue_grey_100</color>
-    <color name="primaryTextColor">@color/grey_900</color>
-    <color name="secondaryTextColor">@color/grey_600</color>
-    <color name="accentColor">@color/teal_500</color>
-    <color name="accentLightColor">@color/teal_200</color>
+    <color name="primary">@color/blue_grey_600</color>
+    <color name="primary_dark">@color/blue_grey_800</color>
+    <color name="primary_light">@color/blue_grey_100</color>
+    <color name="accent">@color/teal_500</color>
+    <color name="accent_light">@color/teal_200</color>
+    <color name="primary_text">@color/grey_900</color>
+    <color name="secondary_text">@color/grey_600</color>
+    <color name="icons">@color/white</color>
+    <color name="divider">@color/grey_400</color>
 
     <color name="shadow">#44616161</color>
     <color name="transparent_grey">#55222222</color>

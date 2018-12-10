@@ -9,16 +9,20 @@ import android.media.AudioManager
 import android.media.AudioManager.*
 import android.net.Uri
 import android.net.wifi.WifiManager
+import android.os.Handler
 import com.google.android.exoplayer2.DefaultRenderersFactory
 import com.google.android.exoplayer2.ExoPlayerFactory
 import com.google.android.exoplayer2.SimpleExoPlayer
 import com.google.android.exoplayer2.source.ExtractorMediaSource
 import com.google.android.exoplayer2.trackselection.DefaultTrackSelector
+import com.google.android.exoplayer2.upstream.BandwidthMeter
+import com.google.android.exoplayer2.upstream.DefaultBandwidthMeter
 import com.google.android.exoplayer2.util.Util
 import io.github.vladimirmi.internetradioplayer.BuildConfig
 import io.github.vladimirmi.internetradioplayer.R
 import io.github.vladimirmi.internetradioplayer.data.source.IcyDataSource
 import io.github.vladimirmi.internetradioplayer.di.Scopes
+import timber.log.Timber
 
 private const val VOLUME_DUCK = 0.2f
 private const val VOLUME_NORMAL = 1.0f
@@ -82,7 +86,11 @@ class Playback(private val service: PlayerService,
 
     private fun createPlayer() {
         val rendererFactory = DefaultRenderersFactory(service)
-        val trackSelector = DefaultTrackSelector()
+        val bandwidthMeter = DefaultBandwidthMeter(Handler(),
+                BandwidthMeter.EventListener { elapsedMs, bytes, bitrate ->
+                    Timber.e("onBandwidthSample: elapsedMs: $elapsedMs, bytes: $bytes, bitrate: $bitrate")
+                })
+        val trackSelector = DefaultTrackSelector(bandwidthMeter)
         player = ExoPlayerFactory.newSimpleInstance(rendererFactory, trackSelector, loadControl)
         player?.addListener(playerCallback)
     }

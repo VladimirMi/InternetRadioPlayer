@@ -24,6 +24,7 @@ import java.util.*
 import javax.inject.Inject
 import kotlin.concurrent.schedule
 
+
 /**
  * Developer Vladimir Mikhalev, 09.05.2017.
  */
@@ -142,6 +143,14 @@ class PlayerService : MediaBrowserServiceCompat(), SessionCallback.Interface {
         playingStationId = station.id
         playback.play(station.uri.toUri())
         historyInteractor.createHistory(station)
+
+//        val extractor = MediaExtractor()
+//        extractor.setDataSource(station.uri)
+//        val trackFormat = extractor.getTrackFormat(0)
+//        val bitRate = trackFormat.getInteger(MediaFormat.KEY_BIT_RATE)
+//
+//        Timber.e("playCurrent: br: $bitRate")
+
     }
 
     //region =============== SessionCallback ==============

@@ -104,7 +104,7 @@ class SearchStationVH(itemView: View) : RecyclerView.ViewHolder(itemView) {
 
         favoriteBt.visible(selected || isFavorite)
         if (selected || isFavorite) {
-            val tint = if (isFavorite) R.color.accentColor else R.color.primaryColor
+            val tint = if (isFavorite) R.color.accent else R.color.primary
             itemView.favoriteBt.background.setTintExt(itemView.context.color(tint))
         }
     }

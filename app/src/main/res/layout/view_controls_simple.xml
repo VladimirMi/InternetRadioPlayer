@@ -6,6 +6,7 @@
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:orientation="horizontal"
+    android:background="@color/primary"
     >
 
     <TextView
@@ -19,7 +20,7 @@
         android:paddingStart="16dp"
         android:paddingLeft="16dp"
         android:singleLine="true"
-        android:textAppearance="@style/TextAppearance.AppCompat.Subhead"
+        android:textAppearance="@style/TextAppearance.AppCompat.Subhead.Inverse"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toStartOf="@id/playPauseBt"
         app:layout_constraintStart_toStartOf="parent"

@@ -48,7 +48,7 @@
         android:ellipsize="end"
         android:maxLines="1"
         android:textAppearance="@style/TextAppearance.AppCompat.Subhead"
-        android:textColor="@color/secondaryTextColor"
+        android:textColor="@color/secondary_text"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toStartOf="@+id/favoriteBt"
         app:layout_constraintStart_toEndOf="@+id/iconIv"

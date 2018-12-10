@@ -17,12 +17,9 @@
         android:layout_marginRight="16dp"
         android:layout_marginLeft="16dp"
         android:layout_marginTop="16dp"
-        app:strokeColor="@color/primaryColor"
-        app:strokeWidth="1dp"
         app:cardElevation="4dp"
         app:cardCornerRadius="8dp"
         app:contentPadding="8dp"
-        app:cardBackgroundColor="@color/primaryLightColor"
         >
 
         <include layout="@layout/view_station_info"/>

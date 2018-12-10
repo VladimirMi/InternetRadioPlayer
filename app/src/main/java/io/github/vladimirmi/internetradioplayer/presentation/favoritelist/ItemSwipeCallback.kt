@@ -20,10 +20,11 @@ abstract class ItemSwipeCallback(context: Context) : ItemTouchHelper.SimpleCallb
 
     private val dp = context.dp
     private val sp = context.sp
+    //todo refactor
     //    private val rightIcon = ContextCompat.getDrawable(context, R.drawable.ic_delete)
     private val leftIcon = ContextCompat.getDrawable(context, R.drawable.ic_edit)!!
     //    private val rightColor = ContextCompat.getColor(context, R.color.deep_orange_500)
-    private val leftColor = ContextCompat.getColor(context, R.color.accentColor)
+    private val leftColor = ContextCompat.getColor(context, R.color.accent)
     //    private val rightText = context.getString(R.string.menu_station_delete).toUpperCase()
     private val leftText = context.getString(R.string.station_list_details).toUpperCase()
     private val rightShadow = ContextCompat.getDrawable(context, R.drawable.shadow_swipe)!!

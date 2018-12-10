@@ -88,7 +88,7 @@
         android:layout_margin="4dp"
         android:paddingTop="4dp"
         android:paddingBottom="4dp"
-        android:background="@drawable/btn_tag"
+        android:background="@drawable/bg_frame"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/specsTv"

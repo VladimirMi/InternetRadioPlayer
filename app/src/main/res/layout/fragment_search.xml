@@ -27,7 +27,6 @@
                 style="@style/Base.Widget.AppCompat.SearchView"
                 android:layout_width="match_parent"
                 android:layout_height="48dp"
-                android:background="@color/primaryLightColor"
                 android:iconifiedByDefault="false"
                 app:queryBackground="@null"
                 app:queryHint="@string/tabs_search"

@@ -107,7 +107,7 @@ class PlayerFragment : BaseFragment<PlayerPresenter, PlayerView>(), PlayerView, 
     }
 
     override fun setFavorite(isFavorite: Boolean) {
-        val tint = if (isFavorite) R.color.accentColor else R.color.primaryColor
+        val tint = if (isFavorite) R.color.accent else R.color.primary
         favoriteBt.background.setTintExt(context!!.color(tint))
     }
 

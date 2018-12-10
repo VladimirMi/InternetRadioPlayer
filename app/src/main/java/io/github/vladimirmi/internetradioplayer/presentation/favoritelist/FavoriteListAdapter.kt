@@ -110,7 +110,7 @@ class StationListAdapter(private val callback: StationItemCallback)
     private fun GroupElementVH.select(position: Int) {
         val selected = if (stations.isGroup(position)) {
             val group = stations.getGroup(position)
-            !group.expanded && group.id == selectedStation.groupId
+            !group.expanded && group.stations.contains(selectedStation)
         } else {
             val station = stations.getStation(position)
             station.id == selectedStation.id

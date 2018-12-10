@@ -28,6 +28,7 @@ class SearchPresenter
     var regularSearch: Boolean = false
     private var searchSub: Disposable? = null
     private var suggestionSub: Disposable? = null
+    private var selectSub: Disposable? = null
 
     override fun onFirstAttach(view: SearchView) {
         searchInteractor.queryRecentSuggestions("")
@@ -57,9 +58,9 @@ class SearchPresenter
     }
 
     fun selectStation(station: StationSearchRes) {
-        searchInteractor.selectUberStation(station.id)
+        selectSub?.dispose()
+        selectSub = searchInteractor.selectUberStation(station.id)
                 .subscribeX()
-                .addTo(dataSubs)
     }
 
     fun switchFavorite() {
@@ -69,7 +70,6 @@ class SearchPresenter
         changeFavorite.subscribeX()
                 .addTo(dataSubs)
     }
-
 
     fun submitSearch(query: String) {
         regularSearch = true

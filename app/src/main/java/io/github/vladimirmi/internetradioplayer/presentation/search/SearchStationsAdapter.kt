@@ -99,7 +99,7 @@ class SearchStationVH(itemView: View) : RecyclerView.ViewHolder(itemView) {
     }
 
     fun select(selected: Boolean, isFavorite: Boolean) {
-        val bg = itemView.context.color(if (selected) R.color.grey_300 else R.color.grey_50)
+        val bg = itemView.context.color(if (selected) R.color.accent_light else R.color.grey_50)
         itemView.background.setTintExt(bg)
 
         favoriteBt.visible(selected || isFavorite)

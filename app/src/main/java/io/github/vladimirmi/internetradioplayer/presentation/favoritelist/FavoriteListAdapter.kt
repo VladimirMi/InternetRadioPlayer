@@ -124,7 +124,7 @@ abstract class GroupElementVH(itemView: View) : RecyclerView.ViewHolder(itemView
 
     fun select(selected: Boolean) {
         colorId = when {
-            selected -> R.color.grey_300
+            selected -> R.color.accent_light
             else -> R.color.grey_50
         }
         setBgColor()

@@ -1,6 +1,5 @@
 package io.github.vladimirmi.internetradioplayer.domain.interactor
 
-import io.github.vladimirmi.internetradioplayer.data.db.entity.Station
 import io.github.vladimirmi.internetradioplayer.data.net.model.StationSearchRes
 import io.github.vladimirmi.internetradioplayer.data.repository.GroupListRepository
 import io.github.vladimirmi.internetradioplayer.data.repository.SearchRepository
@@ -34,12 +33,11 @@ class SearchInteractor
     }
 
     fun selectUberStation(id: Int): Completable {
-        return searchRepository.getStation(id)
-                .map { it.result[0].stations[0] }
-                .doOnSuccess { station ->
-                    val newStation: Station = groupListRepository.stations.findStation { it.uri == station.uri }
-                            ?: station.toStation()
+        return searchRepository.findUberStation(id)
+                .doOnNext { station ->
+                    val newStation = groupListRepository.stations.findStation { it.uri == station.uri }
+                            ?: station
                     stationRepository.station = newStation
-                }.ignoreElement()
+                }.ignoreElements()
     }
 }

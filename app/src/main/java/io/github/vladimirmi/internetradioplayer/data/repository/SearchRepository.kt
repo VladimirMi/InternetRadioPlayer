@@ -1,12 +1,14 @@
 package io.github.vladimirmi.internetradioplayer.data.repository
 
 import io.github.vladimirmi.internetradioplayer.data.db.SuggestionsDatabase
+import io.github.vladimirmi.internetradioplayer.data.db.entity.Station
 import io.github.vladimirmi.internetradioplayer.data.db.entity.SuggestionEntity
 import io.github.vladimirmi.internetradioplayer.data.net.UberStationsService
 import io.github.vladimirmi.internetradioplayer.data.net.model.StationSearchRes
-import io.github.vladimirmi.internetradioplayer.data.net.model.StationsResult
+import io.github.vladimirmi.internetradioplayer.data.utils.StationParser
 import io.github.vladimirmi.internetradioplayer.domain.model.Suggestion
 import io.reactivex.Completable
+import io.reactivex.Observable
 import io.reactivex.Single
 import io.reactivex.schedulers.Schedulers
 import javax.inject.Inject
@@ -17,7 +19,8 @@ import javax.inject.Inject
 
 class SearchRepository
 @Inject constructor(db: SuggestionsDatabase,
-                    private val uberStationsService: UberStationsService) {
+                    private val uberStationsService: UberStationsService,
+                    private val parser: StationParser) {
 
     private val dao = db.suggestionsDao()
 
@@ -45,8 +48,14 @@ class SearchRepository
                 .subscribeOn(Schedulers.io())
     }
 
-    fun getStation(id: Int): Single<StationsResult> {
+    fun findUberStation(id: Int): Observable<Station> {
         return uberStationsService.getStation(id)
+                .map { it.result[0].stations[0].toStation() }
+                .flatMapObservable {
+                    Observable.fromCallable {
+                        parser.parseFromUberStation(it)
+                    }.startWith(it)
+                }
                 .subscribeOn(Schedulers.io())
 
     }

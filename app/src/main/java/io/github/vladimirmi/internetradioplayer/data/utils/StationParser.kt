@@ -45,6 +45,14 @@ private val suppotedPlaylists = arrayOf("x-scpls", "mpegurl", "x-mpegurl", "x-mp
 
 private fun MediaType.isAudioStream() = supportedAudioTypes.contains(subtype())
 
+private val MediaType.encoding: String
+    get() = when (subtype()) {
+        "ogg", "opus" -> "OGG"
+        "aac", "aacp" -> "AAC"
+        else -> "MP3"
+    }
+
+
 private fun MediaType.isPlaylistFile() = suppotedPlaylists.contains(subtype())
 
 private fun MediaType.isPlsFile() = subtype() == "x-scpls"
@@ -53,6 +61,16 @@ class StationParser
 @Inject constructor(private val context: Context,
                     private val client: OkHttpClient,
                     private val networkChecker: NetworkChecker) {
+
+    fun parseFromUberStation(station: Station): Station {
+        val newStation = parseFromNet(station.uri.toURL(), station.name)
+
+        return station.copy(
+                bitrate = newStation.bitrate,
+                encoding = newStation.encoding,
+                sample = newStation.sample
+        )
+    }
 
     fun parseFromUri(uri: Uri): Station {
         Timber.d("parseFromUri: $uri")
@@ -89,7 +107,7 @@ class StationParser
             else body.string().parseM3u()
 
         } else if (type.isAudioStream()) {
-            createStation(name, url, response.headers())
+            createStation(name, url, response.headers(), type.encoding)
 
         } else {
             throw IllegalStateException("Error: Unsupported content type $type")
@@ -97,7 +115,7 @@ class StationParser
         }).also { body.close() }
     }
 
-    private fun createStation(name: String, url: URL, headers: Headers): Station {
+    private fun createStation(name: String, url: URL, headers: Headers, encoding: String): Station {
         Timber.d("createStation: $headers")
 
         return Station(
@@ -105,7 +123,7 @@ class StationParser
                 uri = url.toString(),
                 genre = headers[HEADER_GENRE],
                 url = headers[HEADER_URL],
-                encoding = null,
+                encoding = encoding,
                 bitrate = headers[HEADER_BITRATE],
                 sample = headers[HEADER_SAMPLE]
         )

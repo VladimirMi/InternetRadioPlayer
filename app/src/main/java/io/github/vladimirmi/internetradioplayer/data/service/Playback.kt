@@ -9,20 +9,15 @@ import android.media.AudioManager
 import android.media.AudioManager.*
 import android.net.Uri
 import android.net.wifi.WifiManager
-import android.os.Handler
-import com.google.android.exoplayer2.DefaultRenderersFactory
 import com.google.android.exoplayer2.ExoPlayerFactory
 import com.google.android.exoplayer2.SimpleExoPlayer
 import com.google.android.exoplayer2.source.ExtractorMediaSource
 import com.google.android.exoplayer2.trackselection.DefaultTrackSelector
-import com.google.android.exoplayer2.upstream.BandwidthMeter
-import com.google.android.exoplayer2.upstream.DefaultBandwidthMeter
 import com.google.android.exoplayer2.util.Util
 import io.github.vladimirmi.internetradioplayer.BuildConfig
 import io.github.vladimirmi.internetradioplayer.R
 import io.github.vladimirmi.internetradioplayer.data.source.IcyDataSource
 import io.github.vladimirmi.internetradioplayer.di.Scopes
-import timber.log.Timber
 
 private const val VOLUME_DUCK = 0.2f
 private const val VOLUME_NORMAL = 1.0f
@@ -37,6 +32,7 @@ class Playback(private val service: PlayerService,
     private var playAgainOnHeadset = false
     private var player: SimpleExoPlayer? = null
     private val loadControl = Scopes.app.getInstance(LoadControl::class.java)
+    private val audioRenderers = AudioRenderersFactory(service)
 
     private val wifiLock = (service.applicationContext.getSystemService(Context.WIFI_SERVICE) as WifiManager)
             .createWifiLock(WifiManager.WIFI_MODE_FULL, BuildConfig.APPLICATION_ID)
@@ -85,13 +81,8 @@ class Playback(private val service: PlayerService,
     }
 
     private fun createPlayer() {
-        val rendererFactory = DefaultRenderersFactory(service)
-        val bandwidthMeter = DefaultBandwidthMeter(Handler(),
-                BandwidthMeter.EventListener { elapsedMs, bytes, bitrate ->
-                    Timber.e("onBandwidthSample: elapsedMs: $elapsedMs, bytes: $bytes, bitrate: $bitrate")
-                })
-        val trackSelector = DefaultTrackSelector(bandwidthMeter)
-        player = ExoPlayerFactory.newSimpleInstance(rendererFactory, trackSelector, loadControl)
+        val trackSelector = DefaultTrackSelector()
+        player = ExoPlayerFactory.newSimpleInstance(service, audioRenderers, trackSelector, loadControl)
         player?.addListener(playerCallback)
     }
 

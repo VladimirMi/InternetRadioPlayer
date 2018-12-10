@@ -143,14 +143,6 @@ class PlayerService : MediaBrowserServiceCompat(), SessionCallback.Interface {
         playingStationId = station.id
         playback.play(station.uri.toUri())
         historyInteractor.createHistory(station)
-
-//        val extractor = MediaExtractor()
-//        extractor.setDataSource(station.uri)
-//        val trackFormat = extractor.getTrackFormat(0)
-//        val bitRate = trackFormat.getInteger(MediaFormat.KEY_BIT_RATE)
-//
-//        Timber.e("playCurrent: br: $bitRate")
-
     }
 
     //region =============== SessionCallback ==============

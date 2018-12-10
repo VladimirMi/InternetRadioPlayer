@@ -3,10 +3,7 @@ package io.github.vladimirmi.internetradioplayer.presentation.root
 import android.annotation.SuppressLint
 import android.net.Uri
 import io.github.vladimirmi.internetradioplayer.R
-import io.github.vladimirmi.internetradioplayer.domain.interactor.FavoriteListInteractor
-import io.github.vladimirmi.internetradioplayer.domain.interactor.MainInteractor
-import io.github.vladimirmi.internetradioplayer.domain.interactor.PlayerInteractor
-import io.github.vladimirmi.internetradioplayer.domain.interactor.StationInteractor
+import io.github.vladimirmi.internetradioplayer.domain.interactor.*
 import io.github.vladimirmi.internetradioplayer.extensions.subscribeX
 import io.github.vladimirmi.internetradioplayer.navigation.Router
 import io.github.vladimirmi.internetradioplayer.presentation.base.BasePresenter
@@ -24,9 +21,9 @@ class RootPresenter
                     private val playerInteractor: PlayerInteractor,
                     private val stationInteractor: StationInteractor,
                     private val favoriteListInteractor: FavoriteListInteractor,
-                    private val mainInteractor: MainInteractor)
+                    private val mainInteractor: MainInteractor,
+                    private val historyInteractor: HistoryInteractor)
     : BasePresenter<RootView>() {
-
 
     override fun onFirstAttach(view: RootView) {
         playerInteractor.connect()
@@ -34,6 +31,7 @@ class RootPresenter
         router.newRootScreen(pageId)
 
         favoriteListInteractor.initFavoriteList()
+                .andThen(historyInteractor.selectRecentStation())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribeX { view.checkIntent() }
                 .addTo(dataSubs)

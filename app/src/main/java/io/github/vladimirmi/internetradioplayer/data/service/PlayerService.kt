@@ -11,6 +11,7 @@ import io.github.vladimirmi.internetradioplayer.R
 import io.github.vladimirmi.internetradioplayer.data.db.entity.Station
 import io.github.vladimirmi.internetradioplayer.data.utils.ExponentialBackoff
 import io.github.vladimirmi.internetradioplayer.di.Scopes
+import io.github.vladimirmi.internetradioplayer.domain.interactor.FavoriteListInteractor
 import io.github.vladimirmi.internetradioplayer.domain.interactor.HistoryInteractor
 import io.github.vladimirmi.internetradioplayer.domain.interactor.StationInteractor
 import io.github.vladimirmi.internetradioplayer.extensions.errorHandler
@@ -36,6 +37,7 @@ class PlayerService : MediaBrowserServiceCompat(), SessionCallback.Interface {
     }
 
     @Inject lateinit var stationInteractor: StationInteractor
+    @Inject lateinit var favoriteListInteractor: FavoriteListInteractor
     @Inject lateinit var historyInteractor: HistoryInteractor
 
     private val subs = CompositeDisposable()
@@ -162,13 +164,13 @@ class PlayerService : MediaBrowserServiceCompat(), SessionCallback.Interface {
     }
 
     override fun onSkipToPreviousCommand() {
-//        val changed = stationInteractor.previousStation()
-//        if (changed) session.sendSessionEvent(EVENT_SESSION_PREVIOUS, null)
+        val changed = favoriteListInteractor.nextStation(stationInteractor.station.id)
+        if (changed) session.sendSessionEvent(EVENT_SESSION_PREVIOUS, null)
     }
 
     override fun onSkipToNextCommand() {
-//        val changed = stationInteractor.nextStation()
-//        if (changed) session.sendSessionEvent(EVENT_SESSION_NEXT, null)
+        val changed = favoriteListInteractor.previousStation(stationInteractor.station.id)
+        if (changed) session.sendSessionEvent(EVENT_SESSION_NEXT, null)
     }
 
     //endregion

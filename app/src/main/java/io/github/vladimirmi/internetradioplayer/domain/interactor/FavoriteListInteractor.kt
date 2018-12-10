@@ -100,15 +100,15 @@ class FavoriteListInteractor
         return updateGroups.andThen(updateStations).andThen(initFavoriteList())
     }
 
-//    fun nextStation(id: String = station.id): Boolean {
-//        val next = stationsList.getNextFrom(id)
-//        next?.let { station = it }
-//        return next != null
-//    }
+    fun nextStation(id: String): Boolean {
+        val next = groupListRepository.stations.getNextStationFrom(id)
+        next?.let { stationRepository.station = it }
+        return next != null
+    }
 
-//    fun previousStation(id: String = station.id): Boolean {
-//        val previous = stationsList.getPreviousFrom(id)
-//        previous?.let { station = it }
-//        return previous != null
-//    }
+    fun previousStation(id: String): Boolean {
+        val previous = groupListRepository.stations.getPreviousStationFrom(id)
+        previous?.let { stationRepository.station = it }
+        return previous != null
+    }
 }

@@ -46,9 +46,8 @@ data class Station(
     @Ignore val specs: String
 
     init {
-        //todo add Hz, kbps, check empty
         val sb = StringBuilder()
-        encoding?.let { sb.append(it) }
+        encoding?.let { sb.append(it.toUpperCase()) }
         sample?.let { sb.append(", ").append(it).append(" kHz") }
         bitrate?.let { sb.append(", ").append(it).append(" kbps") }
         specs = sb.toString()

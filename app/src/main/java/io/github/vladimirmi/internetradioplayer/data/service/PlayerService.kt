@@ -165,12 +165,12 @@ class PlayerService : MediaBrowserServiceCompat(), SessionCallback.Interface {
     }
 
     override fun onSkipToPreviousCommand() {
-        val changed = favoriteListInteractor.nextStation(stationInteractor.station.id)
+        val changed = favoriteListInteractor.previousStation(stationInteractor.station.id)
         if (changed) session.sendSessionEvent(EVENT_SESSION_PREVIOUS, null)
     }
 
     override fun onSkipToNextCommand() {
-        val changed = favoriteListInteractor.previousStation(stationInteractor.station.id)
+        val changed = favoriteListInteractor.nextStation(stationInteractor.station.id)
         if (changed) session.sendSessionEvent(EVENT_SESSION_NEXT, null)
     }
 

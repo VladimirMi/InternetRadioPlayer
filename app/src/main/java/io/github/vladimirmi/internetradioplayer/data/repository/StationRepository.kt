@@ -22,7 +22,7 @@ class StationRepository
                     private val db: StationsDatabase) {
 
     private val dao = db.stationDao()
-    private val _currentStationObs = BehaviorRelay.create<Station>()
+    private val _currentStationObs = BehaviorRelay.createDefault(Station.nullObj())
     val stationObs: Observable<Station> get() = _currentStationObs
 
     var station: Station

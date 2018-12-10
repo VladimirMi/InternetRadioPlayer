@@ -48,9 +48,7 @@ class FavoriteListInteractor
         }
     }
 
-    fun isFavorite(station: Station): Boolean {
-        return groupListRepository.stations.findStation { it.id == station.id } != null
-    }
+    fun isFavorite(station: Station) = isFavorite(station.id)
 
     fun createGroup(groupName: String): Completable {
         return Single.fromCallable { groupListRepository.groups }
@@ -101,14 +99,18 @@ class FavoriteListInteractor
     }
 
     fun nextStation(id: String): Boolean {
+        if (!isFavorite(id)) return false
         val next = groupListRepository.stations.getNextStationFrom(id)
         next?.let { stationRepository.station = it }
         return next != null
     }
 
     fun previousStation(id: String): Boolean {
+        if (!isFavorite(id)) return false
         val previous = groupListRepository.stations.getPreviousStationFrom(id)
         previous?.let { stationRepository.station = it }
         return previous != null
     }
+
+    private fun isFavorite(id: String) = groupListRepository.stations.findStation { it.id == id } != null
 }

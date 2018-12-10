@@ -6,7 +6,6 @@ import io.github.vladimirmi.internetradioplayer.data.repository.GroupListReposit
 import io.github.vladimirmi.internetradioplayer.data.repository.StationRepository
 import io.github.vladimirmi.internetradioplayer.data.utils.ShortcutHelper
 import io.reactivex.Completable
-import io.reactivex.Observable
 import io.reactivex.Single
 import io.reactivex.rxkotlin.toCompletable
 import javax.inject.Inject
@@ -22,7 +21,7 @@ class StationInteractor
                     private val favoriteListInteractor: FavoriteListInteractor,
                     private val shortcutHelper: ShortcutHelper) {
 
-    val stationObs: Observable<Station> get() = stationRepository.stationObs
+    val stationObs get() = stationRepository.stationObs
     var station
         get() = stationRepository.station
         set(value) {

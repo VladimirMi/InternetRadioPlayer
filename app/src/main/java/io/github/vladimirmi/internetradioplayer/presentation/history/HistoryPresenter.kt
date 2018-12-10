@@ -24,6 +24,7 @@ class HistoryPresenter
     override fun onAttach(view: HistoryView) {
         Observables.combineLatest(historyInteractor.getHistoryObs(),
                 favoriteListInteractor.stationsListObs) { history, favorites ->
+            //todo isFavorite field in Station
             history.map { station -> station to (favorites.findStation { it.id == station.id } != null) }
         }.observeOn(AndroidSchedulers.mainThread())
                 .subscribeX(onNext = { view.setHistory(it) })

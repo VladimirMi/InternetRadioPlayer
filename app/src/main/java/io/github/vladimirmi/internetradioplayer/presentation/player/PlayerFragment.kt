@@ -109,6 +109,7 @@ class PlayerFragment : BaseFragment<PlayerPresenter, PlayerView>(), PlayerView, 
     override fun setFavorite(isFavorite: Boolean) {
         val tint = if (isFavorite) R.color.accent else R.color.primary
         favoriteBt.background.setTintExt(context!!.color(tint))
+        groupSpinnerWrapper.visible(isFavorite)
     }
 
     override fun setGroups(list: List<String>) {

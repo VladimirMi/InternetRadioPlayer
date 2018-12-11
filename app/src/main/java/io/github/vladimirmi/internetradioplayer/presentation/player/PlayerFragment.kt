@@ -1,6 +1,7 @@
 package io.github.vladimirmi.internetradioplayer.presentation.player
 
 import android.os.Handler
+import android.support.v4.media.MediaMetadataCompat
 import android.text.Spannable
 import android.text.SpannableString
 import android.text.style.ForegroundColorSpan
@@ -17,11 +18,14 @@ import androidx.core.content.ContextCompat
 import io.github.vladimirmi.internetradioplayer.R
 import io.github.vladimirmi.internetradioplayer.data.db.entity.Group
 import io.github.vladimirmi.internetradioplayer.data.db.entity.Station
+import io.github.vladimirmi.internetradioplayer.data.service.artist
+import io.github.vladimirmi.internetradioplayer.data.service.title
 import io.github.vladimirmi.internetradioplayer.di.Scopes
 import io.github.vladimirmi.internetradioplayer.extensions.*
 import io.github.vladimirmi.internetradioplayer.presentation.base.BaseFragment
 import io.github.vladimirmi.internetradioplayer.presentation.favoritelist.NewGroupDialog
 import kotlinx.android.synthetic.main.fragment_player.*
+import kotlinx.android.synthetic.main.view_controls.*
 import kotlinx.android.synthetic.main.view_station_info.*
 import toothpick.Toothpick
 
@@ -51,7 +55,8 @@ class PlayerFragment : BaseFragment<PlayerPresenter, PlayerView>(), PlayerView, 
 
         favoriteBt.setOnClickListener { presenter.switchFavorite() }
 
-        metadataTv.isSelected = true
+        metaTitleTv.isSelected = true
+        metaSubtitleTv.isSelected = true
         playPauseBt.setOnClickListener { presenter.playPause() }
         playPauseBt.setManualMode(true)
         previousBt.setOnClickListener { presenter.skipToPrevious() }
@@ -92,7 +97,6 @@ class PlayerFragment : BaseFragment<PlayerPresenter, PlayerView>(), PlayerView, 
 
     override fun setUserVisibleHint(isVisibleToUser: Boolean) {
         super.setUserVisibleHint(isVisibleToUser)
-//        Timber.e("setUserVisibleHint: $isVisibleToUser $view")
         if (view != null) {
             if (!isVisibleToUser) changeTitleEditable(false)
         }
@@ -107,7 +111,7 @@ class PlayerFragment : BaseFragment<PlayerPresenter, PlayerView>(), PlayerView, 
     }
 
     override fun setFavorite(isFavorite: Boolean) {
-        val tint = if (isFavorite) R.color.accent else R.color.primary
+        val tint = if (isFavorite) R.color.orange_500 else R.color.primary_light
         favoriteBt.background.setTintExt(context!!.color(tint))
         groupSpinnerWrapper.visible(isFavorite)
     }
@@ -164,8 +168,12 @@ class PlayerFragment : BaseFragment<PlayerPresenter, PlayerView>(), PlayerView, 
         previousBt.bounceXAnimation(-200f).start()
     }
 
-    override fun setMetadata(metadata: String) {
-        metadataTv.text = metadata
+    override fun setMetadata(metadata: MediaMetadataCompat?) {
+        metadataCv.visible(metadata != null)
+        metadata?.apply {
+            metaTitleTv.text = artist
+            metaSubtitleTv.text = title
+        }
     }
 
     //endregion

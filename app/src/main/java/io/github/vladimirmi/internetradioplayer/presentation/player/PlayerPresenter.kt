@@ -3,7 +3,9 @@ package io.github.vladimirmi.internetradioplayer.presentation.player
 import android.support.v4.media.MediaMetadataCompat
 import android.support.v4.media.session.PlaybackStateCompat
 import io.github.vladimirmi.internetradioplayer.R
-import io.github.vladimirmi.internetradioplayer.data.service.*
+import io.github.vladimirmi.internetradioplayer.data.service.PlayerService
+import io.github.vladimirmi.internetradioplayer.data.service.album
+import io.github.vladimirmi.internetradioplayer.data.service.notSupported
 import io.github.vladimirmi.internetradioplayer.domain.interactor.FavoriteListInteractor
 import io.github.vladimirmi.internetradioplayer.domain.interactor.PlayerInteractor
 import io.github.vladimirmi.internetradioplayer.domain.interactor.StationInteractor
@@ -136,8 +138,8 @@ class PlayerPresenter
     private fun handleMetadata(metadata: MediaMetadataCompat) {
         //todo fix
 //        if (metadata.notSupported()&&metadata.notEmpty()) viewState.setMetadata(metadata.album!!)
-        if (metadata.notSupported() && metadata.album != null) view?.setMetadata(metadata.album!!)
-        else view?.setMetadata("${metadata.artist} - ${metadata.title}")
+        if (metadata.notSupported() && metadata.album != null) view?.setMetadata(null)
+        else view?.setMetadata(metadata)
     }
 
     private fun handleSessionEvent(event: String) {

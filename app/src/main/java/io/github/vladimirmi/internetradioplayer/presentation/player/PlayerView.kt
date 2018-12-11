@@ -1,5 +1,6 @@
 package io.github.vladimirmi.internetradioplayer.presentation.player
 
+import android.support.v4.media.MediaMetadataCompat
 import io.github.vladimirmi.internetradioplayer.data.db.entity.Station
 import io.github.vladimirmi.internetradioplayer.presentation.base.BaseView
 
@@ -19,7 +20,7 @@ interface PlayerView : BaseView {
 
     fun setFavorite(isFavorite: Boolean)
 
-    fun setMetadata(metadata: String)
+    fun setMetadata(metadata: MediaMetadataCompat?)
 
     fun showStopped()
 

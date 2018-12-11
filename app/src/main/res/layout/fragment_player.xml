@@ -8,97 +8,87 @@
     >
 
     <com.google.android.material.card.MaterialCardView
+        android:id="@+id/infoCv"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        style="@style/Widget.MaterialComponents.CardView"
+        android:layout_marginLeft="16dp"
+        android:layout_marginTop="16dp"
+        android:layout_marginRight="16dp"
+        app:cardCornerRadius="8dp"
+        app:cardElevation="2dp"
+        app:contentPadding="8dp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        android:layout_marginRight="16dp"
-        android:layout_marginLeft="16dp"
-        android:layout_marginTop="16dp"
-        app:cardElevation="4dp"
-        app:cardCornerRadius="8dp"
-        app:contentPadding="8dp"
         >
 
         <include layout="@layout/view_station_info"/>
 
     </com.google.android.material.card.MaterialCardView>
 
-    <TextView
-        android:id="@+id/metadataTv"
-        android:layout_width="0dp"
+    <com.google.android.material.card.MaterialCardView
+        android:id="@+id/metadataCv"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginStart="16dp"
         android:layout_marginLeft="16dp"
-        android:layout_marginEnd="16dp"
+        android:layout_marginTop="16dp"
         android:layout_marginRight="16dp"
-        android:layout_marginBottom="32dp"
-        android:ellipsize="marquee"
-        android:marqueeRepeatLimit="marquee_forever"
-        android:singleLine="true"
-        android:textAppearance="@style/TextAppearance.MaterialComponents.Headline6"
-        app:layout_constraintBottom_toTopOf="@+id/playPauseBt"
+        app:cardCornerRadius="8dp"
+        app:cardElevation="2dp"
+        app:contentPadding="8dp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        tools:text="Festus vigils ducunt ad gemna."
+        app:layout_constraintTop_toBottomOf="@id/infoCv"
+        >
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:orientation="vertical"
+            >
+
+            <TextView
+                android:id="@+id/metaTitleTv"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:padding="8dp"
+                android:ellipsize="marquee"
+                android:marqueeRepeatLimit="marquee_forever"
+                android:singleLine="true"
+                android:textAppearance="@style/TextAppearance.AppCompat.Title"
+                tools:text="Festus vigils ducunt ad gemna."
+                />
+
+            <TextView
+                android:id="@+id/metaSubtitleTv"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:padding="8dp"
+                android:ellipsize="marquee"
+                android:marqueeRepeatLimit="marquee_forever"
+                android:singleLine="true"
+                android:textAppearance="@style/TextAppearance.AppCompat.Subhead"
+                tools:text="Festus vigils ducunt ad gemna."
+                />
+
+        </LinearLayout>
+
+    </com.google.android.material.card.MaterialCardView>
+
+    <View
+        android:id="@+id/shadow"
+        android:layout_width="match_parent"
+        android:layout_height="4dp"
+        android:background="@drawable/shadow_reverse"
+        app:layout_constraintBottom_toTopOf="@id/controls"
         />
 
-    <ImageButton
-        android:id="@+id/previousBt"
-        android:layout_width="48dp"
-        android:layout_height="48dp"
-        android:layout_marginStart="16dp"
-        android:layout_marginLeft="16dp"
-        android:layout_marginBottom="16dp"
-        android:background="@drawable/ic_skip_previous"
-        android:contentDescription="@string/desc_skip_previous_button"
+    <include
+        android:id="@+id/controls"
+        layout="@layout/view_controls"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
         app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toStartOf="@id/stopBt"
-        app:layout_constraintStart_toStartOf="parent"
-        android:foreground="?actionBarItemBackground"
         />
 
-    <ImageButton
-        android:id="@+id/stopBt"
-        android:layout_width="48dp"
-        android:layout_height="48dp"
-        android:background="@drawable/ic_stop"
-        android:layout_marginBottom="16dp"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toStartOf="@id/playPauseBt"
-        app:layout_constraintStart_toEndOf="@id/previousBt"
-        android:contentDescription="@string/desc_stop_button"
-        android:foreground="?actionBarItemBackground"
-        />
-
-    <io.github.vladimirmi.playerbutton.PlayerButton
-        android:id="@+id/playPauseBt"
-        android:layout_width="48dp"
-        android:layout_height="48dp"
-        android:layout_marginBottom="16dp"
-        android:contentDescription="@string/desc_play_pause_button"
-        app:layout_constraintStart_toEndOf="@id/stopBt"
-        app:layout_constraintEnd_toStartOf="@id/nextBt"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:pb_pauseColor="@color/pause_button"
-        app:pb_playColor="@color/play_button"
-        android:foreground="?actionBarItemBackground"
-        />
-
-    <ImageButton
-        android:id="@+id/nextBt"
-        android:layout_width="48dp"
-        android:layout_height="48dp"
-        android:layout_marginEnd="16dp"
-        android:layout_marginRight="16dp"
-        android:layout_marginBottom="16dp"
-        android:background="@drawable/ic_skip_next"
-        android:contentDescription="@string/desc_skip_next_button"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toEndOf="@id/playPauseBt"
-        android:foreground="?actionBarItemBackground"
-        />
 </androidx.constraintlayout.widget.ConstraintLayout>

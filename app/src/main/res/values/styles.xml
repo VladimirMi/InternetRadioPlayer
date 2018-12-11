@@ -73,7 +73,7 @@
     <style name="CustomTabLayout" parent="Widget.MaterialComponents.TabLayout.Colored">
         <item name="tabSelectedTextColor">@color/accent_light</item>
         <item name="tabTextColor">@color/grey_50</item>
-        <item name="tabMode">scrollable</item>
+        <item name="tabGravity">center</item>
     </style>
 
 </resources>

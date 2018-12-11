@@ -119,6 +119,10 @@ class PlayerPresenter
         }
     }
 
+    fun stop() {
+        playerInteractor.stop()
+    }
+
     fun skipToPrevious() {
         playerInteractor.skipToPrevious()
     }

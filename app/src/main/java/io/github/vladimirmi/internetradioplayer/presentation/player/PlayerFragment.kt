@@ -61,6 +61,7 @@ class PlayerFragment : BaseFragment<PlayerPresenter, PlayerView>(), PlayerView, 
         playPauseBt.setManualMode(true)
         previousBt.setOnClickListener { presenter.skipToPrevious() }
         nextBt.setOnClickListener { presenter.skipToNext() }
+        stopBt.setOnClickListener { presenter.stop() }
 //        bufferingPb.indeterminateDrawable.mutate().setTintExt(context!!.color(R.color.pause_button))
     }
 

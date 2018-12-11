@@ -2,7 +2,10 @@ package io.github.vladimirmi.playerbutton;
 
 import android.content.Context;
 import android.content.res.TypedArray;
+import android.graphics.PorterDuff;
 import android.graphics.drawable.Animatable;
+import android.graphics.drawable.Drawable;
+import android.os.Build;
 import android.util.AttributeSet;
 
 import androidx.annotation.ColorInt;
@@ -46,7 +49,7 @@ public class PlayerButton extends androidx.appcompat.widget.AppCompatImageButton
     }
 
     private void init() {
-        setImageDrawable(getAnimatedDrawable(false));
+        setImageDrawable(getVectorDrawable());
         super.setOnClickListener(v -> {
             if (listener != null) listener.onClick(v);
             if (!isManualMode) setPlaying(!isPlaying);
@@ -80,9 +83,11 @@ public class PlayerButton extends androidx.appcompat.widget.AppCompatImageButton
     public void setPlaying(boolean play, boolean animate) {
         if (isPlaying == play) return;
         isPlaying = play;
-        setImageDrawable(getAnimatedDrawable(animate));
         if (animate) {
+            setImageDrawable(getAnimatedDrawable());
             ((Animatable) getDrawable()).start();
+        } else {
+            setImageDrawable(getVectorDrawable());
         }
     }
 
@@ -96,11 +101,26 @@ public class PlayerButton extends androidx.appcompat.widget.AppCompatImageButton
     }
 
 
-    private AnimatedVectorDrawableCompat getAnimatedDrawable(boolean animate) {
-        int resId = isPlaying == animate ? R.drawable.play_to_pause_animation : R.drawable.pause_to_play_animation;
+    private AnimatedVectorDrawableCompat getAnimatedDrawable() {
+        int resId = isPlaying ? R.drawable.play_to_pause_animation : R.drawable.pause_to_play_animation;
         AnimatedVectorDrawableCompat drawable = AnimatedVectorDrawableCompat.create(getContext(), resId);
         //noinspection ConstantConditions
         drawable.setTint(isPlaying ? pauseColor : playColor);
         return drawable;
+    }
+
+    private Drawable getVectorDrawable() {
+        int resId = isPlaying ? R.drawable.icon_pause : R.drawable.icon_play;
+        Drawable drawable = ContextCompat.getDrawable(getContext(), resId);
+        setTint(drawable, isPlaying ? pauseColor : playColor);
+        return drawable;
+    }
+
+    private void setTint(Drawable drawable, @ColorInt int tint) {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+            drawable.setTint(tint);
+        } else {
+            drawable.setColorFilter(tint, PorterDuff.Mode.SRC_IN);
+        }
     }
 }

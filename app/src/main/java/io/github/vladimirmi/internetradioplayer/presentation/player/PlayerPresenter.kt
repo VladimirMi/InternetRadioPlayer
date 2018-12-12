@@ -12,6 +12,7 @@ import io.github.vladimirmi.internetradioplayer.domain.interactor.StationInterac
 import io.github.vladimirmi.internetradioplayer.extensions.subscribeX
 import io.github.vladimirmi.internetradioplayer.presentation.base.BasePresenter
 import io.reactivex.android.schedulers.AndroidSchedulers
+import io.reactivex.disposables.Disposable
 import io.reactivex.rxkotlin.Observables
 import io.reactivex.rxkotlin.addTo
 import javax.inject.Inject
@@ -25,6 +26,8 @@ class PlayerPresenter
                     private val favoriteListInteractor: FavoriteListInteractor,
                     private val playerInteractor: PlayerInteractor)
     : BasePresenter<PlayerView>() {
+
+    private var groupSub: Disposable? = null
 
     override fun onAttach(view: PlayerView) {
         setupStation()
@@ -42,7 +45,8 @@ class PlayerPresenter
                 .addTo(viewSubs)
     }
 
-    private fun setupGroups() {
+    fun setupGroups() {
+        groupSub?.dispose()
         val groupObs = stationInteractor.stationObs
                 .flatMapSingle { favoriteListInteractor.getGroup(it.groupId) }
                 .map { it.name }
@@ -52,11 +56,10 @@ class PlayerPresenter
                 .map { groups -> groups.map { it.name } }
                 .observeOn(AndroidSchedulers.mainThread())
 
-        Observables.combineLatest(groupsObs, groupObs) { list, group ->
+        groupSub = Observables.combineLatest(groupsObs, groupObs) { list, group ->
             view?.setGroups(list)
             list.indexOf(group) + 1 //new folder option offset
         }.subscribeX(onNext = { view?.setGroup(it) })
-                .addTo(viewSubs)
     }
 
     private fun setupPlayer() {

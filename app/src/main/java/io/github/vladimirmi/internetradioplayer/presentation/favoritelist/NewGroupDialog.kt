@@ -23,13 +23,16 @@ class NewGroupDialog : BaseDialogFragment() {
     }
 
     override fun onPositive() {
-        (parentFragment as? Callback)?.onNewGroupCreate(dialogView!!.groupEt.text.toString())
+        (parentFragment as? Callback)?.onGroupCreate(dialogView!!.groupEt.text.toString())
     }
 
     override fun onNegative() {
+        (parentFragment as? Callback)?.onCancelGroupCreate()
     }
 
     interface Callback {
-        fun onNewGroupCreate(group: String)
+        fun onGroupCreate(group: String)
+
+        fun onCancelGroupCreate()
     }
 }

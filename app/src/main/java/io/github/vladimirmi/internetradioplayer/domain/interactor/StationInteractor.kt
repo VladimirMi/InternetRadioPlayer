@@ -58,7 +58,7 @@ class StationInteractor
                 .flatMapCompletable {
                     if (it.id == station.groupId) Completable.complete()
                     else {
-                        val newStation = station.copy(groupId = it.id)
+                        val newStation = station.copy(groupId = it.id, order = it.stations.size)
                         stationRepository.updateStations(listOf(newStation))
                                 .andThen(setStation(newStation))
                                 .andThen(favoriteListInteractor.initFavoriteList())

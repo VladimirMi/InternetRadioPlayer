@@ -41,7 +41,7 @@ class PlayerFragment : BaseFragment<PlayerPresenter, PlayerView>(), PlayerView, 
 
     private var editTextBg: Int = 0
     private lateinit var adapter: ArrayAdapter<String>
-    private var blockSpinnerSelectionListener = false
+    private var blockSpinnerSelection = false
 
     override fun providePresenter(): PlayerPresenter {
         return Toothpick.openScopes(Scopes.ROOT_ACTIVITY, this)
@@ -90,7 +90,7 @@ class PlayerFragment : BaseFragment<PlayerPresenter, PlayerView>(), PlayerView, 
             }
 
             override fun onItemSelected(parent: AdapterView<*>?, view: View?, position: Int, id: Long) {
-                if (blockSpinnerSelectionListener) return
+                if (blockSpinnerSelection) return
                 val groupName = Group.getDbName(adapter.getItem(position)!!, context!!)
                 presenter.selectGroup(position, groupName)
             }
@@ -126,9 +126,9 @@ class PlayerFragment : BaseFragment<PlayerPresenter, PlayerView>(), PlayerView, 
     }
 
     override fun setGroup(position: Int) {
-        blockSpinnerSelectionListener = true
+        blockSpinnerSelection = true
         groupSpinner.setSelection(position)
-        Handler().postDelayed({ blockSpinnerSelectionListener = false }, 100)
+        Handler().postDelayed({ blockSpinnerSelection = false }, 100)
     }
 
     override fun openLinkDialog(url: String) {
@@ -143,8 +143,12 @@ class PlayerFragment : BaseFragment<PlayerPresenter, PlayerView>(), PlayerView, 
         NewGroupDialog().show(childFragmentManager, "new_group_dialog")
     }
 
-    override fun onNewGroupCreate(group: String) {
+    override fun onGroupCreate(group: String) {
         presenter.createGroup(group)
+    }
+
+    override fun onCancelGroupCreate() {
+        presenter.setupGroups()
     }
 
     override fun showStopped() {

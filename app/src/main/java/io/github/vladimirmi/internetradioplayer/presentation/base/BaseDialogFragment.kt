@@ -1,10 +1,10 @@
 package io.github.vladimirmi.internetradioplayer.presentation.base
 
-import android.app.AlertDialog
 import android.app.Dialog
 import android.os.Bundle
 import android.view.View
 import android.view.ViewGroup
+import androidx.appcompat.app.AlertDialog
 import androidx.fragment.app.DialogFragment
 import io.github.vladimirmi.internetradioplayer.R
 
@@ -24,7 +24,7 @@ abstract class BaseDialogFragment : DialogFragment() {
     }
 
     override fun onCreateDialog(savedInstanceState: Bundle?): Dialog {
-        return AlertDialog.Builder(context)
+        return AlertDialog.Builder(context!!)
                 .setView(dialogView)
                 .setTitle(getTitle())
                 .setPositiveButton(R.string.dialog_ok) { _, _ -> onPositive() }

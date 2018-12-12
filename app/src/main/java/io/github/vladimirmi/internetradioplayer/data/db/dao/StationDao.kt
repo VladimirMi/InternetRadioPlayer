@@ -36,6 +36,7 @@ interface StationDao {
     @Query("DELETE FROM station WHERE id = :id")
     fun deleteStation(id: String)
 
-    @Delete
-    fun delete(group: Group)
+    @Query("DELETE FROM `group` WHERE id = :id")
+    fun deleteGroup(id: String)
+
 }

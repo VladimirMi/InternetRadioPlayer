@@ -41,8 +41,22 @@
         tools:text="Group"
         />
 
+    <ImageButton
+        android:id="@+id/removeBt"
+        android:layout_width="40dp"
+        android:layout_height="40dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        android:layout_marginEnd="8dp"
+        android:layout_marginRight="8dp"
+        android:background="@null"
+        android:src="@drawable/ic_delete"
+        android:foreground="?actionBarItemBackground"
+        />
+
     <View
-        android:id="@+id/titleDelimeter"
+        android:id="@+id/titleDelimiter"
         android:layout_width="match_parent"
         android:layout_height="1dp"
         android:layout_gravity="bottom"

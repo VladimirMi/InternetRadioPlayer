@@ -41,6 +41,12 @@ class FavoriteListPresenter
                 .addTo(dataSubs)
     }
 
+    fun removeGroup(id: String) {
+        favoriteListInteractor.removeGroup(id)
+                .subscribeX()
+                .addTo(dataSubs)
+    }
+
     fun moveGroupElements(stations: FlatStationsList) {
         favoriteListInteractor.moveGroupElements(stations)
                 .subscribeX()

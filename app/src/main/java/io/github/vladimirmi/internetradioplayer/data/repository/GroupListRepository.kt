@@ -45,7 +45,9 @@ class GroupListRepository
     }
 
     fun removeGroup(group: Group): Completable {
-        TODO("not implemented")
+        return Completable.fromCallable {
+            dao.deleteGroup(group.id)
+        }.subscribeOn(Schedulers.io())
     }
 
     fun updateGroups(groups: List<Group>): Completable {

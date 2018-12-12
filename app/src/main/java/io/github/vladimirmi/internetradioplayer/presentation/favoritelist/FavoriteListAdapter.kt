@@ -106,6 +106,7 @@ class StationListAdapter(private val callback: StationItemCallback)
         val group = stations.getGroup(position)
         holder.bind(group)
         holder.itemView.setOnClickListener { callback.onGroupSelected(group.id) }
+        holder.itemView.removeBt.setOnClickListener { callback.onGroupRemove(group.id) }
     }
 
     private fun setupGroupItemVH(position: Int, holder: GroupItemVH) {
@@ -157,6 +158,7 @@ class GroupTitleVH(itemView: View) : GroupElementVH(itemView) {
     fun bind(group: Group) {
         itemView.title.text = Group.getViewName(group.name, itemView.context)
         setExpanded(group.expanded)
+        itemView.removeBt.visible(group.stations.isEmpty())
     }
 
     private fun setExpanded(expanded: Boolean) {
@@ -175,7 +177,7 @@ class GroupTitleVH(itemView: View) : GroupElementVH(itemView) {
             itemView.outlineProvider = defaultOutline
         }
         setBottomMargin(single && position != stations.size - 1)
-        itemView.titleDelimeter.visible(!single)
+        itemView.titleDelimiter.visible(!single)
     }
 }
 
@@ -203,11 +205,12 @@ class GroupItemVH(itemView: View) : GroupElementVH(itemView) {
             itemView.outlineProvider = if (middle) fixedOutline else defaultOutline
         }
         setBottomMargin(bottom && position != stations.size - 1)
-        itemView.itemDelimeter.visible(top || middle)
+        itemView.itemDelimiter.visible(top || middle)
     }
 }
 
 interface StationItemCallback {
     fun onItemSelected(station: Station)
     fun onGroupSelected(id: String)
+    fun onGroupRemove(id: String)
 }

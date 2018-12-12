@@ -79,5 +79,9 @@ class FavoriteListFragment : BaseFragment<FavoriteListPresenter, StationListView
         presenter.selectStation(station)
     }
 
+    override fun onGroupRemove(id: String) {
+        presenter.removeGroup(id)
+    }
+
     //endregion
 }

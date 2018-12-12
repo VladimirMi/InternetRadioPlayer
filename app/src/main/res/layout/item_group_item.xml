@@ -38,7 +38,7 @@
         />
 
     <View
-        android:id="@+id/itemDelimeter"
+        android:id="@+id/itemDelimiter"
         android:layout_width="match_parent"
         android:layout_height="1dp"
         android:layout_gravity="bottom"

@@ -82,10 +82,14 @@ class FavoriteListInteractor
     fun expandOrCollapseGroup(id: String): Completable {
         return getGroup(id)
                 .map { it.copy(expanded = !it.expanded) }
-                .flatMapCompletable {
-                    groupListRepository.updateGroups(listOf(it))
-                            .andThen(initFavoriteList())
-                }
+                .flatMapCompletable { groupListRepository.updateGroups(listOf(it)) }
+                .andThen(initFavoriteList())
+    }
+
+    fun removeGroup(id: String): Completable {
+        return getGroup(id)
+                .flatMapCompletable { groupListRepository.removeGroup(it) }
+                .andThen(initFavoriteList())
     }
 
     fun moveGroupElements(stations: FlatStationsList): Completable {

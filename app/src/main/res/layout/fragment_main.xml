@@ -21,7 +21,7 @@
             app:popupTheme="@style/AppTheme.PopupOverlay"
             />
 
-        <com.google.android.material.tabs.TabLayout
+        <io.github.vladimirmi.internetradioplayer.ui.ScrollableTabLayout
             android:id="@+id/mainTl"
             style="@style/CustomTabLayout"
             android:layout_width="match_parent"
@@ -29,6 +29,7 @@
             app:layout_constraintLeft_toLeftOf="parent"
             app:layout_constraintRight_toRightOf="parent"
             app:layout_constraintTop_toTopOf="parent"
+            app:tabMode="scrollable"
             />
 
     </com.google.android.material.appbar.AppBarLayout>

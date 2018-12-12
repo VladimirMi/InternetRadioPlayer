@@ -14,6 +14,7 @@ import io.github.vladimirmi.internetradioplayer.domain.model.FlatStationsList
 import io.github.vladimirmi.internetradioplayer.extensions.color
 import io.github.vladimirmi.internetradioplayer.extensions.dp
 import io.github.vladimirmi.internetradioplayer.extensions.setTintExt
+import io.github.vladimirmi.internetradioplayer.extensions.visible
 import io.github.vladimirmi.internetradioplayer.ui.FixedOutlineProvider
 import kotlinx.android.synthetic.main.item_group_item.view.*
 import kotlinx.android.synthetic.main.item_group_title.view.*
@@ -138,7 +139,7 @@ abstract class GroupElementVH(itemView: View) : RecyclerView.ViewHolder(itemView
         setBgColor()
     }
 
-    protected fun setMargins(addBottomMargin: Boolean) {
+    protected fun setBottomMargin(addBottomMargin: Boolean) {
         val lp = itemView.layoutParams as ViewGroup.MarginLayoutParams
         lp.bottomMargin = (if (addBottomMargin) 8 else 0) * itemView.context.dp
         itemView.layoutParams = lp
@@ -173,7 +174,8 @@ class GroupTitleVH(itemView: View) : GroupElementVH(itemView) {
         if (Build.VERSION.SDK_INT >= 21) {
             itemView.outlineProvider = defaultOutline
         }
-        setMargins(single && position != stations.size - 1)
+        setBottomMargin(single && position != stations.size - 1)
+        itemView.titleDelimeter.visible(!single)
     }
 }
 
@@ -200,7 +202,8 @@ class GroupItemVH(itemView: View) : GroupElementVH(itemView) {
         if (Build.VERSION.SDK_INT >= 21) {
             itemView.outlineProvider = if (middle) fixedOutline else defaultOutline
         }
-        setMargins(bottom && position != stations.size - 1)
+        setBottomMargin(bottom && position != stations.size - 1)
+        itemView.itemDelimeter.visible(top || middle)
     }
 }
 

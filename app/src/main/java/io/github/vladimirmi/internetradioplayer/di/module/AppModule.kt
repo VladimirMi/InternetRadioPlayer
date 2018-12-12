@@ -55,7 +55,7 @@ class AppModule(context: Context) : Module() {
         bind(StationSource::class.java).singletonInScope()
 
         bind(SearchRepository::class.java).singletonInScope()
-        bind(GroupListRepository::class.java).singletonInScope()
+        bind(FavoritesRepository::class.java).singletonInScope()
         bind(StationRepository::class.java).singletonInScope()
         bind(PlayerRepository::class.java).singletonInScope()
         bind(HistoryRepository::class.java).singletonInScope()

@@ -7,9 +7,7 @@ import androidx.core.content.FileProvider
 import io.github.vladimirmi.internetradioplayer.BuildConfig
 import io.github.vladimirmi.internetradioplayer.data.db.entity.Group
 import io.github.vladimirmi.internetradioplayer.data.db.entity.Station
-import io.github.vladimirmi.internetradioplayer.data.repository.GroupListRepository
-import io.github.vladimirmi.internetradioplayer.data.repository.StationRepository
-import io.github.vladimirmi.internetradioplayer.domain.interactor.StationInteractor
+import io.github.vladimirmi.internetradioplayer.data.repository.FavoritesRepository
 import io.github.vladimirmi.internetradioplayer.extensions.clear
 import io.reactivex.Completable
 import org.xmlpull.v1.XmlPullParser
@@ -48,9 +46,7 @@ private const val ORDER_ATTR = "order"
 private const val EXPANDED_ATTR = "expanded"
 
 class BackupRestoreHelper
-@Inject constructor(private val interactor: StationInteractor,
-                    private val stationRepository: StationRepository,
-                    private val repository: GroupListRepository,
+@Inject constructor(private val repository: FavoritesRepository,
                     private val context: Context) {
 
     private val ns: String? = null
@@ -140,7 +136,7 @@ class BackupRestoreHelper
                     Completable.merge(groups.map { repository.addGroup(it) })
                 })
                 .andThen(Completable.defer {
-                    Completable.merge(stations.map { stationRepository.addToFavorite(it) })
+                    Completable.merge(stations.map { repository.addStation(it) })
                 })
     }
 

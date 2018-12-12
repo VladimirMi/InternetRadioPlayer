@@ -1,7 +1,7 @@
 package io.github.vladimirmi.internetradioplayer.domain.interactor
 
 import io.github.vladimirmi.internetradioplayer.data.net.model.StationSearchRes
-import io.github.vladimirmi.internetradioplayer.data.repository.GroupListRepository
+import io.github.vladimirmi.internetradioplayer.data.repository.FavoritesRepository
 import io.github.vladimirmi.internetradioplayer.data.repository.SearchRepository
 import io.github.vladimirmi.internetradioplayer.data.repository.StationRepository
 import io.github.vladimirmi.internetradioplayer.domain.model.Suggestion
@@ -16,7 +16,7 @@ import javax.inject.Inject
 class SearchInteractor
 @Inject constructor(private val searchRepository: SearchRepository,
                     private val stationRepository: StationRepository,
-                    private val groupListRepository: GroupListRepository) {
+                    private val favoritesRepository: FavoritesRepository) {
 
     fun queryRecentSuggestions(query: String): Single<out List<Suggestion>> {
         return searchRepository.getRecentSuggestions(query.trim())
@@ -35,7 +35,7 @@ class SearchInteractor
     fun selectUberStation(id: Int): Completable {
         return searchRepository.findUberStation(id)
                 .doOnNext { station ->
-                    val newStation = groupListRepository.stations.findStation { it.uri == station.uri }
+                    val newStation = favoritesRepository.stations.findStation { it.uri == station.uri }
                             ?: station
                     stationRepository.station = newStation
                 }.ignoreElements()

@@ -2,7 +2,7 @@ package io.github.vladimirmi.internetradioplayer.domain.interactor
 
 import android.net.Uri
 import io.github.vladimirmi.internetradioplayer.data.db.entity.Station
-import io.github.vladimirmi.internetradioplayer.data.repository.GroupListRepository
+import io.github.vladimirmi.internetradioplayer.data.repository.FavoritesRepository
 import io.github.vladimirmi.internetradioplayer.data.repository.StationRepository
 import io.github.vladimirmi.internetradioplayer.data.utils.ShortcutHelper
 import io.reactivex.Completable
@@ -17,7 +17,7 @@ import javax.inject.Inject
 
 class StationInteractor
 @Inject constructor(private val stationRepository: StationRepository,
-                    private val groupListRepository: GroupListRepository,
+                    private val favoritesRepository: FavoritesRepository,
                     private val favoriteListInteractor: FavoriteListInteractor,
                     private val shortcutHelper: ShortcutHelper) {
 
@@ -35,31 +35,31 @@ class StationInteractor
     fun createStation(uri: Uri): Single<Station> {
         return stationRepository.createStation(uri)
                 .doOnSuccess { newStation ->
-                    val favoriteStation = groupListRepository.stations.findStation { it.uri == newStation.uri }
+                    val favoriteStation = favoritesRepository.stations.findStation { it.uri == newStation.uri }
                     station = favoriteStation ?: newStation
                 }
     }
 
     fun addToFavorite(): Completable {
-        val newStation = station.copy(order = groupListRepository.stations.size)
-        return stationRepository.addToFavorite(newStation)
+        val newStation = station.copy(order = favoritesRepository.stations.size)
+        return favoritesRepository.addStation(newStation)
                 .andThen(favoriteListInteractor.initFavoriteList())
                 .andThen(setStation(newStation))
     }
 
     fun removeFromFavorite(): Completable {
-        return stationRepository.removeFromFavorite(station)
+        return favoritesRepository.addStation(station)
                 .andThen(favoriteListInteractor.initFavoriteList())
                 .andThen(setStation(station))
     }
 
     fun changeGroup(groupName: String): Completable {
-        return Single.fromCallable { groupListRepository.groups.find { it.name == groupName } }
+        return Single.fromCallable { favoritesRepository.groups.find { it.name == groupName } }
                 .flatMapCompletable {
                     if (it.id == station.groupId) Completable.complete()
                     else {
                         val newStation = station.copy(groupId = it.id, order = it.stations.size)
-                        stationRepository.updateStations(listOf(newStation))
+                        favoritesRepository.updateStations(listOf(newStation))
                                 .andThen(setStation(newStation))
                                 .andThen(favoriteListInteractor.initFavoriteList())
                     }
@@ -69,7 +69,7 @@ class StationInteractor
     fun editStationTitle(title: String): Completable {
         if (title == station.name) return Completable.complete()
         val newStation = station.copy(name = title)
-        return stationRepository.updateStations(listOf(newStation))
+        return favoritesRepository.updateStations(listOf(newStation))
                 .andThen(setStation(newStation))
                 .andThen(if (favoriteListInteractor.isFavorite(newStation)) {
                     favoriteListInteractor.initFavoriteList()

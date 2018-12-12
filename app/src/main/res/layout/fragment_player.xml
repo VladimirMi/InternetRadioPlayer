@@ -31,7 +31,6 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginLeft="16dp"
-        android:layout_marginTop="16dp"
         android:layout_marginRight="16dp"
         app:cardCornerRadius="8dp"
         app:cardElevation="2dp"
@@ -39,6 +38,8 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@id/infoCv"
+        app:layout_constraintBottom_toTopOf="@id/controls"
+        android:visibility="gone"
         >
 
         <LinearLayout
@@ -74,6 +75,16 @@
         </LinearLayout>
 
     </com.google.android.material.card.MaterialCardView>
+
+    <ProgressBar
+        android:id="@+id/bufferingPb"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/infoCv"
+        app:layout_constraintBottom_toTopOf="@id/controls"
+        />
 
     <View
         android:id="@+id/shadow"

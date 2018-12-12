@@ -15,6 +15,7 @@ import android.widget.ArrayAdapter
 import android.widget.EditText
 import android.widget.TextView
 import androidx.core.content.ContextCompat
+import androidx.interpolator.view.animation.FastOutSlowInInterpolator
 import io.github.vladimirmi.internetradioplayer.R
 import io.github.vladimirmi.internetradioplayer.data.db.entity.Group
 import io.github.vladimirmi.internetradioplayer.data.db.entity.Station
@@ -148,17 +149,17 @@ class PlayerFragment : BaseFragment<PlayerPresenter, PlayerView>(), PlayerView, 
 
     override fun showStopped() {
         playPauseBt.setPlaying(false, userVisibleHint)
-//        bufferingPb.visible(false)
+        bufferingPb.visible(false)
     }
 
     override fun showPlaying() {
         playPauseBt.setPlaying(true, userVisibleHint)
-//        bufferingPb.visible(false)
+        bufferingPb.visible(false)
     }
 
     override fun showBuffering() {
         playPauseBt.setPlaying(true, userVisibleHint)
-//        bufferingPb.visible(true)
+        bufferingPb.visible(true)
     }
 
     override fun showNext() {
@@ -170,7 +171,16 @@ class PlayerFragment : BaseFragment<PlayerPresenter, PlayerView>(), PlayerView, 
     }
 
     override fun setMetadata(metadata: MediaMetadataCompat?) {
-        metadataCv.visible(metadata != null)
+        val visible = metadata != null
+        val scale = if (visible) 1f else 0f
+
+        metadataCv.animate()
+                .scaleX(scale).scaleY(scale)
+                .setDuration(300)
+                .setInterpolator(FastOutSlowInInterpolator())
+                .start()
+        if (visible) metadataCv.visible(true)
+        else Handler().postDelayed({ metadataCv.visible(false) }, 300)
         metadata?.apply {
             metaTitleTv.text = artist
             metaSubtitleTv.text = title

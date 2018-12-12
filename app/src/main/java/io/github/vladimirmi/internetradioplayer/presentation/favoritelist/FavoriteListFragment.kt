@@ -32,7 +32,7 @@ class FavoriteListFragment : BaseFragment<FavoriteListPresenter, StationListView
             }
 
             override fun onStartDrag(position: Int) {
-                adapter.setData(adapter.onStartDrag(position))
+                adapter.onStartDrag(position)
             }
 
             override fun onIdle() {

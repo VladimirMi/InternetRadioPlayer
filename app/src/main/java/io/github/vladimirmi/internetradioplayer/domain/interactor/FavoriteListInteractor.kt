@@ -93,6 +93,11 @@ class FavoriteListInteractor
                 .flatMapCompletable { groupListRepository.updateGroups(it) }
 
         val updateStations = Single.fromCallable { groupListRepository.stations.getStationDifference(stations) }
+                .doOnSuccess { list ->
+                    list.find { it.id == stationRepository.station.id }?.let {
+                        stationRepository.station = it
+                    }
+                }
                 .flatMapCompletable { stationRepository.updateStations(it) }
 
         return updateGroups.andThen(updateStations).andThen(initFavoriteList())

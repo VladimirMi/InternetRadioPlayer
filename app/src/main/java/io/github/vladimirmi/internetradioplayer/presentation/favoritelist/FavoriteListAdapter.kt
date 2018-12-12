@@ -33,13 +33,20 @@ class StationListAdapter(private val callback: StationItemCallback)
     : RecyclerView.Adapter<GroupElementVH>() {
 
     private var stations = FlatStationsList()
+    private var dragged = false
     private var selectedStation = Station.nullObj()
 
     fun setData(data: FlatStationsList) {
-        val diffResult = FavoriteListDiff(stations, data).calc()
-        stations = data
-        diffResult.dispatchUpdatesTo(this)
-        notifyItemRangeChanged(0, itemCount, PAYLOAD_BACKGROUND_CHANGE)
+        if (dragged) {
+            stations = data
+            notifyDataSetChanged()
+            dragged = false
+        } else {
+            val diffResult = FavoriteListDiff(stations, data).calc()
+            stations = data
+            diffResult.dispatchUpdatesTo(this)
+            notifyItemRangeChanged(0, itemCount, PAYLOAD_BACKGROUND_CHANGE)
+        }
     }
 
     fun getPosition(station: Station): Int {
@@ -58,8 +65,9 @@ class StationListAdapter(private val callback: StationItemCallback)
         notifyItemChanged(to, PAYLOAD_BACKGROUND_CHANGE)
     }
 
-    fun onStartDrag(position: Int): FlatStationsList {
-        return stations.startMove(position)
+    fun onStartDrag(position: Int) {
+        setData(stations.startMove(position))
+        dragged = true
     }
 
     fun onIdle(): FlatStationsList {

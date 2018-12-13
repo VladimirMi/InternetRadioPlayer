@@ -4,6 +4,7 @@ import android.content.Intent
 import android.net.Uri
 import android.os.Bundle
 import android.view.View
+import androidx.appcompat.app.ActionBarDrawerToggle
 import androidx.drawerlayout.widget.DrawerLayout
 import com.google.android.material.snackbar.Snackbar
 import io.github.vladimirmi.internetradioplayer.R
@@ -49,6 +50,11 @@ class RootActivity : BaseActivity<RootPresenter, RootView>(), RootView {
     }
 
     override fun setupView() {
+        setupDrawer()
+        setupToolbar()
+    }
+
+    private fun setupDrawer() {
         navigationView.setNavigationItemSelectedListener { menuItem ->
             menuItem.isChecked = true
             drawerLayout.closeDrawers()
@@ -62,8 +68,17 @@ class RootActivity : BaseActivity<RootPresenter, RootView>(), RootView {
         }
     }
 
+    private fun setupToolbar() {
+        setSupportActionBar(toolbar)
+        val toggle = ActionBarDrawerToggle(this, drawerLayout, toolbar, R.string.desc_expand_collapse,
+                R.string.desc_favorite)
+        drawerLayout.addDrawerListener(toggle)
+        toggle.syncState()
+    }
+
     override fun onStart() {
         navigatorHolder.setNavigator(navigator)
+        //todo set directory here (not in main fragment)
         navigator.navigationIdListener = { navigationView.setCheckedItem(it) }
         super.onStart()
     }
@@ -113,4 +128,8 @@ class RootActivity : BaseActivity<RootPresenter, RootView>(), RootView {
     }
 
     //endregion
+
+    fun setDirectory(diresctory: String) {
+        toolbar.subtitle = diresctory
+    }
 }

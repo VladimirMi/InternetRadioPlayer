@@ -6,7 +6,5 @@ package io.github.vladimirmi.internetradioplayer.presentation.base
 
 interface BaseView : BackPressListener {
 
-    fun buildToolbar(builder: ToolbarBuilder)
-
     fun showMessage(resId: Int)
 }

@@ -32,7 +32,6 @@ class SettingsFragment : PreferenceFragmentCompat(), BackPressListener {
         setHasOptionsMenu(true)
     }
 
-
     override fun onCreatePreferences(savedInstanceState: Bundle?, rootKey: String?) {
         preferenceManager.sharedPreferencesName = PREFERENCES_NAME
         addPreferencesFromResource(R.xml.settings_screen)

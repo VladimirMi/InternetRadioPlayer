@@ -61,10 +61,6 @@ abstract class BaseFragment<P : BasePresenter<V>, V : BaseView> : Fragment(), Ba
         return childFragmentManager.fragments.any { it is BackPressListener && it.handleBackPressed() }
     }
 
-    override fun buildToolbar(builder: ToolbarBuilder) {
-
-    }
-
     override fun showMessage(resId: Int) {
         Toast.makeText(context, resId, Toast.LENGTH_SHORT).show()
     }

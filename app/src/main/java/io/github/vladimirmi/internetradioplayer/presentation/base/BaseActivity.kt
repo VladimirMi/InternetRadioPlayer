@@ -63,9 +63,5 @@ abstract class BaseActivity<P : BasePresenter<V>, V : BaseView>
         Snackbar.make(activityView, resId, Snackbar.LENGTH_SHORT).show()
     }
 
-    override fun buildToolbar(builder: ToolbarBuilder) {
-
-    }
-
     protected val isPresenterInitialized get() = this::presenter.isInitialized
 }

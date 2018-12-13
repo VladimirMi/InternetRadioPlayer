@@ -5,21 +5,18 @@ import android.os.Bundle
 import android.view.Menu
 import android.view.MenuItem
 import android.view.View
-import androidx.appcompat.app.ActionBarDrawerToggle
-import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.view.menu.MenuBuilder
 import androidx.constraintlayout.widget.ConstraintSet
 import androidx.core.content.ContextCompat
-import androidx.drawerlayout.widget.DrawerLayout
 import androidx.viewpager.widget.ViewPager
 import io.github.vladimirmi.internetradioplayer.R
 import io.github.vladimirmi.internetradioplayer.data.utils.MAIN_PAGE_ID_KEY
 import io.github.vladimirmi.internetradioplayer.di.Scopes
 import io.github.vladimirmi.internetradioplayer.extensions.waitForMeasure
 import io.github.vladimirmi.internetradioplayer.presentation.base.BaseFragment
+import io.github.vladimirmi.internetradioplayer.presentation.root.RootActivity
 import kotlinx.android.synthetic.main.fragment_main.*
 import kotlinx.android.synthetic.main.view_controls_simple.*
-import timber.log.Timber
 import toothpick.Toothpick
 
 
@@ -65,7 +62,6 @@ class MainFragment : BaseFragment<MainPresenter, MainView>(), MainView {
                 showControls(visibility)
             }
         })
-        setupToolbar()
 
         sPlayPauseBt.setManualMode(true)
         sPlayPauseBt.setOnClickListener { presenter.playPause() }
@@ -100,23 +96,6 @@ class MainFragment : BaseFragment<MainPresenter, MainView>(), MainView {
         return true
     }
 
-    private fun setupToolbar() {
-        Timber.e("setupToolbar: ")
-        (activity as AppCompatActivity).setSupportActionBar(toolbar)
-
-        val drawer = findDrawer(toolbar) ?: return
-        val toggle = ActionBarDrawerToggle(activity, drawer, toolbar, R.string.desc_expand_collapse,
-                R.string.desc_favorite)
-        drawer.addDrawerListener(toggle)
-        toggle.syncState()
-    }
-
-    private fun findDrawer(view: View?): DrawerLayout? {
-        if (view == null) return null
-        if (view is DrawerLayout) return view
-        return findDrawer(view.parent as? View)
-    }
-
     //region =============== MainView ==============
 
     override fun setPageId(pageId: Int) {
@@ -129,8 +108,9 @@ class MainFragment : BaseFragment<MainPresenter, MainView>(), MainView {
         }
         prevPage = page
         mainPager.setCurrentItem(page, true)
-        if (page == PAGE_SEARCH) setDirectory(getString(R.string.directory_uberstations))
-        else toolbar.subtitle = ""
+        val directory = if (page == PAGE_SEARCH) context!!.getString(R.string.directory_uberstations)
+        else ""
+        (activity as RootActivity).setDirectory(directory)
     }
 
 
@@ -151,10 +131,6 @@ class MainFragment : BaseFragment<MainPresenter, MainView>(), MainView {
 
     override fun setMetadata(metadata: String) {
         sMetadataTv.text = metadata
-    }
-
-    override fun setDirectory(resId: String) {
-        toolbar.subtitle = resId
     }
 
     //endregion

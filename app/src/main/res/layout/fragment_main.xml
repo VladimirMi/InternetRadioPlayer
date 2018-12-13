@@ -8,32 +8,17 @@
     android:animateLayoutChanges="true"
     >
 
-    <com.google.android.material.appbar.AppBarLayout
-        android:id="@+id/appbar"
+    <io.github.vladimirmi.internetradioplayer.ui.ScrollableTabLayout
+        android:id="@+id/mainTl"
+        style="@style/CustomTabLayout"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:theme="@style/AppTheme.AppBarOverlay"
-        >
-
-        <androidx.appcompat.widget.Toolbar
-            android:id="@+id/toolbar"
-            android:layout_width="match_parent"
-            android:layout_height="?attr/actionBarSize"
-            app:popupTheme="@style/AppTheme.PopupOverlay"
-            />
-
-        <io.github.vladimirmi.internetradioplayer.ui.ScrollableTabLayout
-            android:id="@+id/mainTl"
-            style="@style/CustomTabLayout"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            app:layout_constraintLeft_toLeftOf="parent"
-            app:layout_constraintRight_toRightOf="parent"
-            app:layout_constraintTop_toTopOf="parent"
-            app:tabMode="scrollable"
-            />
-
-    </com.google.android.material.appbar.AppBarLayout>
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintRight_toRightOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:tabMode="scrollable"
+        android:elevation="4dp"
+        />
 
 
     <androidx.viewpager.widget.ViewPager
@@ -44,7 +29,7 @@
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintRight_toRightOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/appbar"
+        app:layout_constraintTop_toBottomOf="@id/mainTl"
         />
 
     <View

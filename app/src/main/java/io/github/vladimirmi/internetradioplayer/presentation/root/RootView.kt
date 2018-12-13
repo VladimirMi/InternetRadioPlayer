@@ -11,5 +11,4 @@ interface RootView : BaseView {
     fun checkIntent()
 
     fun showLoadingIndicator(visible: Boolean)
-    fun setCheckedDrawerItem(itemId: Int)
 }

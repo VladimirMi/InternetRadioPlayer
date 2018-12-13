@@ -19,6 +19,7 @@ import io.github.vladimirmi.internetradioplayer.extensions.waitForMeasure
 import io.github.vladimirmi.internetradioplayer.presentation.base.BaseFragment
 import kotlinx.android.synthetic.main.fragment_main.*
 import kotlinx.android.synthetic.main.view_controls_simple.*
+import timber.log.Timber
 import toothpick.Toothpick
 
 
@@ -100,6 +101,7 @@ class MainFragment : BaseFragment<MainPresenter, MainView>(), MainView {
     }
 
     private fun setupToolbar() {
+        Timber.e("setupToolbar: ")
         (activity as AppCompatActivity).setSupportActionBar(toolbar)
 
         val drawer = findDrawer(toolbar) ?: return
@@ -127,6 +129,8 @@ class MainFragment : BaseFragment<MainPresenter, MainView>(), MainView {
         }
         prevPage = page
         mainPager.setCurrentItem(page, true)
+        if (page == PAGE_SEARCH) setDirectory(getString(R.string.directory_uberstations))
+        else toolbar.subtitle = ""
     }
 
 
@@ -147,6 +151,10 @@ class MainFragment : BaseFragment<MainPresenter, MainView>(), MainView {
 
     override fun setMetadata(metadata: String) {
         sMetadataTv.text = metadata
+    }
+
+    override fun setDirectory(resId: String) {
+        toolbar.subtitle = resId
     }
 
     //endregion

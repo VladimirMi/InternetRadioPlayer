@@ -3,7 +3,6 @@ package io.github.vladimirmi.internetradioplayer.presentation.root
 import android.content.Intent
 import android.net.Uri
 import android.os.Bundle
-import android.view.MenuItem
 import android.view.View
 import androidx.drawerlayout.widget.DrawerLayout
 import com.google.android.material.snackbar.Snackbar
@@ -87,15 +86,6 @@ class RootActivity : BaseActivity<RootPresenter, RootView>(), RootView {
         super.onDestroy()
     }
 
-    override fun onOptionsItemSelected(item: MenuItem): Boolean {
-        when (item.itemId) {
-            R.string.menu_settings -> presenter.openSettings()
-            R.string.menu_exit -> presenter.exitApp()
-            else -> return super.onOptionsItemSelected(item)
-        }
-        return true
-    }
-
     //region =============== RootView ==============
 
     override fun checkIntent() {
@@ -114,14 +104,8 @@ class RootActivity : BaseActivity<RootPresenter, RootView>(), RootView {
         Snackbar.make(activityView, resId, Snackbar.LENGTH_LONG).show()
     }
 
-
     override fun showLoadingIndicator(visible: Boolean) {
         loadingPb.visible(visible)
-    }
-
-    override fun setCheckedDrawerItem(itemId: Int) {
-//        navigationView.setCheckedItem(itemId)
-        Timber.e("setCheckedDrawerItem: ")
     }
 
     fun addStation(uri: Uri, startPlay: Boolean = false) {

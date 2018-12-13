@@ -5,7 +5,6 @@ import android.view.View
 import android.widget.SeekBar
 import android.widget.TextView
 import androidx.preference.PreferenceDialogFragmentCompat
-import io.github.vladimirmi.internetradioplayer.ui.SeekBarDialogPreference
 import kotlinx.android.synthetic.main.pref_seekbar.view.*
 
 

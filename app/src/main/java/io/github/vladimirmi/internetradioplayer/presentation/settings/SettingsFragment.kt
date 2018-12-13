@@ -15,7 +15,6 @@ import io.github.vladimirmi.internetradioplayer.extensions.startActivitySafe
 import io.github.vladimirmi.internetradioplayer.extensions.subscribeX
 import io.github.vladimirmi.internetradioplayer.navigation.Router
 import io.github.vladimirmi.internetradioplayer.presentation.base.BackPressListener
-import io.github.vladimirmi.internetradioplayer.ui.SeekBarDialogPreference
 
 /**
  * Created by Vladimir Mikhalev 30.09.2018.
@@ -28,11 +27,11 @@ class SettingsFragment : PreferenceFragmentCompat(), BackPressListener {
     private val backupRestoreHelper = Scopes.app.getInstance(BackupRestoreHelper::class.java)
     private val router = Scopes.rootActivity.getInstance(Router::class.java)
 
-    override fun onResume() {
-        super.onResume()
-//        (activity as RootView).showControls(false)
-//        ToolbarBuilder.exit().build(activity as ToolbarView)
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        setHasOptionsMenu(true)
     }
+
 
     override fun onCreatePreferences(savedInstanceState: Bundle?, rootKey: String?) {
         preferenceManager.sharedPreferencesName = PREFERENCES_NAME

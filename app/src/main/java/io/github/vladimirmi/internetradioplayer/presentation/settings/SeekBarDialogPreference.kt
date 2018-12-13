@@ -1,4 +1,4 @@
-package io.github.vladimirmi.internetradioplayer.ui
+package io.github.vladimirmi.internetradioplayer.presentation.settings
 
 import android.content.Context
 import android.content.res.TypedArray
@@ -33,8 +33,9 @@ class SeekBarDialogPreference : DialogPreference {
         return a.getInt(index, 0)
     }
 
-    override fun onSetInitialValue(restorePersistedValue: Boolean, defaultValue: Any?) {
-        progress = if (restorePersistedValue) getPersistedInt(progress) else defaultValue as Int
+    override fun onSetInitialValue(defaultValue: Any?) {
+        progress = if (defaultValue == null) getPersistedInt(0)
+        else defaultValue as Int
     }
 
     override fun getDialogLayoutResource(): Int {

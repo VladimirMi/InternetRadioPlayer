@@ -16,6 +16,7 @@ import io.github.vladimirmi.internetradioplayer.extensions.visible
 import io.github.vladimirmi.internetradioplayer.navigation.Navigator
 import io.github.vladimirmi.internetradioplayer.presentation.base.BaseActivity
 import kotlinx.android.synthetic.main.activity_root.*
+import kotlinx.android.synthetic.main.view_toolbar.*
 import ru.terrakok.cicerone.NavigatorHolder
 import timber.log.Timber
 import toothpick.Toothpick
@@ -78,8 +79,10 @@ class RootActivity : BaseActivity<RootPresenter, RootView>(), RootView {
 
     override fun onStart() {
         navigatorHolder.setNavigator(navigator)
-        //todo set directory here (not in main fragment)
-        navigator.navigationIdListener = { navigationView.setCheckedItem(it) }
+        navigator.navigationIdListener = {
+            navigationView.setCheckedItem(it)
+            showDirectory(it == R.id.nav_search)
+        }
         super.onStart()
     }
 
@@ -129,7 +132,7 @@ class RootActivity : BaseActivity<RootPresenter, RootView>(), RootView {
 
     //endregion
 
-    fun setDirectory(diresctory: String) {
-        toolbar.subtitle = diresctory
+    private fun showDirectory(show: Boolean) {
+        directoryLogoIv.visible(show)
     }
 }

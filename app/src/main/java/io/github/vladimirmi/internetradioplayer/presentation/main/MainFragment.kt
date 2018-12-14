@@ -14,7 +14,6 @@ import io.github.vladimirmi.internetradioplayer.data.utils.MAIN_PAGE_ID_KEY
 import io.github.vladimirmi.internetradioplayer.di.Scopes
 import io.github.vladimirmi.internetradioplayer.extensions.waitForMeasure
 import io.github.vladimirmi.internetradioplayer.presentation.base.BaseFragment
-import io.github.vladimirmi.internetradioplayer.presentation.root.RootActivity
 import kotlinx.android.synthetic.main.fragment_main.*
 import kotlinx.android.synthetic.main.view_controls_simple.*
 import toothpick.Toothpick
@@ -108,9 +107,6 @@ class MainFragment : BaseFragment<MainPresenter, MainView>(), MainView {
         }
         prevPage = page
         mainPager.setCurrentItem(page, true)
-        val directory = if (page == PAGE_SEARCH) context!!.getString(R.string.directory_uberstations)
-        else ""
-        (activity as RootActivity).setDirectory(directory)
     }
 
 

@@ -109,6 +109,8 @@
     <string name="desc_create_shortcut_button">create shortcut button</string>
     <string name="desc_directory_logo">directory logo</string>
     <string name="directory_uberstations">UberStations</string>
+    <string name="desc_open_drawer">open drawer</string>
+    <string name="desc_close_drawer">close drawer</string>
 
     <plurals name="plural_second">
         <item quantity="one">@string/second</item>

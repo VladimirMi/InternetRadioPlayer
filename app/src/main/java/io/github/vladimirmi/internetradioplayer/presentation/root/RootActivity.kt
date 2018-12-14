@@ -1,9 +1,12 @@
 package io.github.vladimirmi.internetradioplayer.presentation.root
 
+import android.animation.ValueAnimator
 import android.content.Intent
 import android.net.Uri
 import android.os.Bundle
+import android.os.Handler
 import android.view.View
+import android.view.animation.DecelerateInterpolator
 import androidx.appcompat.app.ActionBarDrawerToggle
 import androidx.drawerlayout.widget.DrawerLayout
 import com.google.android.material.snackbar.Snackbar
@@ -69,12 +72,16 @@ class RootActivity : BaseActivity<RootPresenter, RootView>(), RootView {
         }
     }
 
+    lateinit var toggle: ActionBarDrawerToggle
+
     private fun setupToolbar() {
         setSupportActionBar(toolbar)
-        val toggle = ActionBarDrawerToggle(this, drawerLayout, toolbar, R.string.desc_expand_collapse,
-                R.string.desc_favorite)
+        supportActionBar?.setDisplayHomeAsUpEnabled(true)
+        toggle = ActionBarDrawerToggle(this, drawerLayout, toolbar, R.string.desc_open_drawer,
+                R.string.desc_close_drawer)
         drawerLayout.addDrawerListener(toggle)
         toggle.syncState()
+        toggle.setToolbarNavigationClickListener { onBackPressed() }
     }
 
     override fun onStart() {
@@ -82,6 +89,7 @@ class RootActivity : BaseActivity<RootPresenter, RootView>(), RootView {
         navigator.navigationIdListener = {
             navigationView.setCheckedItem(it)
             showDirectory(it == R.id.nav_search)
+            setHomeAsUp(it == R.id.nav_settings)
         }
         super.onStart()
     }
@@ -134,5 +142,26 @@ class RootActivity : BaseActivity<RootPresenter, RootView>(), RootView {
 
     private fun showDirectory(show: Boolean) {
         directoryLogoIv.visible(show)
+    }
+
+    private var homeAsUp = false
+
+    private fun setHomeAsUp(isHomeAsUp: Boolean) {
+        if (homeAsUp == isHomeAsUp) return
+        homeAsUp = isHomeAsUp
+        val anim = if (isHomeAsUp) ValueAnimator.ofFloat(0f, 1f) else ValueAnimator.ofFloat(1f, 0f)
+        anim.addUpdateListener { valueAnimator ->
+            val slideOffset = valueAnimator.animatedValue as Float
+            toggle.onDrawerSlide(drawerLayout, slideOffset)
+        }
+        anim.interpolator = DecelerateInterpolator()
+        anim.duration = 600
+        if (isHomeAsUp) {
+            Handler().postDelayed({ toggle.isDrawerIndicatorEnabled = false }, 600)
+        } else {
+            toggle.isDrawerIndicatorEnabled = true
+            toggle.onDrawerSlide(drawerLayout, 1f)
+        }
+        anim.start()
     }
 }

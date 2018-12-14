@@ -3,6 +3,7 @@ package io.github.vladimirmi.internetradioplayer.domain.model
 import io.github.vladimirmi.internetradioplayer.data.db.entity.Group
 import io.github.vladimirmi.internetradioplayer.data.db.entity.Station
 import java.util.*
+import kotlin.collections.ArrayList
 
 
 /**
@@ -71,12 +72,6 @@ class FlatStationsList(private val flatList: MutableList<Any> = arrayListOf()) {
         return if (next?.id == id) null else next
     }
 
-    fun isFirstStation(id: String): Boolean {
-        return size == 0
-                || isGroup(0) && isStation(1) && getStation(1).id == id
-                || isStation(0) && getStation(0).id == id
-    }
-
     fun isLastStationInGroup(position: Int): Boolean {
         if (position > flatList.size - 1 || isGroup(position)) return false
         return position == flatList.size - 1 || isGroup(position + 1)
@@ -103,10 +98,11 @@ class FlatStationsList(private val flatList: MutableList<Any> = arrayListOf()) {
     }
 
     fun startMove(position: Int): FlatStationsList {
-        if (isGroup(position)) {
-            return FlatStationsList(getGroups().map { it.apply { stations = emptyList() } }.toMutableList())
+        return if (isGroup(position)) {
+            FlatStationsList(getGroups().map { it.apply { stations = emptyList() } }.toMutableList())
+        } else {
+            FlatStationsList(ArrayList(flatList))
         }
-        return FlatStationsList.createFrom(getGroups())
     }
 
     fun endMove(): FlatStationsList {
@@ -145,10 +141,6 @@ class FlatStationsList(private val flatList: MutableList<Any> = arrayListOf()) {
         }
         return diff
     }
-
-    fun getFirstStation(): Station? = flatList.firstOrNull { it is Station } as? Station
-
-    fun haveStations() = flatList.any { it is Station }
 
     private fun getGroups() = flatList.filterIsInstance(Group::class.java)
     private fun getStations() = flatList.filterIsInstance(Station::class.java)

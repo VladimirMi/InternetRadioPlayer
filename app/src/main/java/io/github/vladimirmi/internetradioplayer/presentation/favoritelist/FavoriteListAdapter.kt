@@ -5,6 +5,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.view.ViewOutlineProvider
+import androidx.annotation.ColorRes
 import androidx.core.content.ContextCompat
 import androidx.recyclerview.widget.RecyclerView
 import io.github.vladimirmi.internetradioplayer.R
@@ -130,27 +131,29 @@ class StationListAdapter(private val callback: StationItemCallback)
 }
 
 abstract class GroupElementVH(itemView: View) : RecyclerView.ViewHolder(itemView) {
-    private var colorId = R.color.grey_50
+    @ColorRes private var bgColorId = R.color.grey_50
 
     fun select(selected: Boolean) {
-        colorId = when {
+        bgColorId = when {
             selected -> R.color.accent_light
-            else -> R.color.grey_50
+            else -> getBgColorId()
         }
         setBgColor()
     }
 
     protected fun setBottomMargin(addBottomMargin: Boolean) {
         val lp = itemView.layoutParams as ViewGroup.MarginLayoutParams
-        lp.bottomMargin = (if (addBottomMargin) 8 else 0) * itemView.context.dp
+        lp.bottomMargin = (if (addBottomMargin) 16 else 0) * itemView.context.dp
         itemView.layoutParams = lp
     }
 
     protected fun setBgColor() {
-        itemView.background?.setTintExt(itemView.context.color(colorId))
+        itemView.background?.setTintExt(itemView.context.color(bgColorId))
     }
 
     abstract fun changeBackground(stations: FlatStationsList, position: Int)
+
+    abstract fun getBgColorId(): Int
 }
 
 class GroupTitleVH(itemView: View) : GroupElementVH(itemView) {
@@ -179,6 +182,8 @@ class GroupTitleVH(itemView: View) : GroupElementVH(itemView) {
         setBottomMargin(single && position != stations.size - 1)
         itemView.titleDelimiter.visible(!single)
     }
+
+    override fun getBgColorId() = R.color.primary_light
 }
 
 class GroupItemVH(itemView: View) : GroupElementVH(itemView) {
@@ -207,6 +212,8 @@ class GroupItemVH(itemView: View) : GroupElementVH(itemView) {
         setBottomMargin(bottom && position != stations.size - 1)
         itemView.itemDelimiter.visible(top || middle)
     }
+
+    override fun getBgColorId() = R.color.grey_50
 }
 
 interface StationItemCallback {

@@ -80,14 +80,8 @@ class Navigator(private val activity: RootActivity, private val containerId: Int
     }
 
     override fun applyCommand(command: Command?) {
-        var newCommand = command
-        val curScreenKey: String? = screenStack.peek()
-        if (curScreenKey?.screenName == Router.SETTINGS_SCREEN && command is Replace
-                && command.screenKey.screenName == Router.MAIN_SCREEN) {
-            newCommand = Back()
-        }
-        super.applyCommand(newCommand)
-        applyToStack(newCommand)
+        super.applyCommand(command)
+        applyToStack(command)
     }
 
     override fun unknownScreen(command: Command?) {

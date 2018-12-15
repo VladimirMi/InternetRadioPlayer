@@ -80,6 +80,7 @@ class SettingsFragment : PreferenceFragmentCompat(), BackPressListener {
     }
 
     override fun handleBackPressed(): Boolean {
-        return false
+        router.exit()
+        return true
     }
 }

@@ -87,12 +87,8 @@ class RootPresenter
         }
     }
 
-    fun exitApp() {
+    private fun exitApp() {
         playerInteractor.stop()
         router.finishChain()
-    }
-
-    fun openSettings() {
-        Timber.e("openSettings: ")
     }
 }

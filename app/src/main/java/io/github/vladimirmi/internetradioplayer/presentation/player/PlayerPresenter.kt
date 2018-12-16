@@ -81,8 +81,8 @@ class PlayerPresenter
         val changeFavorite = if (isFavorite) stationInteractor.removeFromFavorite()
         else stationInteractor.addToFavorite()
         changeFavorite.observeOn(AndroidSchedulers.mainThread())
-                .subscribeX(onComplete = { view?.setFavorite(!isFavorite) })
-                .addTo(viewSubs)
+                .subscribeX()
+                .addTo(dataSubs)
     }
 
     fun selectGroup(position: Int, group: String) {

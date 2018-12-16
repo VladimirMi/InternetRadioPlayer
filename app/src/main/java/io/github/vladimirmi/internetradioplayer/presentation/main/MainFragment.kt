@@ -23,7 +23,7 @@ import toothpick.Toothpick
  * Created by Vladimir Mikhalev 23.10.2017.
  */
 
-class MainFragment : BaseFragment<MainPresenter, MainView>(), MainView {
+class MainFragment : BaseFragment<MainPresenter, MainView>(), MainView, SimpleControlsView {
 
     override val layout = R.layout.fragment_main
     private var prevPage = PAGE_SEARCH
@@ -65,17 +65,6 @@ class MainFragment : BaseFragment<MainPresenter, MainView>(), MainView {
         sPlayPauseBt.setManualMode(true)
         sPlayPauseBt.setOnClickListener { presenter.playPause() }
         sMetadataTv.isSelected = true
-    }
-
-    private fun showControls(visibility: Float) {
-        simpleControlsContainer.waitForMeasure {
-            val set = ConstraintSet()
-            set.clone(mainCl)
-            set.setMargin(R.id.mainPager, ConstraintSet.BOTTOM,
-                    (simpleControlsContainer.height * visibility).toInt())
-            set.applyTo(mainCl)
-            controlsVisible = visibility > 0
-        }
     }
 
     @SuppressLint("RestrictedApi")
@@ -127,6 +116,22 @@ class MainFragment : BaseFragment<MainPresenter, MainView>(), MainView {
 
     override fun setMetadata(metadata: String) {
         sMetadataTv.text = metadata
+    }
+
+    override fun showControls(visibility: Float) {
+        simpleControlsContainer.waitForMeasure {
+            val set = ConstraintSet()
+            set.clone(mainCl)
+            set.setMargin(R.id.mainPager, ConstraintSet.BOTTOM,
+                    (simpleControlsContainer.height * visibility).toInt())
+            set.applyTo(mainCl)
+
+            childFragmentManager.fragments
+                    .filterIsInstance(SimpleControlsView::class.java)
+                    .forEach { it.showControls(visibility) }
+
+            controlsVisible = visibility > 0
+        }
     }
 
     //endregion

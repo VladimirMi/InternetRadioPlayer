@@ -81,12 +81,13 @@ class HistoryAdapter : RecyclerView.Adapter<StationVH>() {
         return stations.size
     }
 
-    fun selectStation(station: Station) {
+    fun selectStation(station: Station): Int {
         val oldPos = stations.indexOfFirst { it.first.uri == selectedStation?.uri }
         val newPos = stations.indexOfFirst { it.first.uri == station.uri }
         selectedStation = station
         notifyItemChanged(oldPos, PAYLOAD_SELECTED_CHANGE)
         notifyItemChanged(newPos, PAYLOAD_SELECTED_CHANGE)
+        return newPos
     }
 
     private fun StationVH.select(station: Pair<Station, Boolean>) {

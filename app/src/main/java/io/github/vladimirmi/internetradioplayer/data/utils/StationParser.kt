@@ -98,6 +98,9 @@ class StationParser
 
         val request = Request.Builder().url(url).build()
         val response = client.newCall(request).execute()
+        val code = response.code()
+        Timber.e("$response")
+        if (code !in IntRange(200, 299)) throw IllegalStateException("${response.message()} : $code")
         val body = response.body() ?: throw IllegalStateException("Error: Empty body")
         val type = body.contentType() ?: throw IllegalStateException("Error: Empty content type")
 

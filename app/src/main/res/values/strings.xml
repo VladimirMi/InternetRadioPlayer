@@ -17,7 +17,8 @@
     <string name="dialog_cancel_edit_message">Cancel changes?</string>
     <string name="dialog_cancel_create_message">Cancel adding a new station?</string>
     <string name="dialog_new_station">Add new station</string>
-    <string name="dialog_new_station_hint">Paste link to the audio stream or playlist</string>
+    <string name="dialog_new_station_description">Paste link to the audio stream or playlist</string>
+    <string name="dialog_new_station_hint">Link</string>
     <string name="dialog_new_group">Add new folder</string>
     <string name="dialog_new_group_hint">Folder name</string>
     <string name="dialog_start_playback">Start playback</string>

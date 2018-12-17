@@ -121,7 +121,7 @@ class RootActivity : BaseActivity<RootPresenter, RootView>(), RootView {
             //todo legacy
             presenter.showStation(intent.getStringExtra(PlayerService.EXTRA_STATION_ID), startPlay)
         } else {
-            intent.data?.let { addStation(it, startPlay) }
+            intent.data?.let { addOrShowStation(it, startPlay) }
         }
         intent = null
     }
@@ -134,8 +134,8 @@ class RootActivity : BaseActivity<RootPresenter, RootView>(), RootView {
         loadingPb.visible(visible)
     }
 
-    fun addStation(uri: Uri, startPlay: Boolean = false) {
-        presenter.addStation(uri, startPlay)
+    fun addOrShowStation(uri: Uri, startPlay: Boolean = false) {
+        presenter.addOrShowStation(uri, startPlay)
     }
 
     //endregion

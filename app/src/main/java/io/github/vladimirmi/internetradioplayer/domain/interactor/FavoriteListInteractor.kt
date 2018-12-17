@@ -107,6 +107,10 @@ class FavoriteListInteractor
         return updateGroups.andThen(updateStations).andThen(initFavoriteList())
     }
 
+    fun getStation(id: String): Station? {
+        return favoritesRepository.getStation { it.id == id }
+    }
+
     fun nextStation(id: String): Boolean {
         if (!isFavorite(id)) return false
         val next = favoritesRepository.stations.getNextStationFrom(id)
@@ -121,7 +125,5 @@ class FavoriteListInteractor
         return previous != null
     }
 
-    private fun isFavorite(id: String) = favoritesRepository.groups.any { group ->
-        group.stations.any { it.id == id }
-    }
+    private fun isFavorite(id: String) = favoritesRepository.getStation { it.id == id } != null
 }

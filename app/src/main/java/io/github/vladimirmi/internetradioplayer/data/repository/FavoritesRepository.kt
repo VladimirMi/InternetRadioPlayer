@@ -66,6 +66,14 @@ class FavoritesRepository
                 .subscribeOn(Schedulers.io())
     }
 
+    fun getStation(predicate: (Station) -> Boolean): Station? {
+        for (it in groups) {
+            val station = it.stations.find(predicate)
+            if (station != null) return station
+        }
+        return null
+    }
+
     fun addStation(station: Station): Completable {
         return Completable.fromCallable {
             dao.insertStation(station)

@@ -24,7 +24,6 @@ class FavoriteListFragment : BaseFragment<FavoriteListPresenter, StationListView
     override val layout = R.layout.fragment_stations_list
 
     private val adapter by lazy { StationListAdapter(this) }
-    private val layoutManager by lazy { LinearLayoutManager(context!!) }
 
     private val itemTouchHelper by lazy {
         ItemTouchHelper(object : ItemSwipeCallback(context!!) {
@@ -54,7 +53,7 @@ class FavoriteListFragment : BaseFragment<FavoriteListPresenter, StationListView
     }
 
     override fun setupView(view: View) {
-        stationsRv.layoutManager = layoutManager
+        stationsRv.layoutManager = LinearLayoutManager(context!!)
         stationsRv.adapter = adapter
         itemTouchHelper.attachToRecyclerView(stationsRv)
     }

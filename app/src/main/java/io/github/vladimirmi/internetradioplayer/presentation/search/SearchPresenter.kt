@@ -94,12 +94,13 @@ class SearchPresenter
     fun changeQuery(newText: String) {
         searchSub?.dispose()
         suggestionSub?.dispose()
-        if (newText.isBlank()) return
 
         searchInteractor.queryRecentSuggestions(newText)
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribeX(onSuccess = { view?.addRecentSuggestions(it) })
                 .addTo(viewSubs)
+
+        if (newText.isBlank()) return
 
         suggestionSub = Single.just(newText)
                 .delaySubscription(500, TimeUnit.MILLISECONDS)

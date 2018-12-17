@@ -54,7 +54,9 @@ class PlayerFragment : BaseFragment<PlayerPresenter, PlayerView>(), PlayerView, 
         setupTitle()
         setupGroupSpinner()
 
+
         favoriteBt.setOnClickListener { presenter.switchFavorite() }
+        addShortcutBt.setOnClickListener { openAddShortcutDialog() }
 
         metaTitleTv.isSelected = true
         metaSubtitleTv.isSelected = true
@@ -63,7 +65,6 @@ class PlayerFragment : BaseFragment<PlayerPresenter, PlayerView>(), PlayerView, 
         previousBt.setOnClickListener { presenter.skipToPrevious() }
         nextBt.setOnClickListener { presenter.skipToNext() }
         stopBt.setOnClickListener { presenter.stop() }
-//        bufferingPb.indeterminateDrawable.mutate().setTintExt(context!!.color(R.color.pause_button))
     }
 
     private fun setupTitle() {

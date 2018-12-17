@@ -9,9 +9,8 @@ import androidx.core.content.pm.ShortcutInfoCompat
 import androidx.core.content.pm.ShortcutManagerCompat
 import androidx.core.graphics.drawable.IconCompat
 import io.github.vladimirmi.internetradioplayer.R
-import io.github.vladimirmi.internetradioplayer.data.db.entity.Icon
 import io.github.vladimirmi.internetradioplayer.data.db.entity.Station
-import io.github.vladimirmi.internetradioplayer.extensions.getBitmap
+import io.github.vladimirmi.internetradioplayer.domain.model.Icon
 import io.github.vladimirmi.internetradioplayer.extensions.toUri
 import io.github.vladimirmi.internetradioplayer.presentation.root.RootActivity
 import javax.inject.Inject
@@ -25,11 +24,12 @@ class ShortcutHelper
 
     fun pinShortcut(station: Station, startPlay: Boolean): Boolean {
         val label = if (station.name.isBlank()) "Default name" else station.name
+        val icon = Icon.randomIcon(label.hashCode().toLong())
 
         val info = ShortcutInfoCompat.Builder(context, station.id)
                 .setShortLabel(label)
                 .setLongLabel(label)
-                .setIcon(IconCompat.createWithBitmap(Icon.randomIcon().getBitmap(context, true)))
+                .setIcon(IconCompat.createWithBitmap(icon.getBitmap(context, withBackground = true)))
                 .setIntent(createShortcutIntent(station, startPlay))
                 .setDisabledMessage(context.getString(R.string.msg_shortcut_remove))
                 .build()

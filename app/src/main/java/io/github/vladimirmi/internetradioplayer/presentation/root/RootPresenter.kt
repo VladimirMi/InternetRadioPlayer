@@ -47,7 +47,6 @@ class RootPresenter
 
     @SuppressLint("CheckResult")
     fun addOrShowStation(uri: Uri, startPlay: Boolean) {
-
         stationInteractor.createStation(uri)
                 .doOnSuccess { if (startPlay) playerInteractor.play() }
                 .observeOn(AndroidSchedulers.mainThread())

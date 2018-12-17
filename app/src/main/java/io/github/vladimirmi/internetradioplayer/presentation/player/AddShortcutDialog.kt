@@ -19,11 +19,13 @@ class AddShortcutDialog : BaseDialogFragment() {
 
     @SuppressLint("InflateParams")
     override fun getCustomDialogView(): View? {
-        return LayoutInflater.from(context).inflate(R.layout.dialog_add_shortcut, null)
+        return LayoutInflater.from(requireContext()).inflate(R.layout.dialog_add_shortcut, null)
     }
 
     override fun onPositive() {
-        (parentFragment as PlayerFragment).presenter.addShortcut(dialogView!!.checkbox.isChecked)
+        dialogView?.let {
+            (parentFragment as PlayerFragment).presenter.addShortcut(it.checkbox.isChecked)
+        }
     }
 
     override fun onNegative() {

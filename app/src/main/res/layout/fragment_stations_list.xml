@@ -13,7 +13,6 @@
         android:overScrollMode="never"
         android:paddingTop="16dp"
         android:paddingBottom="16dp"
-        android:scrollbars="vertical"
         tools:listitem="@layout/item_group_item"
         />
 

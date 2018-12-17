@@ -10,8 +10,8 @@ import android.view.ViewGroup
 import android.widget.ImageView
 import androidx.viewpager.widget.ViewPager
 import io.github.vladimirmi.internetradioplayer.R
-import io.github.vladimirmi.internetradioplayer.data.db.entity.ICONS
-import io.github.vladimirmi.internetradioplayer.data.db.entity.Icon
+import io.github.vladimirmi.internetradioplayer.domain.model.ICONS
+import io.github.vladimirmi.internetradioplayer.domain.model.Icon
 import io.github.vladimirmi.internetradioplayer.extensions.color
 import io.github.vladimirmi.internetradioplayer.extensions.setTintExt
 import kotlinx.android.synthetic.main.view_icon.view.*

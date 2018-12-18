@@ -8,9 +8,10 @@ import io.github.vladimirmi.internetradioplayer.data.db.entity.Station
 import io.github.vladimirmi.internetradioplayer.di.Scopes
 import io.github.vladimirmi.internetradioplayer.domain.model.FlatStationsList
 import io.github.vladimirmi.internetradioplayer.extensions.dp
+import io.github.vladimirmi.internetradioplayer.extensions.visible
 import io.github.vladimirmi.internetradioplayer.presentation.base.BaseFragment
 import io.github.vladimirmi.internetradioplayer.presentation.main.SimpleControlsView
-import kotlinx.android.synthetic.main.fragment_stations_list.*
+import kotlinx.android.synthetic.main.fragment_favorite_list.*
 import toothpick.Toothpick
 
 
@@ -21,12 +22,12 @@ import toothpick.Toothpick
 class FavoriteListFragment : BaseFragment<FavoriteListPresenter, StationListView>(), StationListView,
         StationItemCallback, SimpleControlsView {
 
-    override val layout = R.layout.fragment_stations_list
+    override val layout = R.layout.fragment_favorite_list
 
     private val adapter by lazy { StationListAdapter(this) }
 
     private val itemTouchHelper by lazy {
-        ItemTouchHelper(object : ItemSwipeCallback(context!!) {
+        ItemTouchHelper(object : ItemSwipeCallback() {
 
             override fun onMove(recyclerView: androidx.recyclerview.widget.RecyclerView, viewHolder: androidx.recyclerview.widget.RecyclerView.ViewHolder,
                                 target: androidx.recyclerview.widget.RecyclerView.ViewHolder): Boolean {
@@ -73,6 +74,11 @@ class FavoriteListFragment : BaseFragment<FavoriteListPresenter, StationListView
     override fun showControls(visibility: Float) {
         val pb = ((48 * (1 - visibility) + 16) * context!!.dp).toInt()
         stationsRv.setPadding(0, stationsRv.paddingTop, 0, pb)
+    }
+
+    override fun showPlaceholder(show: Boolean) {
+        stationsRv.visible(!show)
+        placeholderView.visible(show)
     }
 
     //endregion

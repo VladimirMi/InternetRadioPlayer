@@ -108,7 +108,6 @@ class PlayerFragment : BaseFragment<PlayerPresenter, PlayerView>(), PlayerView, 
     //region =============== PlayerView ==============
 
     override fun setStation(station: Station) {
-        showPlaceholder(station.isNull())
         titleEt.setText(station.name)
         genreTv.setTextOrHide(station.genre)
         specsTv.setTextOrHide(station.specs)
@@ -194,13 +193,13 @@ class PlayerFragment : BaseFragment<PlayerPresenter, PlayerView>(), PlayerView, 
     }
 
 
-    //endregion
-
-    private fun showPlaceholder(show: Boolean) {
+    override fun showPlaceholder(show: Boolean) {
         infoCv.visible(!show)
         controlsView.visible(!show)
         placeholderView.visible(show)
     }
+
+    //endregion
 
     private fun changeTitleEditable(enable: Boolean? = null) {
         val enabled = enable?.not() ?: titleEt.isClickable

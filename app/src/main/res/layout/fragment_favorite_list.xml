@@ -16,4 +16,14 @@
         tools:listitem="@layout/item_group_item"
         />
 
+    <TextView
+        android:id="@+id/placeholderView"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="@string/favorite_list_placeholder"
+        android:layout_gravity="center_vertical"
+        android:gravity="center"
+        android:textAppearance="@style/TextAppearance.AppCompat.Title"
+        />
+
 </FrameLayout>

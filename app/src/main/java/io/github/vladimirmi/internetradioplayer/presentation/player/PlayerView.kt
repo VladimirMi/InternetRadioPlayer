@@ -35,4 +35,6 @@ interface PlayerView : BaseView {
     fun setGroups(list: List<String>)
 
     fun setGroup(position: Int)
+
+    fun showPlaceholder(show: Boolean)
 }

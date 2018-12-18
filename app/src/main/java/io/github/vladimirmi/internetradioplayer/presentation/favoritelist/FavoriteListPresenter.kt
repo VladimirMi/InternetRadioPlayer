@@ -22,7 +22,10 @@ class FavoriteListPresenter
     override fun onAttach(view: StationListView) {
         favoriteListInteractor.stationsListObs
                 .observeOn(AndroidSchedulers.mainThread())
-                .subscribeX(onNext = { view.setStations(it) })
+                .subscribeX(onNext = {
+                    view.setStations(it)
+                    view.showPlaceholder(it.size == 0)
+                })
                 .addTo(viewSubs)
 
         stationInteractor.stationObs

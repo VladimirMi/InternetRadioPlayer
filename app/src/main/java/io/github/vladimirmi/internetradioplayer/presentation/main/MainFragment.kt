@@ -12,6 +12,7 @@ import androidx.viewpager.widget.ViewPager
 import io.github.vladimirmi.internetradioplayer.R
 import io.github.vladimirmi.internetradioplayer.data.utils.MAIN_PAGE_ID_KEY
 import io.github.vladimirmi.internetradioplayer.di.Scopes
+import io.github.vladimirmi.internetradioplayer.extensions.visible
 import io.github.vladimirmi.internetradioplayer.extensions.waitForMeasure
 import io.github.vladimirmi.internetradioplayer.presentation.base.BaseFragment
 import kotlinx.android.synthetic.main.fragment_main.*
@@ -116,6 +117,10 @@ class MainFragment : BaseFragment<MainPresenter, MainView>(), MainView, SimpleCo
 
     override fun setMetadata(metadata: String) {
         sMetadataTv.text = metadata
+    }
+
+    override fun showControls(show: Boolean) {
+        simpleControlsContainer.visible(show)
     }
 
     override fun showControls(visibility: Float) {

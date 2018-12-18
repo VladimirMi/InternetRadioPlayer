@@ -40,6 +40,7 @@ class PlayerPresenter
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribeX(onNext = {
                     view?.setStation(it)
+                    view?.showPlaceholder(it.isNull())
                     view?.setFavorite(favoriteListInteractor.isFavorite(it))
                 })
                 .addTo(viewSubs)

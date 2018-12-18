@@ -13,4 +13,6 @@ interface StationListView : BaseView {
     fun setStations(stationList: FlatStationsList)
 
     fun selectStation(station: Station)
+
+    fun showPlaceholder(show: Boolean)
 }

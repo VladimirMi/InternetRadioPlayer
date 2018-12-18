@@ -6,6 +6,7 @@ import io.github.vladimirmi.internetradioplayer.R
 import io.github.vladimirmi.internetradioplayer.data.db.entity.Station
 import io.github.vladimirmi.internetradioplayer.di.Scopes
 import io.github.vladimirmi.internetradioplayer.extensions.dp
+import io.github.vladimirmi.internetradioplayer.extensions.visible
 import io.github.vladimirmi.internetradioplayer.presentation.base.BaseFragment
 import io.github.vladimirmi.internetradioplayer.presentation.main.SimpleControlsView
 import kotlinx.android.synthetic.main.fragment_history.*
@@ -47,5 +48,10 @@ class HistoryFragment : BaseFragment<HistoryPresenter, HistoryView>(), HistoryVi
     override fun showControls(visibility: Float) {
         val pb = ((48 * (1 - visibility) + 16) * context!!.dp).toInt()
         historyRv.setPadding(0, historyRv.paddingTop, 0, pb)
+    }
+
+    override fun showPlaceholder(show: Boolean) {
+        historyRv.visible(!show)
+        placeholderView.visible(show)
     }
 }

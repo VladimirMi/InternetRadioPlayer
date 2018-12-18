@@ -10,5 +10,8 @@ import io.github.vladimirmi.internetradioplayer.presentation.base.BaseView
 interface HistoryView : BaseView {
 
     fun setHistory(list: List<Pair<Station, Boolean>>)
+
     fun selectStation(station: Station)
+
+    fun showPlaceholder(show: Boolean)
 }

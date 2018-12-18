@@ -27,7 +27,10 @@ class HistoryPresenter
             //todo isFavorite field in Station
             history.map { station -> station to favoriteListInteractor.isFavorite(station) }
         }.observeOn(AndroidSchedulers.mainThread())
-                .subscribeX(onNext = { view.setHistory(it) })
+                .subscribeX(onNext = {
+                    view.setHistory(it)
+                    view.showPlaceholder(it.isEmpty())
+                })
                 .addTo(viewSubs)
 
         stationInteractor.stationObs

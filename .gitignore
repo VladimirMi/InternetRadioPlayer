@@ -6,7 +6,6 @@ local.properties
 build
 captures
 .externalNativeBuild
-gradle.properties
 keystore.properties
 secrets.properties
 reports

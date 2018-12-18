@@ -30,7 +30,9 @@ android {
 
         javaCompileOptions {
             annotationProcessorOptions {
-                arguments = [toothpick_registry_package_name: 'io.github.vladimirmi.internetradioplayer']
+                arguments = [toothpick_registry_package_name: 'io.github.vladimirmi.internetradioplayer',
+                             "room.schemaLocation":
+                                     "$projectDir/schemas".toString()]
             }
         }
         buildConfigField("String", "PARTNER_TOKEN", "\"${secretsProperties['partnerToken']}\"")

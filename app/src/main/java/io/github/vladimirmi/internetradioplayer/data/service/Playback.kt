@@ -18,6 +18,7 @@ import io.github.vladimirmi.internetradioplayer.BuildConfig
 import io.github.vladimirmi.internetradioplayer.R
 import io.github.vladimirmi.internetradioplayer.data.source.IcyDataSource
 import io.github.vladimirmi.internetradioplayer.di.Scopes
+import io.github.vladimirmi.internetradioplayer.extensions.runOnUiThread
 
 private const val VOLUME_DUCK = 0.2f
 private const val VOLUME_NORMAL = 1.0f
@@ -39,30 +40,40 @@ class Playback(private val service: PlayerService,
     private val audioManager = service.getSystemService(Context.AUDIO_SERVICE) as AudioManager
 
     fun play(uri: Uri) {
-        if (player == null) createPlayer()
-        preparePlayer(uri)
-        if (holdResources()) resume()
+        runOnUiThread {
+            if (player == null) createPlayer()
+            preparePlayer(uri)
+            if (holdResources()) resume()
+        }
     }
 
     fun resume() {
-        player?.playWhenReady = true
+        runOnUiThread {
+            player?.playWhenReady = true
+        }
     }
 
     fun pause() {
-        player?.playWhenReady = false
+        runOnUiThread {
+            player?.playWhenReady = false
+        }
     }
 
     fun stop() {
-        playAgainOnFocus = false
-        playAgainOnHeadset = false
-        releaseResources()
-        player?.stop()
+        runOnUiThread {
+            playAgainOnFocus = false
+            playAgainOnHeadset = false
+            releaseResources()
+            player?.stop()
+        }
     }
 
     fun releasePlayer() {
-        player?.removeListener(playerCallback)
-        player?.release()
-        player = null
+        runOnUiThread {
+            player?.removeListener(playerCallback)
+            player?.release()
+            player = null
+        }
     }
 
     override fun onAudioFocusChange(focusChange: Int) {

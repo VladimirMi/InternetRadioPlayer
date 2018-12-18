@@ -2,11 +2,14 @@ package io.github.vladimirmi.internetradioplayer.presentation.favoritelist
 
 import android.view.View
 import androidx.recyclerview.widget.ItemTouchHelper
+import androidx.recyclerview.widget.LinearLayoutManager
 import io.github.vladimirmi.internetradioplayer.R
 import io.github.vladimirmi.internetradioplayer.data.db.entity.Station
 import io.github.vladimirmi.internetradioplayer.di.Scopes
 import io.github.vladimirmi.internetradioplayer.domain.model.FlatStationsList
+import io.github.vladimirmi.internetradioplayer.extensions.dp
 import io.github.vladimirmi.internetradioplayer.presentation.base.BaseFragment
+import io.github.vladimirmi.internetradioplayer.presentation.main.SimpleControlsView
 import kotlinx.android.synthetic.main.fragment_stations_list.*
 import toothpick.Toothpick
 
@@ -16,11 +19,11 @@ import toothpick.Toothpick
  */
 
 class FavoriteListFragment : BaseFragment<FavoriteListPresenter, StationListView>(), StationListView,
-        StationItemCallback {
+        StationItemCallback, SimpleControlsView {
 
     override val layout = R.layout.fragment_stations_list
 
-    private val adapter = StationListAdapter(this)
+    private val adapter by lazy { StationListAdapter(this) }
 
     private val itemTouchHelper by lazy {
         ItemTouchHelper(object : ItemSwipeCallback(context!!) {
@@ -50,7 +53,7 @@ class FavoriteListFragment : BaseFragment<FavoriteListPresenter, StationListView
     }
 
     override fun setupView(view: View) {
-        stationsRv.layoutManager = androidx.recyclerview.widget.LinearLayoutManager(context)
+        stationsRv.layoutManager = LinearLayoutManager(context!!)
         stationsRv.adapter = adapter
         itemTouchHelper.attachToRecyclerView(stationsRv)
     }
@@ -65,6 +68,11 @@ class FavoriteListFragment : BaseFragment<FavoriteListPresenter, StationListView
         adapter.selectStation(station)
         val position = adapter.getPosition(station)
         if (position != -1) stationsRv.scrollToPosition(position)
+    }
+
+    override fun showControls(visibility: Float) {
+        val pb = ((48 * (1 - visibility) + 16) * context!!.dp).toInt()
+        stationsRv.setPadding(0, stationsRv.paddingTop, 0, pb)
     }
 
     //endregion

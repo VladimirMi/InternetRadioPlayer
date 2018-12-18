@@ -1,6 +1,7 @@
 package io.github.vladimirmi.internetradioplayer.domain.interactor
 
 import android.net.Uri
+import io.github.vladimirmi.internetradioplayer.data.db.entity.Group
 import io.github.vladimirmi.internetradioplayer.data.db.entity.Station
 import io.github.vladimirmi.internetradioplayer.data.repository.FavoritesRepository
 import io.github.vladimirmi.internetradioplayer.data.repository.StationRepository
@@ -35,20 +36,23 @@ class StationInteractor
     fun createStation(uri: Uri): Single<Station> {
         return stationRepository.createStation(uri)
                 .doOnSuccess { newStation ->
-                    val favoriteStation = favoritesRepository.stations.findStation { it.uri == newStation.uri }
+                    val favoriteStation = favoritesRepository.getStation { it.uri == newStation.uri }
                     station = favoriteStation ?: newStation
                 }
     }
 
     fun addToFavorite(): Completable {
-        val newStation = station.copy(order = favoritesRepository.stations.size)
-        return favoritesRepository.addStation(newStation)
-                .andThen(favoriteListInteractor.initFavoriteList())
-                .andThen(setStation(newStation))
+        return favoriteListInteractor.getGroup(station.groupId)
+                .flatMapCompletable {
+                    val newStation = station.copy(order = it.stations.size, groupId = Group.DEFAULT_ID)
+                    favoritesRepository.addStation(newStation)
+                            .andThen(favoriteListInteractor.initFavoriteList())
+                            .andThen(setStation(newStation))
+                }
     }
 
     fun removeFromFavorite(): Completable {
-        return favoritesRepository.addStation(station)
+        return favoritesRepository.removeStation(station)
                 .andThen(favoriteListInteractor.initFavoriteList())
                 .andThen(setStation(station))
     }

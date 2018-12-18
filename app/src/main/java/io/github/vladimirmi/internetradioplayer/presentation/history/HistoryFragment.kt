@@ -5,7 +5,9 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import io.github.vladimirmi.internetradioplayer.R
 import io.github.vladimirmi.internetradioplayer.data.db.entity.Station
 import io.github.vladimirmi.internetradioplayer.di.Scopes
+import io.github.vladimirmi.internetradioplayer.extensions.dp
 import io.github.vladimirmi.internetradioplayer.presentation.base.BaseFragment
+import io.github.vladimirmi.internetradioplayer.presentation.main.SimpleControlsView
 import kotlinx.android.synthetic.main.fragment_history.*
 import toothpick.Toothpick
 
@@ -13,7 +15,7 @@ import toothpick.Toothpick
  * Created by Vladimir Mikhalev 02.12.2018.
  */
 
-class HistoryFragment : BaseFragment<HistoryPresenter, HistoryView>(), HistoryView {
+class HistoryFragment : BaseFragment<HistoryPresenter, HistoryView>(), HistoryView, SimpleControlsView {
 
     private val historyAdapter = HistoryAdapter()
 
@@ -38,6 +40,12 @@ class HistoryFragment : BaseFragment<HistoryPresenter, HistoryView>(), HistoryVi
     }
 
     override fun selectStation(station: Station) {
-        historyAdapter.selectStation(station)
+        val position = historyAdapter.selectStation(station)
+        historyRv.scrollToPosition(position)
+    }
+
+    override fun showControls(visibility: Float) {
+        val pb = ((48 * (1 - visibility) + 16) * context!!.dp).toInt()
+        historyRv.setPadding(0, historyRv.paddingTop, 0, pb)
     }
 }

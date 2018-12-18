@@ -93,11 +93,15 @@ class StationParser
         } else content.parseM3u(name)
     }
 
-    private fun parseFromNet(url: URL, name: String = url.host): Station {
+    private fun parseFromNet(url: URL, name: String? = null): Station {
         if (!networkChecker.isAvailable()) throw IllegalStateException("Error: No connection")
 
         val request = Request.Builder().url(url).build()
         val response = client.newCall(request).execute()
+        val code = response.code()
+        Timber.d("parseFromNet: $response")
+
+        if (code !in IntRange(200, 299)) throw IllegalStateException("${response.message()} : $code")
         val body = response.body() ?: throw IllegalStateException("Error: Empty body")
         val type = body.contentType() ?: throw IllegalStateException("Error: Empty content type")
 
@@ -107,7 +111,8 @@ class StationParser
             else body.string().parseM3u()
 
         } else if (type.isAudioStream()) {
-            createStation(name, url, response.headers(), type.encoding)
+            val stationName = name ?: response.request().url().host()
+            createStation(stationName, url, response.headers(), type.encoding)
 
         } else {
             throw IllegalStateException("Error: Unsupported content type $type")
@@ -119,7 +124,7 @@ class StationParser
         Timber.d("createStation: $headers")
 
         return Station(
-                name = headers[HEADER_NAME] ?: name,
+                name = name,
                 uri = url.toString(),
                 genre = headers[HEADER_GENRE],
                 url = headers[HEADER_URL],

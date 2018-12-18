@@ -1,17 +1,28 @@
 <?xml version="1.0" encoding="utf-8"?>
-<FrameLayout
+<LinearLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
+    android:orientation="vertical"
     android:padding="24dp"
     >
+
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="@string/dialog_new_station_description"
+        android:textAppearance="@style/TextAppearance.AppCompat.Subhead"
+        android:padding="4dp"
+        />
 
     <EditText
         android:id="@+id/linkEt"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:hint="@string/dialog_new_station_hint"
-        android:inputType="textUri"
+        android:inputType="textUri|textNoSuggestions"
+        tools:ignore="Autofill"
         />
 
-</FrameLayout>
+</LinearLayout>

@@ -17,7 +17,8 @@
     <string name="dialog_cancel_edit_message">Cancel changes?</string>
     <string name="dialog_cancel_create_message">Cancel adding a new station?</string>
     <string name="dialog_new_station">Add new station</string>
-    <string name="dialog_new_station_hint">Paste link to the audio stream or playlist</string>
+    <string name="dialog_new_station_description">Paste link to the audio stream or playlist</string>
+    <string name="dialog_new_station_hint">Link</string>
     <string name="dialog_new_group">Add new folder</string>
     <string name="dialog_new_group_hint">Folder name</string>
     <string name="dialog_start_playback">Start playback</string>
@@ -41,7 +42,7 @@
 
     <string name="desc_favorite">add to favorite</string>
     <string name="desc_expand_collapse">expand/collapse</string>
-    <string name="desc_station_icon">media icon</string>
+    <string name="desc_station_icon">station icon</string>
     <string name="desc_play_pause_button">play/pause button</string>
     <string name="desc_skip_previous_button">skip previous button</string>
     <string name="desc_skip_next_button">skip next button</string>

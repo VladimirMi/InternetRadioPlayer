@@ -1,6 +1,6 @@
 package io.github.vladimirmi.internetradioplayer.presentation.iconpicker
 
-import io.github.vladimirmi.internetradioplayer.data.db.entity.Icon
+import io.github.vladimirmi.internetradioplayer.domain.model.Icon
 import io.github.vladimirmi.internetradioplayer.navigation.Router
 import io.github.vladimirmi.internetradioplayer.presentation.base.BasePresenter
 import javax.inject.Inject
@@ -13,14 +13,13 @@ class IconPickerPresenter
 @Inject constructor(private val router: Router)
     : BasePresenter<IconPickerView>() {
 
-    var currentIcon = Icon.randomIcon()
+    var currentIcon = Icon.randomIcon(0)
 
     override fun onAttach(view: IconPickerView) {
         view.showControls(false)
     }
 
     fun saveIcon() {
-//        interactor.station = interactor.station.copy(icon = currentIcon)
         exit()
     }
 

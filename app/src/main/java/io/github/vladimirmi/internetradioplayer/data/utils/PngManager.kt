@@ -1,8 +1,8 @@
 package io.github.vladimirmi.internetradioplayer.model.manager
 
 import android.graphics.Color
-import io.github.vladimirmi.internetradioplayer.data.db.entity.ICONS
-import io.github.vladimirmi.internetradioplayer.data.db.entity.Icon
+import io.github.vladimirmi.internetradioplayer.domain.model.ICONS
+import io.github.vladimirmi.internetradioplayer.domain.model.Icon
 import java.io.ByteArrayOutputStream
 import java.io.File
 import java.nio.ByteBuffer

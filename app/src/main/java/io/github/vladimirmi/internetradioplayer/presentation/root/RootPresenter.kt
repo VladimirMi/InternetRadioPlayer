@@ -9,7 +9,6 @@ import io.github.vladimirmi.internetradioplayer.navigation.Router
 import io.github.vladimirmi.internetradioplayer.presentation.base.BasePresenter
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.rxkotlin.addTo
-import timber.log.Timber
 import javax.inject.Inject
 
 /**
@@ -30,6 +29,7 @@ class RootPresenter
         val pageId = mainInteractor.getMainPageId()
         router.newRootScreen(pageId)
 
+
         favoriteListInteractor.initFavoriteList()
                 .andThen(historyInteractor.selectRecentStation())
                 .observeOn(AndroidSchedulers.mainThread())
@@ -46,37 +46,28 @@ class RootPresenter
     }
 
     @SuppressLint("CheckResult")
-    fun addStation(uri: Uri, startPlay: Boolean) {
-//        val station = stationInteractor.getStation { it.uri == uri.toString() }
-//        if (station != null) {
-//            stationInteractor.currentStation = station
-////            router.showStationReplace(station.id)
-//            Timber.e("addStation: existed ${station.name}")
-//            if (startPlay) playerInteractor.play()
-//            return
-//        }
-
+    fun addOrShowStation(uri: Uri, startPlay: Boolean) {
         stationInteractor.createStation(uri)
+                .doOnSuccess { if (startPlay) playerInteractor.play() }
                 .observeOn(AndroidSchedulers.mainThread())
                 .doOnSubscribe { view?.showLoadingIndicator(true) }
                 .doFinally { view?.showLoadingIndicator(false) }
                 .subscribeX(onSuccess = {
-                    Timber.e("addStation: ${it.name}")
-//                    router.showStationSlide(stationInteractor.station.id)
+                    navigateTo(R.id.nav_player)
                 }).addTo(viewSubs)
     }
 
     @SuppressLint("CheckResult")
     fun showStation(id: String, startPlay: Boolean) {
-//        val station = stationInteractor.getStation { it.id == id }
-//        if (station != null) {
-//            stationInteractor.currentStation = station
-//            Timber.e("showStation: ${station.name}")
-////            router.showStationReplace(station.id)
-//            if (startPlay) playerInteractor.play()
-//        } else {
-//            view?.showMessage(R.string.msg_shortcut_remove)
-//        }
+        //todo legacy
+        val station = favoriteListInteractor.getStation(id)
+        if (station != null) {
+            stationInteractor.station = station
+            navigateTo(R.id.nav_player)
+            if (startPlay) playerInteractor.play()
+        } else {
+            view?.showMessage(R.string.msg_shortcut_remove)
+        }
     }
 
     fun navigateTo(navId: Int) {

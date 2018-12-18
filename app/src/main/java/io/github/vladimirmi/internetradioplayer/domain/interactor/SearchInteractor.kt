@@ -35,7 +35,7 @@ class SearchInteractor
     fun selectUberStation(id: Int): Completable {
         return searchRepository.findUberStation(id)
                 .doOnNext { station ->
-                    val newStation = favoritesRepository.stations.findStation { it.uri == station.uri }
+                    val newStation = favoritesRepository.getStation { it.uri == station.uri }
                             ?: station
                     stationRepository.station = newStation
                 }.ignoreElements()

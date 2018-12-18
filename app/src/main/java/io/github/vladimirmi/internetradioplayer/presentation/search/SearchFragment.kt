@@ -12,9 +12,11 @@ import io.github.vladimirmi.internetradioplayer.data.net.model.StationSearchRes
 import io.github.vladimirmi.internetradioplayer.di.Scopes
 import io.github.vladimirmi.internetradioplayer.domain.model.FlatStationsList
 import io.github.vladimirmi.internetradioplayer.domain.model.Suggestion
+import io.github.vladimirmi.internetradioplayer.extensions.dp
 import io.github.vladimirmi.internetradioplayer.extensions.visible
 import io.github.vladimirmi.internetradioplayer.extensions.waitForLayout
 import io.github.vladimirmi.internetradioplayer.presentation.base.BaseFragment
+import io.github.vladimirmi.internetradioplayer.presentation.main.SimpleControlsView
 import kotlinx.android.synthetic.main.fragment_search.*
 import toothpick.Toothpick
 import androidx.appcompat.widget.SearchView as SearchViewAndroid
@@ -24,7 +26,7 @@ import androidx.appcompat.widget.SearchView as SearchViewAndroid
  */
 
 class SearchFragment : BaseFragment<SearchPresenter, SearchView>(), SearchView,
-        SearchSuggestionsAdapter.Callback {
+        SearchSuggestionsAdapter.Callback, SimpleControlsView {
 
     override val layout = R.layout.fragment_search
 
@@ -133,6 +135,11 @@ class SearchFragment : BaseFragment<SearchPresenter, SearchView>(), SearchView,
     override fun showLoading(loading: Boolean) {
         swipeToRefresh.isRefreshing = loading
         if (loading) searchView.clearFocus()
+    }
+
+    override fun showControls(visibility: Float) {
+        val pb = ((48 * (1 - visibility) + 16) * context!!.dp).toInt()
+        stationsRv.setPadding(0, stationsRv.paddingTop, 0, pb)
     }
 
     //endregion

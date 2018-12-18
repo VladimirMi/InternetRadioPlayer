@@ -74,7 +74,7 @@
 
     <string name="metadata_not_available">Метаданные не доступны</string>
     <string name="dialog_start_playback">Начать воспроизведение</string>
-    <string name="default_group">Разное</string>
+    <string name="default_folder">Разное</string>
     <string name="menu_settings">Настройки</string>
     <string name="second">%1$d секунда</string>
     <string name="seconds">%1$d секунды</string>

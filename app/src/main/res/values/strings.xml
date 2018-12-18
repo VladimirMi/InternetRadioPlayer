@@ -46,6 +46,13 @@
     <string name="desc_play_pause_button">play/pause button</string>
     <string name="desc_skip_previous_button">skip previous button</string>
     <string name="desc_skip_next_button">skip next button</string>
+    <string name="desc_stop_button">stop button</string>
+    <string name="desc_edit_title_button">edit title button</string>
+    <string name="desc_add_remove_favorite">add/remove favorite</string>
+    <string name="desc_create_shortcut_button">create shortcut button</string>
+    <string name="desc_directory_logo">directory logo</string>
+    <string name="desc_open_drawer">open drawer</string>
+    <string name="desc_close_drawer">close drawer</string>
 
     <string name="tabs_search">Search</string>
     <string name="tabs_stations">Stations</string>
@@ -58,16 +65,13 @@
         <item>@string/tabs_history</item>
     </string-array>
 
-    <string name="station_list_details">Details</string>
+    <string name="directory_uberstations" translatable="false">UberStations</string>
 
-    <string name="station_uri">Stream uri:</string>
-    <string name="station_url">Station url:</string>
-    <string name="station_bitrate">Stream bitrate:</string>
-    <string name="station_sample_rate">Source sample rate:</string>
+    <string name="history_placeholder">History is empty</string>
+    <string name="favorite_list_placeholder">Stations list is empty</string>
+    <string name="player_placeholder">No station is selected</string>
     <string name="station_title">Title</string>
     <string name="station_folder">Folder</string>
-    <string name="station_title_information">Information:</string>
-    <string name="station_genre">Genres:</string>
 
     <string name="icon_icon">Icon</string>
     <string name="icon_favicon">Web site icon</string>
@@ -78,17 +82,8 @@
 
     <string name="notification_name">Radio Player notification</string>
 
-    <string name="getstarted_title">Get started</string>
-    <string name="help_create">You can create a new station by:</string>
-    <string name="help_create_1"> - clicking on the playlist link in your web browser.\n
-        For example here https://www.internet-radio.com</string>
-    <string name="help_create_2"> - clicking on the playlist file in the file manager.\n
-        The supported extensions are pls, m3u or ram.</string>
-    <string name="help_create_3"> - adding a direct link to the audio stream or playlist.</string>
-
     <string name="metadata_not_available">Metadata is not available</string>
-    <string name="default_group">Other</string>
-
+    <string name="default_folder">Other</string>
 
     <string name="settings_stream">Stream settings</string>
     <string name="settings_backup_restore">Backup and restore</string>
@@ -104,14 +99,7 @@
     <string name="second">%1$d second</string>
     <string name="seconds">%1$d seconds</string>
     <string name="chooser_backup">Save with</string>
-    <string name="desc_stop_button">stop button</string>
-    <string name="desc_edit_title_button">edit title button</string>
-    <string name="desc_add_remove_favorite">add/remove favorite</string>
-    <string name="desc_create_shortcut_button">create shortcut button</string>
-    <string name="desc_directory_logo">directory logo</string>
-    <string name="directory_uberstations">UberStations</string>
-    <string name="desc_open_drawer">open drawer</string>
-    <string name="desc_close_drawer">close drawer</string>
+
 
     <plurals name="plural_second">
         <item quantity="one">@string/second</item>

@@ -117,6 +117,7 @@ class PlayerFragment : BaseFragment<PlayerPresenter, PlayerView>(), PlayerView, 
         val tint = if (isFavorite) R.color.orange_500 else R.color.primary_light
         favoriteBt.background.setTintExt(context!!.color(tint))
         groupSpinnerWrapper.visible(isFavorite)
+        editTitleBt.visible(isFavorite)
     }
 
     override fun setGroups(list: List<String>) {
@@ -204,7 +205,7 @@ class PlayerFragment : BaseFragment<PlayerPresenter, PlayerView>(), PlayerView, 
     private fun changeTitleEditable(enable: Boolean? = null) {
         val enabled = enable?.not() ?: titleEt.isClickable
         titleEt.setEditable(!enabled)
-        editTitleIv.setImageResource(if (enabled) R.drawable.ic_edit else R.drawable.ic_submit)
+        editTitleBt.setImageResource(if (enabled) R.drawable.ic_edit else R.drawable.ic_submit)
         if (enabled) {
             context!!.inputMethodManager.hideSoftInputFromWindow(view?.windowToken, 0)
             presenter.editStationTitle(titleEt.text.toString())

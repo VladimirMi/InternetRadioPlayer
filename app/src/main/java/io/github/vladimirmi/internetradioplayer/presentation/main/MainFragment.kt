@@ -48,6 +48,7 @@ class MainFragment : BaseFragment<MainPresenter, MainView>(), MainView, SimpleCo
 
     override fun setupView(view: View) {
         mainPager.adapter = MainPagerAdapter(context!!, childFragmentManager)
+        mainPager.offscreenPageLimit = 3
         mainTl.setupWithViewPager(mainPager)
         val pageId = arguments?.getInt(MAIN_PAGE_ID_KEY) ?: 0
         setPageId(pageId)

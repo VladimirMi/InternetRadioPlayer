@@ -25,27 +25,18 @@
         app:layout_constraintTop_toTopOf="parent"
         />
 
-    <FrameLayout
+    <ImageButton
         android:id="@+id/editTitleBt"
         android:layout_width="40dp"
         android:layout_height="40dp"
-        android:clickable="true"
-        android:focusable="true"
         android:foreground="?actionBarItemBackground"
         app:layout_constraintBottom_toBottomOf="@+id/titleEt"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toTopOf="@+id/titleEt"
-        >
-
-        <ImageView
-            android:id="@+id/editTitleIv"
-            android:layout_width="24dp"
-            android:layout_height="24dp"
-            android:layout_gravity="center"
-            android:contentDescription="@string/desc_edit_title_button"
-            android:src="@drawable/ic_edit"
-            />
-    </FrameLayout>
+        android:background="@null"
+        android:src="@drawable/ic_edit"
+        android:contentDescription="@string/desc_edit_title_button"
+        />
 
     <TextView
         android:id="@+id/genreTv"

@@ -17,6 +17,7 @@ import io.github.vladimirmi.internetradioplayer.extensions.waitForMeasure
 import io.github.vladimirmi.internetradioplayer.presentation.base.BaseFragment
 import kotlinx.android.synthetic.main.fragment_main.*
 import kotlinx.android.synthetic.main.view_controls_simple.*
+import timber.log.Timber
 import toothpick.Toothpick
 
 
@@ -27,7 +28,6 @@ import toothpick.Toothpick
 class MainFragment : BaseFragment<MainPresenter, MainView>(), MainView, SimpleControlsView {
 
     override val layout = R.layout.fragment_main
-    private var prevPage = PAGE_SEARCH
     private var controlsVisibility = 0f
 
     companion object {
@@ -47,7 +47,6 @@ class MainFragment : BaseFragment<MainPresenter, MainView>(), MainView, SimpleCo
 
     override fun setupView(view: View) {
         mainPager.adapter = MainPagerAdapter(context!!, childFragmentManager)
-        mainPager.offscreenPageLimit = 3
         mainTl.setupWithViewPager(mainPager)
         val pageId = arguments?.getInt(MAIN_PAGE_ID_KEY) ?: 0
         setPageId(pageId)
@@ -95,10 +94,9 @@ class MainFragment : BaseFragment<MainPresenter, MainView>(), MainView, SimpleCo
             R.id.nav_player -> PAGE_PLAYER
             else -> PAGE_HISTORY
         }
-        prevPage = page
-        mainPager.setCurrentItem(page, true)
+        Timber.e("setPageId: $page")
+        mainPager.setCurrentItem(page, false)
     }
-
 
     override fun showStopped() {
         sPlayPauseBt.setPlaying(false, controlsVisibility > 0)

@@ -29,7 +29,6 @@ class RootPresenter
         val pageId = mainInteractor.getMainPageId()
         router.newRootScreen(pageId)
 
-
         favoriteListInteractor.initFavoriteList()
                 .andThen(historyInteractor.selectRecentStation())
                 .observeOn(AndroidSchedulers.mainThread())

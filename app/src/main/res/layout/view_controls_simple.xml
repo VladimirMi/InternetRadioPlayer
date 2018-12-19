@@ -27,15 +27,27 @@
         tools:ignore="RtlSymmetry"
         />
 
-    <io.github.vladimirmi.playerbutton.PlayerButton
-        android:id="@+id/sPlayPauseBt"
-        android:layout_width="48dp"
-        android:layout_height="48dp"
-        android:foreground="?actionBarItemBackground"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:pb_pauseColor="@color/pause_button"
-        app:pb_playColor="@color/play_button"
-        />
+    <FrameLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        >
+
+        <ProgressBar
+            android:id="@+id/sBufferingPb"
+            android:layout_width="48dp"
+            android:layout_height="48dp"
+            app:tint="@color/pause_button"
+            android:indeterminate="true"
+            />
+
+        <io.github.vladimirmi.playerbutton.PlayerButton
+            android:id="@+id/sPlayPauseBt"
+            android:layout_width="48dp"
+            android:layout_height="48dp"
+            android:foreground="?actionBarItemBackground"
+            app:pb_pauseColor="@color/pause_button"
+            app:pb_playColor="@color/play_button"
+            />
+    </FrameLayout>
 
 </LinearLayout>

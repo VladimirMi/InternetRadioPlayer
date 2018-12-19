@@ -76,5 +76,4 @@
         android:textAppearance="@style/TextAppearance.AppCompat.Title"
         />
 
-
 </FrameLayout>

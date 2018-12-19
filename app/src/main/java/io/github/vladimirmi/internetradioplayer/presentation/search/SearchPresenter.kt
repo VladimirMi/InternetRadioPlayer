@@ -31,6 +31,7 @@ class SearchPresenter
     private var selectSub: Disposable? = null
 
     override fun onFirstAttach(view: SearchView) {
+        view.showPlaceholder(true)
         searchInteractor.queryRecentSuggestions("")
                 .filter { it.isNotEmpty() }
                 .map { it.first() }

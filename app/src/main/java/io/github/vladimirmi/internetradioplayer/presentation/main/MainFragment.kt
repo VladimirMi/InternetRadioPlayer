@@ -12,12 +12,13 @@ import androidx.viewpager.widget.ViewPager
 import io.github.vladimirmi.internetradioplayer.R
 import io.github.vladimirmi.internetradioplayer.data.utils.MAIN_PAGE_ID_KEY
 import io.github.vladimirmi.internetradioplayer.di.Scopes
+import io.github.vladimirmi.internetradioplayer.extensions.color
+import io.github.vladimirmi.internetradioplayer.extensions.setTintExt
 import io.github.vladimirmi.internetradioplayer.extensions.visible
 import io.github.vladimirmi.internetradioplayer.extensions.waitForMeasure
 import io.github.vladimirmi.internetradioplayer.presentation.base.BaseFragment
 import kotlinx.android.synthetic.main.fragment_main.*
 import kotlinx.android.synthetic.main.view_controls_simple.*
-import timber.log.Timber
 import toothpick.Toothpick
 
 
@@ -65,6 +66,7 @@ class MainFragment : BaseFragment<MainPresenter, MainView>(), MainView, SimpleCo
         sPlayPauseBt.setManualMode(true)
         sPlayPauseBt.setOnClickListener { presenter.playPause() }
         sMetadataTv.isSelected = true
+        sBufferingPb.indeterminateDrawable.setTintExt(requireContext().color(R.color.pause_button))
     }
 
     @SuppressLint("RestrictedApi")
@@ -94,23 +96,22 @@ class MainFragment : BaseFragment<MainPresenter, MainView>(), MainView, SimpleCo
             R.id.nav_player -> PAGE_PLAYER
             else -> PAGE_HISTORY
         }
-        Timber.e("setPageId: $page")
         mainPager.setCurrentItem(page, false)
     }
 
     override fun showStopped() {
         sPlayPauseBt.setPlaying(false, controlsVisibility > 0)
-//        bufferingPb.visible(false)
+        sBufferingPb.visible(false)
     }
 
     override fun showPlaying() {
         sPlayPauseBt.setPlaying(true, controlsVisibility > 0)
-//        bufferingPb.visible(false)
+        sBufferingPb.visible(false)
     }
 
     override fun showBuffering() {
         sPlayPauseBt.setPlaying(true, controlsVisibility > 0)
-//        bufferingPb.visible(true)
+        sBufferingPb.visible(true)
     }
 
     override fun setMetadata(metadata: String) {

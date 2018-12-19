@@ -32,14 +32,14 @@
         android:layout_height="wrap_content"
         android:layout_marginLeft="16dp"
         android:layout_marginRight="16dp"
+        android:visibility="gone"
         app:cardCornerRadius="8dp"
         app:cardElevation="2dp"
         app:contentPadding="8dp"
+        app:layout_constraintBottom_toTopOf="@id/controlsView"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@id/infoCv"
-        app:layout_constraintBottom_toTopOf="@id/controlsView"
-        android:visibility="gone"
         >
 
         <LinearLayout
@@ -52,9 +52,9 @@
                 android:id="@+id/metaTitleTv"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:padding="8dp"
                 android:ellipsize="marquee"
                 android:marqueeRepeatLimit="marquee_forever"
+                android:padding="8dp"
                 android:singleLine="true"
                 android:textAppearance="@style/TextAppearance.AppCompat.Title"
                 tools:text="Festus vigils ducunt ad gemna."
@@ -64,9 +64,9 @@
                 android:id="@+id/metaSubtitleTv"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:padding="8dp"
                 android:ellipsize="marquee"
                 android:marqueeRepeatLimit="marquee_forever"
+                android:padding="8dp"
                 android:singleLine="true"
                 android:textAppearance="@style/TextAppearance.AppCompat.Subhead"
                 tools:text="Festus vigils ducunt ad gemna."
@@ -80,10 +80,10 @@
         android:id="@+id/bufferingPb"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        app:layout_constraintBottom_toTopOf="@id/controlsView"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@id/infoCv"
-        app:layout_constraintBottom_toTopOf="@id/controlsView"
         />
 
     <View
@@ -98,11 +98,12 @@
         android:id="@+id/placeholderView"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="@string/player_placeholder"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintBottom_toBottomOf="parent"
         android:gravity="center"
+        android:text="@string/player_placeholder"
         android:textAppearance="@style/TextAppearance.AppCompat.Title"
+        android:visibility="gone"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
         />
 
     <include

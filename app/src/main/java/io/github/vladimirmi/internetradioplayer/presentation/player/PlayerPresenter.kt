@@ -109,14 +109,14 @@ class PlayerPresenter
 
     fun addShortcut(startPlay: Boolean) {
         if (stationInteractor.addCurrentShortcut(startPlay)) {
-            view?.showMessage(R.string.msg_add_shortcut_success)
+            view?.showSnackbar(R.string.msg_add_shortcut_success)
         }
     }
 
     fun playPause() {
         with(playerInteractor) {
             if (!isPlaying && !isNetAvail) {
-                view?.showMessage(R.string.msg_net_error)
+                view?.showSnackbar(R.string.msg_net_error)
             } else {
                 playPause()
             }

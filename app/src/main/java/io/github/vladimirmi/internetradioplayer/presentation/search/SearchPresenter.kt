@@ -25,7 +25,7 @@ class SearchPresenter
                     private val favoriteListInteractor: FavoriteListInteractor)
     : BasePresenter<SearchView>() {
 
-    var regularSearch: Boolean = false
+    var regularSearchEnabled: Boolean = false
     private var searchSub: Disposable? = null
     private var suggestionSub: Disposable? = null
     private var selectSub: Disposable? = null
@@ -72,21 +72,28 @@ class SearchPresenter
     }
 
     fun submitSearch(query: String) {
-        regularSearch = true
+        regularSearchEnabled = true
         searchSub?.dispose()
 
         searchSub = Observable.interval(0, 60, TimeUnit.SECONDS, AndroidSchedulers.mainThread())
-                .filter { regularSearch }
+                .filter { regularSearchEnabled }
                 .map { query.trim() }
-                .doOnNext { if (it.length < 3) view?.showMessage(R.string.msg_text_short) }
+                .doOnNext { if (it.length < 3) view?.showToast(R.string.msg_text_short) }
                 .filter { it.length > 2 }
-                .doOnNext { view?.showLoading(true) }
+                .doOnNext {
+                    view?.showLoading(true)
+                    view?.showPlaceholder(false)
+                }
                 .flatMapSingle { searchInteractor.searchStations(it) }
                 .observeOn(AndroidSchedulers.mainThread())
-                .doOnTerminate { view?.showLoading(false) }
+                .doOnError {
+                    view?.showLoading(false)
+                    view?.showPlaceholder(true)
+                }
                 .subscribeX(onNext = {
                     view?.setStations(it)
                     view?.showLoading(false)
+                    view?.showPlaceholder(it.isEmpty())
                 })
 
     }

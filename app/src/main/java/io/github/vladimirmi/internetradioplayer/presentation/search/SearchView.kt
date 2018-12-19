@@ -23,4 +23,6 @@ interface SearchView : BaseView, SearchSuggestionsAdapter.Callback {
     fun selectStation(station: Station)
 
     fun showLoading(loading: Boolean)
+
+    fun showPlaceholder(show: Boolean)
 }

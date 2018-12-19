@@ -66,7 +66,7 @@ class RootPresenter
             navigateTo(R.id.nav_player)
             if (startPlay) playerInteractor.play()
         } else {
-            view?.showMessage(R.string.msg_shortcut_remove)
+            view?.showSnackbar(R.string.msg_shortcut_remove)
         }
     }
 

@@ -14,6 +14,7 @@ import io.github.vladimirmi.internetradioplayer.domain.interactor.StationInterac
 import io.github.vladimirmi.internetradioplayer.extensions.subscribeX
 import io.github.vladimirmi.internetradioplayer.navigation.Router
 import io.github.vladimirmi.internetradioplayer.presentation.base.BasePresenter
+import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.rxkotlin.addTo
 import javax.inject.Inject
 
@@ -43,6 +44,7 @@ class MainPresenter
 
         stationInteractor.stationObs
                 .distinctUntilChanged(Station::uri)
+                .observeOn(AndroidSchedulers.mainThread())
                 .subscribeX(onNext = { view.showControls(!it.isNull()) })
                 .addTo(viewSubs)
     }
@@ -62,7 +64,7 @@ class MainPresenter
     fun playPause() {
         with(playerInteractor) {
             if (!isPlaying && !isNetAvail) {
-                view?.showMessage(R.string.msg_net_error)
+                view?.showSnackbar(R.string.msg_net_error)
             } else {
                 playPause()
             }

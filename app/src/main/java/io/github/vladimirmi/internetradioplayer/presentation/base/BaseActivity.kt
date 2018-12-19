@@ -2,6 +2,7 @@ package io.github.vladimirmi.internetradioplayer.presentation.base
 
 import android.os.Bundle
 import android.view.View
+import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import com.google.android.material.snackbar.Snackbar
 
@@ -59,7 +60,11 @@ abstract class BaseActivity<P : BasePresenter<V>, V : BaseView>
         return supportFragmentManager.fragments.any { it is BackPressListener && it.handleBackPressed() }
     }
 
-    override fun showMessage(resId: Int) {
+    override fun showToast(resId: Int) {
+        Toast.makeText(applicationContext, resId, Toast.LENGTH_SHORT).show()
+    }
+
+    override fun showSnackbar(resId: Int) {
         Snackbar.make(activityView, resId, Snackbar.LENGTH_SHORT).show()
     }
 

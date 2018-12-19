@@ -6,5 +6,7 @@ package io.github.vladimirmi.internetradioplayer.presentation.base
 
 interface BaseView : BackPressListener {
 
-    fun showMessage(resId: Int)
+    fun showToast(resId: Int)
+
+    fun showSnackbar(resId: Int)
 }

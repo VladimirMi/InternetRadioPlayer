@@ -28,7 +28,7 @@ class MainFragment : BaseFragment<MainPresenter, MainView>(), MainView, SimpleCo
 
     override val layout = R.layout.fragment_main
     private var prevPage = PAGE_SEARCH
-    private var controlsVisible = false
+    private var controlsVisibility = 0f
 
     companion object {
         fun newInstance(page: Int): MainFragment {
@@ -101,17 +101,17 @@ class MainFragment : BaseFragment<MainPresenter, MainView>(), MainView, SimpleCo
 
 
     override fun showStopped() {
-        sPlayPauseBt.setPlaying(false, controlsVisible)
+        sPlayPauseBt.setPlaying(false, controlsVisibility > 0)
 //        bufferingPb.visible(false)
     }
 
     override fun showPlaying() {
-        sPlayPauseBt.setPlaying(true, controlsVisible)
+        sPlayPauseBt.setPlaying(true, controlsVisibility > 0)
 //        bufferingPb.visible(false)
     }
 
     override fun showBuffering() {
-        sPlayPauseBt.setPlaying(true, controlsVisible)
+        sPlayPauseBt.setPlaying(true, controlsVisibility > 0)
 //        bufferingPb.visible(true)
     }
 
@@ -121,6 +121,7 @@ class MainFragment : BaseFragment<MainPresenter, MainView>(), MainView, SimpleCo
 
     override fun showControls(show: Boolean) {
         simpleControlsContainer.visible(show)
+        showControls(controlsVisibility)
     }
 
     override fun showControls(visibility: Float) {
@@ -135,7 +136,7 @@ class MainFragment : BaseFragment<MainPresenter, MainView>(), MainView, SimpleCo
                     .filterIsInstance(SimpleControlsView::class.java)
                     .forEach { it.showControls(visibility) }
 
-            controlsVisible = visibility > 0
+            controlsVisibility = visibility
         }
     }
 

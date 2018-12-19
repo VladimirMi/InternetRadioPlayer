@@ -53,7 +53,7 @@ class SearchFragment : BaseFragment<SearchPresenter, SearchView>(), SearchView,
         searchView.setOnQueryTextFocusChangeListener { _, hasFocus ->
             adjustSuggestionsRecyclerHeight(hasFocus)
             suggestionsRv.visible(hasFocus)
-            presenter.regularSearch = !hasFocus
+            presenter.regularSearchEnabled = !hasFocus
         }
 
         searchView.setOnQueryTextListener(object : SearchViewAndroid.OnQueryTextListener {
@@ -100,12 +100,12 @@ class SearchFragment : BaseFragment<SearchPresenter, SearchView>(), SearchView,
     override fun setUserVisibleHint(isVisibleToUser: Boolean) {
         super.setUserVisibleHint(isVisibleToUser)
         if (!isVisibleToUser && view != null) searchView.clearFocus()
-        if (isPresenterInit) presenter.regularSearch = isVisibleToUser
+        if (isPresenterInit) presenter.regularSearchEnabled = isVisibleToUser
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        presenter.regularSearch = userVisibleHint
+        presenter.regularSearchEnabled = userVisibleHint
     }
 
     //region =============== SearchView ==============
@@ -137,6 +137,10 @@ class SearchFragment : BaseFragment<SearchPresenter, SearchView>(), SearchView,
         if (loading) searchView.clearFocus()
     }
 
+    override fun showPlaceholder(show: Boolean) {
+        placeholderView.visible(show)
+    }
+
     override fun showControls(visibility: Float) {
         val pb = ((48 * (1 - visibility) + 16) * context!!.dp).toInt()
         stationsRv.setPadding(0, stationsRv.paddingTop, 0, pb)
@@ -148,7 +152,7 @@ class SearchFragment : BaseFragment<SearchPresenter, SearchView>(), SearchView,
         if (keyboardDisplayed) {
             val rect = Rect()
             suggestionsRv.getWindowVisibleDisplayFrame(rect)
-            constraintLayout.waitForLayout {
+            frameLayout.waitForLayout {
                 val oldVisibleHeight = rect.bottom - rect.top
                 suggestionsRv.getWindowVisibleDisplayFrame(rect)
                 val newVisibleHeight = rect.bottom - rect.top

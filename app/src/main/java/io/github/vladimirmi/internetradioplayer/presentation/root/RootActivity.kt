@@ -126,7 +126,7 @@ class RootActivity : BaseActivity<RootPresenter, RootView>(), RootView {
         intent = null
     }
 
-    override fun showMessage(resId: Int) {
+    override fun showSnackbar(resId: Int) {
         Snackbar.make(activityView, resId, Snackbar.LENGTH_LONG).show()
     }
 

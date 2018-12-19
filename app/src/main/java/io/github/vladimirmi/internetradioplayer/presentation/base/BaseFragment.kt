@@ -7,6 +7,7 @@ import android.view.ViewGroup
 import android.widget.Toast
 import androidx.annotation.Nullable
 import androidx.fragment.app.Fragment
+import com.google.android.material.snackbar.Snackbar
 
 /**
  * Created by Vladimir Mikhalev 10.11.2018.
@@ -61,8 +62,14 @@ abstract class BaseFragment<P : BasePresenter<V>, V : BaseView> : Fragment(), Ba
         return childFragmentManager.fragments.any { it is BackPressListener && it.handleBackPressed() }
     }
 
-    override fun showMessage(resId: Int) {
-        Toast.makeText(context, resId, Toast.LENGTH_SHORT).show()
+    override fun showToast(resId: Int) {
+        Toast.makeText(requireContext(), resId, Toast.LENGTH_SHORT).show()
+    }
+
+    override fun showSnackbar(resId: Int) {
+        view?.let {
+            Snackbar.make(it, resId, Snackbar.LENGTH_SHORT).show()
+        }
     }
 
     //endregion

@@ -1,11 +1,13 @@
 package io.github.vladimirmi.internetradioplayer.domain.interactor
 
 import android.net.Uri
+import io.github.vladimirmi.internetradioplayer.R
 import io.github.vladimirmi.internetradioplayer.data.db.entity.Group
 import io.github.vladimirmi.internetradioplayer.data.db.entity.Station
 import io.github.vladimirmi.internetradioplayer.data.repository.FavoritesRepository
 import io.github.vladimirmi.internetradioplayer.data.repository.StationRepository
 import io.github.vladimirmi.internetradioplayer.data.utils.ShortcutHelper
+import io.github.vladimirmi.internetradioplayer.extensions.MessageResException
 import io.reactivex.Completable
 import io.reactivex.Single
 import io.reactivex.rxkotlin.toCompletable
@@ -72,6 +74,8 @@ class StationInteractor
 
     fun editStationTitle(title: String): Completable {
         if (title == station.name) return Completable.complete()
+        if (title.isBlank()) return Completable.error(MessageResException(R.string.msg_name_empty_error))
+
         val newStation = station.copy(name = title)
         return favoritesRepository.updateStations(listOf(newStation))
                 .andThen(setStation(newStation))
@@ -85,5 +89,7 @@ class StationInteractor
     private fun setStation(station: Station): Completable {
         return { this.station = station }.toCompletable()
     }
+
+
 }
 

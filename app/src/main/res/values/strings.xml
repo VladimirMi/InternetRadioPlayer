@@ -5,11 +5,9 @@
     <string name="msg_add_success">Station added</string>
     <string name="msg_add_error">Could not add station</string>
     <string name="msg_net_error">No connection</string>
-    <string name="msg_remove_success">Station deleted</string>
     <string name="msg_add_shortcut_success">Station shortcut added</string>
     <string name="msg_shortcut_remove">Station was removed. Remove the shortcut manually</string>
-    <string name="msg_name_empty_error">Station name can not be empty</string>
-    <string name="msg_name_exists_error">Station with the given name already exists</string>
+    <string name="msg_name_empty_error">Specify a name</string>
     <string name="msg_text_short">Text too short</string>
 
     <string name="dialog_remove_message">Are you sure you want to delete the station?</string>
@@ -23,7 +21,6 @@
     <string name="dialog_new_group_hint">Folder name</string>
     <string name="dialog_start_playback">Start playback</string>
     <string name="dialog_add_name">Title</string>
-    <string name="dialog_add_name_err">Specify a name</string>
     <string name="dialog_ok">OK</string>
     <string name="dialog_cancel">Cancel</string>
 

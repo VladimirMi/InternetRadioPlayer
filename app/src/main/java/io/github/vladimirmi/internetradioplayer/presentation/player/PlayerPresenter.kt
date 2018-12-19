@@ -102,7 +102,7 @@ class PlayerPresenter
 
     fun editStationTitle(title: String) {
         stationInteractor.editStationTitle(title)
-                .subscribeX()
+                .subscribeX(onComplete = { view?.switchTitleEditable() })
                 .addTo(viewSubs)
     }
 

@@ -12,7 +12,7 @@ import java.util.*
         parentColumns = ["id"],
         childColumns = ["group_id"],
         onDelete = ForeignKey.CASCADE)],
-        indices = [Index(value = ["name", "uri"], unique = true), Index(value = ["group_id"])])
+        indices = [Index(value = ["uri"], unique = true), Index(value = ["group_id"])])
 
 data class Station(
         @PrimaryKey val id: String,

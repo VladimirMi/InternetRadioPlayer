@@ -37,4 +37,6 @@ interface PlayerView : BaseView {
     fun setGroup(position: Int)
 
     fun showPlaceholder(show: Boolean)
+
+    fun switchTitleEditable()
 }

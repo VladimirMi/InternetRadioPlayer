@@ -54,7 +54,6 @@ class PlayerFragment : BaseFragment<PlayerPresenter, PlayerView>(), PlayerView, 
         setupTitle()
         setupGroupSpinner()
 
-
         favoriteBt.setOnClickListener { presenter.switchFavorite() }
         addShortcutBt.setOnClickListener { openAddShortcutDialog() }
 
@@ -73,10 +72,10 @@ class PlayerFragment : BaseFragment<PlayerPresenter, PlayerView>(), PlayerView, 
         editTextBg = typedValue.resourceId
 
         titleEt.setEditable(false)
-        editTitleBt.setOnClickListener { changeTitleEditable() }
+        editTitleBt.setOnClickListener { presenter.editStationTitle(titleEt.text.toString()) }
         titleEt.setOnEditorActionListener { _, actionId, _ ->
             if (actionId == EditorInfo.IME_ACTION_DONE) {
-                changeTitleEditable()
+                presenter.editStationTitle(titleEt.text.toString())
                 true
             } else false
         }
@@ -100,9 +99,17 @@ class PlayerFragment : BaseFragment<PlayerPresenter, PlayerView>(), PlayerView, 
 
     override fun setUserVisibleHint(isVisibleToUser: Boolean) {
         super.setUserVisibleHint(isVisibleToUser)
-        if (view != null) {
-            if (!isVisibleToUser) changeTitleEditable(false)
+        if (view != null && !isVisibleToUser && titleEt.isClickable) {
+            requireContext().inputMethodManager.hideSoftInputFromWindow(view?.windowToken, 0)
         }
+    }
+
+    override fun handleBackPressed(): Boolean {
+        if (titleEt.isClickable) {
+            switchTitleEditable()
+            return true
+        }
+        return super.handleBackPressed()
     }
 
     //region =============== PlayerView ==============
@@ -200,21 +207,20 @@ class PlayerFragment : BaseFragment<PlayerPresenter, PlayerView>(), PlayerView, 
         placeholderView.visible(show)
     }
 
-    //endregion
-
-    private fun changeTitleEditable(enable: Boolean? = null) {
-        val enabled = enable?.not() ?: titleEt.isClickable
+    override fun switchTitleEditable() {
+        val enabled = titleEt.isClickable
         titleEt.setEditable(!enabled)
         editTitleBt.setImageResource(if (enabled) R.drawable.ic_edit else R.drawable.ic_submit)
         if (enabled) {
-            context!!.inputMethodManager.hideSoftInputFromWindow(view?.windowToken, 0)
-            presenter.editStationTitle(titleEt.text.toString())
+            requireContext().inputMethodManager.hideSoftInputFromWindow(view?.windowToken, 0)
         } else {
             titleEt.setSelection(titleEt.length())
             titleEt.requestFocus()
-            context!!.inputMethodManager.showSoftInput(titleEt, InputMethodManager.SHOW_IMPLICIT)
+            requireContext().inputMethodManager.showSoftInput(titleEt, InputMethodManager.SHOW_IMPLICIT)
         }
     }
+
+    //endregion
 
     private fun TextView.linkStyle(enable: Boolean) {
         val string = text.toString()

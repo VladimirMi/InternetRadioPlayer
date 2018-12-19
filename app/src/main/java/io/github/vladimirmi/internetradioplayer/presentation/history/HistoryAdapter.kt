@@ -74,7 +74,6 @@ class HistoryAdapter : RecyclerView.Adapter<StationVH>() {
         holder.setBackground(position, itemCount)
         holder.select(station)
         holder.itemView.setOnClickListener { onItemClickListener?.invoke(station.first) }
-        holder.itemView.favoriteBt?.setOnClickListener { onAddToFavListener?.invoke(station) }
     }
 
     override fun getItemCount(): Int {
@@ -91,8 +90,13 @@ class HistoryAdapter : RecyclerView.Adapter<StationVH>() {
     }
 
     private fun StationVH.select(station: Pair<Station, Boolean>) {
-        val selected = station.first.id == selectedStation?.id
+        val selected = station.first.uri == selectedStation?.uri
         select(selected, station.second)
+        if (selected) {
+            itemView.favoriteBt?.setOnClickListener { onAddToFavListener?.invoke(station) }
+        } else {
+            itemView.favoriteBt?.setOnClickListener { onItemClickListener?.invoke(station.first) }
+        }
     }
 }
 

@@ -121,7 +121,7 @@ class StationListAdapter(private val callback: StationItemCallback)
     private fun GroupElementVH.select(position: Int) {
         val selected = if (stations.isGroup(position)) {
             val group = stations.getGroup(position)
-            !group.expanded && group.stations.contains(selectedStation)
+            !group.expanded && group.stations.find { selectedStation.uri == it.uri } != null
         } else {
             val station = stations.getStation(position)
             station.id == selectedStation.id
@@ -173,7 +173,7 @@ class GroupTitleVH(itemView: View) : GroupElementVH(itemView) {
         val group = stations.getGroup(position)
         val single = !group.expanded || group.stations.isEmpty()
 
-        val bg = if (single) R.drawable.shape_item_single else R.drawable.shape_item_top
+        val bg = if (single) R.drawable.bg_item_single else R.drawable.bg_item_top
         itemView.background = ContextCompat.getDrawable(itemView.context, bg)
         setBgColor()
         if (Build.VERSION.SDK_INT >= 21) {
@@ -198,10 +198,10 @@ class GroupItemVH(itemView: View) : GroupElementVH(itemView) {
         val single = top && bottom
         val middle = !top && !bottom && !single
         val bg = when {
-            single -> R.drawable.shape_item_single
-            top -> R.drawable.shape_item_top
-            middle -> R.drawable.shape_item_middle
-            bottom -> R.drawable.shape_item_bottom
+            single -> R.drawable.bg_item_single
+            top -> R.drawable.bg_item_top
+            middle -> R.drawable.bg_item_middle
+            bottom -> R.drawable.bg_item_bottom
             else -> throw IllegalStateException()
         }
         itemView.background = ContextCompat.getDrawable(itemView.context, bg)

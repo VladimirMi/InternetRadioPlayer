@@ -93,7 +93,6 @@ class PlayerPresenter
                 .addTo(viewSubs)
     }
 
-
     fun createGroup(groupName: String) {
         favoriteListInteractor.createGroup(groupName)
                 .andThen(stationInteractor.changeGroup(groupName))

@@ -112,12 +112,12 @@ class SearchStationVH(itemView: View) : RecyclerView.ViewHolder(itemView) {
     fun setBackground(position: Int, itemCount: Int) {
         var middle = false
         val bg = when {
-            itemCount == 1 -> R.drawable.shape_item_single
-            position == 0 -> R.drawable.shape_item_top
-            position == itemCount - 1 -> R.drawable.shape_item_bottom
+            itemCount == 1 -> R.drawable.bg_item_single
+            position == 0 -> R.drawable.bg_item_top
+            position == itemCount - 1 -> R.drawable.bg_item_bottom
             else -> {
                 middle = true
-                R.drawable.shape_item_middle
+                R.drawable.bg_item_middle
             }
         }
         dilimeter.visible(middle || position == 0)

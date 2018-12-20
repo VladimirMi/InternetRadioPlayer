@@ -13,7 +13,7 @@ import io.github.vladimirmi.internetradioplayer.data.db.entity.Station
  */
 
 @Database(entities = [Station::class, Group::class],
-        version = 1, exportSchema = true)
+        version = 2, exportSchema = true)
 abstract class StationsDatabase : RoomDatabase() {
 
     //todo rename dao to favorites

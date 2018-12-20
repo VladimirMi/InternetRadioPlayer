@@ -116,7 +116,6 @@ class PlayerFragment : BaseFragment<PlayerPresenter, PlayerView>(), PlayerView, 
 
     override fun setStation(station: Station) {
         titleEt.setText(station.name)
-        genreTv.setTextOrHide(station.genre)
         specsTv.setTextOrHide(station.specs)
     }
 

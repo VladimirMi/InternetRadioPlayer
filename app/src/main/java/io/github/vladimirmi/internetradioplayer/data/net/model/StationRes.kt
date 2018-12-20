@@ -37,7 +37,7 @@ class StationRes(
     val uri get() = "$URI_BASE$id"
 
     fun toStation(): Station {
-        return Station(name = name, uri = uri, genre = genre,
+        return Station(name = name, uri = uri,
                 url = websiteUrl, encoding = encoding,
                 bitrate = null, sample = null)
     }

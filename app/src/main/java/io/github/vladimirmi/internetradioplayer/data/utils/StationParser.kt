@@ -126,7 +126,6 @@ class StationParser
         return Station(
                 name = name,
                 uri = url.toString(),
-                genre = headers[HEADER_GENRE],
                 url = headers[HEADER_URL],
                 encoding = encoding,
                 bitrate = headers[HEADER_BITRATE],

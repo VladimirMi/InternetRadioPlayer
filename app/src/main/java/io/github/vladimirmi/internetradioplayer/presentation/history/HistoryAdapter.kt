@@ -110,7 +110,7 @@ class StationVH(itemView: View) : RecyclerView.ViewHolder(itemView) {
     @SuppressLint("SetTextI18n")
     fun bind(station: Station) {
         titleTv.text = station.name
-        subtitleTv.text = station.genre
+        subtitleTv.text = "Fix it"
     }
 
     fun select(selected: Boolean, isFavorite: Boolean) {

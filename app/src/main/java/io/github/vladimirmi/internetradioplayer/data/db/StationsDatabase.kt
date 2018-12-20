@@ -4,6 +4,8 @@ import android.content.Context
 import androidx.room.Database
 import androidx.room.Room
 import androidx.room.RoomDatabase
+import androidx.room.migration.Migration
+import androidx.sqlite.db.SupportSQLiteDatabase
 import io.github.vladimirmi.internetradioplayer.data.db.dao.StationDao
 import io.github.vladimirmi.internetradioplayer.data.db.entity.Group
 import io.github.vladimirmi.internetradioplayer.data.db.entity.Station
@@ -23,7 +25,25 @@ abstract class StationsDatabase : RoomDatabase() {
         fun newInstance(context: Context): StationsDatabase {
             return Room.databaseBuilder(context.applicationContext,
                     StationsDatabase::class.java, "stations.db")
+                    .addMigrations(MIGRATION_1_2)
                     .build()
         }
+    }
+}
+
+private val MIGRATION_1_2 = object : Migration(1, 2) {
+    override fun migrate(database: SupportSQLiteDatabase) {
+        database.beginTransaction()
+        database.execSQL("CREATE TABLE station_temp (`id` TEXT NOT NULL, `name` TEXT NOT NULL, `uri` TEXT NOT NULL," +
+                " `url` TEXT, `encoding` TEXT, `bitrate` TEXT, `sample` TEXT, `order` INTEGER NOT NULL," +
+                " `group_id` TEXT NOT NULL, PRIMARY KEY(`id`), FOREIGN KEY(`group_id`) REFERENCES `Group`(`id`)" +
+                " ON UPDATE NO ACTION ON DELETE CASCADE )")
+
+        database.execSQL("INSERT INTO station_temp SELECT id, name, uri, url, bitrate, sample, `order`, group_id FROM station")
+        database.execSQL("DROP TABLE station")
+        database.execSQL("DROP TABLE genre")
+        database.execSQL("DROP TABLE station_genre_join")
+        database.execSQL("ALTER TABLE station_temp RENAME TO station")
+        database.endTransaction()
     }
 }

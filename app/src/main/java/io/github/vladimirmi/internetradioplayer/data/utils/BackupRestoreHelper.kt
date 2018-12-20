@@ -35,11 +35,10 @@ private const val GROUP_TAG = "group"
 
 private const val VERSION_ATTR = "version"
 private const val NAME_ATTR = "name"
-private const val GENRE_ATTR = "genre"
 private const val GROUP_ATTR = "group"
 private const val URI_ATTR = "streamUri"
 private const val URL_ATTR = "url"
-private const val FORMAT_ATTR = "encoding"
+private const val ENCODING_ATTR = "encoding"
 private const val BITRATE_ATTR = "bitrate"
 private const val SAMPLE_ATTR = "sample"
 private const val ORDER_ATTR = "order"
@@ -85,9 +84,8 @@ class BackupRestoreHelper
                 serializer.attribute(ns, NAME_ATTR, name)
                 serializer.attribute(ns, GROUP_ATTR, group)
                 serializer.attribute(ns, URI_ATTR, uri)
-                genre?.let { serializer.attribute(ns, GENRE_ATTR, it) }
                 url?.let { serializer.attribute(ns, URL_ATTR, it) }
-                encoding?.let { serializer.attribute(ns, FORMAT_ATTR, it) }
+                encoding?.let { serializer.attribute(ns, ENCODING_ATTR, it) }
                 bitrate?.let { serializer.attribute(ns, BITRATE_ATTR, it) }
                 sample?.let { serializer.attribute(ns, SAMPLE_ATTR, it) }
                 serializer.attribute(ns, ORDER_ATTR, order.toString())
@@ -149,8 +147,7 @@ class BackupRestoreHelper
                         name = parser.getAttributeValue(ns, NAME_ATTR),
                         uri = parser.getAttributeValue(ns, URI_ATTR),
                         url = parser.getAttributeValue(ns, URL_ATTR),
-                        genre = parser.getAttributeValue(ns, GENRE_ATTR),
-                        encoding = parser.getAttributeValue(ns, FORMAT_ATTR),
+                        encoding = parser.getAttributeValue(ns, ENCODING_ATTR),
                         bitrate = parser.getAttributeValue(ns, BITRATE_ATTR),
                         sample = parser.getAttributeValue(ns, SAMPLE_ATTR),
                         order = parser.getAttributeValue(ns, ORDER_ATTR).toInt(),

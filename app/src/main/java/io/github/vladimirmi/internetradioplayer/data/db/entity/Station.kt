@@ -18,7 +18,6 @@ data class Station(
         @PrimaryKey val id: String,
         val name: String,
         val uri: String,
-        val genre: String?,
         val url: String?,
         val encoding: String?,
         val bitrate: String?,
@@ -30,17 +29,16 @@ data class Station(
     @Ignore
     constructor(name: String,
                 uri: String,
-                genre: String?,
                 url: String?,
                 encoding: String?,
                 bitrate: String?,
                 sample: String?)
             : this(UUID.randomUUID().toString(),
-            name, uri, genre, url, encoding, bitrate, sample,
+            name, uri, url, encoding, bitrate, sample,
             0, Group.DEFAULT_ID)
 
     companion object {
-        fun nullObj() = Station("", "", null, null, null, null, null) //empty uri not valid (can't be)
+        fun nullObj() = Station("", "", null, null, null, null) //empty uri not valid (can't be)
     }
 
     @Ignore val specs: String

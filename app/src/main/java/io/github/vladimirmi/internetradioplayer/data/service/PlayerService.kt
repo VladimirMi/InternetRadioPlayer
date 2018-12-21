@@ -121,6 +121,7 @@ class PlayerService : MediaBrowserServiceCompat(), SessionCallback.Interface {
             mediaMetadata = mediaMetadata.setArtistTitle("")
             currentStationId = station.id
         }
+        if (isPlaying) historyInteractor.createHistory(station)
         if (isPlaying && currentStationId != playingStationId) playCurrent()
         mediaMetadata = mediaMetadata.setStation(station, this)
         session.setMetadata(mediaMetadata)
@@ -142,7 +143,6 @@ class PlayerService : MediaBrowserServiceCompat(), SessionCallback.Interface {
         val station = stationInteractor.station
         playingStationId = station.id
         playback.play(station.uri.toUri())
-        historyInteractor.createHistory(station)
     }
 
     //region =============== SessionCallback ==============
@@ -151,7 +151,10 @@ class PlayerService : MediaBrowserServiceCompat(), SessionCallback.Interface {
         stopTask?.cancel()
         startService()
         if (isPaused && currentStationId == playingStationId) playback.resume()
-        else playCurrent()
+        else {
+            historyInteractor.createHistory(stationInteractor.station)
+            playCurrent()
+        }
     }
 
     override fun onPauseCommand(stopDelay: Long) { // default is 1 min

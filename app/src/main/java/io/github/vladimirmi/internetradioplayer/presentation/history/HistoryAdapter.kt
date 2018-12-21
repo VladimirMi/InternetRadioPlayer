@@ -114,12 +114,12 @@ class StationVH(itemView: View) : RecyclerView.ViewHolder(itemView) {
     }
 
     fun select(selected: Boolean, isFavorite: Boolean) {
-        bgColor = itemView.context.color(if (selected) R.color.accent_light else R.color.grey_50)
+        bgColor = itemView.context.color(if (selected) R.color.primary_light else R.color.grey_50)
         itemView.background.setTintExt(bgColor)
 
         favoriteBt.visible(selected || isFavorite)
         if (selected || isFavorite) {
-            val tint = if (isFavorite) R.color.orange_500 else R.color.primary_light
+            val tint = if (isFavorite) R.color.orange_500 else R.color.white
             itemView.favoriteBt.setColorFilter(itemView.context.color(tint))
         }
     }

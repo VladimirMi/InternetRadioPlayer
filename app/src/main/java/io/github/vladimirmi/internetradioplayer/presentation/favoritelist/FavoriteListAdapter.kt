@@ -131,15 +131,7 @@ class StationListAdapter(private val callback: StationItemCallback)
 }
 
 abstract class GroupElementVH(itemView: View) : RecyclerView.ViewHolder(itemView) {
-    @ColorRes private var bgColorId = R.color.grey_50
-
-    fun select(selected: Boolean) {
-        bgColorId = when {
-            selected -> R.color.accent_light
-            else -> getBgColorId()
-        }
-        setBgColor()
-    }
+    @ColorRes protected var bgColorId = R.color.grey_50
 
     protected fun setBottomMargin(addBottomMargin: Boolean) {
         val lp = itemView.layoutParams as ViewGroup.MarginLayoutParams
@@ -147,16 +139,20 @@ abstract class GroupElementVH(itemView: View) : RecyclerView.ViewHolder(itemView
         itemView.layoutParams = lp
     }
 
-    protected fun setBgColor() {
+    protected fun setupBgColor() {
         itemView.background?.setTintExt(itemView.context.color(bgColorId))
     }
 
-    abstract fun changeBackground(stations: FlatStationsList, position: Int)
+    abstract fun select(selected: Boolean)
 
-    abstract fun getBgColorId(): Int
+    abstract fun changeBackground(stations: FlatStationsList, position: Int)
 }
 
 class GroupTitleVH(itemView: View) : GroupElementVH(itemView) {
+
+    init {
+        bgColorId = R.color.primary
+    }
 
     fun bind(group: Group) {
         itemView.titleTv.text = Group.getViewName(group.name, itemView.context)
@@ -169,21 +165,23 @@ class GroupTitleVH(itemView: View) : GroupElementVH(itemView) {
         itemView.iconExpandedIv.setImageResource(pointer)
     }
 
+    override fun select(selected: Boolean) {
+        itemView.selectionView.visible(selected)
+    }
+
     override fun changeBackground(stations: FlatStationsList, position: Int) {
         val group = stations.getGroup(position)
         val single = !group.expanded || group.stations.isEmpty()
 
         val bg = if (single) R.drawable.bg_item_single else R.drawable.bg_item_top
         itemView.background = ContextCompat.getDrawable(itemView.context, bg)
-        setBgColor()
+        setupBgColor()
         if (Build.VERSION.SDK_INT >= 21) {
             itemView.outlineProvider = defaultOutline
         }
         setBottomMargin(single && position != stations.size - 1)
         itemView.titleDelimiter.visible(!single)
     }
-
-    override fun getBgColorId() = R.color.primary_light
 }
 
 class GroupItemVH(itemView: View) : GroupElementVH(itemView) {
@@ -191,6 +189,14 @@ class GroupItemVH(itemView: View) : GroupElementVH(itemView) {
     fun bind(station: Station) {
         itemView.nameTv.text = station.name
         itemView.specsTv.text = station.specs
+    }
+
+    override fun select(selected: Boolean) {
+        bgColorId = when {
+            selected -> R.color.primary_light
+            else -> R.color.grey_50
+        }
+        setupBgColor()
     }
 
     override fun changeBackground(stations: FlatStationsList, position: Int) {
@@ -206,7 +212,7 @@ class GroupItemVH(itemView: View) : GroupElementVH(itemView) {
             else -> throw IllegalStateException()
         }
         itemView.background = ContextCompat.getDrawable(itemView.context, bg)
-        setBgColor()
+        setupBgColor()
         if (Build.VERSION.SDK_INT >= 21) {
             itemView.outlineProvider = if (middle) fixedOutline else defaultOutline
         }
@@ -214,7 +220,6 @@ class GroupItemVH(itemView: View) : GroupElementVH(itemView) {
         itemView.itemDelimiter.visible(top || middle)
     }
 
-    override fun getBgColorId() = R.color.grey_50
 }
 
 interface StationItemCallback {

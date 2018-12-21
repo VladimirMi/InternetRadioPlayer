@@ -29,6 +29,7 @@ class HistoryPresenter
         }.observeOn(AndroidSchedulers.mainThread())
                 .subscribeX(onNext = {
                     view.setHistory(it)
+                    view.selectStation(stationInteractor.station)
                     view.showPlaceholder(it.isEmpty())
                 })
                 .addTo(viewSubs)

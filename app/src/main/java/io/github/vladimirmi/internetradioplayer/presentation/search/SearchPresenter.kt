@@ -93,6 +93,7 @@ class SearchPresenter
                 }
                 .subscribeX(onNext = {
                     view?.setStations(it)
+                    view?.selectStation(stationInteractor.station)
                     view?.showLoading(false)
                     view?.showPlaceholder(it.isEmpty())
                 })

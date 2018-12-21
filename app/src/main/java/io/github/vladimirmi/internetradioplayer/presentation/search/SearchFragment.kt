@@ -129,7 +129,8 @@ class SearchFragment : BaseFragment<SearchPresenter, SearchView>(), SearchView,
     }
 
     override fun selectStation(station: Station) {
-        stationsAdapter.selectStation(station)
+        val position = stationsAdapter.selectStation(station)
+        stationsRv.scrollToPosition(position)
     }
 
     override fun showLoading(loading: Boolean) {

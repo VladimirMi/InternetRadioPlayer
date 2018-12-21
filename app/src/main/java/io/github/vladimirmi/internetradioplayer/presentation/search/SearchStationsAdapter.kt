@@ -66,12 +66,13 @@ class SearchStationsAdapter : RecyclerView.Adapter<SearchStationVH>() {
         return stations.size
     }
 
-    fun selectStation(station: Station) {
+    fun selectStation(station: Station): Int {
         val oldPos = stations.indexOf(selectedStation)
         val newPos = stations.indexOfFirst { it.uri == station.uri }
         selectedStation = if (newPos == -1) null else stations[newPos]
         notifyItemChanged(oldPos, PAYLOAD_SELECTED_CHANGE)
         notifyItemChanged(newPos, PAYLOAD_SELECTED_CHANGE)
+        return newPos
     }
 
     fun setFavorites(favorites: FlatStationsList) {
@@ -99,12 +100,12 @@ class SearchStationVH(itemView: View) : RecyclerView.ViewHolder(itemView) {
     }
 
     fun select(selected: Boolean, isFavorite: Boolean) {
-        val bg = itemView.context.color(if (selected) R.color.accent_light else R.color.grey_50)
+        val bg = itemView.context.color(if (selected) R.color.primary_light else R.color.grey_50)
         itemView.background.setTintExt(bg)
 
         favoriteBt.visible(selected || isFavorite)
         if (selected || isFavorite) {
-            val tint = if (isFavorite) R.color.orange_500 else R.color.primary_light
+            val tint = if (isFavorite) R.color.orange_500 else R.color.white
             itemView.favoriteBt.setColorFilter(itemView.context.color(tint))
         }
     }

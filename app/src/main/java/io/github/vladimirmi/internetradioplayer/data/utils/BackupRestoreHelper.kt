@@ -25,7 +25,7 @@ import javax.inject.Inject
 const val BACKUP_TYPE = "text/xml"
 private const val BACKUP_NAME = "stations_backup.xml"
 private const val BACKUP_ENCODING = "UTF-8"
-private const val BACKUP_VERSION = 1
+private const val BACKUP_VERSION = 2
 
 private const val DATA_TAG = "data"
 private const val STATIONS_TAG = "stations"
@@ -35,7 +35,7 @@ private const val GROUP_TAG = "group"
 
 private const val VERSION_ATTR = "version"
 private const val NAME_ATTR = "name"
-private const val GROUP_ATTR = "group"
+private const val GROUP_NAME_ATTR = "group"
 private const val URI_ATTR = "streamUri"
 private const val URL_ATTR = "url"
 private const val ENCODING_ATTR = "encoding"
@@ -53,8 +53,7 @@ class BackupRestoreHelper
     fun createBackup(): Uri {
         val file = File(context.cacheDir, BACKUP_NAME)
         if (file.exists()) file.clear()
-        //fixme
-//        file.writeText(createXml(interactor.groups))
+        file.writeText(createXml(repository.groups))
 
         return FileProvider.getUriForFile(context, "${BuildConfig.APPLICATION_ID}.fileprovider", file)
     }
@@ -78,11 +77,11 @@ class BackupRestoreHelper
     }
 
     private fun writeStations(serializer: XmlSerializer, groups: List<Group>) {
-        fun writeStation(station: Station, group: String) {
+        fun writeStation(station: Station, groupName: String) {
             serializer.startTag(ns, STATION_TAG)
             with(station) {
                 serializer.attribute(ns, NAME_ATTR, name)
-                serializer.attribute(ns, GROUP_ATTR, group)
+                serializer.attribute(ns, GROUP_NAME_ATTR, groupName)
                 serializer.attribute(ns, URI_ATTR, uri)
                 url?.let { serializer.attribute(ns, URL_ATTR, it) }
                 encoding?.let { serializer.attribute(ns, ENCODING_ATTR, it) }
@@ -115,7 +114,7 @@ class BackupRestoreHelper
     fun restoreBackup(inS: InputStream): Completable {
         val parser = Xml.newPullParser()
         parser.setFeature(XmlPullParser.FEATURE_PROCESS_NAMESPACES, false)
-        val stations = arrayListOf<Station>()
+        val stations = arrayListOf<Pair<Station, String>>()
         val groups = arrayListOf<Group>()
         val parse = Completable.fromCallable {
             inS.use {
@@ -134,12 +133,17 @@ class BackupRestoreHelper
                     Completable.merge(groups.map { repository.addGroup(it) })
                 })
                 .andThen(Completable.defer {
-                    Completable.merge(stations.map { repository.addStation(it) })
+                    Completable.merge(stations.map { stationGroupName ->
+                        val group = groups.find { it.name == stationGroupName.second }
+                                ?: Group.default()
+                        val station = stationGroupName.first.copy(groupId = group.id)
+                        repository.addStation(station)
+                    })
                 })
     }
 
-    private fun parseStations(parser: XmlPullParser): List<Station> {
-        val list = arrayListOf<Station>()
+    private fun parseStations(parser: XmlPullParser): List<Pair<Station, String>> {
+        val list = arrayListOf<Pair<Station, String>>()
         while (!(parser.next() == XmlPullParser.END_TAG && parser.name == STATIONS_TAG)) {
             if (parser.eventType == XmlPullParser.START_TAG && parser.name == STATION_TAG) {
                 val station = Station(
@@ -153,9 +157,8 @@ class BackupRestoreHelper
                         order = parser.getAttributeValue(ns, ORDER_ATTR).toInt(),
                         groupId = Group.DEFAULT_ID
                 )
-
-                //todo parse group name
-                list.add(station)
+                val groupName = parser.getAttributeValue(ns, GROUP_NAME_ATTR)
+                list.add(station to groupName)
             }
         }
         return list

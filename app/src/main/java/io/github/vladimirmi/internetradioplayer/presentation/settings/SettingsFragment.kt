@@ -11,10 +11,12 @@ import io.github.vladimirmi.internetradioplayer.data.utils.BACKUP_TYPE
 import io.github.vladimirmi.internetradioplayer.data.utils.BackupRestoreHelper
 import io.github.vladimirmi.internetradioplayer.data.utils.PREFERENCES_NAME
 import io.github.vladimirmi.internetradioplayer.di.Scopes
+import io.github.vladimirmi.internetradioplayer.domain.interactor.FavoriteListInteractor
 import io.github.vladimirmi.internetradioplayer.extensions.startActivitySafe
 import io.github.vladimirmi.internetradioplayer.extensions.subscribeX
 import io.github.vladimirmi.internetradioplayer.navigation.Router
 import io.github.vladimirmi.internetradioplayer.presentation.base.BackPressListener
+import io.reactivex.android.schedulers.AndroidSchedulers
 
 /**
  * Created by Vladimir Mikhalev 30.09.2018.
@@ -71,11 +73,10 @@ class SettingsFragment : PreferenceFragmentCompat(), BackPressListener {
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         if (requestCode == PICK_BACKUP_REQUEST_CODE && resultCode == Activity.RESULT_OK
                 && data?.data != null) {
-            //fixme
             backupRestoreHelper.restoreBackup(context!!.contentResolver.openInputStream(data.data!!)!!)
-//                    .andThen(Scopes.app.getInstance(StationInteractor::class.java).initStations())
-                    .doOnComplete { router.exit() }
-                    .subscribeX()
+                    .andThen(Scopes.app.getInstance(FavoriteListInteractor::class.java).initFavoriteList())
+                    .observeOn(AndroidSchedulers.mainThread())
+                    .subscribeX(onComplete = { router.exit() })
         }
     }
 

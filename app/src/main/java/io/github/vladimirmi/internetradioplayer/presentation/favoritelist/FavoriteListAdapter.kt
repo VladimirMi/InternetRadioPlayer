@@ -159,7 +159,7 @@ abstract class GroupElementVH(itemView: View) : RecyclerView.ViewHolder(itemView
 class GroupTitleVH(itemView: View) : GroupElementVH(itemView) {
 
     fun bind(group: Group) {
-        itemView.title.text = Group.getViewName(group.name, itemView.context)
+        itemView.titleTv.text = Group.getViewName(group.name, itemView.context)
         setExpanded(group.expanded)
         itemView.removeBt.visible(group.stations.isEmpty())
     }
@@ -189,7 +189,8 @@ class GroupTitleVH(itemView: View) : GroupElementVH(itemView) {
 class GroupItemVH(itemView: View) : GroupElementVH(itemView) {
 
     fun bind(station: Station) {
-        itemView.name.text = station.name
+        itemView.nameTv.text = station.name
+        itemView.specsTv.text = station.specs
     }
 
     override fun changeBackground(stations: FlatStationsList, position: Int) {

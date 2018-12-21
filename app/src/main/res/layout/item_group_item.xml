@@ -13,27 +13,32 @@
     android:foreground="?android:attr/selectableItemBackground"
     >
 
-    <ImageView
-        android:id="@+id/iconIv"
-        android:layout_width="64dp"
-        android:layout_height="64dp"
-        android:contentDescription="@string/desc_station_icon"
-        tools:background="@color/white"
-        tools:src="@drawable/ic_station_1"
-        android:visibility="gone"
-        />
-
     <TextView
-        android:id="@+id/name"
+        android:id="@+id/nameTv"
         style="@style/TextAppearance.AppCompat.Subhead"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_marginLeft="8dp"
+        android:textStyle="bold"
         android:layout_marginRight="8dp"
-        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintBottom_toTopOf="@+id/specsTv"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toEndOf="@+id/iconIv"
+        app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
+        tools:text="Item name"
+        />
+
+    <TextView
+        android:id="@+id/specsTv"
+        style="@style/TextAppearance.AppCompat.Caption"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="8dp"
+        android:layout_marginRight="8dp"
+        app:layout_constraintBottom_toTopOf="@+id/itemDelimiter"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/nameTv"
         tools:text="Item name"
         />
 

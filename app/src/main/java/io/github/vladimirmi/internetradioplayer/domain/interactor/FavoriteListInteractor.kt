@@ -112,14 +112,12 @@ class FavoriteListInteractor
     }
 
     fun nextStation(id: String): Boolean {
-        if (!isFavorite(id)) return false
         val next = favoritesRepository.stations.getNextStationFrom(id)
         next?.let { stationRepository.station = it }
         return next != null
     }
 
     fun previousStation(id: String): Boolean {
-        if (!isFavorite(id)) return false
         val previous = favoritesRepository.stations.getPreviousStationFrom(id)
         previous?.let { stationRepository.station = it }
         return previous != null

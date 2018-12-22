@@ -17,8 +17,8 @@
     <string name="dialog_new_station">Add new station</string>
     <string name="dialog_new_station_description">Paste link to the audio stream or playlist</string>
     <string name="dialog_new_station_hint">Link</string>
-    <string name="dialog_new_group">Add new folder</string>
-    <string name="dialog_new_group_hint">Folder name</string>
+    <string name="dialog_new_group">Create new group</string>
+    <string name="dialog_new_group_hint">Group name</string>
     <string name="dialog_start_playback">Start playback</string>
     <string name="dialog_add_name">Title</string>
     <string name="dialog_ok">OK</string>
@@ -40,17 +40,17 @@
     <string name="desc_favorite">add to favorite</string>
     <string name="desc_expand_collapse">expand/collapse</string>
     <string name="desc_station_icon">station icon</string>
-    <string name="desc_play_pause_button">play/pause button</string>
-    <string name="desc_skip_previous_button">skip previous button</string>
-    <string name="desc_skip_next_button">skip next button</string>
-    <string name="desc_stop_button">stop button</string>
-    <string name="desc_edit_title_button">edit title button</string>
+    <string name="desc_play_pause_button">play/pause</string>
+    <string name="desc_skip_previous_button">skip previous</string>
+    <string name="desc_skip_next_button">skip next</string>
+    <string name="desc_stop_button">stop</string>
+    <string name="desc_edit_title_button">edit title</string>
     <string name="desc_add_remove_favorite">add/remove favorite</string>
-    <string name="desc_create_shortcut_button">create shortcut button</string>
+    <string name="desc_create_shortcut_button">create shortcut</string>
     <string name="desc_directory_logo">directory logo</string>
     <string name="desc_open_drawer">open drawer</string>
     <string name="desc_close_drawer">close drawer</string>
-    <string name="desc_remove_folder">remove empty folder</string>
+    <string name="desc_remove_folder">remove empty group</string>
 
     <string name="tabs_search">Search</string>
     <string name="tabs_stations">Stations</string>

@@ -2,10 +2,8 @@
     <string name="msg_add_success">Станция добавлена</string>
     <string name="msg_add_error">Не удалось добавить станцию</string>
     <string name="msg_net_error">Нет сети</string>
-    <string name="msg_remove_success">Станция удалена</string>
     <string name="msg_add_shortcut_success">Ярлык добавлен на рабочий стол</string>
     <string name="msg_shortcut_remove">Станция была удалена. Удалите ярлык вручную.</string>
-    <string name="msg_name_exists_error">Станция с заданным именем уже есть</string>
     <string name="msg_name_empty_error">Имя станции не может быть пустым</string>
     <string name="msg_text_short">Слишком короткий текст</string>
 
@@ -17,9 +15,10 @@
     <string name="dialog_new_station_description">Вставить ссылку на поток или плейлист</string>
     <string name="dialog_new_station_hint">Ссылка</string>
     <string name="dialog_add_name">Название</string>
-    <string name="dialog_add_name_err">Необходимо задать имя</string>
     <string name="dialog_ok">OK</string>
     <string name="dialog_cancel">Отмена</string>
+    <string name="dialog_new_group">Создать новую группу</string>
+    <string name="dialog_new_group_hint">Название группы</string>
 
     <string name="menu_favorite_on">Избранное</string>
     <string name="menu_favorite_off">Все</string>
@@ -36,24 +35,25 @@
     <string name="desc_favorite">добавить в избранное</string>
     <string name="desc_expand_collapse">развернуть/свернуть</string>
     <string name="desc_station_icon">иконка станции</string>
-    <string name="desc_play_pause_button">кнопка воспроизвести/приостановить</string>
-    <string name="desc_skip_previous_button">кнопка предыдущая станция</string>
-    <string name="desc_skip_next_button">кнопка следующая станция</string>
-
-    <string name="station_list_details">Подробнее</string>
+    <string name="desc_play_pause_button">воспроизвести/приостановить</string>
+    <string name="desc_skip_previous_button">предыдущая станция</string>
+    <string name="desc_skip_next_button">следующая станция</string>
+    <string name="desc_stop_button">кнопка стоп</string>
+    <string name="desc_edit_title_button">редактирования названия</string>
+    <string name="desc_add_remove_favorite">добавить/удалить  из избранного</string>
+    <string name="desc_create_shortcut_button">создать ярлык</string>
+    <string name="desc_directory_logo">логотип директории</string>
+    <string name="desc_open_drawer">открыть меню</string>
+    <string name="desc_close_drawer">закрыть меню</string>
+    <string name="desc_remove_folder">удалить пустую группу</string>
 
     <string name="tabs_search">Поиск</string>
     <string name="tabs_stations">Станции</string>
     <string name="tabs_player">Плеер</string>
+    <string name="tabs_history">История</string>
 
-    <string name="station_uri">Адресс потока:</string>
-    <string name="station_url">Адресс станции:</string>
-    <string name="station_bitrate">Битрейт потока:</string>
-    <string name="station_sample_rate">Частота дискретизации:</string>
     <string name="station_title">Название</string>
     <string name="station_folder">Группа</string>
-    <string name="station_title_information">Информация:</string>
-    <string name="station_genre">Жанры:</string>
 
     <string name="icon_icon">Иконка</string>
     <string name="icon_favicon">Иконка сайта</string>
@@ -63,14 +63,6 @@
     <string name="icon_foreground_color">Цвет иконки</string>
 
     <string name="notification_name">Уведомление Radio Player</string>
-
-    <string name="getstarted_title">Начало работы</string>
-    <string name="help_create">Вы можете создать новую станцию:</string>
-    <string name="help_create_1"> - нажав на ссылку плейлиста в вашем веб браузере.\n
-        К примеру, здесь https://www.internet-radio.com</string>
-    <string name="help_create_2"> - нажав на файл плейлиста в менеджере файлов.\n
-        Поддерживаемые расширения - pls, m3u or ram.</string>
-    <string name="help_create_3"> - добавив прямую ссылку на аудиопоток или плейлист.</string>
 
     <string name="metadata_not_available">Метаданные не доступны</string>
     <string name="dialog_start_playback">Начать воспроизведение</string>
@@ -89,4 +81,9 @@
     <string name="setting_privacy">Политика конфиденциальности</string>
     <string name="setting_backup">Сохранить список станций</string>
     <string name="setting_restore">Восстановить список станций</string>
+
+    <string name="history_placeholder">История пуста</string>
+    <string name="favorite_list_placeholder">Список станций пуст</string>
+    <string name="player_placeholder">Не выбранна станция</string>
+    <string name="search_placeholder">Результат поиска пуст</string>
 </resources>

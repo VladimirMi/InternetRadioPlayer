@@ -45,9 +45,8 @@ inline fun View.waitForMeasure(crossinline block: () -> Unit) {
 inline fun View.waitForLayout(crossinline handler: () -> Boolean) {
     viewTreeObserver.addOnGlobalLayoutListener(object : ViewTreeObserver.OnGlobalLayoutListener {
         override fun onGlobalLayout() {
-            val observer = viewTreeObserver
-            if (observer.isAlive && handler.invoke()) {
-                observer.removeOnGlobalLayoutListener(this)
+            if (viewTreeObserver.isAlive && handler.invoke()) {
+                viewTreeObserver.removeOnGlobalLayoutListener(this)
             }
         }
     })

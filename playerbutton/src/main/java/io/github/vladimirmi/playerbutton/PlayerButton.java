@@ -10,6 +10,7 @@ import android.util.AttributeSet;
 
 import androidx.annotation.ColorInt;
 import androidx.annotation.Nullable;
+import androidx.appcompat.app.AppCompatDelegate;
 import androidx.core.content.ContextCompat;
 import androidx.vectordrawable.graphics.drawable.AnimatedVectorDrawableCompat;
 
@@ -49,6 +50,7 @@ public class PlayerButton extends androidx.appcompat.widget.AppCompatImageButton
     }
 
     private void init() {
+        AppCompatDelegate.setCompatVectorFromResourcesEnabled(true);
         setImageDrawable(getVectorDrawable());
         super.setOnClickListener(v -> {
             if (listener != null) listener.onClick(v);
@@ -110,7 +112,7 @@ public class PlayerButton extends androidx.appcompat.widget.AppCompatImageButton
     }
 
     private Drawable getVectorDrawable() {
-        int resId = isPlaying ? R.drawable.icon_pause : R.drawable.icon_play;
+        int resId = isPlaying ? R.drawable.ic_pause : R.drawable.ic_play;
         Drawable drawable = ContextCompat.getDrawable(getContext(), resId);
         setTint(drawable, isPlaying ? pauseColor : playColor);
         return drawable;

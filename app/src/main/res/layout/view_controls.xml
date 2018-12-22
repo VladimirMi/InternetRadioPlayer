@@ -20,7 +20,7 @@
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toStartOf="@id/stopBt"
         app:layout_constraintStart_toStartOf="parent"
-        android:backgroundTint="@color/grey_50"
+        app:backgroundTint="@color/grey_50"
         />
 
     <ImageButton
@@ -33,7 +33,7 @@
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toStartOf="@id/playPauseBt"
         app:layout_constraintStart_toEndOf="@id/previousBt"
-        android:backgroundTint="@color/stop_button"
+        app:backgroundTint="@color/stop_button"
 
         />
 
@@ -60,7 +60,7 @@
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toEndOf="@id/playPauseBt"
-        android:backgroundTint="@color/grey_50"
+        app:backgroundTint="@color/grey_50"
 
         />
 </androidx.constraintlayout.widget.ConstraintLayout>

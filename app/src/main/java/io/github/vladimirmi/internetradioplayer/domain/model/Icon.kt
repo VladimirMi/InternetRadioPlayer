@@ -28,7 +28,7 @@ data class Icon(val res: Int,
     }
 
     fun getBitmap(context: Context, withBackground: Boolean = false): Bitmap {
-        val iconSize = 256
+        val iconSize = 128
         val bitmap = Bitmap.createBitmap(iconSize, iconSize, Bitmap.Config.ARGB_8888)
         val canvas = Canvas(bitmap)
 

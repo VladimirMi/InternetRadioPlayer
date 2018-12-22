@@ -121,6 +121,7 @@ class MainFragment : BaseFragment<MainPresenter, MainView>(), MainView, SimpleCo
 
     override fun showControls(show: Boolean) {
         simpleControlsContainer.visible(show)
+        shadow.visible(show)
         showControls(controlsVisibility)
     }
 

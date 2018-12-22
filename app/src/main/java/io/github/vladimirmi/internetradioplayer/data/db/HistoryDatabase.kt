@@ -12,7 +12,7 @@ import io.github.vladimirmi.internetradioplayer.data.db.entity.History
  */
 
 @Database(entities = [History::class],
-        version = 1, exportSchema = false)
+        version = 2, exportSchema = false)
 abstract class HistoryDatabase : RoomDatabase() {
 
     abstract fun historyDao(): HistoryDao

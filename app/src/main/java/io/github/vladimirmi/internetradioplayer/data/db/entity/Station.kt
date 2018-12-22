@@ -48,7 +48,7 @@ data class Station(
         encoding?.let { sb.append(it.toUpperCase()) }
         sample?.let { sb.append(", ").append(it).append(" Hz") }
         bitrate?.let { sb.append(", ").append(it).append(" kbps") }
-        specs = sb.toString()
+        specs = sb.trim(' ', ',').toString()
     }
 
     fun isNull() = uri.isEmpty()

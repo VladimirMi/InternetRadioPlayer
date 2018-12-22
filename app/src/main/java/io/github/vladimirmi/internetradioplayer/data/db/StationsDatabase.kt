@@ -39,9 +39,9 @@ private val MIGRATION_1_2 = object : Migration(1, 2) {
                 "ON UPDATE NO ACTION ON DELETE CASCADE )")
 
         database.execSQL("INSERT INTO station_temp SELECT id, name, uri, url, 'mp3', bitrate, sample, `order`, group_id FROM station")
-        database.execSQL("DROP TABLE station_genre_join")
-        database.execSQL("DROP TABLE station")
-        database.execSQL("DROP TABLE genre")
+        database.execSQL("DROP TABLE IF EXISTS station_genre_join")
+        database.execSQL("DROP TABLE IF EXISTS station")
+        database.execSQL("DROP TABLE IF EXISTS genre")
         database.execSQL("ALTER TABLE station_temp RENAME TO station")
         database.execSQL("CREATE INDEX `index_Station_group_id` ON `station` (`group_id`)")
         database.execSQL("CREATE UNIQUE INDEX `index_Station_uri` ON `station` (`uri`)")

@@ -23,6 +23,8 @@
             android:name="io.github.vladimirmi.internetradioplayer.presentation.root.RootActivity"
             android:launchMode="singleInstance"
             android:windowSoftInputMode="adjustPan"
+            android:screenOrientation="portrait"
+            android:configChanges="orientation|keyboardHidden"
             android:theme="@style/AppTheme.Splash">
 
             <intent-filter>

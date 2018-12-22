@@ -41,7 +41,6 @@ class RootActivity : BaseActivity<RootPresenter, RootView>(), RootView {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         setTheme(R.style.AppTheme)
-
         Scopes.rootActivity.apply {
             installModules(RootActivityModule())
             Toothpick.inject(this@RootActivity, this)

@@ -12,7 +12,7 @@ import io.github.vladimirmi.internetradioplayer.data.db.entity.SuggestionEntity
  */
 
 @Database(entities = [SuggestionEntity::class],
-        version = 1, exportSchema = false)
+        version = 2, exportSchema = false)
 abstract class SuggestionsDatabase : RoomDatabase() {
 
     abstract fun suggestionsDao(): SuggestionsDao

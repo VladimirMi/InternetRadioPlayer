@@ -133,12 +133,15 @@ class BackupRestoreHelper
                     Completable.merge(groups.map { repository.addGroup(it) })
                 })
                 .andThen(Completable.defer {
-                    Completable.merge(stations.map { stationGroupName ->
-                        val group = groups.find { it.name == stationGroupName.second }
-                                ?: Group.default()
-                        val station = stationGroupName.first.copy(groupId = group.id)
-                        repository.addStation(station)
-                    })
+                    repository.getAllGroups()
+                            .flatMapCompletable { groups ->
+                                Completable.merge(stations.map { stationGroupName ->
+                                    val group = groups.find { it.name == stationGroupName.second }
+                                            ?: Group.default()
+                                    val station = stationGroupName.first.copy(groupId = group.id)
+                                    repository.addStation(station)
+                                })
+                            }
                 })
     }
 

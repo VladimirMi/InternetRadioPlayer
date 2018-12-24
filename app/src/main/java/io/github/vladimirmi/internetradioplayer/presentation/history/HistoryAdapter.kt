@@ -60,12 +60,10 @@ class HistoryAdapter : RecyclerView.Adapter<StationVH>() {
     }
 
     override fun onBindViewHolder(holder: StationVH, position: Int, payloads: MutableList<Any>) {
-        val station = stations[position]
-        when {
-            payloads.contains(PAYLOAD_SELECTED_CHANGE) -> holder.select(station)
-            payloads.contains(PAYLOAD_BACKGROUND_CHANGE) -> holder.setBackground(position, itemCount)
-            else -> super.onBindViewHolder(holder, position, payloads)
-        }
+        if (payloads.contains(PAYLOAD_SELECTED_CHANGE)) holder.select(stations[position])
+        if (payloads.contains(PAYLOAD_BACKGROUND_CHANGE)) holder.setBackground(position, itemCount)
+        if (payloads.isEmpty()) super.onBindViewHolder(holder, position, payloads)
+
     }
 
     override fun onBindViewHolder(holder: StationVH, position: Int) {

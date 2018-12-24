@@ -102,6 +102,7 @@ class PlayerPresenter
 
     fun editStationTitle(title: String) {
         stationInteractor.editStationTitle(title)
+                .observeOn(AndroidSchedulers.mainThread())
                 .subscribeX(onComplete = { view?.switchTitleEditable() })
                 .addTo(viewSubs)
     }

@@ -24,6 +24,7 @@
     <color name="blue_grey_50">#eceff1</color>
     <color name="blue_grey_100">#cfd8dc</color>
     <color name="blue_grey_200">#b0bec5</color>
+    <color name="blue_grey_400">#78909c</color>
     <color name="blue_grey_500">#607d8b</color>
     <color name="blue_grey_600">#546e7a</color>
     <color name="blue_grey_700">#455a64</color>

@@ -151,7 +151,7 @@ abstract class GroupElementVH(itemView: View) : RecyclerView.ViewHolder(itemView
 class GroupTitleVH(itemView: View) : GroupElementVH(itemView) {
 
     init {
-        bgColorId = R.color.primary
+        bgColorId = R.color.blue_grey_400
     }
 
     fun bind(group: Group) {

@@ -13,9 +13,9 @@ ext {
     }
 }
 
-ext.versionMajor = 1
-ext.versionMinor = 1
-ext.versionPatch = 1
+ext.versionMajor = 2
+ext.versionMinor = 0
+ext.versionPatch = 0
 
 android {
     compileSdkVersion 28

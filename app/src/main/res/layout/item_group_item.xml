@@ -11,6 +11,7 @@
     android:background="@drawable/bg_item_middle"
     android:elevation="2dp"
     android:foreground="?android:attr/selectableItemBackground"
+    tools:ignore="UnusedAttribute"
     >
 
     <TextView

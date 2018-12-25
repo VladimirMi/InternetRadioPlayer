@@ -12,11 +12,13 @@ import io.github.vladimirmi.internetradioplayer.data.utils.BackupRestoreHelper
 import io.github.vladimirmi.internetradioplayer.data.utils.PREFERENCES_NAME
 import io.github.vladimirmi.internetradioplayer.di.Scopes
 import io.github.vladimirmi.internetradioplayer.domain.interactor.FavoriteListInteractor
+import io.github.vladimirmi.internetradioplayer.domain.interactor.StationInteractor
 import io.github.vladimirmi.internetradioplayer.extensions.startActivitySafe
 import io.github.vladimirmi.internetradioplayer.extensions.subscribeX
 import io.github.vladimirmi.internetradioplayer.navigation.Router
 import io.github.vladimirmi.internetradioplayer.presentation.base.BackPressListener
 import io.reactivex.android.schedulers.AndroidSchedulers
+import io.reactivex.rxkotlin.toCompletable
 
 /**
  * Created by Vladimir Mikhalev 30.09.2018.
@@ -38,7 +40,7 @@ class SettingsFragment : PreferenceFragmentCompat(), BackPressListener {
         preferenceManager.sharedPreferencesName = PREFERENCES_NAME
         addPreferencesFromResource(R.xml.settings_screen)
 
-        findPreference("BACKUP_STATIONS").setOnPreferenceClickListener {
+        findPreference<Preference>("BACKUP_STATIONS").setOnPreferenceClickListener {
             val uri = backupRestoreHelper.createBackup()
             val intent = ShareCompat.IntentBuilder.from(activity)
                     .setType(BACKUP_TYPE)
@@ -50,7 +52,7 @@ class SettingsFragment : PreferenceFragmentCompat(), BackPressListener {
             context!!.startActivitySafe(intent)
             true
         }
-        findPreference("RESTORE_STATIONS").setOnPreferenceClickListener {
+        findPreference<Preference>("RESTORE_STATIONS").setOnPreferenceClickListener {
             val intent = Intent(Intent.ACTION_GET_CONTENT)
             intent.type = BACKUP_TYPE
             if (context!!.packageManager.resolveActivity(intent, 0) != null) {
@@ -73,8 +75,14 @@ class SettingsFragment : PreferenceFragmentCompat(), BackPressListener {
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         if (requestCode == PICK_BACKUP_REQUEST_CODE && resultCode == Activity.RESULT_OK
                 && data?.data != null) {
+            //todo to interactor
             backupRestoreHelper.restoreBackup(context!!.contentResolver.openInputStream(data.data!!)!!)
                     .andThen(Scopes.app.getInstance(FavoriteListInteractor::class.java).initFavoriteList())
+                    .andThen({
+                        if (Scopes.app.getInstance(StationInteractor::class.java).station.isNull()) {
+                            Scopes.app.getInstance(FavoriteListInteractor::class.java).nextStation("")
+                        }
+                    }.toCompletable())
                     .observeOn(AndroidSchedulers.mainThread())
                     .subscribeX(onComplete = { router.exit() })
         }

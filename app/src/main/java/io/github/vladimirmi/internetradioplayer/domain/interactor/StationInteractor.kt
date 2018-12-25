@@ -89,7 +89,5 @@ class StationInteractor
     private fun setStation(station: Station): Completable {
         return { this.station = station }.toCompletable()
     }
-
-
 }
 

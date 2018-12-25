@@ -2,34 +2,22 @@
     <string name="app_name" translatable="false">Radio Player</string>
     <string name="full_app_name" translatable="false">Internet Radio Player</string>
 
-    <string name="msg_add_success">Station added</string>
-    <string name="msg_add_error">Could not add station</string>
     <string name="msg_net_error">No connection</string>
     <string name="msg_add_shortcut_success">Station shortcut added</string>
     <string name="msg_shortcut_remove">Station was removed. Remove the shortcut manually</string>
     <string name="msg_name_empty_error">Specify a name</string>
     <string name="msg_text_short">Text too short</string>
 
-    <string name="dialog_remove_message">Are you sure you want to delete the station?</string>
     <string name="dialog_goto_message">Go to the link?</string>
-    <string name="dialog_cancel_edit_message">Cancel changes?</string>
-    <string name="dialog_cancel_create_message">Cancel adding a new station?</string>
     <string name="dialog_new_station">Add new station</string>
     <string name="dialog_new_station_description">Paste link to the audio stream or playlist</string>
     <string name="dialog_new_station_hint">Link</string>
     <string name="dialog_new_group">Create new group</string>
     <string name="dialog_new_group_hint">Group name</string>
     <string name="dialog_start_playback">Start playback</string>
-    <string name="dialog_add_name">Title</string>
     <string name="dialog_ok">OK</string>
     <string name="dialog_cancel">Cancel</string>
 
-    <string name="menu_favorite_on">Favorite</string>
-    <string name="menu_favorite_off">All</string>
-    <string name="menu_more">More</string>
-    <string name="menu_station_edit">Edit</string>
-    <string name="menu_station_delete">Delete</string>
-    <string name="menu_station_save">Save</string>
     <string name="menu_station_shortcut">Add station shortcut</string>
     <string name="menu_add_station">Add station</string>
     <string name="menu_settings">Settings</string>
@@ -37,7 +25,6 @@
 
     <string name="metadata_buffering">Loading…</string>
 
-    <string name="desc_favorite">add to favorite</string>
     <string name="desc_expand_collapse">expand/collapse</string>
     <string name="desc_station_icon">station icon</string>
     <string name="desc_play_pause_button">play/pause</string>
@@ -63,25 +50,14 @@
         <item>@string/tabs_history</item>
     </string-array>
 
-    <string name="directory_uberstations" translatable="false">UberStations</string>
-
     <string name="history_placeholder">History is empty</string>
     <string name="favorite_list_placeholder">Stations list is empty</string>
     <string name="player_placeholder">No station is selected</string>
     <string name="search_placeholder">Search result is empty</string>
     <string name="station_title">Title</string>
-    <string name="station_folder">Folder</string>
-
-    <string name="icon_icon">Icon</string>
-    <string name="icon_favicon">Web site icon</string>
-    <string name="icon_text">Text</string>
-    <string name="icon_add">Add</string>
-    <string name="icon_background_color">Background color</string>
-    <string name="icon_foreground_color">Icon color</string>
 
     <string name="notification_name">Radio Player notification</string>
 
-    <string name="metadata_not_available">Metadata is not available</string>
     <string name="default_folder">Other</string>
 
     <string name="settings_stream">Stream settings</string>

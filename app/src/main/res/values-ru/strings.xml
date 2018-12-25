@@ -1,38 +1,25 @@
 <resources>
-    <string name="msg_add_success">Станция добавлена</string>
-    <string name="msg_add_error">Не удалось добавить станцию</string>
     <string name="msg_net_error">Нет сети</string>
     <string name="msg_add_shortcut_success">Ярлык добавлен на рабочий стол</string>
     <string name="msg_shortcut_remove">Станция была удалена. Удалите ярлык вручную.</string>
     <string name="msg_name_empty_error">Имя станции не может быть пустым</string>
     <string name="msg_text_short">Слишком короткий текст</string>
 
-    <string name="dialog_remove_message">Вы действительно хотите удалить станцию?</string>
     <string name="dialog_goto_message">Перейти по ссылке?</string>
-    <string name="dialog_cancel_edit_message">Отменить изменения?</string>
-    <string name="dialog_cancel_create_message">Отменить добавление новой станции?</string>
     <string name="dialog_new_station">Добавить новую станцию</string>
     <string name="dialog_new_station_description">Вставить ссылку на поток или плейлист</string>
     <string name="dialog_new_station_hint">Ссылка</string>
-    <string name="dialog_add_name">Название</string>
     <string name="dialog_ok">OK</string>
     <string name="dialog_cancel">Отмена</string>
     <string name="dialog_new_group">Создать новую группу</string>
     <string name="dialog_new_group_hint">Название группы</string>
 
-    <string name="menu_favorite_on">Избранное</string>
-    <string name="menu_favorite_off">Все</string>
-    <string name="menu_more">Больше</string>
-    <string name="menu_station_edit">Редактировать</string>
-    <string name="menu_station_delete">Удалить</string>
-    <string name="menu_station_save">Сохранить</string>
     <string name="menu_station_shortcut">Добавить ярлык</string>
     <string name="menu_add_station">Добавить станцию</string>
     <string name="menu_exit">Выход</string>
 
     <string name="metadata_buffering">Загрузка…</string>
 
-    <string name="desc_favorite">добавить в избранное</string>
     <string name="desc_expand_collapse">развернуть/свернуть</string>
     <string name="desc_station_icon">иконка станции</string>
     <string name="desc_play_pause_button">воспроизвести/приостановить</string>
@@ -53,18 +40,9 @@
     <string name="tabs_history">История</string>
 
     <string name="station_title">Название</string>
-    <string name="station_folder">Группа</string>
-
-    <string name="icon_icon">Иконка</string>
-    <string name="icon_favicon">Иконка сайта</string>
-    <string name="icon_text">Текст</string>
-    <string name="icon_add">Добавить</string>
-    <string name="icon_background_color">Цвет заднего фона</string>
-    <string name="icon_foreground_color">Цвет иконки</string>
 
     <string name="notification_name">Уведомление Radio Player</string>
 
-    <string name="metadata_not_available">Метаданные не доступны</string>
     <string name="dialog_start_playback">Начать воспроизведение</string>
     <string name="default_folder">Разное</string>
     <string name="menu_settings">Настройки</string>

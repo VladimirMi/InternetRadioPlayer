@@ -14,6 +14,7 @@ import kotlinx.android.synthetic.main.view_color_picker.view.*
  * Created by Vladimir Mikhalev 16.12.2017.
  */
 
+@Suppress("unused")
 class ColorPicker : FrameLayout, SeekBar.OnSeekBarChangeListener {
 
     constructor(context: Context) : super(context) {

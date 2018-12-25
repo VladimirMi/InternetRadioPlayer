@@ -1,3 +1,5 @@
+@file:Suppress("unused")
+
 package io.github.vladimirmi.internetradioplayer.data.net.model
 
 import com.google.gson.annotations.SerializedName

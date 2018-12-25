@@ -71,13 +71,13 @@ dependencies {
     implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk7:$kotlin_version"
     //Support
     implementation 'androidx.appcompat:appcompat:1.0.2'
-    implementation 'com.google.android.material:material:1.1.0-alpha01'
+    implementation 'com.google.android.material:material:1.1.0-alpha02'
     implementation 'androidx.media:media:1.1.0-alpha01'
     implementation 'androidx.cardview:cardview:1.0.0'
     implementation 'androidx.dynamicanimation:dynamicanimation:1.0.0'
-    implementation 'androidx.preference:preference:1.1.0-alpha01'
+    implementation 'androidx.preference:preference:1.1.0-alpha02'
     implementation 'androidx.legacy:legacy-preference-v14:1.0.0'
-    implementation "androidx.constraintlayout:constraintlayout:2.0.0-alpha2"
+    implementation "androidx.constraintlayout:constraintlayout:2.0.0-alpha3"
     //DB
     implementation 'androidx.room:room-runtime:' + ROOM_VERSION
     kapt 'androidx.room:room-compiler:' + ROOM_VERSION

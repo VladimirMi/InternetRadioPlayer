@@ -16,6 +16,7 @@ import toothpick.registries.MemberInjectorRegistryLocator.setRootRegistry
  * Created by Vladimir Mikhalev 30.09.2017.
  */
 
+@Suppress("unused")
 class App : Application() {
 
     override fun onCreate() {

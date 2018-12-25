@@ -20,6 +20,7 @@ import kotlinx.android.synthetic.main.view_icon.view.*
  * Created by Vladimir Mikhalev 05.09.2018.
  */
 
+@Suppress("unused")
 class CarouselIconPicker : ViewPager {
 
     constructor(context: Context, attrs: AttributeSet?) : super(context, attrs)

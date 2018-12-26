@@ -151,7 +151,7 @@ abstract class GroupElementVH(itemView: View) : RecyclerView.ViewHolder(itemView
 class GroupTitleVH(itemView: View) : GroupElementVH(itemView) {
 
     init {
-        bgColorId = R.color.blue_grey_400
+        bgColorId = R.color.secondary_lighter
     }
 
     fun bind(group: Group) {
@@ -193,7 +193,7 @@ class GroupItemVH(itemView: View) : GroupElementVH(itemView) {
 
     override fun select(selected: Boolean) {
         bgColorId = when {
-            selected -> R.color.primary_light
+            selected -> R.color.accent_light
             else -> R.color.grey_50
         }
         setupBgColor()

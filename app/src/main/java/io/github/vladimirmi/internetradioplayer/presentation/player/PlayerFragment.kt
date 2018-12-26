@@ -183,6 +183,7 @@ class PlayerFragment : BaseFragment<PlayerPresenter, PlayerView>(), PlayerView, 
     }
 
     override fun setMetadata(metadata: MediaMetadataCompat?) {
+        if (metadataCv == null) return
         val visible = metadata != null
         val scale = if (visible) 1f else 0f
 

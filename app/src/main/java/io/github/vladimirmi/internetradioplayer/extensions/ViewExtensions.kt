@@ -1,18 +1,29 @@
 package io.github.vladimirmi.internetradioplayer.extensions
 
-import android.support.animation.DynamicAnimation
-import android.support.animation.SpringAnimation
-import android.support.animation.SpringForce
+import android.os.Handler
+import android.os.Looper
 import android.text.Editable
 import android.text.TextWatcher
 import android.view.View
 import android.view.ViewTreeObserver
 import android.widget.TextView
+import androidx.dynamicanimation.animation.DynamicAnimation
+import androidx.dynamicanimation.animation.SpringAnimation
+import androidx.dynamicanimation.animation.SpringForce
 
 
 /**
  * Created by Vladimir Mikhalev 17.11.2017.
  */
+
+fun runOnUiThread(action: () -> Unit) {
+    val mainLooper = Looper.getMainLooper()
+    if (Thread.currentThread().id != mainLooper.thread.id) {
+        Handler(mainLooper).post(action)
+    } else {
+        action.invoke()
+    }
+}
 
 inline fun View.waitForMeasure(crossinline block: () -> Unit) {
     if (width > 0 && height > 0) {
@@ -27,6 +38,16 @@ inline fun View.waitForMeasure(crossinline block: () -> Unit) {
             }
             block()
             return true
+        }
+    })
+}
+
+inline fun View.waitForLayout(crossinline handler: () -> Boolean) {
+    viewTreeObserver.addOnGlobalLayoutListener(object : ViewTreeObserver.OnGlobalLayoutListener {
+        override fun onGlobalLayout() {
+            if (viewTreeObserver.isAlive && handler.invoke()) {
+                viewTreeObserver.removeOnGlobalLayoutListener(this)
+            }
         }
     })
 }

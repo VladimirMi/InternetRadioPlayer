@@ -1,6 +1,5 @@
 package io.github.vladimirmi.internetradioplayer.di.module
 
-import io.github.vladimirmi.internetradioplayer.data.repository.MediaController
 import io.github.vladimirmi.internetradioplayer.navigation.Router
 import io.github.vladimirmi.internetradioplayer.presentation.root.RootPresenter
 import ru.terrakok.cicerone.Cicerone
@@ -17,9 +16,6 @@ class RootActivityModule : Module() {
         bind(Router::class.java).toInstance(cicerone.router)
 
         bind(NavigatorHolder::class.java).toInstance(cicerone.navigatorHolder)
-
-        bind(MediaController::class.java).singletonInScope()
-
         bind(RootPresenter::class.java).singletonInScope()
     }
 }

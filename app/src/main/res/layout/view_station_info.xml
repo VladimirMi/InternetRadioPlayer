@@ -1,76 +1,107 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout
+<androidx.constraintlayout.widget.ConstraintLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:orientation="vertical"
+    android:animateLayoutChanges="true"
+    tools:showIn="@layout/fragment_player"
     >
 
-    <android.support.v7.widget.CardView
-        style="@style/CustomCard"
-        android:layout_margin="8dp"
-        >
-
-        <GridLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:columnCount="2"
-            android:rowCount="2"
-            >
-
-            <TextView
-                android:id="@+id/titleLabelTv"
-                style="@style/CustomText.Label"
-                android:labelFor="@id/titleEt"
-                android:text="@string/station_title"
-                />
-
-            <EditText
-                android:id="@+id/titleEt"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_gravity="fill_horizontal"
-                android:fontFamily="sans-serif-condensed"
-                android:hint="@string/station_title"
-                android:inputType="textNoSuggestions"
-                android:textAppearance="@style/TextAppearance.AppCompat.Title"
-                tools:text="Title - Sunt vitaes reperire emeritis, neuter fluctuies."
-                />
-
-
-            <TextView
-                android:id="@+id/groupLabelTv"
-                style="@style/CustomText.Label"
-                android:layout_width="wrap_content"
-                android:labelFor="@id/groupEt"
-                android:text="@string/station_folder"
-                />
-
-            <EditText
-                android:id="@+id/groupEt"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_gravity="fill_horizontal"
-                android:fontFamily="sans-serif-condensed"
-                android:hint="@string/station_folder"
-                android:imeOptions="actionDone"
-                android:inputType="textNoSuggestions"
-                android:textAppearance="@style/TextAppearance.AppCompat.Subhead"
-                tools:text="Rock"
-                />
-
-        </GridLayout>
-
-    </android.support.v7.widget.CardView>
-
-
-    <include
-        android:id="@+id/detail_info"
-        layout="@layout/view_station_detail_info"
-        android:layout_width="match_parent"
+    <com.google.android.material.textfield.TextInputEditText
+        android:id="@+id/titleEt"
+        android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:layout_margin="8dp"
+        android:layout_marginLeft="8dp"
+        android:layout_marginTop="8dp"
+        android:layout_marginRight="8dp"
+        android:hint="@string/station_title"
+        android:imeOptions="actionDone"
+        android:inputType="textNoSuggestions"
+        android:textAppearance="@style/TextAppearance.AppCompat.Title"
+        app:layout_constraintEnd_toStartOf="@+id/editTitleBt"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
         />
 
-</LinearLayout>
+    <ImageButton
+        android:id="@+id/editTitleBt"
+        android:layout_width="40dp"
+        android:layout_height="40dp"
+        android:foreground="?actionBarItemBackground"
+        app:layout_constraintBottom_toBottomOf="@+id/titleEt"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="@+id/titleEt"
+        android:background="@null"
+        android:src="@drawable/ic_edit"
+        android:contentDescription="@string/desc_edit_title_button"
+        />
+
+    <TextView
+        android:id="@+id/specsTv"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="8dp"
+        android:layout_marginLeft="8dp"
+        android:layout_marginEnd="8dp"
+        android:layout_marginRight="8dp"
+        android:textAppearance="@style/TextAppearance.AppCompat.Body1"
+        android:padding="4dp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/titleEt"
+        />
+
+    <FrameLayout
+        android:id="@+id/groupSpinnerWrapper"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_margin="4dp"
+        android:background="@drawable/bg_frame"
+        android:paddingTop="4dp"
+        android:paddingBottom="4dp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/specsTv"
+        >
+
+        <Spinner
+            android:id="@+id/groupSpinner"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:spinnerMode="dropdown"
+            />
+    </FrameLayout>
+
+    <ImageButton
+        android:id="@+id/favoriteBt"
+        android:layout_width="40dp"
+        android:layout_height="40dp"
+        android:layout_marginTop="8dp"
+        android:background="@drawable/ic_star"
+        android:contentDescription="@string/desc_add_remove_favorite"
+        android:foreground="?actionBarItemBackground"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/groupSpinnerWrapper"
+        />
+
+    <ImageButton
+        android:id="@+id/addShortcutBt"
+        android:layout_width="40dp"
+        android:layout_height="40dp"
+        android:layout_marginStart="8dp"
+        android:layout_marginLeft="8dp"
+        android:layout_marginTop="8dp"
+        android:background="@null"
+        android:contentDescription="@string/desc_create_shortcut_button"
+        android:foreground="?actionBarItemBackground"
+        android:padding="4dp"
+        android:scaleType="fitCenter"
+        android:src="@drawable/ic_label_plus"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/groupSpinnerWrapper"
+        />
+
+</androidx.constraintlayout.widget.ConstraintLayout>

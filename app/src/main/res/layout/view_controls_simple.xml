@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="horizontal"
+    android:background="@color/primary"
+    >
+
+    <TextView
+        android:id="@+id/sMetadataTv"
+        android:layout_width="0dp"
+        android:layout_height="48dp"
+        android:layout_weight="1"
+        android:ellipsize="marquee"
+        android:gravity="center_vertical"
+        android:marqueeRepeatLimit="marquee_forever"
+        android:paddingStart="16dp"
+        android:paddingLeft="16dp"
+        android:singleLine="true"
+        android:textAppearance="@style/TextAppearance.AppCompat.Subhead.Inverse"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toStartOf="@id/playPauseBt"
+        app:layout_constraintStart_toStartOf="parent"
+        tools:ignore="RtlSymmetry"
+        />
+
+    <FrameLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        >
+
+        <ProgressBar
+            android:id="@+id/sBufferingPb"
+            android:layout_width="48dp"
+            android:layout_height="48dp"
+            app:tint="@color/pause_button"
+            android:indeterminate="true"
+            />
+
+        <io.github.vladimirmi.playerbutton.PlayerButton
+            android:id="@+id/sPlayPauseBt"
+            android:layout_width="48dp"
+            android:layout_height="48dp"
+            android:foreground="?actionBarItemBackground"
+            app:pb_pauseColor="@color/pause_button"
+            app:pb_playColor="@color/play_button"
+            />
+    </FrameLayout>
+
+</LinearLayout>

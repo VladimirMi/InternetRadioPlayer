@@ -5,12 +5,12 @@ import android.content.Context
 import android.content.Intent
 import android.content.pm.ShortcutManager
 import android.os.Build
-import android.support.v4.content.pm.ShortcutInfoCompat
-import android.support.v4.content.pm.ShortcutManagerCompat
-import android.support.v4.graphics.drawable.IconCompat
+import androidx.core.content.pm.ShortcutInfoCompat
+import androidx.core.content.pm.ShortcutManagerCompat
+import androidx.core.graphics.drawable.IconCompat
 import io.github.vladimirmi.internetradioplayer.R
 import io.github.vladimirmi.internetradioplayer.data.db.entity.Station
-import io.github.vladimirmi.internetradioplayer.extensions.getBitmap
+import io.github.vladimirmi.internetradioplayer.domain.model.Icon
 import io.github.vladimirmi.internetradioplayer.extensions.toUri
 import io.github.vladimirmi.internetradioplayer.presentation.root.RootActivity
 import javax.inject.Inject
@@ -24,13 +24,14 @@ class ShortcutHelper
 
     fun pinShortcut(station: Station, startPlay: Boolean): Boolean {
         val label = if (station.name.isBlank()) "Default name" else station.name
+        val icon = Icon.randomIcon(label.hashCode().toLong())
 
         val info = ShortcutInfoCompat.Builder(context, station.id)
                 .setShortLabel(label)
                 .setLongLabel(label)
-                .setIcon(IconCompat.createWithBitmap(station.icon.getBitmap(context, withBackground = true)))
+                .setIcon(IconCompat.createWithBitmap(icon.getBitmap(context, withBackground = true)))
                 .setIntent(createShortcutIntent(station, startPlay))
-                .setDisabledMessage(context.getString(R.string.toast_shortcut_remove))
+                .setDisabledMessage(context.getString(R.string.msg_shortcut_remove))
                 .build()
 
         return ShortcutManagerCompat.requestPinShortcut(context, info, null)
@@ -42,7 +43,7 @@ class ShortcutHelper
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
             val shortcutManager = context.getSystemService(ShortcutManager::class.java)
             shortcutManager.disableShortcuts(listOf(station.id),
-                    context.getString(R.string.toast_shortcut_remove))
+                    context.getString(R.string.msg_shortcut_remove))
         } else {
             //todo valid startPlay
             val removeIntent = Intent().apply {

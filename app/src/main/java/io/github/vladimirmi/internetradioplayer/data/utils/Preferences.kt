@@ -2,6 +2,7 @@ package io.github.vladimirmi.internetradioplayer.data.utils
 
 import android.content.Context
 import android.content.SharedPreferences
+import io.github.vladimirmi.internetradioplayer.R
 import io.github.vladimirmi.internetradioplayer.extensions.Preference
 import javax.inject.Inject
 
@@ -10,9 +11,9 @@ import javax.inject.Inject
  */
 
 const val PREFERENCES_NAME = "default"
-const val CURRENT_STATION_ID_KEY = "CURRENT_STATION_ID"
 const val INITIAL_BUFFER_LENGTH_KEY = "INITIAL_BUFFER_LENGTH"
 const val BUFFER_LENGTH_KEY = "BUFFER_LENGTH"
+const val MAIN_PAGE_ID_KEY = "MAIN_PAGE_ID_KEY"
 
 class Preferences
 @Inject constructor(context: Context) {
@@ -20,8 +21,8 @@ class Preferences
     val sharedPreferences: SharedPreferences by lazy {
         context.getSharedPreferences(PREFERENCES_NAME, Context.MODE_PRIVATE)
     }
-    var currentStationId: String by Preference(sharedPreferences, CURRENT_STATION_ID_KEY, "")
     var initialBufferLength: Int by Preference(sharedPreferences, INITIAL_BUFFER_LENGTH_KEY, 3)
     var bufferLength: Int by Preference(sharedPreferences, BUFFER_LENGTH_KEY, 6)
+    var mainPageId: Int by Preference(sharedPreferences, MAIN_PAGE_ID_KEY, R.id.nav_search)
 
 }

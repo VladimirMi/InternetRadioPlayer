@@ -1,11 +1,10 @@
 package io.github.vladimirmi.internetradioplayer.presentation.base
 
-import android.app.AlertDialog
 import android.app.Dialog
 import android.os.Bundle
-import android.support.v4.app.DialogFragment
 import android.view.View
-import android.view.ViewGroup
+import androidx.appcompat.app.AlertDialog
+import androidx.fragment.app.DialogFragment
 import io.github.vladimirmi.internetradioplayer.R
 
 /**
@@ -15,22 +14,18 @@ import io.github.vladimirmi.internetradioplayer.R
 
 abstract class BaseDialogFragment : DialogFragment() {
 
-    protected val dialogView: View? by lazy {
-        val view = getCustomDialogView()
-        if (view != null && view.parent != null) {
-            (view.parent as ViewGroup).removeView(view)
-        }
-        view
-    }
+    protected var dialogView: View? = null
 
     override fun onCreateDialog(savedInstanceState: Bundle?): Dialog {
-        return AlertDialog.Builder(context)
+        dialogView = getCustomDialogView()
+        return AlertDialog.Builder(requireContext())
                 .setView(dialogView)
                 .setTitle(getTitle())
                 .setPositiveButton(R.string.dialog_ok) { _, _ -> onPositive() }
                 .setNegativeButton(R.string.dialog_cancel) { _, _ -> onNegative() }
                 .create()
     }
+
 
     protected open fun getCustomDialogView(): View? = null
 

@@ -2,14 +2,12 @@ package io.github.vladimirmi.internetradioplayer.presentation.root
 
 import android.annotation.SuppressLint
 import android.net.Uri
-import com.arellomobile.mvp.InjectViewState
 import io.github.vladimirmi.internetradioplayer.R
-import io.github.vladimirmi.internetradioplayer.domain.interactor.PlayerControlsInteractor
-import io.github.vladimirmi.internetradioplayer.domain.interactor.StationInteractor
-import io.github.vladimirmi.internetradioplayer.extensions.ioToMain
-import io.github.vladimirmi.internetradioplayer.extensions.subscribeByEx
+import io.github.vladimirmi.internetradioplayer.domain.interactor.*
+import io.github.vladimirmi.internetradioplayer.extensions.subscribeX
 import io.github.vladimirmi.internetradioplayer.navigation.Router
 import io.github.vladimirmi.internetradioplayer.presentation.base.BasePresenter
+import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.rxkotlin.addTo
 import javax.inject.Inject
 
@@ -17,89 +15,70 @@ import javax.inject.Inject
  * Created by Vladimir Mikhalev 01.10.2017.
  */
 
-@InjectViewState
 class RootPresenter
 @Inject constructor(private val router: Router,
-                    private val controlsInteractor: PlayerControlsInteractor,
-                    private val stationInteractor: StationInteractor)
+                    private val playerInteractor: PlayerInteractor,
+                    private val stationInteractor: StationInteractor,
+                    private val favoriteListInteractor: FavoriteListInteractor,
+                    private val mainInteractor: MainInteractor,
+                    private val historyInteractor: HistoryInteractor)
     : BasePresenter<RootView>() {
 
-    private var firstAttach = true
+    override fun onFirstAttach(view: RootView) {
+        playerInteractor.connect()
+        val pageId = mainInteractor.getMainPageId()
+        router.newRootScreen(pageId)
 
-    override fun onFirstViewAttach() {
-        controlsInteractor.connect()
-
-        stationInteractor.initStations()
-                .ioToMain()
-                .subscribeByEx(onComplete = {
-                    setupRootScreen()
-                    viewState.checkIntent()
-                })
-                .addTo(subs)
-
-        stationInteractor.currentStationObs
-                .map { !it.isNull() }
-                .distinctUntilChanged()
-                .ioToMain()
-                .subscribe(viewState::showControls)
-                .addTo(subs)
-        firstAttach = false
+        favoriteListInteractor.initFavoriteList()
+                .andThen(historyInteractor.selectRecentStation())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribeX { view.checkIntent() }
+                .addTo(dataSubs)
     }
 
-    override fun attachView(view: RootView?) {
-        if (!firstAttach) viewState.checkIntent()
-        super.attachView(view)
+    override fun onAttach(view: RootView) {
+        if (!isFirstAttach) view.checkIntent()
     }
 
     override fun onDestroy() {
-        controlsInteractor.disconnect()
+        playerInteractor.disconnect()
     }
 
     @SuppressLint("CheckResult")
-    fun addStation(uri: Uri, startPlay: Boolean) {
-        val station = stationInteractor.getStation { it.uri == uri.toString() }
-        if (station != null) {
-            stationInteractor.currentStation = station
-            router.showStationReplace(station.id)
-            if (startPlay) controlsInteractor.play()
-            return
-        }
-
+    fun addOrShowStation(uri: Uri, startPlay: Boolean) {
         stationInteractor.createStation(uri)
-                .ioToMain()
-                .doOnSubscribe { viewState.showLoadingIndicator(true) }
-                .doFinally { viewState.showLoadingIndicator(false) }
-                .subscribeByEx(onSuccess = {
-                    router.showStationSlide(stationInteractor.currentStation.id)
-                }).addTo(subs)
+                .doOnSuccess { if (startPlay) playerInteractor.play() }
+                .observeOn(AndroidSchedulers.mainThread())
+                .doOnSubscribe { view?.showLoadingIndicator(true) }
+                .doFinally { view?.showLoadingIndicator(false) }
+                .subscribeX(onSuccess = {
+                    navigateTo(R.id.nav_player)
+                }).addTo(viewSubs)
     }
 
     @SuppressLint("CheckResult")
     fun showStation(id: String, startPlay: Boolean) {
-        val station = stationInteractor.getStation { it.id == id }
+        //todo legacy
+        val station = favoriteListInteractor.getStation(id)
         if (station != null) {
-            stationInteractor.currentStation = station
-            router.showStationReplace(station.id)
-            if (startPlay) controlsInteractor.play()
+            stationInteractor.station = station
+            navigateTo(R.id.nav_player)
+            if (startPlay) playerInteractor.play()
         } else {
-            viewState.showToast(R.string.toast_shortcut_remove)
+            view?.showSnackbar(R.string.msg_shortcut_remove)
         }
     }
 
-    fun openSettings() {
-        router.navigateTo(Router.SETTINGS_SCREEN)
+    fun navigateTo(navId: Int) {
+        when (navId) {
+            R.id.nav_exit -> exitApp()
+            R.id.nav_settings -> router.navigateTo(navId)
+            else -> router.replaceScreen(navId)
+        }
     }
 
-    fun exitApp() {
-        controlsInteractor.stop()
+    private fun exitApp() {
+        playerInteractor.stop()
         router.finishChain()
-    }
-
-    private fun setupRootScreen() {
-        if (stationInteractor.haveStations()) {
-            router.newRootScreen(Router.STATIONS_LIST_SCREEN)
-        } else {
-            router.newRootScreen(Router.GET_STARTED_SCREEN)
-        }
     }
 }

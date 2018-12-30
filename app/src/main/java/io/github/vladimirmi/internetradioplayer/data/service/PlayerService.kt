@@ -4,13 +4,15 @@ import android.app.Service
 import android.content.Intent
 import android.os.Bundle
 import android.support.v4.media.MediaBrowserCompat
-import android.support.v4.media.MediaBrowserServiceCompat
 import android.support.v4.media.session.MediaSessionCompat
 import android.support.v4.media.session.PlaybackStateCompat
+import androidx.media.MediaBrowserServiceCompat
 import io.github.vladimirmi.internetradioplayer.R
 import io.github.vladimirmi.internetradioplayer.data.db.entity.Station
 import io.github.vladimirmi.internetradioplayer.data.utils.ExponentialBackoff
 import io.github.vladimirmi.internetradioplayer.di.Scopes
+import io.github.vladimirmi.internetradioplayer.domain.interactor.FavoriteListInteractor
+import io.github.vladimirmi.internetradioplayer.domain.interactor.HistoryInteractor
 import io.github.vladimirmi.internetradioplayer.domain.interactor.StationInteractor
 import io.github.vladimirmi.internetradioplayer.extensions.errorHandler
 import io.github.vladimirmi.internetradioplayer.extensions.toUri
@@ -21,6 +23,7 @@ import java.net.ConnectException
 import java.util.*
 import javax.inject.Inject
 import kotlin.concurrent.schedule
+
 
 /**
  * Developer Vladimir Mikhalev, 09.05.2017.
@@ -35,6 +38,8 @@ class PlayerService : MediaBrowserServiceCompat(), SessionCallback.Interface {
     }
 
     @Inject lateinit var stationInteractor: StationInteractor
+    @Inject lateinit var favoriteListInteractor: FavoriteListInteractor
+    @Inject lateinit var historyInteractor: HistoryInteractor
 
     private val subs = CompositeDisposable()
     private lateinit var session: MediaSessionCompat
@@ -60,7 +65,7 @@ class PlayerService : MediaBrowserServiceCompat(), SessionCallback.Interface {
         playback = Playback(this, playerCallback)
         notification = MediaNotification(this, session)
 
-        stationInteractor.currentStationObs
+        stationInteractor.stationObs
                 .subscribe { handleCurrentStation(it) }
                 .addTo(subs)
     }
@@ -116,6 +121,7 @@ class PlayerService : MediaBrowserServiceCompat(), SessionCallback.Interface {
             mediaMetadata = mediaMetadata.setArtistTitle("")
             currentStationId = station.id
         }
+        if (isPlaying) historyInteractor.createHistory(station)
         if (isPlaying && currentStationId != playingStationId) playCurrent()
         mediaMetadata = mediaMetadata.setStation(station, this)
         session.setMetadata(mediaMetadata)
@@ -134,7 +140,7 @@ class PlayerService : MediaBrowserServiceCompat(), SessionCallback.Interface {
 
 
     private fun playCurrent() {
-        val station = stationInteractor.currentStation
+        val station = stationInteractor.station
         playingStationId = station.id
         playback.play(station.uri.toUri())
     }
@@ -145,7 +151,10 @@ class PlayerService : MediaBrowserServiceCompat(), SessionCallback.Interface {
         stopTask?.cancel()
         startService()
         if (isPaused && currentStationId == playingStationId) playback.resume()
-        else playCurrent()
+        else {
+            historyInteractor.createHistory(stationInteractor.station)
+            playCurrent()
+        }
     }
 
     override fun onPauseCommand(stopDelay: Long) { // default is 1 min
@@ -159,15 +168,12 @@ class PlayerService : MediaBrowserServiceCompat(), SessionCallback.Interface {
     }
 
     override fun onSkipToPreviousCommand() {
-        //todo refactor (remove player mode)
-        if (stationInteractor.createMode || stationInteractor.previousWhenEdit != null) return
-        val changed = stationInteractor.previousStation()
+        val changed = favoriteListInteractor.previousStation(stationInteractor.station.id)
         if (changed) session.sendSessionEvent(EVENT_SESSION_PREVIOUS, null)
     }
 
     override fun onSkipToNextCommand() {
-        if (stationInteractor.createMode || stationInteractor.previousWhenEdit != null) return
-        val changed = stationInteractor.nextStation()
+        val changed = favoriteListInteractor.nextStation(stationInteractor.station.id)
         if (changed) session.sendSessionEvent(EVENT_SESSION_NEXT, null)
     }
 
@@ -188,7 +194,8 @@ class PlayerService : MediaBrowserServiceCompat(), SessionCallback.Interface {
         }
 
         override fun onPlayerError(error: Exception) {
-            onStopCommand()
+            //todo refactor this
+            playback.stop()
             if (error is ConnectException) {
                 val scheduled = exponentialBackoff.schedule { onPlayCommand() }
                 if (!scheduled) errorHandler.invoke(error)

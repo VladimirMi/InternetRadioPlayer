@@ -8,7 +8,6 @@ import io.github.vladimirmi.internetradioplayer.domain.interactor.StationInterac
 import io.github.vladimirmi.internetradioplayer.extensions.subscribeX
 import io.github.vladimirmi.internetradioplayer.presentation.base.BasePresenter
 import io.reactivex.Observable
-import io.reactivex.Single
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.disposables.Disposable
 import io.reactivex.rxkotlin.addTo
@@ -97,7 +96,6 @@ class SearchPresenter
                     view?.showLoading(false)
                     view?.showPlaceholder(it.isEmpty())
                 })
-
     }
 
     fun changeQuery(newText: String) {
@@ -111,10 +109,8 @@ class SearchPresenter
 
         if (newText.isBlank()) return
 
-        suggestionSub = Single.just(newText)
-                .delaySubscription(500, TimeUnit.MILLISECONDS)
-                .flatMap(searchInteractor::queryRegularSuggestions)
+        suggestionSub = searchInteractor.queryRegularSuggestions(newText)
                 .observeOn(AndroidSchedulers.mainThread())
-                .subscribeX(onSuccess = { view?.addRegularSuggestions(it) })
+                .subscribeX(onNext = { view?.addRegularSuggestions(it) })
     }
 }

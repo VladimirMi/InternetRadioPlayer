@@ -21,6 +21,7 @@ abstract class SuggestionsDatabase : RoomDatabase() {
         fun newInstance(context: Context): SuggestionsDatabase {
             return Room.databaseBuilder(context.applicationContext,
                     SuggestionsDatabase::class.java, "suggestions.db")
+                    .fallbackToDestructiveMigrationFrom(1)
                     .build()
         }
     }

@@ -19,17 +19,22 @@ class SearchSuggestionsAdapter(private val callback: SearchSuggestionsAdapter.Ca
     private var suggestions: List<Suggestion> = emptyList()
 
     fun addRecentSuggestions(list: List<Suggestion>) {
-        getDiffResult(list).dispatchUpdatesTo(this)
-        suggestions = list
-    }
-
-    fun addRegularSuggestions(list: List<Suggestion>) {
-        val newList = ArrayList(suggestions)
+        val regular = suggestions.filter { it is Suggestion.Regular }
+        val newList = ArrayList<Suggestion>(list.size + regular.size)
         newList.addAll(list)
+        newList.addAll(regular)
         getDiffResult(newList).dispatchUpdatesTo(this)
         suggestions = newList
     }
 
+    fun addRegularSuggestions(list: List<Suggestion>) {
+        val recent = suggestions.filter { it is Suggestion.Recent }
+        val newList = ArrayList<Suggestion>(recent.size + list.size)
+        newList.addAll(recent)
+        newList.addAll(list)
+        getDiffResult(newList).dispatchUpdatesTo(this)
+        suggestions = newList
+    }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): RecyclerView.ViewHolder {
         val inflater = LayoutInflater.from(parent.context)

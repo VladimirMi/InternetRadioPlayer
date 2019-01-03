@@ -113,11 +113,13 @@ class SearchFragment : BaseFragment<SearchPresenter, SearchView>(), SearchView,
     override fun addRecentSuggestions(list: List<Suggestion>) {
         suggestionsAdapter.addRecentSuggestions(list)
         adjustSuggestionsRecyclerHeight()
+        suggestionsRv.scrollToPosition(0)
     }
 
     override fun addRegularSuggestions(list: List<Suggestion>) {
         suggestionsAdapter.addRegularSuggestions(list)
         adjustSuggestionsRecyclerHeight()
+        suggestionsRv.scrollToPosition(0)
     }
 
     override fun setStations(stations: List<StationSearchRes>) {

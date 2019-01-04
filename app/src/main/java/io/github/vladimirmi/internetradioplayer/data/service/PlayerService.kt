@@ -117,13 +117,10 @@ class PlayerService : MediaBrowserServiceCompat(), SessionCallback.Interface {
     }
 
     private fun handleCurrentStation(station: Station) {
-        if (currentStationId != station.id) {
-            mediaMetadata = mediaMetadata.setArtistTitle("")
-            currentStationId = station.id
-        }
+        currentStationId = station.id
         if (isPlaying) historyInteractor.createHistory(station)
         if (isPlaying && currentStationId != playingStationId) playCurrent()
-        mediaMetadata = mediaMetadata.setStation(station, this)
+        mediaMetadata = EMPTY_METADATA.setStation(station, this)
         session.setMetadata(mediaMetadata)
         notification.update()
     }
@@ -187,7 +184,7 @@ class PlayerService : MediaBrowserServiceCompat(), SessionCallback.Interface {
                     .build()
             session.setPlaybackState(playbackState)
             if (state == PlaybackStateCompat.STATE_STOPPED) {
-                mediaMetadata = mediaMetadata.setArtistTitle("")
+                mediaMetadata = mediaMetadata.clear()
                 session.setMetadata(mediaMetadata)
             }
             notification.update()

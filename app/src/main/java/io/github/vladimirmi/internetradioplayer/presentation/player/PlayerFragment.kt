@@ -20,6 +20,7 @@ import io.github.vladimirmi.internetradioplayer.R
 import io.github.vladimirmi.internetradioplayer.data.db.entity.Group
 import io.github.vladimirmi.internetradioplayer.data.db.entity.Station
 import io.github.vladimirmi.internetradioplayer.data.service.artist
+import io.github.vladimirmi.internetradioplayer.data.service.isEmpty
 import io.github.vladimirmi.internetradioplayer.data.service.title
 import io.github.vladimirmi.internetradioplayer.di.Scopes
 import io.github.vladimirmi.internetradioplayer.extensions.*
@@ -182,9 +183,9 @@ class PlayerFragment : BaseFragment<PlayerPresenter, PlayerView>(), PlayerView, 
         previousBt.bounceXAnimation(-200f).start()
     }
 
-    override fun setMetadata(metadata: MediaMetadataCompat?) {
+    override fun setMetadata(metadata: MediaMetadataCompat) {
         if (metadataCv == null) return
-        val visible = metadata != null
+        val visible = !metadata.isEmpty()
         val scale = if (visible) 1f else 0f
 
         metadataCv.animate()
@@ -194,9 +195,9 @@ class PlayerFragment : BaseFragment<PlayerPresenter, PlayerView>(), PlayerView, 
                 .start()
         if (visible) metadataCv.visible(true)
         else Handler().postDelayed({ metadataCv.visible(false) }, 300)
-        metadata?.apply {
-            metaTitleTv.text = artist
-            metaSubtitleTv.text = title
+        with(metadata) {
+            metaTitleTv.setTextOrHide(artist)
+            metaSubtitleTv.setTextOrHide(title)
         }
     }
 

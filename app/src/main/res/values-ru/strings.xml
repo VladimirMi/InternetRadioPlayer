@@ -19,6 +19,7 @@
     <string name="menu_exit">Выход</string>
 
     <string name="metadata_buffering">Загрузка…</string>
+    <string name="metadata_not_available">Метаданные не доступны</string>
 
     <string name="desc_expand_collapse">развернуть/свернуть</string>
     <string name="desc_station_icon">иконка станции</string>

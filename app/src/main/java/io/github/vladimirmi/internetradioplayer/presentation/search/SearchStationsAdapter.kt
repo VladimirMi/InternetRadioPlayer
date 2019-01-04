@@ -1,6 +1,7 @@
 package io.github.vladimirmi.internetradioplayer.presentation.search
 
 import android.annotation.SuppressLint
+import android.graphics.drawable.GradientDrawable
 import android.os.Build
 import android.view.LayoutInflater
 import android.view.View
@@ -12,7 +13,6 @@ import io.github.vladimirmi.internetradioplayer.data.db.entity.Station
 import io.github.vladimirmi.internetradioplayer.data.net.model.StationSearchRes
 import io.github.vladimirmi.internetradioplayer.domain.model.FlatStationsList
 import io.github.vladimirmi.internetradioplayer.extensions.color
-import io.github.vladimirmi.internetradioplayer.extensions.setTintExt
 import io.github.vladimirmi.internetradioplayer.extensions.visible
 import io.github.vladimirmi.internetradioplayer.presentation.favoritelist.defaultOutline
 import io.github.vladimirmi.internetradioplayer.presentation.favoritelist.fixedOutline
@@ -91,7 +91,6 @@ class SearchStationVH(itemView: View) : RecyclerView.ViewHolder(itemView) {
     private val titleTv = itemView.titleTv
     private val subtitleTv = itemView.subtitleTv
     private val favoriteBt = itemView.favoriteBt
-    private val dilimeter = itemView.dilimeter
 
     @SuppressLint("SetTextI18n")
     fun bind(res: StationSearchRes) {
@@ -101,7 +100,7 @@ class SearchStationVH(itemView: View) : RecyclerView.ViewHolder(itemView) {
 
     fun select(selected: Boolean, isFavorite: Boolean) {
         val bg = itemView.context.color(if (selected) R.color.accent_light else R.color.grey_50)
-        itemView.background.setTintExt(bg)
+        (itemView.background as? GradientDrawable)?.setColor(bg)
 
         favoriteBt.visible(selected || isFavorite)
         if (selected || isFavorite) {
@@ -121,7 +120,6 @@ class SearchStationVH(itemView: View) : RecyclerView.ViewHolder(itemView) {
                 R.drawable.bg_item_middle
             }
         }
-        dilimeter.visible(middle || position == 0)
         itemView.background = ContextCompat.getDrawable(itemView.context, bg)
 
         if (Build.VERSION.SDK_INT < 21) return

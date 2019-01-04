@@ -69,14 +69,4 @@
         app:layout_constraintTop_toTopOf="parent"
         />
 
-
-    <View
-        android:id="@+id/titleDelimiter"
-        android:layout_width="match_parent"
-        android:layout_height="1dp"
-        android:layout_gravity="bottom"
-        android:background="@color/grey_400"
-        app:layout_constraintBottom_toBottomOf="parent"
-        tools:ignore="ContentDescription"
-        />
 </androidx.constraintlayout.widget.ConstraintLayout>

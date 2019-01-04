@@ -1,6 +1,7 @@
 package io.github.vladimirmi.internetradioplayer.presentation.history
 
 import android.annotation.SuppressLint
+import android.graphics.drawable.GradientDrawable
 import android.os.Build
 import android.view.LayoutInflater
 import android.view.View
@@ -11,7 +12,6 @@ import androidx.recyclerview.widget.RecyclerView
 import io.github.vladimirmi.internetradioplayer.R
 import io.github.vladimirmi.internetradioplayer.data.db.entity.Station
 import io.github.vladimirmi.internetradioplayer.extensions.color
-import io.github.vladimirmi.internetradioplayer.extensions.setTintExt
 import io.github.vladimirmi.internetradioplayer.extensions.visible
 import io.github.vladimirmi.internetradioplayer.presentation.favoritelist.defaultOutline
 import io.github.vladimirmi.internetradioplayer.presentation.favoritelist.fixedOutline
@@ -102,7 +102,6 @@ class StationVH(itemView: View) : RecyclerView.ViewHolder(itemView) {
     private val titleTv = itemView.titleTv
     private val subtitleTv = itemView.subtitleTv
     private val favoriteBt = itemView.favoriteBt
-    private val dilimeter = itemView.dilimeter
     private var bgColor: Int = 0
 
     @SuppressLint("SetTextI18n")
@@ -113,7 +112,7 @@ class StationVH(itemView: View) : RecyclerView.ViewHolder(itemView) {
 
     fun select(selected: Boolean, isFavorite: Boolean) {
         bgColor = itemView.context.color(if (selected) R.color.accent_light else R.color.grey_50)
-        itemView.background.setTintExt(bgColor)
+        (itemView.background as? GradientDrawable)?.setColor(bgColor)
 
         favoriteBt.visible(selected || isFavorite)
         if (selected || isFavorite) {
@@ -133,9 +132,8 @@ class StationVH(itemView: View) : RecyclerView.ViewHolder(itemView) {
                 R.drawable.bg_item_middle
             }
         }
-        dilimeter.visible(middle || position == 0)
         itemView.background = ContextCompat.getDrawable(itemView.context, bg)
-        itemView.background.setTintExt(bgColor)
+        (itemView.background as? GradientDrawable)?.setColor(bgColor)
 
         if (Build.VERSION.SDK_INT < 21) return
         itemView.outlineProvider = if (middle) fixedOutline else defaultOutline

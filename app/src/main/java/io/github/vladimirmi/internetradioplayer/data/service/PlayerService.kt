@@ -6,6 +6,7 @@ import android.os.Bundle
 import android.support.v4.media.MediaBrowserCompat
 import android.support.v4.media.session.MediaSessionCompat
 import android.support.v4.media.session.PlaybackStateCompat
+import androidx.core.content.ContextCompat
 import androidx.media.MediaBrowserServiceCompat
 import io.github.vladimirmi.internetradioplayer.R
 import io.github.vladimirmi.internetradioplayer.data.db.entity.Station
@@ -73,8 +74,6 @@ class PlayerService : MediaBrowserServiceCompat(), SessionCallback.Interface {
     private fun initSession() {
         session = MediaSessionCompat(this, javaClass.simpleName)
         session.setCallback(SessionCallback(this))
-        session.setFlags(MediaSessionCompat.FLAG_HANDLES_MEDIA_BUTTONS
-                or MediaSessionCompat.FLAG_HANDLES_TRANSPORT_CONTROLS)
         session.setPlaybackState(playbackState)
         session.setMetadata(mediaMetadata)
         session.setSessionActivity(PlayerActions.sessionActivity(this))
@@ -110,7 +109,7 @@ class PlayerService : MediaBrowserServiceCompat(), SessionCallback.Interface {
 
     private fun startService() {
         if (!serviceStarted) {
-            startService(Intent(applicationContext, PlayerService::class.java))
+            ContextCompat.startForegroundService(this, Intent(applicationContext, PlayerService::class.java))
             serviceStarted = true
             session.isActive = true
         }

@@ -154,9 +154,9 @@ class RootActivity : BaseActivity<RootPresenter, RootView>(), RootView {
             toggle.onDrawerSlide(drawerLayout, slideOffset)
         }
         anim.interpolator = DecelerateInterpolator()
-        anim.duration = 600
+        anim.duration = 400
         if (isHomeAsUp) {
-            Handler().postDelayed({ toggle.isDrawerIndicatorEnabled = false }, 600)
+            Handler().postDelayed({ toggle.isDrawerIndicatorEnabled = false }, 400)
         } else {
             toggle.isDrawerIndicatorEnabled = true
             toggle.onDrawerSlide(drawerLayout, 1f)

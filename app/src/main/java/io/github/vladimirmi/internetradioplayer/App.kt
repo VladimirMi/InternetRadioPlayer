@@ -5,6 +5,8 @@ import com.facebook.stetho.Stetho
 import io.github.vladimirmi.internetradioplayer.di.Scopes
 import io.github.vladimirmi.internetradioplayer.di.module.AppModule
 import io.github.vladimirmi.internetradioplayer.extensions.FileLoggingTree
+import io.github.vladimirmi.internetradioplayer.extensions.globalErrorHandler
+import io.reactivex.plugins.RxJavaPlugins
 import timber.log.Timber
 import toothpick.Toothpick
 import toothpick.configuration.Configuration
@@ -39,5 +41,7 @@ class App : Application() {
                     .build()
             )
         }
+
+        RxJavaPlugins.setErrorHandler(globalErrorHandler)
     }
 }

@@ -1,37 +1,27 @@
 package io.github.vladimirmi.internetradioplayer.presentation.root
 
-import android.annotation.SuppressLint
+import android.animation.ValueAnimator
 import android.content.Intent
 import android.net.Uri
 import android.os.Bundle
-import android.support.annotation.StringRes
-import android.support.design.widget.Snackbar
-import android.support.transition.Slide
-import android.support.transition.TransitionManager
-import android.support.transition.Visibility
-import android.support.v4.view.animation.FastOutSlowInInterpolator
-import android.support.v7.view.menu.MenuBuilder
-import android.support.v7.view.menu.MenuPopupHelper
-import android.support.v7.widget.PopupMenu
-import android.view.*
-import android.widget.Toast
-import com.arellomobile.mvp.MvpAppCompatActivity
-import com.arellomobile.mvp.presenter.InjectPresenter
-import com.arellomobile.mvp.presenter.ProvidePresenter
+import android.os.Handler
+import android.view.View
+import android.view.animation.DecelerateInterpolator
+import androidx.appcompat.app.ActionBarDrawerToggle
+import androidx.drawerlayout.widget.DrawerLayout
+import com.google.android.material.snackbar.Snackbar
 import io.github.vladimirmi.internetradioplayer.R
 import io.github.vladimirmi.internetradioplayer.data.service.PlayerService
 import io.github.vladimirmi.internetradioplayer.data.utils.EXTRA_PLAY
 import io.github.vladimirmi.internetradioplayer.di.Scopes
 import io.github.vladimirmi.internetradioplayer.di.module.RootActivityModule
-import io.github.vladimirmi.internetradioplayer.extensions.setTintExt
 import io.github.vladimirmi.internetradioplayer.extensions.visible
 import io.github.vladimirmi.internetradioplayer.navigation.Navigator
-import io.github.vladimirmi.internetradioplayer.presentation.base.BackPressListener
-import io.github.vladimirmi.internetradioplayer.presentation.base.MenuHolder
-import io.github.vladimirmi.internetradioplayer.presentation.base.ToolbarView
+import io.github.vladimirmi.internetradioplayer.presentation.base.BaseActivity
 import kotlinx.android.synthetic.main.activity_root.*
-import kotlinx.android.synthetic.main.view_menu_item.view.*
+import kotlinx.android.synthetic.main.view_toolbar.*
 import ru.terrakok.cicerone.NavigatorHolder
+import timber.log.Timber
 import toothpick.Toothpick
 import javax.inject.Inject
 
@@ -40,50 +30,80 @@ import javax.inject.Inject
  * Created by Vladimir Mikhalev 01.10.2017.
  */
 
-class RootActivity : MvpAppCompatActivity(), RootView, ToolbarView {
+class RootActivity : BaseActivity<RootPresenter, RootView>(), RootView {
 
     @Inject lateinit var navigatorHolder: NavigatorHolder
-    @InjectPresenter lateinit var presenter: RootPresenter
 
+    override val layout = R.layout.activity_root
     private val navigator by lazy { Navigator(this, R.id.mainFr) }
-    private var menuHolder: MenuHolder? = null
-    private var popupHelper: MenuPopupHelper? = null
 
-    @ProvidePresenter
-    fun providePresenter(): RootPresenter = Scopes.rootActivity.getInstance(RootPresenter::class.java)
+    override fun providePresenter(): RootPresenter = Scopes.rootActivity.getInstance(RootPresenter::class.java)
 
     override fun onCreate(savedInstanceState: Bundle?) {
         setTheme(R.style.AppTheme)
-
         Scopes.rootActivity.apply {
             installModules(RootActivityModule())
             Toothpick.inject(this@RootActivity, this)
         }
         super.onCreate(savedInstanceState)
 
-        setContentView(R.layout.activity_root)
-        setSupportActionBar(toolbar)
-
         if (savedInstanceState != null || (intent.flags and Intent.FLAG_ACTIVITY_LAUNCHED_FROM_HISTORY) != 0) {
             intent = null // stop redeliver old intent
         }
     }
 
-    override fun onResumeFragments() {
-        super.onResumeFragments()
-        navigatorHolder.setNavigator(navigator)
+    override fun setupView() {
+        setupDrawer()
+        setupToolbar()
     }
 
-    @SuppressLint("RestrictedApi")
-    override fun onPause() {
+    private fun setupDrawer() {
+        navigationView.setNavigationItemSelectedListener { menuItem ->
+            menuItem.isChecked = true
+            drawerLayout.closeDrawers()
+            drawerLayout.addDrawerListener(object : DrawerLayout.SimpleDrawerListener() {
+                override fun onDrawerClosed(drawerView: View) {
+                    presenter.navigateTo(menuItem.itemId)
+                    drawerLayout.removeDrawerListener(this)
+                }
+            })
+            true
+        }
+    }
+
+    lateinit var toggle: ActionBarDrawerToggle
+
+    private fun setupToolbar() {
+        setSupportActionBar(toolbar)
+        supportActionBar?.setDisplayHomeAsUpEnabled(true)
+        toggle = ActionBarDrawerToggle(this, drawerLayout, toolbar, R.string.desc_open_drawer,
+                R.string.desc_close_drawer)
+        drawerLayout.addDrawerListener(toggle)
+        toggle.syncState()
+        toggle.setToolbarNavigationClickListener { onBackPressed() }
+    }
+
+    override fun onStart() {
+        navigatorHolder.setNavigator(navigator)
+        navigator.navigationIdListener = {
+            navigationView.setCheckedItem(it)
+            showDirectory(it == R.id.nav_search)
+            setHomeAsUp(it == R.id.nav_settings)
+        }
+        super.onStart()
+    }
+
+    override fun onStop() {
+        navigator.navigationIdListener = null
         navigatorHolder.removeNavigator()
-        popupHelper?.dismiss()
-        super.onPause()
+        super.onStop()
     }
 
     override fun onNewIntent(intent: Intent?) {
+        Timber.e("onNewIntent: $intent")
         super.onNewIntent(intent)
         this.intent = intent
+        if (isPresenterInitialized) checkIntent()
     }
 
     override fun onDestroy() {
@@ -91,142 +111,56 @@ class RootActivity : MvpAppCompatActivity(), RootView, ToolbarView {
         super.onDestroy()
     }
 
-    override fun onBackPressed() {
-        val handled = supportFragmentManager?.fragments?.any {
-            (it as? BackPressListener)?.onBackPressed() ?: false
-        } ?: false
-        if (!handled) super.onBackPressed()
-    }
-
     //region =============== RootView ==============
 
     override fun checkIntent() {
-        if (intent != null) {
-            val startPlay = intent.getBooleanExtra(EXTRA_PLAY, false)
-            if (intent.hasExtra(PlayerService.EXTRA_STATION_ID)) {
-                //todo legacy
-                presenter.showStation(intent.getStringExtra(PlayerService.EXTRA_STATION_ID), startPlay)
-            } else {
-                intent.data?.let { addStation(it, startPlay) }
-            }
-            intent = null
+        if (intent == null) return
+        val startPlay = intent.getBooleanExtra(EXTRA_PLAY, false)
+        if (intent.hasExtra(PlayerService.EXTRA_STATION_ID)) {
+            //todo legacy
+            presenter.showStation(intent.getStringExtra(PlayerService.EXTRA_STATION_ID), startPlay)
+        } else {
+            intent.data?.let { addOrShowStation(it, startPlay) }
         }
-    }
-
-    override fun showToast(resId: Int) {
-        Toast.makeText(this, resId, Toast.LENGTH_SHORT).show()
+        intent = null
     }
 
     override fun showSnackbar(resId: Int) {
-        Snackbar.make(findViewById(android.R.id.content), resId, Snackbar.LENGTH_LONG).show()
-    }
-
-    override fun showControls(visible: Boolean) {
-        val slide = createSlideTransition()
-        slide.mode = if (visible) Visibility.MODE_IN else Visibility.MODE_OUT
-        TransitionManager.beginDelayedTransition(root, slide)
-        playerControlsFr.view?.visible(visible)
+        Snackbar.make(activityView, resId, Snackbar.LENGTH_LONG).show()
     }
 
     override fun showLoadingIndicator(visible: Boolean) {
         loadingPb.visible(visible)
     }
 
-    fun addStation(uri: Uri, startPlay: Boolean = false) {
-        presenter.addStation(uri, startPlay)
+    fun addOrShowStation(uri: Uri, startPlay: Boolean = false) {
+        presenter.addOrShowStation(uri, startPlay)
     }
 
     //endregion
 
-    //region =============== ToolbarView ==============
-    override fun setToolbarVisible(visible: Boolean) {
-        if (visible) {
-            toolbar.visibility = View.VISIBLE
+    private fun showDirectory(show: Boolean) {
+        directoryLogoIv.visible(show)
+    }
+
+    private var homeAsUp = false
+
+    private fun setHomeAsUp(isHomeAsUp: Boolean) {
+        if (homeAsUp == isHomeAsUp) return
+        homeAsUp = isHomeAsUp
+        val anim = if (isHomeAsUp) ValueAnimator.ofFloat(0f, 1f) else ValueAnimator.ofFloat(1f, 0f)
+        anim.addUpdateListener { valueAnimator ->
+            val slideOffset = valueAnimator.animatedValue as Float
+            toggle.onDrawerSlide(drawerLayout, slideOffset)
+        }
+        anim.interpolator = DecelerateInterpolator()
+        anim.duration = 400
+        if (isHomeAsUp) {
+            Handler().postDelayed({ toggle.isDrawerIndicatorEnabled = false }, 400)
         } else {
-            toolbar.visibility = View.GONE
+            toggle.isDrawerIndicatorEnabled = true
+            toggle.onDrawerSlide(drawerLayout, 1f)
         }
-    }
-
-    override fun setToolbarTitle(@StringRes titleId: Int) {
-        setToolbarTitle(getString(titleId))
-    }
-
-    override fun setToolbarTitle(title: String) {
-        supportActionBar?.title = title
-    }
-
-    override fun enableBackNavigation(backNavEnabled: Boolean) {
-        supportActionBar?.setDisplayHomeAsUpEnabled(backNavEnabled)
-    }
-
-    override fun setMenu(menuHolder: MenuHolder) {
-        this.menuHolder = menuHolder
-        invalidateOptionsMenu()
-    }
-
-    override fun onPrepareOptionsMenu(menu: Menu): Boolean {
-        menuHolder?.let { holder ->
-            holder.menu.filter { it.showAsAction }
-                    .forEachIndexed { index, item ->
-                        menu.add(0, item.itemTitleResId, index, item.itemTitleResId).apply {
-                            setIcon(item.iconResId)
-                            setShowAsActionFlags(MenuItem.SHOW_AS_ACTION_IF_ROOM)
-                            setOnMenuItemClickListener { holder.actions?.invoke(it); true }
-                        }
-                    }
-            configurePopupFor(menu, holder)
-        }
-        return super.onPrepareOptionsMenu(menu)
-    }
-
-    @SuppressLint("RestrictedApi")
-    private fun configurePopupFor(menu: Menu, holder: MenuHolder) {
-        val popupItems = holder.menu.filter { !it.showAsAction }
-        if (popupItems.isEmpty()) return
-
-        val anchorItem = menu.add(R.string.menu_more).apply {
-            setShowAsAction(MenuItem.SHOW_AS_ACTION_IF_ROOM)
-        }
-        val anchorView = LayoutInflater.from(this).inflate(R.layout.view_menu_item, toolbar, false)
-        anchorView.icon.setImageResource(R.drawable.ic_more)
-        anchorItem.actionView = anchorView
-
-        //todo expose popup instead od popupHelper
-        val popup = PopupMenu(this, anchorView)
-        popupItems.forEachIndexed { index, item ->
-            popup.menu.add(0, item.itemTitleResId, index, item.itemTitleResId).apply {
-                setIcon(item.iconResId)
-                icon.mutate().setTintExt(item.color)
-            }
-        }
-        popup.setOnMenuItemClickListener {
-            standardMenuActions(it)
-            holder.actions?.invoke(it)
-            true
-        }
-
-        popupHelper = MenuPopupHelper(this, popup.menu as MenuBuilder, anchorView)
-        popupHelper?.setForceShowIcon(true)
-
-        anchorView.setOnClickListener {
-            popupHelper?.show(0, -anchorView.height)
-        }
-    }
-    //endregion
-
-    private fun createSlideTransition(): Slide {
-        val slide = Slide()
-        slide.slideEdge = Gravity.BOTTOM
-        slide.duration = 300
-        slide.addTarget(R.id.playerControlsFr)
-        slide.interpolator = FastOutSlowInInterpolator()
-        return slide
-    }
-
-    private fun standardMenuActions(menuItem: MenuItem) {
-        when (menuItem.itemId) {
-            R.string.menu_settings -> presenter.openSettings()
-            R.string.menu_exit -> presenter.exitApp()
-        }
+        anim.start()
     }
 }

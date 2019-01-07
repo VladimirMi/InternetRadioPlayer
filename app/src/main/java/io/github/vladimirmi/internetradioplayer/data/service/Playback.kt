@@ -9,7 +9,6 @@ import android.media.AudioManager
 import android.media.AudioManager.*
 import android.net.Uri
 import android.net.wifi.WifiManager
-import com.google.android.exoplayer2.DefaultRenderersFactory
 import com.google.android.exoplayer2.ExoPlayerFactory
 import com.google.android.exoplayer2.SimpleExoPlayer
 import com.google.android.exoplayer2.source.ExtractorMediaSource
@@ -19,6 +18,7 @@ import io.github.vladimirmi.internetradioplayer.BuildConfig
 import io.github.vladimirmi.internetradioplayer.R
 import io.github.vladimirmi.internetradioplayer.data.source.IcyDataSource
 import io.github.vladimirmi.internetradioplayer.di.Scopes
+import io.github.vladimirmi.internetradioplayer.extensions.runOnUiThread
 
 private const val VOLUME_DUCK = 0.2f
 private const val VOLUME_NORMAL = 1.0f
@@ -33,36 +33,47 @@ class Playback(private val service: PlayerService,
     private var playAgainOnHeadset = false
     private var player: SimpleExoPlayer? = null
     private val loadControl = Scopes.app.getInstance(LoadControl::class.java)
+    private val audioRenderers = AudioRenderersFactory(service)
 
     private val wifiLock = (service.applicationContext.getSystemService(Context.WIFI_SERVICE) as WifiManager)
             .createWifiLock(WifiManager.WIFI_MODE_FULL, BuildConfig.APPLICATION_ID)
     private val audioManager = service.getSystemService(Context.AUDIO_SERVICE) as AudioManager
 
     fun play(uri: Uri) {
-        if (player == null) createPlayer()
-        preparePlayer(uri)
-        if (holdResources()) resume()
+        runOnUiThread {
+            if (player == null) createPlayer()
+            preparePlayer(uri)
+            if (holdResources()) resume()
+        }
     }
 
     fun resume() {
-        player?.playWhenReady = true
+        runOnUiThread {
+            player?.playWhenReady = true
+        }
     }
 
     fun pause() {
-        player?.playWhenReady = false
+        runOnUiThread {
+            player?.playWhenReady = false
+        }
     }
 
     fun stop() {
-        playAgainOnFocus = false
-        playAgainOnHeadset = false
-        releaseResources()
-        player?.stop()
+        runOnUiThread {
+            playAgainOnFocus = false
+            playAgainOnHeadset = false
+            releaseResources()
+            player?.stop()
+        }
     }
 
     fun releasePlayer() {
-        player?.removeListener(playerCallback)
-        player?.release()
-        player = null
+        runOnUiThread {
+            player?.removeListener(playerCallback)
+            player?.release()
+            player = null
+        }
     }
 
     override fun onAudioFocusChange(focusChange: Int) {
@@ -81,9 +92,8 @@ class Playback(private val service: PlayerService,
     }
 
     private fun createPlayer() {
-        val rendererFactory = DefaultRenderersFactory(service)
         val trackSelector = DefaultTrackSelector()
-        player = ExoPlayerFactory.newSimpleInstance(rendererFactory, trackSelector, loadControl)
+        player = ExoPlayerFactory.newSimpleInstance(service, audioRenderers, trackSelector, loadControl)
         player?.addListener(playerCallback)
     }
 

@@ -1,7 +1,7 @@
 package io.github.vladimirmi.internetradioplayer.data.source
 
 import android.net.Uri
-import com.google.android.exoplayer2.upstream.DataSource
+import com.google.android.exoplayer2.upstream.BaseDataSource
 import com.google.android.exoplayer2.upstream.DataSpec
 import io.github.vladimirmi.internetradioplayer.data.service.PlayerCallback
 import timber.log.Timber
@@ -19,12 +19,14 @@ private const val READ_TIMEOUT_MILLIS = 5000
 
 class IcyDataSource(private val userAgent: String,
                     private val playerCallback: PlayerCallback)
-    : DataSource {
+    : BaseDataSource(true) {
 
     private var inputStream: InputStream? = null
     private var connection: HttpURLConnection? = null
 
+
     override fun open(dataSpec: DataSpec): Long {
+        transferInitializing(dataSpec)
         try {
             connection = makeConnection(dataSpec)
         } catch (e: IOException) {
@@ -40,7 +42,6 @@ class IcyDataSource(private val userAgent: String,
         }
 
         // Check for a valid response code.
-
         if (responseCode !in IntRange(200, 299)) {
             val headers = connection!!.headerFields
             closeConnectionQuietly()
@@ -54,6 +55,7 @@ class IcyDataSource(private val userAgent: String,
             throw e
         }
 
+        transferStarted(dataSpec)
         return dataSpec.length
     }
 
@@ -64,9 +66,11 @@ class IcyDataSource(private val userAgent: String,
     override fun close() {
 //        timerTask?.cancel()
 //        timerTask = null
+
         try {
             inputStream?.close()
         } finally {
+            transferEnded()
             inputStream = null
             closeConnectionQuietly()
         }
@@ -100,7 +104,9 @@ class IcyDataSource(private val userAgent: String,
 //        }
 //
 //        return read
-        return inputStream?.read(buffer, offset, readLength) ?: 0
+        val read = inputStream?.read(buffer, offset, readLength) ?: 0
+        bytesTransferred(read)
+        return read
     }
 
     @Throws(IOException::class)

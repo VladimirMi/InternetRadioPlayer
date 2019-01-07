@@ -1,19 +1,20 @@
 <?xml version="1.0" encoding="utf-8"?>
-<android.support.constraint.ConstraintLayout
+<androidx.constraintlayout.widget.ConstraintLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
-    android:layout_height="54dp"
+    android:layout_height="48dp"
     android:layout_marginLeft="8dp"
     android:layout_marginRight="8dp"
-    android:background="@drawable/shape_item_single"
+    android:background="@drawable/bg_item_single"
     android:elevation="2dp"
     android:foreground="?android:attr/selectableItemBackground"
+    tools:ignore="UnusedAttribute"
     >
 
     <ImageView
-        android:id="@+id/ic_expanded"
+        android:id="@+id/iconExpandedIv"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_gravity="center"
@@ -27,7 +28,7 @@
         />
 
     <TextView
-        android:id="@+id/title"
+        android:id="@+id/titleTv"
         style="@style/TextAppearance.AppCompat.Title"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
@@ -36,18 +37,36 @@
         android:gravity="center_vertical"
         android:textSize="18sp"
         app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintStart_toEndOf="@+id/ic_expanded"
+        app:layout_constraintStart_toEndOf="@+id/iconExpandedIv"
         app:layout_constraintTop_toTopOf="parent"
         tools:text="Group"
         />
 
-    <View
-        android:id="@+id/titleDelimiter"
-        android:layout_width="match_parent"
-        android:layout_height="1dp"
-        android:layout_gravity="bottom"
-        android:background="@color/grey_400"
+    <ImageButton
+        android:id="@+id/removeBt"
+        android:layout_width="40dp"
+        android:layout_height="40dp"
+        android:layout_marginEnd="8dp"
+        android:layout_marginRight="8dp"
+        android:background="@null"
+        android:contentDescription="@string/desc_remove_folder"
+        android:foreground="?actionBarItemBackground"
+        android:src="@drawable/ic_delete"
         app:layout_constraintBottom_toBottomOf="parent"
-        tools:ignore="ContentDescription"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
         />
-</android.support.constraint.ConstraintLayout>
+
+    <View
+        android:id="@+id/selectionView"
+        android:layout_width="16dp"
+        android:layout_height="16dp"
+        android:layout_marginEnd="16dp"
+        android:layout_marginRight="16dp"
+        android:background="@drawable/bg_circle"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        />
+
+</androidx.constraintlayout.widget.ConstraintLayout>

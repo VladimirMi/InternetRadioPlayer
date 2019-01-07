@@ -5,6 +5,8 @@ import com.facebook.stetho.Stetho
 import io.github.vladimirmi.internetradioplayer.di.Scopes
 import io.github.vladimirmi.internetradioplayer.di.module.AppModule
 import io.github.vladimirmi.internetradioplayer.extensions.FileLoggingTree
+import io.github.vladimirmi.internetradioplayer.extensions.globalErrorHandler
+import io.reactivex.plugins.RxJavaPlugins
 import timber.log.Timber
 import toothpick.Toothpick
 import toothpick.configuration.Configuration
@@ -16,6 +18,7 @@ import toothpick.registries.MemberInjectorRegistryLocator.setRootRegistry
  * Created by Vladimir Mikhalev 30.09.2017.
  */
 
+@Suppress("unused")
 class App : Application() {
 
     override fun onCreate() {
@@ -38,5 +41,7 @@ class App : Application() {
                     .build()
             )
         }
+
+        RxJavaPlugins.setErrorHandler(globalErrorHandler)
     }
 }

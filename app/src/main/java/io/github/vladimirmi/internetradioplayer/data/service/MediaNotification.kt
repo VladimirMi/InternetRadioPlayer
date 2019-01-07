@@ -6,12 +6,12 @@ import android.app.NotificationManager
 import android.app.PendingIntent
 import android.content.Context
 import android.os.Build
-import android.support.annotation.RequiresApi
-import android.support.v4.app.NotificationCompat
 import android.support.v4.media.MediaMetadataCompat
-import android.support.v4.media.app.NotificationCompat.MediaStyle
 import android.support.v4.media.session.MediaSessionCompat
 import android.support.v4.media.session.PlaybackStateCompat
+import androidx.annotation.RequiresApi
+import androidx.core.app.NotificationCompat
+import androidx.media.app.NotificationCompat.MediaStyle
 import io.github.vladimirmi.internetradioplayer.R
 
 /**
@@ -63,11 +63,10 @@ class MediaNotification(private val service: PlayerService,
         val metadata: MediaMetadataCompat? = session.controller.metadata
         val playbackState = session.controller.playbackState.state
 
-        metadata?.let {
-            builder.setLargeIcon(it.art)
-                    .setContentTitle(it.description.title)
-                    .setContentText(it.description.subtitle)
-                    .setSubText(it.description.description)
+        metadata?.apply {
+            builder.setContentTitle(description.title)
+                    .setContentText(description.subtitle)
+                    .setSubText(description.description)
         }
 
         if (playbackState == PlaybackStateCompat.STATE_BUFFERING) {

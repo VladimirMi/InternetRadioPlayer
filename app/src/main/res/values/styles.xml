@@ -1,11 +1,13 @@
 <resources>
 
-    <style name="AppTheme" parent="Theme.AppCompat.Light.NoActionBar">
-        <item name="colorPrimary">@color/primaryColor</item>
-        <item name="colorPrimaryDark">@color/primaryDarkColor</item>
-        <item name="colorAccent">@color/accentColor</item>
-        <item name="android:textColorPrimary">@color/primaryTextColor</item>
-        <item name="android:textColorSecondary">@color/secondaryTextColor</item>
+    <style name="AppTheme" parent="Theme.MaterialComponents.Light.NoActionBar">
+        <item name="colorPrimary">@color/primary</item>
+        <item name="colorPrimaryDark">@color/primary_dark</item>
+        <item name="colorAccent">@color/accent</item>
+        <item name="android:textColorPrimary">@color/primary_text</item>
+        <item name="android:textColorSecondary">@color/secondary_text</item>
+        <item name="android:windowBackground">@color/window</item>
+        <item name="android:divider">@color/divider</item>
         <item name="android:windowSoftInputMode">adjustPan|stateAlwaysHidden</item>
         <item name="preferenceTheme">@style/PreferenceThemeOverlay.v14.Material</item>
     </style>
@@ -14,58 +16,18 @@
         <item name="android:windowBackground">@drawable/splash</item>
     </style>
 
-    <style name="AppTheme.AppBarOverlay" parent="ThemeOverlay.AppCompat.Dark.ActionBar"/>
+    <style name="AppTheme.AppBarOverlay" parent="ThemeOverlay.MaterialComponents.Dark.ActionBar"/>
 
-    <style name="AppTheme.PopupOverlay" parent="ThemeOverlay.AppCompat.Light"/>
+    <style name="AppTheme.PopupOverlay" parent="ThemeOverlay.MaterialComponents.Light"/>
 
     <style name="CustomText">
         <item name="android:layout_width">wrap_content</item>
         <item name="android:layout_height">wrap_content</item>
     </style>
 
-    <style name="CustomButton" parent="Base.Widget.AppCompat.Button">
-        <item name="android:textColor">@color/sel_button_text</item>
-    </style>
-
-    <style name="CustomButton.Accent">
-        <item name="colorButtonNormal">@color/accentColor</item>
-    </style>
-
-    <style name="CustomButton.Cancel">
-        <item name="colorButtonNormal">@color/grey_700</item>
-    </style>
-
-    <style name="HorizontalRadioButton">
-        <item name="android:layout_width">0dp</item>
-        <item name="android:layout_height">match_parent</item>
-        <item name="android:layout_weight">1</item>
-        <item name="android:background">@drawable/sel_radio_btn</item>
-        <item name="android:button">@null</item>
-        <item name="android:gravity">center</item>
-        <item name="android:padding">4dp</item>
-    </style>
-
-    <style name="CustomText.Link">
-        <item name="android:ellipsize">end</item>
-        <item name="android:fontFamily">sans-serif-medium</item>
-        <item name="android:maxLines">1</item>
-        <item name="android:padding">4dp</item>
-        <item name="android:textAppearance">@style/TextAppearance.AppCompat.Body2</item>
-        <item name="android:textColorLink">@color/blue_500</item>
-    </style>
-
-    <style name="CustomText.Label">
-        <item name="android:fontFamily">sans-serif-medium</item>
-        <item name="android:padding">4dp</item>
-        <item name="android:textAppearance">@style/TextAppearance.AppCompat.Caption</item>
-    </style>
-
-    <style name="CustomCard">
-        <item name="android:layout_width">match_parent</item>
-        <item name="android:layout_height">wrap_content</item>
-        <item name="cardCornerRadius">4dp</item>
-        <item name="cardElevation">2dp</item>
-        <item name="contentPadding">8dp</item>
+    <style name="CustomTabLayout" parent="Widget.MaterialComponents.TabLayout.Colored">
+        <item name="tabSelectedTextColor">@color/accent_lighter</item>
+        <item name="tabTextColor">@color/grey_50</item>
     </style>
 
 </resources>

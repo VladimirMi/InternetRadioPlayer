@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 
-<android.support.constraint.ConstraintLayout
+<androidx.constraintlayout.widget.ConstraintLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
@@ -8,42 +8,40 @@
     android:layout_height="64dp"
     android:layout_marginLeft="8dp"
     android:layout_marginRight="8dp"
-    android:background="@drawable/shape_item_middle"
+    android:background="@drawable/bg_item_middle"
     android:elevation="2dp"
     android:foreground="?android:attr/selectableItemBackground"
+    tools:ignore="UnusedAttribute"
     >
 
-    <ImageView
-        android:id="@+id/iconIv"
-        android:layout_width="64dp"
-        android:layout_height="64dp"
-        android:contentDescription="@string/desc_station_icon"
-        tools:background="@color/white"
-        tools:src="@drawable/ic_station_1"
-        />
-
     <TextView
-        android:id="@+id/name"
+        android:id="@+id/nameTv"
         style="@style/TextAppearance.AppCompat.Subhead"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_marginLeft="8dp"
+        android:textStyle="bold"
         android:layout_marginRight="8dp"
-        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintBottom_toTopOf="@+id/specsTv"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toEndOf="@+id/iconIv"
+        app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
         tools:text="Item name"
         />
 
-    <View
-        android:id="@+id/itemDelimiter"
-        android:layout_width="match_parent"
-        android:layout_height="1dp"
-        android:layout_gravity="bottom"
-        android:background="@color/grey_300"
+    <TextView
+        android:id="@+id/specsTv"
+        style="@style/TextAppearance.AppCompat.Caption"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:textColor="@color/primary_text"
+        android:layout_marginLeft="8dp"
+        android:layout_marginRight="8dp"
         app:layout_constraintBottom_toBottomOf="parent"
-        tools:ignore="ContentDescription"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/nameTv"
+        tools:text="Item name"
         />
 
-</android.support.constraint.ConstraintLayout>
+</androidx.constraintlayout.widget.ConstraintLayout>

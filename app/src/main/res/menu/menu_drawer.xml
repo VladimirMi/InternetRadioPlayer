@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+    <group
+        android:id="@+id/nav_group_main"
+        android:checkableBehavior="single">
+
+        <item
+            android:id="@+id/nav_search"
+            android:title="@string/tabs_search"/>
+        <item
+            android:id="@+id/nav_favorites"
+            android:title="@string/tabs_stations"/>
+        <item
+            android:id="@+id/nav_player"
+            android:title="@string/tabs_player"/>
+        <item
+            android:id="@+id/nav_history"
+            android:title="@string/tabs_history"/>
+    </group>
+
+    <group
+        android:id="@+id/nav_group_second"
+        android:checkableBehavior="single">
+
+        <item
+            android:id="@+id/nav_settings"
+            android:title="@string/menu_settings"/>
+        <item
+            android:id="@+id/nav_exit"
+            android:title="@string/menu_exit"/>
+    </group>
+</menu>

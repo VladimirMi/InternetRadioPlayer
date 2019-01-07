@@ -1,7 +1,6 @@
 package io.github.vladimirmi.internetradioplayer.extensions
 
 import android.annotation.SuppressLint
-import android.content.Context
 import android.graphics.Bitmap
 import android.graphics.Canvas
 import android.graphics.Color
@@ -10,13 +9,9 @@ import android.graphics.drawable.BitmapDrawable
 import android.graphics.drawable.Drawable
 import android.graphics.drawable.VectorDrawable
 import android.os.Build
-import android.support.annotation.ColorInt
-import android.support.graphics.drawable.VectorDrawableCompat
-import android.support.v4.content.ContextCompat
-import android.support.v4.graphics.ColorUtils
-import io.github.vladimirmi.internetradioplayer.R
-import io.github.vladimirmi.internetradioplayer.data.db.entity.ICONS
-import io.github.vladimirmi.internetradioplayer.data.db.entity.Icon
+import androidx.annotation.ColorInt
+import androidx.core.graphics.ColorUtils
+import androidx.vectordrawable.graphics.drawable.VectorDrawableCompat
 import java.util.*
 
 
@@ -49,25 +44,6 @@ fun Drawable.setTintExt(@ColorInt tint: Int) {
     } else {
         mutate().setColorFilter(tint, PorterDuff.Mode.SRC_IN)
     }
-}
-
-fun Icon.getBitmap(context: Context, withBackground: Boolean = false): Bitmap {
-    val iconSize = 256
-    val bitmap = Bitmap.createBitmap(iconSize, iconSize, Bitmap.Config.ARGB_8888)
-    val canvas = Canvas(bitmap)
-
-    if (withBackground) {
-        val background = ContextCompat.getDrawable(context, R.drawable.ic_background)!!
-        background.setTintExt(bg)
-        background.setBounds(0, 0, canvas.width, canvas.height)
-        background.draw(canvas)
-    }
-
-    val drawable = ContextCompat.getDrawable(context, ICONS[res])!!
-    drawable.setTintExt(fg)
-    drawable.setBounds(0, 0, canvas.width, canvas.height)
-    drawable.draw(canvas)
-    return bitmap
 }
 
 fun getRandomDarkColor(random: Random): Int {

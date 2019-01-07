@@ -1,11 +1,10 @@
 package io.github.vladimirmi.internetradioplayer.presentation.settings
 
 import android.os.Bundle
-import android.support.v7.preference.PreferenceDialogFragmentCompat
 import android.view.View
 import android.widget.SeekBar
 import android.widget.TextView
-import io.github.vladimirmi.internetradioplayer.ui.SeekBarDialogPreference
+import androidx.preference.PreferenceDialogFragmentCompat
 import kotlinx.android.synthetic.main.pref_seekbar.view.*
 
 

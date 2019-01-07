@@ -2,89 +2,80 @@
     <string name="app_name" translatable="false">Radio Player</string>
     <string name="full_app_name" translatable="false">Internet Radio Player</string>
 
-    <string name="toast_add_success">Station added</string>
-    <string name="toast_add_error">Could not add station</string>
-    <string name="toast_net_error">No connection</string>
-    <string name="toast_remove_success">Station deleted</string>
-    <string name="toast_add_shortcut_success">Station shortcut added</string>
-    <string name="toast_shortcut_remove">Station was removed. Remove the shortcut manually</string>
-    <string name="toast_name_empty_error">Station name can not be empty</string>
-    <string name="toast_name_exists_error">Station with the given name already exists</string>
+    <string name="msg_net_error">No connection</string>
+    <string name="msg_add_shortcut_success">Station shortcut added</string>
+    <string name="msg_shortcut_remove">Station was removed. Remove the shortcut manually</string>
+    <string name="msg_name_empty_error">Specify a name</string>
+    <string name="msg_text_short">Text too short</string>
 
-    <string name="dialog_remove_message">Are you sure you want to delete the station?</string>
     <string name="dialog_goto_message">Go to the link?</string>
-    <string name="dialog_cancel_edit_message">Cancel changes?</string>
-    <string name="dialog_cancel_create_message">Cancel adding a new station?</string>
     <string name="dialog_new_station">Add new station</string>
-    <string name="dialog_new_station_hint">Paste link to the audio stream or playlist</string>
+    <string name="dialog_new_station_description">Paste link to the audio stream or playlist</string>
+    <string name="dialog_new_station_hint">Link</string>
+    <string name="dialog_new_group">Create new group</string>
+    <string name="dialog_new_group_hint">Group name</string>
     <string name="dialog_start_playback">Start playback</string>
-    <string name="dialog_add_name">Title</string>
-    <string name="dialog_add_name_err">Specify a name</string>
     <string name="dialog_ok">OK</string>
     <string name="dialog_cancel">Cancel</string>
 
-    <string name="menu_favorite_on">Favorite</string>
-    <string name="menu_favorite_off">All</string>
-    <string name="menu_more">More</string>
-    <string name="menu_station_edit">Edit</string>
-    <string name="menu_station_delete">Delete</string>
-    <string name="menu_station_save">Save</string>
     <string name="menu_station_shortcut">Add station shortcut</string>
     <string name="menu_add_station">Add station</string>
     <string name="menu_settings">Settings</string>
     <string name="menu_exit">Exit</string>
 
     <string name="metadata_buffering">Loading…</string>
+    <string name="metadata_not_available">Metadata not available</string>
 
-    <string name="desc_favorite">add to favorite</string>
     <string name="desc_expand_collapse">expand/collapse</string>
-    <string name="desc_station_icon">media icon</string>
-    <string name="desc_play_pause_button">play/pause button</string>
-    <string name="desc_skip_previous_button">skip previous button</string>
-    <string name="desc_skip_next_button">skip next button</string>
+    <string name="desc_station_icon">station icon</string>
+    <string name="desc_play_pause_button">play/pause</string>
+    <string name="desc_skip_previous_button">skip previous</string>
+    <string name="desc_skip_next_button">skip next</string>
+    <string name="desc_stop_button">stop</string>
+    <string name="desc_edit_title_button">edit title</string>
+    <string name="desc_add_remove_favorite">add/remove favorite</string>
+    <string name="desc_create_shortcut_button">create shortcut</string>
+    <string name="desc_directory_logo">directory logo</string>
+    <string name="desc_open_drawer">open drawer</string>
+    <string name="desc_close_drawer">close drawer</string>
+    <string name="desc_remove_folder">remove empty group</string>
 
-    <string name="station_list_details">Details</string>
+    <string name="tabs_search">Search</string>
+    <string name="tabs_stations">Stations</string>
+    <string name="tabs_player">Player</string>
+    <string name="tabs_history">History</string>
+    <string-array name="uber_stations_tabs">
+        <item>@string/tabs_search</item>
+        <item>@string/tabs_stations</item>
+        <item>@string/tabs_player</item>
+        <item>@string/tabs_history</item>
+    </string-array>
 
-    <string name="station_uri">Stream uri:</string>
-    <string name="station_url">Station url:</string>
-    <string name="station_bitrate">Stream bitrate:</string>
-    <string name="station_sample_rate">Source sample rate:</string>
+    <string name="history_placeholder">History is empty</string>
+    <string name="favorite_list_placeholder">Stations list is empty</string>
+    <string name="player_placeholder">No station is selected</string>
+    <string name="search_placeholder">Search result is empty</string>
     <string name="station_title">Title</string>
-    <string name="station_folder">Folder</string>
-    <string name="station_title_information">Information:</string>
-    <string name="station_genre">Genres:</string>
-
-    <string name="unit_sample_rate" translatable="false">%1$d\Hz</string>
-    <string name="unit_bitrate" translatable="false">%1$d\kbps</string>
-
-    <string name="icon_icon">Icon</string>
-    <string name="icon_favicon">Web site icon</string>
-    <string name="icon_text">Text</string>
-    <string name="icon_add">Add</string>
-    <string name="icon_background_color">Background color</string>
-    <string name="icon_foreground_color">Icon color</string>
 
     <string name="notification_name">Radio Player notification</string>
 
-    <string name="getstarted_title">Get started</string>
-    <string name="help_create">You can create a new station by:</string>
-    <string name="help_create_1"> - clicking on the playlist link in your web browser.\n
-        For example here https://www.internet-radio.com</string>
-    <string name="help_create_2"> - clicking on the playlist file in the file manager.\n
-        The supported extensions are pls, m3u or ram.</string>
-    <string name="help_create_3"> - adding a direct link to the audio stream or playlist.</string>
+    <string name="default_folder">Other</string>
 
-    <string name="metadata_not_available">Metadata is not available</string>
-    <string name="default_group">Other</string>
-
+    <string name="settings_stream">Stream settings</string>
+    <string name="settings_backup_restore">Backup and restore</string>
+    <string name="settings_about">About</string>
     <string name="setting_initial_buffer">Initial buffer duration</string>
     <string name="setting_initial_buffer_desc">Initial duration of media that must be buffered for playback to start</string>
     <string name="setting_buffer">Buffer duration</string>
     <string name="setting_buffer_desc">Duration of media that must be buffered for playback to resume after a rebuffer</string>
+    <string name="setting_backup">Backup stations</string>
+    <string name="setting_restore">Restore stations</string>
+    <string name="setting_privacy">Privacy policy</string>
 
     <string name="second">%1$d second</string>
     <string name="seconds">%1$d seconds</string>
     <string name="chooser_backup">Save with</string>
+
 
     <plurals name="plural_second">
         <item quantity="one">@string/second</item>

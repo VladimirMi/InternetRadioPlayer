@@ -3,6 +3,7 @@ package io.github.vladimirmi.internetradioplayer.domain.model
 import io.github.vladimirmi.internetradioplayer.data.db.entity.Group
 import io.github.vladimirmi.internetradioplayer.data.db.entity.Station
 import java.util.*
+import kotlin.collections.ArrayList
 
 
 /**
@@ -17,7 +18,7 @@ class FlatStationsList(private val flatList: MutableList<Any> = arrayListOf()) {
         fun createFrom(groups: List<Group>): FlatStationsList {
             val flatList = arrayListOf<Any>()
             groups.forEach { group ->
-                if (group.stations.isNotEmpty() && groups.count { it.stations.isNotEmpty() } > 1) {
+                if (groups.size > 1) {
                     flatList.add(group)
                 }
                 if (group.expanded) {
@@ -32,6 +33,8 @@ class FlatStationsList(private val flatList: MutableList<Any> = arrayListOf()) {
 
     fun isStation(position: Int) = flatList[position] is Station
 
+    operator fun get(position: Int): Any = flatList[position]
+
     fun getGroup(position: Int): Group {
         return flatList[position] as? Group ?: throw IllegalStateException("It is station")
     }
@@ -44,7 +47,7 @@ class FlatStationsList(private val flatList: MutableList<Any> = arrayListOf()) {
         return if (isGroup(position)) getGroup(position).id else getStation(position).id
     }
 
-    fun getPreviousFrom(id: String): Station? {
+    fun getPreviousStationFrom(id: String): Station? {
         var previous: Station? = null
         for (element in flatList) {
             if (element is Group) continue
@@ -56,7 +59,7 @@ class FlatStationsList(private val flatList: MutableList<Any> = arrayListOf()) {
         return if (previous?.id == id) null else previous
     }
 
-    fun getNextFrom(id: String): Station? {
+    fun getNextStationFrom(id: String): Station? {
         var next: Station? = null
         for (i in flatList.size - 1 downTo 0) {
             val element = flatList[i]
@@ -69,15 +72,13 @@ class FlatStationsList(private val flatList: MutableList<Any> = arrayListOf()) {
         return if (next?.id == id) null else next
     }
 
-    fun isFirstStation(id: String): Boolean {
-        return size == 0
-                || isGroup(0) && isStation(1) && getStation(1).id == id
-                || isStation(0) && getStation(0).id == id
-    }
-
     fun isLastStationInGroup(position: Int): Boolean {
         if (position > flatList.size - 1 || isGroup(position)) return false
         return position == flatList.size - 1 || isGroup(position + 1)
+    }
+
+    fun findStation(predicate: (Station) -> Boolean): Station? {
+        return flatList.find { it is Station && predicate(it) } as? Station
     }
 
     fun positionOfStation(id: String): Int {
@@ -97,14 +98,14 @@ class FlatStationsList(private val flatList: MutableList<Any> = arrayListOf()) {
     }
 
     fun startMove(position: Int): FlatStationsList {
-        if (isGroup(position)) {
-            return FlatStationsList(flatList.asSequence().filterIsInstance(Group::class.java)
-                    .toMutableList())
+        return if (isGroup(position)) {
+            FlatStationsList(getGroups().map { it.apply { stations = emptyList() } }.toMutableList())
+        } else {
+            FlatStationsList(ArrayList(flatList))
         }
-        return this
     }
 
-    fun endMove() {
+    fun endMove(): FlatStationsList {
         var stationOrder = 0
         var groupOrder = 0
         var groupId = (flatList.find { it is Group } as? Group)?.id ?: Group.DEFAULT_ID
@@ -120,29 +121,26 @@ class FlatStationsList(private val flatList: MutableList<Any> = arrayListOf()) {
                 stationOrder++
             }
         }
+        return this
     }
 
-    fun getGroupUpdatesFrom(stations: FlatStationsList): List<Group> {
-        val updates = arrayListOf<Group>()
+    fun getGroupDifference(stations: FlatStationsList): List<Group> {
+        val diff = arrayListOf<Group>()
         val other = getGroups()
         stations.getGroups().forEachIndexed { index, group ->
-            if (group != other[index]) updates.add(group)
+            if (group != other[index]) diff.add(group)
         }
-        return updates
+        return diff
     }
 
-    fun getStationUpdatesFrom(stations: FlatStationsList): List<Station> {
-        val updates = arrayListOf<Station>()
+    fun getStationDifference(stations: FlatStationsList): List<Station> {
+        val diff = arrayListOf<Station>()
         val other = getStations()
         stations.getStations().forEachIndexed { index, station ->
-            if (station != other[index]) updates.add(station)
+            if (station != other[index]) diff.add(station)
         }
-        return updates
+        return diff
     }
-
-    fun getFirstStation(): Station? = flatList.firstOrNull { it is Station } as? Station
-
-    fun haveStations() = flatList.any { it is Station }
 
     private fun getGroups() = flatList.filterIsInstance(Group::class.java)
     private fun getStations() = flatList.filterIsInstance(Station::class.java)

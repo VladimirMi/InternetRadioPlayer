@@ -1,0 +1,79 @@
+<?xml version="1.0" encoding="utf-8"?>
+<FrameLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:id="@+id/frameLayout"
+    android:layout_height="match_parent"
+    android:focusableInTouchMode="true"
+    >
+
+    <androidx.swiperefreshlayout.widget.SwipeRefreshLayout
+        xmlns:android="http://schemas.android.com/apk/res/android"
+        android:id="@+id/swipeToRefresh"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_marginTop="48dp"
+        >
+
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/stationsRv"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:clipToPadding="false"
+            android:overScrollMode="never"
+            android:paddingTop="8dp"
+            android:paddingBottom="8dp"
+            tools:listitem="@layout/item_station"
+            />
+
+    </androidx.swiperefreshlayout.widget.SwipeRefreshLayout>
+
+    <androidx.cardview.widget.CardView
+        android:id="@+id/searchCv"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        >
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:orientation="vertical"
+            >
+
+            <androidx.appcompat.widget.SearchView
+                android:id="@+id/searchView"
+                style="@style/Base.Widget.AppCompat.SearchView"
+                android:layout_width="match_parent"
+                android:layout_height="48dp"
+                android:iconifiedByDefault="false"
+                app:queryBackground="@null"
+                app:queryHint="@string/tabs_search"
+                />
+
+            <androidx.recyclerview.widget.RecyclerView
+                android:id="@+id/suggestionsRv"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:overScrollMode="never"
+                app:layout_constraintTop_toBottomOf="@id/searchView"
+                tools:listitem="@layout/item_suggestion"
+                tools:visibility="gone"
+                />
+        </LinearLayout>
+
+    </androidx.cardview.widget.CardView>
+
+    <TextView
+        android:id="@+id/placeholderView"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="@string/search_placeholder"
+        android:layout_gravity="center_vertical"
+        android:visibility="gone"
+        android:gravity="center"
+        android:textAppearance="@style/TextAppearance.AppCompat.Title"
+        />
+
+</FrameLayout>

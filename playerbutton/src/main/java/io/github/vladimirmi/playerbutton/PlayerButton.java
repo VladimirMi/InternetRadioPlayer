@@ -2,18 +2,20 @@ package io.github.vladimirmi.playerbutton;
 
 import android.content.Context;
 import android.content.res.TypedArray;
+import android.graphics.PorterDuff;
 import android.graphics.drawable.Animatable;
 import android.graphics.drawable.Drawable;
-import android.support.annotation.ColorInt;
-import android.support.annotation.NonNull;
-import android.support.annotation.Nullable;
-import android.support.graphics.drawable.AnimatedVectorDrawableCompat;
-import android.support.v4.content.ContextCompat;
-import android.support.v4.graphics.drawable.DrawableCompat;
+import android.os.Build;
 import android.util.AttributeSet;
 
+import androidx.annotation.ColorInt;
+import androidx.annotation.Nullable;
+import androidx.appcompat.app.AppCompatDelegate;
+import androidx.core.content.ContextCompat;
+import androidx.vectordrawable.graphics.drawable.AnimatedVectorDrawableCompat;
 
-public class PlayerButton extends android.support.v7.widget.AppCompatImageButton {
+
+public class PlayerButton extends androidx.appcompat.widget.AppCompatImageButton {
 
     private final @ColorInt int playColor;
     private final @ColorInt int pauseColor;
@@ -48,7 +50,8 @@ public class PlayerButton extends android.support.v7.widget.AppCompatImageButton
     }
 
     private void init() {
-        setDrawable(true);
+        AppCompatDelegate.setCompatVectorFromResourcesEnabled(true);
+        setImageDrawable(getVectorDrawable());
         super.setOnClickListener(v -> {
             if (listener != null) listener.onClick(v);
             if (!isManualMode) setPlaying(!isPlaying);
@@ -65,16 +68,29 @@ public class PlayerButton extends android.support.v7.widget.AppCompatImageButton
     }
 
     /**
-     * Set playing mode. Animate if needed
+     * Set playing mode. Animate by default
      *
-     * @param isPlaying {@code true} - playing mode, {@code false} - paused mode
+     * @param play {@code true} - playing mode, {@code false} - paused mode
      */
-    public void setPlaying(boolean isPlaying) {
-        if (this.isPlaying != isPlaying) {
-            setDrawable(false);
+    public void setPlaying(boolean play) {
+        setPlaying(play, true);
+    }
+
+    /**
+     * Set playing mode
+     *
+     * @param play    {@code true} - playing mode, {@code false} - paused mode
+     * @param animate animate changes
+     */
+    public void setPlaying(boolean play, boolean animate) {
+        if (isPlaying == play) return;
+        isPlaying = play;
+        if (animate) {
+            setImageDrawable(getAnimatedDrawable());
             ((Animatable) getDrawable()).start();
+        } else {
+            setImageDrawable(getVectorDrawable());
         }
-        this.isPlaying = isPlaying;
     }
 
     /**
@@ -86,21 +102,27 @@ public class PlayerButton extends android.support.v7.widget.AppCompatImageButton
         this.isManualMode = isManualMode;
     }
 
-    private void setDrawable(boolean init) {
-        AnimatedVectorDrawableCompat drawable = getNextDrawable();
-        if (drawable != null) {
-            tintDrawable(drawable, isPlaying || init ? playColor : pauseColor);
-            setImageDrawable(drawable);
+
+    private AnimatedVectorDrawableCompat getAnimatedDrawable() {
+        int resId = isPlaying ? R.drawable.play_to_pause_animation : R.drawable.pause_to_play_animation;
+        AnimatedVectorDrawableCompat drawable = AnimatedVectorDrawableCompat.create(getContext(), resId);
+        //noinspection ConstantConditions
+        drawable.setTint(isPlaying ? pauseColor : playColor);
+        return drawable;
+    }
+
+    private Drawable getVectorDrawable() {
+        int resId = isPlaying ? R.drawable.ic_pause : R.drawable.ic_play;
+        Drawable drawable = ContextCompat.getDrawable(getContext(), resId);
+        setTint(drawable, isPlaying ? pauseColor : playColor);
+        return drawable;
+    }
+
+    private void setTint(Drawable drawable, @ColorInt int tint) {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+            drawable.setTint(tint);
+        } else {
+            drawable.setColorFilter(tint, PorterDuff.Mode.SRC_IN);
         }
-    }
-
-    private AnimatedVectorDrawableCompat getNextDrawable() {
-        int resId = isPlaying ? R.drawable.pause_to_play_animation : R.drawable.play_to_pause_animation;
-        return AnimatedVectorDrawableCompat.create(getContext(), resId);
-    }
-
-    private void tintDrawable(@NonNull Drawable drawable, @ColorInt int color) {
-        Drawable wrapped = DrawableCompat.wrap(drawable).mutate();
-        DrawableCompat.setTint(wrapped, color);
     }
 }

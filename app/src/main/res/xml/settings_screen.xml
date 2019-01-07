@@ -1,44 +1,57 @@
 <?xml version="1.0" encoding="utf-8"?>
 <PreferenceScreen
-    xmlns:android="http://schemas.android.com/apk/res/android">
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
 
-    <PreferenceCategory android:title="Stream settings">
+    <PreferenceCategory
+        android:title="@string/settings_stream"
+        app:iconSpaceReserved="false">
 
-        <io.github.vladimirmi.internetradioplayer.ui.SeekBarDialogPreference
+        <io.github.vladimirmi.internetradioplayer.presentation.settings.SeekBarDialogPreference
             android:defaultValue="3"
             android:dialogMessage="@string/setting_initial_buffer_desc"
             android:key="INITIAL_BUFFER_LENGTH"
             android:title="@string/setting_initial_buffer"
+            app:iconSpaceReserved="false"
             />
 
-        <io.github.vladimirmi.internetradioplayer.ui.SeekBarDialogPreference
+        <io.github.vladimirmi.internetradioplayer.presentation.settings.SeekBarDialogPreference
             android:defaultValue="6"
             android:dialogMessage="@string/setting_buffer_desc"
             android:key="BUFFER_LENGTH"
             android:title="@string/setting_buffer"
+            app:iconSpaceReserved="false"
             />
 
     </PreferenceCategory>
 
-    <PreferenceCategory android:title="Backup and restore">
+    <PreferenceCategory
+        android:title="@string/settings_backup_restore"
+        app:iconSpaceReserved="false">
 
         <Preference
             android:key="BACKUP_STATIONS"
             android:persistent="false"
-            android:title="Backup stations"
+            android:title="@string/setting_backup"
+            app:iconSpaceReserved="false"
             />
 
         <Preference
             android:key="RESTORE_STATIONS"
             android:persistent="false"
-            android:title="Restore stations"
+            android:title="@string/setting_restore"
+            app:iconSpaceReserved="false"
             />
 
     </PreferenceCategory>
 
-    <PreferenceCategory android:title="About">
+    <PreferenceCategory
+        android:title="@string/settings_about"
+        app:iconSpaceReserved="false">
 
-        <Preference android:title="Privacy policy">
+        <Preference
+            android:title="@string/setting_privacy"
+            app:iconSpaceReserved="false">
             <intent
                 android:action="android.intent.action.VIEW"
                 android:data="https://vladimirmi.github.io/InternetRadioPlayer/"/>

@@ -2,38 +2,77 @@ package io.github.vladimirmi.internetradioplayer.presentation.base
 
 import android.os.Bundle
 import android.view.LayoutInflater
-import android.view.MenuItem
 import android.view.View
 import android.view.ViewGroup
-import com.arellomobile.mvp.MvpAppCompatFragment
+import android.widget.Toast
+import androidx.annotation.Nullable
+import androidx.fragment.app.Fragment
+import com.google.android.material.snackbar.Snackbar
 
 /**
- * Created by Vladimir Mikhalev 30.09.2017.
+ * Created by Vladimir Mikhalev 10.11.2018.
  */
 
-abstract class BaseFragment : MvpAppCompatFragment() {
+abstract class BaseFragment<P : BasePresenter<V>, V : BaseView> : Fragment(), BaseView {
 
-    protected abstract val layoutRes: Int
+    lateinit var presenter: P
 
-    override fun onCreate(savedInstanceState: Bundle?) {
+    protected abstract val layout: Int
+
+    protected abstract fun providePresenter(): P
+
+    override fun onCreate(@Nullable savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        presenter = providePresenter()
         setHasOptionsMenu(true)
     }
 
-    override fun onCreateView(inflater: LayoutInflater,
-                              container: ViewGroup?,
-                              savedInstanceState: Bundle?): View
-            = inflater.inflate(layoutRes, container, false)
+    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {
+        return inflater.inflate(layout, container, false)
+    }
 
-    override fun onOptionsItemSelected(item: MenuItem?): Boolean {
-        if (item?.itemId == android.R.id.home) {
-            activity?.onBackPressed()
-            return true
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        setupView(view)
+    }
+
+    protected abstract fun setupView(view: View)
+
+
+    override fun onStart() {
+        super.onStart()
+        @Suppress("UNCHECKED_CAST")
+        presenter.attachView(this as V)
+    }
+
+    override fun onStop() {
+        presenter.detachView()
+        super.onStop()
+    }
+
+    override fun onDestroy() {
+        if (activity?.isFinishing == true) {
+            presenter.destroy()
         }
-        return super.onOptionsItemSelected(item)
+        super.onDestroy()
     }
 
-    fun buildToolbar(builder: ToolbarBuilder) {
-        builder.build(activity as ToolbarView)
+    //region =============== BaseView =============s=
+
+    override fun handleBackPressed(): Boolean {
+        return childFragmentManager.fragments.any { it is BackPressListener && it.handleBackPressed() }
     }
+
+    override fun showToast(resId: Int) {
+        Toast.makeText(requireContext(), resId, Toast.LENGTH_SHORT).show()
+    }
+
+    override fun showSnackbar(resId: Int) {
+        view?.let {
+            Snackbar.make(it, resId, Snackbar.LENGTH_SHORT).show()
+        }
+    }
+
+    //endregion
+
+    protected val isPresenterInit: Boolean get() = ::presenter.isInitialized
 }

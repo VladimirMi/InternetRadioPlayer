@@ -1,20 +1,16 @@
 package io.github.vladimirmi.internetradioplayer.domain.interactor
 
 import android.net.Uri
-import com.jakewharton.rxrelay2.BehaviorRelay
 import io.github.vladimirmi.internetradioplayer.R
 import io.github.vladimirmi.internetradioplayer.data.db.entity.Group
 import io.github.vladimirmi.internetradioplayer.data.db.entity.Station
-import io.github.vladimirmi.internetradioplayer.data.repository.StationListRepository
-import io.github.vladimirmi.internetradioplayer.data.utils.AppMigrationHelper
+import io.github.vladimirmi.internetradioplayer.data.repository.FavoritesRepository
+import io.github.vladimirmi.internetradioplayer.data.repository.StationRepository
 import io.github.vladimirmi.internetradioplayer.data.utils.ShortcutHelper
-import io.github.vladimirmi.internetradioplayer.domain.model.FlatStationsList
-import io.github.vladimirmi.internetradioplayer.extensions.MessageException
-import io.github.vladimirmi.internetradioplayer.presentation.station.StationInfo
+import io.github.vladimirmi.internetradioplayer.extensions.MessageResException
 import io.reactivex.Completable
-import io.reactivex.Observable
 import io.reactivex.Single
-import io.reactivex.rxkotlin.Singles
+import io.reactivex.rxkotlin.toCompletable
 import javax.inject.Inject
 
 
@@ -23,235 +19,75 @@ import javax.inject.Inject
  */
 
 class StationInteractor
-@Inject constructor(private val stationRepository: StationListRepository,
-                    private val shortcutHelper: ShortcutHelper,
-                    private val migrationHelper: AppMigrationHelper) {
+@Inject constructor(private val stationRepository: StationRepository,
+                    private val favoritesRepository: FavoritesRepository,
+                    private val favoriteListInteractor: FavoriteListInteractor,
+                    private val shortcutHelper: ShortcutHelper) {
 
-    val groups = arrayListOf<Group>()
-
-    var previousWhenEdit: Station? = null
-        private set
-    var createMode: Boolean = false
-        private set
-
-    private val _currentStationObs = BehaviorRelay.create<Station>()
-    val currentStationObs: Observable<Station> get() = _currentStationObs
-
-    var currentStation: Station
-        get() = _currentStationObs.value ?: Station.nullObj()
+    val stationObs get() = stationRepository.stationObs
+    var station
+        get() = stationRepository.station
         set(value) {
-            _currentStationObs.accept(value)
-            stationRepository.saveCurrentStationId(value.id)
+            stationRepository.station = value
         }
-    private val _stationsListObs = BehaviorRelay.create<FlatStationsList>()
-    val stationsListObs: Observable<FlatStationsList> get() = _stationsListObs
-    private var stationsList = FlatStationsList()
-
-    fun initStations(): Completable {
-        return migrationHelper.tryMigrate()
-                .andThen(buildGroupsList()).doOnComplete {
-                    val savedCurrentStation = getStation(stationRepository.getCurrentStationId())
-                    currentStation = savedCurrentStation ?: stationsList.getFirstStation() ?: Station.nullObj()
-                }
-    }
-
-    private fun buildGroupsList(): Completable {
-        return Singles.zip(stationRepository.getAllGroups(), stationRepository.getAllStations())
-        { groups, stations ->
-            val map = stations.groupBy { it.groupId }
-            groups.forEach { group ->
-                val groupStations = map[group.id]
-                groupStations?.forEach { it.groupName = group.name }
-                groupStations?.let { group.stations = groupStations.toMutableList() }
-            }
-            groups
-        }.flatMapCompletable { groups ->
-            //todo optimize
-            val groupUpdates = arrayListOf<Group>()
-            val stationUpdates = arrayListOf<Station>()
-
-            groups.forEachIndexed { i, group ->
-                if (group.order != i) groupUpdates.add(group.copy(order = i))
-                group.stations.forEachIndexed { j, station ->
-                    if (station.order != j) stationUpdates.add(station.copy(order = j))
-                }
-            }
-            if (groupUpdates.isNotEmpty() || stationUpdates.isNotEmpty()) {
-                stationRepository.updateGroups(groupUpdates)
-                        .andThen(stationRepository.updateStations(stationUpdates))
-                        .andThen(buildGroupsList())
-            } else {
-                Completable.fromCallable {
-                    this.groups.clear()
-                    this.groups.addAll(groups)
-                    buildStationsList()
-                }
-            }
-        }
-    }
-
-    private fun buildStationsList() {
-        //todo optimize
-        stationsList = FlatStationsList.createFrom(groups)
-        _stationsListObs.accept(stationsList)
-    }
 
     fun addCurrentShortcut(startPlay: Boolean): Boolean {
-        return shortcutHelper.pinShortcut(currentStation, startPlay)
+        return shortcutHelper.pinShortcut(station, startPlay)
     }
-
-    fun setEditMode(editMode: Boolean) {
-        if (editMode) previousWhenEdit = currentStation
-        else {
-            previousWhenEdit = null
-            createMode = false
-        }
-    }
-
-    fun getStation(predicate: (Station) -> Boolean): Station? {
-        for (group in groups) {
-            for (station in group.stations) {
-                if (predicate.invoke(station)) return station
-            }
-        }
-        return null
-    }
-
-    fun haveStations(): Boolean = stationsList.haveStations()
 
     fun createStation(uri: Uri): Single<Station> {
         return stationRepository.createStation(uri)
                 .doOnSuccess { newStation ->
-                    val station = getStation { it.uri == newStation.uri }
-                    if (station == null) {
-                        setEditMode(true)
-                        createMode = true
-                        currentStation = newStation
-                    } else {
-                        currentStation = station
+                    val favoriteStation = favoritesRepository.getStation { it.uri == newStation.uri }
+                    station = favoriteStation ?: newStation
+                }
+    }
+
+    fun addToFavorite(): Completable {
+        return favoriteListInteractor.getGroup(station.groupId)
+                .flatMapCompletable {
+                    val newStation = station.copy(order = it.stations.size, groupId = Group.DEFAULT_ID)
+                    favoritesRepository.addStation(newStation)
+                            .andThen(favoriteListInteractor.initFavoriteList())
+                            .andThen(setStation(newStation))
+                }
+    }
+
+    fun removeFromFavorite(): Completable {
+        return favoritesRepository.removeStation(station)
+                .andThen(favoriteListInteractor.initFavoriteList())
+                .andThen(setStation(station))
+    }
+
+    fun changeGroup(groupName: String): Completable {
+        return Single.fromCallable { favoritesRepository.groups.find { it.name == groupName } }
+                .flatMapCompletable {
+                    if (it.id == station.groupId) Completable.complete()
+                    else {
+                        val newStation = station.copy(groupId = it.id, order = it.stations.size)
+                        favoritesRepository.updateStations(listOf(newStation))
+                                .andThen(setStation(newStation))
+                                .andThen(favoriteListInteractor.initFavoriteList())
                     }
                 }
     }
 
-    fun addCurrentStation(stationName: String, groupName: String): Completable {
-        validate(stationName, adding = true)?.let { return it }
+    fun editStationTitle(title: String): Completable {
+        if (title == station.name) return Completable.complete()
+        if (title.isBlank()) return Completable.error(MessageResException(R.string.msg_name_empty_error))
 
-        return addGroup(groupName).flatMapCompletable { group ->
-            val newStation = currentStation.copy(groupId = group.id, order = group.stations.size)
-            newStation.genres = currentStation.genres
-            newStation.groupName = groupName
-            stationRepository.addStation(newStation).doOnComplete {
-                group.stations.add(newStation)
-                currentStation = newStation
-                buildStationsList()
-            }
-        }
-    }
-
-    fun updateCurrentStation(stationName: String, groupName: String): Completable {
-        validate(stationName)?.let { return it }
-
-        return addGroup(groupName).flatMapCompletable { group ->
-            val order = if (currentStation.groupId != group.id) group.stations.size else currentStation.order
-            val newStation = currentStation.copy(name = stationName, groupId = group.id, order = order)
-            newStation.groupName = groupName
-            stationRepository.updateStations(listOf(newStation))
-                    .doOnComplete { currentStation = newStation }
-            //todo optimize
-        }.andThen(buildGroupsList())
-    }
-
-    fun removeStation(id: String): Completable {
-        val station = getStation(id)
-                ?: return Completable.error(IllegalStateException("Can not find station with id $id"))
-
-        return stationRepository.removeStation(station)
-                .doOnComplete {
-                    val changed = if (stationsList.isFirstStation(id)) nextStation(id)
-                    else previousStation(id)
-                    if (!changed) currentStation = Station.nullObj()
-                }
-                //todo optimize
-                .andThen(buildGroupsList())
-    }
-
-    fun nextStation(id: String = currentStation.id): Boolean {
-        val next = stationsList.getNextFrom(id)
-        next?.let { currentStation = it }
-        return next != null
-    }
-
-    fun previousStation(id: String = currentStation.id): Boolean {
-        val previous = stationsList.getPreviousFrom(id)
-        previous?.let { currentStation = it }
-        return previous != null
-    }
-
-    fun expandOrCollapseGroup(id: String): Completable {
-        val i = indexOfGroup(id)
-        val group = groups[i]
-        val newGroup = group.copy(expanded = !group.expanded)
-        newGroup.stations = group.stations
-        return stationRepository.updateGroups(listOf(newGroup))
-                .doOnComplete {
-                    groups[i] = newGroup
-                    buildStationsList()
-                }
-    }
-
-    fun stationChanged(stationInfo: StationInfo): Boolean {
-        return when {
-            currentStation.icon != previousWhenEdit!!.icon -> true
-            stationInfo.stationName != previousWhenEdit!!.name -> true
-            stationInfo.groupName != previousWhenEdit!!.groupName -> true
-            else -> false
-        }
-    }
-
-    fun moveGroupElements(stations: FlatStationsList): Completable {
-        val updateGroups = Single.fromCallable { FlatStationsList.createFrom(groups).getGroupUpdatesFrom(stations) }
-                .flatMapCompletable { stationRepository.updateGroups(it) }
-
-        val updateStations = Single.fromCallable { FlatStationsList.createFrom(groups).getStationUpdatesFrom(stations) }
-                .flatMapCompletable { stationRepository.updateStations(it) }
-
-        return updateGroups.andThen(updateStations).andThen(buildGroupsList())
-                .doOnComplete { currentStation = getStation(currentStation.id) ?: Station.nullObj() }
-    }
-
-    private fun addGroup(name: String): Single<Group> {
-        groups.find { it.name == name }?.let { return Single.just(it) }
-
-        val group = if (name == Group.DEFAULT_NAME) Group.default() else Group(name, groups.size)
-
-        return stationRepository.addGroup(group)
-                .andThen(Single.fromCallable {
-                    groups.add(group)
-                    buildStationsList()
-                    group
+        val newStation = station.copy(name = title)
+        return favoritesRepository.updateStations(listOf(newStation))
+                .andThen(setStation(newStation))
+                .andThen(if (favoriteListInteractor.isFavorite(newStation)) {
+                    favoriteListInteractor.initFavoriteList()
+                } else {
+                    Completable.complete()
                 })
     }
 
-    private fun containsStation(predicate: (Station) -> Boolean): Boolean {
-        return groups.any { it.stations.any(predicate) }
+    private fun setStation(station: Station): Completable {
+        return { this.station = station }.toCompletable()
     }
-
-    private fun validate(stationName: String, adding: Boolean = false): Completable? {
-        return when {
-            adding && containsStation { it.name == stationName } -> {
-                Completable.error(MessageException(R.string.toast_name_exists_error))
-            }
-            stationName.isBlank() -> {
-                Completable.error(MessageException(R.string.toast_name_empty_error))
-            }
-            else -> null
-        }
-    }
-
-    private fun indexOfGroup(groupId: String): Int {
-        return groups.indexOfFirst { it.id == groupId }
-    }
-
-    private fun getStation(id: String) = getStation { it.id == id }
 }
 

@@ -11,6 +11,7 @@ import android.net.Uri
 import android.net.wifi.WifiManager
 import com.google.android.exoplayer2.ExoPlayerFactory
 import com.google.android.exoplayer2.SimpleExoPlayer
+import com.google.android.exoplayer2.analytics.AnalyticsListener
 import com.google.android.exoplayer2.source.ExtractorMediaSource
 import com.google.android.exoplayer2.trackselection.DefaultTrackSelector
 import com.google.android.exoplayer2.util.Util
@@ -38,6 +39,12 @@ class Playback(private val service: PlayerService,
     private val wifiLock = (service.applicationContext.getSystemService(Context.WIFI_SERVICE) as WifiManager)
             .createWifiLock(WifiManager.WIFI_MODE_FULL, BuildConfig.APPLICATION_ID)
     private val audioManager = service.getSystemService(Context.AUDIO_SERVICE) as AudioManager
+
+    private val analyticsListener = object : AnalyticsListener {
+        override fun onAudioSessionId(eventTime: AnalyticsListener.EventTime?, audioSessionId: Int) {
+            playerCallback.onAudioSessionId(audioSessionId)
+        }
+    }
 
     fun play(uri: Uri) {
         runOnUiThread {
@@ -71,6 +78,7 @@ class Playback(private val service: PlayerService,
     fun releasePlayer() {
         runOnUiThread {
             player?.removeListener(playerCallback)
+            player?.removeAnalyticsListener(analyticsListener)
             player?.release()
             player = null
         }
@@ -95,6 +103,7 @@ class Playback(private val service: PlayerService,
         val trackSelector = DefaultTrackSelector()
         player = ExoPlayerFactory.newSimpleInstance(service, audioRenderers, trackSelector, loadControl)
         player?.addListener(playerCallback)
+        player?.addAnalyticsListener(analyticsListener)
     }
 
     private fun preparePlayer(uri: Uri) {

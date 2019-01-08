@@ -2,6 +2,7 @@ package io.github.vladimirmi.internetradioplayer.data.service
 
 import android.app.Service
 import android.content.Intent
+import android.media.audiofx.Equalizer
 import android.os.Bundle
 import android.support.v4.media.MediaBrowserCompat
 import android.support.v4.media.session.MediaSessionCompat
@@ -19,6 +20,7 @@ import io.github.vladimirmi.internetradioplayer.extensions.errorHandler
 import io.github.vladimirmi.internetradioplayer.extensions.toUri
 import io.reactivex.disposables.CompositeDisposable
 import io.reactivex.rxkotlin.addTo
+import timber.log.Timber
 import toothpick.Toothpick
 import java.net.ConnectException
 import java.util.*
@@ -204,6 +206,18 @@ class PlayerService : MediaBrowserServiceCompat(), SessionCallback.Interface {
             mediaMetadata = mediaMetadata.setArtistTitle(metadata)
             session.setMetadata(mediaMetadata)
             notification.update()
+        }
+
+        override fun onAudioSessionId(audioSessionId: Int) {
+            Timber.e("onAudioSessionId: id - $audioSessionId")
+
+            val equalizer = Equalizer(1, audioSessionId)
+            Timber.e("onAudioSessionId: settings - ${equalizer.properties}")
+            Timber.e("onAudioSessionId: bands - ${(0 until equalizer.numberOfBands)
+                    .joinToString { equalizer.getCenterFreq(it.toShort()).toString() }}")
+            Timber.e("onAudioSessionId: presets - ${(0 until equalizer.numberOfPresets)
+                    .joinToString { equalizer.getPresetName(it.toShort()) }}")
+            Timber.e("onAudioSessionId: band level range - ${Arrays.toString(equalizer.bandLevelRange)}")
         }
     }
 

@@ -37,6 +37,7 @@ class PlayerService : MediaBrowserServiceCompat(), SessionCallback.Interface {
     companion object {
         const val EVENT_SESSION_NEXT = "EVENT_SESSION_NEXT"
         const val EVENT_SESSION_PREVIOUS = "EVENT_SESSION_PREVIOUS"
+        const val EVENT_SESSION_ID = "EVENT_SESSION_ID"
         const val EXTRA_STATION_ID = "EXTRA_STATION_ID"
     }
 
@@ -167,12 +168,12 @@ class PlayerService : MediaBrowserServiceCompat(), SessionCallback.Interface {
 
     override fun onSkipToPreviousCommand() {
         val changed = favoriteListInteractor.previousStation(stationInteractor.station.id)
-        if (changed) session.sendSessionEvent(EVENT_SESSION_PREVIOUS, null)
+        if (changed) session.sendSessionEvent(EVENT_SESSION_PREVIOUS, Bundle.EMPTY)
     }
 
     override fun onSkipToNextCommand() {
         val changed = favoriteListInteractor.nextStation(stationInteractor.station.id)
-        if (changed) session.sendSessionEvent(EVENT_SESSION_NEXT, null)
+        if (changed) session.sendSessionEvent(EVENT_SESSION_NEXT, Bundle.EMPTY)
     }
 
     //endregion
@@ -209,6 +210,7 @@ class PlayerService : MediaBrowserServiceCompat(), SessionCallback.Interface {
         }
 
         override fun onAudioSessionId(audioSessionId: Int) {
+            session.sendSessionEvent(EVENT_SESSION_ID, Bundle().apply { putInt(EVENT_SESSION_ID, audioSessionId) })
             Timber.e("onAudioSessionId: id - $audioSessionId")
 
             val equalizer = Equalizer(1, audioSessionId)

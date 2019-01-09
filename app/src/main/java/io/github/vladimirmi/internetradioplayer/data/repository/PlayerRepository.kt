@@ -27,7 +27,7 @@ class PlayerRepository
 
     val playbackState: BehaviorRelay<PlaybackStateCompat> = BehaviorRelay.create()
     val metadata: BehaviorRelay<MediaMetadataCompat> = BehaviorRelay.create()
-    val sessionEvent: BehaviorRelay<String> = BehaviorRelay.create()
+    val sessionEvent: BehaviorRelay<Pair<String, Bundle>> = BehaviorRelay.create()
     private val connected = BehaviorRelay.createDefault(false)
 
     private val connectionCallbacks = object : MediaBrowserCompat.ConnectionCallback() {
@@ -65,7 +65,7 @@ class PlayerRepository
         }
 
         override fun onSessionEvent(event: String, extras: Bundle) {
-            sessionEvent.accept(event)
+            sessionEvent.accept(event to extras)
         }
     }
 

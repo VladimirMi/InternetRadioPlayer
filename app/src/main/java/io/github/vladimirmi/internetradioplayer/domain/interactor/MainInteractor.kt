@@ -1,5 +1,6 @@
 package io.github.vladimirmi.internetradioplayer.domain.interactor
 
+import io.github.vladimirmi.internetradioplayer.R
 import io.github.vladimirmi.internetradioplayer.data.utils.Preferences
 import javax.inject.Inject
 
@@ -15,6 +16,7 @@ class MainInteractor
     }
 
     fun getMainPageId(): Int {
-        return prefs.mainPageId
+        val id = prefs.mainPageId
+        return if (id == R.id.nav_settings) R.id.nav_search else id
     }
 }

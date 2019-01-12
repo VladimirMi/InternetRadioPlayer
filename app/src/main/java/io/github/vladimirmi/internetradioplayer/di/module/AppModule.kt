@@ -3,6 +3,7 @@ package io.github.vladimirmi.internetradioplayer.di.module
 import android.content.Context
 import com.google.gson.Gson
 import com.google.gson.GsonBuilder
+import io.github.vladimirmi.internetradioplayer.data.db.EqualizerDatabase
 import io.github.vladimirmi.internetradioplayer.data.db.HistoryDatabase
 import io.github.vladimirmi.internetradioplayer.data.db.StationsDatabase
 import io.github.vladimirmi.internetradioplayer.data.db.SuggestionsDatabase
@@ -39,14 +40,10 @@ class AppModule(context: Context) : Module() {
         bind(UberStationsService::class.java)
                 .toInstance(httpClient.getUberStationsService(gsonConverterFactory))
 
-        val stationsDatabase = StationsDatabase.newInstance(context)
-        bind(StationsDatabase::class.java).toInstance(stationsDatabase)
-
-        val suggestionsDatabase = SuggestionsDatabase.newInstance(context)
-        bind(SuggestionsDatabase::class.java).toInstance(suggestionsDatabase)
-
-        val historyDatabase = HistoryDatabase.newInstance(context)
-        bind(HistoryDatabase::class.java).toInstance(historyDatabase)
+        bind(StationsDatabase::class.java).toInstance(StationsDatabase.newInstance(context))
+        bind(SuggestionsDatabase::class.java).toInstance(SuggestionsDatabase.newInstance(context))
+        bind(HistoryDatabase::class.java).toInstance(HistoryDatabase.newInstance(context))
+        bind(EqualizerDatabase::class.java).toInstance(EqualizerDatabase.newInstance(context))
 
         bind(StationParser::class.java).singletonInScope()
 

@@ -1,9 +1,9 @@
 package io.github.vladimirmi.internetradioplayer.presentation.equalizer
 
-import android.media.audiofx.Equalizer
+import io.github.vladimirmi.internetradioplayer.data.repository.EqualizerRepository
+import io.github.vladimirmi.internetradioplayer.extensions.subscribeX
 import io.github.vladimirmi.internetradioplayer.presentation.base.BasePresenter
-import timber.log.Timber
-import java.util.*
+import io.reactivex.rxkotlin.addTo
 import javax.inject.Inject
 
 /**
@@ -11,22 +11,20 @@ import javax.inject.Inject
  */
 
 class EqualizerPresenter
-@Inject constructor() : BasePresenter<EqualizerView>() {
+@Inject constructor(private val equalizerRepository: EqualizerRepository) : BasePresenter<EqualizerView>() {
 
     override fun onFirstAttach(view: EqualizerView) {
 
-        val equalizer = Equalizer(1, 66)
-        Timber.e("onAudioSessionId: settings - ${equalizer.properties}")
-        val bands = (0 until equalizer.numberOfBands)
-                .map { (equalizer.getCenterFreq(it.toShort()) / 1000).toString() }
-        val values = (0 until equalizer.numberOfBands)
-                .map { equalizer.getBandLevel(it.toShort()).toInt() }
-        val range = equalizer.bandLevelRange
-        view.setBands(bands, values, range[0].toInt(), range[1].toInt())
+        val bands = equalizerRepository.bands
+        val values = bands.map { it.length }
+        val range = equalizerRepository.levelRange
+        view.setBands(bands, values, range.first, range.second)
 
-        Timber.e("onAudioSessionId: bands - $bands")
-        Timber.e("onAudioSessionId: presets - ${(0 until equalizer.numberOfPresets)
-                .joinToString { equalizer.getPresetName(it.toShort()) }}")
-        Timber.e("onAudioSessionId: band level range - ${Arrays.toString(equalizer.bandLevelRange)}")
+        equalizerRepository.equalizerObs.subscribeX()
+                .addTo(viewSubs)
+    }
+
+    fun setBandLevel(band: Int, level: Int) {
+        equalizerRepository.setBandLevel(band, level)
     }
 }

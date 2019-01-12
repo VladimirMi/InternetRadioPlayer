@@ -31,5 +31,7 @@ class EqualizerFragment : BaseFragment<EqualizerPresenter, EqualizerView>(), Equ
         view?.waitForMeasure {
             equalizerView.setBands(bands, values, min, max)
         }
+
+        equalizerView.onBandLevelChangeListener = presenter::setBandLevel
     }
 }

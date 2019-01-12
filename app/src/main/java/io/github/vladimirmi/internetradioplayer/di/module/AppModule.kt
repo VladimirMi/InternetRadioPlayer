@@ -59,6 +59,7 @@ class AppModule(context: Context) : Module() {
         bind(StationRepository::class.java).singletonInScope()
         bind(PlayerRepository::class.java).singletonInScope()
         bind(HistoryRepository::class.java).singletonInScope()
+        bind(EqualizerRepository::class.java).singletonInScope()
 
         bind(MainInteractor::class.java).singletonInScope()
         bind(SearchInteractor::class.java).singletonInScope()

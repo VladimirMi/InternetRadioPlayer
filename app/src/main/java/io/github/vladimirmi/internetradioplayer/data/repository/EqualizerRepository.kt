@@ -3,8 +3,6 @@ package io.github.vladimirmi.internetradioplayer.data.repository
 import android.media.audiofx.BassBoost
 import android.media.audiofx.Equalizer
 import android.media.audiofx.Virtualizer
-import io.github.vladimirmi.internetradioplayer.data.service.PlayerService
-import io.reactivex.Completable
 import javax.inject.Inject
 
 /**
@@ -12,12 +10,14 @@ import javax.inject.Inject
  */
 
 class EqualizerRepository
-@Inject constructor(playerRepository: PlayerRepository) {
+@Inject constructor() {
 
     private var equalizer: Equalizer? = null
     private var bassBoost: BassBoost? = null
     private var virtualizer: Virtualizer? = null
-    private val equalizerSettings: Equalizer.Settings
+    val equalizerSettings: Equalizer.Settings
+    val bassSettings = BassBoost.Settings()
+    val virtualizerSettings = Virtualizer.Settings()
     val bands: List<String>
     val levelRange: Pair<Int, Int>
 
@@ -34,26 +34,21 @@ class EqualizerRepository
         }
     }
 
-    val equalizerObs: Completable = playerRepository.sessionEvent
-            .filter { it.first == PlayerService.EVENT_SESSION_ID }
-            .map {
-                val id = it.second.getInt(PlayerService.EVENT_SESSION_ID, 0)
-                if (id != 0) initEqualizer(id)
-                else releaseEqualizer()
-            }.ignoreElements()
-
-    private fun initEqualizer(sessionId: Int) {
+    fun initEqualizer(sessionId: Int) {
         equalizer = Equalizer(0, sessionId)
         equalizer?.enabled = true
         equalizer?.properties = equalizerSettings
 
         bassBoost = BassBoost(0, sessionId)
         bassBoost?.enabled = true
+        bassBoost?.properties = bassSettings
+
         virtualizer = Virtualizer(0, sessionId)
         virtualizer?.enabled = true
+        virtualizer?.properties = virtualizerSettings
     }
 
-    private fun releaseEqualizer() {
+    fun releaseEqualizer() {
         equalizer?.release()
         equalizer = null
         bassBoost?.release()
@@ -69,10 +64,12 @@ class EqualizerRepository
     }
 
     fun setBassBoost(strength: Int) {
+        bassSettings.strength = strength.toShort()
         bassBoost?.setStrength(strength.toShort())
     }
 
     fun setVirtualizer(strength: Int) {
+        virtualizerSettings.strength = strength.toShort()
         virtualizer?.setStrength(strength.toShort())
     }
 }

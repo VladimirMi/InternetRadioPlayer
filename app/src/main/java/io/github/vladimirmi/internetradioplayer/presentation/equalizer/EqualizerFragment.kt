@@ -46,4 +46,12 @@ class EqualizerFragment : BaseFragment<EqualizerPresenter, EqualizerView>(), Equ
             }
         })
     }
+
+    override fun setBassBoost(bassBoost: Int) {
+        bassSb.progress = bassBoost
+    }
+
+    override fun setVirtualizer(virtualizer: Int) {
+        virtualSb.progress = virtualizer
+    }
 }

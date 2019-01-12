@@ -1,6 +1,6 @@
 package io.github.vladimirmi.internetradioplayer.presentation.equalizer
 
-import io.github.vladimirmi.internetradioplayer.data.repository.EqualizerRepository
+import io.github.vladimirmi.internetradioplayer.domain.interactor.EqualizerInteractor
 import io.github.vladimirmi.internetradioplayer.extensions.subscribeX
 import io.github.vladimirmi.internetradioplayer.presentation.base.BasePresenter
 import io.reactivex.rxkotlin.addTo
@@ -11,28 +11,30 @@ import javax.inject.Inject
  */
 
 class EqualizerPresenter
-@Inject constructor(private val equalizerRepository: EqualizerRepository) : BasePresenter<EqualizerView>() {
+@Inject constructor(private val equalizerInteractor: EqualizerInteractor) : BasePresenter<EqualizerView>() {
 
     override fun onFirstAttach(view: EqualizerView) {
 
-        val bands = equalizerRepository.bands
-        val values = bands.map { it.length }
-        val range = equalizerRepository.levelRange
-        view.setBands(bands, values, range.first, range.second)
+        val bands = equalizerInteractor.bands
+        val bandLevels = equalizerInteractor.bandLevels
+        val range = equalizerInteractor.levelRange
+        view.setBands(bands, bandLevels, range.first, range.second)
+        view.setBassBoost(equalizerInteractor.bassBoost)
+        view.setVirtualizer(equalizerInteractor.virtualizer)
 
-        equalizerRepository.equalizerObs.subscribeX()
+        equalizerInteractor.equalizerInit.subscribeX()
                 .addTo(dataSubs)
     }
 
     fun setBandLevel(band: Int, level: Int) {
-        equalizerRepository.setBandLevel(band, level)
+        equalizerInteractor.setBandLevel(band, level)
     }
 
     fun setBassBoost(strength: Int) {
-        equalizerRepository.setBassBoost(strength)
+        equalizerInteractor.bassBoost = strength
     }
 
     fun setVirtualizer(strength: Int) {
-        equalizerRepository.setVirtualizer(strength)
+        equalizerInteractor.virtualizer = strength
     }
 }

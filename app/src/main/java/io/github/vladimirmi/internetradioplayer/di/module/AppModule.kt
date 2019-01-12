@@ -67,6 +67,7 @@ class AppModule(context: Context) : Module() {
         bind(StationInteractor::class.java).singletonInScope()
         bind(PlayerInteractor::class.java).singletonInScope()
         bind(HistoryInteractor::class.java).singletonInScope()
+        bind(EqualizerInteractor::class.java).singletonInScope()
 
         bind(LoadControl::class.java).singletonInScope()
     }

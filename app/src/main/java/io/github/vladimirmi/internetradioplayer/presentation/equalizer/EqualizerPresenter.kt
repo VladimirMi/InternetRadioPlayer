@@ -21,10 +21,18 @@ class EqualizerPresenter
         view.setBands(bands, values, range.first, range.second)
 
         equalizerRepository.equalizerObs.subscribeX()
-                .addTo(viewSubs)
+                .addTo(dataSubs)
     }
 
     fun setBandLevel(band: Int, level: Int) {
         equalizerRepository.setBandLevel(band, level)
+    }
+
+    fun setBassBoost(strength: Int) {
+        equalizerRepository.setBassBoost(strength)
+    }
+
+    fun setVirtualizer(strength: Int) {
+        equalizerRepository.setVirtualizer(strength)
     }
 }

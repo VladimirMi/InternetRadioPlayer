@@ -1,4 +1,4 @@
-package io.github.vladimirmi.internetradioplayer.extensions
+package io.github.vladimirmi.internetradioplayer.data.utils
 
 import android.content.Context
 import timber.log.Timber

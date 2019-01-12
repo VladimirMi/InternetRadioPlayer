@@ -7,7 +7,7 @@ import io.github.vladimirmi.internetradioplayer.data.db.entity.Station
 import io.github.vladimirmi.internetradioplayer.data.repository.FavoritesRepository
 import io.github.vladimirmi.internetradioplayer.data.repository.StationRepository
 import io.github.vladimirmi.internetradioplayer.data.utils.ShortcutHelper
-import io.github.vladimirmi.internetradioplayer.extensions.MessageResException
+import io.github.vladimirmi.internetradioplayer.utils.MessageResException
 import io.reactivex.Completable
 import io.reactivex.Single
 import io.reactivex.rxkotlin.toCompletable

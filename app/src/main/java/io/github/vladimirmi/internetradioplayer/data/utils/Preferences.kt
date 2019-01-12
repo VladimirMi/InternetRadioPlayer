@@ -3,7 +3,7 @@ package io.github.vladimirmi.internetradioplayer.data.utils
 import android.content.Context
 import android.content.SharedPreferences
 import io.github.vladimirmi.internetradioplayer.R
-import io.github.vladimirmi.internetradioplayer.extensions.Preference
+import io.github.vladimirmi.internetradioplayer.utils.Preference
 import javax.inject.Inject
 
 /**

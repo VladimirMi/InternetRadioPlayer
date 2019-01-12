@@ -37,7 +37,7 @@
                 android:layout_marginStart="12dp"
                 android:layout_marginLeft="12dp"
                 android:layout_span="3"
-                android:text="Bass"
+                android:text="BassBoost"
                 android:textAppearance="@style/TextAppearance.AppCompat.Subhead"
                 />
         </TableRow>
@@ -58,7 +58,8 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:padding="8dp"
-                android:progress="50"
+                android:progress="500"
+                android:max="1000"
                 />
 
             <TextView
@@ -78,7 +79,7 @@
             <TextView
                 android:layout_marginStart="12dp"
                 android:layout_marginLeft="12dp"
-                android:text="Virtualization"
+                android:text="Virtualizer"
                 android:textAppearance="@style/TextAppearance.AppCompat.Subhead"
                 />
         </TableRow>
@@ -98,7 +99,8 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:padding="8dp"
-                android:progress="50"
+                android:progress="500"
+                android:max="1000"
                 />
 
             <TextView

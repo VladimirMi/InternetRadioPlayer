@@ -1,10 +1,12 @@
 package io.github.vladimirmi.internetradioplayer.presentation.equalizer
 
 import android.view.View
+import android.widget.SeekBar
 import io.github.vladimirmi.internetradioplayer.R
 import io.github.vladimirmi.internetradioplayer.di.Scopes
 import io.github.vladimirmi.internetradioplayer.extensions.waitForMeasure
 import io.github.vladimirmi.internetradioplayer.presentation.base.BaseFragment
+import io.github.vladimirmi.internetradioplayer.utils.SimpleOnSeekBarChangeListener
 import kotlinx.android.synthetic.main.fragment_equalizer.*
 import toothpick.Toothpick
 
@@ -24,7 +26,6 @@ class EqualizerFragment : BaseFragment<EqualizerPresenter, EqualizerView>(), Equ
     }
 
     override fun setupView(view: View) {
-
     }
 
     override fun setBands(bands: List<String>, values: List<Int>, min: Int, max: Int) {
@@ -33,5 +34,16 @@ class EqualizerFragment : BaseFragment<EqualizerPresenter, EqualizerView>(), Equ
         }
 
         equalizerView.onBandLevelChangeListener = presenter::setBandLevel
+
+        bassSb.setOnSeekBarChangeListener(object : SimpleOnSeekBarChangeListener() {
+            override fun onProgressChanged(seekBar: SeekBar?, progress: Int, fromUser: Boolean) {
+                if (fromUser) presenter.setBassBoost(progress)
+            }
+        })
+        virtualSb.setOnSeekBarChangeListener(object : SimpleOnSeekBarChangeListener() {
+            override fun onProgressChanged(seekBar: SeekBar?, progress: Int, fromUser: Boolean) {
+                if (fromUser) presenter.setVirtualizer(progress)
+            }
+        })
     }
 }

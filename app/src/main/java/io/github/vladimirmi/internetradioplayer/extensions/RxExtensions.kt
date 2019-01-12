@@ -2,6 +2,7 @@ package io.github.vladimirmi.internetradioplayer.extensions
 
 import android.widget.Toast
 import io.github.vladimirmi.internetradioplayer.di.Scopes
+import io.github.vladimirmi.internetradioplayer.utils.MessageResException
 import io.reactivex.Completable
 import io.reactivex.Maybe
 import io.reactivex.Observable

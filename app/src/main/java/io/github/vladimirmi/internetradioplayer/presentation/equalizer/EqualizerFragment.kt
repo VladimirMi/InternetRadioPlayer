@@ -1,6 +1,7 @@
 package io.github.vladimirmi.internetradioplayer.presentation.equalizer
 
 import android.view.View
+import android.widget.ArrayAdapter
 import android.widget.SeekBar
 import io.github.vladimirmi.internetradioplayer.R
 import io.github.vladimirmi.internetradioplayer.di.Scopes
@@ -16,6 +17,8 @@ import toothpick.Toothpick
 
 class EqualizerFragment : BaseFragment<EqualizerPresenter, EqualizerView>(), EqualizerView {
 
+    private lateinit var presetAdapter: ArrayAdapter<String>
+
     override val layout = R.layout.fragment_equalizer
 
     override fun providePresenter(): EqualizerPresenter {
@@ -26,6 +29,9 @@ class EqualizerFragment : BaseFragment<EqualizerPresenter, EqualizerView>(), Equ
     }
 
     override fun setupView(view: View) {
+        presetAdapter = ArrayAdapter(context!!, android.R.layout.simple_spinner_item)
+        presetAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
+        presetSpinner.adapter = presetAdapter
     }
 
     override fun setBands(bands: List<String>, values: List<Int>, min: Int, max: Int) {
@@ -53,5 +59,12 @@ class EqualizerFragment : BaseFragment<EqualizerPresenter, EqualizerView>(), Equ
 
     override fun setVirtualizer(virtualizer: Int) {
         virtualSb.progress = virtualizer
+    }
+
+    override fun setPresets(presets: List<String>, curPreset: Int) {
+        presetAdapter.clear()
+        presetAdapter.addAll(presets)
+        presetAdapter.notifyDataSetChanged()
+        presetSpinner.setSelection(curPreset)
     }
 }

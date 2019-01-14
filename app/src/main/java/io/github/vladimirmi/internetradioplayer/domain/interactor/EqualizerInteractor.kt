@@ -4,6 +4,7 @@ import io.github.vladimirmi.internetradioplayer.data.repository.EqualizerReposit
 import io.github.vladimirmi.internetradioplayer.data.repository.PlayerRepository
 import io.github.vladimirmi.internetradioplayer.data.service.PlayerService
 import io.reactivex.Completable
+import io.reactivex.Single
 import javax.inject.Inject
 
 /**
@@ -36,4 +37,12 @@ class EqualizerInteractor
             }.ignoreElements()
 
     fun setBandLevel(band: Int, level: Int) = equalizerRepository.setBandLevel(band, level)
+
+    fun getPresets(): Single<List<String>> {
+        return Single.just(equalizerRepository.defaultPresets)
+    }
+
+    fun getCurrentPreset(): Single<Int> {
+        return Single.just(0)
+    }
 }

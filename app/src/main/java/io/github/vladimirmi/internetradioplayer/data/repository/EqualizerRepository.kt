@@ -20,6 +20,7 @@ class EqualizerRepository
     val virtualizerSettings = Virtualizer.Settings()
     val bands: List<String>
     val levelRange: Pair<Int, Int>
+    val defaultPresets: List<String>
 
     init {
         with(Equalizer(-1, 1)) {
@@ -28,7 +29,7 @@ class EqualizerRepository
                 if (freq > 1000) "${freq / 1000.0} kHz" else "$freq Hz"
             }
             levelRange = bandLevelRange[0].toInt() to bandLevelRange[1].toInt()
-
+            defaultPresets = (0 until numberOfPresets).map { getPresetName(it.toShort()) }
             equalizerSettings = properties
             release()
         }

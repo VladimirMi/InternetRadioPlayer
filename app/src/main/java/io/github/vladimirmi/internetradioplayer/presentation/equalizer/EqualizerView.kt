@@ -13,4 +13,6 @@ interface EqualizerView : BaseView {
     fun setBassBoost(bassBoost: Int)
 
     fun setVirtualizer(virtualizer: Int)
+
+    fun setPresets(presets: List<String>, curPreset: Int)
 }

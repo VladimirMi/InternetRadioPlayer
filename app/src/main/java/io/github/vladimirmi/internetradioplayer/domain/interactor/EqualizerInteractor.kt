@@ -45,4 +45,8 @@ class EqualizerInteractor
     fun getCurrentPreset(): Single<Int> {
         return Single.just(0)
     }
+
+    fun selectPreset(position: Int) {
+        equalizerRepository.usePreset(position)
+    }
 }

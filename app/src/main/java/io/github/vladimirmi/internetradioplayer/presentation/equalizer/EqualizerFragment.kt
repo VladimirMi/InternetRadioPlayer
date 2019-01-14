@@ -1,6 +1,7 @@
 package io.github.vladimirmi.internetradioplayer.presentation.equalizer
 
 import android.view.View
+import android.widget.AdapterView
 import android.widget.ArrayAdapter
 import android.widget.SeekBar
 import io.github.vladimirmi.internetradioplayer.R
@@ -32,11 +33,20 @@ class EqualizerFragment : BaseFragment<EqualizerPresenter, EqualizerView>(), Equ
         presetAdapter = ArrayAdapter(context!!, android.R.layout.simple_spinner_item)
         presetAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
         presetSpinner.adapter = presetAdapter
+
+        presetSpinner.onItemSelectedListener = object : AdapterView.OnItemSelectedListener {
+            override fun onNothingSelected(parent: AdapterView<*>?) {
+            }
+
+            override fun onItemSelected(parent: AdapterView<*>?, view: View?, position: Int, id: Long) {
+                presenter.selectPreset(position)
+            }
+        }
     }
 
-    override fun setBands(bands: List<String>, values: List<Int>, min: Int, max: Int) {
+    override fun setupBands(bands: List<String>, min: Int, max: Int) {
         view?.waitForMeasure {
-            equalizerView.setBands(bands, values, min, max)
+            equalizerView.setBands(bands, min, max)
         }
 
         equalizerView.onBandLevelChangeListener = presenter::setBandLevel
@@ -51,6 +61,10 @@ class EqualizerFragment : BaseFragment<EqualizerPresenter, EqualizerView>(), Equ
                 if (fromUser) presenter.setVirtualizer(progress)
             }
         })
+    }
+
+    override fun setBandLevels(bandLevels: List<Int>) {
+        equalizerView.setBandLevels(bandLevels)
     }
 
     override fun setBassBoost(bassBoost: Int) {

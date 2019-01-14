@@ -135,6 +135,7 @@ class PlayerFragment : BaseFragment<PlayerPresenter, PlayerView>(), PlayerView, 
     }
 
     override fun setGroup(position: Int) {
+        //todo try refactor
         blockSpinnerSelection = true
         groupSpinner.setSelection(position)
         Handler().postDelayed({ blockSpinnerSelection = false }, 100)

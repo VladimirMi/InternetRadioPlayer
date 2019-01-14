@@ -24,11 +24,15 @@ class VerticalSeekBar @JvmOverloads constructor(
         addView(label)
     }
 
-    fun setup(label: String, progress: Int, min: Int, max: Int) {
+
+    fun setup(label: String, min: Int, max: Int) {
         this.label.text = label
         minProgress = min
         bar.max = max - min
-        bar.progress = progress - min
+    }
+
+    fun setProgress(progress: Int) {
+        bar.progress = progress - minProgress
     }
 
     fun setOnSeekBarChangeListener(l: SeekBar.OnSeekBarChangeListener?) {

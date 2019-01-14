@@ -8,7 +8,9 @@ import io.github.vladimirmi.internetradioplayer.presentation.base.BaseView
 
 interface EqualizerView : BaseView {
 
-    fun setBands(bands: List<String>, values: List<Int>, min: Int, max: Int)
+    fun setupBands(bands: List<String>, min: Int, max: Int)
+
+    fun setBandLevels(bandLevels: List<Int>)
 
     fun setBassBoost(bassBoost: Int)
 

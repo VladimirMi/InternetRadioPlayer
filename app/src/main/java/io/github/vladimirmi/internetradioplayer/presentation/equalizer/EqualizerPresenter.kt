@@ -17,9 +17,9 @@ class EqualizerPresenter
     override fun onFirstAttach(view: EqualizerView) {
 
         val bands = equalizerInteractor.bands
-        val bandLevels = equalizerInteractor.bandLevels
         val range = equalizerInteractor.levelRange
-        view.setBands(bands, bandLevels, range.first, range.second)
+        view.setupBands(bands, range.first, range.second)
+        view.setBandLevels(equalizerInteractor.bandLevels)
         view.setBassBoost(equalizerInteractor.bassBoost)
         view.setVirtualizer(equalizerInteractor.virtualizer)
 
@@ -44,5 +44,10 @@ class EqualizerPresenter
 
     fun setVirtualizer(strength: Int) {
         equalizerInteractor.virtualizer = strength
+    }
+
+    fun selectPreset(position: Int) {
+        equalizerInteractor.selectPreset(position)
+        view?.setBandLevels(equalizerInteractor.bandLevels)
     }
 }

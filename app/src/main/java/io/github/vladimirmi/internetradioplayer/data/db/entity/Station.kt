@@ -23,7 +23,8 @@ data class Station(
         val bitrate: String?,
         val sample: String?,
         val order: Int,
-        @ColumnInfo(name = "group_id") val groupId: String
+        @ColumnInfo(name = "group_id") val groupId: String,
+        val equalizerId: String? = null
 ) {
 
     @Ignore

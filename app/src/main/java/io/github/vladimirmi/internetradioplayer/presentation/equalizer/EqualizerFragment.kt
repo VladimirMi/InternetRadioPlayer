@@ -39,7 +39,7 @@ class EqualizerFragment : BaseFragment<EqualizerPresenter, EqualizerView>(), Equ
             }
 
             override fun onItemSelected(parent: AdapterView<*>?, view: View?, position: Int, id: Long) {
-                presenter.selectPreset(position)
+                presenter.selectPreset(presetAdapter.getItem(position) ?: "")
             }
         }
     }

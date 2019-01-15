@@ -39,7 +39,7 @@ class EqualizerContainer @JvmOverloads constructor(
     }
 
     fun setBandLevels(bandLevels: List<Int>) {
-        (0 until childCount).map { (getChildAt(it) as? VerticalSeekBar)?.setProgress(bandLevels[it]) }
+        (0 until childCount).map { (getChildAt(it) as? VerticalSeekBar)?.setProgress(bandLevels[it], true) }
     }
 }
 

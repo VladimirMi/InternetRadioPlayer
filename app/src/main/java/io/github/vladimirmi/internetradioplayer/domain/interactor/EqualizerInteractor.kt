@@ -36,17 +36,19 @@ class EqualizerInteractor
                 else equalizerRepository.releaseEqualizer()
             }.ignoreElements()
 
-    fun setBandLevel(band: Int, level: Int) = equalizerRepository.setBandLevel(band, level)
+    fun setBandLevel(band: Int, level: Int) {
+        equalizerRepository.setBandLevel(band, level)
+    }
 
     fun getPresets(): Single<List<String>> {
-        return Single.just(equalizerRepository.defaultPresets)
+        return Single.just(equalizerRepository.defaultPresets.keys.toList())
     }
 
     fun getCurrentPreset(): Single<Int> {
         return Single.just(0)
     }
 
-    fun selectPreset(position: Int) {
-        equalizerRepository.usePreset(position)
+    fun selectPreset(preset: String) {
+        equalizerRepository.usePreset(preset)
     }
 }

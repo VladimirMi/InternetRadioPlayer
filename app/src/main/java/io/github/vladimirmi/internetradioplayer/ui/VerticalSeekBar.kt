@@ -1,8 +1,10 @@
 package io.github.vladimirmi.internetradioplayer.ui
 
+import android.animation.ObjectAnimator
 import android.content.Context
 import android.util.AttributeSet
 import android.view.ViewGroup
+import android.view.animation.AccelerateDecelerateInterpolator
 import android.widget.SeekBar
 import android.widget.TextView
 
@@ -31,8 +33,16 @@ class VerticalSeekBar @JvmOverloads constructor(
         bar.max = max - min
     }
 
-    fun setProgress(progress: Int) {
-        bar.progress = progress - minProgress
+    fun setProgress(progress: Int, animate: Boolean) {
+        val actual = progress - minProgress
+        if (animate) {
+            val animation = ObjectAnimator.ofInt(bar, "progress", actual)
+            animation.duration = 300
+            animation.interpolator = AccelerateDecelerateInterpolator()
+            animation.start()
+        } else {
+            bar.progress = actual
+        }
     }
 
     fun setOnSeekBarChangeListener(l: SeekBar.OnSeekBarChangeListener?) {

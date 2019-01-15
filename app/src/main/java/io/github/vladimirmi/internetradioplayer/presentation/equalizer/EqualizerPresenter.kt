@@ -46,8 +46,8 @@ class EqualizerPresenter
         equalizerInteractor.virtualizer = strength
     }
 
-    fun selectPreset(position: Int) {
-        equalizerInteractor.selectPreset(position)
+    fun selectPreset(preset: String) {
+        equalizerInteractor.selectPreset(preset)
         view?.setBandLevels(equalizerInteractor.bandLevels)
     }
 }

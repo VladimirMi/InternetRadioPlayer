@@ -12,7 +12,6 @@ import javax.inject.Inject
 class EqualizerRepository
 @Inject constructor() {
 
-    private var defaultEqualizer = Equalizer(-1, 1)
     private var equalizer: Equalizer? = null
     private var bassBoost: BassBoost? = null
     private var virtualizer: Virtualizer? = null
@@ -21,17 +20,22 @@ class EqualizerRepository
     val virtualizerSettings = Virtualizer.Settings()
     val bands: List<String>
     val levelRange: Pair<Int, Int>
-    val defaultPresets: List<String>
+    val defaultPresets: LinkedHashMap<String, Equalizer.Settings>
 
     init {
-        with(defaultEqualizer) {
+        with(Equalizer(-1, 1)) {
             bands = (0 until numberOfBands).map {
                 val freq = getCenterFreq(it.toShort()) / 1000 //Hz
                 if (freq > 1000) "${freq / 1000.0} kHz" else "$freq Hz"
             }
             levelRange = bandLevelRange[0].toInt() to bandLevelRange[1].toInt()
-            defaultPresets = (0 until numberOfPresets).map { getPresetName(it.toShort()) }
             equalizerSettings = properties
+            defaultPresets = (0 until numberOfPresets).associateTo(LinkedHashMap(numberOfPresets.toInt())
+            ) { preset ->
+                usePreset(preset.toShort())
+                getPresetName(preset.toShort()) to properties
+            }
+            release()
         }
     }
 
@@ -76,9 +80,8 @@ class EqualizerRepository
         virtualizer?.setStrength(strength.toShort())
     }
 
-    fun usePreset(preset: Int) {
-        defaultEqualizer.usePreset(preset.toShort())
-        equalizerSettings = defaultEqualizer.properties
+    fun usePreset(preset: String) {
+        equalizerSettings = defaultPresets[preset] ?: return
         equalizer?.usePreset(preset.toShort())
     }
 }

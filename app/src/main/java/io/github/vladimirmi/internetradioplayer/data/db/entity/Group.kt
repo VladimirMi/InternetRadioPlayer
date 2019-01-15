@@ -18,7 +18,7 @@ data class Group(@PrimaryKey
                  val name: String,
                  val expanded: Boolean,
                  val order: Int,
-                 val equalizerId: String? = null) {
+                 val equalizerPreset: String? = null) {
 
     @Ignore var stations: List<Station> = arrayListOf()
 

@@ -32,6 +32,6 @@ abstract class HistoryDatabase : RoomDatabase() {
 
 private val MIGRATION_2_3 = object : Migration(2, 3) {
     override fun migrate(database: SupportSQLiteDatabase) {
-        database.execSQL("ALTER TABLE history ADD COLUMN equalizerId TEXT")
+        database.execSQL("ALTER TABLE history ADD COLUMN equalizerPreset TEXT")
     }
 }

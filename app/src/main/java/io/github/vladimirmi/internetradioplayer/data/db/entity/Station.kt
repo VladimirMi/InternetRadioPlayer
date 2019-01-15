@@ -24,7 +24,7 @@ data class Station(
         val sample: String?,
         val order: Int,
         @ColumnInfo(name = "group_id") val groupId: String,
-        val equalizerId: String? = null
+        val equalizerPreset: String? = null
 ) {
 
     @Ignore

@@ -8,8 +8,7 @@ import androidx.room.PrimaryKey
  */
 
 @Entity()
-class EqualizerPreset(@PrimaryKey val id: String,
-                      val name: String?,
+class EqualizerPreset(@PrimaryKey val name: String,
                       val bands: String,
                       val bass: String,
                       val virtualizer: String)

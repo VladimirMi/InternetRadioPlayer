@@ -45,6 +45,10 @@ class VerticalSeekBar @JvmOverloads constructor(
         }
     }
 
+    fun getProgress(): Int {
+        return bar.progress + minProgress
+    }
+
     fun setOnSeekBarChangeListener(l: SeekBar.OnSeekBarChangeListener?) {
         if (l == null) {
             bar.setOnSeekBarChangeListener(null)

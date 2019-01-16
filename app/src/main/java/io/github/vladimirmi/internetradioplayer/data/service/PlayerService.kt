@@ -12,6 +12,7 @@ import io.github.vladimirmi.internetradioplayer.R
 import io.github.vladimirmi.internetradioplayer.data.db.entity.Station
 import io.github.vladimirmi.internetradioplayer.data.utils.ExponentialBackoff
 import io.github.vladimirmi.internetradioplayer.di.Scopes
+import io.github.vladimirmi.internetradioplayer.domain.interactor.EqualizerInteractor
 import io.github.vladimirmi.internetradioplayer.domain.interactor.FavoriteListInteractor
 import io.github.vladimirmi.internetradioplayer.domain.interactor.HistoryInteractor
 import io.github.vladimirmi.internetradioplayer.domain.interactor.StationInteractor
@@ -41,6 +42,7 @@ class PlayerService : MediaBrowserServiceCompat(), SessionCallback.Interface {
     }
 
     @Inject lateinit var stationInteractor: StationInteractor
+    @Inject lateinit var equalizerInteractor: EqualizerInteractor
     @Inject lateinit var favoriteListInteractor: FavoriteListInteractor
     @Inject lateinit var historyInteractor: HistoryInteractor
 
@@ -67,6 +69,14 @@ class PlayerService : MediaBrowserServiceCompat(), SessionCallback.Interface {
 
         playback = Playback(this, playerCallback)
         notification = MediaNotification(this, session)
+
+        equalizerInteractor.initPresets()
+                .subscribe()
+                .addTo(subs)
+
+        equalizerInteractor.initEqualizer()
+                .subscribe()
+                .addTo(subs)
 
         stationInteractor.stationObs
                 .subscribe { handleCurrentStation(it) }

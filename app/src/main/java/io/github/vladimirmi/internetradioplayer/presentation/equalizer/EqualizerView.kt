@@ -1,5 +1,7 @@
 package io.github.vladimirmi.internetradioplayer.presentation.equalizer
 
+import io.github.vladimirmi.internetradioplayer.domain.model.EqualizerConfig
+import io.github.vladimirmi.internetradioplayer.domain.model.EqualizerPreset
 import io.github.vladimirmi.internetradioplayer.presentation.base.BaseView
 
 /**
@@ -8,13 +10,9 @@ import io.github.vladimirmi.internetradioplayer.presentation.base.BaseView
 
 interface EqualizerView : BaseView {
 
-    fun setupBands(bands: List<String>, min: Int, max: Int)
+    fun setupEqualizer(config: EqualizerConfig)
 
-    fun setBandLevels(bandLevels: List<Int>)
+    fun setPresetNames(presets: List<String>)
 
-    fun setBassBoost(bassBoost: Int)
-
-    fun setVirtualizer(virtualizer: Int)
-
-    fun setPresets(presets: List<String>, curPreset: Int)
+    fun setPreset(preset: EqualizerPreset)
 }

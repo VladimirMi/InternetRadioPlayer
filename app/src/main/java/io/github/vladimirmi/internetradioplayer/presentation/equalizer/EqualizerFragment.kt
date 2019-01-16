@@ -6,8 +6,11 @@ import android.widget.ArrayAdapter
 import android.widget.SeekBar
 import io.github.vladimirmi.internetradioplayer.R
 import io.github.vladimirmi.internetradioplayer.di.Scopes
+import io.github.vladimirmi.internetradioplayer.domain.model.EqualizerConfig
+import io.github.vladimirmi.internetradioplayer.domain.model.EqualizerPreset
 import io.github.vladimirmi.internetradioplayer.extensions.waitForMeasure
 import io.github.vladimirmi.internetradioplayer.presentation.base.BaseFragment
+import io.github.vladimirmi.internetradioplayer.ui.EqualizerContainer
 import io.github.vladimirmi.internetradioplayer.utils.SimpleOnSeekBarChangeListener
 import kotlinx.android.synthetic.main.fragment_equalizer.*
 import toothpick.Toothpick
@@ -39,46 +42,56 @@ class EqualizerFragment : BaseFragment<EqualizerPresenter, EqualizerView>(), Equ
             }
 
             override fun onItemSelected(parent: AdapterView<*>?, view: View?, position: Int, id: Long) {
-                presenter.selectPreset(presetAdapter.getItem(position) ?: "")
+                presenter.selectPreset(position)
             }
         }
     }
 
-    override fun setupBands(bands: List<String>, min: Int, max: Int) {
+    override fun setupEqualizer(config: EqualizerConfig) {
         view?.waitForMeasure {
-            equalizerView.setBands(bands, min, max)
+            equalizerView.setBands(config.bands, config.minLevel, config.maxLevel)
         }
+        equalizerView.onBandLevelChangeListener = object : EqualizerContainer.OnBandLevelChangeListener {
+            override fun onBandLevelChange(band: Int, level: Int) {
+                presenter.setBandLevel(band, level)
+            }
 
-        equalizerView.onBandLevelChangeListener = presenter::setBandLevel
-
+            override fun onStopChange(band: Int) {
+                presenter.saveCurrentPreset()
+            }
+        }
         bassSb.setOnSeekBarChangeListener(object : SimpleOnSeekBarChangeListener() {
             override fun onProgressChanged(seekBar: SeekBar?, progress: Int, fromUser: Boolean) {
                 if (fromUser) presenter.setBassBoost(progress)
+            }
+
+            override fun onStopTrackingTouch(seekBar: SeekBar?) {
+                presenter.saveCurrentPreset()
             }
         })
         virtualSb.setOnSeekBarChangeListener(object : SimpleOnSeekBarChangeListener() {
             override fun onProgressChanged(seekBar: SeekBar?, progress: Int, fromUser: Boolean) {
                 if (fromUser) presenter.setVirtualizer(progress)
             }
+
+            override fun onStopTrackingTouch(seekBar: SeekBar?) {
+                presenter.saveCurrentPreset()
+            }
         })
     }
 
-    override fun setBandLevels(bandLevels: List<Int>) {
-        equalizerView.setBandLevels(bandLevels)
+    override fun setPreset(preset: EqualizerPreset) {
+        with(preset) {
+            presetSpinner.setSelection(presetAdapter.getPosition(name))
+            equalizerView.setBandLevels(bandLevels)
+            bassSb.progress = bassBoostStrength
+            virtualSb.progress = virtualizerStrength
+        }
     }
 
-    override fun setBassBoost(bassBoost: Int) {
-        bassSb.progress = bassBoost
-    }
-
-    override fun setVirtualizer(virtualizer: Int) {
-        virtualSb.progress = virtualizer
-    }
-
-    override fun setPresets(presets: List<String>, curPreset: Int) {
+    override fun setPresetNames(presets: List<String>) {
         presetAdapter.clear()
         presetAdapter.addAll(presets)
         presetAdapter.notifyDataSetChanged()
-        presetSpinner.setSelection(curPreset)
     }
 }

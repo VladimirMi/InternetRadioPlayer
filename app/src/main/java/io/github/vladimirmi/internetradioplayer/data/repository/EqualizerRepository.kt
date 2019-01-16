@@ -3,9 +3,14 @@ package io.github.vladimirmi.internetradioplayer.data.repository
 import android.media.audiofx.BassBoost
 import android.media.audiofx.Equalizer
 import android.media.audiofx.Virtualizer
+import com.jakewharton.rxrelay2.BehaviorRelay
 import io.github.vladimirmi.internetradioplayer.data.db.EqualizerDatabase
-import io.github.vladimirmi.internetradioplayer.data.db.entity.EqualizerPreset
+import io.github.vladimirmi.internetradioplayer.data.db.entity.EqualizerPresetEntity
 import io.github.vladimirmi.internetradioplayer.data.utils.Preferences
+import io.github.vladimirmi.internetradioplayer.domain.model.EqualizerConfig
+import io.github.vladimirmi.internetradioplayer.domain.model.EqualizerPreset
+import io.reactivex.Completable
+import io.reactivex.Observable
 import io.reactivex.Single
 import io.reactivex.schedulers.Schedulers
 import javax.inject.Inject
@@ -22,42 +27,28 @@ class EqualizerRepository
     private var equalizer: Equalizer? = null
     private var bassBoost: BassBoost? = null
     private var virtualizer: Virtualizer? = null
-    var equalizerSettings: Equalizer.Settings
-    val bassSettings = BassBoost.Settings()
-    val virtualizerSettings = Virtualizer.Settings()
-    val bands: List<String>
-    val levelRange: Pair<Int, Int>
-    val defaultPresets: LinkedHashMap<String, Equalizer.Settings>
+    val equalizerConfig: EqualizerConfig
+    var presets: List<EqualizerPreset> = emptyList()
+    private val currentPreset = BehaviorRelay.create<EqualizerPreset>()
+    val currentPresetObs: Observable<EqualizerPreset> get() = currentPreset
 
     init {
-        with(Equalizer(-1, 1)) {
-            bands = (0 until numberOfBands).map {
-                val freq = getCenterFreq(it.toShort()) / 1000 //Hz
-                if (freq > 1000) "${freq / 1000.0} kHz" else "$freq Hz"
-            }
-            levelRange = bandLevelRange[0].toInt() to bandLevelRange[1].toInt()
-            equalizerSettings = properties
-            defaultPresets = (0 until numberOfPresets).associateTo(LinkedHashMap(numberOfPresets.toInt())
-            ) { preset ->
-                usePreset(preset.toShort())
-                getPresetName(preset.toShort()) to properties
-            }
-            release()
-        }
+        val tempEqualizer = Equalizer(-1, 1)
+        equalizerConfig = EqualizerConfig.create(tempEqualizer)
+        tempEqualizer.release()
     }
 
-    fun initEqualizer(sessionId: Int) {
+    fun createEqualizer(sessionId: Int) {
         equalizer = Equalizer(0, sessionId)
         equalizer?.enabled = true
-        equalizer?.properties = equalizerSettings
 
         bassBoost = BassBoost(0, sessionId)
         bassBoost?.enabled = true
-        bassBoost?.properties = bassSettings
 
         virtualizer = Virtualizer(0, sessionId)
         virtualizer?.enabled = true
-        virtualizer?.properties = virtualizerSettings
+
+        currentPreset.value?.applyTo(equalizer, bassBoost, virtualizer)
     }
 
     fun releaseEqualizer() {
@@ -70,35 +61,56 @@ class EqualizerRepository
     }
 
     fun setBandLevel(band: Int, level: Int) {
-        equalizerSettings.curPreset = -1
-        equalizerSettings.bandLevels[band] = level.toShort()
+        val preset = currentPreset.value?.let {
+            val bands = it.bandLevels.toMutableList()
+            bands[band] = level
+            it.copy(bandLevels = bands)
+        }
+        updatePresetsWith(preset)
         equalizer?.setBandLevel(band.toShort(), level.toShort())
-
-        equalizer?.usePreset(1)
     }
 
-    fun setBassBoost(strength: Int) {
-        bassSettings.strength = strength.toShort()
+    fun setBassBoostStrength(strength: Int) {
+        updatePresetsWith(currentPreset.value?.copy(bassBoostStrength = strength))
         bassBoost?.setStrength(strength.toShort())
     }
 
-    fun setVirtualizer(strength: Int) {
-        virtualizerSettings.strength = strength.toShort()
+    fun setVirtualizerStrength(strength: Int) {
+        updatePresetsWith(currentPreset.value?.copy(virtualizerStrength = strength))
         virtualizer?.setStrength(strength.toShort())
     }
 
-    fun usePreset(preset: String) {
-        equalizerSettings = defaultPresets[preset] ?: return
-        equalizer?.properties = equalizerSettings
-        preferences.globalPreset = preset
+    fun saveCurrentPreset(): Completable {
+        return Completable.fromCallable {
+            currentPreset.value?.let { dao.insert(it.toEntity()) }
+        }.subscribeOn(Schedulers.io())
     }
 
-    fun getSavedPresets(): Single<List<EqualizerPreset>> {
+    fun setPreset(preset: EqualizerPreset) {
+        preset.applyTo(equalizer, bassBoost, virtualizer)
+        currentPreset.accept(preset)
+    }
+
+    fun selectPreset(index: Int) {
+        val preset = presets[index]
+        preset.applyTo(equalizer, bassBoost, virtualizer)
+        preferences.globalPreset = preset.name
+        currentPreset.accept(preset)
+    }
+
+    fun getSavedPresets(): Single<List<EqualizerPresetEntity>> {
         return dao.getPresets()
                 .subscribeOn(Schedulers.io())
     }
 
-    fun getGlobalPreset(): String {
-        return preferences.globalPreset
+    fun getGlobalPreset(): EqualizerPreset {
+        return presets.find { it.name == preferences.globalPreset } ?: presets.first()
+    }
+
+    private fun updatePresetsWith(preset: EqualizerPreset?) {
+        preset?.let {
+            presets = presets.map { p -> if (p.name == preset.name) preset else p }
+            currentPreset.accept(it)
+        }
     }
 }

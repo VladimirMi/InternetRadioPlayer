@@ -1,8 +1,10 @@
 package io.github.vladimirmi.internetradioplayer.data.db.dao
 
 import androidx.room.Dao
+import androidx.room.Insert
+import androidx.room.OnConflictStrategy
 import androidx.room.Query
-import io.github.vladimirmi.internetradioplayer.data.db.entity.EqualizerPreset
+import io.github.vladimirmi.internetradioplayer.data.db.entity.EqualizerPresetEntity
 import io.reactivex.Single
 
 /**
@@ -12,6 +14,9 @@ import io.reactivex.Single
 @Dao
 interface EqualizerDao {
 
-    @Query("SELECT * FROM equalizerpreset")
-    fun getPresets(): Single<List<EqualizerPreset>>
+    @Query("SELECT * FROM equalizerpresetentity")
+    fun getPresets(): Single<List<EqualizerPresetEntity>>
+
+    @Insert(onConflict = OnConflictStrategy.REPLACE)
+    fun insert(preset: EqualizerPresetEntity)
 }

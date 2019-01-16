@@ -1,9 +1,10 @@
 package io.github.vladimirmi.internetradioplayer.presentation.equalizer
 
 import io.github.vladimirmi.internetradioplayer.domain.interactor.EqualizerInteractor
+import io.github.vladimirmi.internetradioplayer.domain.model.EqualizerPreset
 import io.github.vladimirmi.internetradioplayer.extensions.subscribeX
 import io.github.vladimirmi.internetradioplayer.presentation.base.BasePresenter
-import io.reactivex.rxkotlin.Singles
+import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.rxkotlin.addTo
 import javax.inject.Inject
 
@@ -15,23 +16,16 @@ class EqualizerPresenter
 @Inject constructor(private val equalizerInteractor: EqualizerInteractor) : BasePresenter<EqualizerView>() {
 
     override fun onFirstAttach(view: EqualizerView) {
-
-        val bands = equalizerInteractor.bands
-        val range = equalizerInteractor.levelRange
-        view.setupBands(bands, range.first, range.second)
-        view.setBandLevels(equalizerInteractor.bandLevels)
-        view.setBassBoost(equalizerInteractor.bassBoost)
-        view.setVirtualizer(equalizerInteractor.virtualizer)
-
-        //todo move to player service
-        equalizerInteractor.equalizerInit.subscribeX()
-                .addTo(dataSubs)
-
-        Singles.zip(equalizerInteractor.getPresets(), equalizerInteractor.getCurrentPreset()) { list, preset ->
-            list to list.indexOf(preset)
-        }.subscribeX(onSuccess = { view.setPresets(it.first, it.second) })
+        equalizerInteractor.currentPresetObs
+                .distinctUntilChanged(EqualizerPreset::name)
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribeX(onNext = {
+                    view.setPresetNames(equalizerInteractor.getPresetNames())
+                    view.setPreset(it)
+                })
                 .addTo(viewSubs)
 
+        view.setupEqualizer(equalizerInteractor.equalizerConfig)
     }
 
     fun setBandLevel(band: Int, level: Int) {
@@ -39,15 +33,20 @@ class EqualizerPresenter
     }
 
     fun setBassBoost(strength: Int) {
-        equalizerInteractor.bassBoost = strength
+        equalizerInteractor.setBassBoostStrength(strength)
     }
 
     fun setVirtualizer(strength: Int) {
-        equalizerInteractor.virtualizer = strength
+        equalizerInteractor.setVirtualizerStrength(strength)
     }
 
-    fun selectPreset(preset: String) {
-        equalizerInteractor.selectPreset(preset)
-        view?.setBandLevels(equalizerInteractor.bandLevels)
+    fun selectPreset(index: Int) {
+        equalizerInteractor.selectPreset(index)
+    }
+
+    fun saveCurrentPreset() {
+        equalizerInteractor.saveCurrentPreset()
+                .subscribeX()
+                .addTo(dataSubs)
     }
 }

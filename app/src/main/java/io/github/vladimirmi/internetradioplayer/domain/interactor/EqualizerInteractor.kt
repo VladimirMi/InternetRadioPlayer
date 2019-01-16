@@ -5,8 +5,9 @@ import io.github.vladimirmi.internetradioplayer.data.repository.FavoritesReposit
 import io.github.vladimirmi.internetradioplayer.data.repository.PlayerRepository
 import io.github.vladimirmi.internetradioplayer.data.repository.StationRepository
 import io.github.vladimirmi.internetradioplayer.data.service.PlayerService
+import io.github.vladimirmi.internetradioplayer.domain.model.EqualizerPreset
 import io.reactivex.Completable
-import io.reactivex.Single
+import io.reactivex.Observable
 import javax.inject.Inject
 
 /**
@@ -14,51 +15,75 @@ import javax.inject.Inject
  */
 
 class EqualizerInteractor
-@Inject constructor(playerRepository: PlayerRepository,
+@Inject constructor(private val playerRepository: PlayerRepository,
                     private val equalizerRepository: EqualizerRepository,
                     private val stationRepository: StationRepository,
                     private val favoritesRepository: FavoritesRepository) {
 
-    val bands: List<String>
-        get() = equalizerRepository.bands
-    val levelRange: Pair<Int, Int>
-        get() = equalizerRepository.levelRange
-    val bandLevels: List<Int>
-        get() = equalizerRepository.equalizerSettings.bandLevels.map { it.toInt() }
-    var bassBoost: Int
-        get() = equalizerRepository.bassSettings.strength.toInt()
-        set(value) = equalizerRepository.setBassBoost(value)
-    var virtualizer: Int
-        get() = equalizerRepository.virtualizerSettings.strength.toInt()
-        set(value) = equalizerRepository.setVirtualizer(value)
+    val currentPresetObs: Observable<EqualizerPreset> = equalizerRepository.currentPresetObs
+    val equalizerConfig = equalizerRepository.equalizerConfig
 
-    val equalizerInit: Completable = playerRepository.sessionEvent
-            .filter { it.first == PlayerService.EVENT_SESSION_ID }
-            .map {
-                val id = it.second.getInt(PlayerService.EVENT_SESSION_ID, 0)
-                if (id != 0) equalizerRepository.initEqualizer(id)
-                else equalizerRepository.releaseEqualizer()
-            }.ignoreElements()
+    fun initEqualizer(): Completable {
+        return playerRepository.sessionEvent
+                .filter { it.first == PlayerService.EVENT_SESSION_ID }
+                .map { it.second.getInt(PlayerService.EVENT_SESSION_ID, 0) }
+                .map {
+                    if (it != 0) equalizerRepository.createEqualizer(it)
+                    else equalizerRepository.releaseEqualizer()
+                }.ignoreElements()
+    }
+
+    fun initPresets(): Completable {
+        return equalizerRepository.getSavedPresets().map { entities ->
+            val presets = entities.map { EqualizerPreset.create(it) }
+            val defaultPresets = equalizerRepository.equalizerConfig.defaultPresets
+            val result = ArrayList<EqualizerPreset>(presets.size + defaultPresets.size)
+            result.addAll(defaultPresets)
+            presets.forEach { preset ->
+                val index = result.indexOfFirst { it.name == preset.name }
+                if (index != -1) result[index] = preset
+                else result += preset
+            }
+            equalizerRepository.presets = result
+        }.ignoreElement()
+                .andThen(initCurrentPreset())
+    }
+
+    private fun initCurrentPreset(): Completable {
+        return stationRepository.stationObs
+                .map { station ->
+                    val presetName = station.equalizerPreset
+                            ?: favoritesRepository.groups.find { it.id == station.groupId }?.equalizerPreset
+
+                    val preset = presetName?.let { name ->
+                        equalizerRepository.presets.find { it.name == name }
+                    } ?: equalizerRepository.getGlobalPreset()
+
+                    equalizerRepository.setPreset(preset)
+                }.ignoreElements()
+    }
 
     fun setBandLevel(band: Int, level: Int) {
         equalizerRepository.setBandLevel(band, level)
     }
 
-    fun getPresets(): Single<List<String>> {
-        val default = equalizerRepository.defaultPresets.keys.toList()
-        return Single.just(default)
+    fun setBassBoostStrength(strength: Int) {
+        equalizerRepository.setBassBoostStrength(strength)
     }
 
-    fun getCurrentPreset(): Single<String> {
-        return Single.fromCallable {
-            val station = stationRepository.station
-            station.equalizerPreset
-                    ?: favoritesRepository.groups.find { it.id == station.groupId }?.equalizerPreset
-                    ?: equalizerRepository.getGlobalPreset()
-        }
+    fun setVirtualizerStrength(strength: Int) {
+        equalizerRepository.setVirtualizerStrength(strength)
     }
 
-    fun selectPreset(preset: String) {
-        equalizerRepository.usePreset(preset)
+    fun getPresetNames(): List<String> {
+        return equalizerRepository.presets.map { it.name }
+    }
+
+    fun selectPreset(index: Int) {
+        equalizerRepository.selectPreset(index)
+    }
+
+    fun saveCurrentPreset(): Completable {
+        return equalizerRepository.saveCurrentPreset()
     }
 }

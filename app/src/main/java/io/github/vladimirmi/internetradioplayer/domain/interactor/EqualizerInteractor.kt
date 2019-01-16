@@ -1,7 +1,9 @@
 package io.github.vladimirmi.internetradioplayer.domain.interactor
 
 import io.github.vladimirmi.internetradioplayer.data.repository.EqualizerRepository
+import io.github.vladimirmi.internetradioplayer.data.repository.FavoritesRepository
 import io.github.vladimirmi.internetradioplayer.data.repository.PlayerRepository
+import io.github.vladimirmi.internetradioplayer.data.repository.StationRepository
 import io.github.vladimirmi.internetradioplayer.data.service.PlayerService
 import io.reactivex.Completable
 import io.reactivex.Single
@@ -13,7 +15,9 @@ import javax.inject.Inject
 
 class EqualizerInteractor
 @Inject constructor(playerRepository: PlayerRepository,
-                    private val equalizerRepository: EqualizerRepository) {
+                    private val equalizerRepository: EqualizerRepository,
+                    private val stationRepository: StationRepository,
+                    private val favoritesRepository: FavoritesRepository) {
 
     val bands: List<String>
         get() = equalizerRepository.bands
@@ -41,11 +45,17 @@ class EqualizerInteractor
     }
 
     fun getPresets(): Single<List<String>> {
-        return Single.just(equalizerRepository.defaultPresets.keys.toList())
+        val default = equalizerRepository.defaultPresets.keys.toList()
+        return Single.just(default)
     }
 
-    fun getCurrentPreset(): Single<Int> {
-        return Single.just(0)
+    fun getCurrentPreset(): Single<String> {
+        return Single.fromCallable {
+            val station = stationRepository.station
+            station.equalizerPreset
+                    ?: favoritesRepository.groups.find { it.id == station.groupId }?.equalizerPreset
+                    ?: equalizerRepository.getGlobalPreset()
+        }
     }
 
     fun selectPreset(preset: String) {

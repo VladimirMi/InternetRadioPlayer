@@ -3,6 +3,11 @@ package io.github.vladimirmi.internetradioplayer.data.repository
 import android.media.audiofx.BassBoost
 import android.media.audiofx.Equalizer
 import android.media.audiofx.Virtualizer
+import io.github.vladimirmi.internetradioplayer.data.db.EqualizerDatabase
+import io.github.vladimirmi.internetradioplayer.data.db.entity.EqualizerPreset
+import io.github.vladimirmi.internetradioplayer.data.utils.Preferences
+import io.reactivex.Single
+import io.reactivex.schedulers.Schedulers
 import javax.inject.Inject
 
 /**
@@ -10,8 +15,10 @@ import javax.inject.Inject
  */
 
 class EqualizerRepository
-@Inject constructor() {
+@Inject constructor(db: EqualizerDatabase,
+                    private val preferences: Preferences) {
 
+    private val dao = db.equalizerDao()
     private var equalizer: Equalizer? = null
     private var bassBoost: BassBoost? = null
     private var virtualizer: Virtualizer? = null
@@ -82,6 +89,16 @@ class EqualizerRepository
 
     fun usePreset(preset: String) {
         equalizerSettings = defaultPresets[preset] ?: return
-        equalizer?.usePreset(preset.toShort())
+        equalizer?.properties = equalizerSettings
+        preferences.globalPreset = preset
+    }
+
+    fun getSavedPresets(): Single<List<EqualizerPreset>> {
+        return dao.getPresets()
+                .subscribeOn(Schedulers.io())
+    }
+
+    fun getGlobalPreset(): String {
+        return preferences.globalPreset
     }
 }

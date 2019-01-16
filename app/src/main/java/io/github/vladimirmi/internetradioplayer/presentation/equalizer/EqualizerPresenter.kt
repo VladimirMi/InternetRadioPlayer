@@ -27,8 +27,8 @@ class EqualizerPresenter
         equalizerInteractor.equalizerInit.subscribeX()
                 .addTo(dataSubs)
 
-        Singles.zip(equalizerInteractor.getPresets(), equalizerInteractor.getCurrentPreset()) { list, i ->
-            list to i
+        Singles.zip(equalizerInteractor.getPresets(), equalizerInteractor.getCurrentPreset()) { list, preset ->
+            list to list.indexOf(preset)
         }.subscribeX(onSuccess = { view.setPresets(it.first, it.second) })
                 .addTo(viewSubs)
 

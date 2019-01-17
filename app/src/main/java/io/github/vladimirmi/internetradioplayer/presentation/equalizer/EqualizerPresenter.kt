@@ -16,6 +16,10 @@ class EqualizerPresenter
 @Inject constructor(private val equalizerInteractor: EqualizerInteractor) : BasePresenter<EqualizerView>() {
 
     override fun onFirstAttach(view: EqualizerView) {
+        view.setupEqualizer(equalizerInteractor.equalizerConfig)
+    }
+
+    override fun onAttach(view: EqualizerView) {
         equalizerInteractor.currentPresetObs
                 .distinctUntilChanged(EqualizerPreset::name)
                 .observeOn(AndroidSchedulers.mainThread())
@@ -24,8 +28,6 @@ class EqualizerPresenter
                     view.setPreset(it)
                 })
                 .addTo(viewSubs)
-
-        view.setupEqualizer(equalizerInteractor.equalizerConfig)
     }
 
     fun setBandLevel(band: Int, level: Int) {

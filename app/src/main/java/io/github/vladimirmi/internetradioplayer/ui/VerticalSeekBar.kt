@@ -1,12 +1,11 @@
 package io.github.vladimirmi.internetradioplayer.ui
 
-import android.animation.ObjectAnimator
 import android.content.Context
 import android.util.AttributeSet
 import android.view.ViewGroup
-import android.view.animation.AccelerateDecelerateInterpolator
 import android.widget.SeekBar
 import android.widget.TextView
+import io.github.vladimirmi.internetradioplayer.extensions.setProgressWithAnimation
 
 /**
  * Created by Vladimir Mikhalev 11.01.2019.
@@ -16,13 +15,13 @@ class VerticalSeekBar @JvmOverloads constructor(
         context: Context, attrs: AttributeSet? = null, defStyleAttr: Int = 0
 ) : ViewGroup(context, attrs, defStyleAttr) {
 
-    private val bar = SeekBar(context)
+    private val seekBar = SeekBar(context)
     private val label = TextView(context)
     private var minProgress = 0
 
     init {
-        bar.layoutParams = LayoutParams(LayoutParams.MATCH_PARENT, LayoutParams.MATCH_PARENT)
-        addView(bar)
+        seekBar.layoutParams = LayoutParams(LayoutParams.MATCH_PARENT, LayoutParams.MATCH_PARENT)
+        addView(seekBar)
         addView(label)
     }
 
@@ -30,32 +29,29 @@ class VerticalSeekBar @JvmOverloads constructor(
     fun setup(label: String, min: Int, max: Int) {
         this.label.text = label
         minProgress = min
-        bar.max = max - min
+        seekBar.max = max - min
     }
 
     fun setProgress(progress: Int, animate: Boolean) {
         val actual = progress - minProgress
         if (animate) {
-            val animation = ObjectAnimator.ofInt(bar, "progress", actual)
-            animation.duration = 300
-            animation.interpolator = AccelerateDecelerateInterpolator()
-            animation.start()
+            seekBar.setProgressWithAnimation(actual)
         } else {
-            bar.progress = actual
+            seekBar.progress = actual
         }
     }
 
     fun getProgress(): Int {
-        return bar.progress + minProgress
+        return seekBar.progress + minProgress
     }
 
     fun setOnSeekBarChangeListener(l: SeekBar.OnSeekBarChangeListener?) {
         if (l == null) {
-            bar.setOnSeekBarChangeListener(null)
+            seekBar.setOnSeekBarChangeListener(null)
             return
         }
 
-        bar.setOnSeekBarChangeListener(object : SeekBar.OnSeekBarChangeListener {
+        seekBar.setOnSeekBarChangeListener(object : SeekBar.OnSeekBarChangeListener {
             override fun onProgressChanged(seekBar: SeekBar?, progress: Int, fromUser: Boolean) {
                 l.onProgressChanged(seekBar, progress + minProgress, fromUser)
             }
@@ -73,10 +69,10 @@ class VerticalSeekBar @JvmOverloads constructor(
     override fun onMeasure(widthMeasureSpec: Int, heightMeasureSpec: Int) {
         measureChild(label, widthMeasureSpec, heightMeasureSpec)
         val barHeight = MeasureSpec.getSize(heightMeasureSpec) - label.measuredHeight
-        measureChild(bar, MeasureSpec.makeMeasureSpec(barHeight, MeasureSpec.EXACTLY), widthMeasureSpec)
+        measureChild(seekBar, MeasureSpec.makeMeasureSpec(barHeight, MeasureSpec.EXACTLY), widthMeasureSpec)
 
-        val height = bar.measuredWidth + label.measuredHeight
-        val width = Math.max(bar.measuredHeight, label.measuredWidth)
+        val height = seekBar.measuredWidth + label.measuredHeight
+        val width = Math.max(seekBar.measuredHeight, label.measuredWidth)
 
         setMeasuredDimension(width, height)
     }
@@ -87,16 +83,16 @@ class VerticalSeekBar @JvmOverloads constructor(
     }
 
     private fun layoutSeekBar(l: Int, t: Int, r: Int, b: Int) {
-        val h = bar.measuredHeight
-        val w = bar.measuredWidth
+        val h = seekBar.measuredHeight
+        val w = seekBar.measuredWidth
         val containerWidth = r - l
         val left = (containerWidth - h) / 2
 
-        bar.layout(left, w, left + w, w + h)
+        seekBar.layout(left, w, left + w, w + h)
 
-        bar.pivotX = 0f
-        bar.pivotY = 0f
-        bar.rotation = -90f
+        seekBar.pivotX = 0f
+        seekBar.pivotY = 0f
+        seekBar.rotation = -90f
     }
 
     private fun layoutLabel(l: Int, t: Int, r: Int, b: Int) {

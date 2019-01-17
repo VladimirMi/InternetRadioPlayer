@@ -8,11 +8,12 @@ import io.github.vladimirmi.internetradioplayer.R
 import io.github.vladimirmi.internetradioplayer.di.Scopes
 import io.github.vladimirmi.internetradioplayer.domain.model.EqualizerConfig
 import io.github.vladimirmi.internetradioplayer.domain.model.EqualizerPreset
+import io.github.vladimirmi.internetradioplayer.extensions.setProgressWithAnimation
 import io.github.vladimirmi.internetradioplayer.extensions.waitForMeasure
 import io.github.vladimirmi.internetradioplayer.presentation.base.BaseFragment
 import io.github.vladimirmi.internetradioplayer.ui.EqualizerContainer
 import io.github.vladimirmi.internetradioplayer.utils.SimpleOnSeekBarChangeListener
-import kotlinx.android.synthetic.main.fragment_equalizer.*
+import kotlinx.android.synthetic.main.view_equalizer.*
 import toothpick.Toothpick
 
 /**
@@ -84,8 +85,8 @@ class EqualizerFragment : BaseFragment<EqualizerPresenter, EqualizerView>(), Equ
         with(preset) {
             presetSpinner.setSelection(presetAdapter.getPosition(name))
             equalizerView.setBandLevels(bandLevels)
-            bassSb.progress = bassBoostStrength
-            virtualSb.progress = virtualizerStrength
+            bassSb.setProgressWithAnimation(bassBoostStrength)
+            virtualSb.setProgressWithAnimation(virtualizerStrength)
         }
     }
 

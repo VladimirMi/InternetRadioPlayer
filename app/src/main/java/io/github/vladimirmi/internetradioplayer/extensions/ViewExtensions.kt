@@ -1,11 +1,14 @@
 package io.github.vladimirmi.internetradioplayer.extensions
 
+import android.animation.ObjectAnimator
 import android.os.Handler
 import android.os.Looper
 import android.text.Editable
 import android.text.TextWatcher
 import android.view.View
 import android.view.ViewTreeObserver
+import android.view.animation.AccelerateDecelerateInterpolator
+import android.widget.SeekBar
 import android.widget.TextView
 import androidx.dynamicanimation.animation.DynamicAnimation
 import androidx.dynamicanimation.animation.SpringAnimation
@@ -66,6 +69,14 @@ fun TextView.onTextChanges(listener: (String) -> Unit) {
         override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {}
         override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {}
     })
+}
+
+fun SeekBar.setProgressWithAnimation(progress: Int) {
+    with(ObjectAnimator.ofInt(this, "progress", progress)) {
+        duration = 300
+        interpolator = AccelerateDecelerateInterpolator()
+        start()
+    }
 }
 
 fun View.bounceXAnimation(dpVelocity: Float): SpringAnimation {

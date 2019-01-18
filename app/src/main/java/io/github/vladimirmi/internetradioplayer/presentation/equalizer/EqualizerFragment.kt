@@ -46,6 +46,8 @@ class EqualizerFragment : BaseFragment<EqualizerPresenter, EqualizerView>(), Equ
                 presenter.selectPreset(position)
             }
         }
+
+        switchBindBt.setOnClickListener { presenter.switchBind() }
     }
 
     override fun setupEqualizer(config: EqualizerConfig) {
@@ -94,5 +96,9 @@ class EqualizerFragment : BaseFragment<EqualizerPresenter, EqualizerView>(), Equ
         presetAdapter.clear()
         presetAdapter.addAll(presets)
         presetAdapter.notifyDataSetChanged()
+    }
+
+    override fun setBindIcon(iconResId: Int) {
+        switchBindBt.setImageResource(iconResId)
     }
 }

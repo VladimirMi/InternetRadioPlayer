@@ -1,7 +1,6 @@
 package io.github.vladimirmi.internetradioplayer.domain.interactor
 
 import io.github.vladimirmi.internetradioplayer.data.repository.EqualizerRepository
-import io.github.vladimirmi.internetradioplayer.data.repository.FavoritesRepository
 import io.github.vladimirmi.internetradioplayer.data.repository.PlayerRepository
 import io.github.vladimirmi.internetradioplayer.data.repository.StationRepository
 import io.github.vladimirmi.internetradioplayer.data.service.PlayerService
@@ -17,11 +16,11 @@ import javax.inject.Inject
 class EqualizerInteractor
 @Inject constructor(private val playerRepository: PlayerRepository,
                     private val equalizerRepository: EqualizerRepository,
-                    private val stationRepository: StationRepository,
-                    private val favoritesRepository: FavoritesRepository) {
+                    private val stationRepository: StationRepository) {
 
-    val currentPresetObs: Observable<EqualizerPreset> = equalizerRepository.currentPresetObs
-    val equalizerConfig = equalizerRepository.equalizerConfig
+    val currentPresetObs: Observable<EqualizerPreset> get() = equalizerRepository.currentPresetObs
+    val binderIconResId: Int get() = equalizerRepository.binder.iconResId
+    val equalizerConfig get() = equalizerRepository.equalizerConfig
 
     fun initEqualizer(): Completable {
         return playerRepository.sessionEvent
@@ -51,15 +50,15 @@ class EqualizerInteractor
 
     private fun initCurrentPreset(): Completable {
         return stationRepository.stationObs
-                .map { station ->
-                    val presetName = station.equalizerPreset
-                            ?: favoritesRepository.groups.find { it.id == station.groupId }?.equalizerPreset
+                .flatMapSingle { equalizerRepository.getPresetBinder(it.id) }
+                .map {
+                    val (presetName, binder) = it
 
-                    val preset = presetName?.let { name ->
-                        equalizerRepository.presets.find { it.name == name }
-                    } ?: equalizerRepository.getGlobalPreset()
+                    val preset = equalizerRepository.presets.find { preset -> preset.name == presetName }
+                            ?: equalizerRepository.getGlobalPreset()
 
-                    equalizerRepository.setPreset(preset)
+                    equalizerRepository.setPreset(preset, binder)
+
                 }.ignoreElements()
     }
 
@@ -85,5 +84,9 @@ class EqualizerInteractor
 
     fun saveCurrentPreset(): Completable {
         return equalizerRepository.saveCurrentPreset()
+    }
+
+    fun switchBind(): Completable {
+        return equalizerRepository.switchBind()
     }
 }

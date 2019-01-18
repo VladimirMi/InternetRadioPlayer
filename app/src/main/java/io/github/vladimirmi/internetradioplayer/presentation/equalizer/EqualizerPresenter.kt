@@ -25,6 +25,7 @@ class EqualizerPresenter
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribeX(onNext = {
                     view.setPresetNames(equalizerInteractor.getPresetNames())
+                    view.setBindIcon(equalizerInteractor.binderIconResId)
                     view.setPreset(it)
                 })
                 .addTo(viewSubs)
@@ -49,6 +50,12 @@ class EqualizerPresenter
     fun saveCurrentPreset() {
         equalizerInteractor.saveCurrentPreset()
                 .subscribeX()
+                .addTo(dataSubs)
+    }
+
+    fun switchBind() {
+        equalizerInteractor.switchBind()
+                .subscribeX(onComplete = { view?.setBindIcon(equalizerInteractor.binderIconResId) })
                 .addTo(dataSubs)
     }
 }

@@ -18,8 +18,11 @@ interface StationDao {
     @Query("SELECT * FROM `group` ORDER BY `order` ASC")
     fun getAllGroups(): Single<List<Group>>
 
-    @Query("SELECT * FROM `group` WHERE name = :groupName")
-    fun getGroupByName(groupName: String): Group
+    @Query("SELECT * FROM station WHERE id = :id")
+    fun getStation(id: String): Single<Station>
+
+    @Query("SELECT * FROM `group` WHERE id = :id")
+    fun getGroup(id: String): Single<Group>
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     fun insertStation(station: Station): Long

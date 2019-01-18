@@ -15,4 +15,6 @@ interface EqualizerView : BaseView {
     fun setPresetNames(presets: List<String>)
 
     fun setPreset(preset: EqualizerPreset)
+
+    fun setBindIcon(iconResId: Int)
 }

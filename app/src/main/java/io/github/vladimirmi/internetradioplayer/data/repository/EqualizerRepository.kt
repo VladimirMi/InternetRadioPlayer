@@ -5,10 +5,13 @@ import android.media.audiofx.Equalizer
 import android.media.audiofx.Virtualizer
 import com.jakewharton.rxrelay2.BehaviorRelay
 import io.github.vladimirmi.internetradioplayer.data.db.EqualizerDatabase
+import io.github.vladimirmi.internetradioplayer.data.db.StationsDatabase
 import io.github.vladimirmi.internetradioplayer.data.db.entity.EqualizerPresetEntity
 import io.github.vladimirmi.internetradioplayer.data.utils.Preferences
 import io.github.vladimirmi.internetradioplayer.domain.model.EqualizerConfig
 import io.github.vladimirmi.internetradioplayer.domain.model.EqualizerPreset
+import io.github.vladimirmi.internetradioplayer.domain.model.GlobalPresetBinder
+import io.github.vladimirmi.internetradioplayer.domain.model.PresetBinder
 import io.reactivex.Completable
 import io.reactivex.Observable
 import io.reactivex.Single
@@ -21,15 +24,19 @@ import javax.inject.Inject
 
 class EqualizerRepository
 @Inject constructor(db: EqualizerDatabase,
+                    private val stationsDb: StationsDatabase,
                     private val preferences: Preferences) {
 
     private val dao = db.equalizerDao()
     private var equalizer: Equalizer? = null
     private var bassBoost: BassBoost? = null
     private var virtualizer: Virtualizer? = null
+
     val equalizerConfig: EqualizerConfig
     var presets: List<EqualizerPreset> = emptyList()
+
     private val currentPreset = BehaviorRelay.create<EqualizerPreset>()
+    var binder: PresetBinder = GlobalPresetBinder(stationsDb)
     val currentPresetObs: Observable<EqualizerPreset> get() = currentPreset
 
     init {
@@ -86,8 +93,9 @@ class EqualizerRepository
         }.subscribeOn(Schedulers.io())
     }
 
-    fun setPreset(preset: EqualizerPreset) {
+    fun setPreset(preset: EqualizerPreset, binder: PresetBinder) {
         preset.applyTo(equalizer, bassBoost, virtualizer)
+        this.binder = binder
         currentPreset.accept(preset)
     }
 
@@ -112,5 +120,17 @@ class EqualizerRepository
             presets = presets.map { p -> if (p.name == preset.name) preset else p }
             currentPreset.accept(it)
         }
+    }
+
+    fun getPresetBinder(stationId: String): Single<Pair<String, PresetBinder>> {
+        return PresetBinder.create(stationsDb, stationId)
+                .subscribeOn(Schedulers.io())
+    }
+
+    fun switchBind(): Completable {
+        return binder.switch()
+                .doOnSuccess { binder = it }
+                .ignoreElement()
+                .subscribeOn(Schedulers.io())
     }
 }

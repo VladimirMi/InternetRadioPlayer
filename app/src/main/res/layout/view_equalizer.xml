@@ -15,8 +15,9 @@
         android:background="@drawable/bg_frame"
         android:paddingTop="4dp"
         android:paddingBottom="4dp"
+        app:layout_constraintBottom_toBottomOf="@+id/switchBindBt"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintTop_toTopOf="@+id/switchBindBt"
         >
 
         <Spinner
@@ -30,12 +31,12 @@
         android:id="@+id/equalizerView"
         android:layout_width="match_parent"
         android:layout_height="0dp"
-        android:layout_marginBottom="8dp"
 
+        android:layout_marginBottom="8dp"
         app:layout_constraintBottom_toTopOf="@id/equalizerView2"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/presetSpinnerWrapper"
+        app:layout_constraintTop_toBottomOf="@+id/switchBindBt"
         />
 
     <TableLayout
@@ -137,8 +138,9 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         app:backgroundTint="@color/accent"
-        app:fabSize="mini"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toTopOf="parent"
+        app:tint="@color/grey_50"
+        app:rippleColor="@color/grey_50"
         />
 </androidx.constraintlayout.widget.ConstraintLayout>

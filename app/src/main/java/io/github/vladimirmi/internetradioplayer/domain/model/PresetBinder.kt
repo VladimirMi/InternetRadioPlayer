@@ -1,6 +1,5 @@
 package io.github.vladimirmi.internetradioplayer.domain.model
 
-import android.annotation.SuppressLint
 import io.github.vladimirmi.internetradioplayer.R
 import io.github.vladimirmi.internetradioplayer.data.db.StationsDatabase
 import io.reactivex.Completable
@@ -11,9 +10,13 @@ import timber.log.Timber
  * Created by Vladimir Mikhalev 18.01.2019.
  */
 
-abstract class PresetBinder(protected val db: StationsDatabase) {
+interface PresetBinderView {
 
-    abstract val iconResId: Int
+    val iconResId: Int
+    val descriptionResId: Int
+}
+
+abstract class PresetBinder(protected val db: StationsDatabase) : PresetBinderView {
 
     abstract fun bind(): Completable
 
@@ -26,7 +29,6 @@ abstract class PresetBinder(protected val db: StationsDatabase) {
     }
 
     companion object {
-        @SuppressLint("CheckResult")
         fun create(db: StationsDatabase, stationId: String): Single<Pair<String, PresetBinder>> {
             val dao = db.stationDao()
 
@@ -46,7 +48,8 @@ abstract class PresetBinder(protected val db: StationsDatabase) {
 
 class StationPresetBinder(db: StationsDatabase) : PresetBinder(db) {
 
-    override val iconResId = R.drawable.ic_label_plus
+    override val iconResId = R.drawable.ic_station_1
+    override val descriptionResId = R.string.preset_bind_station
 
     override fun bind(): Completable {
         return Completable.fromAction { Timber.e("bind: StationPresetBinder") }
@@ -57,7 +60,8 @@ class StationPresetBinder(db: StationsDatabase) : PresetBinder(db) {
 
 class GroupPresetBinder(db: StationsDatabase) : PresetBinder(db) {
 
-    override val iconResId = R.drawable.ic_add
+    override val iconResId = R.drawable.ic_group
+    override val descriptionResId = R.string.preset_bind_group
 
     override fun bind(): Completable {
         return Completable.fromAction { Timber.e("bind: GroupPresetBinder") }
@@ -68,7 +72,8 @@ class GroupPresetBinder(db: StationsDatabase) : PresetBinder(db) {
 
 class GlobalPresetBinder(db: StationsDatabase) : PresetBinder(db) {
 
-    override val iconResId = R.drawable.ic_delete
+    override val iconResId = R.drawable.ic_globe
+    override val descriptionResId = R.string.preset_bind_all
 
     override fun bind(): Completable {
         return Completable.fromAction { Timber.e("bind: GlobalPresetBinder") }

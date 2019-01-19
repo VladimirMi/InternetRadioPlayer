@@ -72,10 +72,13 @@
     <string name="setting_restore">Restore stations</string>
     <string name="setting_privacy">Privacy policy</string>
 
+    <string name="preset_bind_station">Apply to station</string>
+    <string name="preset_bind_group">Apply to group</string>
+    <string name="preset_bind_all">Apply to all</string>
+
     <string name="second">%1$d second</string>
     <string name="seconds">%1$d seconds</string>
     <string name="chooser_backup">Save with</string>
-
 
     <plurals name="plural_second">
         <item quantity="one">@string/second</item>

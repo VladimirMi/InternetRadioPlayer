@@ -5,6 +5,7 @@ import io.github.vladimirmi.internetradioplayer.data.repository.PlayerRepository
 import io.github.vladimirmi.internetradioplayer.data.repository.StationRepository
 import io.github.vladimirmi.internetradioplayer.data.service.PlayerService
 import io.github.vladimirmi.internetradioplayer.domain.model.EqualizerPreset
+import io.github.vladimirmi.internetradioplayer.domain.model.PresetBinderView
 import io.reactivex.Completable
 import io.reactivex.Observable
 import javax.inject.Inject
@@ -19,7 +20,7 @@ class EqualizerInteractor
                     private val stationRepository: StationRepository) {
 
     val currentPresetObs: Observable<EqualizerPreset> get() = equalizerRepository.currentPresetObs
-    val binderIconResId: Int get() = equalizerRepository.binder.iconResId
+    val presetBinder: PresetBinderView get() = equalizerRepository.binder
     val equalizerConfig get() = equalizerRepository.equalizerConfig
 
     fun initEqualizer(): Completable {

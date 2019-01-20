@@ -1,7 +1,6 @@
 package io.github.vladimirmi.internetradioplayer.presentation.equalizer
 
 import io.github.vladimirmi.internetradioplayer.domain.interactor.EqualizerInteractor
-import io.github.vladimirmi.internetradioplayer.domain.model.EqualizerPreset
 import io.github.vladimirmi.internetradioplayer.extensions.subscribeX
 import io.github.vladimirmi.internetradioplayer.presentation.base.BasePresenter
 import io.reactivex.android.schedulers.AndroidSchedulers
@@ -21,7 +20,6 @@ class EqualizerPresenter
 
     override fun onAttach(view: EqualizerView) {
         equalizerInteractor.currentPresetObs
-                .distinctUntilChanged(EqualizerPreset::name)
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribeX(onNext = {
                     view.setPresetNames(equalizerInteractor.getPresetNames())
@@ -45,6 +43,8 @@ class EqualizerPresenter
 
     fun selectPreset(index: Int) {
         equalizerInteractor.selectPreset(index)
+                .subscribeX()
+                .addTo(dataSubs)
     }
 
     fun saveCurrentPreset() {

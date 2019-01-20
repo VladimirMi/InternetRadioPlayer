@@ -8,6 +8,7 @@ import io.github.vladimirmi.internetradioplayer.domain.model.EqualizerPreset
 import io.github.vladimirmi.internetradioplayer.domain.model.PresetBinderView
 import io.reactivex.Completable
 import io.reactivex.Observable
+import timber.log.Timber
 import javax.inject.Inject
 
 /**
@@ -53,13 +54,11 @@ class EqualizerInteractor
         return stationRepository.stationObs
                 .flatMapSingle { equalizerRepository.getPresetBinder(it.id) }
                 .map {
-                    val (presetName, binder) = it
-
-                    val preset = equalizerRepository.presets.find { preset -> preset.name == presetName }
+                    Timber.e("initCurrentPreset: $it")
+                    val preset = equalizerRepository.presets.find { preset -> preset.name == it.presetName }
                             ?: equalizerRepository.getGlobalPreset()
 
-                    equalizerRepository.setPreset(preset, binder)
-
+                    equalizerRepository.setPreset(preset, it)
                 }.ignoreElements()
     }
 
@@ -79,8 +78,8 @@ class EqualizerInteractor
         return equalizerRepository.presets.map { it.name }
     }
 
-    fun selectPreset(index: Int) {
-        equalizerRepository.selectPreset(index)
+    fun selectPreset(index: Int): Completable {
+        return equalizerRepository.selectPreset(index)
     }
 
     fun saveCurrentPreset(): Completable {

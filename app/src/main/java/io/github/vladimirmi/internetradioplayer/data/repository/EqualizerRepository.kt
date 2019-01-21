@@ -128,4 +128,10 @@ class EqualizerRepository
         return binder.bind()
                 .subscribeOn(Schedulers.io())
     }
+
+    fun resetCurrentPreset(): Completable {
+        val defaultPreset = equalizerConfig.defaultPresets.find { it.name == currentPreset.value?.name }
+        updatePresetsWith(defaultPreset)
+        return saveCurrentPreset()
+    }
 }

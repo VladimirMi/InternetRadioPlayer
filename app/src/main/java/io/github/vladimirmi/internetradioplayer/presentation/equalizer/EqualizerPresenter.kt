@@ -62,4 +62,10 @@ class EqualizerPresenter
                 })
                 .addTo(viewSubs)
     }
+
+    fun resetCurrentPreset() {
+        equalizerInteractor.resetCurrentPreset()
+                .subscribeX()
+                .addTo(dataSubs)
+    }
 }

@@ -89,4 +89,8 @@ class EqualizerInteractor
     fun switchBind(): Completable {
         return equalizerRepository.switchBind()
     }
+
+    fun resetCurrentPreset(): Completable {
+        return equalizerRepository.resetCurrentPreset()
+    }
 }

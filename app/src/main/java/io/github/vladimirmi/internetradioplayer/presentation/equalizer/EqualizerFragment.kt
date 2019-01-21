@@ -48,6 +48,8 @@ class EqualizerFragment : BaseFragment<EqualizerPresenter, EqualizerView>(), Equ
         }
 
         switchBindBt.setOnClickListener { presenter.switchBind() }
+
+        resetBt.setOnClickListener { presenter.resetCurrentPreset() }
     }
 
     override fun setupEqualizer(config: EqualizerConfig) {

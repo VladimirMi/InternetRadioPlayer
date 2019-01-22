@@ -8,12 +8,11 @@ import io.github.vladimirmi.internetradioplayer.R
 import io.github.vladimirmi.internetradioplayer.di.Scopes
 import io.github.vladimirmi.internetradioplayer.domain.model.EqualizerConfig
 import io.github.vladimirmi.internetradioplayer.domain.model.EqualizerPreset
-import io.github.vladimirmi.internetradioplayer.extensions.setProgressX
-import io.github.vladimirmi.internetradioplayer.extensions.visible
-import io.github.vladimirmi.internetradioplayer.extensions.waitForMeasure
+import io.github.vladimirmi.internetradioplayer.extensions.*
 import io.github.vladimirmi.internetradioplayer.presentation.base.BaseFragment
 import io.github.vladimirmi.internetradioplayer.ui.EqualizerContainer
 import io.github.vladimirmi.internetradioplayer.utils.SimpleOnSeekBarChangeListener
+import kotlinx.android.synthetic.main.view_controls_simple.*
 import kotlinx.android.synthetic.main.view_equalizer.*
 import toothpick.Toothpick
 
@@ -50,8 +49,12 @@ class EqualizerFragment : BaseFragment<EqualizerPresenter, EqualizerView>(), Equ
         }
 
         switchBindBt.setOnClickListener { presenter.switchBind() }
-
         resetBt.setOnClickListener { presenter.resetCurrentPreset() }
+
+        sPlayPauseBt.setManualMode(true)
+        sPlayPauseBt.setOnClickListener { presenter.playPause() }
+        sMetadataTv.isSelected = true
+        sBufferingPb.indeterminateDrawable.setTintExt(requireContext().color(R.color.pause_button))
     }
 
     override fun setupEqualizer(config: EqualizerConfig) {
@@ -118,5 +121,24 @@ class EqualizerFragment : BaseFragment<EqualizerPresenter, EqualizerView>(), Equ
 
     override fun showReset(show: Boolean) {
         resetBt.visible(show)
+    }
+
+    override fun showStopped() {
+        sPlayPauseBt.isPlaying = false
+        sBufferingPb.visible(false)
+    }
+
+    override fun showPlaying() {
+        sPlayPauseBt.isPlaying = true
+        sBufferingPb.visible(false)
+    }
+
+    override fun showBuffering() {
+        sPlayPauseBt.isPlaying = true
+        sBufferingPb.visible(true)
+    }
+
+    override fun setMetadata(metadata: String) {
+        sMetadataTv.text = metadata
     }
 }

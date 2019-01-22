@@ -71,11 +71,15 @@ fun TextView.onTextChanges(listener: (String) -> Unit) {
     })
 }
 
-fun SeekBar.setProgressWithAnimation(progress: Int) {
-    with(ObjectAnimator.ofInt(this, "progress", progress)) {
-        duration = 300
-        interpolator = AccelerateDecelerateInterpolator()
-        start()
+fun SeekBar.setProgressX(progress: Int, animate: Boolean) {
+    if (animate) {
+        with(ObjectAnimator.ofInt(this, "progress", progress)) {
+            duration = 300
+            interpolator = AccelerateDecelerateInterpolator()
+            start()
+        }
+    } else {
+        setProgress(progress)
     }
 }
 

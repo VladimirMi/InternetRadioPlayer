@@ -20,7 +20,7 @@ class EqualizerInteractor
                     private val equalizerRepository: EqualizerRepository,
                     private val stationRepository: StationRepository) {
 
-    val currentPresetObs: Observable<EqualizerPreset> get() = equalizerRepository.currentPresetObs
+    val currentPresetObs: Observable<EqualizerPreset> get() = equalizerRepository.currentPreset
     val presetBinder: PresetBinderView get() = equalizerRepository.binder
     val equalizerConfig get() = equalizerRepository.equalizerConfig
 
@@ -92,5 +92,11 @@ class EqualizerInteractor
 
     fun resetCurrentPreset(): Completable {
         return equalizerRepository.resetCurrentPreset()
+    }
+
+    fun isCurrentPresetCanReset(): Boolean {
+        val preset = equalizerRepository.currentPreset.value
+        val defaultPreset = equalizerConfig.defaultPresets.find { it.name == preset?.name }
+        return preset != defaultPreset
     }
 }

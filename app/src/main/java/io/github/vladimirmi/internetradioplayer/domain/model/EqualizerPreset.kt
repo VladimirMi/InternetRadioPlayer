@@ -15,17 +15,21 @@ data class EqualizerPreset(val name: String,
                            val virtualizerStrength: Int) {
 
     companion object {
-        fun create(name: String, settings: Equalizer.Settings): EqualizerPreset {
-            return EqualizerPreset(name,
-                    settings.bandLevels.map { it.toInt() },
-                    0, 0)
+        fun create(entity: EqualizerPresetEntity): EqualizerPreset {
+            return create(entity.name,
+                    Equalizer.Settings(entity.bands),
+                    BassBoost.Settings(entity.bass),
+                    Virtualizer.Settings(entity.virtualizer))
         }
 
-        fun create(entity: EqualizerPresetEntity): EqualizerPreset {
-            return EqualizerPreset(entity.name,
-                    Equalizer.Settings(entity.bands).bandLevels.map { it.toInt() },
-                    BassBoost.Settings(entity.bass).strength.toInt(),
-                    Virtualizer.Settings(entity.virtualizer).strength.toInt())
+        fun create(name: String, eS: Equalizer.Settings,
+                   bS: BassBoost.Settings = BassBoost.Settings(),
+                   vS: Virtualizer.Settings = Virtualizer.Settings())
+                : EqualizerPreset {
+            return EqualizerPreset(name,
+                    eS.bandLevels.map { it.toInt() },
+                    bS.strength.toInt(),
+                    vS.strength.toInt())
         }
     }
 

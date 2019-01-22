@@ -8,7 +8,8 @@ import io.github.vladimirmi.internetradioplayer.R
 import io.github.vladimirmi.internetradioplayer.di.Scopes
 import io.github.vladimirmi.internetradioplayer.domain.model.EqualizerConfig
 import io.github.vladimirmi.internetradioplayer.domain.model.EqualizerPreset
-import io.github.vladimirmi.internetradioplayer.extensions.setProgressWithAnimation
+import io.github.vladimirmi.internetradioplayer.extensions.setProgressX
+import io.github.vladimirmi.internetradioplayer.extensions.visible
 import io.github.vladimirmi.internetradioplayer.extensions.waitForMeasure
 import io.github.vladimirmi.internetradioplayer.presentation.base.BaseFragment
 import io.github.vladimirmi.internetradioplayer.ui.EqualizerContainer
@@ -23,6 +24,7 @@ import toothpick.Toothpick
 class EqualizerFragment : BaseFragment<EqualizerPresenter, EqualizerView>(), EqualizerView {
 
     private lateinit var presetAdapter: ArrayAdapter<String>
+    private var change = false
 
     override val layout = R.layout.fragment_equalizer
 
@@ -59,28 +61,38 @@ class EqualizerFragment : BaseFragment<EqualizerPresenter, EqualizerView>(), Equ
         equalizerView.onBandLevelChangeListener = object : EqualizerContainer.OnBandLevelChangeListener {
             override fun onBandLevelChange(band: Int, level: Int) {
                 presenter.setBandLevel(band, level)
+                change = true
             }
 
             override fun onStopChange(band: Int) {
                 presenter.saveCurrentPreset()
+                change = false
             }
         }
         bassSb.setOnSeekBarChangeListener(object : SimpleOnSeekBarChangeListener() {
             override fun onProgressChanged(seekBar: SeekBar?, progress: Int, fromUser: Boolean) {
-                if (fromUser) presenter.setBassBoost(progress)
+                if (fromUser) {
+                    presenter.setBassBoost(progress)
+                    change = true
+                }
             }
 
             override fun onStopTrackingTouch(seekBar: SeekBar?) {
                 presenter.saveCurrentPreset()
+                change = false
             }
         })
         virtualSb.setOnSeekBarChangeListener(object : SimpleOnSeekBarChangeListener() {
             override fun onProgressChanged(seekBar: SeekBar?, progress: Int, fromUser: Boolean) {
-                if (fromUser) presenter.setVirtualizer(progress)
+                if (fromUser) {
+                    presenter.setVirtualizer(progress)
+                    change = true
+                }
             }
 
             override fun onStopTrackingTouch(seekBar: SeekBar?) {
                 presenter.saveCurrentPreset()
+                change = false
             }
         })
     }
@@ -88,9 +100,9 @@ class EqualizerFragment : BaseFragment<EqualizerPresenter, EqualizerView>(), Equ
     override fun setPreset(preset: EqualizerPreset) {
         with(preset) {
             presetSpinner.setSelection(presetAdapter.getPosition(name))
-            equalizerView.setBandLevels(bandLevels)
-            bassSb.setProgressWithAnimation(bassBoostStrength)
-            virtualSb.setProgressWithAnimation(virtualizerStrength)
+            equalizerView.setBandLevels(bandLevels, animate = !change)
+            bassSb.setProgressX(bassBoostStrength, animate = !change)
+            virtualSb.setProgressX(virtualizerStrength, animate = !change)
         }
     }
 
@@ -102,5 +114,9 @@ class EqualizerFragment : BaseFragment<EqualizerPresenter, EqualizerView>(), Equ
 
     override fun setBindIcon(iconResId: Int) {
         switchBindBt.setImageResource(iconResId)
+    }
+
+    override fun showReset(show: Boolean) {
+        resetBt.visible(show)
     }
 }

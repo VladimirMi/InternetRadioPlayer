@@ -12,7 +12,6 @@ import io.github.vladimirmi.internetradioplayer.domain.model.EqualizerConfig
 import io.github.vladimirmi.internetradioplayer.domain.model.EqualizerPreset
 import io.github.vladimirmi.internetradioplayer.domain.model.PresetBinder
 import io.reactivex.Completable
-import io.reactivex.Observable
 import io.reactivex.Single
 import io.reactivex.schedulers.Schedulers
 import javax.inject.Inject
@@ -34,9 +33,8 @@ class EqualizerRepository
     val equalizerConfig: EqualizerConfig
     var presets: List<EqualizerPreset> = emptyList()
 
-    private val currentPreset = BehaviorRelay.create<EqualizerPreset>()
+    val currentPreset = BehaviorRelay.create<EqualizerPreset>()
     lateinit var binder: PresetBinder
-    val currentPresetObs: Observable<EqualizerPreset> get() = currentPreset
 
     init {
         val tempEqualizer = Equalizer(-1, 1)
@@ -96,9 +94,9 @@ class EqualizerRepository
     fun selectPreset(index: Int): Completable {
         val preset = presets[index]
         preset.applyTo(equalizer, bassBoost, virtualizer)
-        binder.presetName = preset.name
         currentPreset.accept(preset)
-        return binder.bind()
+        binder.presetName = preset.name
+        return binder.bind(stationsDb, preferences)
                 .subscribeOn(Schedulers.io())
     }
 
@@ -111,13 +109,6 @@ class EqualizerRepository
         return presets.find { it.name == preferences.globalPreset } ?: presets.first()
     }
 
-    private fun updatePresetsWith(preset: EqualizerPreset?) {
-        preset?.let {
-            presets = presets.map { p -> if (p.name == preset.name) preset else p }
-            currentPreset.accept(it)
-        }
-    }
-
     fun getPresetBinder(stationId: String): Single<PresetBinder> {
         return PresetBinder.create(stationsDb.stationDao(), stationId)
                 .subscribeOn(Schedulers.io())
@@ -125,7 +116,7 @@ class EqualizerRepository
 
     fun switchBind(): Completable {
         binder = binder.nextBinder()
-        return binder.bind()
+        return binder.bind(stationsDb, preferences)
                 .subscribeOn(Schedulers.io())
     }
 
@@ -133,5 +124,12 @@ class EqualizerRepository
         val defaultPreset = equalizerConfig.defaultPresets.find { it.name == currentPreset.value?.name }
         updatePresetsWith(defaultPreset)
         return saveCurrentPreset()
+    }
+
+    private fun updatePresetsWith(preset: EqualizerPreset?) {
+        preset?.let {
+            presets = presets.map { p -> if (p.name == preset.name) preset else p }
+            currentPreset.accept(it)
+        }
     }
 }

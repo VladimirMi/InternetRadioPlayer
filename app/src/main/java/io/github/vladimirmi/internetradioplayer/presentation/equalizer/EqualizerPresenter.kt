@@ -25,6 +25,7 @@ class EqualizerPresenter
                     view.setPresetNames(equalizerInteractor.getPresetNames())
                     view.setBindIcon(equalizerInteractor.presetBinder.iconResId)
                     view.setPreset(it)
+                    view.showReset(equalizerInteractor.isCurrentPresetCanReset())
                 })
                 .addTo(viewSubs)
     }

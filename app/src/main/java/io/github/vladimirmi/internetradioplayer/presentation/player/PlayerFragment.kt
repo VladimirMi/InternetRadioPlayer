@@ -65,6 +65,7 @@ class PlayerFragment : BaseFragment<PlayerPresenter, PlayerView>(), PlayerView, 
         previousBt.setOnClickListener { presenter.skipToPrevious() }
         nextBt.setOnClickListener { presenter.skipToNext() }
         stopBt.setOnClickListener { presenter.stop() }
+        equalizerBt.setOnClickListener { presenter.openEqualizer() }
     }
 
     private fun setupTitle() {
@@ -195,7 +196,7 @@ class PlayerFragment : BaseFragment<PlayerPresenter, PlayerView>(), PlayerView, 
                 .setInterpolator(FastOutSlowInInterpolator())
                 .start()
         if (visible) metadataCv.visible(true)
-        else Handler().postDelayed({ metadataCv.visible(false) }, 300)
+        else Handler().postDelayed({ metadataCv?.visible(false) }, 300)
         with(metadata) {
             metaTitleTv.setTextOrHide(artist)
             metaSubtitleTv.setTextOrHide(title)

@@ -88,7 +88,7 @@ class RootActivity : BaseActivity<RootPresenter, RootView>(), RootView {
         navigator.navigationIdListener = {
             navigationView.setCheckedItem(it)
             showDirectory(it == R.id.nav_search)
-            setHomeAsUp(it == R.id.nav_settings)
+            setHomeAsUp(it == R.id.nav_settings || it == R.id.nav_equalizer)
         }
         super.onStart()
     }

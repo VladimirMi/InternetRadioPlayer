@@ -22,11 +22,7 @@ plugins {
 allprojects {
     repositories {
         jcenter()
-        mavenCentral()
         google()
-        maven {
-            url 'https://google.bintray.com/exoplayer/'
-        }
     }
 }
 

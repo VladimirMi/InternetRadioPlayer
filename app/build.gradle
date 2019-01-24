@@ -31,7 +31,7 @@ android {
         javaCompileOptions {
             annotationProcessorOptions {
                 arguments = [toothpick_registry_package_name: 'io.github.vladimirmi.internetradioplayer',
-                             "room.schemaLocation":
+                             "room.schemaLocation"          :
                                      "$projectDir/schemas".toString()]
             }
         }
@@ -60,7 +60,8 @@ private String generateVersionName() {
 }
 
 ext {
-    ROOM_VERSION = "2.1.0-alpha02"
+    ROOM_VERSION = "2.1.0-alpha03"
+    EXOPLAYER_VERSION = "2.9.2"
 }
 
 dependencies {
@@ -80,9 +81,9 @@ dependencies {
     implementation 'androidx.legacy:legacy-preference-v14:1.0.0'
     implementation "androidx.constraintlayout:constraintlayout:2.0.0-alpha3"
     //DB
-    implementation 'androidx.room:room-runtime:' + ROOM_VERSION
-    kapt 'androidx.room:room-compiler:' + ROOM_VERSION
-    implementation 'androidx.room:room-rxjava2:' + ROOM_VERSION
+    implementation "androidx.room:room-runtime:$ROOM_VERSION"
+    kapt "androidx.room:room-compiler:$ROOM_VERSION"
+    implementation "androidx.room:room-rxjava2:$ROOM_VERSION"
     //Net
     implementation "com.squareup.retrofit2:retrofit:2.5.0"
     implementation "com.squareup.retrofit2:converter-gson:2.5.0"
@@ -103,7 +104,8 @@ dependencies {
     implementation "com.facebook.stetho:stetho:1.5.0"
     implementation "com.squareup.okhttp3:logging-interceptor:3.12.1"
     //ExoPlayer
-    implementation "com.google.android.exoplayer:exoplayer-core:2.9.2"
+    implementation "com.google.android.exoplayer:exoplayer-core:$EXOPLAYER_VERSION"
+    implementation "com.google.android.exoplayer:extension-okhttp:$EXOPLAYER_VERSION"
 
     implementation project(':playerbutton')
 }

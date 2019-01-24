@@ -36,6 +36,7 @@
         android:background="@null"
         android:src="@drawable/ic_edit"
         android:contentDescription="@string/desc_edit_title_button"
+        tools:ignore="UnusedAttribute"
         />
 
     <TextView
@@ -84,6 +85,7 @@
         android:foreground="?actionBarItemBackground"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/groupSpinnerWrapper"
+        tools:ignore="UnusedAttribute"
         />
 
     <ImageButton
@@ -102,6 +104,26 @@
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/groupSpinnerWrapper"
+        tools:ignore="UnusedAttribute"
+        />
+
+    <ImageButton
+        android:id="@+id/equalizerBt"
+        android:layout_width="40dp"
+        android:layout_height="40dp"
+        android:layout_marginStart="16dp"
+        android:layout_marginLeft="16dp"
+        android:layout_marginTop="8dp"
+        android:background="@null"
+        android:contentDescription="@string/desc_open_equalizer"
+        android:foreground="?actionBarItemBackground"
+        android:padding="4dp"
+        android:scaleType="fitCenter"
+        android:src="@drawable/ic_equalizer"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintStart_toEndOf="@+id/addShortcutBt"
+        app:layout_constraintTop_toBottomOf="@+id/groupSpinnerWrapper"
+        tools:ignore="UnusedAttribute"
         />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

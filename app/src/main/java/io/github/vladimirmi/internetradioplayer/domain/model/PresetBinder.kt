@@ -9,7 +9,6 @@ import io.github.vladimirmi.internetradioplayer.data.utils.Preferences
 import io.github.vladimirmi.internetradioplayer.di.Scopes
 import io.reactivex.Completable
 import io.reactivex.Single
-import timber.log.Timber
 
 /**
  * Created by Vladimir Mikhalev 18.01.2019.
@@ -22,14 +21,11 @@ interface PresetBinderView {
 }
 
 abstract class PresetBinder(val station: Station,
-                            val group: Group) : PresetBinderView {
+                            val group: Group,
+                            var presetName: String) : PresetBinderView {
 
-    protected val db: StationsDatabase = Scopes.app.getInstance(StationsDatabase::class.java)
-    protected val prefs: Preferences = Scopes.app.getInstance(Preferences::class.java)
 
-    abstract var presetName: String
-
-    open fun bind(): Completable {
+    open fun bind(db: StationsDatabase, prefs: Preferences): Completable {
         return Completable.fromAction {
             db.runInTransaction {
                 with(db.stationDao()) {
@@ -52,31 +48,31 @@ abstract class PresetBinder(val station: Station,
         }
 
         private fun createBinder(station: Station, group: Group): PresetBinder {
-            Timber.e("createBinder: s-${station.equalizerPreset} g-${group.equalizerPreset}")
             return if (station.equalizerPreset == null) {
                 if (group.equalizerPreset == null) {
-                    GlobalPresetBinder(station, group)
+                    val globalPreset = Scopes.app.getInstance(Preferences::class.java).globalPreset
+                    GlobalPresetBinder(station, group, globalPreset)
                 } else {
-                    GroupPresetBinder(station, group)
+                    GroupPresetBinder(station, group, group.equalizerPreset)
                 }
             } else {
-                StationPresetBinder(station, group)
+                StationPresetBinder(station, group, station.equalizerPreset)
             }
         }
     }
 }
 
-class StationPresetBinder(station: Station, group: Group) : PresetBinder(station, group) {
+class StationPresetBinder(station: Station, group: Group, presetName: String)
+    : PresetBinder(station, group, presetName) {
 
     override val iconResId = R.drawable.ic_station_1
     override val descriptionResId = R.string.preset_bind_station
-    override var presetName = station.equalizerPreset!!
 
     override fun nextBinder(): GlobalPresetBinder {
         return GlobalPresetBinder(
                 station.copy(equalizerPreset = null),
-                group.copy(equalizerPreset = null)
-        ).apply { presetName = this@StationPresetBinder.presetName }
+                group.copy(equalizerPreset = null),
+                presetName)
     }
 
     override fun toString(): String {
@@ -84,15 +80,16 @@ class StationPresetBinder(station: Station, group: Group) : PresetBinder(station
     }
 }
 
-class GroupPresetBinder(station: Station, group: Group) : PresetBinder(station, group) {
+class GroupPresetBinder(station: Station, group: Group, presetName: String)
+    : PresetBinder(station, group, presetName) {
 
     override val iconResId = R.drawable.ic_group
     override val descriptionResId = R.string.preset_bind_group
-    override var presetName = group.equalizerPreset!!
 
     override fun nextBinder() = StationPresetBinder(
             station.copy(equalizerPreset = presetName),
-            group.copy(equalizerPreset = null)
+            group.copy(equalizerPreset = null),
+            presetName
     )
 
     override fun toString(): String {
@@ -100,20 +97,21 @@ class GroupPresetBinder(station: Station, group: Group) : PresetBinder(station, 
     }
 }
 
-class GlobalPresetBinder(station: Station, group: Group) : PresetBinder(station, group) {
+class GlobalPresetBinder(station: Station, group: Group, presetName: String)
+    : PresetBinder(station, group, presetName) {
 
     override val iconResId = R.drawable.ic_globe
     override val descriptionResId = R.string.preset_bind_all
-    override var presetName = prefs.globalPreset
 
-    override fun bind(): Completable {
-        return super.bind()
+    override fun bind(db: StationsDatabase, prefs: Preferences): Completable {
+        return super.bind(db, prefs)
                 .doOnComplete { prefs.globalPreset = presetName }
     }
 
     override fun nextBinder() = GroupPresetBinder(
             station.copy(equalizerPreset = null),
-            group.copy(equalizerPreset = presetName)
+            group.copy(equalizerPreset = presetName),
+            presetName
     )
 
     override fun toString(): String {

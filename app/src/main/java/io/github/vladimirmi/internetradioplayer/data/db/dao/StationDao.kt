@@ -33,7 +33,7 @@ interface StationDao {
     @Update(onConflict = OnConflictStrategy.IGNORE)
     fun updateStation(station: Station)
 
-    @Update
+    @Update(onConflict = OnConflictStrategy.IGNORE)
     fun updateGroup(group: Group)
 
     @Query("DELETE FROM station WHERE id = :id")

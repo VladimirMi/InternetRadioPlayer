@@ -8,11 +8,11 @@ import io.github.vladimirmi.internetradioplayer.R
 import io.github.vladimirmi.internetradioplayer.di.Scopes
 import io.github.vladimirmi.internetradioplayer.domain.model.EqualizerConfig
 import io.github.vladimirmi.internetradioplayer.domain.model.EqualizerPreset
-import io.github.vladimirmi.internetradioplayer.extensions.setProgressWithAnimation
-import io.github.vladimirmi.internetradioplayer.extensions.waitForMeasure
+import io.github.vladimirmi.internetradioplayer.extensions.*
 import io.github.vladimirmi.internetradioplayer.presentation.base.BaseFragment
 import io.github.vladimirmi.internetradioplayer.ui.EqualizerContainer
 import io.github.vladimirmi.internetradioplayer.utils.SimpleOnSeekBarChangeListener
+import kotlinx.android.synthetic.main.view_controls_simple.*
 import kotlinx.android.synthetic.main.view_equalizer.*
 import toothpick.Toothpick
 
@@ -23,6 +23,7 @@ import toothpick.Toothpick
 class EqualizerFragment : BaseFragment<EqualizerPresenter, EqualizerView>(), EqualizerView {
 
     private lateinit var presetAdapter: ArrayAdapter<String>
+    private var change = false
 
     override val layout = R.layout.fragment_equalizer
 
@@ -48,6 +49,12 @@ class EqualizerFragment : BaseFragment<EqualizerPresenter, EqualizerView>(), Equ
         }
 
         switchBindBt.setOnClickListener { presenter.switchBind() }
+        resetBt.setOnClickListener { presenter.resetCurrentPreset() }
+
+        sPlayPauseBt.setManualMode(true)
+        sPlayPauseBt.setOnClickListener { presenter.playPause() }
+        sMetadataTv.isSelected = true
+        sBufferingPb.indeterminateDrawable.setTintExt(requireContext().color(R.color.pause_button))
     }
 
     override fun setupEqualizer(config: EqualizerConfig) {
@@ -57,28 +64,38 @@ class EqualizerFragment : BaseFragment<EqualizerPresenter, EqualizerView>(), Equ
         equalizerView.onBandLevelChangeListener = object : EqualizerContainer.OnBandLevelChangeListener {
             override fun onBandLevelChange(band: Int, level: Int) {
                 presenter.setBandLevel(band, level)
+                change = true
             }
 
             override fun onStopChange(band: Int) {
                 presenter.saveCurrentPreset()
+                change = false
             }
         }
         bassSb.setOnSeekBarChangeListener(object : SimpleOnSeekBarChangeListener() {
             override fun onProgressChanged(seekBar: SeekBar?, progress: Int, fromUser: Boolean) {
-                if (fromUser) presenter.setBassBoost(progress)
+                if (fromUser) {
+                    presenter.setBassBoost(progress)
+                    change = true
+                }
             }
 
             override fun onStopTrackingTouch(seekBar: SeekBar?) {
                 presenter.saveCurrentPreset()
+                change = false
             }
         })
         virtualSb.setOnSeekBarChangeListener(object : SimpleOnSeekBarChangeListener() {
             override fun onProgressChanged(seekBar: SeekBar?, progress: Int, fromUser: Boolean) {
-                if (fromUser) presenter.setVirtualizer(progress)
+                if (fromUser) {
+                    presenter.setVirtualizer(progress)
+                    change = true
+                }
             }
 
             override fun onStopTrackingTouch(seekBar: SeekBar?) {
                 presenter.saveCurrentPreset()
+                change = false
             }
         })
     }
@@ -86,9 +103,9 @@ class EqualizerFragment : BaseFragment<EqualizerPresenter, EqualizerView>(), Equ
     override fun setPreset(preset: EqualizerPreset) {
         with(preset) {
             presetSpinner.setSelection(presetAdapter.getPosition(name))
-            equalizerView.setBandLevels(bandLevels)
-            bassSb.setProgressWithAnimation(bassBoostStrength)
-            virtualSb.setProgressWithAnimation(virtualizerStrength)
+            equalizerView.setBandLevels(bandLevels, animate = !change)
+            bassSb.setProgressX(bassBoostStrength, animate = !change)
+            virtualSb.setProgressX(virtualizerStrength, animate = !change)
         }
     }
 
@@ -100,5 +117,28 @@ class EqualizerFragment : BaseFragment<EqualizerPresenter, EqualizerView>(), Equ
 
     override fun setBindIcon(iconResId: Int) {
         switchBindBt.setImageResource(iconResId)
+    }
+
+    override fun showReset(show: Boolean) {
+        resetBt.visible(show)
+    }
+
+    override fun showStopped() {
+        sPlayPauseBt.isPlaying = false
+        sBufferingPb.visible(false)
+    }
+
+    override fun showPlaying() {
+        sPlayPauseBt.isPlaying = true
+        sBufferingPb.visible(false)
+    }
+
+    override fun showBuffering() {
+        sPlayPauseBt.isPlaying = true
+        sBufferingPb.visible(true)
+    }
+
+    override fun setMetadata(metadata: String) {
+        sMetadataTv.text = metadata
     }
 }

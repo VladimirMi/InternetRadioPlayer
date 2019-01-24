@@ -27,6 +27,32 @@
             />
     </FrameLayout>
 
+    <com.google.android.material.button.MaterialButton
+        android:id="@+id/resetBt"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="8dp"
+        android:layout_marginLeft="8dp"
+        app:layout_constraintBottom_toBottomOf="@+id/switchBindBt"
+        app:layout_constraintStart_toEndOf="@id/presetSpinnerWrapper"
+        app:layout_constraintTop_toTopOf="@+id/switchBindBt"
+        style="@style/Widget.MaterialComponents.Button.TextButton.Dialog"
+        android:text="Reset"
+        />
+
+    <com.google.android.material.floatingactionbutton.FloatingActionButton
+        android:id="@+id/switchBindBt"
+        style="@style/Widget.MaterialComponents.FloatingActionButton"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        app:backgroundTint="@color/accent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:fabSize="mini"
+        app:layout_constraintTop_toTopOf="parent"
+        app:tint="@color/grey_50"
+        app:rippleColor="@color/grey_50"
+        />
+
     <io.github.vladimirmi.internetradioplayer.ui.EqualizerContainer
         android:id="@+id/equalizerView"
         android:layout_width="match_parent"
@@ -131,16 +157,4 @@
         </TableRow>
 
     </TableLayout>
-
-    <com.google.android.material.floatingactionbutton.FloatingActionButton
-        android:id="@+id/switchBindBt"
-        style="@style/Widget.MaterialComponents.FloatingActionButton"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        app:backgroundTint="@color/accent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        app:tint="@color/grey_50"
-        app:rippleColor="@color/grey_50"
-        />
 </androidx.constraintlayout.widget.ConstraintLayout>

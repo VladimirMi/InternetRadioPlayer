@@ -17,4 +17,15 @@ interface EqualizerView : BaseView {
     fun setPreset(preset: EqualizerPreset)
 
     fun setBindIcon(iconResId: Int)
+
+    fun showReset(show: Boolean)
+
+    fun setMetadata(metadata: String)
+
+    fun showStopped()
+
+    fun showBuffering()
+
+    fun showPlaying()
+
 }

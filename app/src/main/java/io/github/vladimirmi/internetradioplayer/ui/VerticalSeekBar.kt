@@ -5,7 +5,7 @@ import android.util.AttributeSet
 import android.view.ViewGroup
 import android.widget.SeekBar
 import android.widget.TextView
-import io.github.vladimirmi.internetradioplayer.extensions.setProgressWithAnimation
+import io.github.vladimirmi.internetradioplayer.extensions.setProgressX
 
 /**
  * Created by Vladimir Mikhalev 11.01.2019.
@@ -34,11 +34,7 @@ class VerticalSeekBar @JvmOverloads constructor(
 
     fun setProgress(progress: Int, animate: Boolean) {
         val actual = progress - minProgress
-        if (animate) {
-            seekBar.setProgressWithAnimation(actual)
-        } else {
-            seekBar.progress = actual
-        }
+        seekBar.setProgressX(actual, animate)
     }
 
     fun getProgress(): Int {

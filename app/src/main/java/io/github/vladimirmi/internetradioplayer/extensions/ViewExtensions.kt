@@ -10,6 +10,7 @@ import android.view.ViewTreeObserver
 import android.view.animation.AccelerateDecelerateInterpolator
 import android.widget.SeekBar
 import android.widget.TextView
+import androidx.drawerlayout.widget.DrawerLayout
 import androidx.dynamicanimation.animation.DynamicAnimation
 import androidx.dynamicanimation.animation.SpringAnimation
 import androidx.dynamicanimation.animation.SpringForce
@@ -71,11 +72,15 @@ fun TextView.onTextChanges(listener: (String) -> Unit) {
     })
 }
 
-fun SeekBar.setProgressWithAnimation(progress: Int) {
-    with(ObjectAnimator.ofInt(this, "progress", progress)) {
-        duration = 300
-        interpolator = AccelerateDecelerateInterpolator()
-        start()
+fun SeekBar.setProgressX(progress: Int, animate: Boolean) {
+    if (animate) {
+        with(ObjectAnimator.ofInt(this, "progress", progress)) {
+            duration = 300
+            interpolator = AccelerateDecelerateInterpolator()
+            start()
+        }
+    } else {
+        setProgress(progress)
     }
 }
 
@@ -85,4 +90,9 @@ fun View.bounceXAnimation(dpVelocity: Float): SpringAnimation {
                 spring.dampingRatio = SpringForce.DAMPING_RATIO_HIGH_BOUNCY
                 spring.stiffness = 1000f
             }
+}
+
+fun DrawerLayout.lock(locked: Boolean) {
+    setDrawerLockMode(if (locked) DrawerLayout.LOCK_MODE_LOCKED_CLOSED
+    else DrawerLayout.LOCK_MODE_UNLOCKED)
 }

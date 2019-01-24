@@ -19,6 +19,7 @@ import androidx.interpolator.view.animation.FastOutSlowInInterpolator
 import io.github.vladimirmi.internetradioplayer.R
 import io.github.vladimirmi.internetradioplayer.data.db.entity.Group
 import io.github.vladimirmi.internetradioplayer.data.db.entity.Station
+import io.github.vladimirmi.internetradioplayer.data.service.EMPTY_METADATA
 import io.github.vladimirmi.internetradioplayer.data.service.artist
 import io.github.vladimirmi.internetradioplayer.data.service.isEmpty
 import io.github.vladimirmi.internetradioplayer.data.service.title
@@ -175,6 +176,7 @@ class PlayerFragment : BaseFragment<PlayerPresenter, PlayerView>(), PlayerView, 
     override fun showBuffering() {
         playPauseBt.setPlaying(true, userVisibleHint)
         bufferingPb.visible(true)
+        setMetadata(EMPTY_METADATA)
     }
 
     override fun showNext() {

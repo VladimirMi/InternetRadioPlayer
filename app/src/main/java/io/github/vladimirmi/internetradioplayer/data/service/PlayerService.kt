@@ -6,11 +6,9 @@ import android.os.Bundle
 import android.support.v4.media.MediaBrowserCompat
 import android.support.v4.media.session.MediaSessionCompat
 import android.support.v4.media.session.PlaybackStateCompat
-import androidx.core.content.ContextCompat
 import androidx.media.MediaBrowserServiceCompat
 import io.github.vladimirmi.internetradioplayer.R
 import io.github.vladimirmi.internetradioplayer.data.db.entity.Station
-import io.github.vladimirmi.internetradioplayer.data.utils.ExponentialBackoff
 import io.github.vladimirmi.internetradioplayer.di.Scopes
 import io.github.vladimirmi.internetradioplayer.domain.interactor.EqualizerInteractor
 import io.github.vladimirmi.internetradioplayer.domain.interactor.FavoriteListInteractor
@@ -22,7 +20,6 @@ import io.reactivex.disposables.CompositeDisposable
 import io.reactivex.rxkotlin.addTo
 import timber.log.Timber
 import toothpick.Toothpick
-import java.net.ConnectException
 import java.util.*
 import javax.inject.Inject
 import kotlin.concurrent.schedule
@@ -60,7 +57,6 @@ class PlayerService : MediaBrowserServiceCompat(), SessionCallback.Interface {
     private var currentStationId: String? = null
     private var playingStationId: String? = null
     private var stopTask: TimerTask? = null
-    private val exponentialBackoff = ExponentialBackoff()
 
     override fun onCreate() {
         super.onCreate()
@@ -121,7 +117,7 @@ class PlayerService : MediaBrowserServiceCompat(), SessionCallback.Interface {
 
     private fun startService() {
         if (!serviceStarted) {
-            ContextCompat.startForegroundService(this, Intent(applicationContext, PlayerService::class.java))
+            startService(Intent(applicationContext, PlayerService::class.java))
             serviceStarted = true
             session.isActive = true
         }
@@ -202,14 +198,7 @@ class PlayerService : MediaBrowserServiceCompat(), SessionCallback.Interface {
         }
 
         override fun onPlayerError(error: Exception) {
-            //todo refactor this
-            playback.stop()
-            if (error is ConnectException) {
-                val scheduled = exponentialBackoff.schedule { onPlayCommand() }
-                if (!scheduled) errorHandler.invoke(error)
-            } else {
-                errorHandler.invoke(error)
-            }
+            errorHandler.invoke(error)
         }
 
         override fun onMetadata(metadata: String) {

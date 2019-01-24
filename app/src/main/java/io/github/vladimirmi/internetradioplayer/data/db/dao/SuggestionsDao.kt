@@ -17,6 +17,6 @@ interface SuggestionsDao {
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     fun insert(suggestion: SuggestionEntity)
 
-    @Query("SELECT * FROM suggestionentity WHERE value LIKE :query ORDER BY lastModified ASC")
+    @Query("SELECT * FROM suggestionentity WHERE value LIKE :query ORDER BY lastModified DESC")
     fun getSuggestions(query: String): Single<List<SuggestionEntity>>
 }

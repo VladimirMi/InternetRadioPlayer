@@ -60,6 +60,8 @@ fun View.visible(visible: Boolean) {
     visibility = if (visible) View.VISIBLE else View.GONE
 }
 
+val View?.isVisible: Boolean
+    get() = this?.visibility == View.VISIBLE
 
 fun TextView.onTextChanges(listener: (String) -> Unit) {
     addTextChangedListener(object : TextWatcher {

@@ -108,7 +108,8 @@ class FlatStationsList(private val flatList: MutableList<Any> = arrayListOf()) {
     fun endMove(): FlatStationsList {
         var stationOrder = 0
         var groupOrder = 0
-        var groupId = (flatList.find { it is Group } as? Group)?.id ?: Group.DEFAULT_ID
+        var groupId = (flatList.find { it is Group } as? Group)?.id
+                ?: (flatList.find { it is Station } as? Station)?.groupId ?: Group.DEFAULT_ID
 
         flatList.forEachIndexed { index, item ->
             if (item is Group) {

@@ -17,6 +17,7 @@ class MainInteractor
 
     fun getMainPageId(): Int {
         val id = prefs.mainPageId
-        return if (id == R.id.nav_settings) R.id.nav_search else id
+        return if (id == R.id.nav_settings || id == R.id.nav_equalizer) R.id.nav_search
+        else id
     }
 }

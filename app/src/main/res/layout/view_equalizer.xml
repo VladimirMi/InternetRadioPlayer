@@ -37,7 +37,7 @@
         app:layout_constraintStart_toEndOf="@id/presetSpinnerWrapper"
         app:layout_constraintTop_toTopOf="@+id/switchBindBt"
         style="@style/Widget.MaterialComponents.Button.TextButton.Dialog"
-        android:text="Reset"
+        android:text="@string/reset"
         />
 
     <com.google.android.material.floatingactionbutton.FloatingActionButton
@@ -83,7 +83,7 @@
                 android:layout_marginStart="12dp"
                 android:layout_marginLeft="12dp"
                 android:layout_span="3"
-                android:text="BassBoost"
+                android:text="@string/bass_boost"
                 android:textAppearance="@style/TextAppearance.AppCompat.Subhead"
                 />
         </TableRow>
@@ -95,7 +95,7 @@
                 android:layout_height="wrap_content"
                 android:layout_gravity="center"
                 android:gravity="center"
-                android:text="min"
+                android:text="@string/min"
                 android:textAppearance="@style/TextAppearance.AppCompat.Caption"
                 />
 
@@ -112,7 +112,7 @@
                 android:layout_height="wrap_content"
                 android:layout_gravity="center"
                 android:gravity="center"
-                android:text="max"
+                android:text="@string/max"
                 android:textAppearance="@style/TextAppearance.AppCompat.Caption"
                 />
         </TableRow>
@@ -124,7 +124,7 @@
             <TextView
                 android:layout_marginStart="12dp"
                 android:layout_marginLeft="12dp"
-                android:text="Virtualizer"
+                android:text="@string/virtualizer"
                 android:textAppearance="@style/TextAppearance.AppCompat.Subhead"
                 />
         </TableRow>
@@ -135,7 +135,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_gravity="center"
-                android:text="min"
+                android:text="@string/min"
                 android:textAppearance="@style/TextAppearance.AppCompat.Caption"
                 />
 
@@ -151,7 +151,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_gravity="center"
-                android:text="max"
+                android:text="@string/max"
                 android:textAppearance="@style/TextAppearance.AppCompat.Caption"
                 />
         </TableRow>

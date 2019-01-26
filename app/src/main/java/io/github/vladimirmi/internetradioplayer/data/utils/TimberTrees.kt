@@ -56,8 +56,8 @@ private constructor(context: Context,
                         "&nbsp&nbsp$timeStamp :&nbsp&nbsp</strong>&nbsp&nbsp$message</p>"
 
         companion object {
-            private val map = values().associateBy { it.ordinal + 2 }
-            fun priority(int: Int) = map[int]!!
+            private val map: Map<Int, Logs> = values().associateBy { it.ordinal + 2 }
+            fun priority(int: Int): Logs = map[int] ?: ERROR
         }
     }
 

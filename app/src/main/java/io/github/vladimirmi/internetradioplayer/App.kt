@@ -36,7 +36,7 @@ class App : Application() {
 
         if (BuildConfig.DEBUG) {
             Stetho.initializeWithDefaults(this)
-            Timber.plant(FileLoggingTree.Builder(Scopes.context)
+            Timber.plant(FileLoggingTree.Builder(applicationContext)
                     .log(FileLoggingTree.Logs.ERROR)
                     .build()
             )

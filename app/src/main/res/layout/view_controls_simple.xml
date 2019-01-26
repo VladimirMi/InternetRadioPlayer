@@ -47,6 +47,7 @@
             android:foreground="?actionBarItemBackground"
             app:pb_pauseColor="@color/pause_button"
             app:pb_playColor="@color/play_button"
+            tools:ignore="UnusedAttribute"
             />
     </FrameLayout>
 

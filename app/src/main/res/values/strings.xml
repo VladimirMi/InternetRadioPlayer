@@ -83,6 +83,12 @@
     <string name="seconds">%1$d seconds</string>
     <string name="chooser_backup">Save with</string>
 
+    <string name="reset">Reset</string>
+    <string name="bass_boost" translatable="false">BassBoost</string>
+    <string name="virtualizer" translatable="false">Virtualizer</string>
+    <string name="min" translatable="false">min</string>
+    <string name="max" translatable="false">max</string>
+
     <plurals name="plural_second">
         <item quantity="one">@string/second</item>
         <item quantity="other">@string/seconds</item>

@@ -25,26 +25,17 @@ abstract class PresetBinder(val station: Station,
                             var presetName: String) : PresetBinderView {
 
 
-    open fun bind(db: StationsDatabase, prefs: Preferences): Completable {
-        return Completable.fromAction {
-            db.runInTransaction {
-                with(db.stationDao()) {
-                    updateStation(station)
-                    updateGroup(group)
-                }
-            }
-        }
-    }
+    abstract fun bind(db: StationsDatabase, prefs: Preferences): Completable
 
     abstract fun nextBinder(): PresetBinder
 
     companion object {
         fun create(dao: StationDao, stationId: String): Single<PresetBinder> {
-            return dao.getStation(stationId)
+            return dao.getStationMaybe(stationId)
                     .flatMap { station ->
-                        dao.getGroup(station.groupId)
+                        dao.getGroupMaybe(station.groupId)
                                 .map { group -> createBinder(station, group) }
-                    }
+                    }.toSingle(createBinder(Station.nullObj(), Group.nullObj()))
         }
 
         private fun createBinder(station: Station, group: Group): PresetBinder {
@@ -68,11 +59,17 @@ class StationPresetBinder(station: Station, group: Group, presetName: String)
     override val iconResId = R.drawable.ic_station_1
     override val descriptionResId = R.string.preset_bind_station
 
-    override fun nextBinder(): GlobalPresetBinder {
-        return GlobalPresetBinder(
-                station.copy(equalizerPreset = null),
-                group.copy(equalizerPreset = null),
-                presetName)
+    override fun nextBinder() = GlobalPresetBinder(station, group, presetName)
+
+    override fun bind(db: StationsDatabase, prefs: Preferences): Completable {
+        return Completable.fromAction {
+            db.runInTransaction {
+                with(db.stationDao()) {
+                    updateStation(station.copy(equalizerPreset = presetName))
+                    updateGroup(group)
+                }
+            }
+        }
     }
 
     override fun toString(): String {
@@ -86,11 +83,18 @@ class GroupPresetBinder(station: Station, group: Group, presetName: String)
     override val iconResId = R.drawable.ic_group
     override val descriptionResId = R.string.preset_bind_group
 
-    override fun nextBinder() = StationPresetBinder(
-            station.copy(equalizerPreset = presetName),
-            group.copy(equalizerPreset = null),
-            presetName
-    )
+    override fun nextBinder() = StationPresetBinder(station, group, presetName)
+
+    override fun bind(db: StationsDatabase, prefs: Preferences): Completable {
+        return Completable.fromAction {
+            db.runInTransaction {
+                with(db.stationDao()) {
+                    updateStation(station.copy(equalizerPreset = null))
+                    updateGroup(group.copy(equalizerPreset = presetName))
+                }
+            }
+        }
+    }
 
     override fun toString(): String {
         return "GroupPresetBinder(presetName='$presetName')"
@@ -103,16 +107,21 @@ class GlobalPresetBinder(station: Station, group: Group, presetName: String)
     override val iconResId = R.drawable.ic_globe
     override val descriptionResId = R.string.preset_bind_all
 
-    override fun bind(db: StationsDatabase, prefs: Preferences): Completable {
-        return super.bind(db, prefs)
-                .doOnComplete { prefs.globalPreset = presetName }
+    override fun nextBinder(): PresetBinder {
+        return if (station.isNull()) this
+        else GroupPresetBinder(station, group, presetName)
     }
 
-    override fun nextBinder() = GroupPresetBinder(
-            station.copy(equalizerPreset = null),
-            group.copy(equalizerPreset = presetName),
-            presetName
-    )
+    override fun bind(db: StationsDatabase, prefs: Preferences): Completable {
+        return Completable.fromAction {
+            db.runInTransaction {
+                with(db.stationDao()) {
+                    if (!station.isNull()) updateStation(station.copy(equalizerPreset = null))
+                    if (!group.isNull()) updateGroup(group.copy(equalizerPreset = null))
+                }
+            }
+        }.doOnComplete { prefs.globalPreset = presetName }
+    }
 
     override fun toString(): String {
         return "GlobalPresetBinder(presetName='$presetName')"

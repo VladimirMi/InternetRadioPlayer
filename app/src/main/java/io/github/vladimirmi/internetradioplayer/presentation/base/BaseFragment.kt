@@ -16,6 +16,7 @@ import com.google.android.material.snackbar.Snackbar
 abstract class BaseFragment<P : BasePresenter<V>, V : BaseView> : Fragment(), BaseView {
 
     lateinit var presenter: P
+    private lateinit var toast: Toast
 
     protected abstract val layout: Int
 
@@ -50,9 +51,7 @@ abstract class BaseFragment<P : BasePresenter<V>, V : BaseView> : Fragment(), Ba
     }
 
     override fun onDestroy() {
-        if (activity?.isFinishing == true) {
-            presenter.destroy()
-        }
+        presenter.destroy()
         super.onDestroy()
     }
 
@@ -63,7 +62,9 @@ abstract class BaseFragment<P : BasePresenter<V>, V : BaseView> : Fragment(), Ba
     }
 
     override fun showToast(resId: Int) {
-        Toast.makeText(requireContext(), resId, Toast.LENGTH_SHORT).show()
+        if (::toast.isInitialized) toast.cancel()
+        toast = Toast.makeText(requireContext(), resId, Toast.LENGTH_SHORT)
+        toast.show()
     }
 
     override fun showSnackbar(resId: Int) {

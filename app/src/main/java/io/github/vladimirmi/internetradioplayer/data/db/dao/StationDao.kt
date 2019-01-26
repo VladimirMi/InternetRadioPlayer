@@ -3,6 +3,7 @@ package io.github.vladimirmi.internetradioplayer.data.db.dao
 import androidx.room.*
 import io.github.vladimirmi.internetradioplayer.data.db.entity.Group
 import io.github.vladimirmi.internetradioplayer.data.db.entity.Station
+import io.reactivex.Maybe
 import io.reactivex.Single
 
 /**
@@ -21,8 +22,14 @@ interface StationDao {
     @Query("SELECT * FROM station WHERE id = :id")
     fun getStation(id: String): Single<Station>
 
+    @Query("SELECT * FROM station WHERE id = :id")
+    fun getStationMaybe(id: String): Maybe<Station>
+
     @Query("SELECT * FROM `group` WHERE id = :id")
     fun getGroup(id: String): Single<Group>
+
+    @Query("SELECT * FROM `group` WHERE id = :id")
+    fun getGroupMaybe(id: String): Maybe<Group>
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     fun insertStation(station: Station): Long

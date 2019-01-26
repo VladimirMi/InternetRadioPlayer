@@ -43,6 +43,12 @@ class EqualizerPresenter
         playerInteractor.metadataObs
                 .subscribeX(onNext = { handleMetadata(it) })
                 .addTo(viewSubs)
+
+    }
+
+    override fun onDestroy() {
+        equalizerInteractor.bindPreset()
+                .subscribeX()
     }
 
     fun setBandLevel(band: Int, level: Int) {
@@ -59,8 +65,6 @@ class EqualizerPresenter
 
     fun selectPreset(index: Int) {
         equalizerInteractor.selectPreset(index)
-                .subscribeX()
-                .addTo(dataSubs)
     }
 
     fun saveCurrentPreset() {
@@ -71,12 +75,8 @@ class EqualizerPresenter
 
     fun switchBind() {
         equalizerInteractor.switchBind()
-                .observeOn(AndroidSchedulers.mainThread())
-                .subscribeX(onComplete = {
-                    view?.setBindIcon(equalizerInteractor.presetBinder.iconResId)
-                    view?.showToast(equalizerInteractor.presetBinder.descriptionResId)
-                })
-                .addTo(viewSubs)
+        view?.setBindIcon(equalizerInteractor.presetBinder.iconResId)
+        view?.showToast(equalizerInteractor.presetBinder.descriptionResId)
     }
 
     fun resetCurrentPreset() {

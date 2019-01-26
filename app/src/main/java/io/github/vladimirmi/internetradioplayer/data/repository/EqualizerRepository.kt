@@ -85,19 +85,17 @@ class EqualizerRepository
         }.subscribeOn(Schedulers.io())
     }
 
-    fun setPreset(preset: EqualizerPreset, binder: PresetBinder) {
-        preset.applyTo(equalizer, bassBoost, virtualizer)
-        this.binder = binder
-        currentPreset.accept(preset)
+    fun createBinder(stationId: String): Single<PresetBinder> {
+        return bindPreset().andThen(PresetBinder.create(stationsDb.stationDao(), stationId))
+                .doOnSuccess { binder = it }
+                .subscribeOn(Schedulers.io())
     }
 
-    fun selectPreset(index: Int): Completable {
-        val preset = presets[index]
+    fun selectPreset(index: Int) {
+        val preset = if (index >= 0) presets[index] else getGlobalPreset()
         preset.applyTo(equalizer, bassBoost, virtualizer)
         currentPreset.accept(preset)
-        binder.presetName = preset.name
-        return binder.bind(stationsDb, preferences)
-                .subscribeOn(Schedulers.io())
+        if (::binder.isInitialized) binder.presetName = preset.name
     }
 
     fun getSavedPresets(): Single<List<EqualizerPresetEntity>> {
@@ -105,25 +103,21 @@ class EqualizerRepository
                 .subscribeOn(Schedulers.io())
     }
 
-    fun getGlobalPreset(): EqualizerPreset {
-        return presets.find { it.name == preferences.globalPreset } ?: presets.first()
+    fun resetCurrentPreset(): Completable {
+        val defaultPreset = equalizerConfig.defaultPresets.find { it.name == currentPreset.value?.name }
+        defaultPreset?.applyTo(equalizer, bassBoost, virtualizer)
+        updatePresetsWith(defaultPreset)
+        return saveCurrentPreset()
     }
 
-    fun getPresetBinder(stationId: String): Single<PresetBinder> {
-        return PresetBinder.create(stationsDb.stationDao(), stationId)
-                .subscribeOn(Schedulers.io())
-    }
-
-    fun switchBind(): Completable {
-        binder = binder.nextBinder()
+    fun bindPreset(): Completable {
+        if (!::binder.isInitialized) return Completable.complete()
         return binder.bind(stationsDb, preferences)
                 .subscribeOn(Schedulers.io())
     }
 
-    fun resetCurrentPreset(): Completable {
-        val defaultPreset = equalizerConfig.defaultPresets.find { it.name == currentPreset.value?.name }
-        updatePresetsWith(defaultPreset)
-        return saveCurrentPreset()
+    private fun getGlobalPreset(): EqualizerPreset {
+        return presets.find { it.name == preferences.globalPreset } ?: presets.first()
     }
 
     private fun updatePresetsWith(preset: EqualizerPreset?) {

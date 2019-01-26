@@ -18,7 +18,6 @@ import io.github.vladimirmi.internetradioplayer.extensions.errorHandler
 import io.github.vladimirmi.internetradioplayer.extensions.toUri
 import io.reactivex.disposables.CompositeDisposable
 import io.reactivex.rxkotlin.addTo
-import timber.log.Timber
 import toothpick.Toothpick
 import java.util.*
 import javax.inject.Inject
@@ -209,7 +208,6 @@ class PlayerService : MediaBrowserServiceCompat(), SessionCallback.Interface {
 
         override fun onAudioSessionId(audioSessionId: Int) {
             session.sendSessionEvent(EVENT_SESSION_ID, Bundle().apply { putInt(EVENT_SESSION_ID, audioSessionId) })
-            Timber.e("onAudioSessionId: id - $audioSessionId")
         }
     }
 

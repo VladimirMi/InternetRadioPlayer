@@ -8,7 +8,6 @@ import io.github.vladimirmi.internetradioplayer.domain.model.EqualizerPreset
 import io.github.vladimirmi.internetradioplayer.domain.model.PresetBinderView
 import io.reactivex.Completable
 import io.reactivex.Observable
-import timber.log.Timber
 import javax.inject.Inject
 
 /**
@@ -52,14 +51,10 @@ class EqualizerInteractor
 
     private fun initCurrentPreset(): Completable {
         return stationRepository.stationObs
-                .flatMapSingle { equalizerRepository.getPresetBinder(it.id) }
-                .map {
-                    Timber.e("initCurrentPreset: $it")
-                    val preset = equalizerRepository.presets.find { preset -> preset.name == it.presetName }
-                            ?: equalizerRepository.getGlobalPreset()
-
-                    equalizerRepository.setPreset(preset, it)
-                }.ignoreElements()
+                .flatMapSingle { equalizerRepository.createBinder(it.id) }
+                .map { equalizerRepository.presets.indexOfFirst { preset -> preset.name == it.presetName } }
+                .doOnNext { equalizerRepository.selectPreset(it) }
+                .ignoreElements()
     }
 
     fun setBandLevel(band: Int, level: Int) {
@@ -78,16 +73,20 @@ class EqualizerInteractor
         return equalizerRepository.presets.map { it.name }
     }
 
-    fun selectPreset(index: Int): Completable {
-        return equalizerRepository.selectPreset(index)
+    fun selectPreset(index: Int) {
+        equalizerRepository.selectPreset(index)
     }
 
     fun saveCurrentPreset(): Completable {
         return equalizerRepository.saveCurrentPreset()
     }
 
-    fun switchBind(): Completable {
-        return equalizerRepository.switchBind()
+    fun switchBind() {
+        equalizerRepository.binder = equalizerRepository.binder.nextBinder()
+    }
+
+    fun bindPreset(): Completable {
+        return equalizerRepository.bindPreset()
     }
 
     fun resetCurrentPreset(): Completable {

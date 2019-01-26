@@ -125,14 +125,13 @@ class PlayerFragment : BaseFragment<PlayerPresenter, PlayerView>(), PlayerView, 
     override fun setFavorite(isFavorite: Boolean) {
         val tint = if (isFavorite) R.color.orange_500 else R.color.primary_light
         favoriteBt.background.setTintExt(context!!.color(tint))
-        groupSpinnerWrapper.visible(isFavorite)
+        groupSpinnerWrapper.visible(isFavorite, false)
         editTitleBt.visible(isFavorite)
     }
 
     override fun setGroups(list: List<String>) {
         adapter.clear()
-        //todo to strings
-        adapter.add("New folder...")
+        adapter.add(getString(R.string.create_new_group))
         adapter.addAll(list.map { Group.getViewName(it, context!!) })
     }
 

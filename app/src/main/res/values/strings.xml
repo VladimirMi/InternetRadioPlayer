@@ -56,6 +56,8 @@
     <string name="favorite_list_placeholder">Stations list is empty</string>
     <string name="player_placeholder">No station is selected</string>
     <string name="search_placeholder">Search result is empty</string>
+
+    <string name="create_new_group">Create new group</string>
     <string name="station_title">Title</string>
 
     <string name="notification_name">Radio Player notification</string>

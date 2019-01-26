@@ -74,6 +74,7 @@ class PlayerService : MediaBrowserServiceCompat(), SessionCallback.Interface {
                 .addTo(subs)
 
         stationInteractor.stationObs
+                .distinctUntilChanged(Station::id)
                 .subscribe { handleCurrentStation(it) }
                 .addTo(subs)
     }

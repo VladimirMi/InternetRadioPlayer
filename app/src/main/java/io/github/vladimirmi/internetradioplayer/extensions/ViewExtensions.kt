@@ -56,8 +56,8 @@ inline fun View.waitForLayout(crossinline handler: () -> Boolean) {
     })
 }
 
-fun View.visible(visible: Boolean) {
-    visibility = if (visible) View.VISIBLE else View.GONE
+fun View.visible(visible: Boolean, gone: Boolean = true) {
+    visibility = if (visible) View.VISIBLE else if (gone) View.GONE else View.INVISIBLE
 }
 
 val View?.isVisible: Boolean

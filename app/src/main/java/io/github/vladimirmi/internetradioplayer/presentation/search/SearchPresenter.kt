@@ -75,8 +75,8 @@ class SearchPresenter
         searchSub?.dispose()
 
         searchSub = Observable.interval(0, 60, TimeUnit.SECONDS, AndroidSchedulers.mainThread())
-                .filter { intervalSearchEnabled }
                 .map { query.trim() }
+                .filter { intervalSearchEnabled && it.isNotEmpty() }
                 .doOnNext { if (it.length < 3) view?.showToast(R.string.msg_text_short) }
                 .filter { it.length > 2 }
                 .doOnNext { view?.showLoading(true) }

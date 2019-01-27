@@ -86,7 +86,8 @@ class EqualizerRepository
     }
 
     fun createBinder(stationId: String): Single<PresetBinder> {
-        return bindPreset().andThen(PresetBinder.create(stationsDb.stationDao(), stationId, preferences.globalPreset))
+        return bindPreset()
+                .andThen(PresetBinder.create(stationsDb.stationDao(), stationId, preferences.globalPreset))
                 .doOnSuccess { binder = it }
                 .subscribeOn(Schedulers.io())
     }

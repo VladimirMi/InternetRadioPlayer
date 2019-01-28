@@ -4,6 +4,7 @@ import android.content.Context
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentTransaction
 import io.github.vladimirmi.internetradioplayer.R
+import io.github.vladimirmi.internetradioplayer.presentation.equalizer.EqualizerFragment
 import io.github.vladimirmi.internetradioplayer.presentation.main.MainFragment
 import io.github.vladimirmi.internetradioplayer.presentation.main.MainView
 import io.github.vladimirmi.internetradioplayer.presentation.root.RootActivity
@@ -55,6 +56,7 @@ class Navigator(private val activity: RootActivity, private val containerId: Int
                 return MainFragment.newInstance(navId)
             }
             Router.SETTINGS_SCREEN -> SettingsFragment()
+            Router.EQUALIZER_SCREEN -> EqualizerFragment()
             else -> null
         }
     }

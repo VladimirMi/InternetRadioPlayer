@@ -30,4 +30,10 @@
         <item name="tabTextColor">@color/grey_50</item>
     </style>
 
+    <style name="CustomCardView" parent="Widget.MaterialComponents.CardView">
+        <item name="cardElevation">2dp</item>
+        <item name="cardCornerRadius">8dp</item>
+        <item name="contentPadding">8dp</item>
+    </style>
+
 </resources>

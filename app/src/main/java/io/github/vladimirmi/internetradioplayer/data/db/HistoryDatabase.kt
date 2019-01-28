@@ -4,6 +4,8 @@ import android.content.Context
 import androidx.room.Database
 import androidx.room.Room
 import androidx.room.RoomDatabase
+import androidx.room.migration.Migration
+import androidx.sqlite.db.SupportSQLiteDatabase
 import io.github.vladimirmi.internetradioplayer.data.db.dao.HistoryDao
 import io.github.vladimirmi.internetradioplayer.data.db.entity.History
 
@@ -12,7 +14,7 @@ import io.github.vladimirmi.internetradioplayer.data.db.entity.History
  */
 
 @Database(entities = [History::class],
-        version = 2, exportSchema = false)
+        version = 3, exportSchema = true)
 abstract class HistoryDatabase : RoomDatabase() {
 
     abstract fun historyDao(): HistoryDao
@@ -21,7 +23,15 @@ abstract class HistoryDatabase : RoomDatabase() {
         fun newInstance(context: Context): HistoryDatabase {
             return Room.databaseBuilder(context.applicationContext,
                     HistoryDatabase::class.java, "history.db")
+                    .addMigrations(MIGRATION_2_3)
+                    .fallbackToDestructiveMigrationFrom(1)
                     .build()
         }
+    }
+}
+
+private val MIGRATION_2_3 = object : Migration(2, 3) {
+    override fun migrate(database: SupportSQLiteDatabase) {
+        database.execSQL("ALTER TABLE history ADD COLUMN equalizerPreset TEXT")
     }
 }

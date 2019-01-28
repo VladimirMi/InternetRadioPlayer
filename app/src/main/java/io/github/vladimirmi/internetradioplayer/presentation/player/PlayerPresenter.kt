@@ -1,15 +1,15 @@
 package io.github.vladimirmi.internetradioplayer.presentation.player
 
+import android.os.Bundle
 import android.support.v4.media.MediaMetadataCompat
 import android.support.v4.media.session.PlaybackStateCompat
 import io.github.vladimirmi.internetradioplayer.R
 import io.github.vladimirmi.internetradioplayer.data.service.PlayerService
-import io.github.vladimirmi.internetradioplayer.data.service.album
-import io.github.vladimirmi.internetradioplayer.data.service.notSupported
 import io.github.vladimirmi.internetradioplayer.domain.interactor.FavoriteListInteractor
 import io.github.vladimirmi.internetradioplayer.domain.interactor.PlayerInteractor
 import io.github.vladimirmi.internetradioplayer.domain.interactor.StationInteractor
 import io.github.vladimirmi.internetradioplayer.extensions.subscribeX
+import io.github.vladimirmi.internetradioplayer.navigation.Router
 import io.github.vladimirmi.internetradioplayer.presentation.base.BasePresenter
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.disposables.Disposable
@@ -24,7 +24,8 @@ import javax.inject.Inject
 class PlayerPresenter
 @Inject constructor(private val stationInteractor: StationInteractor,
                     private val favoriteListInteractor: FavoriteListInteractor,
-                    private val playerInteractor: PlayerInteractor)
+                    private val playerInteractor: PlayerInteractor,
+                    private val router: Router)
     : BasePresenter<PlayerView>() {
 
     private var groupSub: Disposable? = null
@@ -144,16 +145,17 @@ class PlayerPresenter
     }
 
     private fun handleMetadata(metadata: MediaMetadataCompat) {
-        //todo fix
-//        if (metadata.notSupported()&&metadata.notEmpty()) viewState.setMetadata(metadata.album!!)
-        if (metadata.notSupported() && metadata.album != null) view?.setMetadata(null)
-        else view?.setMetadata(metadata)
+        view?.setMetadata(metadata)
     }
 
-    private fun handleSessionEvent(event: String) {
-        when (event) {
+    private fun handleSessionEvent(event: Pair<String, Bundle>) {
+        when (event.first) {
             PlayerService.EVENT_SESSION_PREVIOUS -> view?.showPrevious()
             PlayerService.EVENT_SESSION_NEXT -> view?.showNext()
         }
+    }
+
+    fun openEqualizer() {
+        router.navigateTo(R.id.nav_equalizer)
     }
 }

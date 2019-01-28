@@ -9,14 +9,12 @@
 
     <com.google.android.material.card.MaterialCardView
         android:id="@+id/infoCv"
+        style="@style/CustomCardView"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginLeft="16dp"
         android:layout_marginTop="16dp"
         android:layout_marginRight="16dp"
-        app:cardCornerRadius="8dp"
-        app:cardElevation="2dp"
-        app:contentPadding="8dp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
@@ -28,14 +26,12 @@
 
     <com.google.android.material.card.MaterialCardView
         android:id="@+id/metadataCv"
+        style="@style/CustomCardView"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginLeft="16dp"
         android:layout_marginRight="16dp"
         android:visibility="gone"
-        app:cardCornerRadius="8dp"
-        app:cardElevation="2dp"
-        app:contentPadding="8dp"
         app:layout_constraintBottom_toTopOf="@id/controlsView"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"

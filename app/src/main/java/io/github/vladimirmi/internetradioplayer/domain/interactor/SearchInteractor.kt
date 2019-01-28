@@ -6,7 +6,9 @@ import io.github.vladimirmi.internetradioplayer.data.repository.SearchRepository
 import io.github.vladimirmi.internetradioplayer.data.repository.StationRepository
 import io.github.vladimirmi.internetradioplayer.domain.model.Suggestion
 import io.reactivex.Completable
+import io.reactivex.Observable
 import io.reactivex.Single
+import java.util.concurrent.TimeUnit
 import javax.inject.Inject
 
 /**
@@ -18,13 +20,20 @@ class SearchInteractor
                     private val stationRepository: StationRepository,
                     private val favoritesRepository: FavoritesRepository) {
 
+    private var suggestions: List<Suggestion> = emptyList()
+
     fun queryRecentSuggestions(query: String): Single<out List<Suggestion>> {
         return searchRepository.getRecentSuggestions(query.trim())
-                .map { it.asReversed() }
     }
 
-    fun queryRegularSuggestions(query: String): Single<out List<Suggestion>> {
-        return searchRepository.getRegularSuggestions(query.trim())
+    fun queryRegularSuggestions(query: String): Observable<out List<Suggestion>> {
+        suggestions = suggestions.filter { it.value.contains(query, true) || query.contains(it.value, true) }
+
+        return Observable.concat(Observable.just(suggestions),
+                searchRepository.getRegularSuggestions(query.trim())
+                        .delaySubscription(500, TimeUnit.MILLISECONDS)
+                        .doOnSuccess { suggestions = it }
+                        .toObservable())
     }
 
     fun searchStations(query: String): Single<List<StationSearchRes>> {
@@ -35,9 +44,8 @@ class SearchInteractor
     fun selectUberStation(id: Int): Completable {
         return searchRepository.findUberStation(id)
                 .doOnNext { station ->
-                    val newStation = favoritesRepository.getStation { it.uri == station.uri }
+                    stationRepository.station = favoritesRepository.getStation { it.uri == station.uri }
                             ?: station
-                    stationRepository.station = newStation
                 }.ignoreElements()
     }
 }

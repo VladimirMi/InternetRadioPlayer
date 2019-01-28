@@ -15,6 +15,7 @@ import io.github.vladimirmi.internetradioplayer.data.service.PlayerService
 import io.github.vladimirmi.internetradioplayer.data.utils.EXTRA_PLAY
 import io.github.vladimirmi.internetradioplayer.di.Scopes
 import io.github.vladimirmi.internetradioplayer.di.module.RootActivityModule
+import io.github.vladimirmi.internetradioplayer.extensions.lock
 import io.github.vladimirmi.internetradioplayer.extensions.visible
 import io.github.vladimirmi.internetradioplayer.navigation.Navigator
 import io.github.vladimirmi.internetradioplayer.presentation.base.BaseActivity
@@ -88,7 +89,7 @@ class RootActivity : BaseActivity<RootPresenter, RootView>(), RootView {
         navigator.navigationIdListener = {
             navigationView.setCheckedItem(it)
             showDirectory(it == R.id.nav_search)
-            setHomeAsUp(it == R.id.nav_settings)
+            setHomeAsUp(it == R.id.nav_settings || it == R.id.nav_equalizer)
         }
         super.onStart()
     }
@@ -148,15 +149,16 @@ class RootActivity : BaseActivity<RootPresenter, RootView>(), RootView {
     private fun setHomeAsUp(isHomeAsUp: Boolean) {
         if (homeAsUp == isHomeAsUp) return
         homeAsUp = isHomeAsUp
+        drawerLayout.lock(isHomeAsUp)
         val anim = if (isHomeAsUp) ValueAnimator.ofFloat(0f, 1f) else ValueAnimator.ofFloat(1f, 0f)
         anim.addUpdateListener { valueAnimator ->
             val slideOffset = valueAnimator.animatedValue as Float
             toggle.onDrawerSlide(drawerLayout, slideOffset)
         }
         anim.interpolator = DecelerateInterpolator()
-        anim.duration = 600
+        anim.duration = 400
         if (isHomeAsUp) {
-            Handler().postDelayed({ toggle.isDrawerIndicatorEnabled = false }, 600)
+            Handler().postDelayed({ toggle.isDrawerIndicatorEnabled = false }, 400)
         } else {
             toggle.isDrawerIndicatorEnabled = true
             toggle.onDrawerSlide(drawerLayout, 1f)

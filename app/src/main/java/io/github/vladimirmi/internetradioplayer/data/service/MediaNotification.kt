@@ -63,11 +63,10 @@ class MediaNotification(private val service: PlayerService,
         val metadata: MediaMetadataCompat? = session.controller.metadata
         val playbackState = session.controller.playbackState.state
 
-        metadata?.let {
-            builder.setLargeIcon(it.art)
-                    .setContentTitle(it.description.title)
-                    .setContentText(it.description.subtitle)
-                    .setSubText(it.description.description)
+        metadata?.apply {
+            builder.setContentTitle(description.title)
+                    .setContentText(description.subtitle)
+                    .setSubText(description.description)
         }
 
         if (playbackState == PlaybackStateCompat.STATE_BUFFERING) {

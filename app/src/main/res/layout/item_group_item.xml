@@ -37,21 +37,11 @@
         android:textColor="@color/primary_text"
         android:layout_marginLeft="8dp"
         android:layout_marginRight="8dp"
-        app:layout_constraintBottom_toTopOf="@+id/itemDelimiter"
+        app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/nameTv"
         tools:text="Item name"
-        />
-
-    <View
-        android:id="@+id/itemDelimiter"
-        android:layout_width="match_parent"
-        android:layout_height="1dp"
-        android:layout_gravity="bottom"
-        android:background="@color/grey_300"
-        app:layout_constraintBottom_toBottomOf="parent"
-        tools:ignore="ContentDescription"
         />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

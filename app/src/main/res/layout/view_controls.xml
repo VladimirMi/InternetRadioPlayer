@@ -21,6 +21,7 @@
         app:layout_constraintEnd_toStartOf="@id/stopBt"
         app:layout_constraintStart_toStartOf="parent"
         app:backgroundTint="@color/grey_50"
+        tools:ignore="UnusedAttribute"
         />
 
     <ImageButton
@@ -34,7 +35,7 @@
         app:layout_constraintEnd_toStartOf="@id/playPauseBt"
         app:layout_constraintStart_toEndOf="@id/previousBt"
         app:backgroundTint="@color/stop_button"
-
+        tools:ignore="UnusedAttribute"
         />
 
     <io.github.vladimirmi.playerbutton.PlayerButton
@@ -48,6 +49,7 @@
         app:layout_constraintStart_toEndOf="@id/stopBt"
         app:pb_pauseColor="@color/pause_button"
         app:pb_playColor="@color/play_button"
+        tools:ignore="UnusedAttribute"
         />
 
     <ImageButton
@@ -61,6 +63,6 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toEndOf="@id/playPauseBt"
         app:backgroundTint="@color/grey_50"
-
+        tools:ignore="UnusedAttribute"
         />
 </androidx.constraintlayout.widget.ConstraintLayout>

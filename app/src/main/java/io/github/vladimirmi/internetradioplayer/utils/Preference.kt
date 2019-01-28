@@ -1,4 +1,4 @@
-package io.github.vladimirmi.internetradioplayer.extensions
+package io.github.vladimirmi.internetradioplayer.utils
 
 import android.annotation.SuppressLint
 import android.content.SharedPreferences

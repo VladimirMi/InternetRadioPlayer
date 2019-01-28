@@ -20,7 +20,7 @@ interface PlayerView : BaseView {
 
     fun setFavorite(isFavorite: Boolean)
 
-    fun setMetadata(metadata: MediaMetadataCompat?)
+    fun setMetadata(metadata: MediaMetadataCompat)
 
     fun showStopped()
 

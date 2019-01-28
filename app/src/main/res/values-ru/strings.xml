@@ -19,6 +19,7 @@
     <string name="menu_exit">Выход</string>
 
     <string name="metadata_buffering">Загрузка…</string>
+    <string name="metadata_not_available">Метаданные не доступны</string>
 
     <string name="desc_expand_collapse">развернуть/свернуть</string>
     <string name="desc_station_icon">иконка станции</string>
@@ -64,4 +65,9 @@
     <string name="favorite_list_placeholder">Список станций пуст</string>
     <string name="player_placeholder">Не выбранна станция</string>
     <string name="search_placeholder">Результат поиска пуст</string>
+    <string name="create_new_group">Создать новую группу</string>
+    <string name="preset_bind_station">Применить к станции</string>
+    <string name="preset_bind_group">Применить к группе</string>
+    <string name="preset_bind_all">Применить ко всем</string>
+    <string name="reset">Сброс</string>
 </resources>

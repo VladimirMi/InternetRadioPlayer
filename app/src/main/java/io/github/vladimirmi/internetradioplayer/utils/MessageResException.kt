@@ -1,4 +1,4 @@
-package io.github.vladimirmi.internetradioplayer.extensions
+package io.github.vladimirmi.internetradioplayer.utils
 
 import androidx.annotation.StringRes
 

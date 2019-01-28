@@ -7,6 +7,7 @@ import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.RecyclerView
 import io.github.vladimirmi.internetradioplayer.R
 import io.github.vladimirmi.internetradioplayer.domain.model.Suggestion
+import io.github.vladimirmi.internetradioplayer.domain.model.SuggestionList
 import kotlinx.android.synthetic.main.item_suggestion.view.*
 
 /**
@@ -16,20 +17,21 @@ import kotlinx.android.synthetic.main.item_suggestion.view.*
 class SearchSuggestionsAdapter(private val callback: SearchSuggestionsAdapter.Callback)
     : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
 
-    private var suggestions: List<Suggestion> = emptyList()
+    private var suggestions = SuggestionList()
 
     fun addRecentSuggestions(list: List<Suggestion>) {
-        getDiffResult(list).dispatchUpdatesTo(this)
-        suggestions = list
-    }
-
-    fun addRegularSuggestions(list: List<Suggestion>) {
-        val newList = ArrayList(suggestions)
-        newList.addAll(list)
+        val newList = suggestions.copy()
+        newList.recent = list
         getDiffResult(newList).dispatchUpdatesTo(this)
         suggestions = newList
     }
 
+    fun addRegularSuggestions(list: List<Suggestion>) {
+        val newList = suggestions.copy()
+        newList.regular = list
+        getDiffResult(newList).dispatchUpdatesTo(this)
+        suggestions = newList
+    }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): RecyclerView.ViewHolder {
         val inflater = LayoutInflater.from(parent.context)

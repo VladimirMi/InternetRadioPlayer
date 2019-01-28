@@ -1,13 +1,11 @@
 package io.github.vladimirmi.internetradioplayer.presentation.main
 
+import android.os.Bundle
 import android.support.v4.media.MediaMetadataCompat
 import android.support.v4.media.session.PlaybackStateCompat
 import io.github.vladimirmi.internetradioplayer.R
 import io.github.vladimirmi.internetradioplayer.data.db.entity.Station
-import io.github.vladimirmi.internetradioplayer.data.service.album
-import io.github.vladimirmi.internetradioplayer.data.service.artist
-import io.github.vladimirmi.internetradioplayer.data.service.notSupported
-import io.github.vladimirmi.internetradioplayer.data.service.title
+import io.github.vladimirmi.internetradioplayer.data.service.*
 import io.github.vladimirmi.internetradioplayer.domain.interactor.MainInteractor
 import io.github.vladimirmi.internetradioplayer.domain.interactor.PlayerInteractor
 import io.github.vladimirmi.internetradioplayer.domain.interactor.StationInteractor
@@ -80,13 +78,14 @@ class MainPresenter
     }
 
     private fun handleMetadata(metadata: MediaMetadataCompat) {
-        //todo fix
-//        if (metadata.notSupported()&&metadata.notEmpty()) viewState.setMetadata(metadata.album!!)
-        if (metadata.notSupported() && metadata.album != null) view?.setMetadata(metadata.album!!)
-        else view?.setMetadata("${metadata.artist} - ${metadata.title}")
+        when {
+            metadata.isNotSupported() -> view?.setMetadata("${metadata.album} - ${metadata.title}")
+            metadata.isEmpty() -> view?.setMetadata("${metadata.album}")
+            else -> view?.setMetadata("${metadata.artist} - ${metadata.title}")
+        }
     }
 
-    private fun handleSessionEvent(event: String) {
+    private fun handleSessionEvent(event: Pair<String, Bundle>) {
 //        when (event) {
 //            PlayerService.EVENT_SESSION_PREVIOUS -> view?.showPrevious()
 //            PlayerService.EVENT_SESSION_NEXT -> view?.showNext()

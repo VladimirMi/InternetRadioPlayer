@@ -2,12 +2,16 @@ package io.github.vladimirmi.internetradioplayer.extensions
 
 import android.widget.Toast
 import io.github.vladimirmi.internetradioplayer.di.Scopes
+import io.github.vladimirmi.internetradioplayer.utils.MessageResException
 import io.reactivex.Completable
 import io.reactivex.Maybe
 import io.reactivex.Observable
 import io.reactivex.Single
 import io.reactivex.disposables.Disposable
+import io.reactivex.exceptions.UndeliverableException
 import timber.log.Timber
+import java.io.IOException
+import java.net.SocketException
 
 /**
  * Created by Vladimir Mikhalev 14.11.2017.
@@ -19,6 +23,16 @@ val errorHandler: (Throwable) -> Unit = {
     } else {
         Timber.e(it)
         runOnUiThread { Toast.makeText(Scopes.context, it.message, Toast.LENGTH_SHORT).show() }
+    }
+}
+
+val globalErrorHandler: (Throwable) -> Unit = {
+    if (it is UndeliverableException) {
+        val e = it.cause
+
+        if ((e is IOException) || (e is SocketException)  // fine, irrelevant network problem or API that throws on cancellation
+                || e is InterruptedException) { // fine, some blocking code was interrupted by a dispose call)
+        } else Timber.e(e, "Undeliverable exception received, not sure what to do")
     }
 }
 
@@ -43,3 +57,4 @@ fun <T : Any> Maybe<T>.subscribeX(
         onComplete: () -> Unit = {},
         onNext: (T) -> Unit = {}
 ): Disposable = subscribe(onNext, onError, onComplete)
+

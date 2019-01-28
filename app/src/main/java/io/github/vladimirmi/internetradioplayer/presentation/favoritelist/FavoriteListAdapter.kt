@@ -1,5 +1,6 @@
 package io.github.vladimirmi.internetradioplayer.presentation.favoritelist
 
+import android.graphics.drawable.GradientDrawable
 import android.os.Build
 import android.view.LayoutInflater
 import android.view.View
@@ -14,7 +15,6 @@ import io.github.vladimirmi.internetradioplayer.data.db.entity.Station
 import io.github.vladimirmi.internetradioplayer.domain.model.FlatStationsList
 import io.github.vladimirmi.internetradioplayer.extensions.color
 import io.github.vladimirmi.internetradioplayer.extensions.dp
-import io.github.vladimirmi.internetradioplayer.extensions.setTintExt
 import io.github.vladimirmi.internetradioplayer.extensions.visible
 import io.github.vladimirmi.internetradioplayer.ui.FixedOutlineProvider
 import kotlinx.android.synthetic.main.item_group_item.view.*
@@ -140,7 +140,7 @@ abstract class GroupElementVH(itemView: View) : RecyclerView.ViewHolder(itemView
     }
 
     protected fun setupBgColor() {
-        itemView.background?.setTintExt(itemView.context.color(bgColorId))
+        (itemView.background as? GradientDrawable)?.setColor(itemView.context.color(bgColorId))
     }
 
     abstract fun select(selected: Boolean)
@@ -180,7 +180,6 @@ class GroupTitleVH(itemView: View) : GroupElementVH(itemView) {
             itemView.outlineProvider = defaultOutline
         }
         setBottomMargin(single && position != stations.size - 1)
-        itemView.titleDelimiter.visible(!single)
     }
 }
 
@@ -217,7 +216,6 @@ class GroupItemVH(itemView: View) : GroupElementVH(itemView) {
             itemView.outlineProvider = if (middle) fixedOutline else defaultOutline
         }
         setBottomMargin(bottom && position != stations.size - 1)
-        itemView.itemDelimiter.visible(top || middle)
     }
 
 }

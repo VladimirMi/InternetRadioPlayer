@@ -19,9 +19,18 @@ import javax.inject.Inject
 
 class LoadControl
 @Inject constructor(private val prefs: Preferences)
-    : DefaultLoadControl(DefaultAllocator(true, C.DEFAULT_AUDIO_BUFFER_SIZE)) {
+    : DefaultLoadControl(DefaultAllocator(true, C.DEFAULT_AUDIO_BUFFER_SIZE),
+        DEFAULT_MIN_BUFFER_MS,
+        DEFAULT_MAX_BUFFER_MS,
+        DEFAULT_BUFFER_FOR_PLAYBACK_MS,
+        DEFAULT_BUFFER_FOR_PLAYBACK_AFTER_REBUFFER_MS,
+        DEFAULT_TARGET_BUFFER_BYTES,
+        DEFAULT_PRIORITIZE_TIME_OVER_SIZE_THRESHOLDS,
+        null,
+        DEFAULT_BACK_BUFFER_DURATION_MS,
+        DEFAULT_RETAIN_BACK_BUFFER_FROM_KEYFRAME) {
 
-    private var targetBufferSize = 0
+    private var targetBufferSize = DEFAULT_TARGET_BUFFER_BYTES
     private var initialBufferUs = prefs.initialBufferLength * 1000000L
     private var bufferUs = prefs.bufferLength * 1000000L
     private val minBufferUs = DEFAULT_MIN_BUFFER_MS * 1000L

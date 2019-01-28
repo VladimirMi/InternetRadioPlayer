@@ -1,5 +1,6 @@
 package io.github.vladimirmi.internetradioplayer.presentation.main
 
+import android.os.Bundle
 import android.support.v4.media.MediaMetadataCompat
 import android.support.v4.media.session.PlaybackStateCompat
 import io.github.vladimirmi.internetradioplayer.R
@@ -84,7 +85,7 @@ class MainPresenter
         }
     }
 
-    private fun handleSessionEvent(event: String) {
+    private fun handleSessionEvent(event: Pair<String, Bundle>) {
 //        when (event) {
 //            PlayerService.EVENT_SESSION_PREVIOUS -> view?.showPrevious()
 //            PlayerService.EVENT_SESSION_NEXT -> view?.showNext()

@@ -11,6 +11,6 @@
         <item name="android:divider">@color/divider</item>
         <item name="android:windowSoftInputMode">adjustPan|stateAlwaysHidden</item>
         <item name="preferenceTheme">@style/PreferenceThemeOverlay.v14.Material</item>
-        <item name="android:windowTranslucentStatus">true</item>
+        <!--<item name="android:windowTranslucentStatus">true</item>-->
     </style>
 </resources>

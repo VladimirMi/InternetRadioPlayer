@@ -1,12 +1,16 @@
 package io.github.vladimirmi.internetradioplayer.extensions
 
+import android.animation.ObjectAnimator
 import android.os.Handler
 import android.os.Looper
 import android.text.Editable
 import android.text.TextWatcher
 import android.view.View
 import android.view.ViewTreeObserver
+import android.view.animation.AccelerateDecelerateInterpolator
+import android.widget.SeekBar
 import android.widget.TextView
+import androidx.drawerlayout.widget.DrawerLayout
 import androidx.dynamicanimation.animation.DynamicAnimation
 import androidx.dynamicanimation.animation.SpringAnimation
 import androidx.dynamicanimation.animation.SpringForce
@@ -52,10 +56,12 @@ inline fun View.waitForLayout(crossinline handler: () -> Boolean) {
     })
 }
 
-fun View.visible(visible: Boolean) {
-    visibility = if (visible) View.VISIBLE else View.GONE
+fun View.visible(visible: Boolean, gone: Boolean = true) {
+    visibility = if (visible) View.VISIBLE else if (gone) View.GONE else View.INVISIBLE
 }
 
+val View?.isVisible: Boolean
+    get() = this?.visibility == View.VISIBLE
 
 fun TextView.onTextChanges(listener: (String) -> Unit) {
     addTextChangedListener(object : TextWatcher {
@@ -68,10 +74,27 @@ fun TextView.onTextChanges(listener: (String) -> Unit) {
     })
 }
 
+fun SeekBar.setProgressX(progress: Int, animate: Boolean) {
+    if (animate) {
+        with(ObjectAnimator.ofInt(this, "progress", progress)) {
+            duration = 300
+            interpolator = AccelerateDecelerateInterpolator()
+            start()
+        }
+    } else {
+        setProgress(progress)
+    }
+}
+
 fun View.bounceXAnimation(dpVelocity: Float): SpringAnimation {
     return SpringAnimation(this, DynamicAnimation.TRANSLATION_X, 0f)
             .setStartVelocity(dpVelocity * context.dp).apply {
                 spring.dampingRatio = SpringForce.DAMPING_RATIO_HIGH_BOUNCY
                 spring.stiffness = 1000f
             }
+}
+
+fun DrawerLayout.lock(locked: Boolean) {
+    setDrawerLockMode(if (locked) DrawerLayout.LOCK_MODE_LOCKED_CLOSED
+    else DrawerLayout.LOCK_MODE_UNLOCKED)
 }

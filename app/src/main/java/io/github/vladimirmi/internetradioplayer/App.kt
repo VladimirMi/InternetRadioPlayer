@@ -2,9 +2,9 @@ package io.github.vladimirmi.internetradioplayer
 
 import android.app.Application
 import com.facebook.stetho.Stetho
+import io.github.vladimirmi.internetradioplayer.data.utils.FileLoggingTree
 import io.github.vladimirmi.internetradioplayer.di.Scopes
 import io.github.vladimirmi.internetradioplayer.di.module.AppModule
-import io.github.vladimirmi.internetradioplayer.extensions.FileLoggingTree
 import io.github.vladimirmi.internetradioplayer.extensions.globalErrorHandler
 import io.reactivex.plugins.RxJavaPlugins
 import timber.log.Timber
@@ -36,7 +36,7 @@ class App : Application() {
 
         if (BuildConfig.DEBUG) {
             Stetho.initializeWithDefaults(this)
-            Timber.plant(FileLoggingTree.Builder(Scopes.context)
+            Timber.plant(FileLoggingTree.Builder(applicationContext)
                     .log(FileLoggingTree.Logs.ERROR)
                     .build()
             )

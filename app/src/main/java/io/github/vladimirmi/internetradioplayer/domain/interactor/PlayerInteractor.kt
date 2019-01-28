@@ -1,5 +1,6 @@
 package io.github.vladimirmi.internetradioplayer.domain.interactor
 
+import android.os.Bundle
 import android.support.v4.media.MediaMetadataCompat
 import android.support.v4.media.session.PlaybackStateCompat
 import io.github.vladimirmi.internetradioplayer.data.repository.PlayerRepository
@@ -17,7 +18,7 @@ class PlayerInteractor
 
     val playbackStateObs: Observable<PlaybackStateCompat> get() = player.playbackState
     val metadataObs: Observable<MediaMetadataCompat> get() = player.metadata
-    val sessionEventObs: Observable<String> get() = player.sessionEvent
+    val sessionEventObs: Observable<Pair<String, Bundle>> get() = player.sessionEvent
 
     val isPlaying: Boolean
         get() = with(player.playbackState) {

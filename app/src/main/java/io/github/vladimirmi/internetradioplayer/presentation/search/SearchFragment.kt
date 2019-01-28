@@ -4,7 +4,6 @@ import android.graphics.Rect
 import android.os.Bundle
 import android.view.View
 import android.view.ViewGroup
-import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.LinearLayoutManager
 import io.github.vladimirmi.internetradioplayer.R
 import io.github.vladimirmi.internetradioplayer.data.db.entity.Station
@@ -13,6 +12,7 @@ import io.github.vladimirmi.internetradioplayer.di.Scopes
 import io.github.vladimirmi.internetradioplayer.domain.model.FlatStationsList
 import io.github.vladimirmi.internetradioplayer.domain.model.Suggestion
 import io.github.vladimirmi.internetradioplayer.extensions.dp
+import io.github.vladimirmi.internetradioplayer.extensions.isVisible
 import io.github.vladimirmi.internetradioplayer.extensions.visible
 import io.github.vladimirmi.internetradioplayer.extensions.waitForLayout
 import io.github.vladimirmi.internetradioplayer.presentation.base.BaseFragment
@@ -53,18 +53,19 @@ class SearchFragment : BaseFragment<SearchPresenter, SearchView>(), SearchView,
         searchView.setOnQueryTextFocusChangeListener { _, hasFocus ->
             adjustSuggestionsRecyclerHeight(hasFocus)
             suggestionsRv.visible(hasFocus)
-            presenter.regularSearchEnabled = !hasFocus
+            presenter.intervalSearchEnabled = !hasFocus
         }
 
         searchView.setOnQueryTextListener(object : SearchViewAndroid.OnQueryTextListener {
             override fun onQueryTextSubmit(query: String): Boolean {
                 presenter.submitSearch(query)
-                return true
+                searchView.clearFocus()
+                return false
             }
 
             override fun onQueryTextChange(newText: String): Boolean {
                 presenter.changeQuery(newText)
-                return true
+                return false
             }
         })
     }
@@ -82,7 +83,6 @@ class SearchFragment : BaseFragment<SearchPresenter, SearchView>(), SearchView,
         val lm = LinearLayoutManager(context)
         suggestionsRv.layoutManager = lm
         suggestionsRv.adapter = suggestionsAdapter
-        suggestionsRv.addItemDecoration(DividerItemDecoration(context, lm.orientation))
         suggestionsRv.visible(false)
     }
 
@@ -100,12 +100,17 @@ class SearchFragment : BaseFragment<SearchPresenter, SearchView>(), SearchView,
     override fun setUserVisibleHint(isVisibleToUser: Boolean) {
         super.setUserVisibleHint(isVisibleToUser)
         if (!isVisibleToUser && view != null) searchView.clearFocus()
-        if (isPresenterInit) presenter.regularSearchEnabled = isVisibleToUser
+        if (isPresenterInit) {
+            presenter.intervalSearchEnabled = isVisibleToUser
+            if (isVisibleToUser && placeholderView.isVisible) {
+                presenter.submitSearch(searchView.query.toString())
+            }
+        }
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        presenter.regularSearchEnabled = userVisibleHint
+        presenter.intervalSearchEnabled = userVisibleHint
     }
 
     //region =============== SearchView ==============
@@ -137,7 +142,6 @@ class SearchFragment : BaseFragment<SearchPresenter, SearchView>(), SearchView,
 
     override fun showLoading(loading: Boolean) {
         swipeToRefresh.isRefreshing = loading
-        if (loading) searchView.clearFocus()
     }
 
     override fun showPlaceholder(show: Boolean) {

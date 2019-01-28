@@ -35,6 +35,7 @@
     <string name="desc_edit_title_button">edit title</string>
     <string name="desc_add_remove_favorite">add/remove favorite</string>
     <string name="desc_create_shortcut_button">create shortcut</string>
+    <string name="desc_open_equalizer" translatable="false">open equalizer</string>
     <string name="desc_directory_logo">directory logo</string>
     <string name="desc_open_drawer">open drawer</string>
     <string name="desc_close_drawer">close drawer</string>
@@ -55,6 +56,8 @@
     <string name="favorite_list_placeholder">Stations list is empty</string>
     <string name="player_placeholder">No station is selected</string>
     <string name="search_placeholder">Search result is empty</string>
+
+    <string name="create_new_group">Create new group</string>
     <string name="station_title">Title</string>
 
     <string name="notification_name">Radio Player notification</string>
@@ -72,10 +75,19 @@
     <string name="setting_restore">Restore stations</string>
     <string name="setting_privacy">Privacy policy</string>
 
+    <string name="preset_bind_station">Apply to station</string>
+    <string name="preset_bind_group">Apply to group</string>
+    <string name="preset_bind_all">Apply to all</string>
+
     <string name="second">%1$d second</string>
     <string name="seconds">%1$d seconds</string>
     <string name="chooser_backup">Save with</string>
 
+    <string name="reset">Reset</string>
+    <string name="bass_boost" translatable="false">BassBoost</string>
+    <string name="virtualizer" translatable="false">Virtualizer</string>
+    <string name="min" translatable="false">min</string>
+    <string name="max" translatable="false">max</string>
 
     <plurals name="plural_second">
         <item quantity="one">@string/second</item>

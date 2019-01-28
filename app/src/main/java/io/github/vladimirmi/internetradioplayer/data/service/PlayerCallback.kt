@@ -71,4 +71,6 @@ abstract class PlayerCallback : Player.EventListener {
     abstract fun onMetadata(metadata: String)
 
     abstract fun onPlayerError(error: Exception)
+
+    abstract fun onAudioSessionId(audioSessionId: Int)
 }

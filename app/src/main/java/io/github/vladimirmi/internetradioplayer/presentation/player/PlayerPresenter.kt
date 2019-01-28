@@ -1,5 +1,6 @@
 package io.github.vladimirmi.internetradioplayer.presentation.player
 
+import android.os.Bundle
 import android.support.v4.media.MediaMetadataCompat
 import android.support.v4.media.session.PlaybackStateCompat
 import io.github.vladimirmi.internetradioplayer.R
@@ -8,6 +9,7 @@ import io.github.vladimirmi.internetradioplayer.domain.interactor.FavoriteListIn
 import io.github.vladimirmi.internetradioplayer.domain.interactor.PlayerInteractor
 import io.github.vladimirmi.internetradioplayer.domain.interactor.StationInteractor
 import io.github.vladimirmi.internetradioplayer.extensions.subscribeX
+import io.github.vladimirmi.internetradioplayer.navigation.Router
 import io.github.vladimirmi.internetradioplayer.presentation.base.BasePresenter
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.disposables.Disposable
@@ -22,7 +24,8 @@ import javax.inject.Inject
 class PlayerPresenter
 @Inject constructor(private val stationInteractor: StationInteractor,
                     private val favoriteListInteractor: FavoriteListInteractor,
-                    private val playerInteractor: PlayerInteractor)
+                    private val playerInteractor: PlayerInteractor,
+                    private val router: Router)
     : BasePresenter<PlayerView>() {
 
     private var groupSub: Disposable? = null
@@ -145,10 +148,14 @@ class PlayerPresenter
         view?.setMetadata(metadata)
     }
 
-    private fun handleSessionEvent(event: String) {
-        when (event) {
+    private fun handleSessionEvent(event: Pair<String, Bundle>) {
+        when (event.first) {
             PlayerService.EVENT_SESSION_PREVIOUS -> view?.showPrevious()
             PlayerService.EVENT_SESSION_NEXT -> view?.showNext()
         }
+    }
+
+    fun openEqualizer() {
+        router.navigateTo(R.id.nav_equalizer)
     }
 }

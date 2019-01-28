@@ -23,7 +23,8 @@ data class Station(
         val bitrate: String?,
         val sample: String?,
         val order: Int,
-        @ColumnInfo(name = "group_id") val groupId: String
+        @ColumnInfo(name = "group_id") val groupId: String,
+        val equalizerPreset: String? = null
 ) {
 
     @Ignore
@@ -38,7 +39,7 @@ data class Station(
             0, Group.DEFAULT_ID)
 
     companion object {
-        fun nullObj() = Station("", "", null, null, null, null) //empty uri not valid (can't be)
+        fun nullObj() = Station("", "", "", null, null, null, null, 0, "", null)
     }
 
     @Ignore val specs: String
@@ -51,5 +52,5 @@ data class Station(
         specs = sb.trim(' ', ',').toString()
     }
 
-    fun isNull() = uri.isEmpty()
+    fun isNull() = id.isEmpty()
 }

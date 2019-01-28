@@ -19,6 +19,7 @@ import androidx.interpolator.view.animation.FastOutSlowInInterpolator
 import io.github.vladimirmi.internetradioplayer.R
 import io.github.vladimirmi.internetradioplayer.data.db.entity.Group
 import io.github.vladimirmi.internetradioplayer.data.db.entity.Station
+import io.github.vladimirmi.internetradioplayer.data.service.EMPTY_METADATA
 import io.github.vladimirmi.internetradioplayer.data.service.artist
 import io.github.vladimirmi.internetradioplayer.data.service.isEmpty
 import io.github.vladimirmi.internetradioplayer.data.service.title
@@ -65,6 +66,7 @@ class PlayerFragment : BaseFragment<PlayerPresenter, PlayerView>(), PlayerView, 
         previousBt.setOnClickListener { presenter.skipToPrevious() }
         nextBt.setOnClickListener { presenter.skipToNext() }
         stopBt.setOnClickListener { presenter.stop() }
+        equalizerBt.setOnClickListener { presenter.openEqualizer() }
     }
 
     private fun setupTitle() {
@@ -123,18 +125,18 @@ class PlayerFragment : BaseFragment<PlayerPresenter, PlayerView>(), PlayerView, 
     override fun setFavorite(isFavorite: Boolean) {
         val tint = if (isFavorite) R.color.orange_500 else R.color.primary_light
         favoriteBt.background.setTintExt(context!!.color(tint))
-        groupSpinnerWrapper.visible(isFavorite)
+        groupSpinnerWrapper.visible(isFavorite, false)
         editTitleBt.visible(isFavorite)
     }
 
     override fun setGroups(list: List<String>) {
         adapter.clear()
-        //todo to strings
-        adapter.add("New folder...")
+        adapter.add(getString(R.string.create_new_group))
         adapter.addAll(list.map { Group.getViewName(it, context!!) })
     }
 
     override fun setGroup(position: Int) {
+        //todo try refactor
         blockSpinnerSelection = true
         groupSpinner.setSelection(position)
         Handler().postDelayed({ blockSpinnerSelection = false }, 100)
@@ -173,6 +175,7 @@ class PlayerFragment : BaseFragment<PlayerPresenter, PlayerView>(), PlayerView, 
     override fun showBuffering() {
         playPauseBt.setPlaying(true, userVisibleHint)
         bufferingPb.visible(true)
+        setMetadata(EMPTY_METADATA)
     }
 
     override fun showNext() {
@@ -194,7 +197,7 @@ class PlayerFragment : BaseFragment<PlayerPresenter, PlayerView>(), PlayerView, 
                 .setInterpolator(FastOutSlowInInterpolator())
                 .start()
         if (visible) metadataCv.visible(true)
-        else Handler().postDelayed({ metadataCv.visible(false) }, 300)
+        else Handler().postDelayed({ metadataCv?.visible(false) }, 300)
         with(metadata) {
             metaTitleTv.setTextOrHide(artist)
             metaSubtitleTv.setTextOrHide(title)

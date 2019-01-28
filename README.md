@@ -1,24 +1,19 @@
 # Description
 
-Internet Radio Player is an open source app for listening to radio broadcasts or audio streams over the internet.
-
+Internet Radio Player is a simple app for listening to radio broadcasts or audio streams over the internet.
 ## Features
 
- -  Supports audio encoded in MP3, AAC, AAC+, Ogg Vorbis, Opus.
- -  Import stations from playlist files. M3U, M3U8, RAM or PLS file extensions are supported.
- -  Display information about the broadcast and the current playing track if the stream provides such information.
- -  Add a radio station in your favourite list to quickly find in future.
- -  Add a shortcut on your home screen for quick access to the station.
- -  Control playback and navigation using the headset or notification on the lock screen or the notification panel.
-
-## Important note:
-
-App does not have any kind of built-in search option. You will have to manually add radio stations.
-
-You can add a new station by:
- - clicking on the playlist link in your web browser.
- - clicking on the playlist file in the file manager.
- - adding a direct link to the audio stream.
+- Search from the UberStations directory with more than 30000 live radio stations across the world.
+- Add a station via a playlist or audio stream URI link.
+- Display information about the broadcast and the current playing track if the stream provides such information.
+- Add a radio station in your favorite list to quickly find in future.
+- Find stations that have recently played in the History tab.
+- Add a shortcut on your home screen for quick access to the station.
+- Control playback and navigation using the headset or notification on the lock screen or the notification panel.
+- Change the order of stations or sort them into groups for easier navigation using the Previous/Next buttons.
+- Use the equalizer to adjust the sound. Each station or group can be assigned its own equalizer preset.
+- Supports audio encoded in MP3, AAC, AAC+, Ogg Vorbis, Opus.
+- M3U, M3U8, RAM or PLS playlist file extensions are supported.
  
 ## Install
 

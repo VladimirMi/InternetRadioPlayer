@@ -19,7 +19,6 @@ import javax.inject.Inject
  * Created by Vladimir Mikhalev 13.10.2017.
  */
 
-
 class PlayerRepository
 @Inject constructor(context: Context) {
 
@@ -59,9 +58,6 @@ class PlayerRepository
     private val controllerCallback = object : MediaControllerCompat.Callback() {
         override fun onPlaybackStateChanged(state: PlaybackStateCompat) {
             playbackState.accept(state)
-            if (state.state == PlaybackStateCompat.STATE_STOPPED) {
-                onSessionEvent(PlayerService.EVENT_SESSION_ID, Bundle.EMPTY)
-            }
         }
 
         override fun onMetadataChanged(metadata: MediaMetadataCompat) {

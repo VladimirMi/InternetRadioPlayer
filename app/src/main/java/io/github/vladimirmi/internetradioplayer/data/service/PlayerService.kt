@@ -33,7 +33,7 @@ class PlayerService : MediaBrowserServiceCompat(), SessionCallback.Interface {
     companion object {
         const val EVENT_SESSION_NEXT = "EVENT_SESSION_NEXT"
         const val EVENT_SESSION_PREVIOUS = "EVENT_SESSION_PREVIOUS"
-        const val EVENT_SESSION_ID = "EVENT_SESSION_ID"
+        const val EXTRA_SESSION_ID = "EXTRA_SESSION_ID"
         const val EXTRA_STATION_ID = "EXTRA_STATION_ID"
     }
 
@@ -207,8 +207,8 @@ class PlayerService : MediaBrowserServiceCompat(), SessionCallback.Interface {
             notification.update()
         }
 
-        override fun onAudioSessionId(audioSessionId: Int) {
-            session.sendSessionEvent(EVENT_SESSION_ID, Bundle().apply { putInt(EVENT_SESSION_ID, audioSessionId) })
+        override fun onAudioSessionId(event: String, audioSessionId: Int) {
+            session.sendSessionEvent(event, Bundle().apply { putInt(EXTRA_SESSION_ID, audioSessionId) })
         }
     }
 

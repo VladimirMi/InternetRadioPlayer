@@ -3,6 +3,8 @@ package io.github.vladimirmi.internetradioplayer.domain.interactor
 import io.github.vladimirmi.internetradioplayer.data.repository.EqualizerRepository
 import io.github.vladimirmi.internetradioplayer.data.repository.PlayerRepository
 import io.github.vladimirmi.internetradioplayer.data.repository.StationRepository
+import io.github.vladimirmi.internetradioplayer.data.service.EVENT_SESSION_END
+import io.github.vladimirmi.internetradioplayer.data.service.EVENT_SESSION_START
 import io.github.vladimirmi.internetradioplayer.data.service.PlayerService
 import io.github.vladimirmi.internetradioplayer.domain.model.EqualizerPreset
 import io.github.vladimirmi.internetradioplayer.domain.model.PresetBinderView
@@ -25,11 +27,15 @@ class EqualizerInteractor
 
     fun initEqualizer(): Completable {
         return playerRepository.sessionEvent
-                .filter { it.first == PlayerService.EVENT_SESSION_ID }
-                .map { it.second.getInt(PlayerService.EVENT_SESSION_ID, 0) }
                 .map {
-                    if (it != 0) equalizerRepository.createEqualizer(it)
-                    else equalizerRepository.releaseEqualizer()
+                    val sessionId = it.second.getInt(PlayerService.EXTRA_SESSION_ID)
+                    if (sessionId != 0) {
+                        if (it.first == EVENT_SESSION_START) {
+                            equalizerRepository.createEqualizer(sessionId)
+                        } else if (it.first == EVENT_SESSION_END) {
+                            equalizerRepository.releaseEqualizer(sessionId)
+                        }
+                    }
                 }.ignoreElements()
     }
 

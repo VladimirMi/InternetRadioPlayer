@@ -34,7 +34,9 @@ data class EqualizerPreset(val name: String,
     }
 
     fun applyTo(equalizer: Equalizer?, bassBoost: BassBoost?, virtualizer: Virtualizer?) {
-        equalizer?.properties = equalizerSettings()
+        bandLevels.forEachIndexed { band, level ->
+            equalizer?.setBandLevel(band.toShort(), level.toShort())
+        }
         bassBoost?.setStrength(bassBoostStrength.toShort())
         virtualizer?.setStrength(virtualizerStrength.toShort())
     }

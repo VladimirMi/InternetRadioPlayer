@@ -8,8 +8,12 @@ import com.google.android.exoplayer2.trackselection.TrackSelectionArray
 import timber.log.Timber
 import java.net.ConnectException
 
+const val EVENT_SESSION_START = "EVENT_SESSION_START"
+const val EVENT_SESSION_END = "EVENT_SESSION_END"
 
 abstract class PlayerCallback : Player.EventListener {
+
+    var sessionId = 0
 
     override fun onPlaybackParametersChanged(playbackParameters: PlaybackParameters) {}
 
@@ -45,6 +49,10 @@ abstract class PlayerCallback : Player.EventListener {
             playbackState == Player.STATE_ENDED -> PlaybackStateCompat.STATE_STOPPED
             else -> PlaybackStateCompat.STATE_NONE
         }
+        if (state == PlaybackStateCompat.STATE_STOPPED) {
+            onAudioSessionId(EVENT_SESSION_END, sessionId)
+            sessionId = 0
+        }
         onPlayerStateChanged(state)
     }
 
@@ -72,5 +80,5 @@ abstract class PlayerCallback : Player.EventListener {
 
     abstract fun onPlayerError(error: Exception)
 
-    abstract fun onAudioSessionId(audioSessionId: Int)
+    abstract fun onAudioSessionId(event: String, audioSessionId: Int)
 }

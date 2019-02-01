@@ -3,14 +3,18 @@ package io.github.vladimirmi.internetradioplayer.data.service
 import android.content.Context
 import com.google.android.exoplayer2.offline.DownloadManager
 import com.google.android.exoplayer2.offline.DownloaderConstructorHelper
-import com.google.android.exoplayer2.upstream.*
+import com.google.android.exoplayer2.upstream.DataSource
+import com.google.android.exoplayer2.upstream.DefaultHttpDataSourceFactory
+import com.google.android.exoplayer2.upstream.FileDataSourceFactory
 import com.google.android.exoplayer2.upstream.cache.*
+import com.google.android.exoplayer2.util.Util
+import io.github.vladimirmi.internetradioplayer.R
+import timber.log.Timber
 import java.io.File
 
 /**
  * Created by Vladimir Mikhalev 31.01.2019.
  */
-
 
 private const val DOWNLOAD_CONTENT_DIRECTORY = "downloads"
 private const val DOWNLOAD_ACTION_FILE = "actions"
@@ -26,47 +30,42 @@ class PlayerProvider(private val context: Context) {
         val downloadContentDirectory = File(downloadDirectory, DOWNLOAD_CONTENT_DIRECTORY)
         SimpleCache(downloadContentDirectory, NoOpCacheEvictor())
     }
-    private val downloadManager: DownloadManager by lazy(this::createDownloadManager)
-    private val downloadTracker: DownloadTracker by lazy(this::createDownloadTracker)
+    val downloadManager: DownloadManager by lazy(this::createDownloadManager)
+    val downloadTracker: DownloadTracker by lazy(this::createDownloadTracker)
+    private val userAgent = Util.getUserAgent(context, context.getString(R.string.full_app_name))
 
-    fun buildDataSourceFactory(): DataSource.Factory {
-        val upstreamFactory = DefaultDataSourceFactory(context, buildHttpDataSourceFactory())
-        return buildReadOnlyCacheDataSource(upstreamFactory, downloadCache)
+
+    fun buildHttpDataSourceFactory(): DataSource.Factory {
+        return DefaultHttpDataSourceFactory(userAgent)
     }
 
-    fun buildHttpDataSourceFactory(): HttpDataSource.Factory {
-        return DefaultHttpDataSourceFactory("userAgent")
-    }
-
-    private fun buildReadOnlyCacheDataSource(upstreamFactory: DefaultDataSourceFactory, cache: Cache)
-            : CacheDataSourceFactory {
-        return CacheDataSourceFactory(
-                cache,
-                upstreamFactory,
-                FileDataSourceFactory(),
-                /* eventListener= */ null,
+    fun buildCacheDataSource(): ForcedCacheDataSource {
+        val cacheDataSource = CacheDataSource(downloadCache,
+                buildHttpDataSourceFactory().createDataSource(),
+                FileDataSourceFactory().createDataSource(),
+                CacheDataSink(downloadCache, CacheDataSource.DEFAULT_MAX_CACHE_FILE_SIZE),
                 CacheDataSource.FLAG_IGNORE_CACHE_ON_ERROR,
-                /* cacheWriteDataSinkFactory= */ null)
+                /* eventListener= */ null)
+        return ForcedCacheDataSource(cacheDataSource)
     }
 
     private fun createDownloadTracker(): DownloadTracker {
-        val tracker = DownloadTracker()
-        downloadManager.removeListener(tracker)
-        downloadManager.addListener(tracker)
-        return tracker
+        Timber.e("keys: ${downloadCache.keys}")
+        downloadCache.keys.forEach {
+            Timber.e("key: $it; ${downloadCache.getCachedLength(it, 0, Long.MAX_VALUE)}")
+        }
+
+        return DownloadTracker()
     }
 
     private fun createDownloadManager(): DownloadManager {
         val downloaderConstructorHelper = DownloaderConstructorHelper(downloadCache,
                 buildHttpDataSourceFactory())
-        val manager = DownloadManager(
+
+        return DownloadManager(
                 downloaderConstructorHelper,
                 MAX_SIMULTANEOUS_DOWNLOADS,
                 DownloadManager.DEFAULT_MIN_RETRY_COUNT,
                 File(downloadDirectory, DOWNLOAD_ACTION_FILE))
-
-        manager.removeListener(downloadTracker)
-        manager.addListener(downloadTracker)
-        return manager
     }
 }

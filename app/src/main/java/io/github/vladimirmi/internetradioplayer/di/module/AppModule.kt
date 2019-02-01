@@ -12,6 +12,7 @@ import io.github.vladimirmi.internetradioplayer.data.net.createClient
 import io.github.vladimirmi.internetradioplayer.data.net.getUberStationsService
 import io.github.vladimirmi.internetradioplayer.data.repository.*
 import io.github.vladimirmi.internetradioplayer.data.service.LoadControl
+import io.github.vladimirmi.internetradioplayer.data.service.PlayerProvider
 import io.github.vladimirmi.internetradioplayer.data.utils.ShortcutHelper
 import io.github.vladimirmi.internetradioplayer.data.utils.StationParser
 import io.github.vladimirmi.internetradioplayer.domain.interactor.*
@@ -47,6 +48,8 @@ class AppModule(context: Context) : Module() {
         bind(StationParser::class.java).singletonInScope()
 
         bind(ShortcutHelper::class.java).singletonInScope()
+
+        bind(PlayerProvider::class.java).toInstance(PlayerProvider(context))
 
         bind(SearchRepository::class.java).singletonInScope()
         bind(FavoritesRepository::class.java).singletonInScope()

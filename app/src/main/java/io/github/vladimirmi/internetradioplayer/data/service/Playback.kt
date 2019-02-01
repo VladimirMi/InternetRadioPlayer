@@ -35,6 +35,7 @@ class Playback(private val service: PlayerService,
 
     private val httpClient = Scopes.app.getInstance(OkHttpClient::class.java)
     private val loadControl = Scopes.app.getInstance(LoadControl::class.java)
+    private val provider = Scopes.app.getInstance(PlayerProvider::class.java)
     private val audioRenderers = AudioRenderersFactory(service)
     private val errorHandlingPolicy = ErrorHandlingPolicy()
 
@@ -48,6 +49,10 @@ class Playback(private val service: PlayerService,
             playerCallback.onAudioSessionId(EVENT_SESSION_START, audioSessionId)
         }
 
+    }
+
+    init {
+        val manager = provider.downloadTracker
     }
 
     fun play(uri: Uri) {
@@ -104,8 +109,11 @@ class Playback(private val service: PlayerService,
     private fun preparePlayer(uri: Uri) {
         val userAgent = Util.getUserAgent(service, service.getString(R.string.app_name))
         val mediaSource = ExtractorMediaSource.Factory {
-            IcyHttpDataSource(httpClient, userAgent, playerCallback)
+            provider.buildCacheDataSource()
         }
+//                ExtractorMediaSource.Factory {
+//            IcyHttpDataSource(httpClient, userAgent, playerCallback)
+//        }
                 .setLoadErrorHandlingPolicy(errorHandlingPolicy)
                 .createMediaSource(uri)
 

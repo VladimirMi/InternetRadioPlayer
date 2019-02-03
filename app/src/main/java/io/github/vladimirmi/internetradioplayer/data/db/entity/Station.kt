@@ -1,6 +1,7 @@
 package io.github.vladimirmi.internetradioplayer.data.db.entity
 
 import androidx.room.*
+import io.github.vladimirmi.internetradioplayer.domain.model.Media
 import java.util.*
 
 /**
@@ -15,9 +16,9 @@ import java.util.*
         indices = [Index(value = ["uri"], unique = true), Index(value = ["group_id"])])
 
 data class Station(
-        @PrimaryKey val id: String,
-        val name: String,
-        val uri: String,
+        @PrimaryKey override val id: String,
+        override val name: String,
+        override val uri: String,
         val url: String?,
         val encoding: String?,
         val bitrate: String?,
@@ -25,7 +26,7 @@ data class Station(
         val order: Int,
         @ColumnInfo(name = "group_id") val groupId: String,
         val equalizerPreset: String? = null
-) {
+) : Media {
 
     @Ignore
     constructor(name: String,

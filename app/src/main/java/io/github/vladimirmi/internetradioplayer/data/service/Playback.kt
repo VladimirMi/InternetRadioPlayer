@@ -16,6 +16,7 @@ import com.google.android.exoplayer2.analytics.AnalyticsListener
 import com.google.android.exoplayer2.audio.AudioAttributes
 import com.google.android.exoplayer2.source.ExtractorMediaSource
 import com.google.android.exoplayer2.trackselection.DefaultTrackSelector
+import com.google.android.exoplayer2.upstream.TeeDataSource
 import com.google.android.exoplayer2.util.Util
 import io.github.vladimirmi.internetradioplayer.BuildConfig
 import io.github.vladimirmi.internetradioplayer.R
@@ -35,7 +36,7 @@ class Playback(private val service: PlayerService,
 
     private val httpClient = Scopes.app.getInstance(OkHttpClient::class.java)
     private val loadControl = Scopes.app.getInstance(LoadControl::class.java)
-    private val provider = Scopes.app.getInstance(PlayerProvider::class.java)
+    private val recorder = Scopes.app.getInstance(Recorder::class.java)
     private val audioRenderers = AudioRenderersFactory(service)
     private val errorHandlingPolicy = ErrorHandlingPolicy()
 
@@ -49,10 +50,6 @@ class Playback(private val service: PlayerService,
             playerCallback.onAudioSessionId(EVENT_SESSION_START, audioSessionId)
         }
 
-    }
-
-    init {
-        val manager = provider.downloadTracker
     }
 
     fun play(uri: Uri) {
@@ -109,11 +106,9 @@ class Playback(private val service: PlayerService,
     private fun preparePlayer(uri: Uri) {
         val userAgent = Util.getUserAgent(service, service.getString(R.string.app_name))
         val mediaSource = ExtractorMediaSource.Factory {
-            provider.buildCacheDataSource()
+            val icyHttpDataSource = IcyHttpDataSource(httpClient, userAgent, playerCallback)
+            TeeDataSource(icyHttpDataSource, recorder)
         }
-//                ExtractorMediaSource.Factory {
-//            IcyHttpDataSource(httpClient, userAgent, playerCallback)
-//        }
                 .setLoadErrorHandlingPolicy(errorHandlingPolicy)
                 .createMediaSource(uri)
 

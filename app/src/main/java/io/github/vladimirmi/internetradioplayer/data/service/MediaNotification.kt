@@ -4,27 +4,28 @@ import android.app.Notification
 import android.app.NotificationChannel
 import android.app.NotificationManager
 import android.app.PendingIntent
-import android.content.Context
 import android.os.Build
 import android.support.v4.media.MediaMetadataCompat
 import android.support.v4.media.session.MediaSessionCompat
 import android.support.v4.media.session.PlaybackStateCompat
-import androidx.annotation.RequiresApi
 import androidx.core.app.NotificationCompat
 import androidx.media.app.NotificationCompat.MediaStyle
 import io.github.vladimirmi.internetradioplayer.R
+import io.github.vladimirmi.internetradioplayer.extensions.notificationManager
 
 /**
  * Created by Vladimir Mikhalev 20.10.2017.
  */
-
-private const val CHANNEL_ID = "internet_radio_player_channel"
-private const val PLAYER_NOTIFICATION_ID = 73
+const val CHANNEL_ID = "internet_radio_player_channel"
 
 class MediaNotification(private val service: PlayerService,
                         private val session: MediaSessionCompat) {
 
-    private val notificationManager = service.getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
+    companion object {
+        private const val NOTIFICATION_ID = 73
+    }
+
+    private val notificationManager = service.notificationManager
 
     private val playPauseIntent = PlayerActions.playPauseIntent(service.applicationContext)
     private val stopIntent = PlayerActions.stopIntent(service.applicationContext)
@@ -38,22 +39,20 @@ class MediaNotification(private val service: PlayerService,
             .setCancelButtonIntent(stopIntent)
 
     init {
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-            createNotificationChannel()
-        }
+        createNotificationChannel()
     }
 
     fun update() {
         val state = session.controller.playbackState.state
         when (state) {
-            PlaybackStateCompat.STATE_PLAYING -> service.startForeground(PLAYER_NOTIFICATION_ID,
+            PlaybackStateCompat.STATE_PLAYING -> service.startForeground(NOTIFICATION_ID,
                     createNotification())
             PlaybackStateCompat.STATE_STOPPED -> service.stopForeground(true)
             else -> {
                 if (state == PlaybackStateCompat.STATE_PAUSED) {
                     service.stopForeground(false)
                 }
-                notificationManager.notify(PLAYER_NOTIFICATION_ID, createNotification())
+                notificationManager.notify(NOTIFICATION_ID, createNotification())
             }
         }
     }
@@ -84,13 +83,14 @@ class MediaNotification(private val service: PlayerService,
         return builder.build()
     }
 
-    @RequiresApi(Build.VERSION_CODES.O)
     private fun createNotificationChannel() {
-        val channelName = service.getString(R.string.notification_name)
-        val channel = NotificationChannel(CHANNEL_ID, channelName, NotificationManager.IMPORTANCE_LOW)
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            val channelName = service.getString(R.string.notification_name)
+            val channel = NotificationChannel(CHANNEL_ID, channelName, NotificationManager.IMPORTANCE_LOW)
 
-        channel.description = service.getString(R.string.notification_name)
-        notificationManager.createNotificationChannel(channel)
+            channel.description = service.getString(R.string.notification_name)
+            notificationManager.createNotificationChannel(channel)
+        }
     }
 
     private fun generateAction(icon: Int, title: String, action: PendingIntent): NotificationCompat.Action {

@@ -15,7 +15,7 @@ private const val RESPONSE_ICY_METAINT_HEADER = "icy-metaint"
 
 class IcyHttpDataSource(callFactory: Call.Factory,
                         userAgent: String,
-                        private val playerCallback: PlayerCallback)
+                        private val playerCallback: PlayerCallback? = null)
     : OkHttpDataSource(callFactory, userAgent, null) {
 
     init {
@@ -38,7 +38,7 @@ class IcyHttpDataSource(callFactory: Call.Factory,
         }
 
         if (metadataWindow == 0) {
-            playerCallback.onMetadata("")
+            playerCallback?.onMetadata("")
             Timber.d("stream does not support icy metadata")
         }
 

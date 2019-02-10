@@ -9,6 +9,6 @@ import com.google.android.exoplayer2.upstream.DefaultLoadErrorHandlingPolicy
 class ErrorHandlingPolicy : DefaultLoadErrorHandlingPolicy() {
 
     override fun getMinimumLoadableRetryCount(dataType: Int): Int {
-        return 3
+        return 6
     }
 }

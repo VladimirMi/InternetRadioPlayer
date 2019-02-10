@@ -9,7 +9,7 @@ import java.io.InputStream
 
 class IcyInputStream(inS: InputStream,
                      private val window: Int,
-                     private val playerCallback: PlayerCallback)
+                     private val playerCallback: PlayerCallback? = null)
     : FilterInputStream(inS) {
 
     private var buffer = ByteArray(128)
@@ -39,7 +39,7 @@ class IcyInputStream(inS: InputStream,
         val actualSize = buffer.indexOfFirst { it.toInt() == 0 }
         //todo detect charset
         val metaString = String(buffer, 0, actualSize)
-        playerCallback.onMetadata(metaString)
+        playerCallback?.onMetadata(metaString)
     }
 
     private fun ensureFill(buffer: ByteArray, offset: Int, size: Int): Int {

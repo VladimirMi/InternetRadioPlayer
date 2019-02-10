@@ -1,9 +1,11 @@
 package io.github.vladimirmi.internetradioplayer.extensions
 
 import android.app.DownloadManager
+import android.app.NotificationManager
 import android.content.Context
 import android.content.Intent
 import android.graphics.Point
+import android.net.wifi.WifiManager
 import android.util.DisplayMetrics
 import android.view.WindowManager
 import android.view.inputmethod.InputMethodManager
@@ -50,3 +52,9 @@ val Context.inputMethodManager: InputMethodManager
 
 val Context.windowManager: WindowManager
     get() = getSystemService(Context.WINDOW_SERVICE) as WindowManager
+
+val Context.wifiManager: WifiManager
+    get() = applicationContext.getSystemService(Context.WIFI_SERVICE) as WifiManager
+
+val Context.notificationManager: NotificationManager
+    get() = getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager

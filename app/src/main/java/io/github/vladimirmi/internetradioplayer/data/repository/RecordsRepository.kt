@@ -1,8 +1,13 @@
 package io.github.vladimirmi.internetradioplayer.data.repository
 
 import android.content.Context
+import android.content.Intent
+import androidx.core.content.ContextCompat
 import com.jakewharton.rxrelay2.BehaviorRelay
+import io.github.vladimirmi.internetradioplayer.data.db.entity.Station
+import io.github.vladimirmi.internetradioplayer.data.service.recorder.RecorderService
 import io.github.vladimirmi.internetradioplayer.domain.model.Record
+import io.github.vladimirmi.internetradioplayer.extensions.toUri
 import timber.log.Timber
 import java.io.File
 import java.util.*
@@ -24,7 +29,22 @@ class RecordsRepository
         dir
     }
 
+    private var recording = false
+
     val recordsObs = BehaviorRelay.createDefault(emptyList<Record>())
+
+    fun startRecord(station: Station) {
+        val intent = Intent(context, RecorderService::class.java).apply {
+            if (recording) {
+                putExtra(RecorderService.EXTRA_STOP_RECORD, 0)
+            } else {
+                putExtra(RecorderService.EXTRA_START_RECORD, 0)
+            }
+            data = station.uri.toUri()
+        }
+        ContextCompat.startForegroundService(context, intent)
+        recording = !recording
+    }
 
     fun createNewRecord(name: String): Record {
         Timber.e("createNewRecord: $name")

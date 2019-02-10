@@ -16,12 +16,12 @@ import com.google.android.exoplayer2.analytics.AnalyticsListener
 import com.google.android.exoplayer2.audio.AudioAttributes
 import com.google.android.exoplayer2.source.ExtractorMediaSource
 import com.google.android.exoplayer2.trackselection.DefaultTrackSelector
-import com.google.android.exoplayer2.upstream.TeeDataSource
 import com.google.android.exoplayer2.util.Util
 import io.github.vladimirmi.internetradioplayer.BuildConfig
 import io.github.vladimirmi.internetradioplayer.R
 import io.github.vladimirmi.internetradioplayer.di.Scopes
 import io.github.vladimirmi.internetradioplayer.extensions.runOnUiThread
+import io.github.vladimirmi.internetradioplayer.extensions.wifiManager
 import okhttp3.OkHttpClient
 
 
@@ -36,11 +36,8 @@ class Playback(private val service: PlayerService,
 
     private val httpClient = Scopes.app.getInstance(OkHttpClient::class.java)
     private val loadControl = Scopes.app.getInstance(LoadControl::class.java)
-    private val recorder = Scopes.app.getInstance(Recorder::class.java)
-    private val audioRenderers = AudioRenderersFactory(service)
-    private val errorHandlingPolicy = ErrorHandlingPolicy()
 
-    private val wifiLock = (service.applicationContext.getSystemService(Context.WIFI_SERVICE) as WifiManager)
+    private val wifiLock = service.wifiManager
             .createWifiLock(WifiManager.WIFI_MODE_FULL, BuildConfig.APPLICATION_ID)
 
     private val analyticsListener = object : AnalyticsListener {
@@ -49,7 +46,6 @@ class Playback(private val service: PlayerService,
             playerCallback.sessionId = audioSessionId
             playerCallback.onAudioSessionId(EVENT_SESSION_START, audioSessionId)
         }
-
     }
 
     fun play(uri: Uri) {
@@ -91,8 +87,8 @@ class Playback(private val service: PlayerService,
     }
 
     private fun createPlayer() {
-        player = ExoPlayerFactory.newSimpleInstance(service, audioRenderers, DefaultTrackSelector(),
-                loadControl)
+        player = ExoPlayerFactory.newSimpleInstance(service, AudioRenderersFactory(service),
+                DefaultTrackSelector(), loadControl)
         player?.addListener(playerCallback)
         player?.addAnalyticsListener(analyticsListener)
 
@@ -106,10 +102,9 @@ class Playback(private val service: PlayerService,
     private fun preparePlayer(uri: Uri) {
         val userAgent = Util.getUserAgent(service, service.getString(R.string.app_name))
         val mediaSource = ExtractorMediaSource.Factory {
-            val icyHttpDataSource = IcyHttpDataSource(httpClient, userAgent, playerCallback)
-            TeeDataSource(icyHttpDataSource, recorder)
+            IcyHttpDataSource(httpClient, userAgent, playerCallback)
         }
-                .setLoadErrorHandlingPolicy(errorHandlingPolicy)
+                .setLoadErrorHandlingPolicy(ErrorHandlingPolicy())
                 .createMediaSource(uri)
 
         player?.prepare(mediaSource)

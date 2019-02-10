@@ -67,6 +67,7 @@ class PlayerFragment : BaseFragment<PlayerPresenter, PlayerView>(), PlayerView, 
         nextBt.setOnClickListener { presenter.skipToNext() }
         stopBt.setOnClickListener { presenter.stop() }
         equalizerBt.setOnClickListener { presenter.openEqualizer() }
+        recordBt.setOnClickListener { presenter.scheduleRecord() }
     }
 
     private fun setupTitle() {

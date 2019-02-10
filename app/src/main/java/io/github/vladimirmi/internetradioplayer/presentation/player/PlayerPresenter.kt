@@ -4,6 +4,7 @@ import android.os.Bundle
 import android.support.v4.media.MediaMetadataCompat
 import android.support.v4.media.session.PlaybackStateCompat
 import io.github.vladimirmi.internetradioplayer.R
+import io.github.vladimirmi.internetradioplayer.data.repository.RecordsRepository
 import io.github.vladimirmi.internetradioplayer.data.service.PlayerService
 import io.github.vladimirmi.internetradioplayer.domain.interactor.FavoriteListInteractor
 import io.github.vladimirmi.internetradioplayer.domain.interactor.PlayerInteractor
@@ -25,6 +26,7 @@ class PlayerPresenter
 @Inject constructor(private val stationInteractor: StationInteractor,
                     private val favoriteListInteractor: FavoriteListInteractor,
                     private val playerInteractor: PlayerInteractor,
+                    private val recordsRepository: RecordsRepository,
                     private val router: Router)
     : BasePresenter<PlayerView>() {
 
@@ -157,5 +159,9 @@ class PlayerPresenter
 
     fun openEqualizer() {
         router.navigateTo(R.id.nav_equalizer)
+    }
+
+    fun scheduleRecord() {
+        recordsRepository.startRecord(stationInteractor.station)
     }
 }

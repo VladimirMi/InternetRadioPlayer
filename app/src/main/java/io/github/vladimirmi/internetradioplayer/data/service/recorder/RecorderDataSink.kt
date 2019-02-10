@@ -1,4 +1,4 @@
-package io.github.vladimirmi.internetradioplayer.data.service
+package io.github.vladimirmi.internetradioplayer.data.service.recorder
 
 import com.google.android.exoplayer2.upstream.DataSink
 import com.google.android.exoplayer2.upstream.DataSpec
@@ -17,7 +17,7 @@ import javax.inject.Inject
 private const val DEFAULT_BUFFER_SIZE = 20480
 private const val DEFAULT_MAX_FILE_SIZE: Long = 10 * 1024 * 1024
 
-class Recorder
+class RecorderDataSink
 @Inject constructor(private val repository: RecordsRepository) : DataSink {
 
     private var dataSpecBytesWritten: Long = 0

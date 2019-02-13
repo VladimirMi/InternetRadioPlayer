@@ -1,4 +1,4 @@
-package io.github.vladimirmi.internetradioplayer.presentation.favoritelist
+package io.github.vladimirmi.internetradioplayer.presentation.favoritelist.stations
 
 import androidx.recyclerview.widget.DiffUtil
 import io.github.vladimirmi.internetradioplayer.domain.model.FlatStationsList
@@ -7,8 +7,8 @@ import io.github.vladimirmi.internetradioplayer.domain.model.FlatStationsList
  * Created by Vladimir Mikhalev 29.11.2018.
  */
 
-class FavoriteListDiff(private val oldList: FlatStationsList,
-                       private val newList: FlatStationsList) {
+class FavoriteStationsDiff(private val oldList: FlatStationsList,
+                           private val newList: FlatStationsList) {
 
     fun calc(): DiffUtil.DiffResult {
         return DiffUtil.calculateDiff(object : DiffUtil.Callback() {

@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="utf-8"?>
+<io.github.vladimirmi.internetradioplayer.presentation.favoritelist.stations.FavoriteStationsViewImpl
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    >
+
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/stationsRv"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:clipToPadding="false"
+        android:overScrollMode="never"
+        android:paddingTop="16dp"
+        android:paddingBottom="16dp"
+        tools:listitem="@layout/item_group_item"
+        />
+
+    <TextView
+        android:id="@+id/placeholderView"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center_vertical"
+        android:gravity="center"
+        android:text="@string/favorite_list_placeholder"
+        android:textAppearance="@style/TextAppearance.AppCompat.Title"
+        android:visibility="gone"
+        />
+
+</io.github.vladimirmi.internetradioplayer.presentation.favoritelist.stations.FavoriteStationsViewImpl>

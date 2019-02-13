@@ -1,4 +1,4 @@
-package io.github.vladimirmi.internetradioplayer.presentation.favoritelist
+package io.github.vladimirmi.internetradioplayer.presentation.favoritelist.stations
 
 import android.graphics.drawable.GradientDrawable
 import android.os.Build
@@ -44,7 +44,7 @@ class StationListAdapter(private val callback: StationItemCallback)
             notifyDataSetChanged()
             dragged = false
         } else {
-            val diffResult = FavoriteListDiff(stations, data).calc()
+            val diffResult = FavoriteStationsDiff(stations, data).calc()
             stations = data
             diffResult.dispatchUpdatesTo(this)
             notifyItemRangeChanged(0, itemCount, PAYLOAD_BACKGROUND_CHANGE)

@@ -26,7 +26,6 @@ import io.github.vladimirmi.internetradioplayer.data.service.title
 import io.github.vladimirmi.internetradioplayer.di.Scopes
 import io.github.vladimirmi.internetradioplayer.extensions.*
 import io.github.vladimirmi.internetradioplayer.presentation.base.BaseFragment
-import io.github.vladimirmi.internetradioplayer.presentation.favoritelist.NewGroupDialog
 import kotlinx.android.synthetic.main.fragment_player.*
 import kotlinx.android.synthetic.main.view_controls.*
 import kotlinx.android.synthetic.main.view_station_info.*

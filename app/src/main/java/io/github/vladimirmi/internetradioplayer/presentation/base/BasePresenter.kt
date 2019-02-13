@@ -32,6 +32,7 @@ open class BasePresenter<V : BaseView> {
 
     fun destroy() {
         onDestroy()
+        view = null
         isFirstAttach = true
         dataSubs.clear()
     }

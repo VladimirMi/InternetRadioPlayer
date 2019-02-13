@@ -1,4 +1,4 @@
-package io.github.vladimirmi.internetradioplayer.presentation.favoritelist
+package io.github.vladimirmi.internetradioplayer.presentation.player
 
 import android.annotation.SuppressLint
 import android.view.LayoutInflater

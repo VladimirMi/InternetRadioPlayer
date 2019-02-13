@@ -1,4 +1,4 @@
-package io.github.vladimirmi.internetradioplayer.presentation.favoritelist
+package io.github.vladimirmi.internetradioplayer.presentation.favoritelist.stations
 
 import androidx.recyclerview.widget.ItemTouchHelper
 import androidx.recyclerview.widget.RecyclerView

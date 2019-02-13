@@ -90,6 +90,9 @@
     <string name="min" translatable="false">min</string>
     <string name="max" translatable="false">max</string>
 
+    <string name="stations">Stations</string>
+    <string name="records">Records</string>
+
     <plurals name="plural_second">
         <item quantity="one">@string/second</item>
         <item quantity="other">@string/seconds</item>

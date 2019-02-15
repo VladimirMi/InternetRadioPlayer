@@ -1,13 +1,12 @@
 package io.github.vladimirmi.internetradioplayer.presentation.favoritelist
 
+import android.annotation.SuppressLint
 import android.view.View
 import com.google.android.material.tabs.TabLayout
 import io.github.vladimirmi.internetradioplayer.R
 import io.github.vladimirmi.internetradioplayer.di.Scopes
 import io.github.vladimirmi.internetradioplayer.presentation.base.BaseFragment
-import io.github.vladimirmi.internetradioplayer.presentation.base.BaseFrameView
 import io.github.vladimirmi.internetradioplayer.presentation.base.BaseView
-import io.github.vladimirmi.internetradioplayer.presentation.main.SimpleControlsView
 import kotlinx.android.synthetic.main.fragment_favorite_list.*
 import toothpick.Toothpick
 
@@ -36,19 +35,29 @@ class FavoriteListFragment : BaseFragment<FavoriteListPresenter, BaseView>(){
             override fun onTabUnselected(tab: TabLayout.Tab?) {
             }
 
+            @SuppressLint("InflateParams")
             override fun onTabSelected(tab: TabLayout.Tab) {
-                contentView = when (tab.text) {
-                    getString(R.string.stations) -> layoutInflater.inflate(R.layout.view_favorite_stations, null) as BaseView
-                    getString(R.string.records) -> layoutInflater.inflate(R.layout.view_records, null) as BaseView
+                contentView = when (tab.position) {
+                    0 -> layoutInflater.inflate(R.layout.view_favorite_stations, null) as BaseView
+                    1 -> layoutInflater.inflate(R.layout.view_records, null) as BaseView
                     else -> throw IllegalStateException()
                 }
-                (container.getChildAt(0) as? BaseView)?.onDestroy()
+                (container.getChildAt(0) as? BaseView)?.apply {
+                    onStop()
+                    onDestroy()
+                }
                 container.removeAllViews()
                 container.addView(contentView as View)
                 contentView?.onStart()
             }
         })
-        navigationTl.selectTab(navigationTl.getTabAt(0))
+        navigationTl.addTab(navigationTl.newTab().apply {
+            text = getString(R.string.stations)
+        })
+        navigationTl.addTab(navigationTl.newTab().apply {
+            text = getString(R.string.records)
+        })
+        navigationTl.getTabAt(0)?.select()
     }
 
     override fun onStart() {

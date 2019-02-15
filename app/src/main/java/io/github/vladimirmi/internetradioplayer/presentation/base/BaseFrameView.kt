@@ -2,11 +2,9 @@ package io.github.vladimirmi.internetradioplayer.presentation.base
 
 import android.content.Context
 import android.util.AttributeSet
-import android.view.View
 import android.widget.FrameLayout
 import android.widget.Toast
 import com.google.android.material.snackbar.Snackbar
-import timber.log.Timber
 
 /**
  * Created by Vladimir Mikhalev 13.02.2019.
@@ -22,26 +20,22 @@ abstract class BaseFrameView<P : BasePresenter<V>, V : BaseView> @JvmOverloads c
 
     override fun onFinishInflate() {
         super.onFinishInflate()
-        Timber.e("onFinishInflate: ")
         setupView()
     }
 
     abstract fun setupView()
 
     override fun onStart() {
-        Timber.e("onStart: ")
-        presenter = providePresenter()
+        if (!::presenter.isInitialized) presenter = providePresenter()
         @Suppress("UNCHECKED_CAST")
         presenter.attachView(this as V)
     }
 
     override fun onStop() {
-        Timber.e("onStop: ")
         presenter.detachView()
     }
 
     override fun onDestroy() {
-        Timber.e("onDestroy: ")
         presenter.destroy()
     }
 

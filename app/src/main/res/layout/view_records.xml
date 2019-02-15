@@ -14,6 +14,8 @@
         android:overScrollMode="never"
         android:paddingTop="16dp"
         android:paddingBottom="16dp"
-        tools:listitem="@layout/item_group_item"
+        android:layout_marginLeft="8dp"
+        android:layout_marginRight="8dp"
+        tools:listitem="@layout/item_record"
         />
 </io.github.vladimirmi.internetradioplayer.presentation.favoritelist.records.RecordsViewImpl>

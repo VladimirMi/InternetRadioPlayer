@@ -18,7 +18,7 @@ import javax.inject.Inject
  */
 
 private const val RECORDS_DIRECTORY = "records"
-private const val RECORD_EXT = ".mp3"
+private const val RECORD_EXT = "mp3"
 
 class RecordsRepository
 @Inject constructor(private val context: Context) {
@@ -31,7 +31,9 @@ class RecordsRepository
 
     private var recording = false
 
-    val recordsObs = BehaviorRelay.createDefault(emptyList<Record>())
+    val recordsObs by lazy {
+        BehaviorRelay.createDefault(initRecords())
+    }
 
     fun startRecord(station: Station) {
         val intent = Intent(context, RecorderService::class.java).apply {
@@ -48,7 +50,7 @@ class RecordsRepository
 
     fun createNewRecord(name: String): Record {
         Timber.e("createNewRecord: $name")
-        val file = File(recordsDirectory, name + RECORD_EXT)
+        val file = File(recordsDirectory, "$name.$RECORD_EXT")
         return Record(
                 UUID.randomUUID().toString(),
                 name,
@@ -65,5 +67,11 @@ class RecordsRepository
 
     fun deleteRecord(record: Record) {
         Timber.e("deleteRecord: $record")
+    }
+
+    private fun initRecords(): List<Record> {
+        return recordsDirectory
+                .listFiles { pathname -> pathname.extension == RECORD_EXT }
+                .map { Record.fromFile(it) }
     }
 }

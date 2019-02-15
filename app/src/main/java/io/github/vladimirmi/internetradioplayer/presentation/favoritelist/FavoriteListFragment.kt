@@ -38,8 +38,8 @@ class FavoriteListFragment : BaseFragment<FavoriteListPresenter, BaseView>(){
             @SuppressLint("InflateParams")
             override fun onTabSelected(tab: TabLayout.Tab) {
                 contentView = when (tab.position) {
-                    0 -> layoutInflater.inflate(R.layout.view_favorite_stations, null) as BaseView
-                    1 -> layoutInflater.inflate(R.layout.view_records, null) as BaseView
+                    0 -> layoutInflater.inflate(R.layout.view_favorite_stations, container, false) as BaseView
+                    1 -> layoutInflater.inflate(R.layout.view_records, container, false) as BaseView
                     else -> throw IllegalStateException()
                 }
                 (container.getChildAt(0) as? BaseView)?.apply {

@@ -4,9 +4,11 @@ import android.os.Bundle
 import android.support.v4.media.MediaMetadataCompat
 import android.support.v4.media.session.PlaybackStateCompat
 import io.github.vladimirmi.internetradioplayer.R
+import io.github.vladimirmi.internetradioplayer.data.db.entity.Station
 import io.github.vladimirmi.internetradioplayer.data.repository.RecordsRepository
 import io.github.vladimirmi.internetradioplayer.data.service.PlayerService
 import io.github.vladimirmi.internetradioplayer.domain.interactor.FavoriteListInteractor
+import io.github.vladimirmi.internetradioplayer.domain.interactor.MediaInteractor
 import io.github.vladimirmi.internetradioplayer.domain.interactor.PlayerInteractor
 import io.github.vladimirmi.internetradioplayer.domain.interactor.StationInteractor
 import io.github.vladimirmi.internetradioplayer.extensions.subscribeX
@@ -27,6 +29,7 @@ class PlayerPresenter
                     private val favoriteListInteractor: FavoriteListInteractor,
                     private val playerInteractor: PlayerInteractor,
                     private val recordsRepository: RecordsRepository,
+                    private val mediaInteractor: MediaInteractor,
                     private val router: Router)
     : BasePresenter<PlayerView>() {
 
@@ -39,7 +42,7 @@ class PlayerPresenter
     }
 
     private fun setupStation() {
-        stationInteractor.stationObs
+        mediaInteractor.currentStationObs
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribeX(onNext = {
                     view?.setStation(it)
@@ -51,7 +54,7 @@ class PlayerPresenter
 
     fun setupGroups() {
         groupSub?.dispose()
-        val groupObs = stationInteractor.stationObs
+        val groupObs = mediaInteractor.currentStationObs
                 .flatMapSingle { favoriteListInteractor.getGroup(it.groupId) }
                 .map { it.name }
                 .observeOn(AndroidSchedulers.mainThread())
@@ -81,10 +84,9 @@ class PlayerPresenter
     }
 
     fun switchFavorite() {
-        val isFavorite = favoriteListInteractor.isFavorite(stationInteractor.station)
-        val changeFavorite = if (isFavorite) stationInteractor.removeFromFavorite()
-        else stationInteractor.addToFavorite()
-        changeFavorite.observeOn(AndroidSchedulers.mainThread())
+        val station = mediaInteractor.currentMedia as? Station ?: return
+        stationInteractor.switchFavorite(station)
+                .observeOn(AndroidSchedulers.mainThread())
                 .subscribeX()
                 .addTo(dataSubs)
     }
@@ -162,6 +164,6 @@ class PlayerPresenter
     }
 
     fun scheduleRecord() {
-        recordsRepository.startRecord(stationInteractor.station)
+        recordsRepository.startCurrentRecord()
     }
 }

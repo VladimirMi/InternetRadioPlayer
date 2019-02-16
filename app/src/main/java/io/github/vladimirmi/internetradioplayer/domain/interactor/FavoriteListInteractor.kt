@@ -3,6 +3,7 @@ package io.github.vladimirmi.internetradioplayer.domain.interactor
 import io.github.vladimirmi.internetradioplayer.data.db.entity.Group
 import io.github.vladimirmi.internetradioplayer.data.db.entity.Station
 import io.github.vladimirmi.internetradioplayer.data.repository.FavoritesRepository
+import io.github.vladimirmi.internetradioplayer.data.repository.MediaRepository
 import io.github.vladimirmi.internetradioplayer.data.repository.StationRepository
 import io.github.vladimirmi.internetradioplayer.domain.model.FlatStationsList
 import io.reactivex.Completable
@@ -17,7 +18,8 @@ import javax.inject.Inject
 
 class FavoriteListInteractor
 @Inject constructor(private val favoritesRepository: FavoritesRepository,
-                    private val stationRepository: StationRepository) {
+                    private val stationRepository: StationRepository,
+                    private val mediaRepository: MediaRepository) {
 
     val stationsListObs: Observable<FlatStationsList>
         get() = favoritesRepository.stationsListObs
@@ -97,11 +99,7 @@ class FavoriteListInteractor
                 .flatMapCompletable { favoritesRepository.updateGroups(it) }
 
         val updateStations = Single.fromCallable { favoritesRepository.stations.getStationDifference(stations) }
-                .doOnSuccess { list ->
-                    list.find { it.id == stationRepository.station.id }?.let {
-                        stationRepository.station = it
-                    }
-                }
+                .doOnSuccess { list -> updateCurrentStation(list) }
                 .flatMapCompletable { favoritesRepository.updateStations(it) }
 
         return updateGroups.andThen(updateStations).andThen(initFavoriteList())
@@ -113,15 +111,22 @@ class FavoriteListInteractor
 
     fun nextStation(id: String): Boolean {
         val next = favoritesRepository.stations.getNextStationFrom(id)
-        next?.let { stationRepository.station = it }
+        next?.let { mediaRepository.currentMedia = it }
         return next != null
     }
 
     fun previousStation(id: String): Boolean {
         val previous = favoritesRepository.stations.getPreviousStationFrom(id)
-        previous?.let { stationRepository.station = it }
+        previous?.let { mediaRepository.currentMedia = it }
         return previous != null
     }
 
     private fun isFavorite(id: String) = favoritesRepository.getStation { it.id == id } != null
+
+    private fun updateCurrentStation(list: List<Station>) {
+        val station = mediaRepository.currentMedia as? Station ?: return
+        list.find { it.id == station.id }?.let {
+            mediaRepository.currentMedia = it
+        }
+    }
 }

@@ -26,7 +26,7 @@ private const val PAYLOAD_BACKGROUND_CHANGE = "PAYLOAD_BACKGROUND_CHANGE"
 
 class HistoryAdapter : RecyclerView.Adapter<StationVH>() {
 
-    private var selectedStation: Station? = null
+    private var selectedStationId: String? = null
 
     var onItemClickListener: ((Station) -> Unit)? = null
 
@@ -78,17 +78,17 @@ class HistoryAdapter : RecyclerView.Adapter<StationVH>() {
         return stations.size
     }
 
-    fun selectStation(station: Station): Int {
-        val oldPos = stations.indexOfFirst { it.first.uri == selectedStation?.uri }
-        val newPos = stations.indexOfFirst { it.first.uri == station.uri }
-        selectedStation = station
+    fun selectStation(id: String): Int {
+        val oldPos = stations.indexOfFirst { it.first.id == selectedStationId }
+        val newPos = stations.indexOfFirst { it.first.id == id }
+        selectedStationId = id
         notifyItemChanged(oldPos, PAYLOAD_SELECTED_CHANGE)
         notifyItemChanged(newPos, PAYLOAD_SELECTED_CHANGE)
         return newPos
     }
 
     private fun StationVH.select(station: Pair<Station, Boolean>) {
-        val selected = station.first.uri == selectedStation?.uri
+        val selected = station.first.id == selectedStationId
         select(selected, station.second)
         if (selected) {
             itemView.favoriteBt?.setOnClickListener { onAddToFavListener?.invoke(station) }

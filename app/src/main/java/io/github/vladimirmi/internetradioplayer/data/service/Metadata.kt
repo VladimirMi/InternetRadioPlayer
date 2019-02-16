@@ -6,6 +6,7 @@ import android.support.v4.media.MediaMetadataCompat
 import io.github.vladimirmi.internetradioplayer.R
 import io.github.vladimirmi.internetradioplayer.data.db.entity.Station
 import io.github.vladimirmi.internetradioplayer.di.Scopes
+import io.github.vladimirmi.internetradioplayer.domain.model.Media
 
 /**
  * Created by Vladimir Mikhalev 01.02.2018.
@@ -42,9 +43,9 @@ fun MediaMetadataCompat.setArtistTitle(metadata: String): MediaMetadataCompat {
             .build()
 }
 
-fun MediaMetadataCompat.setStation(station: Station, context: Context): MediaMetadataCompat {
+fun MediaMetadataCompat.setMedia(media: Media, context: Context): MediaMetadataCompat {
     return MediaMetadataCompat.Builder(this)
-            .putString(MediaMetadataCompat.METADATA_KEY_ALBUM, station.name)
+            .putString(MediaMetadataCompat.METADATA_KEY_ALBUM, media.name)
 //            .putBitmap(MediaMetadataCompat.METADATA_KEY_ALBUM_ART, station.icon.getBitmap(context, true))
             .build()
 }

@@ -2,6 +2,7 @@ package io.github.vladimirmi.internetradioplayer.presentation.favoritelist.stati
 
 import io.github.vladimirmi.internetradioplayer.data.db.entity.Station
 import io.github.vladimirmi.internetradioplayer.domain.interactor.FavoriteListInteractor
+import io.github.vladimirmi.internetradioplayer.domain.interactor.MediaInteractor
 import io.github.vladimirmi.internetradioplayer.domain.interactor.StationInteractor
 import io.github.vladimirmi.internetradioplayer.domain.model.FlatStationsList
 import io.github.vladimirmi.internetradioplayer.extensions.subscribeX
@@ -15,8 +16,8 @@ import javax.inject.Inject
  */
 
 class FavoriteStationsPresenter
-@Inject constructor(private val stationInteractor: StationInteractor,
-                    private val favoriteListInteractor: FavoriteListInteractor)
+@Inject constructor(private val favoriteListInteractor: FavoriteListInteractor,
+                    private val mediaInteractor: MediaInteractor)
     : BasePresenter<FavoriteStationsView>() {
 
     override fun onAttach(view: FavoriteStationsView) {
@@ -28,14 +29,14 @@ class FavoriteStationsPresenter
                 })
                 .addTo(viewSubs)
 
-        stationInteractor.stationObs
+        mediaInteractor.currentStationObs
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribeX(onNext = { view.selectStation(it) })
                 .addTo(viewSubs)
     }
 
     fun selectStation(station: Station) {
-        stationInteractor.station = station
+        mediaInteractor.currentMedia = station
     }
 
     fun selectGroup(id: String) {

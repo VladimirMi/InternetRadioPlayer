@@ -3,6 +3,7 @@ package io.github.vladimirmi.internetradioplayer.presentation.history
 import io.github.vladimirmi.internetradioplayer.data.db.entity.Station
 import io.github.vladimirmi.internetradioplayer.domain.interactor.FavoriteListInteractor
 import io.github.vladimirmi.internetradioplayer.domain.interactor.HistoryInteractor
+import io.github.vladimirmi.internetradioplayer.domain.interactor.MediaInteractor
 import io.github.vladimirmi.internetradioplayer.domain.interactor.StationInteractor
 import io.github.vladimirmi.internetradioplayer.extensions.subscribeX
 import io.github.vladimirmi.internetradioplayer.presentation.base.BasePresenter
@@ -18,7 +19,8 @@ import javax.inject.Inject
 class HistoryPresenter
 @Inject constructor(private val historyInteractor: HistoryInteractor,
                     private val favoriteListInteractor: FavoriteListInteractor,
-                    private val stationInteractor: StationInteractor)
+                    private val stationInteractor: StationInteractor,
+                    private val mediaInteractor: MediaInteractor)
     : BasePresenter<HistoryView>() {
 
     override fun onAttach(view: HistoryView) {
@@ -29,28 +31,25 @@ class HistoryPresenter
         }.observeOn(AndroidSchedulers.mainThread())
                 .subscribeX(onNext = {
                     view.setHistory(it)
-                    view.selectStation(stationInteractor.station)
+                    view.selectStation(mediaInteractor.currentMedia.id)
                     view.showPlaceholder(it.isEmpty())
                 })
                 .addTo(viewSubs)
 
-        stationInteractor.stationObs
+        mediaInteractor.currentStationObs
                 .observeOn(AndroidSchedulers.mainThread())
-                .subscribeX(onNext = { view.selectStation(it) })
+                .subscribeX(onNext = { view.selectStation(it.id) })
                 .addTo(viewSubs)
     }
 
     fun selectStation(station: Station) {
-        stationInteractor.station = station
+        mediaInteractor.currentMedia = station
     }
 
-    fun switchFavorite(stationFavorite: Pair<Station, Boolean>) {
-        val changeFavorite = if (stationFavorite.second) {
-            stationInteractor.removeFromFavorite()
-        } else {
-            stationInteractor.addToFavorite()
-        }
-        changeFavorite.subscribeX()
+    fun switchFavorite() {
+        val station = mediaInteractor.currentMedia as? Station ?: return
+        stationInteractor.switchFavorite(station)
+                .subscribeX()
                 .addTo(dataSubs)
     }
 }

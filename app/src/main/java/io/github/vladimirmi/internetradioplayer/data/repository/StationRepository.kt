@@ -16,15 +16,6 @@ import javax.inject.Inject
 class StationRepository
 @Inject constructor(private val stationParser: StationParser) {
 
-    private val _currentStationObs = BehaviorRelay.createDefault(Station.nullObj())
-    val stationObs: Observable<Station> get() = _currentStationObs
-
-    var station: Station
-        get() = _currentStationObs.value ?: Station.nullObj()
-        set(value) {
-            _currentStationObs.accept(value)
-        }
-
     fun createStation(uri: Uri): Single<Station> {
         return Single.fromCallable {
             stationParser.parseFromUri(uri)

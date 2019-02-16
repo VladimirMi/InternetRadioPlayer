@@ -17,6 +17,4 @@ interface MainView : BaseView {
     fun showBuffering()
 
     fun showPlaying()
-
-    fun showControls(show: Boolean)
 }

@@ -11,7 +11,7 @@ interface HistoryView : BaseView {
 
     fun setHistory(list: List<Pair<Station, Boolean>>)
 
-    fun selectStation(station: Station)
+    fun selectStation(id: String)
 
     fun showPlaceholder(show: Boolean)
 }

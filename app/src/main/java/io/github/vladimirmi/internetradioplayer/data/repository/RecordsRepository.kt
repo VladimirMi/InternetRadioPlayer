@@ -21,7 +21,8 @@ private const val RECORDS_DIRECTORY = "records"
 private const val RECORD_EXT = "mp3"
 
 class RecordsRepository
-@Inject constructor(private val context: Context) {
+@Inject constructor(private val context: Context,
+                    private val mediaRepository: MediaRepository) {
 
     private val recordsDirectory: File by lazy {
         val dir = File(context.getExternalFilesDir(null), RECORDS_DIRECTORY)
@@ -35,7 +36,8 @@ class RecordsRepository
         BehaviorRelay.createDefault(initRecords())
     }
 
-    fun startRecord(station: Station) {
+    fun startCurrentRecord() {
+        val station = mediaRepository.currentMedia as? Station ?: return
         val intent = Intent(context, RecorderService::class.java).apply {
             if (recording) {
                 putExtra(RecorderService.EXTRA_STOP_RECORD, 0)

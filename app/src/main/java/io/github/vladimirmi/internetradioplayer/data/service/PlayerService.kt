@@ -10,12 +10,9 @@ import androidx.media.MediaBrowserServiceCompat
 import io.github.vladimirmi.internetradioplayer.R
 import io.github.vladimirmi.internetradioplayer.data.db.entity.Station
 import io.github.vladimirmi.internetradioplayer.di.Scopes
-import io.github.vladimirmi.internetradioplayer.domain.interactor.EqualizerInteractor
-import io.github.vladimirmi.internetradioplayer.domain.interactor.FavoriteListInteractor
-import io.github.vladimirmi.internetradioplayer.domain.interactor.HistoryInteractor
-import io.github.vladimirmi.internetradioplayer.domain.interactor.StationInteractor
+import io.github.vladimirmi.internetradioplayer.domain.interactor.*
+import io.github.vladimirmi.internetradioplayer.domain.model.Media
 import io.github.vladimirmi.internetradioplayer.extensions.errorHandler
-import io.github.vladimirmi.internetradioplayer.extensions.toUri
 import io.reactivex.disposables.CompositeDisposable
 import io.reactivex.rxkotlin.addTo
 import toothpick.Toothpick
@@ -37,7 +34,7 @@ class PlayerService : MediaBrowserServiceCompat(), SessionCallback.Interface {
         const val EXTRA_STATION_ID = "EXTRA_STATION_ID"
     }
 
-    @Inject lateinit var stationInteractor: StationInteractor
+    @Inject lateinit var mediaInteractor: MediaInteractor
     @Inject lateinit var equalizerInteractor: EqualizerInteractor
     @Inject lateinit var favoriteListInteractor: FavoriteListInteractor
     @Inject lateinit var historyInteractor: HistoryInteractor
@@ -73,9 +70,9 @@ class PlayerService : MediaBrowserServiceCompat(), SessionCallback.Interface {
                 .subscribe()
                 .addTo(subs)
 
-        stationInteractor.stationObs
-                .distinctUntilChanged(Station::id)
-                .subscribe { handleCurrentStation(it) }
+        mediaInteractor.currentMediaObs
+                .distinctUntilChanged(Media::id)
+                .subscribe { handleCurrentMedia(it) }
                 .addTo(subs)
     }
 
@@ -123,11 +120,11 @@ class PlayerService : MediaBrowserServiceCompat(), SessionCallback.Interface {
         }
     }
 
-    private fun handleCurrentStation(station: Station) {
-        currentStationId = station.id
-        if (isPlaying) historyInteractor.createHistory(station)
+    private fun handleCurrentMedia(media: Media) {
+        currentStationId = media.id
+        if (isPlaying && media is Station) historyInteractor.createHistory(media)
         if (isPlaying && currentStationId != playingStationId) playCurrent()
-        mediaMetadata = EMPTY_METADATA.setStation(station, this)
+        mediaMetadata = EMPTY_METADATA.setMedia(media, this)
         session.setMetadata(mediaMetadata)
         notification.update()
     }

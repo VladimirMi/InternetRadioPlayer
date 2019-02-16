@@ -1,6 +1,7 @@
 package io.github.vladimirmi.internetradioplayer.domain.interactor
 
 import io.github.vladimirmi.internetradioplayer.data.repository.EqualizerRepository
+import io.github.vladimirmi.internetradioplayer.data.repository.MediaRepository
 import io.github.vladimirmi.internetradioplayer.data.repository.PlayerRepository
 import io.github.vladimirmi.internetradioplayer.data.repository.StationRepository
 import io.github.vladimirmi.internetradioplayer.data.service.EVENT_SESSION_END
@@ -19,7 +20,8 @@ import javax.inject.Inject
 class EqualizerInteractor
 @Inject constructor(private val playerRepository: PlayerRepository,
                     private val equalizerRepository: EqualizerRepository,
-                    private val stationRepository: StationRepository) {
+                    private val stationRepository: StationRepository,
+                    private val mediaRepository: MediaRepository) {
 
     val currentPresetObs: Observable<EqualizerPreset> get() = equalizerRepository.currentPreset
     val presetBinder: PresetBinderView get() = equalizerRepository.binder
@@ -56,7 +58,7 @@ class EqualizerInteractor
     }
 
     private fun initCurrentPreset(): Completable {
-        return stationRepository.stationObs
+        return mediaRepository.currentMediaObs
                 .flatMapSingle { equalizerRepository.createBinder(it.id) }
                 .map { equalizerRepository.presets.indexOfFirst { preset -> preset.name == it.presetName } }
                 .doOnNext { equalizerRepository.selectPreset(it) }

@@ -79,9 +79,9 @@ class SettingsFragment : PreferenceFragmentCompat(), BackPressListener {
             backupRestoreHelper.restoreBackup(context!!.contentResolver.openInputStream(data.data!!)!!)
                     .andThen(Scopes.app.getInstance(FavoriteListInteractor::class.java).initFavoriteList())
                     .andThen({
-                        if (Scopes.app.getInstance(StationInteractor::class.java).station.isNull()) {
-                            Scopes.app.getInstance(FavoriteListInteractor::class.java).nextStation("")
-                        }
+//                        if (Scopes.app.getInstance(StationInteractor::class.java).station.isNull()) {
+//                            Scopes.app.getInstance(FavoriteListInteractor::class.java).nextStation("")
+//                        }
                     }.toCompletable())
                     .observeOn(AndroidSchedulers.mainThread())
                     .subscribeX(onComplete = { router.exit() })

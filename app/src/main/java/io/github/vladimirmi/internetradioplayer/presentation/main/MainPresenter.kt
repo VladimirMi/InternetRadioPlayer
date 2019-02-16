@@ -7,6 +7,7 @@ import io.github.vladimirmi.internetradioplayer.R
 import io.github.vladimirmi.internetradioplayer.data.db.entity.Station
 import io.github.vladimirmi.internetradioplayer.data.service.*
 import io.github.vladimirmi.internetradioplayer.domain.interactor.MainInteractor
+import io.github.vladimirmi.internetradioplayer.domain.interactor.MediaInteractor
 import io.github.vladimirmi.internetradioplayer.domain.interactor.PlayerInteractor
 import io.github.vladimirmi.internetradioplayer.domain.interactor.StationInteractor
 import io.github.vladimirmi.internetradioplayer.extensions.subscribeX
@@ -23,8 +24,7 @@ import javax.inject.Inject
 class MainPresenter
 @Inject constructor(private val router: Router,
                     private val mainInteractor: MainInteractor,
-                    private val playerInteractor: PlayerInteractor,
-                    private val stationInteractor: StationInteractor)
+                    private val playerInteractor: PlayerInteractor)
     : BasePresenter<MainView>() {
 
     override fun onAttach(view: MainView) {
@@ -38,12 +38,6 @@ class MainPresenter
 
         playerInteractor.sessionEventObs
                 .subscribeX(onNext = { handleSessionEvent(it) })
-                .addTo(viewSubs)
-
-        stationInteractor.stationObs
-                .distinctUntilChanged(Station::uri)
-                .observeOn(AndroidSchedulers.mainThread())
-                .subscribeX(onNext = { view.showControls(!it.isNull()) })
                 .addTo(viewSubs)
     }
 

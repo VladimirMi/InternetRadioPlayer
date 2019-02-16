@@ -119,12 +119,6 @@ class MainFragment : BaseFragment<MainPresenter, MainView>(), MainView, SimpleCo
         sMetadataTv.text = metadata
     }
 
-    override fun showControls(show: Boolean) {
-        simpleControlsContainer.visible(show)
-        shadow.visible(show)
-        showControls(controlsVisibility)
-    }
-
     override fun showControls(visibility: Float) {
         simpleControlsContainer.waitForMeasure {
             val set = ConstraintSet()

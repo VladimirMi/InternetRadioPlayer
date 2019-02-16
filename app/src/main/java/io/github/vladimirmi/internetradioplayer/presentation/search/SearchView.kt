@@ -20,7 +20,7 @@ interface SearchView : BaseView, SearchSuggestionsAdapter.Callback {
 
     fun setFavorites(favorites: FlatStationsList)
 
-    fun selectStation(station: Station)
+    fun selectStation(id: String)
 
     fun showLoading(loading: Boolean)
 

@@ -1,8 +1,10 @@
 package io.github.vladimirmi.internetradioplayer.presentation.search
 
 import io.github.vladimirmi.internetradioplayer.R
+import io.github.vladimirmi.internetradioplayer.data.db.entity.Station
 import io.github.vladimirmi.internetradioplayer.data.net.model.StationSearchRes
 import io.github.vladimirmi.internetradioplayer.domain.interactor.FavoriteListInteractor
+import io.github.vladimirmi.internetradioplayer.domain.interactor.MediaInteractor
 import io.github.vladimirmi.internetradioplayer.domain.interactor.SearchInteractor
 import io.github.vladimirmi.internetradioplayer.domain.interactor.StationInteractor
 import io.github.vladimirmi.internetradioplayer.extensions.subscribeX
@@ -21,6 +23,7 @@ import javax.inject.Inject
 class SearchPresenter
 @Inject constructor(private val searchInteractor: SearchInteractor,
                     private val stationInteractor: StationInteractor,
+                    private val mediaInteractor: MediaInteractor,
                     private val favoriteListInteractor: FavoriteListInteractor)
     : BasePresenter<SearchView>() {
 
@@ -41,9 +44,9 @@ class SearchPresenter
 
     override fun onAttach(view: SearchView) {
         //todo refactor like in history
-        stationInteractor.stationObs
+        mediaInteractor.currentMediaObs
                 .observeOn(AndroidSchedulers.mainThread())
-                .subscribeX(onNext = { view.selectStation(it) })
+                .subscribeX(onNext = { view.selectStation(it.id) })
                 .addTo(viewSubs)
 
         favoriteListInteractor.stationsListObs
@@ -64,10 +67,9 @@ class SearchPresenter
     }
 
     fun switchFavorite() {
-        val isFavorite = favoriteListInteractor.isFavorite(stationInteractor.station)
-        val changeFavorite = if (isFavorite) stationInteractor.removeFromFavorite()
-        else stationInteractor.addToFavorite()
-        changeFavorite.subscribeX()
+        val station = mediaInteractor.currentMedia as? Station ?: return
+        stationInteractor.switchFavorite(station)
+                .subscribeX()
                 .addTo(dataSubs)
     }
 
@@ -84,7 +86,7 @@ class SearchPresenter
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribeX(onNext = {
                     view?.setStations(it)
-                    view?.selectStation(stationInteractor.station)
+                    view?.selectStation(mediaInteractor.currentMedia.id)
                     view?.showLoading(false)
                     view?.showPlaceholder(it.isEmpty())
                 }, onError = {

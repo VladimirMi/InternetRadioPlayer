@@ -2,6 +2,7 @@ package io.github.vladimirmi.internetradioplayer.domain.interactor
 
 import io.github.vladimirmi.internetradioplayer.data.db.entity.Station
 import io.github.vladimirmi.internetradioplayer.data.repository.HistoryRepository
+import io.github.vladimirmi.internetradioplayer.data.repository.MediaRepository
 import io.github.vladimirmi.internetradioplayer.data.repository.StationRepository
 import io.github.vladimirmi.internetradioplayer.extensions.subscribeX
 import io.reactivex.Completable
@@ -14,7 +15,7 @@ import javax.inject.Inject
 
 class HistoryInteractor
 @Inject constructor(private val historyRepository: HistoryRepository,
-                    private val stationRepository: StationRepository) {
+                    private val mediaRepository: MediaRepository) {
 
     fun getHistoryObs(): Observable<List<Station>> {
         return historyRepository.getHistoryObs()
@@ -29,7 +30,7 @@ class HistoryInteractor
                 .first(emptyList())
                 .flatMapCompletable {
                     Completable.fromAction {
-                        stationRepository.station = it.firstOrNull() ?: Station.nullObj()
+                         mediaRepository.currentMedia = it.firstOrNull() ?: Station.nullObj()
                     }
                 }
     }

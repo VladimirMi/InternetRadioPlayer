@@ -57,6 +57,7 @@ class AppModule(context: Context) : Module() {
         bind(PlayerRepository::class.java).singletonInScope()
         bind(HistoryRepository::class.java).singletonInScope()
         bind(EqualizerRepository::class.java).singletonInScope()
+        bind(MediaRepository::class.java).singletonInScope()
 
         bind(MainInteractor::class.java).singletonInScope()
         bind(SearchInteractor::class.java).singletonInScope()
@@ -65,6 +66,7 @@ class AppModule(context: Context) : Module() {
         bind(PlayerInteractor::class.java).singletonInScope()
         bind(HistoryInteractor::class.java).singletonInScope()
         bind(EqualizerInteractor::class.java).singletonInScope()
+        bind(MediaInteractor::class.java).singletonInScope()
 
         bind(LoadControl::class.java).singletonInScope()
     }

@@ -9,7 +9,6 @@ import android.view.ViewGroup
 import androidx.core.content.ContextCompat
 import androidx.recyclerview.widget.RecyclerView
 import io.github.vladimirmi.internetradioplayer.R
-import io.github.vladimirmi.internetradioplayer.data.db.entity.Station
 import io.github.vladimirmi.internetradioplayer.data.net.model.StationSearchRes
 import io.github.vladimirmi.internetradioplayer.domain.model.FlatStationsList
 import io.github.vladimirmi.internetradioplayer.extensions.color
@@ -26,7 +25,7 @@ private const val PAYLOAD_SELECTED_CHANGE = "PAYLOAD_SELECTED_CHANGE"
 
 class SearchStationsAdapter : RecyclerView.Adapter<SearchStationVH>() {
 
-    private var selectedStation: StationSearchRes? = null
+    private var selectedStationUri: String? = null
     private var favorites = FlatStationsList()
 
     var onItemClickListener: ((StationSearchRes) -> Unit)? = null
@@ -66,10 +65,10 @@ class SearchStationsAdapter : RecyclerView.Adapter<SearchStationVH>() {
         return stations.size
     }
 
-    fun selectStation(station: Station): Int {
-        val oldPos = stations.indexOf(selectedStation)
-        val newPos = stations.indexOfFirst { it.uri == station.uri }
-        selectedStation = if (newPos == -1) null else stations[newPos]
+    fun selectStation(uri: String): Int {
+        val oldPos = stations.indexOfFirst { it.uri == selectedStationUri }
+        val newPos = stations.indexOfFirst { it.uri == uri }
+        selectedStationUri = uri
         notifyItemChanged(oldPos, PAYLOAD_SELECTED_CHANGE)
         notifyItemChanged(newPos, PAYLOAD_SELECTED_CHANGE)
         return newPos
@@ -82,7 +81,7 @@ class SearchStationsAdapter : RecyclerView.Adapter<SearchStationVH>() {
 
     private fun SearchStationVH.select(station: StationSearchRes) {
         val isFavorite = favorites.findStation { it.uri == station.uri } != null
-        val selected = station.id == selectedStation?.id
+        val selected = station.uri == selectedStationUri
         select(selected, isFavorite)
     }
 }

@@ -6,7 +6,6 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.recyclerview.widget.LinearLayoutManager
 import io.github.vladimirmi.internetradioplayer.R
-import io.github.vladimirmi.internetradioplayer.data.db.entity.Station
 import io.github.vladimirmi.internetradioplayer.data.net.model.StationSearchRes
 import io.github.vladimirmi.internetradioplayer.di.Scopes
 import io.github.vladimirmi.internetradioplayer.domain.model.FlatStationsList
@@ -135,8 +134,8 @@ class SearchFragment : BaseFragment<SearchPresenter, SearchView>(), SearchView,
         stationsAdapter.setFavorites(favorites)
     }
 
-    override fun selectStation(station: Station) {
-        val position = stationsAdapter.selectStation(station)
+    override fun selectStation(uri: String) {
+        val position = stationsAdapter.selectStation(uri)
         stationsRv.scrollToPosition(position)
     }
 

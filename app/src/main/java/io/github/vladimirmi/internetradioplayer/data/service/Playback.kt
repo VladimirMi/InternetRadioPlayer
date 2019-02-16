@@ -23,6 +23,7 @@ import io.github.vladimirmi.internetradioplayer.di.Scopes
 import io.github.vladimirmi.internetradioplayer.extensions.runOnUiThread
 import io.github.vladimirmi.internetradioplayer.extensions.wifiManager
 import okhttp3.OkHttpClient
+import timber.log.Timber
 
 
 const val STOP_DELAY = 60000L // default stop delay 1 min
@@ -49,6 +50,7 @@ class Playback(private val service: PlayerService,
     }
 
     fun play(uri: Uri) {
+        Timber.e("play: $uri")
         runOnUiThread {
             if (player == null) createPlayer()
             preparePlayer(uri)

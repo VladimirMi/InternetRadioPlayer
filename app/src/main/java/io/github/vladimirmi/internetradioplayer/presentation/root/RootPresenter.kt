@@ -20,6 +20,7 @@ class RootPresenter
                     private val playerInteractor: PlayerInteractor,
                     private val stationInteractor: StationInteractor,
                     private val favoriteListInteractor: FavoriteListInteractor,
+                    private val mediaInteractor: MediaInteractor,
                     private val mainInteractor: MainInteractor,
                     private val historyInteractor: HistoryInteractor)
     : BasePresenter<RootView>() {
@@ -61,7 +62,7 @@ class RootPresenter
         //todo legacy
         val station = favoriteListInteractor.getStation(id)
         if (station != null) {
-            stationInteractor.station = station
+            mediaInteractor.currentMedia = station
             navigateTo(R.id.nav_player)
             if (startPlay) playerInteractor.play()
         } else {

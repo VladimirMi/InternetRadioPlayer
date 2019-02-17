@@ -17,7 +17,7 @@ class RecordsViewImpl @JvmOverloads constructor(
         context: Context, attrs: AttributeSet? = null, defStyleAttr: Int = 0
 ) : BaseFrameView<RecordsPresenter, RecordsView>(context, attrs, defStyleAttr), RecordsView {
 
-    private val adapter = RecordsAdapter()
+    private val recordsAdapter = RecordsAdapter()
 
     override fun providePresenter(): RecordsPresenter {
         return Toothpick.openScopes(Scopes.ROOT_ACTIVITY, this)
@@ -28,10 +28,16 @@ class RecordsViewImpl @JvmOverloads constructor(
 
     override fun setupView() {
         recordsRv.layoutManager = LinearLayoutManager(context)
-        recordsRv.adapter = adapter
+        recordsRv.adapter = recordsAdapter
+        recordsAdapter.onItemClickListener = { presenter.selectRecord(it) }
     }
 
     override fun setRecords(records: List<Record>) {
-        adapter.data = records
+        recordsAdapter.records = records
+    }
+
+    override fun selectRecord(id: String) {
+        val position = recordsAdapter.selectRecord(id)
+        recordsRv.scrollToPosition(position)
     }
 }

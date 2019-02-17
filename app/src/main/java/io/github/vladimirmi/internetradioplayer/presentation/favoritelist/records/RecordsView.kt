@@ -10,4 +10,5 @@ import io.github.vladimirmi.internetradioplayer.presentation.base.BaseView
 interface RecordsView : BaseView {
 
     fun setRecords(records: List<Record>)
+    fun selectRecord(id: String)
 }

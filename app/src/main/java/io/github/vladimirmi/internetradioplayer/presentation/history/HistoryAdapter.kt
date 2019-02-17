@@ -13,6 +13,8 @@ import io.github.vladimirmi.internetradioplayer.R
 import io.github.vladimirmi.internetradioplayer.data.db.entity.Station
 import io.github.vladimirmi.internetradioplayer.extensions.color
 import io.github.vladimirmi.internetradioplayer.extensions.visible
+import io.github.vladimirmi.internetradioplayer.presentation.favoritelist.stations.PAYLOAD_BACKGROUND_CHANGE
+import io.github.vladimirmi.internetradioplayer.presentation.favoritelist.stations.PAYLOAD_SELECTED_CHANGE
 import io.github.vladimirmi.internetradioplayer.presentation.favoritelist.stations.defaultOutline
 import io.github.vladimirmi.internetradioplayer.presentation.favoritelist.stations.fixedOutline
 import kotlinx.android.synthetic.main.item_station.view.*
@@ -20,9 +22,6 @@ import kotlinx.android.synthetic.main.item_station.view.*
 /**
  * Created by Vladimir Mikhalev 15.11.2018.
  */
-
-private const val PAYLOAD_SELECTED_CHANGE = "PAYLOAD_SELECTED_CHANGE"
-private const val PAYLOAD_BACKGROUND_CHANGE = "PAYLOAD_BACKGROUND_CHANGE"
 
 class HistoryAdapter : RecyclerView.Adapter<StationVH>() {
 

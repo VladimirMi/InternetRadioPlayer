@@ -75,7 +75,8 @@ class PlayerService : MediaBrowserServiceCompat(), SessionCallback.Interface {
                 .addTo(subs)
 
         mediaInteractor.currentMediaObs
-                .distinctUntilChanged(Media::id)
+                //todo on each update metadata
+                .distinctUntilChanged(Media::uri)
                 .subscribe { handleCurrentMedia(it) }
                 .addTo(subs)
     }

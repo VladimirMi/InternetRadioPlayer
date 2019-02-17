@@ -42,12 +42,13 @@ class PlayerPresenter
     }
 
     private fun setupStation() {
-        mediaInteractor.currentStationObs
+        mediaInteractor.currentMediaObs
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribeX(onNext = {
-                    view?.setStation(it)
-                    view?.showPlaceholder(it.isNull())
-                    view?.setFavorite(favoriteListInteractor.isFavorite(it))
+                    view?.setMedia(it)
+                    if (it is Station) {
+                        view?.setFavorite(favoriteListInteractor.isFavorite(it))
+                    }
                 })
                 .addTo(viewSubs)
     }

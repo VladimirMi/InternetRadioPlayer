@@ -18,9 +18,9 @@ import javax.inject.Inject
  * Created by Vladimir Mikhalev 13.11.2017.
  */
 
+const val SCHEME_HTTP = "http"
 private const val SCHEME_FILE = "file"
 private const val SCHEME_CONTENT = "content"
-private const val SCHEME_HTTP = "http"
 
 private const val EXT_PLS = "pls"
 private const val EXT_M3U = "m3u"

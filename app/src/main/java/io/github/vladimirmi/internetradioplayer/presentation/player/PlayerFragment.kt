@@ -24,6 +24,7 @@ import io.github.vladimirmi.internetradioplayer.data.service.artist
 import io.github.vladimirmi.internetradioplayer.data.service.isEmpty
 import io.github.vladimirmi.internetradioplayer.data.service.title
 import io.github.vladimirmi.internetradioplayer.di.Scopes
+import io.github.vladimirmi.internetradioplayer.domain.model.Media
 import io.github.vladimirmi.internetradioplayer.extensions.*
 import io.github.vladimirmi.internetradioplayer.presentation.base.BaseFragment
 import kotlinx.android.synthetic.main.fragment_player.*
@@ -117,9 +118,12 @@ class PlayerFragment : BaseFragment<PlayerPresenter, PlayerView>(), PlayerView, 
 
     //region =============== PlayerView ==============
 
-    override fun setStation(station: Station) {
-        titleEt.setText(station.name)
-        specsTv.setTextOrHide(station.specs)
+    override fun setMedia(media: Media) {
+        titleEt.setText(media.name)
+        if (media is Station) {
+            //todo move to presenter
+            specsTv.setTextOrHide(media.specs)
+        }
     }
 
     override fun setFavorite(isFavorite: Boolean) {
@@ -202,13 +206,6 @@ class PlayerFragment : BaseFragment<PlayerPresenter, PlayerView>(), PlayerView, 
             metaTitleTv.setTextOrHide(artist)
             metaSubtitleTv.setTextOrHide(title)
         }
-    }
-
-
-    override fun showPlaceholder(show: Boolean) {
-        infoCv.visible(!show)
-        controlsView.visible(!show)
-        placeholderView.visible(show)
     }
 
     override fun switchTitleEditable() {

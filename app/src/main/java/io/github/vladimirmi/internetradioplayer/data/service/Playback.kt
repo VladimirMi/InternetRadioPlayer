@@ -16,9 +16,11 @@ import com.google.android.exoplayer2.analytics.AnalyticsListener
 import com.google.android.exoplayer2.audio.AudioAttributes
 import com.google.android.exoplayer2.source.ExtractorMediaSource
 import com.google.android.exoplayer2.trackselection.DefaultTrackSelector
+import com.google.android.exoplayer2.upstream.FileDataSource
 import com.google.android.exoplayer2.util.Util
 import io.github.vladimirmi.internetradioplayer.BuildConfig
 import io.github.vladimirmi.internetradioplayer.R
+import io.github.vladimirmi.internetradioplayer.data.utils.SCHEME_HTTP
 import io.github.vladimirmi.internetradioplayer.di.Scopes
 import io.github.vladimirmi.internetradioplayer.extensions.runOnUiThread
 import io.github.vladimirmi.internetradioplayer.extensions.wifiManager
@@ -53,7 +55,11 @@ class Playback(private val service: PlayerService,
         Timber.e("play: $uri")
         runOnUiThread {
             if (player == null) createPlayer()
-            preparePlayer(uri)
+            if (uri.scheme?.contains(SCHEME_HTTP) == true) {
+                prepareHttpPlayer(uri)
+            } else {
+                prepareFilePlayer(uri)
+            }
             holdResources()
             resume()
         }
@@ -101,7 +107,7 @@ class Playback(private val service: PlayerService,
         player?.setAudioAttributes(audioAttributes, true)
     }
 
-    private fun preparePlayer(uri: Uri) {
+    private fun prepareHttpPlayer(uri: Uri) {
         val userAgent = Util.getUserAgent(service, service.getString(R.string.app_name))
         val mediaSource = ExtractorMediaSource.Factory {
             IcyHttpDataSource(httpClient, userAgent, playerCallback)
@@ -109,6 +115,11 @@ class Playback(private val service: PlayerService,
                 .setLoadErrorHandlingPolicy(ErrorHandlingPolicy())
                 .createMediaSource(uri)
 
+        player?.prepare(mediaSource)
+    }
+
+    private fun prepareFilePlayer(uri: Uri) {
+        val mediaSource = ExtractorMediaSource.Factory(::FileDataSource).createMediaSource(uri)
         player?.prepare(mediaSource)
     }
 

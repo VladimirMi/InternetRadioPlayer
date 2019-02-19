@@ -30,7 +30,7 @@ class RecorderService : Service() {
         when {
             intent == null -> stopSelf()
             intent.hasExtra(EXTRA_START_RECORD) -> {
-                recorder.startRecord(intent.data!!)
+                recorder.startRecord(intent.getStringExtra(EXTRA_START_RECORD), intent.data!!)
                 notification.start()
             }
             intent.hasExtra(EXTRA_STOP_RECORD) -> {

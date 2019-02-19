@@ -10,7 +10,6 @@ import io.github.vladimirmi.internetradioplayer.domain.model.Record
 import io.github.vladimirmi.internetradioplayer.extensions.toUri
 import timber.log.Timber
 import java.io.File
-import java.util.*
 import javax.inject.Inject
 
 /**
@@ -30,7 +29,7 @@ class RecordsRepository
         dir
     }
 
-    private var recording = false
+    private val currentRecording = HashSet<String>()
 
     val recordsObs by lazy {
         BehaviorRelay.createDefault(initRecords())
@@ -38,32 +37,31 @@ class RecordsRepository
 
     fun startCurrentRecord() {
         val station = mediaRepository.currentMedia as? Station ?: return
+        val name = getNewRecordName(station.name)
+
         val intent = Intent(context, RecorderService::class.java).apply {
-            if (recording) {
-                putExtra(RecorderService.EXTRA_STOP_RECORD, 0)
+            if (currentRecording.contains(station.name)) {
+                putExtra(RecorderService.EXTRA_STOP_RECORD, name)
+                currentRecording.remove(station.name)
             } else {
-                putExtra(RecorderService.EXTRA_START_RECORD, 0)
+                putExtra(RecorderService.EXTRA_START_RECORD, name)
+                currentRecording.add(station.name)
             }
             data = station.uri.toUri()
         }
         ContextCompat.startForegroundService(context, intent)
-        recording = !recording
     }
 
     fun createNewRecord(name: String): Record {
         Timber.e("createNewRecord: $name")
         val file = File(recordsDirectory, "$name.$RECORD_EXT")
-        return Record(
-                UUID.randomUUID().toString(),
-                name,
-                file.toURI().toString(),
-                file
-        )
+        return Record.fromFile(file)
     }
 
     fun commitRecord(record: Record) {
-        Timber.e("commitRecord: $record")
-        val list = (recordsObs.value ?: emptyList()) + record
+        val newRecord = record.copy(createdAt = System.currentTimeMillis())
+        Timber.e("commitRecord: $newRecord")
+        val list = (recordsObs.value ?: emptyList()) + newRecord
         recordsObs.accept(list)
     }
 
@@ -72,8 +70,17 @@ class RecordsRepository
     }
 
     private fun initRecords(): List<Record> {
+        Timber.e("initRecords: ")
         return recordsDirectory
                 .listFiles { pathname -> pathname.extension == RECORD_EXT }
                 .map { Record.fromFile(it) }
+    }
+
+    private fun getNewRecordName(stationName: String): String {
+        val regex = "^$stationName(_\\d)?".toRegex()
+        Timber.e("getNewRecordName: ${recordsObs.value?.map { it.name }}")
+        val list = recordsObs.value?.filter { it.name.matches(regex) } ?: emptyList()
+        return if (list.isEmpty()) stationName
+        else "${stationName}_${list.size}"
     }
 }

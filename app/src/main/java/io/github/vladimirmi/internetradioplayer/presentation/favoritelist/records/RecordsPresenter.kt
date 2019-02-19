@@ -5,6 +5,7 @@ import io.github.vladimirmi.internetradioplayer.domain.interactor.RecordsInterac
 import io.github.vladimirmi.internetradioplayer.domain.model.Record
 import io.github.vladimirmi.internetradioplayer.extensions.subscribeX
 import io.github.vladimirmi.internetradioplayer.presentation.base.BasePresenter
+import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.rxkotlin.addTo
 import javax.inject.Inject
 
@@ -19,10 +20,12 @@ class RecordsPresenter
 
     override fun onAttach(view: RecordsView) {
         recordsInteractor.recordsObs
+                .observeOn(AndroidSchedulers.mainThread())
                 .subscribeX(onNext = { view.setRecords(it) })
                 .addTo(viewSubs)
 
         mediaInteractor.currentMediaObs
+                .observeOn(AndroidSchedulers.mainThread())
                 .subscribeX(onNext = { view.selectRecord(it.id) })
                 .addTo(viewSubs)
     }

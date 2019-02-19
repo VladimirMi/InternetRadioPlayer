@@ -37,11 +37,11 @@ class Recorder
     private val wifiLock = context.wifiManager
             .createWifiLock(WifiManager.WIFI_MODE_FULL, BuildConfig.APPLICATION_ID)
 
-    fun startRecord(uri: Uri) {
+    fun startRecord(name: String, uri: Uri) {
         runOnUiThread {
             if (player == null) createPlayer()
             if (!wifiLock.isHeld) wifiLock.acquire()
-            preparePlayer(uri)
+            preparePlayer(name, uri)
             player?.playWhenReady = false
         }
     }
@@ -74,13 +74,14 @@ class Recorder
         player = null
     }
 
-    private fun preparePlayer(uri: Uri) {
+    private fun preparePlayer(name: String, uri: Uri) {
         val userAgent = Util.getUserAgent(context, context.getString(R.string.app_name))
         val mediaSource = ExtractorMediaSource.Factory {
             val icyHttpDataSource = IcyHttpDataSource(httpClient, userAgent, null)
             TeeDataSource(icyHttpDataSource, recorderDataSink)
         }
                 .setLoadErrorHandlingPolicy(ErrorHandlingPolicy())
+                .setCustomCacheKey(name)
                 .createMediaSource(uri)
 
         player?.prepare(mediaSource)

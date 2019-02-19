@@ -10,15 +10,17 @@ import java.util.*
 data class Record(override val id: String,
                   override val name: String,
                   override val uri: String,
-                  val file: File) : Media {
+                  val file: File,
+                  val createdAt: Long) : Media {
 
     companion object {
         fun fromFile(file: File): Record {
             return Record(
                     UUID.randomUUID().toString(),
-                    file.name,
+                    file.name.substringBeforeLast('.'),
                     file.toURI().toString(),
-                    file
+                    file,
+                    file.lastModified()
             )
         }
     }

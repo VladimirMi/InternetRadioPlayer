@@ -70,7 +70,6 @@ class RecordsRepository
     }
 
     private fun initRecords(): List<Record> {
-        Timber.e("initRecords: ")
         return recordsDirectory
                 .listFiles { pathname -> pathname.extension == RECORD_EXT }
                 .map { Record.fromFile(it) }
@@ -78,7 +77,6 @@ class RecordsRepository
 
     private fun getNewRecordName(stationName: String): String {
         val regex = "^$stationName(_\\d)?".toRegex()
-        Timber.e("getNewRecordName: ${recordsObs.value?.map { it.name }}")
         val list = recordsObs.value?.filter { it.name.matches(regex) } ?: emptyList()
         return if (list.isEmpty()) stationName
         else "${stationName}_${list.size}"

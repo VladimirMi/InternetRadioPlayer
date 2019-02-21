@@ -9,14 +9,6 @@
     android:focusable="true"
     >
 
-    <View
-        android:id="@+id/shadow"
-        android:layout_width="match_parent"
-        app:layout_constraintTop_toTopOf="parent"
-        android:layout_height="4dp"
-        android:background="@drawable/shadow_reverse"
-        />
-
     <include
         android:id="@+id/stationInfoView"
         layout="@layout/view_station_info"
@@ -24,7 +16,7 @@
         android:layout_height="wrap_content"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/shadow"
+        app:layout_constraintTop_toTopOf="parent"
         />
 
     <LinearLayout
@@ -83,7 +75,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/shadow"
+        app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintVertical_bias="0.0"
         />
 
@@ -92,8 +84,8 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="Status"
-        app:layout_constraintBottom_toTopOf="@id/guideline"
         android:textAppearance="@style/TextAppearance.AppCompat.Small.Inverse"
+        app:layout_constraintBottom_toTopOf="@id/guideline"
         />
 
     <androidx.constraintlayout.widget.Guideline

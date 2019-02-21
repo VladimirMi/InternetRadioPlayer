@@ -22,7 +22,6 @@
         android:layout_marginRight="8dp"
         android:ellipsize="end"
         android:maxLines="1"
-        android:textStyle="bold"
         app:layout_constraintBottom_toTopOf="@+id/subtitleTv"
         app:layout_constraintEnd_toStartOf="@id/favoriteBt"
         app:layout_constraintStart_toStartOf="parent"

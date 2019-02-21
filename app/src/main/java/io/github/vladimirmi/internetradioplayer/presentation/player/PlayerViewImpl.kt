@@ -2,12 +2,20 @@ package io.github.vladimirmi.internetradioplayer.presentation.player
 
 import android.content.Context
 import android.support.v4.media.MediaMetadataCompat
+import android.text.Spannable
+import android.text.SpannableString
+import android.text.style.ForegroundColorSpan
+import android.text.style.URLSpan
 import android.util.AttributeSet
 import android.widget.TextView
 import androidx.constraintlayout.widget.ConstraintSet
+import androidx.core.content.ContextCompat
+import androidx.fragment.app.FragmentActivity
 import io.github.vladimirmi.internetradioplayer.R
 import io.github.vladimirmi.internetradioplayer.data.db.entity.Station
 import io.github.vladimirmi.internetradioplayer.data.service.EMPTY_METADATA
+import io.github.vladimirmi.internetradioplayer.data.service.artist
+import io.github.vladimirmi.internetradioplayer.data.service.title
 import io.github.vladimirmi.internetradioplayer.di.Scopes
 import io.github.vladimirmi.internetradioplayer.domain.model.Media
 import io.github.vladimirmi.internetradioplayer.extensions.*
@@ -43,6 +51,18 @@ class PlayerViewImpl @JvmOverloads constructor(
             startStatusY = statusTv.y
             true
         }
+        favoriteBt.setOnClickListener { presenter.switchFavorite() }
+        addShortcutBt.setOnClickListener { openAddShortcutDialog() }
+
+        metaTitleTv.isSelected = true
+        metaSubtitleTv.isSelected = true
+        playPauseBt.setOnClickListener { presenter.playPause() }
+        playPauseBt.setManualMode(true)
+        previousBt.setOnClickListener { presenter.skipToPrevious() }
+        nextBt.setOnClickListener { presenter.skipToNext() }
+        stopBt.setOnClickListener { presenter.stop() }
+        equalizerBt.setOnClickListener { presenter.openEqualizer() }
+        recordBt.setOnClickListener { presenter.scheduleRecord() }
     }
 
     //region =============== PlayerView ==============
@@ -61,22 +81,22 @@ class PlayerViewImpl @JvmOverloads constructor(
     }
 
     override fun setGroup(group: String) {
-        //todo implement
+        groupTv.text = group
     }
 
-    override fun showStopped() {
+    override fun showPaused() {
         playPauseBt.isPlaying = false
-//        bufferingPb.visible(false)
+        statusTv.text = "Paused"
     }
 
     override fun showPlaying() {
         playPauseBt.isPlaying = true
-//        bufferingPb.visible(false)
+        statusTv.text = "Playing"
     }
 
     override fun showBuffering() {
         playPauseBt.isPlaying = true
-//        bufferingPb.visible(true)
+        statusTv.text = "Loading"
         setMetadata(EMPTY_METADATA)
     }
 
@@ -89,21 +109,20 @@ class PlayerViewImpl @JvmOverloads constructor(
     }
 
     override fun setMetadata(metadata: MediaMetadataCompat) {
-//        if (metadataCv == null) return
-//        val visible = !metadata.isEmpty()
-//        val scale = if (visible) 1f else 0f
-//
-//        metadataCv.animate()
-//                .scaleX(scale).scaleY(scale)
-//                .setDuration(300)
-//                .setInterpolator(FastOutSlowInInterpolator())
-//                .start()
-//        if (visible) metadataCv.visible(true)
-//        else Handler().postDelayed({ metadataCv?.visible(false) }, 300)
-//        with(metadata) {
-//            metaTitleTv.setTextOrHide(artist)
-//            metaSubtitleTv.setTextOrHide(title)
-//        }
+        with(metadata) {
+            metaTitleTv.setTextOrHide(artist)
+            metaSubtitleTv.setTextOrHide(title)
+        }
+    }
+
+    override fun openLinkDialog(url: String) {
+        val fm = (context as FragmentActivity).supportFragmentManager
+        LinkDialog.newInstance(url).show(fm, "link_dialog")
+    }
+
+    override fun openAddShortcutDialog() {
+        val fm = (context as FragmentActivity).supportFragmentManager
+        AddShortcutDialog().show(fm, "add_shortcut_dialog")
     }
 
     //endregion
@@ -132,5 +151,18 @@ class PlayerViewImpl @JvmOverloads constructor(
         playPauseBt.x = startPlayX + (playPauseBtStub.x - startPlayX) * state
         playPauseBt.y = startPlayY + (playPauseBtStub.y - startPlayY) * state
         statusTv.y = startStatusY + (height - statusTv.height - startStatusY) * state
+    }
+
+    private fun TextView.linkStyle(enable: Boolean) {
+        val string = text.toString()
+        val color = ContextCompat.getColor(context, R.color.blue_500)
+        text = if (enable) {
+            val spannable = SpannableString(string)
+            spannable.setSpan(URLSpan(string), 0, spannable.length, Spannable.SPAN_EXCLUSIVE_EXCLUSIVE)
+            spannable.setSpan(ForegroundColorSpan(color), 0, spannable.length, Spannable.SPAN_EXCLUSIVE_EXCLUSIVE)
+            spannable
+        } else {
+            string
+        }
     }
 }

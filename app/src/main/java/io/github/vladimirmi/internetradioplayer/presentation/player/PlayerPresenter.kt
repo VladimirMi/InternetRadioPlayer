@@ -145,7 +145,7 @@ class PlayerPresenter
 
     private fun handleState(state: PlaybackStateCompat) {
         when (state.state) {
-            PlaybackStateCompat.STATE_PAUSED, PlaybackStateCompat.STATE_STOPPED -> view?.showStopped()
+            PlaybackStateCompat.STATE_PAUSED, PlaybackStateCompat.STATE_STOPPED -> view?.showPaused()
             PlaybackStateCompat.STATE_BUFFERING -> view?.showBuffering()
             PlaybackStateCompat.STATE_PLAYING -> view?.showPlaying()
         }

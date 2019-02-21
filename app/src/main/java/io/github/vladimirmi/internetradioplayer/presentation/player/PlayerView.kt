@@ -16,7 +16,7 @@ interface PlayerView : BaseView {
 
     fun setMetadata(metadata: MediaMetadataCompat)
 
-    fun showStopped()
+    fun showPaused()
 
     fun showBuffering()
 
@@ -27,4 +27,8 @@ interface PlayerView : BaseView {
     fun showNext()
 
     fun setGroup(group: String)
+
+    fun openLinkDialog(url: String)
+
+    fun openAddShortcutDialog()
 }

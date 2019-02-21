@@ -5,7 +5,7 @@ import android.util.AttributeSet
 import androidx.recyclerview.widget.LinearLayoutManager
 import io.github.vladimirmi.internetradioplayer.di.Scopes
 import io.github.vladimirmi.internetradioplayer.domain.model.Record
-import io.github.vladimirmi.internetradioplayer.presentation.base.BaseFrameView
+import io.github.vladimirmi.internetradioplayer.presentation.base.BaseViewGroup
 import kotlinx.android.synthetic.main.view_records.view.*
 import toothpick.Toothpick
 
@@ -15,7 +15,7 @@ import toothpick.Toothpick
 
 class RecordsViewImpl @JvmOverloads constructor(
         context: Context, attrs: AttributeSet? = null, defStyleAttr: Int = 0
-) : BaseFrameView<RecordsPresenter, RecordsView>(context, attrs, defStyleAttr), RecordsView {
+) : BaseViewGroup<RecordsPresenter, RecordsView>(context, attrs, defStyleAttr), RecordsView {
 
     private val recordsAdapter = RecordsAdapter()
 

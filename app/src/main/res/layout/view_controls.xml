@@ -2,12 +2,10 @@
 <androidx.constraintlayout.widget.ConstraintLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    xmlns:tools="http://schemas.android.com/tools"
-    android:padding="24dp"
     android:background="@color/primary"
-    tools:showIn="@layout/fragment_player"
     >
 
     <ImageButton
@@ -17,10 +15,10 @@
         android:background="@drawable/ic_skip_previous"
         android:contentDescription="@string/desc_skip_previous_button"
         android:foreground="?actionBarItemBackground"
-        app:layout_constraintBottom_toBottomOf="parent"
+        app:backgroundTint="@color/grey_50"
         app:layout_constraintEnd_toStartOf="@id/stopBt"
         app:layout_constraintStart_toStartOf="parent"
-        app:backgroundTint="@color/grey_50"
+        app:layout_constraintTop_toTopOf="@id/playPauseBtStub"
         tools:ignore="UnusedAttribute"
         />
 
@@ -31,10 +29,25 @@
         android:background="@drawable/ic_stop"
         android:contentDescription="@string/desc_stop_button"
         android:foreground="?actionBarItemBackground"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toStartOf="@id/playPauseBt"
-        app:layout_constraintStart_toEndOf="@id/previousBt"
         app:backgroundTint="@color/stop_button"
+        app:layout_constraintEnd_toStartOf="@id/playPauseBtStub"
+        app:layout_constraintStart_toEndOf="@id/previousBt"
+        app:layout_constraintTop_toTopOf="@id/playPauseBtStub"
+        tools:ignore="UnusedAttribute"
+        />
+
+    <Space
+        android:id="@+id/playPauseBtStub"
+        android:layout_width="48dp"
+        android:layout_height="48dp"
+        android:layout_marginTop="24dp"
+        android:layout_marginBottom="24dp"
+        android:contentDescription="@string/desc_play_pause_button"
+        android:foreground="?actionBarItemBackground"
+        app:layout_constraintEnd_toStartOf="@id/nextBt"
+        app:layout_constraintStart_toEndOf="@id/stopBt"
+        app:layout_constraintBottom_toTopOf="@id/progressSb"
+        app:layout_constraintTop_toTopOf="parent"
         tools:ignore="UnusedAttribute"
         />
 
@@ -42,11 +55,13 @@
         android:id="@+id/playPauseBt"
         android:layout_width="48dp"
         android:layout_height="48dp"
+        android:layout_marginTop="8dp"
+        android:layout_marginEnd="8dp"
+        android:layout_marginRight="8dp"
         android:contentDescription="@string/desc_play_pause_button"
         android:foreground="?actionBarItemBackground"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toStartOf="@id/nextBt"
-        app:layout_constraintStart_toEndOf="@id/stopBt"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
         app:pb_pauseColor="@color/pause_button"
         app:pb_playColor="@color/play_button"
         tools:ignore="UnusedAttribute"
@@ -59,10 +74,20 @@
         android:background="@drawable/ic_skip_next"
         android:contentDescription="@string/desc_skip_next_button"
         android:foreground="?actionBarItemBackground"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toEndOf="@id/playPauseBt"
         app:backgroundTint="@color/grey_50"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toEndOf="@id/playPauseBtStub"
+        app:layout_constraintTop_toTopOf="@id/playPauseBtStub"
         tools:ignore="UnusedAttribute"
         />
+
+    <SeekBar
+        android:layout_margin="16dp"
+        android:padding="4dp"
+        android:id="@+id/progressSb"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        app:layout_constraintBottom_toBottomOf="parent"
+        />
+
 </androidx.constraintlayout.widget.ConstraintLayout>

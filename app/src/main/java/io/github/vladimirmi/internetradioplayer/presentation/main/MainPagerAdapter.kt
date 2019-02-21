@@ -7,7 +7,6 @@ import androidx.fragment.app.FragmentPagerAdapter
 import io.github.vladimirmi.internetradioplayer.R
 import io.github.vladimirmi.internetradioplayer.presentation.favoritelist.FavoriteListFragment
 import io.github.vladimirmi.internetradioplayer.presentation.history.HistoryFragment
-import io.github.vladimirmi.internetradioplayer.presentation.player.PlayerFragment
 import io.github.vladimirmi.internetradioplayer.presentation.search.SearchFragment
 
 /**
@@ -27,9 +26,7 @@ class MainPagerAdapter(context: Context, fm: FragmentManager) : FragmentPagerAda
         return when (position) {
             0 -> SearchFragment()
             1 -> FavoriteListFragment()
-            2 -> PlayerFragment()
-            3 -> HistoryFragment()
-            else -> throw IllegalStateException("Can't find fragment for the position $position")
+            else -> HistoryFragment()
         }
     }
 

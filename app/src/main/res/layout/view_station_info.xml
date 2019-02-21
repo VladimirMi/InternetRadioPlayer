@@ -5,96 +5,44 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:animateLayoutChanges="true"
-    tools:showIn="@layout/fragment_player"
+    android:background="@color/primary"
+    android:padding="16dp"
     >
 
-    <com.google.android.material.textfield.TextInputEditText
-        android:id="@+id/titleEt"
-        android:layout_width="0dp"
+    <TextView
+        android:id="@+id/titleTv"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginLeft="8dp"
-        android:layout_marginTop="8dp"
-        android:layout_marginRight="8dp"
-        android:hint="@string/station_title"
-        android:imeOptions="actionDone"
-        android:inputType="textNoSuggestions"
-        android:textAppearance="@style/TextAppearance.AppCompat.Title"
-        app:layout_constraintEnd_toStartOf="@+id/editTitleBt"
-        app:layout_constraintStart_toStartOf="parent"
+        android:textAppearance="@style/TextAppearance.AppCompat.Title.Inverse"
         app:layout_constraintTop_toTopOf="parent"
+        tools:text="Station title"
         />
 
-    <ImageButton
-        android:id="@+id/editTitleBt"
-        android:layout_width="40dp"
-        android:layout_height="40dp"
-        android:foreground="?actionBarItemBackground"
-        app:layout_constraintBottom_toBottomOf="@+id/titleEt"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toTopOf="@+id/titleEt"
-        android:background="@null"
-        android:src="@drawable/ic_edit"
-        android:contentDescription="@string/desc_edit_title_button"
-        tools:ignore="UnusedAttribute"
+    <TextView
+        android:id="@+id/groupTv"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="8dp"
+        android:textAppearance="@style/TextAppearance.AppCompat.Medium.Inverse"
+        app:layout_constraintTop_toBottomOf="@+id/titleTv"
+        tools:text="Station group"
         />
 
     <TextView
         android:id="@+id/specsTv"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginStart="8dp"
-        android:layout_marginLeft="8dp"
-        android:layout_marginEnd="8dp"
-        android:layout_marginRight="8dp"
-        android:textAppearance="@style/TextAppearance.AppCompat.Body1"
-        android:padding="4dp"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/titleEt"
-        />
-
-    <FrameLayout
-        android:id="@+id/groupSpinnerWrapper"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_margin="4dp"
-        android:background="@drawable/bg_frame"
-        android:paddingTop="4dp"
-        android:paddingBottom="4dp"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/specsTv"
-        >
-
-        <Spinner
-            android:id="@+id/groupSpinner"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:spinnerMode="dropdown"
-            />
-    </FrameLayout>
-
-    <ImageButton
-        android:id="@+id/favoriteBt"
-        android:layout_width="40dp"
-        android:layout_height="40dp"
-        android:layout_marginTop="8dp"
-        android:background="@drawable/ic_star"
-        android:contentDescription="@string/desc_add_remove_favorite"
-        android:foreground="?actionBarItemBackground"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/groupSpinnerWrapper"
-        tools:ignore="UnusedAttribute"
+        android:textAppearance="@style/TextAppearance.AppCompat.Medium.Inverse"
+        app:layout_constraintTop_toBottomOf="@+id/groupTv"
+        tools:layout_editor_absoluteX="16dp"
+        tools:text="22100 kHz, 128 kbps"
         />
 
     <ImageButton
         android:id="@+id/addShortcutBt"
         android:layout_width="40dp"
         android:layout_height="40dp"
-        android:layout_marginStart="8dp"
-        android:layout_marginLeft="8dp"
-        android:layout_marginTop="8dp"
+        android:layout_marginTop="16dp"
         android:background="@null"
         android:contentDescription="@string/desc_create_shortcut_button"
         android:foreground="?actionBarItemBackground"
@@ -102,8 +50,10 @@
         android:scaleType="fitCenter"
         android:src="@drawable/ic_label_plus"
         app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toStartOf="@+id/equalizerBt"
+        app:layout_constraintHorizontal_bias="0.5"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/groupSpinnerWrapper"
+        app:layout_constraintTop_toBottomOf="@+id/specsTv"
         tools:ignore="UnusedAttribute"
         />
 
@@ -111,9 +61,7 @@
         android:id="@+id/equalizerBt"
         android:layout_width="40dp"
         android:layout_height="40dp"
-        android:layout_marginStart="24dp"
-        android:layout_marginLeft="24dp"
-        android:layout_marginTop="8dp"
+        android:layout_marginTop="16dp"
         android:background="@null"
         android:contentDescription="@string/desc_open_equalizer"
         android:foreground="?actionBarItemBackground"
@@ -121,8 +69,10 @@
         android:scaleType="fitCenter"
         android:src="@drawable/ic_equalizer"
         app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toStartOf="@+id/recordBt"
+        app:layout_constraintHorizontal_bias="0.5"
         app:layout_constraintStart_toEndOf="@+id/addShortcutBt"
-        app:layout_constraintTop_toBottomOf="@+id/groupSpinnerWrapper"
+        app:layout_constraintTop_toBottomOf="@+id/specsTv"
         tools:ignore="UnusedAttribute"
         />
 
@@ -130,18 +80,33 @@
         android:id="@+id/recordBt"
         android:layout_width="40dp"
         android:layout_height="40dp"
-        android:layout_marginStart="24dp"
-        android:layout_marginLeft="24dp"
-        android:layout_marginTop="8dp"
+        android:layout_marginTop="16dp"
         android:background="@null"
         android:contentDescription="@string/desc_record"
         android:foreground="?actionBarItemBackground"
-        android:padding="6dp"
+        android:padding="10dp"
         android:scaleType="fitCenter"
         android:src="@drawable/bg_circle"
         app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toStartOf="@+id/favoriteBt"
+        app:layout_constraintHorizontal_bias="0.5"
         app:layout_constraintStart_toEndOf="@+id/equalizerBt"
-        app:layout_constraintTop_toBottomOf="@+id/groupSpinnerWrapper"
+        app:layout_constraintTop_toBottomOf="@+id/specsTv"
+        tools:ignore="UnusedAttribute"
+        />
+
+    <ImageButton
+        android:id="@+id/favoriteBt"
+        android:layout_width="40dp"
+        android:layout_height="40dp"
+        android:layout_marginTop="16dp"
+        android:background="@drawable/ic_star"
+        android:contentDescription="@string/desc_add_remove_favorite"
+        android:foreground="?actionBarItemBackground"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.5"
+        app:layout_constraintStart_toEndOf="@+id/recordBt"
+        app:layout_constraintTop_toBottomOf="@+id/specsTv"
         tools:ignore="UnusedAttribute"
         />
 

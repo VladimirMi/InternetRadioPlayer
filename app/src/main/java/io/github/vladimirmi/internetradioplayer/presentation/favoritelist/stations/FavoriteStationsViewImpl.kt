@@ -9,7 +9,7 @@ import io.github.vladimirmi.internetradioplayer.data.db.entity.Station
 import io.github.vladimirmi.internetradioplayer.di.Scopes
 import io.github.vladimirmi.internetradioplayer.domain.model.FlatStationsList
 import io.github.vladimirmi.internetradioplayer.extensions.visible
-import io.github.vladimirmi.internetradioplayer.presentation.base.BaseFrameView
+import io.github.vladimirmi.internetradioplayer.presentation.base.BaseViewGroup
 import kotlinx.android.synthetic.main.view_favorite_stations.view.*
 import toothpick.Toothpick
 
@@ -19,7 +19,7 @@ import toothpick.Toothpick
 
 class FavoriteStationsViewImpl @JvmOverloads constructor(
         context: Context, attrs: AttributeSet? = null, defStyleAttr: Int = 0
-) : BaseFrameView<FavoriteStationsPresenter, FavoriteStationsView>(context, attrs, defStyleAttr),
+) : BaseViewGroup<FavoriteStationsPresenter, FavoriteStationsView>(context, attrs, defStyleAttr),
         FavoriteStationsView, StationItemCallback {
 
     private val adapter by lazy { StationListAdapter(this) }
@@ -56,7 +56,6 @@ class FavoriteStationsViewImpl @JvmOverloads constructor(
         itemTouchHelper.attachToRecyclerView(stationsRv)
     }
 
-
     //region =============== StationListView ==============
 
     override fun setStations(stationList: FlatStationsList) {
@@ -69,6 +68,7 @@ class FavoriteStationsViewImpl @JvmOverloads constructor(
         if (position != -1) stationsRv.scrollToPosition(position)
     }
 
+    //todo refactor
 //    override fun showControls(visibility: Float) {
 //        val pb = ((48 * (1 - visibility) + 16) * context!!.dp).toInt()
 //        stationsRv.setPadding(0, stationsRv.paddingTop, 0, pb)

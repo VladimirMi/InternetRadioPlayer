@@ -6,19 +6,16 @@ import android.view.Menu
 import android.view.MenuItem
 import android.view.View
 import androidx.appcompat.view.menu.MenuBuilder
-import androidx.constraintlayout.widget.ConstraintSet
 import androidx.core.content.ContextCompat
 import androidx.viewpager.widget.ViewPager
+import com.google.android.material.bottomsheet.BottomSheetBehavior
 import io.github.vladimirmi.internetradioplayer.R
 import io.github.vladimirmi.internetradioplayer.data.utils.MAIN_PAGE_ID_KEY
 import io.github.vladimirmi.internetradioplayer.di.Scopes
-import io.github.vladimirmi.internetradioplayer.extensions.color
-import io.github.vladimirmi.internetradioplayer.extensions.setTintExt
-import io.github.vladimirmi.internetradioplayer.extensions.visible
-import io.github.vladimirmi.internetradioplayer.extensions.waitForMeasure
 import io.github.vladimirmi.internetradioplayer.presentation.base.BaseFragment
+import io.github.vladimirmi.internetradioplayer.presentation.base.BaseView
+import io.github.vladimirmi.internetradioplayer.presentation.player.PlayerViewImpl
 import kotlinx.android.synthetic.main.fragment_main.*
-import kotlinx.android.synthetic.main.view_controls_simple.*
 import toothpick.Toothpick
 
 
@@ -29,7 +26,6 @@ import toothpick.Toothpick
 class MainFragment : BaseFragment<MainPresenter, MainView>(), MainView, SimpleControlsView {
 
     override val layout = R.layout.fragment_main
-    private var controlsVisibility = 0f
 
     companion object {
         fun newInstance(page: Int): MainFragment {
@@ -47,6 +43,20 @@ class MainFragment : BaseFragment<MainPresenter, MainView>(), MainView, SimpleCo
     }
 
     override fun setupView(view: View) {
+        setupPager()
+        setupControls()
+        BottomSheetBehavior.from(playerView).setBottomSheetCallback(object : BottomSheetBehavior.BottomSheetCallback() {
+            override fun onSlide(bottomSheet: View, slideOffset: Float) {
+                (playerView as? PlayerViewImpl)?.setState(slideOffset)
+            }
+
+            override fun onStateChanged(bottomSheet: View, newState: Int) {
+            }
+        })
+        (playerView as? PlayerViewImpl)?.setState(0f)
+    }
+
+    private fun setupPager() {
         mainPager.adapter = MainPagerAdapter(context!!, childFragmentManager)
         mainPager.offscreenPageLimit = 3
         mainTl.setupWithViewPager(mainPager)
@@ -63,11 +73,14 @@ class MainFragment : BaseFragment<MainPresenter, MainView>(), MainView, SimpleCo
                 showControls(visibility)
             }
         })
+    }
 
-        sPlayPauseBt.setManualMode(true)
-        sPlayPauseBt.setOnClickListener { presenter.playPause() }
-        sMetadataTv.isSelected = true
-        sBufferingPb.indeterminateDrawable.setTintExt(requireContext().color(R.color.pause_button))
+    private fun setupControls() {
+        //todo refactor
+        //        sPlayPauseBt.setManualMode(true)
+        //        sPlayPauseBt.setOnClickListener { presenter.playPause() }
+        //        sMetadataTv.isSelected = true
+        //        sBufferingPb.indeterminateDrawable.setTintExt(requireContext().color(R.color.pause_button))
     }
 
     @SuppressLint("RestrictedApi")
@@ -101,41 +114,57 @@ class MainFragment : BaseFragment<MainPresenter, MainView>(), MainView, SimpleCo
     }
 
     override fun showStopped() {
-        sPlayPauseBt.setPlaying(false, controlsVisibility > 0)
-        sBufferingPb.visible(false)
+//        sPlayPauseBt.setPlaying(false, controlsVisibility > 0)
+//        sBufferingPb.visible(false)
     }
 
     override fun showPlaying() {
-        sPlayPauseBt.setPlaying(true, controlsVisibility > 0)
-        sBufferingPb.visible(false)
+//        sPlayPauseBt.setPlaying(true, controlsVisibility > 0)
+//        sBufferingPb.visible(false)
     }
 
     override fun showBuffering() {
-        sPlayPauseBt.setPlaying(true, controlsVisibility > 0)
-        sBufferingPb.visible(true)
+//        sPlayPauseBt.setPlaying(true, controlsVisibility > 0)
+//        sBufferingPb.visible(true)
     }
 
     override fun setMetadata(metadata: String) {
-        sMetadataTv.text = metadata
+//        sMetadataTv.text = metadata
     }
 
     override fun showControls(visibility: Float) {
-        simpleControlsContainer.waitForMeasure {
-            val set = ConstraintSet()
-            set.clone(mainCl)
-            set.setMargin(R.id.mainPager, ConstraintSet.BOTTOM,
-                    (simpleControlsContainer.height * visibility).toInt())
-            set.applyTo(mainCl)
-
-            childFragmentManager.fragments
-                    .filterIsInstance(SimpleControlsView::class.java)
-                    .forEach { it.showControls(visibility) }
-
-            controlsVisibility = visibility
-        }
+        //todo refactor
+//        simpleControlsContainer.waitForMeasure {
+//            val set = ConstraintSet()
+//            set.clone(mainCl)
+//            set.setMargin(R.id.mainPager, ConstraintSet.BOTTOM,
+//                    (simpleControlsContainer.height * visibility).toInt())
+//            set.applyTo(mainCl)
+//
+//            childFragmentManager.fragments
+//                    .filterIsInstance(SimpleControlsView::class.java)
+//                    .forEach { it.showControls(visibility) }
+//
+//            controlsVisibility = visibility
+//        }
     }
 
     //endregion
+
+    override fun onStart() {
+        super.onStart()
+        (playerView as? BaseView)?.onStart()
+    }
+
+    override fun onStop() {
+        super.onStop()
+        (playerView as? BaseView)?.onStop()
+    }
+
+    override fun onDestroy() {
+        super.onDestroy()
+        (playerView as? BaseView)?.onDestroy()
+    }
 
     private fun openAddStationDialog() {
         NewStationDialog().show(childFragmentManager, "new_station_dialog")

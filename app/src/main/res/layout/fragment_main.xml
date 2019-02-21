@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.constraintlayout.widget.ConstraintLayout
+<androidx.coordinatorlayout.widget.CoordinatorLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
@@ -8,46 +8,43 @@
     android:layout_height="match_parent"
     >
 
-    <io.github.vladimirmi.internetradioplayer.ui.ScrollableTabLayout
-        android:id="@+id/mainTl"
-        style="@style/CustomTabLayout"
+    <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:elevation="4dp"
-        app:layout_constraintLeft_toLeftOf="parent"
-        app:layout_constraintRight_toRightOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        app:tabMode="scrollable"
-        tools:ignore="UnusedAttribute"
-        />
+        android:layout_height="match_parent"
+        android:orientation="vertical"
+        android:layout_marginBottom="64dp"
+        >
+        <io.github.vladimirmi.internetradioplayer.ui.ScrollableTabLayout
+            android:id="@+id/mainTl"
+            style="@style/CustomTabLayout"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:elevation="4dp"
+            app:layout_constraintLeft_toLeftOf="parent"
+            app:layout_constraintRight_toRightOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:tabMode="scrollable"
+            tools:ignore="UnusedAttribute"
+            />
 
 
-    <androidx.viewpager.widget.ViewPager
-        android:id="@+id/mainPager"
-        android:layout_width="match_parent"
-        android:layout_height="0dp"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintLeft_toLeftOf="parent"
-        app:layout_constraintRight_toRightOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/mainTl"
-        />
+        <androidx.viewpager.widget.ViewPager
+            android:id="@+id/mainPager"
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_weight="1"
+            />
 
-    <View
-        android:id="@+id/shadow"
-        android:layout_width="match_parent"
-        android:layout_height="4dp"
-        android:background="@drawable/shadow_reverse"
-        app:layout_constraintBottom_toBottomOf="@id/mainPager"
-        />
+    </LinearLayout>
 
     <include
-        android:id="@+id/simpleControlsContainer"
-        layout="@layout/view_controls_simple"
+        android:elevation="8dp"
+        android:id="@+id/playerView"
+        layout="@layout/view_player"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/mainPager"
+        android:layout_height="match_parent"
+        app:behavior_peekHeight="64dp"
+        app:layout_behavior="@string/bottom_sheet_behavior"
         />
 
-</androidx.constraintlayout.widget.ConstraintLayout>
+</androidx.coordinatorlayout.widget.CoordinatorLayout>

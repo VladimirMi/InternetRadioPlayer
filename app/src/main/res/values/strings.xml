@@ -49,7 +49,6 @@
     <string-array name="uber_stations_tabs">
         <item>@string/tabs_search</item>
         <item>@string/tabs_stations</item>
-        <item>@string/tabs_player</item>
         <item>@string/tabs_history</item>
     </string-array>
 

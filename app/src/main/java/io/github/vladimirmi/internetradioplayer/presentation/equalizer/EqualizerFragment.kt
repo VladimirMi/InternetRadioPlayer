@@ -8,7 +8,9 @@ import io.github.vladimirmi.internetradioplayer.R
 import io.github.vladimirmi.internetradioplayer.di.Scopes
 import io.github.vladimirmi.internetradioplayer.domain.model.EqualizerConfig
 import io.github.vladimirmi.internetradioplayer.domain.model.EqualizerPreset
-import io.github.vladimirmi.internetradioplayer.extensions.*
+import io.github.vladimirmi.internetradioplayer.extensions.setProgressX
+import io.github.vladimirmi.internetradioplayer.extensions.visible
+import io.github.vladimirmi.internetradioplayer.extensions.waitForMeasure
 import io.github.vladimirmi.internetradioplayer.presentation.base.BaseFragment
 import io.github.vladimirmi.internetradioplayer.ui.EqualizerContainer
 import io.github.vladimirmi.internetradioplayer.utils.SimpleOnSeekBarChangeListener
@@ -54,7 +56,7 @@ class EqualizerFragment : BaseFragment<EqualizerPresenter, EqualizerView>(), Equ
         sPlayPauseBt.setManualMode(true)
         sPlayPauseBt.setOnClickListener { presenter.playPause() }
         sMetadataTv.isSelected = true
-        sBufferingPb.indeterminateDrawable.setTintExt(requireContext().color(R.color.pause_button))
+//        sBufferingPb.indeterminateDrawable.setTintExt(requireContext().color(R.color.pause_button))
     }
 
     override fun setupEqualizer(config: EqualizerConfig) {
@@ -125,17 +127,17 @@ class EqualizerFragment : BaseFragment<EqualizerPresenter, EqualizerView>(), Equ
 
     override fun showStopped() {
         sPlayPauseBt.isPlaying = false
-        sBufferingPb.visible(false)
+//        sBufferingPb.visible(false)
     }
 
     override fun showPlaying() {
         sPlayPauseBt.isPlaying = true
-        sBufferingPb.visible(false)
+//        sBufferingPb.visible(false)
     }
 
     override fun showBuffering() {
         sPlayPauseBt.isPlaying = true
-        sBufferingPb.visible(true)
+//        sBufferingPb.visible(true)
     }
 
     override fun setMetadata(metadata: String) {

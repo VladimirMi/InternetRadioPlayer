@@ -2,10 +2,7 @@ package io.github.vladimirmi.internetradioplayer.presentation.favoritelist.stati
 
 import android.graphics.drawable.GradientDrawable
 import android.os.Build
-import android.view.LayoutInflater
-import android.view.View
-import android.view.ViewGroup
-import android.view.ViewOutlineProvider
+import android.view.*
 import androidx.annotation.ColorRes
 import androidx.core.content.ContextCompat
 import androidx.recyclerview.widget.RecyclerView
@@ -35,6 +32,8 @@ val fixedOutline = if (Build.VERSION.SDK_INT >= 21) FixedOutlineProvider() else 
 
 class StationListAdapter(private val callback: StationItemCallback)
     : RecyclerView.Adapter<GroupElementVH>() {
+
+    var longClickedItem: Any? = null
 
     private var stations = FlatStationsList()
     private var dragged = false
@@ -97,6 +96,7 @@ class StationListAdapter(private val callback: StationItemCallback)
     }
 
     override fun onBindViewHolder(holder: GroupElementVH, position: Int) {
+        holder.itemView.setOnLongClickListener { longClickedItem = stations[position]; false }
         holder.changeBackground(stations, position)
         holder.select(position)
         when (holder) {
@@ -132,8 +132,15 @@ class StationListAdapter(private val callback: StationItemCallback)
     }
 }
 
-abstract class GroupElementVH(itemView: View) : RecyclerView.ViewHolder(itemView) {
+abstract class GroupElementVH(itemView: View)
+    : RecyclerView.ViewHolder(itemView), View.OnCreateContextMenuListener {
+
     @ColorRes protected var bgColorId = R.color.grey_50
+
+    init {
+        @Suppress("LeakingThis")
+        itemView.setOnCreateContextMenuListener(this)
+    }
 
     protected fun setBottomMargin(addBottomMargin: Boolean) {
         val lp = itemView.layoutParams as ViewGroup.MarginLayoutParams
@@ -154,6 +161,10 @@ class GroupTitleVH(itemView: View) : GroupElementVH(itemView) {
 
     init {
         bgColorId = R.color.secondary_lighter
+    }
+
+    override fun onCreateContextMenu(menu: ContextMenu?, v: View?, menuInfo: ContextMenu.ContextMenuInfo?) {
+        menu?.add(Menu.NONE, R.id.context_menu_action_edit, 0, R.string.menu_edit)
     }
 
     fun bind(group: Group) {
@@ -185,7 +196,12 @@ class GroupTitleVH(itemView: View) : GroupElementVH(itemView) {
     }
 }
 
-class GroupItemVH(itemView: View) : GroupElementVH(itemView) {
+class GroupItemVH(itemView: View) : GroupElementVH(itemView), View.OnCreateContextMenuListener {
+
+    override fun onCreateContextMenu(menu: ContextMenu?, v: View?, menuInfo: ContextMenu.ContextMenuInfo?) {
+        menu?.add(Menu.NONE, R.id.context_menu_action_edit, 0, R.string.menu_edit)
+        menu?.add(Menu.NONE, R.id.context_menu_action_delete, 1, R.string.menu_delete)
+    }
 
     fun bind(station: Station) {
         itemView.nameTv.text = station.name

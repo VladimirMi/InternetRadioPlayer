@@ -2,9 +2,7 @@ package io.github.vladimirmi.internetradioplayer.presentation.favoritelist.recor
 
 import android.graphics.drawable.GradientDrawable
 import android.os.Build
-import android.view.LayoutInflater
-import android.view.View
-import android.view.ViewGroup
+import android.view.*
 import androidx.core.content.ContextCompat
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.RecyclerView
@@ -25,6 +23,7 @@ import kotlinx.android.synthetic.main.item_station.view.*
 class RecordsAdapter : RecyclerView.Adapter<RecordVH>() {
 
     var onItemClickListener: ((Record) -> Unit)? = null
+    var longClickedItem: Record? = null
 
     private var selectedId: String? = null
 
@@ -65,6 +64,7 @@ class RecordsAdapter : RecyclerView.Adapter<RecordVH>() {
         holder.bind(record)
         holder.setBackground(position, itemCount)
         holder.itemView.setOnClickListener { onItemClickListener?.invoke(record) }
+        holder.itemView.setOnLongClickListener { longClickedItem = records[position]; false }
     }
 
     override fun getItemCount(): Int {
@@ -81,10 +81,19 @@ class RecordsAdapter : RecyclerView.Adapter<RecordVH>() {
     }
 }
 
-class RecordVH(itemView: View) : RecyclerView.ViewHolder(itemView) {
+class RecordVH(itemView: View) : RecyclerView.ViewHolder(itemView), View.OnCreateContextMenuListener {
+
     private val titleTv = itemView.titleTv
 
     private var bgColor: Int = itemView.context.color(R.color.grey_50)
+
+    init {
+        itemView.setOnCreateContextMenuListener(this)
+    }
+
+    override fun onCreateContextMenu(menu: ContextMenu?, v: View?, menuInfo: ContextMenu.ContextMenuInfo?) {
+        menu?.add(Menu.NONE, R.id.context_menu_action_delete, 1, R.string.menu_delete)
+    }
 
     fun bind(record: Record) {
         titleTv.text = record.name

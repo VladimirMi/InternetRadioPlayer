@@ -2,11 +2,13 @@ package io.github.vladimirmi.internetradioplayer.presentation.favoritelist.recor
 
 import android.content.Context
 import android.util.AttributeSet
+import android.view.MenuItem
 import androidx.recyclerview.widget.LinearLayoutManager
 import io.github.vladimirmi.internetradioplayer.di.Scopes
 import io.github.vladimirmi.internetradioplayer.domain.model.Record
 import io.github.vladimirmi.internetradioplayer.presentation.base.BaseViewGroup
 import kotlinx.android.synthetic.main.view_records.view.*
+import timber.log.Timber
 import toothpick.Toothpick
 
 /**
@@ -30,6 +32,11 @@ class RecordsViewImpl @JvmOverloads constructor(
         recordsRv.layoutManager = LinearLayoutManager(context)
         recordsRv.adapter = recordsAdapter
         recordsAdapter.onItemClickListener = { presenter.selectRecord(it) }
+    }
+
+    fun onContextItemSelected(item: MenuItem): Boolean {
+        Timber.e("onContextItemSelected: $item ${recordsAdapter.longClickedItem}")
+        return true
     }
 
     override fun setRecords(records: List<Record>) {

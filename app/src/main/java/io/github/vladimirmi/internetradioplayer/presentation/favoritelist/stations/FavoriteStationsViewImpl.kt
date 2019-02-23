@@ -2,6 +2,7 @@ package io.github.vladimirmi.internetradioplayer.presentation.favoritelist.stati
 
 import android.content.Context
 import android.util.AttributeSet
+import android.view.MenuItem
 import androidx.recyclerview.widget.ItemTouchHelper
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
@@ -11,6 +12,7 @@ import io.github.vladimirmi.internetradioplayer.domain.model.FlatStationsList
 import io.github.vladimirmi.internetradioplayer.extensions.visible
 import io.github.vladimirmi.internetradioplayer.presentation.base.BaseViewGroup
 import kotlinx.android.synthetic.main.view_favorite_stations.view.*
+import timber.log.Timber
 import toothpick.Toothpick
 
 /**
@@ -22,23 +24,23 @@ class FavoriteStationsViewImpl @JvmOverloads constructor(
 ) : BaseViewGroup<FavoriteStationsPresenter, FavoriteStationsView>(context, attrs, defStyleAttr),
         FavoriteStationsView, StationItemCallback {
 
-    private val adapter by lazy { StationListAdapter(this) }
+    private val stationListAdapter by lazy { StationListAdapter(this) }
 
     private val itemTouchHelper by lazy {
         ItemTouchHelper(object : ItemSwipeCallback() {
 
             override fun onMove(recyclerView: RecyclerView, viewHolder: RecyclerView.ViewHolder,
                                 target: RecyclerView.ViewHolder): Boolean {
-                adapter.onMove(viewHolder.adapterPosition, target.adapterPosition)
+                stationListAdapter.onMove(viewHolder.adapterPosition, target.adapterPosition)
                 return true
             }
 
             override fun onStartDrag(position: Int) {
-                adapter.onStartDrag(position)
+                stationListAdapter.onStartDrag(position)
             }
 
             override fun onIdle() {
-                presenter.moveGroupElements(adapter.onIdle())
+                presenter.moveGroupElements(stationListAdapter.onIdle())
             }
         })
     }
@@ -52,19 +54,24 @@ class FavoriteStationsViewImpl @JvmOverloads constructor(
 
     override fun setupView() {
         stationsRv.layoutManager = LinearLayoutManager(context!!)
-        stationsRv.adapter = adapter
-        itemTouchHelper.attachToRecyclerView(stationsRv)
+        stationsRv.adapter = stationListAdapter
+//        itemTouchHelper.attachToRecyclerView(stationsRv)
+    }
+
+    fun onContextItemSelected(item: MenuItem): Boolean {
+        Timber.e("onContextItemSelected: $item ${stationListAdapter.longClickedItem}")
+        return true
     }
 
     //region =============== StationListView ==============
 
     override fun setStations(stationList: FlatStationsList) {
-        adapter.setData(stationList)
+        stationListAdapter.setData(stationList)
     }
 
     override fun selectStation(station: Station) {
-        adapter.selectStation(station)
-        val position = adapter.getPosition(station)
+        stationListAdapter.selectStation(station)
+        val position = stationListAdapter.getPosition(station)
         if (position != -1) stationsRv.scrollToPosition(position)
     }
 

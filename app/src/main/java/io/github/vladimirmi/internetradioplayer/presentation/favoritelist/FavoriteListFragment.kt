@@ -1,12 +1,15 @@
 package io.github.vladimirmi.internetradioplayer.presentation.favoritelist
 
 import android.annotation.SuppressLint
+import android.view.MenuItem
 import android.view.View
 import com.google.android.material.tabs.TabLayout
 import io.github.vladimirmi.internetradioplayer.R
 import io.github.vladimirmi.internetradioplayer.di.Scopes
 import io.github.vladimirmi.internetradioplayer.presentation.base.BaseFragment
 import io.github.vladimirmi.internetradioplayer.presentation.base.BaseView
+import io.github.vladimirmi.internetradioplayer.presentation.favoritelist.records.RecordsViewImpl
+import io.github.vladimirmi.internetradioplayer.presentation.favoritelist.stations.FavoriteStationsViewImpl
 import kotlinx.android.synthetic.main.fragment_favorite_list.*
 import toothpick.Toothpick
 
@@ -73,5 +76,12 @@ class FavoriteListFragment : BaseFragment<FavoriteListPresenter, BaseView>(){
     override fun onDestroy() {
         super.onDestroy()
         contentView?.onDestroy()
+    }
+
+
+    override fun onContextItemSelected(item: MenuItem): Boolean {
+        return (container.getChildAt(0) as? FavoriteStationsViewImpl)?.onContextItemSelected(item)
+                ?: (container.getChildAt(0) as? RecordsViewImpl)?.onContextItemSelected(item)
+                ?: super.onContextItemSelected(item)
     }
 }

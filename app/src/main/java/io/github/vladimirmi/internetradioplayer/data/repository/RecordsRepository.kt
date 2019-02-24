@@ -71,7 +71,7 @@ class RecordsRepository
                     if (deleted) Completable.fromAction { recordsObs.accept(initRecords()) }
                     else Completable.error(IllegalStateException("Can not delete record"))
                 }
-                .observeOn(Schedulers.io())
+                .subscribeOn(Schedulers.io())
     }
 
     private fun initRecords(): List<Record> {

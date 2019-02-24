@@ -3,6 +3,7 @@ package io.github.vladimirmi.internetradioplayer.presentation.history
 import android.annotation.SuppressLint
 import android.graphics.drawable.GradientDrawable
 import android.os.Build
+import android.view.ContextMenu
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -27,8 +28,9 @@ class HistoryAdapter : RecyclerView.Adapter<StationVH>() {
 
     private var selectedStationId: String? = null
 
-    var onItemClickListener: ((Station) -> Unit)? = null
+    var longClickedItem: Station? = null
 
+    var onItemClickListener: ((Station) -> Unit)? = null
     var onAddToFavListener: ((Pair<Station, Boolean>) -> Unit)? = null
 
     var stations: List<Pair<Station, Boolean>> = emptyList()
@@ -71,6 +73,7 @@ class HistoryAdapter : RecyclerView.Adapter<StationVH>() {
         holder.setBackground(position, itemCount)
         holder.select(station)
         holder.itemView.setOnClickListener { onItemClickListener?.invoke(station.first) }
+        holder.itemView.setOnLongClickListener { longClickedItem = stations[position].first; false }
     }
 
     override fun getItemCount(): Int {
@@ -97,11 +100,19 @@ class HistoryAdapter : RecyclerView.Adapter<StationVH>() {
     }
 }
 
-class StationVH(itemView: View) : RecyclerView.ViewHolder(itemView) {
+class StationVH(itemView: View) : RecyclerView.ViewHolder(itemView), View.OnCreateContextMenuListener {
     private val titleTv = itemView.titleTv
+
     private val subtitleTv = itemView.subtitleTv
     private val favoriteBt = itemView.favoriteBt
     private var bgColor: Int = 0
+    init {
+        itemView.setOnCreateContextMenuListener(this)
+    }
+
+    override fun onCreateContextMenu(menu: ContextMenu?, v: View?, menuInfo: ContextMenu.ContextMenuInfo?) {
+        menu?.add(R.id.context_menu_history, R.id.context_menu_action_delete, 0, R.string.menu_delete)
+    }
 
     @SuppressLint("SetTextI18n")
     fun bind(station: Station) {

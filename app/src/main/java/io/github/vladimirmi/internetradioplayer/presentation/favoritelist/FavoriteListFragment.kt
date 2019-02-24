@@ -95,7 +95,7 @@ class FavoriteListFragment : BaseFragment<FavoriteListPresenter, BaseView>(), Ed
             } else {
                 return false
             }
-            else -> return false
+            else -> return super.onContextItemSelected(item)
         }
         return true
     }
@@ -114,6 +114,6 @@ class FavoriteListFragment : BaseFragment<FavoriteListPresenter, BaseView>(), Ed
     private fun getContextSelectedItem(): Any {
         return (contentView as? FavoriteStationsView)?.getContextSelectedItem()
                 ?: (contentView as? RecordsView)?.getContextSelectedItem()
-                ?: throw IllegalStateException()
+                ?: Any()
     }
 }

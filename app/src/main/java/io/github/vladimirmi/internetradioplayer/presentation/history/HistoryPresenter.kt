@@ -52,4 +52,10 @@ class HistoryPresenter
                 .subscribeX()
                 .addTo(dataSubs)
     }
+
+    fun deleteHistory(station: Station) {
+        historyInteractor.deleteHistory(station)
+                .subscribeX()
+                .addTo(dataSubs)
+    }
 }

@@ -3,7 +3,6 @@ package io.github.vladimirmi.internetradioplayer.domain.interactor
 import io.github.vladimirmi.internetradioplayer.data.db.entity.Station
 import io.github.vladimirmi.internetradioplayer.data.repository.HistoryRepository
 import io.github.vladimirmi.internetradioplayer.data.repository.MediaRepository
-import io.github.vladimirmi.internetradioplayer.data.repository.StationRepository
 import io.github.vladimirmi.internetradioplayer.extensions.subscribeX
 import io.reactivex.Completable
 import io.reactivex.Observable
@@ -33,5 +32,9 @@ class HistoryInteractor
                          mediaRepository.currentMedia = it.firstOrNull() ?: Station.nullObj()
                     }
                 }
+    }
+
+    fun deleteHistory(station: Station): Completable {
+        return historyRepository.deleteHistory(station.id)
     }
 }

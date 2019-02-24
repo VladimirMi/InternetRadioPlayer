@@ -95,7 +95,7 @@ class RecordVH(itemView: View) : RecyclerView.ViewHolder(itemView), View.OnCreat
     }
 
     override fun onCreateContextMenu(menu: ContextMenu?, v: View?, menuInfo: ContextMenu.ContextMenuInfo?) {
-        menu?.add(R.id.context_menu_records, R.id.context_menu_action_delete, 1, R.string.menu_delete)
+        menu?.add(R.id.context_menu_records, R.id.context_menu_action_delete, 0, R.string.menu_delete)
     }
 
     fun bind(record: Record) {

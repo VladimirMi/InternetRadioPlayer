@@ -1,5 +1,6 @@
 package io.github.vladimirmi.internetradioplayer.presentation.history
 
+import android.view.MenuItem
 import android.view.View
 import androidx.recyclerview.widget.LinearLayoutManager
 import io.github.vladimirmi.internetradioplayer.R
@@ -53,5 +54,13 @@ class HistoryFragment : BaseFragment<HistoryPresenter, HistoryView>(), HistoryVi
     override fun showPlaceholder(show: Boolean) {
         historyRv.visible(!show)
         placeholderView.visible(show)
+    }
+
+    override fun onContextItemSelected(item: MenuItem): Boolean {
+        if (item.groupId == R.id.context_menu_history && item.itemId == R.id.context_menu_action_delete) {
+            historyAdapter.longClickedItem?.let { presenter.deleteHistory(it) }
+            return true
+        }
+        return super.onContextItemSelected(item)
     }
 }

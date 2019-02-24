@@ -8,7 +8,9 @@ import io.github.vladimirmi.internetradioplayer.data.db.entity.Station
 import io.github.vladimirmi.internetradioplayer.data.service.recorder.RecorderService
 import io.github.vladimirmi.internetradioplayer.domain.model.Record
 import io.github.vladimirmi.internetradioplayer.extensions.toUri
-import timber.log.Timber
+import io.reactivex.Completable
+import io.reactivex.Single
+import io.reactivex.schedulers.Schedulers
 import java.io.File
 import javax.inject.Inject
 
@@ -53,20 +55,23 @@ class RecordsRepository
     }
 
     fun createNewRecord(name: String): Record {
-        Timber.e("createNewRecord: $name")
         val file = File(recordsDirectory, "$name.$RECORD_EXT")
         return Record.fromFile(file)
     }
 
     fun commitRecord(record: Record) {
         val newRecord = record.copy(createdAt = System.currentTimeMillis())
-        Timber.e("commitRecord: $newRecord")
         val list = (recordsObs.value ?: emptyList()) + newRecord
         recordsObs.accept(list)
     }
 
-    fun deleteRecord(record: Record) {
-        Timber.e("deleteRecord: $record")
+    fun deleteRecord(record: Record): Completable {
+        return Single.fromCallable { record.file.delete() }
+                .flatMapCompletable { deleted ->
+                    if (deleted) Completable.fromAction { recordsObs.accept(initRecords()) }
+                    else Completable.error(IllegalStateException("Can not delete record"))
+                }
+                .observeOn(Schedulers.io())
     }
 
     private fun initRecords(): List<Record> {

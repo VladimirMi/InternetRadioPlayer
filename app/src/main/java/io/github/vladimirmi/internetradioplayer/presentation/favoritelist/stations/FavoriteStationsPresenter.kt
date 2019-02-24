@@ -3,7 +3,6 @@ package io.github.vladimirmi.internetradioplayer.presentation.favoritelist.stati
 import io.github.vladimirmi.internetradioplayer.data.db.entity.Station
 import io.github.vladimirmi.internetradioplayer.domain.interactor.FavoriteListInteractor
 import io.github.vladimirmi.internetradioplayer.domain.interactor.MediaInteractor
-import io.github.vladimirmi.internetradioplayer.domain.interactor.StationInteractor
 import io.github.vladimirmi.internetradioplayer.domain.model.FlatStationsList
 import io.github.vladimirmi.internetradioplayer.extensions.subscribeX
 import io.github.vladimirmi.internetradioplayer.presentation.base.BasePresenter
@@ -55,5 +54,9 @@ class FavoriteStationsPresenter
         favoriteListInteractor.moveGroupElements(stations)
                 .subscribeX()
                 .addTo(dataSubs)
+    }
+
+    fun delete(item: Any) {
+        TODO("not implemented")
     }
 }

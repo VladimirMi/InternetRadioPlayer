@@ -2,7 +2,6 @@ package io.github.vladimirmi.internetradioplayer.presentation.favoritelist.stati
 
 import android.content.Context
 import android.util.AttributeSet
-import android.view.MenuItem
 import androidx.recyclerview.widget.ItemTouchHelper
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
@@ -12,7 +11,6 @@ import io.github.vladimirmi.internetradioplayer.domain.model.FlatStationsList
 import io.github.vladimirmi.internetradioplayer.extensions.visible
 import io.github.vladimirmi.internetradioplayer.presentation.base.BaseViewGroup
 import kotlinx.android.synthetic.main.view_favorite_stations.view.*
-import timber.log.Timber
 import toothpick.Toothpick
 
 /**
@@ -58,11 +56,6 @@ class FavoriteStationsViewImpl @JvmOverloads constructor(
 //        itemTouchHelper.attachToRecyclerView(stationsRv)
     }
 
-    fun onContextItemSelected(item: MenuItem): Boolean {
-        Timber.e("onContextItemSelected: $item ${stationListAdapter.longClickedItem}")
-        return true
-    }
-
     //region =============== StationListView ==============
 
     override fun setStations(stationList: FlatStationsList) {
@@ -76,15 +69,13 @@ class FavoriteStationsViewImpl @JvmOverloads constructor(
     }
 
     //todo refactor
-//    override fun showControls(visibility: Float) {
-//        val pb = ((48 * (1 - visibility) + 16) * context!!.dp).toInt()
-//        stationsRv.setPadding(0, stationsRv.paddingTop, 0, pb)
-//    }
 
     override fun showPlaceholder(show: Boolean) {
         stationsRv.visible(!show)
         placeholderView.visible(show)
     }
+
+    override fun getContextSelectedItem() : Any = stationListAdapter.longClickedItem!!
 
     //endregion
 
@@ -103,4 +94,6 @@ class FavoriteStationsViewImpl @JvmOverloads constructor(
     }
 
     //endregion
+
 }
+

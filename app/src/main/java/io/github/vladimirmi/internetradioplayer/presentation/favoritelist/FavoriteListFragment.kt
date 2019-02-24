@@ -5,11 +5,14 @@ import android.view.MenuItem
 import android.view.View
 import com.google.android.material.tabs.TabLayout
 import io.github.vladimirmi.internetradioplayer.R
+import io.github.vladimirmi.internetradioplayer.data.db.entity.Station
 import io.github.vladimirmi.internetradioplayer.di.Scopes
+import io.github.vladimirmi.internetradioplayer.domain.model.Record
 import io.github.vladimirmi.internetradioplayer.presentation.base.BaseFragment
 import io.github.vladimirmi.internetradioplayer.presentation.base.BaseView
-import io.github.vladimirmi.internetradioplayer.presentation.favoritelist.records.RecordsViewImpl
-import io.github.vladimirmi.internetradioplayer.presentation.favoritelist.stations.FavoriteStationsViewImpl
+import io.github.vladimirmi.internetradioplayer.presentation.favoritelist.records.RecordsView
+import io.github.vladimirmi.internetradioplayer.presentation.favoritelist.stations.EditDialog
+import io.github.vladimirmi.internetradioplayer.presentation.favoritelist.stations.FavoriteStationsView
 import kotlinx.android.synthetic.main.fragment_favorite_list.*
 import toothpick.Toothpick
 
@@ -18,7 +21,7 @@ import toothpick.Toothpick
  * Created by Vladimir Mikhalev 30.09.2017.
  */
 
-class FavoriteListFragment : BaseFragment<FavoriteListPresenter, BaseView>(){
+class FavoriteListFragment : BaseFragment<FavoriteListPresenter, BaseView>(), EditDialog.Callback {
 
     override val layout = R.layout.fragment_favorite_list
     private var contentView: BaseView? = null
@@ -78,10 +81,39 @@ class FavoriteListFragment : BaseFragment<FavoriteListPresenter, BaseView>(){
         contentView?.onDestroy()
     }
 
-
     override fun onContextItemSelected(item: MenuItem): Boolean {
-        return (container.getChildAt(0) as? FavoriteStationsViewImpl)?.onContextItemSelected(item)
-                ?: (container.getChildAt(0) as? RecordsViewImpl)?.onContextItemSelected(item)
-                ?: super.onContextItemSelected(item)
+        val selectedItem = getContextSelectedItem()
+        when (selectedItem) {
+            is Station -> when {
+                item.itemId == R.id.context_menu_action_edit -> openStationEditDialog(selectedItem)
+                item.itemId == R.id.context_menu_action_delete -> presenter.deleteStation(selectedItem)
+                else -> return false
+
+            }
+            is Record -> if (item.itemId == R.id.context_menu_action_delete) {
+                presenter.deleteRecord(selectedItem)
+            } else {
+                return false
+            }
+            else -> return false
+        }
+        return true
+    }
+
+    override fun onDialogEdit(newText: String) {
+        val station = getContextSelectedItem() as? Station ?: return
+        presenter.editStation(station, newText)
+    }
+
+    private fun openStationEditDialog(station: Station) {
+        //todo to strings
+        EditDialog.newInstance("Edit station", "Station name", station.name)
+                .show(childFragmentManager, "edit_station_dialog")
+    }
+
+    private fun getContextSelectedItem(): Any {
+        return (contentView as? FavoriteStationsView)?.getContextSelectedItem()
+                ?: (contentView as? RecordsView)?.getContextSelectedItem()
+                ?: throw IllegalStateException()
     }
 }

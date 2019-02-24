@@ -164,7 +164,7 @@ class GroupTitleVH(itemView: View) : GroupElementVH(itemView) {
     }
 
     override fun onCreateContextMenu(menu: ContextMenu?, v: View?, menuInfo: ContextMenu.ContextMenuInfo?) {
-        menu?.add(Menu.NONE, R.id.context_menu_action_edit, 0, R.string.menu_edit)
+        menu?.add(R.id.context_menu_stations, R.id.context_menu_action_edit, 0, R.string.menu_edit)
     }
 
     fun bind(group: Group) {
@@ -199,8 +199,8 @@ class GroupTitleVH(itemView: View) : GroupElementVH(itemView) {
 class GroupItemVH(itemView: View) : GroupElementVH(itemView), View.OnCreateContextMenuListener {
 
     override fun onCreateContextMenu(menu: ContextMenu?, v: View?, menuInfo: ContextMenu.ContextMenuInfo?) {
-        menu?.add(Menu.NONE, R.id.context_menu_action_edit, 0, R.string.menu_edit)
-        menu?.add(Menu.NONE, R.id.context_menu_action_delete, 1, R.string.menu_delete)
+        menu?.add(R.id.context_menu_stations, R.id.context_menu_action_edit, 0, R.string.menu_edit)
+        menu?.add(R.id.context_menu_stations, R.id.context_menu_action_delete, 1, R.string.menu_delete)
     }
 
     fun bind(station: Station) {

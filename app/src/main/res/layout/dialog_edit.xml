@@ -8,12 +8,11 @@
     >
 
     <EditText
-        android:id="@+id/groupEt"
+        android:id="@+id/editTextView"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:hint="@string/dialog_new_group_hint"
         android:inputType="textNoSuggestions"
-        tools:ignore="Autofill"
+        tools:ignore="Autofill,LabelFor"
         />
 
 </FrameLayout>

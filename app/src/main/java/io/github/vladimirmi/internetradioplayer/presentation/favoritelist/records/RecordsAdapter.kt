@@ -2,7 +2,10 @@ package io.github.vladimirmi.internetradioplayer.presentation.favoritelist.recor
 
 import android.graphics.drawable.GradientDrawable
 import android.os.Build
-import android.view.*
+import android.view.ContextMenu
+import android.view.LayoutInflater
+import android.view.View
+import android.view.ViewGroup
 import androidx.core.content.ContextCompat
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.RecyclerView
@@ -92,7 +95,7 @@ class RecordVH(itemView: View) : RecyclerView.ViewHolder(itemView), View.OnCreat
     }
 
     override fun onCreateContextMenu(menu: ContextMenu?, v: View?, menuInfo: ContextMenu.ContextMenuInfo?) {
-        menu?.add(Menu.NONE, R.id.context_menu_action_delete, 1, R.string.menu_delete)
+        menu?.add(R.id.context_menu_records, R.id.context_menu_action_delete, 1, R.string.menu_delete)
     }
 
     fun bind(record: Record) {

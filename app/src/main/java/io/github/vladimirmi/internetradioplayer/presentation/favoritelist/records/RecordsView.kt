@@ -12,4 +12,5 @@ interface RecordsView : BaseView {
     fun setRecords(records: List<Record>)
 
     fun selectRecord(id: String)
+    fun getContextSelectedItem(): Any
 }

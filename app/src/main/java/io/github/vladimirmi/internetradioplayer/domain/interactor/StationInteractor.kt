@@ -58,19 +58,11 @@ class StationInteractor
                 }
     }
 
-    fun editStationTitle(title: String): Completable {
-        val station = mediaRepository.currentMedia as? Station ?: return Completable.complete()
-        if (title == station.name) return Completable.complete()
-        if (title.isBlank()) return Completable.error(MessageResException(R.string.msg_name_empty_error))
+    fun updateStation(station: Station): Completable {
+        if (station.name.isBlank()) return Completable.error(MessageResException(R.string.msg_name_empty_error))
 
-        val newStation = station.copy(name = title)
-        return favoritesRepository.updateStations(listOf(newStation))
-                .andThen(setStation(newStation))
-                .andThen(if (favoriteListInteractor.isFavorite(newStation)) {
-                    favoriteListInteractor.initFavoriteList()
-                } else {
-                    Completable.complete()
-                })
+        return favoritesRepository.updateStations(listOf(station))
+                .andThen(favoriteListInteractor.initFavoriteList())
     }
 
     private fun setStation(station: Station): Completable {

@@ -4,8 +4,10 @@ import io.github.vladimirmi.internetradioplayer.data.db.entity.Station
 import io.github.vladimirmi.internetradioplayer.domain.interactor.FavoriteListInteractor
 import io.github.vladimirmi.internetradioplayer.domain.interactor.StationInteractor
 import io.github.vladimirmi.internetradioplayer.domain.model.Record
+import io.github.vladimirmi.internetradioplayer.extensions.subscribeX
 import io.github.vladimirmi.internetradioplayer.presentation.base.BasePresenter
 import io.github.vladimirmi.internetradioplayer.presentation.base.BaseView
+import io.reactivex.rxkotlin.addTo
 import timber.log.Timber
 import javax.inject.Inject
 
@@ -19,7 +21,9 @@ class FavoriteListPresenter
     : BasePresenter<BaseView>() {
 
     fun deleteStation(station: Station) {
-        Timber.e("deleteStation: $station")
+        stationInteractor.switchFavorite(station)
+                .subscribeX()
+                .addTo(dataSubs)
     }
 
     fun deleteRecord(record: Record) {
@@ -27,7 +31,9 @@ class FavoriteListPresenter
     }
 
     fun editStation(station: Station, newName: String) {
-        Timber.e("editStation: $newName $station")
+        stationInteractor.updateStation(station.copy(name = newName))
+                .subscribeX()
+                .addTo(dataSubs)
     }
 
 }

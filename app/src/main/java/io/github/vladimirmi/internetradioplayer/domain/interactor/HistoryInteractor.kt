@@ -27,9 +27,9 @@ class HistoryInteractor
     fun selectRecentStation(): Completable {
         return getHistoryObs()
                 .first(emptyList())
-                .flatMapCompletable {
+                .flatMapCompletable { stations ->
                     Completable.fromAction {
-                         mediaRepository.currentMedia = it.firstOrNull() ?: Station.nullObj()
+                        stations.firstOrNull()?.let { mediaRepository.currentMedia = it }
                     }
                 }
     }

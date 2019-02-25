@@ -33,6 +33,10 @@ class PlayerViewImpl @JvmOverloads constructor(
         context: Context, attrs: AttributeSet? = null, defStyleAttr: Int = 0
 ) : BaseViewGroup<PlayerPresenter, PlayerView>(context, attrs, defStyleAttr), PlayerView {
 
+    companion object {
+        const val STATE_INIT = -1f
+    }
+
     override fun providePresenter(): PlayerPresenter {
         return Toothpick.openScopes(Scopes.ROOT_ACTIVITY, this)
                 .getInstance(PlayerPresenter::class.java).also {
@@ -40,17 +44,7 @@ class PlayerViewImpl @JvmOverloads constructor(
                 }
     }
 
-    private var startPlayX = 0f
-    private var startPlayY = 0f
-    private var startStatusY = 0f
-
     override fun setupView() {
-        waitForLayout {
-            startPlayX = playPauseBt.x
-            startPlayY = playPauseBt.y
-            startStatusY = statusTv.y
-            true
-        }
         favoriteBt.setOnClickListener { presenter.switchFavorite() }
         addShortcutBt.setOnClickListener { openAddShortcutDialog() }
 
@@ -127,16 +121,14 @@ class PlayerViewImpl @JvmOverloads constructor(
 
     //endregion
 
-    private fun TextView.setTextOrHide(text: String?) {
-        if (text == null || text.isBlank()) {
-            visible(false)
-        } else {
-            visible(true)
-            this.text = text
-        }
-    }
+    private var startPlayX = 0f
+    private var startPlayY = 0f
+    private var startStatusY = 0f
 
     fun setState(state: Float) {
+        if (state == STATE_INIT) {
+            initStartState(); return
+        }
         val set = ConstraintSet()
         set.clone(this)
         set.setVerticalBias(R.id.controlsView, state)
@@ -151,6 +143,25 @@ class PlayerViewImpl @JvmOverloads constructor(
         playPauseBt.x = startPlayX + (playPauseBtStub.x - startPlayX) * state
         playPauseBt.y = startPlayY + (playPauseBtStub.y - startPlayY) * state
         statusTv.y = startStatusY + (height - statusTv.height - startStatusY) * state
+    }
+
+    private fun initStartState() {
+        waitForLayout {
+            startPlayX = playPauseBt.x
+            startPlayY = playPauseBt.y
+            startStatusY = statusTv.y
+            true
+        }
+        setState(0f)
+    }
+
+    private fun TextView.setTextOrHide(text: String?) {
+        if (text == null || text.isBlank()) {
+            visible(false)
+        } else {
+            visible(true)
+            this.text = text
+        }
     }
 
     private fun TextView.linkStyle(enable: Boolean) {

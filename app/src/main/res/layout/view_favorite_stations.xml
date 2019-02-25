@@ -4,6 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     >
 
     <androidx.recyclerview.widget.RecyclerView
@@ -21,7 +22,8 @@
         android:id="@+id/placeholderView"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_gravity="center_vertical"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintBottom_toBottomOf="parent"
         android:gravity="center"
         android:text="@string/favorite_list_placeholder"
         android:textAppearance="@style/TextAppearance.AppCompat.Title"

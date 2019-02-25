@@ -6,7 +6,7 @@ import io.github.vladimirmi.internetradioplayer.domain.interactor.StationInterac
 import io.github.vladimirmi.internetradioplayer.domain.model.Record
 import io.github.vladimirmi.internetradioplayer.extensions.subscribeX
 import io.github.vladimirmi.internetradioplayer.presentation.base.BasePresenter
-import io.github.vladimirmi.internetradioplayer.presentation.base.BaseView
+import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.rxkotlin.addTo
 import javax.inject.Inject
 
@@ -17,7 +17,15 @@ import javax.inject.Inject
 class FavoriteListPresenter
 @Inject constructor(private val stationInteractor: StationInteractor,
                     private val recordsInteractor: RecordsInteractor)
-    : BasePresenter<BaseView>() {
+    : BasePresenter<FavoriteListView>() {
+
+    override fun onAttach(view: FavoriteListView) {
+        view.showTabs(false)
+        recordsInteractor.recordsObs
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribeX(onNext = { view.showTabs(it.isNotEmpty()) })
+                .addTo(viewSubs)
+    }
 
     fun deleteStation(station: Station) {
         stationInteractor.switchFavorite(station)

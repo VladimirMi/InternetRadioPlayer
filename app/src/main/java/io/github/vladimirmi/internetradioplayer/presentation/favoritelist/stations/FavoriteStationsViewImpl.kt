@@ -68,8 +68,6 @@ class FavoriteStationsViewImpl @JvmOverloads constructor(
         if (position != -1) stationsRv.scrollToPosition(position)
     }
 
-    //todo refactor
-
     override fun showPlaceholder(show: Boolean) {
         stationsRv.visible(!show)
         placeholderView.visible(show)

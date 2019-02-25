@@ -12,10 +12,12 @@ import com.google.android.material.bottomsheet.BottomSheetBehavior
 import io.github.vladimirmi.internetradioplayer.R
 import io.github.vladimirmi.internetradioplayer.data.utils.MAIN_PAGE_ID_KEY
 import io.github.vladimirmi.internetradioplayer.di.Scopes
+import io.github.vladimirmi.internetradioplayer.extensions.visible
 import io.github.vladimirmi.internetradioplayer.presentation.base.BaseFragment
 import io.github.vladimirmi.internetradioplayer.presentation.base.BaseView
 import io.github.vladimirmi.internetradioplayer.presentation.player.PlayerViewImpl
 import kotlinx.android.synthetic.main.fragment_main.*
+import timber.log.Timber
 import toothpick.Toothpick
 
 
@@ -23,7 +25,7 @@ import toothpick.Toothpick
  * Created by Vladimir Mikhalev 23.10.2017.
  */
 
-class MainFragment : BaseFragment<MainPresenter, MainView>(), MainView, SimpleControlsView {
+class MainFragment : BaseFragment<MainPresenter, MainView>(), MainView {
 
     override val layout = R.layout.fragment_main
 
@@ -44,16 +46,7 @@ class MainFragment : BaseFragment<MainPresenter, MainView>(), MainView, SimpleCo
 
     override fun setupView(view: View) {
         setupPager()
-        setupControls()
-        BottomSheetBehavior.from(playerView).setBottomSheetCallback(object : BottomSheetBehavior.BottomSheetCallback() {
-            override fun onSlide(bottomSheet: View, slideOffset: Float) {
-                (playerView as? PlayerViewImpl)?.setState(slideOffset)
-            }
-
-            override fun onStateChanged(bottomSheet: View, newState: Int) {
-            }
-        })
-        (playerView as? PlayerViewImpl)?.setState(0f)
+        setupPlayerView()
     }
 
     private fun setupPager() {
@@ -69,18 +62,20 @@ class MainFragment : BaseFragment<MainPresenter, MainView>(), MainView, SimpleCo
             }
 
             override fun onPageScrolled(position: Int, positionOffset: Float, positionOffsetPixels: Int) {
-                val visibility = Math.min(1f, Math.abs(PAGE_PLAYER - (position + positionOffset)))
-                showControls(visibility)
             }
         })
     }
 
-    private fun setupControls() {
-        //todo refactor
-        //        sPlayPauseBt.setManualMode(true)
-        //        sPlayPauseBt.setOnClickListener { presenter.playPause() }
-        //        sMetadataTv.isSelected = true
-        //        sBufferingPb.indeterminateDrawable.setTintExt(requireContext().color(R.color.pause_button))
+    private fun setupPlayerView() {
+        BottomSheetBehavior.from(playerView).setBottomSheetCallback(object : BottomSheetBehavior.BottomSheetCallback() {
+            override fun onSlide(bottomSheet: View, slideOffset: Float) {
+                (playerView as? PlayerViewImpl)?.setState(slideOffset)
+            }
+
+            override fun onStateChanged(bottomSheet: View, newState: Int) {
+            }
+        })
+        (playerView as? PlayerViewImpl)?.setState(PlayerViewImpl.STATE_INIT)
     }
 
     @SuppressLint("RestrictedApi")
@@ -113,40 +108,10 @@ class MainFragment : BaseFragment<MainPresenter, MainView>(), MainView, SimpleCo
         mainPager.setCurrentItem(page, false)
     }
 
-    override fun showStopped() {
-//        sPlayPauseBt.setPlaying(false, controlsVisibility > 0)
-//        sBufferingPb.visible(false)
-    }
-
-    override fun showPlaying() {
-//        sPlayPauseBt.setPlaying(true, controlsVisibility > 0)
-//        sBufferingPb.visible(false)
-    }
-
-    override fun showBuffering() {
-//        sPlayPauseBt.setPlaying(true, controlsVisibility > 0)
-//        sBufferingPb.visible(true)
-    }
-
-    override fun setMetadata(metadata: String) {
-//        sMetadataTv.text = metadata
-    }
-
-    override fun showControls(visibility: Float) {
-        //todo refactor
-//        simpleControlsContainer.waitForMeasure {
-//            val set = ConstraintSet()
-//            set.clone(mainCl)
-//            set.setMargin(R.id.mainPager, ConstraintSet.BOTTOM,
-//                    (simpleControlsContainer.height * visibility).toInt())
-//            set.applyTo(mainCl)
-//
-//            childFragmentManager.fragments
-//                    .filterIsInstance(SimpleControlsView::class.java)
-//                    .forEach { it.showControls(visibility) }
-//
-//            controlsVisibility = visibility
-//        }
+    override fun showPlayerView(visible: Boolean) {
+        Timber.e("showPlayerView: $visible")
+        playerView.visible(visible)
+        if (visible) (playerView as? PlayerViewImpl)?.setState(PlayerViewImpl.STATE_INIT)
     }
 
     //endregion

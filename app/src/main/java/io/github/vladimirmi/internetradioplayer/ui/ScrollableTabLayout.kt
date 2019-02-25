@@ -12,7 +12,7 @@ import java.lang.reflect.Field
  * Created by Vladimir Mikhalev 12.12.2018.
  */
 
-private const val NUM_PAGES = 4
+private const val NUM_PAGES = 3
 
 class ScrollableTabLayout : TabLayout {
 
@@ -29,7 +29,7 @@ class ScrollableTabLayout : TabLayout {
     }
 
     private fun initTabMinWidth() {
-        val (width, height) = context.getScreenSize()
+        val (width, _) = context.getScreenSize()
         val tabMinWidth = width / NUM_PAGES
 
         val field: Field

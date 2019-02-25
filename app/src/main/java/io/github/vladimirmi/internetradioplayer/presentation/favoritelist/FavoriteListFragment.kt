@@ -8,6 +8,7 @@ import io.github.vladimirmi.internetradioplayer.R
 import io.github.vladimirmi.internetradioplayer.data.db.entity.Station
 import io.github.vladimirmi.internetradioplayer.di.Scopes
 import io.github.vladimirmi.internetradioplayer.domain.model.Record
+import io.github.vladimirmi.internetradioplayer.extensions.visible
 import io.github.vladimirmi.internetradioplayer.presentation.base.BaseFragment
 import io.github.vladimirmi.internetradioplayer.presentation.base.BaseView
 import io.github.vladimirmi.internetradioplayer.presentation.favoritelist.records.RecordsView
@@ -21,7 +22,8 @@ import toothpick.Toothpick
  * Created by Vladimir Mikhalev 30.09.2017.
  */
 
-class FavoriteListFragment : BaseFragment<FavoriteListPresenter, BaseView>(), EditDialog.Callback {
+class FavoriteListFragment : BaseFragment<FavoriteListPresenter, FavoriteListView>(),
+        FavoriteListView, EditDialog.Callback {
 
     override val layout = R.layout.fragment_favorite_list
     private var contentView: BaseView? = null
@@ -64,6 +66,11 @@ class FavoriteListFragment : BaseFragment<FavoriteListPresenter, BaseView>(), Ed
             text = getString(R.string.records)
         })
         navigationTl.getTabAt(0)?.select()
+    }
+
+    override fun showTabs(visible: Boolean) {
+        navigationTl.visible(visible)
+        if (!visible) navigationTl.getTabAt(0)?.select()
     }
 
     override fun onStart() {

@@ -10,11 +10,5 @@ interface MainView : BaseView {
 
     fun setPageId(pageId: Int)
 
-    fun setMetadata(metadata: String)
-
-    fun showStopped()
-
-    fun showBuffering()
-
-    fun showPlaying()
+    fun showPlayerView(visible: Boolean)
 }

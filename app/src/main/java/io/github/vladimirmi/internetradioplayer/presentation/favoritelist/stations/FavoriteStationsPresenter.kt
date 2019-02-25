@@ -55,8 +55,4 @@ class FavoriteStationsPresenter
                 .subscribeX()
                 .addTo(dataSubs)
     }
-
-    fun delete(item: Any) {
-        TODO("not implemented")
-    }
 }

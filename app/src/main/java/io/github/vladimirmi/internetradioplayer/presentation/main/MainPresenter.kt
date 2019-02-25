@@ -21,10 +21,11 @@ class MainPresenter
     : BasePresenter<MainView>() {
 
     override fun onAttach(view: MainView) {
-        view.showPlayerView(false)
         mediaInteractor.currentMediaObs
+                .map { !it.isNull() }
+                .distinctUntilChanged()
                 .observeOn(AndroidSchedulers.mainThread())
-                .subscribeX(onNext = { view.showPlayerView(true) })
+                .subscribeX(onNext = { view.showPlayerView(it) })
                 .addTo(viewSubs)
     }
 

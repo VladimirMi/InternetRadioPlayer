@@ -6,7 +6,7 @@ import android.support.v4.media.session.PlaybackStateCompat
 import io.github.vladimirmi.internetradioplayer.R
 import io.github.vladimirmi.internetradioplayer.data.db.entity.Station
 import io.github.vladimirmi.internetradioplayer.data.repository.RecordsRepository
-import io.github.vladimirmi.internetradioplayer.data.service.PlayerService
+import io.github.vladimirmi.internetradioplayer.data.service.*
 import io.github.vladimirmi.internetradioplayer.domain.interactor.FavoriteListInteractor
 import io.github.vladimirmi.internetradioplayer.domain.interactor.MediaInteractor
 import io.github.vladimirmi.internetradioplayer.domain.interactor.PlayerInteractor
@@ -17,6 +17,7 @@ import io.github.vladimirmi.internetradioplayer.presentation.base.BasePresenter
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.disposables.Disposable
 import io.reactivex.rxkotlin.addTo
+import timber.log.Timber
 import javax.inject.Inject
 
 /**
@@ -115,12 +116,6 @@ class PlayerPresenter
 //                .addTo(viewSubs)
     }
 
-    fun addShortcut(startPlay: Boolean) {
-        if (stationInteractor.addCurrentShortcut(startPlay)) {
-            view?.showSnackbar(R.string.msg_add_shortcut_success)
-        }
-    }
-
     fun playPause() {
         with(playerInteractor) {
             if (!isPlaying && !isNetAvail) {
@@ -145,14 +140,31 @@ class PlayerPresenter
 
     private fun handleState(state: PlaybackStateCompat) {
         when (state.state) {
-            PlaybackStateCompat.STATE_PAUSED, PlaybackStateCompat.STATE_STOPPED -> view?.showPaused()
-            PlaybackStateCompat.STATE_BUFFERING -> view?.showBuffering()
-            PlaybackStateCompat.STATE_PLAYING -> view?.showPlaying()
+            PlaybackStateCompat.STATE_PAUSED -> {
+                view?.showPlaying(false)
+                view?.setStatus(R.string.status_paused)
+            }
+            PlaybackStateCompat.STATE_STOPPED -> {
+                view?.showPlaying(false)
+                view?.setStatus(R.string.status_stopped)
+            }
+            PlaybackStateCompat.STATE_BUFFERING -> {
+                view?.showPlaying(true)
+                view?.setStatus(R.string.metadata_buffering)
+            }
+            PlaybackStateCompat.STATE_PLAYING ->{
+                view?.showPlaying(true)
+                view?.setStatus(R.string.status_playing)
+            }
         }
     }
 
     private fun handleMetadata(metadata: MediaMetadataCompat) {
-        view?.setMetadata(metadata)
+        Timber.e("handleMetadata: ${metadata.album} ${metadata.artist} ${metadata.title}")
+        view?.setMetadata(metadata.artist, metadata.title)
+        val metadataLine = if (metadata.isEmpty() || metadata.isNotSupported()) metadata.album
+        else "${metadata.artist} - ${metadata.title}"
+        view?.setSimpleMetadata(metadataLine)
     }
 
     private fun handleSessionEvent(event: Pair<String, Bundle>) {

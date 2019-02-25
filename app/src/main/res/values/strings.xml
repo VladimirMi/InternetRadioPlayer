@@ -28,6 +28,11 @@
     <string name="metadata_buffering">Loading…</string>
     <string name="metadata_not_available">Metadata not available</string>
 
+    <string name="status_playing">Playing</string>
+    <string name="status_stopped">Stopped</string>
+    <string name="status_paused">Paused</string>
+    <string name="status_recording">Recording</string>
+
     <string name="desc_expand_collapse">expand/collapse</string>
     <string name="desc_station_icon">station icon</string>
     <string name="desc_play_pause_button">play/pause</string>

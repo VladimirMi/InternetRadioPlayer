@@ -23,7 +23,7 @@ class EditDialog : BaseDialogFragment() {
             return EditDialog().apply {
                 arguments = Bundle().apply {
                     putString(TITLE, title)
-                    putString(HINT, title)
+                    putString(HINT, hint)
                     putString(TEXT, text)
                 }
             }

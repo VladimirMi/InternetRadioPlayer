@@ -1,7 +1,6 @@
 package io.github.vladimirmi.internetradioplayer.presentation.player
 
 import android.content.Context
-import android.support.v4.media.MediaMetadataCompat
 import android.text.Spannable
 import android.text.SpannableString
 import android.text.style.ForegroundColorSpan
@@ -13,9 +12,6 @@ import androidx.core.content.ContextCompat
 import androidx.fragment.app.FragmentActivity
 import io.github.vladimirmi.internetradioplayer.R
 import io.github.vladimirmi.internetradioplayer.data.db.entity.Station
-import io.github.vladimirmi.internetradioplayer.data.service.EMPTY_METADATA
-import io.github.vladimirmi.internetradioplayer.data.service.artist
-import io.github.vladimirmi.internetradioplayer.data.service.title
 import io.github.vladimirmi.internetradioplayer.di.Scopes
 import io.github.vladimirmi.internetradioplayer.domain.model.Media
 import io.github.vladimirmi.internetradioplayer.extensions.*
@@ -50,6 +46,7 @@ class PlayerViewImpl @JvmOverloads constructor(
 
         metaTitleTv.isSelected = true
         metaSubtitleTv.isSelected = true
+        simpleMetaTv.isSelected = true
         playPauseBt.setOnClickListener { presenter.playPause() }
         playPauseBt.setManualMode(true)
         previousBt.setOnClickListener { presenter.skipToPrevious() }
@@ -78,20 +75,12 @@ class PlayerViewImpl @JvmOverloads constructor(
         groupTv.text = group
     }
 
-    override fun showPaused() {
-        playPauseBt.isPlaying = false
-        statusTv.text = "Paused"
+    override fun setStatus(resId: Int) {
+        statusTv.setText(resId)
     }
 
-    override fun showPlaying() {
-        playPauseBt.isPlaying = true
-        statusTv.text = "Playing"
-    }
-
-    override fun showBuffering() {
-        playPauseBt.isPlaying = true
-        statusTv.text = "Loading"
-        setMetadata(EMPTY_METADATA)
+    override fun showPlaying(isPlaying: Boolean) {
+        playPauseBt.isPlaying = isPlaying
     }
 
     override fun showNext() {
@@ -102,21 +91,13 @@ class PlayerViewImpl @JvmOverloads constructor(
         previousBt.bounceXAnimation(-200f).start()
     }
 
-    override fun setMetadata(metadata: MediaMetadataCompat) {
-        with(metadata) {
-            metaTitleTv.setTextOrHide(artist)
-            metaSubtitleTv.setTextOrHide(title)
-        }
+    override fun setMetadata(artist: String, title: String) {
+        metaTitleTv.setTextOrHide(artist)
+        metaSubtitleTv.setTextOrHide(title)
     }
 
-    override fun openLinkDialog(url: String) {
-        val fm = (context as FragmentActivity).supportFragmentManager
-        LinkDialog.newInstance(url).show(fm, "link_dialog")
-    }
-
-    override fun openAddShortcutDialog() {
-        val fm = (context as FragmentActivity).supportFragmentManager
-        AddShortcutDialog().show(fm, "add_shortcut_dialog")
+    override fun setSimpleMetadata(metadata: String) {
+        simpleMetaTv.text = metadata
     }
 
     //endregion
@@ -140,6 +121,8 @@ class PlayerViewImpl @JvmOverloads constructor(
         stopBt.visible(visible, false)
         progressSb.visible(visible, false)
 
+        simpleMetaTv.visible(state == 0f)
+
         playPauseBt.x = startPlayX + (playPauseBtStub.x - startPlayX) * state
         playPauseBt.y = startPlayY + (playPauseBtStub.y - startPlayY) * state
         statusTv.y = startStatusY + (height - statusTv.height - startStatusY) * state
@@ -153,6 +136,16 @@ class PlayerViewImpl @JvmOverloads constructor(
             true
         }
         setState(0f)
+    }
+
+    private fun openLinkDialog(url: String) {
+        val fm = (context as FragmentActivity).supportFragmentManager
+        LinkDialog.newInstance(url).show(fm, "link_dialog")
+    }
+
+    private fun openAddShortcutDialog() {
+        val fm = (context as FragmentActivity).supportFragmentManager
+        AddShortcutDialog().show(fm, "add_shortcut_dialog")
     }
 
     private fun TextView.setTextOrHide(text: String?) {

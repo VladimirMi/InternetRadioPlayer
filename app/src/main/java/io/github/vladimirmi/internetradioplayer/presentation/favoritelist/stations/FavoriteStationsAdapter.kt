@@ -37,7 +37,7 @@ class StationListAdapter(private val callback: StationItemCallback)
 
     private var stations = FlatStationsList()
     private var dragged = false
-    private var selectedStation = Station.nullObj()
+    private var selectedStation: Station? = null
 
     fun setData(data: FlatStationsList) {
         if (dragged) {
@@ -123,10 +123,10 @@ class StationListAdapter(private val callback: StationItemCallback)
     private fun GroupElementVH.select(position: Int) {
         val selected = if (stations.isGroup(position)) {
             val group = stations.getGroup(position)
-            !group.expanded && group.stations.find { selectedStation.uri == it.uri } != null
+            !group.expanded && group.stations.find { selectedStation?.uri == it.uri } != null
         } else {
             val station = stations.getStation(position)
-            station.id == selectedStation.id
+            station.id == selectedStation?.id
         }
         select(selected)
     }

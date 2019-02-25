@@ -1,7 +1,6 @@
 package io.github.vladimirmi.internetradioplayer.data.repository
 
 import com.jakewharton.rxrelay2.BehaviorRelay
-import io.github.vladimirmi.internetradioplayer.data.db.entity.Station
 import io.github.vladimirmi.internetradioplayer.domain.model.Media
 import javax.inject.Inject
 
@@ -12,10 +11,10 @@ import javax.inject.Inject
 class MediaRepository
 @Inject constructor() {
 
-    val currentMediaObs = BehaviorRelay.create<Media>()
+    val currentMediaObs = BehaviorRelay.createDefault(Media.nullObj())
 
     var currentMedia: Media
-        get() = currentMediaObs.value ?: Station.nullObj()
+        get() = currentMediaObs.value ?: Media.nullObj()
         set(value) {
             currentMediaObs.accept(value)
         }

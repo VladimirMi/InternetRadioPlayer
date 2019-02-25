@@ -1,6 +1,5 @@
 package io.github.vladimirmi.internetradioplayer.presentation.player
 
-import android.support.v4.media.MediaMetadataCompat
 import io.github.vladimirmi.internetradioplayer.domain.model.Media
 import io.github.vladimirmi.internetradioplayer.presentation.base.BaseView
 
@@ -14,21 +13,17 @@ interface PlayerView : BaseView {
 
     fun setFavorite(isFavorite: Boolean)
 
-    fun setMetadata(metadata: MediaMetadataCompat)
+    fun setMetadata(artist: String, title: String)
 
-    fun showPaused()
+    fun setSimpleMetadata(metadata: String)
 
-    fun showBuffering()
+    fun setStatus(resId: Int)
 
-    fun showPlaying()
+    fun showPlaying(isPlaying: Boolean)
 
     fun showPrevious()
 
     fun showNext()
 
     fun setGroup(group: String)
-
-    fun openLinkDialog(url: String)
-
-    fun openAddShortcutDialog()
 }

@@ -12,12 +12,12 @@ import com.google.android.material.bottomsheet.BottomSheetBehavior
 import io.github.vladimirmi.internetradioplayer.R
 import io.github.vladimirmi.internetradioplayer.data.utils.MAIN_PAGE_ID_KEY
 import io.github.vladimirmi.internetradioplayer.di.Scopes
+import io.github.vladimirmi.internetradioplayer.extensions.isVisible
 import io.github.vladimirmi.internetradioplayer.extensions.visible
 import io.github.vladimirmi.internetradioplayer.presentation.base.BaseFragment
 import io.github.vladimirmi.internetradioplayer.presentation.base.BaseView
 import io.github.vladimirmi.internetradioplayer.presentation.player.PlayerViewImpl
 import kotlinx.android.synthetic.main.fragment_main.*
-import timber.log.Timber
 import toothpick.Toothpick
 
 
@@ -109,7 +109,7 @@ class MainFragment : BaseFragment<MainPresenter, MainView>(), MainView {
     }
 
     override fun showPlayerView(visible: Boolean) {
-        Timber.e("showPlayerView: $visible")
+        if (playerView.isVisible == visible) return
         playerView.visible(visible)
         if (visible) (playerView as? PlayerViewImpl)?.setState(PlayerViewImpl.STATE_INIT)
     }

@@ -39,10 +39,6 @@ data class Station(
             name, uri, url, encoding, bitrate, sample,
             0, Group.DEFAULT_ID)
 
-    companion object {
-        fun nullObj() = Station("", "", "", null, null, null, null, 0, "", null)
-    }
-
     @Ignore val specs: String
 
     init {
@@ -52,6 +48,4 @@ data class Station(
         bitrate?.let { sb.append(", ").append(it).append(" kbps") }
         specs = sb.trim(' ', ',').toString()
     }
-
-    fun isNull() = id.isEmpty()
 }

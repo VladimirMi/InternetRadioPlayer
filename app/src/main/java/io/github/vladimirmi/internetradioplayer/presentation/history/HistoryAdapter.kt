@@ -73,7 +73,7 @@ class HistoryAdapter : RecyclerView.Adapter<StationVH>() {
         holder.setBackground(position, itemCount)
         holder.select(station)
         holder.itemView.setOnClickListener { onItemClickListener?.invoke(station.first) }
-        holder.itemView.setOnLongClickListener { longClickedItem = stations[position].first; false }
+        holder.itemView.setOnLongClickListener { longClickedItem = station.first; false }
     }
 
     override fun getItemCount(): Int {
@@ -106,6 +106,7 @@ class StationVH(itemView: View) : RecyclerView.ViewHolder(itemView), View.OnCrea
     private val subtitleTv = itemView.subtitleTv
     private val favoriteBt = itemView.favoriteBt
     private var bgColor: Int = 0
+
     init {
         itemView.setOnCreateContextMenuListener(this)
     }

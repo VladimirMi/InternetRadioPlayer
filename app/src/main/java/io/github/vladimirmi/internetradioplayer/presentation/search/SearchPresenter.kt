@@ -7,6 +7,7 @@ import io.github.vladimirmi.internetradioplayer.domain.interactor.FavoriteListIn
 import io.github.vladimirmi.internetradioplayer.domain.interactor.MediaInteractor
 import io.github.vladimirmi.internetradioplayer.domain.interactor.SearchInteractor
 import io.github.vladimirmi.internetradioplayer.domain.interactor.StationInteractor
+import io.github.vladimirmi.internetradioplayer.domain.model.Suggestion
 import io.github.vladimirmi.internetradioplayer.extensions.subscribeX
 import io.github.vladimirmi.internetradioplayer.presentation.base.BasePresenter
 import io.reactivex.Observable
@@ -109,5 +110,13 @@ class SearchPresenter
         suggestionSub = searchInteractor.queryRegularSuggestions(newText)
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribeX(onNext = { view?.addRegularSuggestions(it) })
+    }
+
+    fun deleteRecentSuggestion(suggestion: Suggestion, curQuery: String) {
+        searchInteractor.deleteRecentSuggestion(suggestion)
+                .andThen(searchInteractor.queryRecentSuggestions(curQuery))
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribeX(onSuccess = { view?.addRecentSuggestions(it) })
+                .addTo(viewSubs)
     }
 }

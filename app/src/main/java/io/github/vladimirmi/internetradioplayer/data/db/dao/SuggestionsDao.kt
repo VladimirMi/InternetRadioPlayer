@@ -1,9 +1,6 @@
 package io.github.vladimirmi.internetradioplayer.data.db.dao
 
-import androidx.room.Dao
-import androidx.room.Insert
-import androidx.room.OnConflictStrategy
-import androidx.room.Query
+import androidx.room.*
 import io.github.vladimirmi.internetradioplayer.data.db.entity.SuggestionEntity
 import io.reactivex.Single
 
@@ -19,4 +16,10 @@ interface SuggestionsDao {
 
     @Query("SELECT * FROM suggestionentity WHERE value LIKE :query ORDER BY lastModified DESC")
     fun getSuggestions(query: String): Single<List<SuggestionEntity>>
+
+    @Query("SELECT * FROM suggestionentity WHERE value = :value")
+    fun getSuggestion(value: String): Single<SuggestionEntity>
+
+    @Delete
+    fun delete(suggestion: SuggestionEntity)
 }

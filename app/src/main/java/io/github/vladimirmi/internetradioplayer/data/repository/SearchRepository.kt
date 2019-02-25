@@ -42,6 +42,12 @@ class SearchRepository
                 .subscribeOn(Schedulers.io())
     }
 
+    fun deleteRecentSuggestion(suggestion: Suggestion): Completable {
+        return dao.getSuggestion(suggestion.value)
+                .flatMapCompletable { Completable.fromAction { dao.delete(it) } }
+                .subscribeOn(Schedulers.io())
+    }
+
     fun searchStations(query: String): Single<List<StationSearchRes>> {
         return uberStationsService.searchStations(query)
                 .map { it.result }

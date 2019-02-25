@@ -36,6 +36,10 @@ class SearchInteractor
                         .toObservable())
     }
 
+    fun deleteRecentSuggestion(suggestion: Suggestion): Completable {
+        return searchRepository.deleteRecentSuggestion(suggestion)
+    }
+
     fun searchStations(query: String): Single<List<StationSearchRes>> {
         return searchRepository.saveQuery(query)
                 .andThen(searchRepository.searchStations(query))

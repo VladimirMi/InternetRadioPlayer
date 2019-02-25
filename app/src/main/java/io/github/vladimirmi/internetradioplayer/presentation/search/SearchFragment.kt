@@ -2,6 +2,7 @@ package io.github.vladimirmi.internetradioplayer.presentation.search
 
 import android.graphics.Rect
 import android.os.Bundle
+import android.view.MenuItem
 import android.view.View
 import android.view.ViewGroup
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -90,6 +91,16 @@ class SearchFragment : BaseFragment<SearchPresenter, SearchView>(), SearchView,
             presenter.submitSearch(searchView.query.toString())
             swipeToRefresh.isRefreshing = false
         }
+    }
+
+    override fun onContextItemSelected(item: MenuItem): Boolean {
+        if (item.groupId == R.id.context_menu_history && item.itemId == R.id.context_menu_action_delete) {
+            suggestionsAdapter.longClickedItem?.let {
+                presenter.deleteRecentSuggestion(it, searchView.query.toString())
+            }
+            return true
+        }
+        return super.onContextItemSelected(item)
     }
 
     override fun onSuggestionSelected(suggestion: Suggestion) {

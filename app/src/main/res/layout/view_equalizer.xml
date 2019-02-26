@@ -45,7 +45,7 @@
         style="@style/Widget.MaterialComponents.FloatingActionButton"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        app:backgroundTint="@color/accent"
+        app:backgroundTint="@color/secondary"
         app:layout_constraintEnd_toEndOf="parent"
         app:fabSize="mini"
         app:layout_constraintTop_toTopOf="parent"

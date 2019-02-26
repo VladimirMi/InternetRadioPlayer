@@ -1,10 +1,8 @@
 package io.github.vladimirmi.internetradioplayer.data.repository
 
 import android.net.Uri
-import com.jakewharton.rxrelay2.BehaviorRelay
 import io.github.vladimirmi.internetradioplayer.data.db.entity.Station
 import io.github.vladimirmi.internetradioplayer.data.utils.StationParser
-import io.reactivex.Observable
 import io.reactivex.Single
 import io.reactivex.schedulers.Schedulers
 import javax.inject.Inject

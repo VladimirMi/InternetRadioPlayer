@@ -12,7 +12,6 @@ import io.github.vladimirmi.internetradioplayer.data.utils.BackupRestoreHelper
 import io.github.vladimirmi.internetradioplayer.data.utils.PREFERENCES_NAME
 import io.github.vladimirmi.internetradioplayer.di.Scopes
 import io.github.vladimirmi.internetradioplayer.domain.interactor.FavoriteListInteractor
-import io.github.vladimirmi.internetradioplayer.domain.interactor.StationInteractor
 import io.github.vladimirmi.internetradioplayer.extensions.startActivitySafe
 import io.github.vladimirmi.internetradioplayer.extensions.subscribeX
 import io.github.vladimirmi.internetradioplayer.navigation.Router
@@ -79,7 +78,7 @@ class SettingsFragment : PreferenceFragmentCompat(), BackPressListener {
             backupRestoreHelper.restoreBackup(context!!.contentResolver.openInputStream(data.data!!)!!)
                     .andThen(Scopes.app.getInstance(FavoriteListInteractor::class.java).initFavoriteList())
                     .andThen({
-//                        if (Scopes.app.getInstance(StationInteractor::class.java).station.isNull()) {
+                        //                        if (Scopes.app.getInstance(StationInteractor::class.java).station.isNull()) {
 //                            Scopes.app.getInstance(FavoriteListInteractor::class.java).nextStation("")
 //                        }
                     }.toCompletable())

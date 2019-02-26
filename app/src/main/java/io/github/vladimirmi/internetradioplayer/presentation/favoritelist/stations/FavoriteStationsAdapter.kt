@@ -160,7 +160,7 @@ abstract class GroupElementVH(itemView: View)
 class GroupTitleVH(itemView: View) : GroupElementVH(itemView) {
 
     init {
-        bgColorId = R.color.secondary_lighter
+        bgColorId = R.color.group
     }
 
     override fun onCreateContextMenu(menu: ContextMenu?, v: View?, menuInfo: ContextMenu.ContextMenuInfo?) {

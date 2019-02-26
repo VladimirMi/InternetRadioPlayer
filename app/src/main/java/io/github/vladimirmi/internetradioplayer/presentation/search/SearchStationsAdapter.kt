@@ -12,6 +12,7 @@ import io.github.vladimirmi.internetradioplayer.R
 import io.github.vladimirmi.internetradioplayer.data.net.model.StationSearchRes
 import io.github.vladimirmi.internetradioplayer.domain.model.FlatStationsList
 import io.github.vladimirmi.internetradioplayer.extensions.color
+import io.github.vladimirmi.internetradioplayer.extensions.themeAttrData
 import io.github.vladimirmi.internetradioplayer.extensions.visible
 import io.github.vladimirmi.internetradioplayer.presentation.favoritelist.stations.defaultOutline
 import io.github.vladimirmi.internetradioplayer.presentation.favoritelist.stations.fixedOutline
@@ -98,12 +99,14 @@ class SearchStationVH(itemView: View) : RecyclerView.ViewHolder(itemView) {
     }
 
     fun select(selected: Boolean, isFavorite: Boolean) {
-        val bg = itemView.context.color(if (selected) R.color.accent_light else R.color.grey_50)
+        val bg = if (selected) itemView.context.themeAttrData(R.attr.colorSecondaryVariant)
+        else itemView.context.themeAttrData(R.attr.colorSurface)
+
         (itemView.background as? GradientDrawable)?.setColor(bg)
 
         favoriteBt.visible(selected || isFavorite)
         if (selected || isFavorite) {
-            val tint = if (isFavorite) R.color.orange_500 else R.color.primary_light
+            val tint = if (isFavorite) R.color.orange_500 else R.color.primary_variant
             itemView.favoriteBt.setColorFilter(itemView.context.color(tint))
         }
     }

@@ -41,5 +41,5 @@ class RecordsViewImpl @JvmOverloads constructor(
         recordsRv.scrollToPosition(position)
     }
 
-    override fun getContextSelectedItem() : Any = recordsAdapter.longClickedItem!!
+    override fun getContextSelectedItem()  = recordsAdapter.longClickedItem
 }

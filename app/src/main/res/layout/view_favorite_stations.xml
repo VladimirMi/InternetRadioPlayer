@@ -30,4 +30,14 @@
         android:visibility="gone"
         />
 
+    <com.google.android.material.floatingactionbutton.FloatingActionButton
+        android:id="@+id/addStationFab"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:src="@drawable/ic_add"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintBottom_toBottomOf="parent"
+        android:layout_margin="16dp"
+        />
+
 </io.github.vladimirmi.internetradioplayer.presentation.favoritelist.stations.FavoriteStationsViewImpl>

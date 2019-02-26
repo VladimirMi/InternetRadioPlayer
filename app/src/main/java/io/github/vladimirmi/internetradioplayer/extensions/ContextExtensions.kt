@@ -7,6 +7,7 @@ import android.content.Intent
 import android.graphics.Point
 import android.net.wifi.WifiManager
 import android.util.DisplayMetrics
+import android.util.TypedValue
 import android.view.WindowManager
 import android.view.inputmethod.InputMethodManager
 import androidx.annotation.ColorRes
@@ -42,6 +43,18 @@ fun Context.getScreenSize(): Pair<Int, Int> {
     val size = Point()
     display.getSize(size)
     return size.x to size.y
+}
+
+fun Context.themeAttrData(resId: Int): Int {
+    val typedValue = TypedValue()
+    theme.resolveAttribute(resId, typedValue, true)
+    return typedValue.data
+}
+
+fun Context.themeAttrRes(resId: Int): Int {
+    val typedValue = TypedValue()
+    theme.resolveAttribute(resId, typedValue, true)
+    return typedValue.resourceId
 }
 
 val Context.downloadManager: DownloadManager

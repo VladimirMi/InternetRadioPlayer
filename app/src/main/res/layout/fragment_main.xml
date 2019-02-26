@@ -6,17 +6,19 @@
     android:id="@+id/mainCl"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:background="@color/grey_300"
     >
 
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:orientation="vertical"
         android:layout_marginBottom="64dp"
+        android:orientation="vertical"
         >
+
         <io.github.vladimirmi.internetradioplayer.ui.ScrollableTabLayout
             android:id="@+id/mainTl"
-            style="@style/CustomTabLayout"
+            style="@style/Widget.MaterialComponents.TabLayout.Colored"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:elevation="4dp"
@@ -26,7 +28,6 @@
             app:tabMode="scrollable"
             tools:ignore="UnusedAttribute"
             />
-
 
         <androidx.viewpager.widget.ViewPager
             android:id="@+id/mainPager"
@@ -38,7 +39,6 @@
     </LinearLayout>
 
     <include
-        android:elevation="8dp"
         android:id="@+id/playerView"
         layout="@layout/view_player"
         android:layout_width="match_parent"

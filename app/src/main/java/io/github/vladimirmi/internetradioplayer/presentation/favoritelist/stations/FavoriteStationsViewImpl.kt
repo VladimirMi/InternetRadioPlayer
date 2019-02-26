@@ -2,6 +2,7 @@ package io.github.vladimirmi.internetradioplayer.presentation.favoritelist.stati
 
 import android.content.Context
 import android.util.AttributeSet
+import androidx.fragment.app.FragmentActivity
 import androidx.recyclerview.widget.ItemTouchHelper
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
@@ -10,6 +11,7 @@ import io.github.vladimirmi.internetradioplayer.di.Scopes
 import io.github.vladimirmi.internetradioplayer.domain.model.FlatStationsList
 import io.github.vladimirmi.internetradioplayer.extensions.visible
 import io.github.vladimirmi.internetradioplayer.presentation.base.BaseViewGroup
+import io.github.vladimirmi.internetradioplayer.presentation.main.NewStationDialog
 import kotlinx.android.synthetic.main.view_favorite_stations.view.*
 import toothpick.Toothpick
 
@@ -53,6 +55,7 @@ class FavoriteStationsViewImpl @JvmOverloads constructor(
     override fun setupView() {
         stationsRv.layoutManager = LinearLayoutManager(context!!)
         stationsRv.adapter = stationListAdapter
+        addStationFab.setOnClickListener { openAddStationDialog() }
 //        itemTouchHelper.attachToRecyclerView(stationsRv)
     }
 
@@ -73,7 +76,7 @@ class FavoriteStationsViewImpl @JvmOverloads constructor(
         placeholderView.visible(show)
     }
 
-    override fun getContextSelectedItem() : Any = stationListAdapter.longClickedItem!!
+    override fun getContextSelectedItem() = stationListAdapter.longClickedItem
 
     //endregion
 
@@ -92,6 +95,10 @@ class FavoriteStationsViewImpl @JvmOverloads constructor(
     }
 
     //endregion
+
+    private fun openAddStationDialog() {
+        NewStationDialog().show((context as FragmentActivity).supportFragmentManager, "new_station_dialog")
+    }
 
 }
 

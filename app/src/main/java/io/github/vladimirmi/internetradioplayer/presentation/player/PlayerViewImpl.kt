@@ -67,7 +67,7 @@ class PlayerViewImpl @JvmOverloads constructor(
     }
 
     override fun setFavorite(isFavorite: Boolean) {
-        val tint = if (isFavorite) R.color.orange_500 else R.color.primary_light
+        val tint = if (isFavorite) R.color.orange_500 else R.color.primary_variant
         favoriteBt.background.setTintExt(context!!.color(tint))
     }
 

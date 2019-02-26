@@ -3,12 +3,14 @@
     <style name="AppTheme" parent="Theme.MaterialComponents.Light.NoActionBar">
         <item name="colorPrimary">@color/primary</item>
         <item name="colorPrimaryDark">@color/primary_dark</item>
-        <item name="colorAccent">@color/accent</item>
-        <item name="android:textColorPrimary">@color/primary_text</item>
-        <item name="android:textColorSecondary">@color/secondary_text</item>
-        <item name="android:windowBackground">@color/window</item>
-        <item name="android:divider">@color/divider</item>
-        <item name="android:windowSoftInputMode">adjustPan|stateAlwaysHidden</item>
+        <item name="colorPrimaryVariant">@color/primary_variant</item>
+        <item name="colorSecondary">@color/secondary</item>
+        <item name="colorSecondaryVariant">@color/secondary_variant</item>
+        <item name="colorOnPrimary">@color/on_primary</item>
+        <item name="colorOnSecondary">@color/on_secondary</item>
+        <item name="colorSurface">@color/surface</item>
+        <item name="android:colorBackground">@color/background</item>
+        <item name="android:popupMenuStyle">@style/PopupMenu</item>
         <item name="preferenceTheme">@style/PreferenceThemeOverlay.v14.Material</item>
     </style>
 
@@ -20,20 +22,8 @@
 
     <style name="AppTheme.PopupOverlay" parent="ThemeOverlay.MaterialComponents.Light"/>
 
-    <style name="CustomText">
-        <item name="android:layout_width">wrap_content</item>
-        <item name="android:layout_height">wrap_content</item>
-    </style>
-
-    <style name="CustomTabLayout" parent="Widget.MaterialComponents.TabLayout.Colored">
-        <item name="tabSelectedTextColor">@color/accent_lighter</item>
-        <item name="tabTextColor">@color/grey_50</item>
-    </style>
-
-    <style name="CustomCardView" parent="Widget.MaterialComponents.CardView">
-        <item name="cardElevation">2dp</item>
-        <item name="cardCornerRadius">8dp</item>
-        <item name="contentPadding">8dp</item>
+    <style name="PopupMenu" parent="@android:style/Widget.PopupMenu">
+        <item name="android:popupBackground">@color/white</item>
     </style>
 
 </resources>

@@ -1,12 +1,7 @@
 package io.github.vladimirmi.internetradioplayer.presentation.main
 
-import android.annotation.SuppressLint
 import android.os.Bundle
-import android.view.Menu
-import android.view.MenuItem
 import android.view.View
-import androidx.appcompat.view.menu.MenuBuilder
-import androidx.core.content.ContextCompat
 import androidx.viewpager.widget.ViewPager
 import com.google.android.material.bottomsheet.BottomSheetBehavior
 import io.github.vladimirmi.internetradioplayer.R
@@ -78,22 +73,22 @@ class MainFragment : BaseFragment<MainPresenter, MainView>(), MainView {
         (playerView as? PlayerViewImpl)?.setState(PlayerViewImpl.STATE_INIT)
     }
 
-    @SuppressLint("RestrictedApi")
-    override fun onPrepareOptionsMenu(menu: Menu) {
-        menu.clear()
-        val item = menu.add(0, R.string.menu_add_station, 0, R.string.menu_add_station)
-        item.setShowAsAction(MenuItem.SHOW_AS_ACTION_NEVER)
-        item.icon = ContextCompat.getDrawable(context!!, R.drawable.ic_add)
-        if (menu is MenuBuilder) menu.setOptionalIconsVisible(true)
-    }
-
-    override fun onOptionsItemSelected(item: MenuItem): Boolean {
-        when (item.itemId) {
-            R.string.menu_add_station -> openAddStationDialog()
-            else -> return false
-        }
-        return true
-    }
+//    @SuppressLint("RestrictedApi")
+//    override fun onPrepareOptionsMenu(menu: Menu) {
+//        menu.clear()
+//        val item = menu.add(0, R.string.menu_add_station, 0, R.string.menu_add_station)
+//        item.setShowAsAction(MenuItem.SHOW_AS_ACTION_NEVER)
+//        item.icon = ContextCompat.getDrawable(context!!, R.drawable.ic_add)
+//        if (menu is MenuBuilder) menu.setOptionalIconsVisible(true)
+//    }
+//
+//    override fun onOptionsItemSelected(item: MenuItem): Boolean {
+//        when (item.itemId) {
+//            R.string.menu_add_station -> openAddStationDialog()
+//            else -> return false
+//        }
+//        return true
+//    }
 
     //region =============== MainView ==============
 
@@ -106,6 +101,9 @@ class MainFragment : BaseFragment<MainPresenter, MainView>(), MainView {
             else -> PAGE_HISTORY
         }
         mainPager.setCurrentItem(page, false)
+        if (page == PAGE_FAVORITES) {
+
+        }
     }
 
     override fun showPlayerView(visible: Boolean) {

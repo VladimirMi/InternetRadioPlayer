@@ -16,5 +16,5 @@ interface FavoriteStationsView : BaseView {
 
     fun showPlaceholder(show: Boolean)
 
-    fun getContextSelectedItem(): Any
+    fun getContextSelectedItem(): Any?
 }

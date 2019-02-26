@@ -29,7 +29,7 @@
         android:background="@drawable/ic_stop"
         android:contentDescription="@string/desc_stop_button"
         android:foreground="?actionBarItemBackground"
-        app:backgroundTint="@color/stop_button"
+        app:backgroundTint="@color/stop"
         app:layout_constraintEnd_toStartOf="@id/playPauseBtStub"
         app:layout_constraintStart_toEndOf="@id/previousBt"
         app:layout_constraintTop_toTopOf="@id/playPauseBtStub"
@@ -62,8 +62,8 @@
         android:foreground="?actionBarItemBackground"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        app:pb_pauseColor="@color/pause_button"
-        app:pb_playColor="@color/play_button"
+        app:pb_pauseColor="@color/pause"
+        app:pb_playColor="@color/play"
         tools:ignore="UnusedAttribute"
         />
 

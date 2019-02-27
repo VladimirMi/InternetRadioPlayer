@@ -1,7 +1,6 @@
 package io.github.vladimirmi.internetradioplayer.domain.model
 
 import java.io.File
-import java.util.*
 
 /**
  * Created by Vladimir Mikhalev 02.02.2019.
@@ -15,10 +14,11 @@ data class Record(override val id: String,
 
     companion object {
         fun fromFile(file: File): Record {
+            val uri = file.toURI().toString()
             return Record(
-                    UUID.randomUUID().toString(),
+                    uri,
                     file.name.substringBeforeLast('.'),
-                    file.toURI().toString(),
+                    uri,
                     file,
                     file.lastModified()
             )

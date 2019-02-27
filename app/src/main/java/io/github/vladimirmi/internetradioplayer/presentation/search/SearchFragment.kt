@@ -92,13 +92,13 @@ class SearchFragment : BaseFragment<SearchPresenter, SearchView>(), SearchView,
     }
 
     override fun onContextItemSelected(item: MenuItem): Boolean {
-        if (item.groupId == R.id.context_menu_history && item.itemId == R.id.context_menu_action_delete) {
-            suggestionsAdapter.longClickedItem?.let {
-                presenter.deleteRecentSuggestion(it, searchView.query.toString())
-            }
+        if (item.groupId != R.id.context_menu_suggestion) return false
+        val selectedItem = suggestionsAdapter.longClickedItem
+        if (item.itemId == R.id.context_menu_action_delete && selectedItem != null) {
+            presenter.deleteRecentSuggestion(selectedItem, searchView.query.toString())
             return true
         }
-        return super.onContextItemSelected(item)
+        return false
     }
 
     override fun onSuggestionSelected(suggestion: Suggestion) {

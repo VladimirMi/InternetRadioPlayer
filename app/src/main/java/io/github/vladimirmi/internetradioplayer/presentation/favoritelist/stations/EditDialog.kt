@@ -39,6 +39,7 @@ class EditDialog : BaseDialogFragment() {
         return LayoutInflater.from(context).inflate(R.layout.dialog_edit, null).apply {
             editTextView.hint = arguments?.getString(HINT) ?: ""
             editTextView.setText(arguments?.getString(TEXT) ?: "")
+            editTextView.setSelection(editTextView.text.length)
         }
     }
 

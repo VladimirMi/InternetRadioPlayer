@@ -50,10 +50,12 @@ class HistoryFragment : BaseFragment<HistoryPresenter, HistoryView>(), HistoryVi
     }
 
     override fun onContextItemSelected(item: MenuItem): Boolean {
-        if (item.groupId == R.id.context_menu_history && item.itemId == R.id.context_menu_action_delete) {
-            historyAdapter.longClickedItem?.let { presenter.deleteHistory(it) }
+        if (item.groupId != R.id.context_menu_history) return false
+        val selectedItem = historyAdapter.longClickedItem
+        if (item.itemId == R.id.context_menu_action_delete && selectedItem != null) {
+            presenter.deleteHistory(selectedItem)
             return true
         }
-        return super.onContextItemSelected(item)
+        return false
     }
 }

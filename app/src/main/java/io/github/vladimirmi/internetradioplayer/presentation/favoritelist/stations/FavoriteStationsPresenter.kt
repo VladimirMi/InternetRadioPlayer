@@ -3,6 +3,7 @@ package io.github.vladimirmi.internetradioplayer.presentation.favoritelist.stati
 import io.github.vladimirmi.internetradioplayer.data.db.entity.Station
 import io.github.vladimirmi.internetradioplayer.domain.interactor.FavoriteListInteractor
 import io.github.vladimirmi.internetradioplayer.domain.interactor.MediaInteractor
+import io.github.vladimirmi.internetradioplayer.domain.interactor.StationInteractor
 import io.github.vladimirmi.internetradioplayer.domain.model.FlatStationsList
 import io.github.vladimirmi.internetradioplayer.extensions.subscribeX
 import io.github.vladimirmi.internetradioplayer.presentation.base.BasePresenter
@@ -16,7 +17,8 @@ import javax.inject.Inject
 
 class FavoriteStationsPresenter
 @Inject constructor(private val favoriteListInteractor: FavoriteListInteractor,
-                    private val mediaInteractor: MediaInteractor)
+                    private val mediaInteractor: MediaInteractor,
+                    private val stationInteractor: StationInteractor)
     : BasePresenter<FavoriteStationsView>() {
 
     override fun onAttach(view: FavoriteStationsView) {
@@ -52,6 +54,19 @@ class FavoriteStationsPresenter
 
     fun moveGroupElements(stations: FlatStationsList) {
         favoriteListInteractor.moveGroupElements(stations)
+                .subscribeX()
+                .addTo(dataSubs)
+    }
+
+
+    fun deleteStation(station: Station) {
+        stationInteractor.switchFavorite(station)
+                .subscribeX()
+                .addTo(dataSubs)
+    }
+
+    fun editStation(station: Station, newName: String) {
+        stationInteractor.updateStation(station.copy(name = newName))
                 .subscribeX()
                 .addTo(dataSubs)
     }

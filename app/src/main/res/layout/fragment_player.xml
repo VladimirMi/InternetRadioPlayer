@@ -26,6 +26,7 @@
         android:background="@color/surface"
         android:orientation="vertical"
         app:layout_constraintBottom_toTopOf="@id/controlsView"
+        android:padding="8dp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@id/stationInfoView"

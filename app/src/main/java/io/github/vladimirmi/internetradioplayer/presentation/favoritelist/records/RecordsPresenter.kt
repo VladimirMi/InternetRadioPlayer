@@ -33,4 +33,10 @@ class RecordsPresenter
     fun selectRecord(record: Record) {
         mediaInteractor.currentMedia = record
     }
+
+    fun deleteRecord(record: Record) {
+        recordsInteractor.deleteRecord(record)
+                .subscribeX()
+                .addTo(dataSubs)
+    }
 }

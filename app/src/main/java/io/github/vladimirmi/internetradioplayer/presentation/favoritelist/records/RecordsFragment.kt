@@ -1,5 +1,6 @@
 package io.github.vladimirmi.internetradioplayer.presentation.favoritelist.records
 
+import android.view.MenuItem
 import android.view.View
 import androidx.recyclerview.widget.LinearLayoutManager
 import io.github.vladimirmi.internetradioplayer.R
@@ -32,6 +33,17 @@ class RecordsFragment : BaseFragment<RecordsPresenter, RecordsView>(), RecordsVi
         recordsAdapter.onItemClickListener = { presenter.selectRecord(it) }
     }
 
+    override fun onContextItemSelected(item: MenuItem): Boolean {
+        if (item.groupId != R.id.context_menu_records) return false
+        val selectedItem = recordsAdapter.longClickedItem
+        if (item.itemId == R.id.context_menu_action_delete && selectedItem != null) {
+            presenter.deleteRecord(selectedItem)
+        } else {
+            return false
+        }
+        return true
+    }
+
     //region =============== RecordsView ==============
 
     override fun setRecords(records: List<Record>) {
@@ -44,6 +56,4 @@ class RecordsFragment : BaseFragment<RecordsPresenter, RecordsView>(), RecordsVi
     }
 
     //endregion
-
-    override fun getContextSelectedItem() = recordsAdapter.longClickedItem
 }

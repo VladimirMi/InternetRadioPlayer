@@ -25,7 +25,7 @@ import toothpick.Toothpick
  */
 
 class FavoriteStationsFragment : BaseFragment<FavoriteStationsPresenter, FavoriteStationsView>(),
-        FavoriteStationsView, StationItemCallback {
+        FavoriteStationsView, StationItemCallback, EditDialog.Callback {
 
     override val layout = R.layout.fragment_favorite_stations
 
@@ -89,6 +89,20 @@ class FavoriteStationsFragment : BaseFragment<FavoriteStationsPresenter, Favorit
         return true
     }
 
+    override fun onContextItemSelected(item: MenuItem): Boolean {
+        if (item.groupId != R.id.context_menu_stations) return false
+        val selectedItem = stationListAdapter.longClickedItem
+        when (selectedItem) {
+            is Station -> when {
+                item.itemId == R.id.context_menu_action_edit -> openStationEditDialog(selectedItem)
+                item.itemId == R.id.context_menu_action_delete -> presenter.deleteStation(selectedItem)
+                else -> return false
+            }
+            else -> return false
+        }
+        return true
+    }
+
     //region =============== StationListView ==============
 
     override fun setStations(stationList: FlatStationsList) {
@@ -105,8 +119,6 @@ class FavoriteStationsFragment : BaseFragment<FavoriteStationsPresenter, Favorit
         stationsRv.visible(!show)
         placeholderView.visible(show)
     }
-
-    override fun getContextSelectedItem() = stationListAdapter.longClickedItem
 
     //endregion
 
@@ -125,6 +137,16 @@ class FavoriteStationsFragment : BaseFragment<FavoriteStationsPresenter, Favorit
     }
 
     //endregion
+
+    override fun onDialogEdit(newText: String) {
+        presenter.editStation(stationListAdapter.longClickedItem as Station, newText)
+    }
+
+    private fun openStationEditDialog(station: Station) {
+        //todo to strings
+        EditDialog.newInstance("Edit station", "Station name", station.name)
+                .show(childFragmentManager, "edit_station_dialog")
+    }
 
     private fun openAddStationDialog() {
         NewStationDialog().show((context as FragmentActivity).supportFragmentManager, "new_station_dialog")

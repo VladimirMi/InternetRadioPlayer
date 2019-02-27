@@ -32,6 +32,8 @@ class RecordsFragment : BaseFragment<RecordsPresenter, RecordsView>(), RecordsVi
         recordsAdapter.onItemClickListener = { presenter.selectRecord(it) }
     }
 
+    //region =============== RecordsView ==============
+
     override fun setRecords(records: List<Record>) {
         recordsAdapter.records = records
     }
@@ -40,6 +42,8 @@ class RecordsFragment : BaseFragment<RecordsPresenter, RecordsView>(), RecordsVi
         val position = recordsAdapter.selectRecord(id)
         recordsRv.scrollToPosition(position)
     }
+
+    //endregion
 
     override fun getContextSelectedItem() = recordsAdapter.longClickedItem
 }

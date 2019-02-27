@@ -1,6 +1,11 @@
 package io.github.vladimirmi.internetradioplayer.presentation.favoritelist.stations
 
+import android.annotation.SuppressLint
+import android.view.Menu
+import android.view.MenuItem
 import android.view.View
+import androidx.appcompat.view.menu.MenuBuilder
+import androidx.core.content.ContextCompat
 import androidx.fragment.app.FragmentActivity
 import androidx.recyclerview.widget.ItemTouchHelper
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -57,6 +62,31 @@ class FavoriteStationsFragment : BaseFragment<FavoriteStationsPresenter, Favorit
         stationsRv.adapter = stationListAdapter
         addStationFab.setOnClickListener { openAddStationDialog() }
 //        itemTouchHelper.attachToRecyclerView(stationsRv)
+    }
+
+    @SuppressLint("RestrictedApi")
+    override fun onPrepareOptionsMenu(menu: Menu) {
+        super.onPrepareOptionsMenu(menu)
+        menu.add(0, R.string.menu_change_order, 0, R.string.menu_change_order).apply {
+            setShowAsAction(MenuItem.SHOW_AS_ACTION_NEVER)
+            icon = ContextCompat.getDrawable(context!!, R.drawable.ic_sort)
+        }
+        menu.add(0, R.string.menu_add_group, 0, R.string.menu_add_group).apply {
+            setShowAsAction(MenuItem.SHOW_AS_ACTION_NEVER)
+            icon = ContextCompat.getDrawable(context!!, R.drawable.ic_add)
+        }
+        if (menu is MenuBuilder) menu.setOptionalIconsVisible(true)
+    }
+
+    override fun onOptionsItemSelected(item: MenuItem): Boolean {
+        when (item.itemId) {
+            R.string.menu_change_order -> {
+            }
+            R.string.menu_add_group -> {
+            }
+            else -> return false
+        }
+        return true
     }
 
     //region =============== StationListView ==============

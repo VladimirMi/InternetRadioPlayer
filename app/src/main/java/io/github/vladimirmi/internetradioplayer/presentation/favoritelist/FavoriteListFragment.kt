@@ -1,11 +1,8 @@
 package io.github.vladimirmi.internetradioplayer.presentation.favoritelist
 
 import android.annotation.SuppressLint
-import android.view.Menu
 import android.view.MenuItem
 import android.view.View
-import androidx.appcompat.view.menu.MenuBuilder
-import androidx.core.content.ContextCompat
 import com.google.android.material.tabs.TabLayout
 import io.github.vladimirmi.internetradioplayer.R
 import io.github.vladimirmi.internetradioplayer.data.db.entity.Station
@@ -54,54 +51,15 @@ class FavoriteListFragment : BaseFragment<FavoriteListPresenter, FavoriteListVie
                 childFragmentManager.beginTransaction()
                         .add(R.id.container, fragment)
                         .commit()
-//                (container.getChildAt(0) as? BaseView)?.apply {
-//                    onStop()
-//                    onDestroy()
-//                }
-//                container.removeAllViews()
-//                container.addView(contentView as View)
-//                contentView?.onStart()
-//                activity?.invalidateOptionsMenu()
             }
         })
-        navigationTl.addTab(navigationTl.newTab().apply {
-            text = getString(R.string.tab_stations)
-        })
-        navigationTl.addTab(navigationTl.newTab().apply {
-            text = getString(R.string.tab_records)
-        })
+        navigationTl.addTab(navigationTl.newTab().apply { text = getString(R.string.tab_stations) })
+        navigationTl.addTab(navigationTl.newTab().apply { text = getString(R.string.tab_records) })
     }
 
     override fun showTabs(visible: Boolean) {
         navigationTl.visible(visible)
         if (!visible) navigationTl.getTabAt(0)?.select()
-    }
-
-    @SuppressLint("RestrictedApi")
-    override fun onPrepareOptionsMenu(menu: Menu) {
-        menu.clear()
-        if (navigationTl.selectedTabPosition == 1) return
-
-        menu.add(0, R.string.menu_change_order, 0, R.string.menu_change_order).apply {
-            setShowAsAction(MenuItem.SHOW_AS_ACTION_NEVER)
-            icon = ContextCompat.getDrawable(context!!, R.drawable.ic_sort)
-        }
-        menu.add(0, R.string.menu_add_group, 0, R.string.menu_add_group).apply {
-            setShowAsAction(MenuItem.SHOW_AS_ACTION_NEVER)
-            icon = ContextCompat.getDrawable(context!!, R.drawable.ic_add)
-        }
-        if (menu is MenuBuilder) menu.setOptionalIconsVisible(true)
-    }
-
-    override fun onOptionsItemSelected(item: MenuItem): Boolean {
-        when (item.itemId) {
-            R.string.menu_change_order -> {
-            }
-            R.string.menu_add_group -> {
-            }
-            else -> return false
-        }
-        return true
     }
 
     override fun onContextItemSelected(item: MenuItem): Boolean {

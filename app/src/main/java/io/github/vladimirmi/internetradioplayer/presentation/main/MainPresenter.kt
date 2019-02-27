@@ -31,9 +31,8 @@ class MainPresenter
 
     fun selectPage(position: Int) {
         val pageId = when (position) {
-            0 -> R.id.nav_search
-            1 -> R.id.nav_favorites
-            2 -> R.id.nav_player
+            PAGE_SEARCH -> R.id.nav_search
+            PAGE_FAVORITES -> R.id.nav_favorites
             else -> R.id.nav_history
         }
         mainInteractor.saveMainPageId(pageId)

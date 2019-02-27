@@ -44,8 +44,7 @@ class Navigator(private val activity: RootActivity, private val containerId: Int
     override fun createActivityIntent(context: Context, screenKey: String, data: Any?) = null
 
     override fun createFragment(screenKey: String, data: Any?): Fragment? {
-        val screenName = screenKey.screenName
-        return when (screenName) {
+        return when (screenKey.screenName) {
             Router.MAIN_SCREEN -> {
                 val navId = screenKey.navId
                 val fragment = getCurrentFragment()

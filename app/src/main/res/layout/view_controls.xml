@@ -92,7 +92,8 @@
         android:marqueeRepeatLimit="marquee_forever"
         android:padding="8dp"
         android:singleLine="true"
-        android:textAppearance="@style/TextAppearance.AppCompat.Title.Inverse"
+        android:textColor="?attr/colorOnPrimary"
+        android:textAppearance="@style/TextAppearance.MaterialComponents.Headline6"
         app:layout_constraintTop_toTopOf="parent"
         tools:text="Festus vigils ducunt ad gemna."
         />

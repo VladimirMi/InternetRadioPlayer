@@ -2,6 +2,7 @@ package io.github.vladimirmi.internetradioplayer.presentation.main
 
 import android.os.Bundle
 import android.view.View
+import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.viewpager.widget.ViewPager
 import com.google.android.material.bottomsheet.BottomSheetBehavior
 import io.github.vladimirmi.internetradioplayer.R
@@ -10,8 +11,7 @@ import io.github.vladimirmi.internetradioplayer.di.Scopes
 import io.github.vladimirmi.internetradioplayer.extensions.isVisible
 import io.github.vladimirmi.internetradioplayer.extensions.visible
 import io.github.vladimirmi.internetradioplayer.presentation.base.BaseFragment
-import io.github.vladimirmi.internetradioplayer.presentation.base.BaseView
-import io.github.vladimirmi.internetradioplayer.presentation.player.PlayerViewImpl
+import io.github.vladimirmi.internetradioplayer.presentation.player.PlayerFragment
 import kotlinx.android.synthetic.main.fragment_main.*
 import toothpick.Toothpick
 
@@ -23,6 +23,13 @@ import toothpick.Toothpick
 class MainFragment : BaseFragment<MainPresenter, MainView>(), MainView {
 
     override val layout = R.layout.fragment_main
+
+    private val playerView: ConstraintLayout by lazy {
+        view!!.findViewById<ConstraintLayout>(R.id.playerFragment)
+    }
+    private val playerFragment: PlayerFragment by lazy {
+        childFragmentManager.findFragmentById(R.id.playerFragment) as PlayerFragment
+    }
 
     companion object {
         fun newInstance(page: Int): MainFragment {
@@ -64,31 +71,14 @@ class MainFragment : BaseFragment<MainPresenter, MainView>(), MainView {
     private fun setupPlayerView() {
         BottomSheetBehavior.from(playerView).setBottomSheetCallback(object : BottomSheetBehavior.BottomSheetCallback() {
             override fun onSlide(bottomSheet: View, slideOffset: Float) {
-                (playerView as? PlayerViewImpl)?.setState(slideOffset)
+                playerFragment.setState(slideOffset)
             }
 
             override fun onStateChanged(bottomSheet: View, newState: Int) {
             }
         })
-        (playerView as? PlayerViewImpl)?.setState(PlayerViewImpl.STATE_INIT)
+        playerFragment.setState(PlayerFragment.STATE_INIT)
     }
-
-//    @SuppressLint("RestrictedApi")
-//    override fun onPrepareOptionsMenu(menu: Menu) {
-//        menu.clear()
-//        val item = menu.add(0, R.string.menu_add_station, 0, R.string.menu_add_station)
-//        item.setShowAsAction(MenuItem.SHOW_AS_ACTION_NEVER)
-//        item.icon = ContextCompat.getDrawable(context!!, R.drawable.ic_add)
-//        if (menu is MenuBuilder) menu.setOptionalIconsVisible(true)
-//    }
-//
-//    override fun onOptionsItemSelected(item: MenuItem): Boolean {
-//        when (item.itemId) {
-//            R.string.menu_add_station -> openAddStationDialog()
-//            else -> return false
-//        }
-//        return true
-//    }
 
     //region =============== MainView ==============
 
@@ -97,7 +87,6 @@ class MainFragment : BaseFragment<MainPresenter, MainView>(), MainView {
         val page = when (pageId) {
             R.id.nav_search -> PAGE_SEARCH
             R.id.nav_favorites -> PAGE_FAVORITES
-            R.id.nav_player -> PAGE_PLAYER
             else -> PAGE_HISTORY
         }
         mainPager.setCurrentItem(page, false)
@@ -109,25 +98,10 @@ class MainFragment : BaseFragment<MainPresenter, MainView>(), MainView {
     override fun showPlayerView(visible: Boolean) {
         if (playerView.isVisible == visible) return
         playerView.visible(visible)
-        if (visible) (playerView as? PlayerViewImpl)?.setState(PlayerViewImpl.STATE_INIT)
+        if (visible) playerFragment.setState(PlayerFragment.STATE_INIT)
     }
 
     //endregion
-
-    override fun onStart() {
-        super.onStart()
-        (playerView as? BaseView)?.onStart()
-    }
-
-    override fun onStop() {
-        super.onStop()
-        (playerView as? BaseView)?.onStop()
-    }
-
-    override fun onDestroy() {
-        super.onDestroy()
-        (playerView as? BaseView)?.onDestroy()
-    }
 
     private fun openAddStationDialog() {
         NewStationDialog().show(childFragmentManager, "new_station_dialog")

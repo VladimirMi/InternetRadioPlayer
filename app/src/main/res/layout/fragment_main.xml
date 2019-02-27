@@ -38,9 +38,9 @@
 
     </LinearLayout>
 
-    <include
-        android:id="@+id/playerView"
-        layout="@layout/view_player"
+    <fragment
+        android:id="@+id/playerFragment"
+        android:name="io.github.vladimirmi.internetradioplayer.presentation.player.PlayerFragment"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         app:behavior_peekHeight="64dp"

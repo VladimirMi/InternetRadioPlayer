@@ -17,7 +17,6 @@ import io.github.vladimirmi.internetradioplayer.presentation.base.BasePresenter
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.disposables.Disposable
 import io.reactivex.rxkotlin.addTo
-import timber.log.Timber
 import javax.inject.Inject
 
 /**
@@ -160,7 +159,6 @@ class PlayerPresenter
     }
 
     private fun handleMetadata(metadata: MediaMetadataCompat) {
-        Timber.e("handleMetadata: ${metadata.album} ${metadata.artist} ${metadata.title}")
         view?.setMetadata(metadata.artist, metadata.title)
         val metadataLine = if (metadata.isEmpty() || metadata.isNotSupported()) metadata.album
         else "${metadata.artist} - ${metadata.title}"

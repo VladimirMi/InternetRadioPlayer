@@ -14,8 +14,6 @@
     <string name="dialog_new_group">Создать новую группу</string>
     <string name="dialog_new_group_hint">Название группы</string>
 
-    <string name="menu_station_shortcut">Добавить ярлык</string>
-    <string name="menu_add_station">Добавить станцию</string>
     <string name="menu_exit">Выход</string>
 
     <string name="metadata_buffering">Загрузка…</string>
@@ -29,16 +27,16 @@
     <string name="desc_stop_button">кнопка стоп</string>
     <string name="desc_edit_title_button">редактирования названия</string>
     <string name="desc_add_remove_favorite">добавить/удалить  из избранного</string>
-    <string name="desc_create_shortcut_button">создать ярлык</string>
+    <string name="desc_create_shortcut_button">Создать ярлык</string>
     <string name="desc_directory_logo">логотип директории</string>
     <string name="desc_open_drawer">открыть меню</string>
     <string name="desc_close_drawer">закрыть меню</string>
     <string name="desc_remove_folder">удалить пустую группу</string>
+    <string name="desc_add_station">добавить станцию</string>
 
-    <string name="tabs_search">Поиск</string>
-    <string name="tabs_stations">Станции</string>
-    <string name="tabs_player">Плеер</string>
-    <string name="tabs_history">История</string>
+    <string name="tab_search">Поиск</string>
+    <string name="tab_favorite">Избранное</string>
+    <string name="tab_history">История</string>
 
     <string name="station_title">Название</string>
 

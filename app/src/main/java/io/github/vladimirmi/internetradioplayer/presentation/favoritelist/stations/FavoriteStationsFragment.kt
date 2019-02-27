@@ -1,28 +1,28 @@
 package io.github.vladimirmi.internetradioplayer.presentation.favoritelist.stations
 
-import android.content.Context
-import android.util.AttributeSet
+import android.view.View
 import androidx.fragment.app.FragmentActivity
 import androidx.recyclerview.widget.ItemTouchHelper
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import io.github.vladimirmi.internetradioplayer.R
 import io.github.vladimirmi.internetradioplayer.data.db.entity.Station
 import io.github.vladimirmi.internetradioplayer.di.Scopes
 import io.github.vladimirmi.internetradioplayer.domain.model.FlatStationsList
 import io.github.vladimirmi.internetradioplayer.extensions.visible
-import io.github.vladimirmi.internetradioplayer.presentation.base.BaseViewGroup
+import io.github.vladimirmi.internetradioplayer.presentation.base.BaseFragment
 import io.github.vladimirmi.internetradioplayer.presentation.main.NewStationDialog
-import kotlinx.android.synthetic.main.view_favorite_stations.view.*
+import kotlinx.android.synthetic.main.fragment_favorite_stations.*
 import toothpick.Toothpick
 
 /**
  * Created by Vladimir Mikhalev 13.02.2019.
  */
 
-class FavoriteStationsViewImpl @JvmOverloads constructor(
-        context: Context, attrs: AttributeSet? = null, defStyleAttr: Int = 0
-) : BaseViewGroup<FavoriteStationsPresenter, FavoriteStationsView>(context, attrs, defStyleAttr),
+class FavoriteStationsFragment : BaseFragment<FavoriteStationsPresenter, FavoriteStationsView>(),
         FavoriteStationsView, StationItemCallback {
+
+    override val layout = R.layout.fragment_favorite_stations
 
     private val stationListAdapter by lazy { StationListAdapter(this) }
 
@@ -52,7 +52,7 @@ class FavoriteStationsViewImpl @JvmOverloads constructor(
                 }
     }
 
-    override fun setupView() {
+    override fun setupView(view: View) {
         stationsRv.layoutManager = LinearLayoutManager(context!!)
         stationsRv.adapter = stationListAdapter
         addStationFab.setOnClickListener { openAddStationDialog() }

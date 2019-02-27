@@ -20,7 +20,6 @@ class FavoriteListPresenter
     : BasePresenter<FavoriteListView>() {
 
     override fun onAttach(view: FavoriteListView) {
-        view.showTabs(false)
         recordsInteractor.recordsObs
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribeX(onNext = { view.showTabs(it.isNotEmpty()) })

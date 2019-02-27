@@ -1,37 +1,36 @@
 package io.github.vladimirmi.internetradioplayer.presentation.player
 
-import android.content.Context
 import android.text.Spannable
 import android.text.SpannableString
 import android.text.style.ForegroundColorSpan
 import android.text.style.URLSpan
-import android.util.AttributeSet
+import android.view.View
 import android.widget.TextView
+import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.constraintlayout.widget.ConstraintSet
 import androidx.core.content.ContextCompat
-import androidx.fragment.app.FragmentActivity
 import io.github.vladimirmi.internetradioplayer.R
 import io.github.vladimirmi.internetradioplayer.data.db.entity.Station
 import io.github.vladimirmi.internetradioplayer.di.Scopes
 import io.github.vladimirmi.internetradioplayer.domain.model.Media
 import io.github.vladimirmi.internetradioplayer.extensions.*
-import io.github.vladimirmi.internetradioplayer.presentation.base.BaseViewGroup
-import kotlinx.android.synthetic.main.view_controls.view.*
-import kotlinx.android.synthetic.main.view_player.view.*
-import kotlinx.android.synthetic.main.view_station_info.view.*
+import io.github.vladimirmi.internetradioplayer.presentation.base.BaseFragment
+import kotlinx.android.synthetic.main.fragment_player.*
+import kotlinx.android.synthetic.main.view_controls.*
+import kotlinx.android.synthetic.main.view_station_info.*
 import toothpick.Toothpick
 
 /**
  * Created by Vladimir Mikhalev 20.02.2019.
  */
 
-class PlayerViewImpl @JvmOverloads constructor(
-        context: Context, attrs: AttributeSet? = null, defStyleAttr: Int = 0
-) : BaseViewGroup<PlayerPresenter, PlayerView>(context, attrs, defStyleAttr), PlayerView {
+class PlayerFragment : BaseFragment<PlayerPresenter, PlayerView>(), PlayerView {
 
     companion object {
         const val STATE_INIT = -1f
     }
+
+    override val layout = R.layout.fragment_player
 
     override fun providePresenter(): PlayerPresenter {
         return Toothpick.openScopes(Scopes.ROOT_ACTIVITY, this)
@@ -40,7 +39,7 @@ class PlayerViewImpl @JvmOverloads constructor(
                 }
     }
 
-    override fun setupView() {
+    override fun setupView(view: View) {
         favoriteBt.setOnClickListener { presenter.switchFavorite() }
         addShortcutBt.setOnClickListener { openAddShortcutDialog() }
 
@@ -110,10 +109,11 @@ class PlayerViewImpl @JvmOverloads constructor(
         if (state == STATE_INIT) {
             initStartState(); return
         }
+        val playerView = view as? ConstraintLayout ?: return
         val set = ConstraintSet()
-        set.clone(this)
+        set.clone(playerView)
         set.setVerticalBias(R.id.controlsView, state)
-        set.applyTo(this)
+        set.applyTo(playerView)
 
         val visible = state > 0.9
         nextBt.visible(visible, false)
@@ -125,11 +125,11 @@ class PlayerViewImpl @JvmOverloads constructor(
 
         playPauseBt.x = startPlayX + (playPauseBtStub.x - startPlayX) * state
         playPauseBt.y = startPlayY + (playPauseBtStub.y - startPlayY) * state
-        statusTv.y = startStatusY + (height - statusTv.height - startStatusY) * state
+        statusTv.y = startStatusY + (playerView.height - statusTv.height - startStatusY) * state
     }
 
     private fun initStartState() {
-        waitForLayout {
+        view?.waitForLayout {
             startPlayX = playPauseBt.x
             startPlayY = playPauseBt.y
             startStatusY = statusTv.y
@@ -139,13 +139,11 @@ class PlayerViewImpl @JvmOverloads constructor(
     }
 
     private fun openLinkDialog(url: String) {
-        val fm = (context as FragmentActivity).supportFragmentManager
-        LinkDialog.newInstance(url).show(fm, "link_dialog")
+        LinkDialog.newInstance(url).show(childFragmentManager, "link_dialog")
     }
 
     private fun openAddShortcutDialog() {
-        val fm = (context as FragmentActivity).supportFragmentManager
-        AddShortcutDialog().show(fm, "add_shortcut_dialog")
+        AddShortcutDialog().show(childFragmentManager, "add_shortcut_dialog")
     }
 
     private fun TextView.setTextOrHide(text: String?) {

@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<io.github.vladimirmi.internetradioplayer.presentation.favoritelist.records.RecordsViewImpl
+<androidx.constraintlayout.widget.ConstraintLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
@@ -16,4 +16,4 @@
         android:paddingBottom="16dp"
         tools:listitem="@layout/item_record"
         />
-</io.github.vladimirmi.internetradioplayer.presentation.favoritelist.records.RecordsViewImpl>
+</androidx.constraintlayout.widget.ConstraintLayout>

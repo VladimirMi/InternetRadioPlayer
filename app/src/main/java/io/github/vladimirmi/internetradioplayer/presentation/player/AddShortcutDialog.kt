@@ -17,7 +17,7 @@ import kotlinx.android.synthetic.main.dialog_add_shortcut.view.*
 class AddShortcutDialog : BaseDialogFragment() {
 
     override fun getTitle(): String {
-        return getString(R.string.menu_station_shortcut)
+        return getString(R.string.desc_create_shortcut_button)
     }
 
     @SuppressLint("InflateParams")

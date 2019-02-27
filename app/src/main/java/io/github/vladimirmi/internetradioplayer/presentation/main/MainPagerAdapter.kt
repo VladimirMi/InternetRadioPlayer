@@ -15,17 +15,16 @@ import io.github.vladimirmi.internetradioplayer.presentation.search.SearchFragme
 
 const val PAGE_SEARCH = 0
 const val PAGE_FAVORITES = 1
-const val PAGE_PLAYER = 2
-const val PAGE_HISTORY = 3
+const val PAGE_HISTORY = 2
 
 class MainPagerAdapter(context: Context, fm: FragmentManager) : FragmentPagerAdapter(fm) {
 
-    private val tabTitles = context.resources.getStringArray(R.array.uber_stations_tabs)
+    private val tabTitles = context.resources.getStringArray(R.array.main_tabs)
 
     override fun getItem(position: Int): Fragment {
         return when (position) {
-            0 -> SearchFragment()
-            1 -> FavoriteListFragment()
+            PAGE_SEARCH -> SearchFragment()
+            PAGE_FAVORITES -> FavoriteListFragment()
             else -> HistoryFragment()
         }
     }

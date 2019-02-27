@@ -49,7 +49,7 @@
                 android:layout_height="48dp"
                 android:iconifiedByDefault="false"
                 app:queryBackground="@null"
-                app:queryHint="@string/tabs_search"
+                app:queryHint="@string/tab_search"
                 />
 
             <androidx.recyclerview.widget.RecyclerView

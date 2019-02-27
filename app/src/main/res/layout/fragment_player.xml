@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<io.github.vladimirmi.internetradioplayer.presentation.player.PlayerViewImpl
+<androidx.constraintlayout.widget.ConstraintLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
@@ -23,8 +23,8 @@
         android:id="@+id/metadataInfoView"
         android:layout_width="match_parent"
         android:layout_height="0dp"
-        android:orientation="vertical"
         android:background="@color/surface"
+        android:orientation="vertical"
         app:layout_constraintBottom_toTopOf="@id/controlsView"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
@@ -57,18 +57,6 @@
 
     </LinearLayout>
 
-    <TextView
-        android:id="@+id/placeholderView"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:gravity="center"
-        android:text="@string/player_placeholder"
-        android:textAppearance="@style/TextAppearance.AppCompat.Title"
-        android:visibility="gone"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        />
-
     <include
         android:id="@+id/controlsView"
         layout="@layout/view_controls"
@@ -84,12 +72,13 @@
         android:id="@+id/statusTv"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:textAllCaps="true"
-        android:textColor="@color/grey_300"
-        android:textAppearance="@style/TextAppearance.MaterialComponents.Caption"
-        app:layout_constraintBottom_toTopOf="@id/guideline"
         android:paddingLeft="8dp"
         android:paddingRight="8dp"
+        android:textAllCaps="true"
+        android:textAppearance="@style/TextAppearance.MaterialComponents.Caption"
+        android:textColor="@color/grey_300"
+        app:layout_constraintBottom_toTopOf="@id/guideline"
+        app:layout_constraintStart_toStartOf="parent"
         tools:text="playing"
         />
 
@@ -102,4 +91,4 @@
         app:layout_constraintGuide_end="64dp"
         />
 
-</io.github.vladimirmi.internetradioplayer.presentation.player.PlayerViewImpl>
+</androidx.constraintlayout.widget.ConstraintLayout>

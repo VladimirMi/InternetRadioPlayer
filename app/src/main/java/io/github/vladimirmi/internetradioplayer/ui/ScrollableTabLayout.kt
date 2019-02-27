@@ -2,7 +2,6 @@ package io.github.vladimirmi.internetradioplayer.ui
 
 import android.content.Context
 import android.util.AttributeSet
-import androidx.viewpager.widget.ViewPager
 import com.google.android.material.tabs.TabLayout
 import io.github.vladimirmi.internetradioplayer.extensions.getScreenSize
 import java.lang.reflect.Field
@@ -34,7 +33,7 @@ class ScrollableTabLayout : TabLayout {
 
         val field: Field
         try {
-            field = TabLayout::class.java.getDeclaredField("scrollableTabMinWidth")
+            field = TabLayout::class.java.getDeclaredField("requestedTabMinWidth")
             field.isAccessible = true
             field.set(this, tabMinWidth)
         } catch (e: NoSuchFieldException) {
@@ -42,23 +41,5 @@ class ScrollableTabLayout : TabLayout {
         } catch (e: IllegalAccessException) {
             e.printStackTrace()
         }
-    }
-
-    override fun setupWithViewPager(pager: ViewPager?) {
-        super.setupWithViewPager(pager)
-        val listener = object : TabLayout.OnTabSelectedListener {
-            override fun onTabReselected(tab: Tab) {
-            }
-
-            override fun onTabUnselected(tab: Tab) {
-            }
-
-            override fun onTabSelected(tab: Tab) {
-                pager?.setCurrentItem(tab.position, false)
-            }
-
-        }
-        clearOnTabSelectedListeners()
-        addOnTabSelectedListener(listener)
     }
 }

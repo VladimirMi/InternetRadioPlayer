@@ -9,10 +9,4 @@ interface BaseView : BackPressListener {
     fun showToast(resId: Int)
 
     fun showSnackbar(resId: Int)
-
-    fun onStart()
-
-    fun onStop()
-
-    fun onDestroy()
 }

@@ -53,7 +53,7 @@ class RootPresenter
                 .doOnSubscribe { view?.showLoadingIndicator(true) }
                 .doFinally { view?.showLoadingIndicator(false) }
                 .subscribeX(onSuccess = {
-                    navigateTo(R.id.nav_player)
+                    navigateTo(R.id.nav_favorites)
                 }).addTo(viewSubs)
     }
 
@@ -63,7 +63,7 @@ class RootPresenter
         val station = favoriteListInteractor.getStation(id)
         if (station != null) {
             mediaInteractor.currentMedia = station
-            navigateTo(R.id.nav_player)
+            navigateTo(R.id.nav_favorites)
             if (startPlay) playerInteractor.play()
         } else {
             view?.showSnackbar(R.string.msg_shortcut_remove)

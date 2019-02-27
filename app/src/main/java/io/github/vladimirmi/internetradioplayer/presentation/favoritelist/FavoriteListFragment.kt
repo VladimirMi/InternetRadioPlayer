@@ -1,8 +1,11 @@
 package io.github.vladimirmi.internetradioplayer.presentation.favoritelist
 
 import android.annotation.SuppressLint
+import android.view.Menu
 import android.view.MenuItem
 import android.view.View
+import androidx.appcompat.view.menu.MenuBuilder
+import androidx.core.content.ContextCompat
 import com.google.android.material.tabs.TabLayout
 import io.github.vladimirmi.internetradioplayer.R
 import io.github.vladimirmi.internetradioplayer.data.db.entity.Station
@@ -10,10 +13,9 @@ import io.github.vladimirmi.internetradioplayer.di.Scopes
 import io.github.vladimirmi.internetradioplayer.domain.model.Record
 import io.github.vladimirmi.internetradioplayer.extensions.visible
 import io.github.vladimirmi.internetradioplayer.presentation.base.BaseFragment
-import io.github.vladimirmi.internetradioplayer.presentation.base.BaseView
-import io.github.vladimirmi.internetradioplayer.presentation.favoritelist.records.RecordsView
+import io.github.vladimirmi.internetradioplayer.presentation.favoritelist.records.RecordsFragment
 import io.github.vladimirmi.internetradioplayer.presentation.favoritelist.stations.EditDialog
-import io.github.vladimirmi.internetradioplayer.presentation.favoritelist.stations.FavoriteStationsView
+import io.github.vladimirmi.internetradioplayer.presentation.favoritelist.stations.FavoriteStationsFragment
 import kotlinx.android.synthetic.main.fragment_favorite_list.*
 import toothpick.Toothpick
 
@@ -26,7 +28,6 @@ class FavoriteListFragment : BaseFragment<FavoriteListPresenter, FavoriteListVie
         FavoriteListView, EditDialog.Callback {
 
     override val layout = R.layout.fragment_favorite_list
-    private var contentView: BaseView? = null
 
     override fun providePresenter(): FavoriteListPresenter {
         return Toothpick.openScopes(Scopes.ROOT_ACTIVITY, this)
@@ -45,27 +46,30 @@ class FavoriteListFragment : BaseFragment<FavoriteListPresenter, FavoriteListVie
 
             @SuppressLint("InflateParams")
             override fun onTabSelected(tab: TabLayout.Tab) {
-                contentView = when (tab.position) {
-                    0 -> layoutInflater.inflate(R.layout.view_favorite_stations, container, false) as BaseView
-                    1 -> layoutInflater.inflate(R.layout.view_records, container, false) as BaseView
+                val fragment = when (tab.position) {
+                    0 -> FavoriteStationsFragment()
+                    1 -> RecordsFragment()
                     else -> throw IllegalStateException()
                 }
-                (container.getChildAt(0) as? BaseView)?.apply {
-                    onStop()
-                    onDestroy()
-                }
-                container.removeAllViews()
-                container.addView(contentView as View)
-                contentView?.onStart()
+                childFragmentManager.beginTransaction()
+                        .add(R.id.container, fragment)
+                        .commit()
+//                (container.getChildAt(0) as? BaseView)?.apply {
+//                    onStop()
+//                    onDestroy()
+//                }
+//                container.removeAllViews()
+//                container.addView(contentView as View)
+//                contentView?.onStart()
+//                activity?.invalidateOptionsMenu()
             }
         })
         navigationTl.addTab(navigationTl.newTab().apply {
-            text = getString(R.string.stations)
+            text = getString(R.string.tab_stations)
         })
         navigationTl.addTab(navigationTl.newTab().apply {
-            text = getString(R.string.records)
+            text = getString(R.string.tab_records)
         })
-        navigationTl.getTabAt(0)?.select()
     }
 
     override fun showTabs(visible: Boolean) {
@@ -73,19 +77,31 @@ class FavoriteListFragment : BaseFragment<FavoriteListPresenter, FavoriteListVie
         if (!visible) navigationTl.getTabAt(0)?.select()
     }
 
-    override fun onStart() {
-        super.onStart()
-        contentView?.onStart()
+    @SuppressLint("RestrictedApi")
+    override fun onPrepareOptionsMenu(menu: Menu) {
+        menu.clear()
+        if (navigationTl.selectedTabPosition == 1) return
+
+        menu.add(0, R.string.menu_change_order, 0, R.string.menu_change_order).apply {
+            setShowAsAction(MenuItem.SHOW_AS_ACTION_NEVER)
+            icon = ContextCompat.getDrawable(context!!, R.drawable.ic_sort)
+        }
+        menu.add(0, R.string.menu_add_group, 0, R.string.menu_add_group).apply {
+            setShowAsAction(MenuItem.SHOW_AS_ACTION_NEVER)
+            icon = ContextCompat.getDrawable(context!!, R.drawable.ic_add)
+        }
+        if (menu is MenuBuilder) menu.setOptionalIconsVisible(true)
     }
 
-    override fun onStop() {
-        super.onStop()
-        contentView?.onStop()
-    }
-
-    override fun onDestroy() {
-        super.onDestroy()
-        contentView?.onDestroy()
+    override fun onOptionsItemSelected(item: MenuItem): Boolean {
+        when (item.itemId) {
+            R.string.menu_change_order -> {
+            }
+            R.string.menu_add_group -> {
+            }
+            else -> return false
+        }
+        return true
     }
 
     override fun onContextItemSelected(item: MenuItem): Boolean {
@@ -119,8 +135,9 @@ class FavoriteListFragment : BaseFragment<FavoriteListPresenter, FavoriteListVie
     }
 
     private fun getContextSelectedItem(): Any {
-        return (contentView as? FavoriteStationsView)?.getContextSelectedItem()
-                ?: (contentView as? RecordsView)?.getContextSelectedItem()
-                ?: Any()
+//        return (contentView as? FavoriteStationsView)?.getContextSelectedItem()
+//                ?: (contentView as? RecordsView)?.getContextSelectedItem()
+//                ?: Any()
+        return Any()
     }
 }

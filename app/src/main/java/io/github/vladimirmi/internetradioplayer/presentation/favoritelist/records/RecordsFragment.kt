@@ -1,21 +1,21 @@
 package io.github.vladimirmi.internetradioplayer.presentation.favoritelist.records
 
-import android.content.Context
-import android.util.AttributeSet
+import android.view.View
 import androidx.recyclerview.widget.LinearLayoutManager
+import io.github.vladimirmi.internetradioplayer.R
 import io.github.vladimirmi.internetradioplayer.di.Scopes
 import io.github.vladimirmi.internetradioplayer.domain.model.Record
-import io.github.vladimirmi.internetradioplayer.presentation.base.BaseViewGroup
-import kotlinx.android.synthetic.main.view_records.view.*
+import io.github.vladimirmi.internetradioplayer.presentation.base.BaseFragment
+import kotlinx.android.synthetic.main.fragment_records.*
 import toothpick.Toothpick
 
 /**
  * Created by Vladimir Mikhalev 13.02.2019.
  */
 
-class RecordsViewImpl @JvmOverloads constructor(
-        context: Context, attrs: AttributeSet? = null, defStyleAttr: Int = 0
-) : BaseViewGroup<RecordsPresenter, RecordsView>(context, attrs, defStyleAttr), RecordsView {
+class RecordsFragment : BaseFragment<RecordsPresenter, RecordsView>(), RecordsView {
+
+    override val layout = R.layout.fragment_records
 
     private val recordsAdapter = RecordsAdapter()
 
@@ -26,7 +26,7 @@ class RecordsViewImpl @JvmOverloads constructor(
                 }
     }
 
-    override fun setupView() {
+    override fun setupView(view: View) {
         recordsRv.layoutManager = LinearLayoutManager(context)
         recordsRv.adapter = recordsAdapter
         recordsAdapter.onItemClickListener = { presenter.selectRecord(it) }
@@ -41,5 +41,5 @@ class RecordsViewImpl @JvmOverloads constructor(
         recordsRv.scrollToPosition(position)
     }
 
-    override fun getContextSelectedItem()  = recordsAdapter.longClickedItem
+    override fun getContextSelectedItem() = recordsAdapter.longClickedItem
 }

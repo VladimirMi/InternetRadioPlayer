@@ -100,21 +100,6 @@ class PlayerPresenter
 //                .addTo(viewSubs)
     }
 
-    fun createGroup(groupName: String) {
-        favoriteListInteractor.createGroup(groupName)
-                .andThen(stationInteractor.changeGroup(groupName))
-                .subscribeX()
-                .addTo(viewSubs)
-    }
-
-    fun editStationTitle(title: String) {
-        //todo refactor this
-//        stationInteractor.editStationTitle(title)
-//                .observeOn(AndroidSchedulers.mainThread())
-//                .subscribeX(onComplete = { view?.switchTitleEditable() })
-//                .addTo(viewSubs)
-    }
-
     fun playPause() {
         with(playerInteractor) {
             if (!isPlaying && !isNetAvail) {

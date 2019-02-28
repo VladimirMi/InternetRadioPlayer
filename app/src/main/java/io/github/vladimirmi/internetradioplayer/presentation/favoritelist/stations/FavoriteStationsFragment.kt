@@ -18,11 +18,16 @@ import io.github.vladimirmi.internetradioplayer.extensions.visible
 import io.github.vladimirmi.internetradioplayer.presentation.base.BaseFragment
 import io.github.vladimirmi.internetradioplayer.presentation.main.NewStationDialog
 import kotlinx.android.synthetic.main.fragment_favorite_stations.*
+import timber.log.Timber
 import toothpick.Toothpick
 
 /**
  * Created by Vladimir Mikhalev 13.02.2019.
  */
+
+private const val EDIT_STATION_DIALOG = "edit_station_dialog"
+private const val NEW_GROUP_DIALOG = "new_group_dialog"
+private const val NEW_STATION_DIALOG = "new_station_dialog"
 
 class FavoriteStationsFragment : BaseFragment<FavoriteStationsPresenter, FavoriteStationsView>(),
         FavoriteStationsView, StationItemCallback, EditDialog.Callback {
@@ -30,6 +35,7 @@ class FavoriteStationsFragment : BaseFragment<FavoriteStationsPresenter, Favorit
     override val layout = R.layout.fragment_favorite_stations
 
     private val stationListAdapter by lazy { StationListAdapter(this) }
+    private var changeOrderMode = false
 
     private val itemTouchHelper by lazy {
         ItemTouchHelper(object : ItemSwipeCallback() {
@@ -67,11 +73,18 @@ class FavoriteStationsFragment : BaseFragment<FavoriteStationsPresenter, Favorit
     @SuppressLint("RestrictedApi")
     override fun onPrepareOptionsMenu(menu: Menu) {
         super.onPrepareOptionsMenu(menu)
-        menu.add(0, R.string.menu_change_order, 0, R.string.menu_change_order).apply {
-            setShowAsAction(MenuItem.SHOW_AS_ACTION_NEVER)
-            icon = ContextCompat.getDrawable(context!!, R.drawable.ic_sort)
+        if (changeOrderMode) {
+            menu.add(Menu.NONE, R.string.menu_change_order, Menu.NONE, R.string.menu_change_order).apply {
+                setShowAsAction(MenuItem.SHOW_AS_ACTION_IF_ROOM)
+                icon = ContextCompat.getDrawable(context!!, R.drawable.ic_submit)
+            }
+        } else {
+            menu.add(Menu.NONE, R.string.menu_change_order, Menu.NONE, R.string.menu_change_order).apply {
+                setShowAsAction(MenuItem.SHOW_AS_ACTION_NEVER)
+                icon = ContextCompat.getDrawable(context!!, R.drawable.ic_sort)
+            }
         }
-        menu.add(0, R.string.menu_add_group, 0, R.string.menu_add_group).apply {
+        menu.add(Menu.NONE, R.string.menu_add_group, Menu.NONE, R.string.menu_add_group).apply {
             setShowAsAction(MenuItem.SHOW_AS_ACTION_NEVER)
             icon = ContextCompat.getDrawable(context!!, R.drawable.ic_add)
         }
@@ -80,10 +93,8 @@ class FavoriteStationsFragment : BaseFragment<FavoriteStationsPresenter, Favorit
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
         when (item.itemId) {
-            R.string.menu_change_order -> {
-            }
-            R.string.menu_add_group -> {
-            }
+            R.string.menu_change_order -> switchChangeOrderMode()
+            R.string.menu_add_group -> openAddGroupDialog()
             else -> return false
         }
         return true
@@ -101,6 +112,14 @@ class FavoriteStationsFragment : BaseFragment<FavoriteStationsPresenter, Favorit
             else -> return false
         }
         return true
+    }
+
+    override fun handleBackPressed(): Boolean {
+        return if (changeOrderMode) {
+            switchChangeOrderMode(); true
+        } else {
+            false
+        }
     }
 
     //region =============== StationListView ==============
@@ -138,18 +157,36 @@ class FavoriteStationsFragment : BaseFragment<FavoriteStationsPresenter, Favorit
 
     //endregion
 
-    override fun onDialogEdit(newText: String) {
-        presenter.editStation(stationListAdapter.longClickedItem as Station, newText)
+    override fun onDialogEdit(newText: String, tag: String) {
+        when (tag) {
+            EDIT_STATION_DIALOG -> presenter.editStation(stationListAdapter.longClickedItem as Station, newText)
+            NEW_GROUP_DIALOG -> presenter.createGroup(newText)
+        }
+
     }
 
     private fun openStationEditDialog(station: Station) {
-        //todo to strings
-        EditDialog.newInstance("Edit station", "Station name", station.name)
-                .show(childFragmentManager, "edit_station_dialog")
+        EditDialog.newInstance(getString(R.string.dialog_edit_station),
+                getString(R.string.dialog_edit_station_hint), station.name)
+                .show(childFragmentManager, EDIT_STATION_DIALOG)
     }
 
     private fun openAddStationDialog() {
-        NewStationDialog().show((context as FragmentActivity).supportFragmentManager, "new_station_dialog")
+        NewStationDialog().show((context as FragmentActivity).supportFragmentManager, NEW_STATION_DIALOG)
+    }
+
+    private fun openAddGroupDialog() {
+        EditDialog.newInstance(getString(R.string.dialog_new_group),
+                getString(R.string.dialog_new_group_hint), "")
+                .show(childFragmentManager, NEW_GROUP_DIALOG)
+    }
+
+    private fun switchChangeOrderMode() {
+        changeOrderMode = !changeOrderMode
+        if (changeOrderMode) Timber.e("change mode true")
+        else Timber.e("change mode false")
+
+        activity?.invalidateOptionsMenu()
     }
 
 }

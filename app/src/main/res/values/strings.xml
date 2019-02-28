@@ -14,6 +14,8 @@
     <string name="dialog_new_station_hint">Link</string>
     <string name="dialog_new_group">Create new group</string>
     <string name="dialog_new_group_hint">Group name</string>
+    <string name="dialog_edit_station">Edit station</string>
+    <string name="dialog_edit_station_hint">Station name</string>
     <string name="dialog_start_playback">Start playback</string>
     <string name="dialog_ok">OK</string>
     <string name="dialog_cancel">Cancel</string>

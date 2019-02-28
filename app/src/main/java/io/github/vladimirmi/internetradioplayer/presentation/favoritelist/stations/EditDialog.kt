@@ -44,13 +44,14 @@ class EditDialog : BaseDialogFragment() {
     }
 
     override fun onPositive() {
-        (parentFragment as? Callback)?.onDialogEdit(dialogView!!.editTextView.text.toString())
+        (parentFragment as? Callback)?.onDialogEdit(dialogView!!.editTextView.text.toString(), tag
+                ?: "")
     }
 
     override fun onNegative() {
     }
 
     interface Callback {
-        fun onDialogEdit(newText: String)
+        fun onDialogEdit(newText: String, tag: String)
     }
 }

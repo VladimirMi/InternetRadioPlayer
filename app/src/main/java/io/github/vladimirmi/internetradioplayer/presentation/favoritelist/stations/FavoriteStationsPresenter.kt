@@ -46,6 +46,13 @@ class FavoriteStationsPresenter
                 .addTo(dataSubs)
     }
 
+    fun createGroup(groupName: String) {
+        favoriteListInteractor.createGroup(groupName)
+//                .andThen(stationInteractor.changeGroup(groupName))
+                .subscribeX()
+                .addTo(viewSubs)
+    }
+
     fun removeGroup(id: String) {
         favoriteListInteractor.removeGroup(id)
                 .subscribeX()

@@ -49,7 +49,6 @@
     <string name="desc_directory_logo">directory logo</string>
     <string name="desc_open_drawer">open drawer</string>
     <string name="desc_close_drawer">close drawer</string>
-    <string name="desc_remove_folder">remove empty group</string>
     <string name="desc_add_station">add station</string>
 
     <string name="tab_search">Search</string>

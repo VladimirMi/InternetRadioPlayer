@@ -9,7 +9,6 @@ import androidx.recyclerview.widget.RecyclerView
 
 abstract class ItemSwipeCallback : ItemTouchHelper.SimpleCallback(0, 0) {
 
-
     abstract override fun onMove(recyclerView: RecyclerView, viewHolder: RecyclerView.ViewHolder,
                                  target: RecyclerView.ViewHolder): Boolean
 
@@ -17,7 +16,9 @@ abstract class ItemSwipeCallback : ItemTouchHelper.SimpleCallback(0, 0) {
         if (actionState == ItemTouchHelper.ACTION_STATE_DRAG && viewHolder != null) {
             onStartDrag(viewHolder.adapterPosition)
 
-        } else if (actionState == ItemTouchHelper.ACTION_STATE_IDLE) onIdle()
+        } else if (actionState == ItemTouchHelper.ACTION_STATE_IDLE) {
+            onIdle()
+        }
         super.onSelectedChanged(viewHolder, actionState)
     }
 
@@ -34,5 +35,9 @@ abstract class ItemSwipeCallback : ItemTouchHelper.SimpleCallback(0, 0) {
 
     override fun getSwipeDirs(recyclerView: RecyclerView, viewHolder: RecyclerView.ViewHolder): Int {
         return 0
+    }
+
+    override fun isLongPressDragEnabled(): Boolean {
+        return false
     }
 }

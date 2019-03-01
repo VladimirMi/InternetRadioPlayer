@@ -18,7 +18,6 @@ import io.github.vladimirmi.internetradioplayer.extensions.visible
 import io.github.vladimirmi.internetradioplayer.presentation.base.BaseFragment
 import io.github.vladimirmi.internetradioplayer.presentation.main.NewStationDialog
 import kotlinx.android.synthetic.main.fragment_favorite_stations.*
-import timber.log.Timber
 import toothpick.Toothpick
 
 /**
@@ -30,7 +29,7 @@ private const val NEW_GROUP_DIALOG = "new_group_dialog"
 private const val NEW_STATION_DIALOG = "new_station_dialog"
 
 class FavoriteStationsFragment : BaseFragment<FavoriteStationsPresenter, FavoriteStationsView>(),
-        FavoriteStationsView, StationItemCallback, EditDialog.Callback {
+        FavoriteStationsView, FavoriteStationsAdapterCallback, EditDialog.Callback {
 
     override val layout = R.layout.fragment_favorite_stations
 
@@ -67,7 +66,7 @@ class FavoriteStationsFragment : BaseFragment<FavoriteStationsPresenter, Favorit
         stationsRv.layoutManager = LinearLayoutManager(context!!)
         stationsRv.adapter = stationListAdapter
         addStationFab.setOnClickListener { openAddStationDialog() }
-//        itemTouchHelper.attachToRecyclerView(stationsRv)
+        itemTouchHelper.attachToRecyclerView(stationsRv)
     }
 
     @SuppressLint("RestrictedApi")
@@ -141,7 +140,7 @@ class FavoriteStationsFragment : BaseFragment<FavoriteStationsPresenter, Favorit
 
     //endregion
 
-    //region =============== StationItemCallback ==============
+    //region =============== FavoriteStationsAdapterCallback ==============
 
     override fun onGroupSelected(id: String) {
         presenter.selectGroup(id)
@@ -151,8 +150,8 @@ class FavoriteStationsFragment : BaseFragment<FavoriteStationsPresenter, Favorit
         presenter.selectStation(station)
     }
 
-    override fun onGroupRemove(id: String) {
-        presenter.removeGroup(id)
+    override fun onStartDrag(vh: RecyclerView.ViewHolder) {
+        itemTouchHelper.startDrag(vh)
     }
 
     //endregion
@@ -162,7 +161,6 @@ class FavoriteStationsFragment : BaseFragment<FavoriteStationsPresenter, Favorit
             EDIT_STATION_DIALOG -> presenter.editStation(stationListAdapter.longClickedItem as Station, newText)
             NEW_GROUP_DIALOG -> presenter.createGroup(newText)
         }
-
     }
 
     private fun openStationEditDialog(station: Station) {
@@ -183,9 +181,8 @@ class FavoriteStationsFragment : BaseFragment<FavoriteStationsPresenter, Favorit
 
     private fun switchChangeOrderMode() {
         changeOrderMode = !changeOrderMode
-        if (changeOrderMode) Timber.e("change mode true")
-        else Timber.e("change mode false")
-
+        addStationFab.visible(!changeOrderMode)
+        stationListAdapter.setDragEnabled(changeOrderMode)
         activity?.invalidateOptionsMenu()
     }
 

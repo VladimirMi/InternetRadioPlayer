@@ -65,10 +65,12 @@ class FavoriteListInteractor
                 }.andThen(initFavoriteList())
     }
 
+    fun findGroup(id: String): Group? {
+        return favoritesRepository.groups.find { it.id == id }
+    }
+
     fun getGroup(id: String): Single<Group> {
-        return Single.fromCallable {
-            favoritesRepository.groups.find { it.id == id } ?: Group.nullObj()
-        }
+        return Single.fromCallable { findGroup(id) ?: Group.nullObj() }
                 .flatMap {
                     if (it.isNull()) createGroup(Group.DEFAULT_NAME)
                             .andThen(getGroup(Group.DEFAULT_ID))

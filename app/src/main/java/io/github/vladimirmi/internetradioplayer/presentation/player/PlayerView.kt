@@ -25,5 +25,7 @@ interface PlayerView : BaseView {
 
     fun showNext()
 
-    fun setGroup(group: String)
+    fun setGroup(group: String?)
+
+    fun setSpecs(specs: String)
 }

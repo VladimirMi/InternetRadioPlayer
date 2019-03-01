@@ -15,7 +15,6 @@ import io.github.vladimirmi.internetradioplayer.extensions.subscribeX
 import io.github.vladimirmi.internetradioplayer.navigation.Router
 import io.github.vladimirmi.internetradioplayer.presentation.base.BasePresenter
 import io.reactivex.android.schedulers.AndroidSchedulers
-import io.reactivex.disposables.Disposable
 import io.reactivex.rxkotlin.addTo
 import javax.inject.Inject
 
@@ -32,11 +31,8 @@ class PlayerPresenter
                     private val router: Router)
     : BasePresenter<PlayerView>() {
 
-    private var groupSub: Disposable? = null
-
     override fun onAttach(view: PlayerView) {
         setupStation()
-        setupGroups()
         setupPlayer()
     }
 
@@ -46,29 +42,14 @@ class PlayerPresenter
                 .subscribeX(onNext = {
                     view?.setMedia(it)
                     if (it is Station) {
+                        view?.setSpecs(it.specs)
                         view?.setFavorite(favoriteListInteractor.isFavorite(it))
+                        view?.setGroup(favoriteListInteractor.findGroup(it.groupId)?.name)
                     }
                 })
                 .addTo(viewSubs)
     }
 
-    fun setupGroups() {
-        //todo refactor this
-//        groupSub?.dispose()
-//        val groupObs = mediaInteractor.currentStationObs
-//                .flatMapSingle { favoriteListInteractor.getGroup(it.groupId) }
-//                .map { it.name }
-//                .observeOn(AndroidSchedulers.mainThread())
-//
-//        val groupsObs = favoriteListInteractor.getGroupsObs()
-//                .map { groups -> groups.map { it.name } }
-//                .observeOn(AndroidSchedulers.mainThread())
-
-//        groupSub = Observables.combineLatest(groupsObs, groupObs) { list, group ->
-//            view?.setGroups(list)
-//            list.indexOf(group) + 1 //new folder option offset
-//        }.subscribeX(onNext = { view?.setGroup(it) })
-    }
 
     private fun setupPlayer() {
         playerInteractor.playbackStateObs
@@ -90,14 +71,6 @@ class PlayerPresenter
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribeX()
                 .addTo(dataSubs)
-    }
-
-    fun selectGroup(position: Int, group: String) {
-        //todo refactor this
-//        if (position == 0) view?.openNewGroupDialog()
-//        else stationInteractor.changeGroup(group)
-//                .subscribeX()
-//                .addTo(viewSubs)
     }
 
     fun playPause() {
@@ -136,7 +109,7 @@ class PlayerPresenter
                 view?.showPlaying(true)
                 view?.setStatus(R.string.metadata_buffering)
             }
-            PlaybackStateCompat.STATE_PLAYING ->{
+            PlaybackStateCompat.STATE_PLAYING -> {
                 view?.showPlaying(true)
                 view?.setStatus(R.string.status_playing)
             }

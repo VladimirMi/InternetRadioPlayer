@@ -10,7 +10,6 @@ import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.constraintlayout.widget.ConstraintSet
 import androidx.core.content.ContextCompat
 import io.github.vladimirmi.internetradioplayer.R
-import io.github.vladimirmi.internetradioplayer.data.db.entity.Station
 import io.github.vladimirmi.internetradioplayer.di.Scopes
 import io.github.vladimirmi.internetradioplayer.domain.model.Media
 import io.github.vladimirmi.internetradioplayer.extensions.*
@@ -59,10 +58,6 @@ class PlayerFragment : BaseFragment<PlayerPresenter, PlayerView>(), PlayerView {
 
     override fun setMedia(media: Media) {
         titleTv.text = media.name
-        if (media is Station) {
-            //todo move to presenter
-            specsTv.setTextOrHide(media.specs)
-        }
     }
 
     override fun setFavorite(isFavorite: Boolean) {
@@ -70,12 +65,16 @@ class PlayerFragment : BaseFragment<PlayerPresenter, PlayerView>(), PlayerView {
         favoriteBt.background.setTintExt(context!!.color(tint))
     }
 
-    override fun setGroup(group: String) {
-        groupTv.text = group
+    override fun setGroup(group: String?) {
+        groupTv.setTextOrHide(group)
     }
 
     override fun setStatus(resId: Int) {
         statusTv.setText(resId)
+    }
+
+    override fun setSpecs(specs: String) {
+        specsTv.text = specs
     }
 
     override fun showPlaying(isPlaying: Boolean) {

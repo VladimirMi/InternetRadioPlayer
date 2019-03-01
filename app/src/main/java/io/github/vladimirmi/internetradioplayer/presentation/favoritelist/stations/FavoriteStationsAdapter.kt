@@ -122,7 +122,7 @@ class StationListAdapter(private val callback: FavoriteStationsAdapterCallback)
     private fun setupGroupTitleVH(position: Int, holder: GroupTitleVH) {
         val group = stations.getGroup(position)
         holder.bind(group)
-        holder.itemView.setOnClickListener { callback.onGroupSelected(group.id) }
+        holder.itemView.setOnClickListener { callback.onGroupSelected(group) }
     }
 
     private fun setupGroupItemVH(position: Int, holder: GroupItemVH) {
@@ -285,6 +285,6 @@ class GroupItemVH(itemView: View) : GroupElementVH(itemView), View.OnCreateConte
 
 interface FavoriteStationsAdapterCallback {
     fun onItemSelected(station: Station)
-    fun onGroupSelected(id: String)
+    fun onGroupSelected(group: Group)
     fun onStartDrag(vh: RecyclerView.ViewHolder)
 }

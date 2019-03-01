@@ -1,5 +1,6 @@
 package io.github.vladimirmi.internetradioplayer.presentation.favoritelist.stations
 
+import io.github.vladimirmi.internetradioplayer.data.db.entity.Group
 import io.github.vladimirmi.internetradioplayer.data.db.entity.Station
 import io.github.vladimirmi.internetradioplayer.domain.interactor.FavoriteListInteractor
 import io.github.vladimirmi.internetradioplayer.domain.interactor.MediaInteractor
@@ -40,21 +41,26 @@ class FavoriteStationsPresenter
         mediaInteractor.currentMedia = station
     }
 
-    fun selectGroup(id: String) {
-        favoriteListInteractor.expandOrCollapseGroup(id)
+    fun selectGroup(group: Group) {
+        favoriteListInteractor.expandOrCollapseGroup(group)
                 .subscribeX()
                 .addTo(dataSubs)
     }
 
     fun createGroup(groupName: String) {
         favoriteListInteractor.createGroup(groupName)
-//                .andThen(stationInteractor.changeGroup(groupName))
                 .subscribeX()
                 .addTo(viewSubs)
     }
 
-    fun removeGroup(id: String) {
-        favoriteListInteractor.removeGroup(id)
+    fun deleteGroup(group: Group) {
+        favoriteListInteractor.deleteGroup(group)
+                .subscribeX()
+                .addTo(dataSubs)
+    }
+
+    fun editGroup(group: Group, newName: String) {
+        favoriteListInteractor.updateGroup(group.copy(name = newName))
                 .subscribeX()
                 .addTo(dataSubs)
     }
@@ -64,7 +70,6 @@ class FavoriteStationsPresenter
                 .subscribeX()
                 .addTo(dataSubs)
     }
-
 
     fun deleteStation(station: Station) {
         stationInteractor.switchFavorite(station)

@@ -11,6 +11,7 @@ import androidx.recyclerview.widget.ItemTouchHelper
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import io.github.vladimirmi.internetradioplayer.R
+import io.github.vladimirmi.internetradioplayer.data.db.entity.Group
 import io.github.vladimirmi.internetradioplayer.data.db.entity.Station
 import io.github.vladimirmi.internetradioplayer.di.Scopes
 import io.github.vladimirmi.internetradioplayer.domain.model.FlatStationsList
@@ -25,6 +26,7 @@ import toothpick.Toothpick
  */
 
 private const val EDIT_STATION_DIALOG = "edit_station_dialog"
+private const val EDIT_GROUP_DIALOG = "edit_group_dialog"
 private const val NEW_GROUP_DIALOG = "new_group_dialog"
 private const val NEW_STATION_DIALOG = "new_station_dialog"
 
@@ -108,6 +110,11 @@ class FavoriteStationsFragment : BaseFragment<FavoriteStationsPresenter, Favorit
                 item.itemId == R.id.context_menu_action_delete -> presenter.deleteStation(selectedItem)
                 else -> return false
             }
+            is Group -> when {
+                item.itemId == R.id.context_menu_action_edit -> openGroupEditDialog(selectedItem)
+                item.itemId == R.id.context_menu_action_delete -> presenter.deleteGroup(selectedItem)
+                else -> return false
+            }
             else -> return false
         }
         return true
@@ -142,8 +149,8 @@ class FavoriteStationsFragment : BaseFragment<FavoriteStationsPresenter, Favorit
 
     //region =============== FavoriteStationsAdapterCallback ==============
 
-    override fun onGroupSelected(id: String) {
-        presenter.selectGroup(id)
+    override fun onGroupSelected(group: Group) {
+        presenter.selectGroup(group)
     }
 
     override fun onItemSelected(station: Station) {
@@ -159,6 +166,7 @@ class FavoriteStationsFragment : BaseFragment<FavoriteStationsPresenter, Favorit
     override fun onDialogEdit(newText: String, tag: String) {
         when (tag) {
             EDIT_STATION_DIALOG -> presenter.editStation(stationListAdapter.longClickedItem as Station, newText)
+            EDIT_GROUP_DIALOG -> presenter.editGroup(stationListAdapter.longClickedItem as Group, newText)
             NEW_GROUP_DIALOG -> presenter.createGroup(newText)
         }
     }
@@ -177,6 +185,12 @@ class FavoriteStationsFragment : BaseFragment<FavoriteStationsPresenter, Favorit
         EditDialog.newInstance(getString(R.string.dialog_new_group),
                 getString(R.string.dialog_new_group_hint), "")
                 .show(childFragmentManager, NEW_GROUP_DIALOG)
+    }
+
+    private fun openGroupEditDialog(group: Group) {
+        EditDialog.newInstance(getString(R.string.dialog_edit_group),
+                getString(R.string.dialog_new_group_hint), group.name)
+                .show(childFragmentManager, EDIT_GROUP_DIALOG)
     }
 
     private fun switchChangeOrderMode() {

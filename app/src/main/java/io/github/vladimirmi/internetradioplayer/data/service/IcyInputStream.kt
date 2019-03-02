@@ -38,8 +38,8 @@ class IcyInputStream(inS: InputStream,
         ensureFill(buffer, 0, size)
         val actualSize = buffer.indexOfFirst { it.toInt() == 0 }
         //todo detect charset
-        val metaString = String(buffer, 0, actualSize)
-        playerCallback?.onMetadata(metaString)
+        val string = String(buffer, 0, actualSize)
+        playerCallback?.setArtistTitle(string)
     }
 
     private fun ensureFill(buffer: ByteArray, offset: Int, size: Int): Int {

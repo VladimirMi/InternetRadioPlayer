@@ -1,6 +1,5 @@
 package io.github.vladimirmi.internetradioplayer.data.service
 
-import android.content.Context
 import android.graphics.Bitmap
 import android.support.v4.media.MediaMetadataCompat
 import io.github.vladimirmi.internetradioplayer.R
@@ -38,21 +37,19 @@ fun MediaMetadataCompat.setArtistTitle(metadata: String): MediaMetadataCompat {
         title = ""
         artist = Scopes.context.getString(R.string.metadata_not_available)
     }
-
     return MediaMetadataCompat.Builder(this)
             .putString(MediaMetadataCompat.METADATA_KEY_ARTIST, artist)
             .putString(MediaMetadataCompat.METADATA_KEY_TITLE, title)
             .build()
 }
 
-fun MediaMetadataCompat.setMedia(media: Media, context: Context): MediaMetadataCompat {
-    return MediaMetadataCompat.Builder()
+fun MediaMetadataCompat.setMedia(media: Media): MediaMetadataCompat {
+    return MediaMetadataCompat.Builder(this)
             .putString(MediaMetadataCompat.METADATA_KEY_ALBUM, media.name)
-//            .putBitmap(MediaMetadataCompat.METADATA_KEY_ALBUM_ART, station.icon.getBitmap(context, true))
             .build()
 }
 
-fun MediaMetadataCompat.clear(): MediaMetadataCompat {
+fun MediaMetadataCompat.clearArtistTitle(): MediaMetadataCompat {
     return MediaMetadataCompat.Builder(this)
             .putString(MediaMetadataCompat.METADATA_KEY_ARTIST, "")
             .putString(MediaMetadataCompat.METADATA_KEY_TITLE, "")
@@ -60,9 +57,15 @@ fun MediaMetadataCompat.clear(): MediaMetadataCompat {
 }
 
 fun MediaMetadataCompat.isNotSupported(): Boolean {
-    return title == Scopes.context.getString(R.string.metadata_not_available)
+    return artist == Scopes.context.getString(R.string.metadata_not_available)
 }
 
 fun MediaMetadataCompat.isEmpty(): Boolean {
     return title.isBlank() && artist.isBlank()
+}
+
+fun MediaMetadataCompat.setDuration(durationMs: Long): MediaMetadataCompat {
+    return MediaMetadataCompat.Builder(this)
+            .putLong(MediaMetadataCompat.METADATA_KEY_DURATION, durationMs)
+            .build()
 }

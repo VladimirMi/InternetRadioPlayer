@@ -46,8 +46,7 @@ class Playback(private val service: PlayerService,
     private val analyticsListener = object : AnalyticsListener {
 
         override fun onAudioSessionId(eventTime: AnalyticsListener.EventTime?, audioSessionId: Int) {
-            playerCallback.sessionId = audioSessionId
-            playerCallback.onAudioSessionId(EVENT_SESSION_START, audioSessionId)
+            playerCallback.setStartAudioSessionId(audioSessionId)
         }
     }
 

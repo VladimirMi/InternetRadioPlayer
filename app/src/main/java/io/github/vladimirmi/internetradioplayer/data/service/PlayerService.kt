@@ -4,6 +4,7 @@ import android.app.Service
 import android.content.Intent
 import android.os.Bundle
 import android.support.v4.media.MediaBrowserCompat
+import android.support.v4.media.MediaMetadataCompat
 import android.support.v4.media.session.MediaSessionCompat
 import android.support.v4.media.session.PlaybackStateCompat
 import androidx.media.MediaBrowserServiceCompat
@@ -48,11 +49,6 @@ class PlayerService : MediaBrowserServiceCompat(), SessionCallback.Interface {
     private lateinit var playback: Playback
     private lateinit var notification: MediaNotification
 
-    private var playbackState = PlaybackStateCompat.Builder()
-            .setState(PlaybackStateCompat.STATE_STOPPED, 0, 1F)
-            .setActions(PlayerActions.DEFAULT_ACTIONS).build()
-    private var mediaMetadata = EMPTY_METADATA
-
     private var serviceStarted = false
     private var currentStationId: String? = null
     private var playingMediaId: String? = null
@@ -61,10 +57,9 @@ class PlayerService : MediaBrowserServiceCompat(), SessionCallback.Interface {
     override fun onCreate() {
         super.onCreate()
         Toothpick.inject(this, Scopes.app)
-        initSession()
 
         playback = Playback(this, playerCallback)
-        notification = MediaNotification(this, session)
+        initSession()
 
         equalizerInteractor.initPresets()
                 .subscribe()
@@ -84,10 +79,10 @@ class PlayerService : MediaBrowserServiceCompat(), SessionCallback.Interface {
     private fun initSession() {
         session = MediaSessionCompat(this, javaClass.simpleName)
         session.setCallback(SessionCallback(this))
-        session.setPlaybackState(playbackState)
-        session.setMetadata(mediaMetadata)
         session.setSessionActivity(PlayerActions.sessionActivity(this))
         sessionToken = session.sessionToken
+        notification = MediaNotification(this, session)
+        playerCallback.initDefault()
     }
 
     override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
@@ -128,9 +123,7 @@ class PlayerService : MediaBrowserServiceCompat(), SessionCallback.Interface {
     private fun handleCurrentMedia(media: Media) {
         currentStationId = media.id
         if (isPlaying && currentStationId != playingMediaId) playCurrent()
-        mediaMetadata = EMPTY_METADATA.setMedia(media, this)
-        session.setMetadata(mediaMetadata)
-        notification.update()
+        playerCallback.setMedia(media)
     }
 
     private val isPlaying: Boolean
@@ -187,15 +180,8 @@ class PlayerService : MediaBrowserServiceCompat(), SessionCallback.Interface {
 
     private val playerCallback = object : PlayerCallback() {
 
-        override fun onPlayerStateChanged(state: Int) {
-            playbackState = PlaybackStateCompat.Builder(playbackState)
-                    .setState(state, 0, 1f)
-                    .build()
-            session.setPlaybackState(playbackState)
-            if (state == PlaybackStateCompat.STATE_STOPPED) {
-                mediaMetadata = mediaMetadata.clear()
-                session.setMetadata(mediaMetadata)
-            }
+        override fun onPlaybackStateChanged(state: PlaybackStateCompat) {
+            session.setPlaybackState(state)
             notification.update()
         }
 
@@ -203,8 +189,7 @@ class PlayerService : MediaBrowserServiceCompat(), SessionCallback.Interface {
             errorHandler.invoke(error)
         }
 
-        override fun onMetadata(metadata: String) {
-            mediaMetadata = mediaMetadata.setArtistTitle(metadata)
+        override fun onMediaMetadataChanged(mediaMetadata: MediaMetadataCompat) {
             session.setMetadata(mediaMetadata)
             notification.update()
         }
@@ -215,6 +200,7 @@ class PlayerService : MediaBrowserServiceCompat(), SessionCallback.Interface {
     }
 
     private fun scheduleStopTask(stopDelay: Long) {
+        //todo move to SessionCallback
         stopTask?.cancel()
         stopTask = Timer().schedule(stopDelay) {
             onStopCommand()

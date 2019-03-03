@@ -16,7 +16,10 @@ val MediaMetadataCompat.title: String
     get() = getString(MediaMetadataCompat.METADATA_KEY_TITLE) ?: ""
 val MediaMetadataCompat.album: String
     get() = getString(MediaMetadataCompat.METADATA_KEY_ALBUM) ?: ""
-val MediaMetadataCompat.art: Bitmap? get() = getBitmap(MediaMetadataCompat.METADATA_KEY_ALBUM_ART)
+val MediaMetadataCompat.art: Bitmap?
+    get() = getBitmap(MediaMetadataCompat.METADATA_KEY_ALBUM_ART)
+val MediaMetadataCompat.duration: Long
+    get() = getLong(MediaMetadataCompat.METADATA_KEY_DURATION)
 
 val EMPTY_METADATA: MediaMetadataCompat get() = MediaMetadataCompat.Builder().build()
 

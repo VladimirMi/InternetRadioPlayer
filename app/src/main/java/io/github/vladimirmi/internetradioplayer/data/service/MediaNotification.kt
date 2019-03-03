@@ -38,6 +38,8 @@ class MediaNotification(private val service: PlayerService,
             .setShowActionsInCompactView(0, 1, 2)
             .setCancelButtonIntent(stopIntent)
 
+    private var isActive = false
+
     init {
         createNotificationChannel()
     }
@@ -45,15 +47,19 @@ class MediaNotification(private val service: PlayerService,
     fun update() {
         val state = session.controller.playbackState.state
         when (state) {
-            PlaybackStateCompat.STATE_PLAYING -> service.startForeground(NOTIFICATION_ID,
-                    createNotification())
-            PlaybackStateCompat.STATE_STOPPED -> service.stopForeground(true)
-            else -> {
-                if (state == PlaybackStateCompat.STATE_PAUSED) {
-                    service.stopForeground(false)
-                }
-                notificationManager.notify(NOTIFICATION_ID, createNotification())
+            PlaybackStateCompat.STATE_PLAYING -> {
+                service.startForeground(NOTIFICATION_ID, createNotification())
+                isActive = true
             }
+            PlaybackStateCompat.STATE_STOPPED -> {
+                service.stopForeground(true)
+                isActive = false
+            }
+            PlaybackStateCompat.STATE_PAUSED -> {
+                service.stopForeground(false)
+                if (isActive) notificationManager.notify(NOTIFICATION_ID, createNotification())
+            }
+            else -> notificationManager.notify(NOTIFICATION_ID, createNotification())
         }
     }
 

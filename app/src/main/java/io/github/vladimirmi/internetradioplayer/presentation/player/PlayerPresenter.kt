@@ -16,7 +16,9 @@ import io.github.vladimirmi.internetradioplayer.navigation.Router
 import io.github.vladimirmi.internetradioplayer.presentation.base.BasePresenter
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.rxkotlin.addTo
+import java.util.*
 import javax.inject.Inject
+import kotlin.concurrent.schedule
 
 /**
  * Created by Vladimir Mikhalev 18.11.2017.
@@ -30,6 +32,8 @@ class PlayerPresenter
                     private val mediaInteractor: MediaInteractor,
                     private val router: Router)
     : BasePresenter<PlayerView>() {
+
+    private var playTask: TimerTask? = null
 
     override fun onAttach(view: PlayerView) {
         setupStation()
@@ -73,12 +77,13 @@ class PlayerPresenter
                 .addTo(dataSubs)
     }
 
-    fun playPause() {
+    fun playPause(position: Int) {
         with(playerInteractor) {
             if (!isPlaying && !isNetAvail) {
                 view?.showSnackbar(R.string.msg_net_error)
             } else {
                 playPause()
+                seekTo(position)
             }
         }
     }
@@ -95,7 +100,13 @@ class PlayerPresenter
         playerInteractor.skipToNext()
     }
 
+    fun seekTo(position: Int) {
+        playerInteractor.seekTo(position)
+    }
+
     private fun handleState(state: PlaybackStateCompat) {
+        playTask?.cancel()
+        view?.setPosition(state.position)
         when (state.state) {
             PlaybackStateCompat.STATE_PAUSED -> {
                 view?.showPlaying(false)
@@ -112,6 +123,7 @@ class PlayerPresenter
             PlaybackStateCompat.STATE_PLAYING -> {
                 view?.showPlaying(true)
                 view?.setStatus(R.string.status_playing)
+                playTask = Timer().schedule(0, 300) { view?.increasePosition(300) }
             }
         }
     }
@@ -121,6 +133,8 @@ class PlayerPresenter
         val metadataLine = if (metadata.isEmpty() || metadata.isNotSupported()) metadata.album
         else "${metadata.artist} - ${metadata.title}"
         view?.setSimpleMetadata(metadataLine)
+
+        view?.setDuration(metadata.duration)
     }
 
     private fun handleSessionEvent(event: Pair<String, Bundle>) {

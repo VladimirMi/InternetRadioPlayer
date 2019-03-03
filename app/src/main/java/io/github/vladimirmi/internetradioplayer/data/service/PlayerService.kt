@@ -16,10 +16,12 @@ import io.github.vladimirmi.internetradioplayer.domain.interactor.FavoriteListIn
 import io.github.vladimirmi.internetradioplayer.domain.interactor.HistoryInteractor
 import io.github.vladimirmi.internetradioplayer.domain.interactor.MediaInteractor
 import io.github.vladimirmi.internetradioplayer.domain.model.Media
+import io.github.vladimirmi.internetradioplayer.domain.model.Record
 import io.github.vladimirmi.internetradioplayer.extensions.errorHandler
 import io.github.vladimirmi.internetradioplayer.extensions.toUri
 import io.reactivex.disposables.CompositeDisposable
 import io.reactivex.rxkotlin.addTo
+import timber.log.Timber
 import toothpick.Toothpick
 import java.util.*
 import javax.inject.Inject
@@ -70,7 +72,6 @@ class PlayerService : MediaBrowserServiceCompat(), SessionCallback.Interface {
                 .addTo(subs)
 
         mediaInteractor.currentMediaObs
-                //todo on each update metadata
                 .distinctUntilChanged(Media::uri)
                 .subscribe { handleCurrentMedia(it) }
                 .addTo(subs)
@@ -91,6 +92,7 @@ class PlayerService : MediaBrowserServiceCompat(), SessionCallback.Interface {
     }
 
     override fun onDestroy() {
+        Timber.e("onDestroy: ")
         subs.dispose()
         serviceStarted = false
         session.isActive = false
@@ -121,9 +123,16 @@ class PlayerService : MediaBrowserServiceCompat(), SessionCallback.Interface {
     }
 
     private fun handleCurrentMedia(media: Media) {
-        currentStationId = media.id
-        if (isPlaying && currentStationId != playingMediaId) playCurrent()
         playerCallback.setMedia(media)
+        currentStationId = media.id
+        if (isPlaying && currentStationId != playingMediaId) {
+            prepareAndPlay()
+        } else if (media is Record) {
+            playback.prepare(media.uri.toUri()) // prepare anyway for duration init
+            scheduleStopTask(STOP_DELAY)
+        } else {
+            playback.stop()
+        }
     }
 
     private val isPlaying: Boolean
@@ -137,12 +146,14 @@ class PlayerService : MediaBrowserServiceCompat(), SessionCallback.Interface {
         get() = session.controller.playbackState.state == PlaybackStateCompat.STATE_PAUSED
 
 
-    private fun playCurrent() {
+    private fun prepareAndPlay() {
+        stopTask?.cancel()
         val media = mediaInteractor.currentMedia
         //todo refactor (move)
         if (media is Station) historyInteractor.createHistory(media)
         playingMediaId = media.id
-        playback.play(media.uri.toUri())
+        playback.prepare(media.uri.toUri())
+        playback.play()
     }
 
     //region =============== SessionCallback ==============
@@ -150,8 +161,8 @@ class PlayerService : MediaBrowserServiceCompat(), SessionCallback.Interface {
     override fun onPlayCommand() {
         stopTask?.cancel()
         startService()
-        if (isPaused && currentStationId == playingMediaId) playback.resume()
-        else playCurrent()
+        if (isPaused && currentStationId == playingMediaId) playback.play()
+        else prepareAndPlay()
     }
 
     override fun onPauseCommand(stopDelay: Long) { // default is 1 min
@@ -174,6 +185,10 @@ class PlayerService : MediaBrowserServiceCompat(), SessionCallback.Interface {
         if (currentStationId == null) return
         val changed = favoriteListInteractor.nextStation(currentStationId!!)
         if (changed) session.sendSessionEvent(EVENT_SESSION_NEXT, Bundle.EMPTY)
+    }
+
+    override fun onSeekCommand(pos: Long) {
+        playback.seekTo(pos)
     }
 
     //endregion

@@ -104,4 +104,8 @@ class PlayerRepository
     fun skipToNext() {
         controller?.transportControls?.skipToNext()
     }
+
+    fun seekTo(position: Long) {
+        controller?.transportControls?.seekTo(position)
+    }
 }

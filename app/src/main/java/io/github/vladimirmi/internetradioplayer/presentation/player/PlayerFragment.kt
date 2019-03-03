@@ -5,10 +5,12 @@ import android.text.SpannableString
 import android.text.style.ForegroundColorSpan
 import android.text.style.URLSpan
 import android.view.View
+import android.widget.SeekBar
 import android.widget.TextView
 import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.constraintlayout.widget.ConstraintSet
 import androidx.core.content.ContextCompat
+import com.google.android.exoplayer2.util.Util
 import io.github.vladimirmi.internetradioplayer.R
 import io.github.vladimirmi.internetradioplayer.di.Scopes
 import io.github.vladimirmi.internetradioplayer.domain.model.Media
@@ -18,6 +20,7 @@ import kotlinx.android.synthetic.main.fragment_player.*
 import kotlinx.android.synthetic.main.view_controls.*
 import kotlinx.android.synthetic.main.view_station_info.*
 import toothpick.Toothpick
+import java.util.*
 
 /**
  * Created by Vladimir Mikhalev 20.02.2019.
@@ -45,7 +48,7 @@ class PlayerFragment : BaseFragment<PlayerPresenter, PlayerView>(), PlayerView {
         metaTitleTv.isSelected = true
         metaSubtitleTv.isSelected = true
         simpleMetaTv.isSelected = true
-        playPauseBt.setOnClickListener { presenter.playPause() }
+        playPauseBt.setOnClickListener { presenter.playPause(progressSb.progress) }
         playPauseBt.setManualMode(true)
         previousBt.setOnClickListener { presenter.skipToPrevious() }
         nextBt.setOnClickListener { presenter.skipToNext() }
@@ -96,6 +99,32 @@ class PlayerFragment : BaseFragment<PlayerPresenter, PlayerView>(), PlayerView {
 
     override fun setSimpleMetadata(metadata: String) {
         simpleMetaTv.text = metadata
+    }
+
+    override fun setPosition(position: Long) {
+        progressSb.progress = position.toInt()
+    }
+
+    override fun increasePosition(duration: Long) {
+        progressSb.progress = (progressSb.progress + duration).toInt()
+    }
+
+    override fun setDuration(duration: Long) {
+        durationTv.text = Util.getStringForTime(StringBuilder(), Formatter(), duration)
+        progressSb.max = duration.toInt()
+        progressSb.setOnSeekBarChangeListener(object : SeekBar.OnSeekBarChangeListener {
+            override fun onProgressChanged(seekBar: SeekBar?, progress: Int, fromUser: Boolean) {
+                if (fromUser) presenter.seekTo(progress)
+                //todo do not create sb and formatter
+                positionTv.text = Util.getStringForTime(StringBuilder(), Formatter(), progress.toLong())
+            }
+
+            override fun onStartTrackingTouch(seekBar: SeekBar?) {
+            }
+
+            override fun onStopTrackingTouch(seekBar: SeekBar?) {
+            }
+        })
     }
 
     //endregion

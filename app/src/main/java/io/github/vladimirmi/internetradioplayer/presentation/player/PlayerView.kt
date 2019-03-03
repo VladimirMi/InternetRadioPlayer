@@ -28,4 +28,10 @@ interface PlayerView : BaseView {
     fun setGroup(group: String?)
 
     fun setSpecs(specs: String)
+
+    fun setDuration(duration: Long)
+
+    fun setPosition(position: Long)
+
+    fun increasePosition(duration: Long)
 }

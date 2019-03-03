@@ -29,6 +29,10 @@ class SessionCallback(private val callback: Interface)
         callback.onSkipToNextCommand()
     }
 
+    override fun onSeekTo(pos: Long) {
+        callback.onSeekCommand(pos)
+    }
+
     interface Interface {
         fun onPlayCommand()
 
@@ -39,5 +43,7 @@ class SessionCallback(private val callback: Interface)
         fun onSkipToPreviousCommand()
 
         fun onSkipToNextCommand()
+
+        fun onSeekCommand(pos: Long)
     }
 }

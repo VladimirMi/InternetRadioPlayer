@@ -1,6 +1,7 @@
 package io.github.vladimirmi.internetradioplayer.extensions
 
 import android.animation.ObjectAnimator
+import android.os.Build
 import android.os.Handler
 import android.os.Looper
 import android.text.Editable
@@ -76,10 +77,14 @@ fun TextView.onTextChanges(listener: (String) -> Unit) {
 
 fun SeekBar.setProgressX(progress: Int, animate: Boolean) {
     if (animate) {
-        with(ObjectAnimator.ofInt(this, "progress", progress)) {
-            duration = 300
-            interpolator = AccelerateDecelerateInterpolator()
-            start()
+        if (Build.VERSION.SDK_INT >= 24) {
+            setProgress(progress, animate)
+        } else {
+            with(ObjectAnimator.ofInt(this, "progress", progress)) {
+                duration = 300
+                interpolator = AccelerateDecelerateInterpolator()
+                start()
+            }
         }
     } else {
         setProgress(progress)

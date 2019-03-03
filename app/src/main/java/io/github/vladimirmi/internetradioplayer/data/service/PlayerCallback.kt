@@ -18,6 +18,7 @@ abstract class PlayerCallback : Player.EventListener {
     private var sessionId = 0
     private var playbackStateCompat = DEFAULT_PLAYBACK_STATE
     private var mediaMetadata = EMPTY_METADATA
+    var player: ExoPlayer? = null
 
     fun initDefault() {
         onPlaybackStateChanged(playbackStateCompat)
@@ -30,7 +31,7 @@ abstract class PlayerCallback : Player.EventListener {
     }
 
     fun setMedia(media: Media) {
-        mediaMetadata = mediaMetadata.setMedia(media)
+        mediaMetadata = EMPTY_METADATA.setMedia(media)
         onMediaMetadataChanged(mediaMetadata)
     }
 
@@ -41,7 +42,9 @@ abstract class PlayerCallback : Player.EventListener {
 
     //region =============== Player.EventListener ==============
 
-    override fun onPlaybackParametersChanged(playbackParameters: PlaybackParameters) {}
+    override fun onPlaybackParametersChanged(playbackParameters: PlaybackParameters) {
+        Timber.e("onPlaybackParametersChanged: ${playbackParameters.speed}")
+    }
 
     override fun onTracksChanged(trackGroups: TrackGroupArray, trackSelections: TrackSelectionArray) {
         if (trackGroups.length > 0) {
@@ -72,45 +75,50 @@ abstract class PlayerCallback : Player.EventListener {
             playbackState == Player.STATE_BUFFERING && !playWhenReady -> PlaybackStateCompat.STATE_PAUSED
             playbackState == Player.STATE_READY && playWhenReady -> PlaybackStateCompat.STATE_PLAYING
             playbackState == Player.STATE_READY && !playWhenReady -> PlaybackStateCompat.STATE_PAUSED
-            playbackState == Player.STATE_ENDED -> PlaybackStateCompat.STATE_STOPPED
+            playbackState == Player.STATE_ENDED -> {
+                player?.stop() //todo implement "play next"
+                PlaybackStateCompat.STATE_STOPPED
+            }
             else -> PlaybackStateCompat.STATE_NONE
         }
         playbackStateCompat = playbackStateCompat.setState(state)
-        onPlaybackStateChanged(playbackStateCompat)
+
+        if (playbackState == Player.STATE_READY) {
+            mediaMetadata = mediaMetadata.setDuration(player?.duration ?: 0)
+            playbackStateCompat = playbackStateCompat.setPosition(player?.currentPosition ?: 0)
+        }
 
         if (state == PlaybackStateCompat.STATE_STOPPED) {
+            playbackStateCompat = playbackStateCompat.setPosition(0)
             onAudioSessionId(EVENT_SESSION_END, sessionId)
             sessionId = 0
             mediaMetadata = mediaMetadata.clearArtistTitle()
-            onMediaMetadataChanged(mediaMetadata)
         }
+
+        onPlaybackStateChanged(playbackStateCompat)
+        onMediaMetadataChanged(mediaMetadata)
+    }
+
+    override fun onSeekProcessed() {
+        player?.let {
+            playbackStateCompat = playbackStateCompat.setPosition(it.currentPosition)
+            onPlaybackStateChanged(playbackStateCompat)
+        }
+    }
+
+    override fun onTimelineChanged(timeline: Timeline, manifest: Any?, reason: Int) {
     }
 
     override fun onLoadingChanged(isLoading: Boolean) {
     }
 
+    override fun onPositionDiscontinuity(reason: Int) {
+    }
+
     override fun onRepeatModeChanged(repeatMode: Int) {
     }
 
-    override fun onSeekProcessed() {
-    }
-
-    override fun onPositionDiscontinuity(reason: Int) {
-        Timber.e("onPositionDiscontinuity: $reason")
-    }
-
     override fun onShuffleModeEnabledChanged(shuffleModeEnabled: Boolean) {
-    }
-
-    override fun onTimelineChanged(timeline: Timeline, manifest: Any?, reason: Int) {
-        if (timeline.windowCount == 0) return
-        val window = timeline.getWindow(0, Timeline.Window())
-        val duration = if (window.durationMs == C.TIME_UNSET) -1 else window.durationMs
-        mediaMetadata = mediaMetadata.setDuration(duration)
-        onMediaMetadataChanged(mediaMetadata)
-
-        Timber.e("onTimelineChanged: seekable ${window.isSeekable}")
-        Timber.e("onTimelineChanged: reason $reason")
     }
 
     //endregion

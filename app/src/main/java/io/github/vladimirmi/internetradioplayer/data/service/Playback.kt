@@ -14,18 +14,17 @@ import com.google.android.exoplayer2.ExoPlayerFactory
 import com.google.android.exoplayer2.SimpleExoPlayer
 import com.google.android.exoplayer2.analytics.AnalyticsListener
 import com.google.android.exoplayer2.audio.AudioAttributes
+import com.google.android.exoplayer2.extractor.DefaultExtractorsFactory
 import com.google.android.exoplayer2.source.ExtractorMediaSource
 import com.google.android.exoplayer2.trackselection.DefaultTrackSelector
 import com.google.android.exoplayer2.upstream.FileDataSource
 import com.google.android.exoplayer2.util.Util
 import io.github.vladimirmi.internetradioplayer.BuildConfig
 import io.github.vladimirmi.internetradioplayer.R
-import io.github.vladimirmi.internetradioplayer.data.utils.SCHEME_HTTP
 import io.github.vladimirmi.internetradioplayer.di.Scopes
 import io.github.vladimirmi.internetradioplayer.extensions.runOnUiThread
 import io.github.vladimirmi.internetradioplayer.extensions.wifiManager
 import okhttp3.OkHttpClient
-import timber.log.Timber
 
 
 const val STOP_DELAY = 60000L // default stop delay 1 min
@@ -50,21 +49,20 @@ class Playback(private val service: PlayerService,
         }
     }
 
-    fun play(uri: Uri) {
-        Timber.e("play: $uri")
+    fun prepare(uri: Uri) {
         runOnUiThread {
             if (player == null) createPlayer()
-            if (uri.scheme?.contains(SCHEME_HTTP) == true) {
-                prepareHttpPlayer(uri)
-            } else {
+            if (Util.isLocalFileUri(uri)) {
                 prepareFilePlayer(uri)
+                registerAudioNoisyReceiver()
+            } else {
+                prepareHttpPlayer(uri)
+                holdResources()
             }
-            holdResources()
-            resume()
         }
     }
 
-    fun resume() {
+    fun play() {
         runOnUiThread {
             player?.playWhenReady = true
         }
@@ -84,9 +82,16 @@ class Playback(private val service: PlayerService,
         }
     }
 
+    fun seekTo(position: Long) {
+        runOnUiThread {
+            player?.seekTo(position)
+        }
+    }
+
     fun releasePlayer() {
         runOnUiThread {
             player?.removeListener(playerCallback)
+            playerCallback.player = null
             player?.removeAnalyticsListener(analyticsListener)
             player?.release()
             player = null
@@ -97,6 +102,7 @@ class Playback(private val service: PlayerService,
         player = ExoPlayerFactory.newSimpleInstance(service, AudioRenderersFactory(service),
                 DefaultTrackSelector(), loadControl)
         player?.addListener(playerCallback)
+        playerCallback.player = player
         player?.addAnalyticsListener(analyticsListener)
 
         val audioAttributes = AudioAttributes.Builder()
@@ -118,7 +124,9 @@ class Playback(private val service: PlayerService,
     }
 
     private fun prepareFilePlayer(uri: Uri) {
-        val mediaSource = ExtractorMediaSource.Factory(::FileDataSource).createMediaSource(uri)
+        val mediaSource = ExtractorMediaSource.Factory(::FileDataSource)
+                .setExtractorsFactory(DefaultExtractorsFactory().setConstantBitrateSeekingEnabled(true))
+                .createMediaSource(uri)
         player?.prepare(mediaSource)
     }
 

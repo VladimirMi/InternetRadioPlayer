@@ -52,4 +52,6 @@ class PlayerInteractor
     fun skipToPrevious() = player.skipToPrevious()
 
     fun skipToNext() = player.skipToNext()
+
+    fun seekTo(position: Int) = player.seekTo(position.toLong())
 }

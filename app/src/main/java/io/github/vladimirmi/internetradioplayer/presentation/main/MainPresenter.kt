@@ -2,12 +2,8 @@ package io.github.vladimirmi.internetradioplayer.presentation.main
 
 import io.github.vladimirmi.internetradioplayer.R
 import io.github.vladimirmi.internetradioplayer.domain.interactor.MainInteractor
-import io.github.vladimirmi.internetradioplayer.domain.interactor.MediaInteractor
-import io.github.vladimirmi.internetradioplayer.extensions.subscribeX
 import io.github.vladimirmi.internetradioplayer.navigation.Router
 import io.github.vladimirmi.internetradioplayer.presentation.base.BasePresenter
-import io.reactivex.android.schedulers.AndroidSchedulers
-import io.reactivex.rxkotlin.addTo
 import javax.inject.Inject
 
 /**
@@ -16,18 +12,8 @@ import javax.inject.Inject
 
 class MainPresenter
 @Inject constructor(private val router: Router,
-                    private val mainInteractor: MainInteractor,
-                    private val mediaInteractor: MediaInteractor)
+                    private val mainInteractor: MainInteractor)
     : BasePresenter<MainView>() {
-
-    override fun onAttach(view: MainView) {
-        mediaInteractor.currentMediaObs
-                .map { !it.isNull() }
-                .distinctUntilChanged()
-                .observeOn(AndroidSchedulers.mainThread())
-                .subscribeX(onNext = { view.showPlayerView(it) })
-                .addTo(viewSubs)
-    }
 
     fun selectPage(position: Int) {
         val pageId = when (position) {

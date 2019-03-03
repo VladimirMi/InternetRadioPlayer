@@ -44,6 +44,7 @@ class PlayerPresenter
         mediaInteractor.currentMediaObs
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribeX(onNext = {
+                    view?.showPlayerView(!it.isNull())
                     view?.setMedia(it)
                     if (it is Station) {
                         view?.setSpecs(it.specs)

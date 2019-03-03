@@ -11,6 +11,7 @@ import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.constraintlayout.widget.ConstraintSet
 import androidx.core.content.ContextCompat
 import com.google.android.exoplayer2.util.Util
+import com.google.android.material.bottomsheet.BottomSheetBehavior
 import io.github.vladimirmi.internetradioplayer.R
 import io.github.vladimirmi.internetradioplayer.di.Scopes
 import io.github.vladimirmi.internetradioplayer.domain.model.Media
@@ -27,10 +28,6 @@ import java.util.*
  */
 
 class PlayerFragment : BaseFragment<PlayerPresenter, PlayerView>(), PlayerView {
-
-    companion object {
-        const val STATE_INIT = -1f
-    }
 
     override val layout = R.layout.fragment_player
 
@@ -55,9 +52,34 @@ class PlayerFragment : BaseFragment<PlayerPresenter, PlayerView>(), PlayerView {
         stopBt.setOnClickListener { presenter.stop() }
         equalizerBt.setOnClickListener { presenter.openEqualizer() }
         recordBt.setOnClickListener { presenter.scheduleRecord() }
+
+        setupBehavior(view)
+    }
+
+    private fun setupBehavior(view: View) {
+        view.waitForLayout {
+            val sheetBehavior = BottomSheetBehavior.from(view)
+            sheetBehavior.setBottomSheetCallback(object : BottomSheetBehavior.BottomSheetCallback() {
+                override fun onSlide(bottomSheet: View, slideOffset: Float) {
+                    setOffset(slideOffset)
+                }
+
+                override fun onStateChanged(bottomSheet: View, newState: Int) {
+                }
+            })
+            setState(sheetBehavior.state)
+            true
+        }
     }
 
     //region =============== PlayerView ==============
+
+
+    override fun showPlayerView(visible: Boolean) {
+        if (view.isVisible == visible) return
+        view?.visible(visible)
+//        if (visible) playerFragment.setState(BottomSheetBehavior.STATE_COLLAPSED)
+    }
 
     override fun setMedia(media: Media) {
         titleTv.text = media.name
@@ -129,14 +151,12 @@ class PlayerFragment : BaseFragment<PlayerPresenter, PlayerView>(), PlayerView {
 
     //endregion
 
-    private var startPlayX = 0f
-    private var startPlayY = 0f
-    private var startStatusY = 0f
+    private fun setState(state: Int) {
+        if (state == BottomSheetBehavior.STATE_COLLAPSED) setOffset(0f)
+        else if (state == BottomSheetBehavior.STATE_EXPANDED) setOffset(1f)
+    }
 
-    fun setState(state: Float) {
-        if (state == STATE_INIT) {
-            initStartState(); return
-        }
+    private fun setOffset(state: Float) {
         val playerView = view as? ConstraintLayout ?: return
         val set = ConstraintSet()
         set.clone(playerView)
@@ -151,19 +171,9 @@ class PlayerFragment : BaseFragment<PlayerPresenter, PlayerView>(), PlayerView {
 
         simpleMetaTv.visible(state == 0f)
 
-        playPauseBt.x = startPlayX + (playPauseBtStub.x - startPlayX) * state
-        playPauseBt.y = startPlayY + (playPauseBtStub.y - startPlayY) * state
-        statusTv.y = startStatusY + (playerView.height - statusTv.height - startStatusY) * state
-    }
-
-    private fun initStartState() {
-        view?.waitForLayout {
-            startPlayX = playPauseBt.x
-            startPlayY = playPauseBt.y
-            startStatusY = statusTv.y
-            true
-        }
-        setState(0f)
+        playPauseBt.x = playPauseBtStart.x + (playPauseBtEnd.x - playPauseBtStart.x) * state
+        playPauseBt.y = playPauseBtStart.y + (playPauseBtEnd.y - playPauseBtStart.y) * state
+        statusTv.y = statusTvStart.y + (playerView.height - statusTv.height - statusTvStart.y) * state
     }
 
     private fun openLinkDialog(url: String) {

@@ -9,6 +9,8 @@ import io.github.vladimirmi.internetradioplayer.presentation.base.BaseView
 
 interface PlayerView : BaseView {
 
+    fun showPlayerView(visible: Boolean)
+
     fun setMedia(media: Media)
 
     fun setFavorite(isFavorite: Boolean)

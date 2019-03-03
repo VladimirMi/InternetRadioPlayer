@@ -18,7 +18,7 @@
         app:backgroundTint="@color/grey_50"
         app:layout_constraintEnd_toStartOf="@id/stopBt"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="@id/playPauseBtStub"
+        app:layout_constraintTop_toTopOf="@id/playPauseBtEnd"
         tools:ignore="UnusedAttribute"
         />
 
@@ -30,14 +30,37 @@
         android:contentDescription="@string/desc_stop_button"
         android:foreground="?actionBarItemBackground"
         app:backgroundTint="@color/stop"
-        app:layout_constraintEnd_toStartOf="@id/playPauseBtStub"
+        app:layout_constraintEnd_toStartOf="@id/playPauseBtEnd"
         app:layout_constraintStart_toEndOf="@id/previousBt"
-        app:layout_constraintTop_toTopOf="@id/playPauseBtStub"
+        app:layout_constraintTop_toTopOf="@id/playPauseBtEnd"
         tools:ignore="UnusedAttribute"
         />
 
     <Space
-        android:id="@+id/playPauseBtStub"
+        android:id="@+id/playPauseBtEnd"
+        android:layout_width="48dp"
+        android:layout_height="48dp"
+        android:layout_marginTop="24dp"
+        android:layout_marginBottom="16dp"
+        app:layout_constraintBottom_toTopOf="@id/progressSb"
+        app:layout_constraintEnd_toStartOf="@id/nextBt"
+        app:layout_constraintStart_toEndOf="@id/stopBt"
+        app:layout_constraintTop_toTopOf="parent"
+        />
+
+    <Space
+        android:id="@+id/playPauseBtStart"
+        android:layout_width="48dp"
+        android:layout_height="48dp"
+        android:layout_marginTop="8dp"
+        android:layout_marginEnd="8dp"
+        android:layout_marginRight="8dp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        />
+
+    <io.github.vladimirmi.playerbutton.PlayerButton
+        android:id="@+id/playPauseBt"
         android:layout_width="48dp"
         android:layout_height="48dp"
         android:layout_marginTop="24dp"
@@ -47,20 +70,6 @@
         app:layout_constraintBottom_toTopOf="@id/progressSb"
         app:layout_constraintEnd_toStartOf="@id/nextBt"
         app:layout_constraintStart_toEndOf="@id/stopBt"
-        app:layout_constraintTop_toTopOf="parent"
-        tools:ignore="UnusedAttribute"
-        />
-
-    <io.github.vladimirmi.playerbutton.PlayerButton
-        android:id="@+id/playPauseBt"
-        android:layout_width="48dp"
-        android:layout_height="48dp"
-        android:layout_marginTop="8dp"
-        android:layout_marginEnd="8dp"
-        android:layout_marginRight="8dp"
-        android:contentDescription="@string/desc_play_pause_button"
-        android:foreground="?actionBarItemBackground"
-        app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toTopOf="parent"
         app:pb_pauseColor="@color/pause"
         app:pb_playColor="@color/play"
@@ -76,8 +85,8 @@
         android:foreground="?actionBarItemBackground"
         app:backgroundTint="@color/grey_50"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toEndOf="@id/playPauseBtStub"
-        app:layout_constraintTop_toTopOf="@id/playPauseBtStub"
+        app:layout_constraintStart_toEndOf="@id/playPauseBtEnd"
+        app:layout_constraintTop_toTopOf="@id/playPauseBtEnd"
         tools:ignore="UnusedAttribute"
         />
 
@@ -96,6 +105,7 @@
         android:singleLine="true"
         android:textAppearance="@style/TextAppearance.MaterialComponents.Headline6"
         android:textColor="?attr/colorOnPrimary"
+        android:visibility="gone"
         app:layout_constraintTop_toTopOf="parent"
         tools:text="Festus vigils ducunt ad gemna. Ubi est fidelis canis?"
         />
@@ -104,12 +114,12 @@
         android:id="@+id/progressSb"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:padding="16dp"
-        android:layout_marginBottom="32dp"
         android:layout_marginLeft="16dp"
         android:layout_marginRight="16dp"
+        android:layout_marginBottom="32dp"
         android:clickable="true"
         android:focusable="true"
+        android:padding="16dp"
         app:layout_constraintBottom_toBottomOf="parent"
         />
 
@@ -117,24 +127,24 @@
         android:id="@+id/positionTv"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        tools:text="00:00"
-        android:textAppearance="@style/TextAppearance.MaterialComponents.Caption"
-        app:layout_constraintTop_toTopOf="@id/progressSb"
-        app:layout_constraintStart_toStartOf="@id/progressSb"
         android:layout_marginTop="32dp"
+        android:textAppearance="@style/TextAppearance.MaterialComponents.Caption"
         android:textColor="?attr/colorOnPrimary"
+        app:layout_constraintStart_toStartOf="@id/progressSb"
+        app:layout_constraintTop_toTopOf="@id/progressSb"
+        tools:text="00:00"
         />
 
     <TextView
         android:id="@+id/durationTv"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        tools:text="00:00"
-        android:textAppearance="@style/TextAppearance.MaterialComponents.Caption"
-        app:layout_constraintTop_toTopOf="@id/progressSb"
-        app:layout_constraintEnd_toEndOf="@id/progressSb"
         android:layout_marginTop="32dp"
+        android:textAppearance="@style/TextAppearance.MaterialComponents.Caption"
         android:textColor="?attr/colorOnPrimary"
+        app:layout_constraintEnd_toEndOf="@id/progressSb"
+        app:layout_constraintTop_toTopOf="@id/progressSb"
+        tools:text="00:00"
         />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

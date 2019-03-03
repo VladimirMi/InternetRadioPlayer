@@ -65,6 +65,7 @@ private String generateVersionName() {
 ext {
     ROOM_VERSION = "2.1.0-alpha04"
     EXOPLAYER_VERSION = "2.9.2"
+    OKHHP_VERSION = "3.12.1"
 }
 
 dependencies {
@@ -90,7 +91,7 @@ dependencies {
     //Net
     implementation "com.squareup.retrofit2:retrofit:2.5.0"
     implementation "com.squareup.retrofit2:converter-gson:2.5.0"
-    implementation "com.squareup.okhttp3:okhttp:3.13.1"
+    implementation "com.squareup.okhttp3:okhttp:$OKHHP_VERSION"
     implementation "com.jakewharton.retrofit:retrofit2-rxjava2-adapter:1.0.0"
     //Rx
     implementation "io.reactivex.rxjava2:rxjava:2.2.6"
@@ -105,7 +106,7 @@ dependencies {
     //Logging
     implementation "com.jakewharton.timber:timber:4.7.1"
     implementation "com.facebook.stetho:stetho:1.5.0"
-    implementation "com.squareup.okhttp3:logging-interceptor:3.13.1"
+    implementation "com.squareup.okhttp3:logging-interceptor:$OKHHP_VERSION"
     //ExoPlayer
     implementation "com.google.android.exoplayer:exoplayer-core:$EXOPLAYER_VERSION"
     implementation "com.google.android.exoplayer:extension-okhttp:$EXOPLAYER_VERSION"

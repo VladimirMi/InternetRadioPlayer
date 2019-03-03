@@ -6,7 +6,6 @@ import android.os.Build
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import androidx.core.content.ContextCompat
 import androidx.recyclerview.widget.RecyclerView
 import io.github.vladimirmi.internetradioplayer.R
 import io.github.vladimirmi.internetradioplayer.data.net.model.StationSearchRes
@@ -122,7 +121,7 @@ class SearchStationVH(itemView: View) : RecyclerView.ViewHolder(itemView) {
                 R.drawable.bg_item_middle
             }
         }
-        itemView.background = ContextCompat.getDrawable(itemView.context, bg)
+        itemView.setBackgroundResource(bg)
 
         if (Build.VERSION.SDK_INT < 21) return
         itemView.outlineProvider = if (middle) fixedOutline else defaultOutline

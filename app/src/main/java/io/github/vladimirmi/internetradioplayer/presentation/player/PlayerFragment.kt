@@ -31,6 +31,8 @@ class PlayerFragment : BaseFragment<PlayerPresenter, PlayerView>(), PlayerView {
 
     override val layout = R.layout.fragment_player
 
+    private lateinit var sheetBehavior: BottomSheetBehavior<View>
+
     override fun providePresenter(): PlayerPresenter {
         return Toothpick.openScopes(Scopes.ROOT_ACTIVITY, this)
                 .getInstance(PlayerPresenter::class.java).also {
@@ -52,13 +54,14 @@ class PlayerFragment : BaseFragment<PlayerPresenter, PlayerView>(), PlayerView {
         stopBt.setOnClickListener { presenter.stop() }
         equalizerBt.setOnClickListener { presenter.openEqualizer() }
         recordBt.setOnClickListener { presenter.scheduleRecord() }
+        pointerIv.setOnClickListener { switchState() }
 
         setupBehavior(view)
     }
 
     private fun setupBehavior(view: View) {
         view.waitForLayout {
-            val sheetBehavior = BottomSheetBehavior.from(view)
+            sheetBehavior = BottomSheetBehavior.from(view)
             sheetBehavior.setBottomSheetCallback(object : BottomSheetBehavior.BottomSheetCallback() {
                 override fun onSlide(bottomSheet: View, slideOffset: Float) {
                     setOffset(slideOffset)
@@ -151,6 +154,14 @@ class PlayerFragment : BaseFragment<PlayerPresenter, PlayerView>(), PlayerView {
 
     //endregion
 
+    private fun switchState() {
+        if (sheetBehavior.state == BottomSheetBehavior.STATE_COLLAPSED) {
+            sheetBehavior.state = BottomSheetBehavior.STATE_EXPANDED
+        } else if (sheetBehavior.state == BottomSheetBehavior.STATE_EXPANDED) {
+            sheetBehavior.state = BottomSheetBehavior.STATE_COLLAPSED
+        }
+    }
+
     private fun setState(state: Int) {
         if (state == BottomSheetBehavior.STATE_COLLAPSED) setOffset(0f)
         else if (state == BottomSheetBehavior.STATE_EXPANDED) setOffset(1f)
@@ -174,6 +185,8 @@ class PlayerFragment : BaseFragment<PlayerPresenter, PlayerView>(), PlayerView {
         playPauseBt.x = playPauseBtStart.x + (playPauseBtEnd.x - playPauseBtStart.x) * state
         playPauseBt.y = playPauseBtStart.y + (playPauseBtEnd.y - playPauseBtStart.y) * state
         statusTv.y = statusTvStart.y + (playerView.height - statusTv.height - statusTvStart.y) * state
+
+        pointerIv.rotationX = 180 * state
     }
 
     private fun openLinkDialog(url: String) {

@@ -3,16 +3,15 @@
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
-    android:id="@+id/mainCl"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@color/grey_300"
     >
 
     <LinearLayout
+        android:id="@+id/mainContent"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_marginBottom="64dp"
         android:orientation="vertical"
         >
 
@@ -43,7 +42,7 @@
         android:name="io.github.vladimirmi.internetradioplayer.presentation.player.PlayerFragment"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        app:behavior_peekHeight="64dp"
+        app:behavior_peekHeight="@dimen/player_collapsed_height"
         app:layout_behavior="@string/bottom_sheet_behavior"
         />
 

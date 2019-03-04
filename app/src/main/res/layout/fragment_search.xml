@@ -1,7 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <FrameLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:id="@+id/frameLayout"
@@ -44,12 +43,9 @@
 
             <androidx.appcompat.widget.SearchView
                 android:id="@+id/searchView"
-                style="@style/Base.Widget.AppCompat.SearchView"
+                style="@style/Widget.AppCompat.SearchView.ActionBar"
                 android:layout_width="match_parent"
                 android:layout_height="48dp"
-                android:iconifiedByDefault="false"
-                app:queryBackground="@null"
-                app:queryHint="@string/tab_search"
                 />
 
             <androidx.recyclerview.widget.RecyclerView

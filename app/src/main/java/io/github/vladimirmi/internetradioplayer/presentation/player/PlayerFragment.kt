@@ -18,6 +18,7 @@ import io.github.vladimirmi.internetradioplayer.di.Scopes
 import io.github.vladimirmi.internetradioplayer.domain.model.Media
 import io.github.vladimirmi.internetradioplayer.extensions.*
 import io.github.vladimirmi.internetradioplayer.presentation.base.BaseFragment
+import io.github.vladimirmi.internetradioplayer.presentation.main.MainFragment
 import kotlinx.android.synthetic.main.fragment_player.*
 import kotlinx.android.synthetic.main.view_controls.*
 import kotlinx.android.synthetic.main.view_station_info.*
@@ -72,7 +73,7 @@ class PlayerFragment : BaseFragment<PlayerPresenter, PlayerView>(), PlayerView {
                 override fun onStateChanged(bottomSheet: View, newState: Int) {
                 }
             })
-            setState(sheetBehavior.state)
+            setupOffset()
             true
         }
     }
@@ -81,9 +82,12 @@ class PlayerFragment : BaseFragment<PlayerPresenter, PlayerView>(), PlayerView {
 
 
     override fun showPlayerView(visible: Boolean) {
-        if (view.isVisible == visible) return
-        view?.visible(visible)
-//        if (visible) playerFragment.setState(BottomSheetBehavior.STATE_COLLAPSED)
+        if (requireView().isVisible == visible) return
+        requireView().visible(visible)
+        (parentFragment as MainFragment?)?.showPlayerView(visible)
+        if (visible) requireView().waitForLayout {
+            setupOffset(); true
+        }
     }
 
     override fun setMedia(media: Media) {
@@ -164,9 +168,9 @@ class PlayerFragment : BaseFragment<PlayerPresenter, PlayerView>(), PlayerView {
         }
     }
 
-    private fun setState(state: Int) {
-        if (state == BottomSheetBehavior.STATE_COLLAPSED) setOffset(0f)
-        else if (state == BottomSheetBehavior.STATE_EXPANDED) setOffset(1f)
+    private fun setupOffset() {
+        if (sheetBehavior.state == BottomSheetBehavior.STATE_COLLAPSED) setOffset(0f)
+        else if (sheetBehavior.state == BottomSheetBehavior.STATE_EXPANDED) setOffset(1f)
     }
 
     private fun setOffset(state: Float) {

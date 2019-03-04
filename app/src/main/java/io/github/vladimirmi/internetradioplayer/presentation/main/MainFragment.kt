@@ -63,5 +63,15 @@ class MainFragment : BaseFragment<MainPresenter, MainView>(), MainView {
         mainPager.setCurrentItem(page, false)
     }
 
+    override fun showPlayerView(visible: Boolean) {
+        val bottomPadding: Int = if (visible) {
+            requireContext().resources.getDimension(R.dimen.player_collapsed_height).toInt()
+        } else {
+            0
+        }
+        mainContent.setPadding(mainContent.paddingLeft, mainContent.paddingTop, mainContent.paddingRight,
+                bottomPadding)
+    }
+
     //endregion
 }

@@ -2,4 +2,5 @@
 <resources>
     <dimen name="item_card_radius">6dp</dimen>
     <dimen name="item_card_elevation">2dp</dimen>
+    <dimen name="player_collapsed_height">64dp</dimen>
 </resources>

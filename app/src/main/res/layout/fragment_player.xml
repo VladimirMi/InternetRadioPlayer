@@ -116,8 +116,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="horizontal"
-        app:layout_constraintGuide_begin="64dp"
-        app:layout_constraintGuide_end="64dp"
+        app:layout_constraintGuide_begin="@dimen/player_collapsed_height"
         />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

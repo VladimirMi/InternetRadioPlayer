@@ -1,6 +1,7 @@
 package io.github.vladimirmi.internetradioplayer.presentation.player
 
-import io.github.vladimirmi.internetradioplayer.domain.model.Media
+import io.github.vladimirmi.internetradioplayer.data.db.entity.Station
+import io.github.vladimirmi.internetradioplayer.domain.model.Record
 import io.github.vladimirmi.internetradioplayer.presentation.base.BaseView
 
 /**
@@ -11,7 +12,9 @@ interface PlayerView : BaseView {
 
     fun showPlayerView(visible: Boolean)
 
-    fun setMedia(media: Media)
+    fun setStation(station: Station)
+
+    fun setRecord(record: Record)
 
     fun setFavorite(isFavorite: Boolean)
 
@@ -30,8 +33,6 @@ interface PlayerView : BaseView {
     fun setRecording(isRecording: Boolean)
 
     fun setGroup(group: String?)
-
-    fun setSpecs(specs: String)
 
     fun setDuration(duration: Long)
 

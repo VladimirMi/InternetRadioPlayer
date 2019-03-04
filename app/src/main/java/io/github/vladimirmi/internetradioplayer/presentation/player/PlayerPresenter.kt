@@ -7,6 +7,7 @@ import io.github.vladimirmi.internetradioplayer.R
 import io.github.vladimirmi.internetradioplayer.data.db.entity.Station
 import io.github.vladimirmi.internetradioplayer.data.service.*
 import io.github.vladimirmi.internetradioplayer.domain.interactor.*
+import io.github.vladimirmi.internetradioplayer.domain.model.Record
 import io.github.vladimirmi.internetradioplayer.extensions.subscribeX
 import io.github.vladimirmi.internetradioplayer.navigation.Router
 import io.github.vladimirmi.internetradioplayer.presentation.base.BasePresenter
@@ -41,11 +42,12 @@ class PlayerPresenter
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribeX(onNext = {
                     view?.showPlayerView(!it.isNull())
-                    view?.setMedia(it)
                     if (it is Station) {
-                        view?.setSpecs(it.specs)
+                        view?.setStation(it)
                         view?.setFavorite(favoriteListInteractor.isFavorite(it))
                         view?.setGroup(favoriteListInteractor.findGroup(it.groupId)?.name)
+                    } else if (it is Record) {
+                        view?.setRecord(it)
                     }
                 })
                 .addTo(viewSubs)

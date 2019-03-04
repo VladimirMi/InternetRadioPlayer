@@ -13,9 +13,10 @@ import androidx.core.content.ContextCompat
 import com.google.android.exoplayer2.util.Util
 import com.google.android.material.bottomsheet.BottomSheetBehavior
 import io.github.vladimirmi.internetradioplayer.R
+import io.github.vladimirmi.internetradioplayer.data.db.entity.Station
 import io.github.vladimirmi.internetradioplayer.data.utils.AudioEffects
 import io.github.vladimirmi.internetradioplayer.di.Scopes
-import io.github.vladimirmi.internetradioplayer.domain.model.Media
+import io.github.vladimirmi.internetradioplayer.domain.model.Record
 import io.github.vladimirmi.internetradioplayer.extensions.*
 import io.github.vladimirmi.internetradioplayer.presentation.base.BaseFragment
 import io.github.vladimirmi.internetradioplayer.presentation.main.MainFragment
@@ -46,7 +47,6 @@ class PlayerFragment : BaseFragment<PlayerPresenter, PlayerView>(), PlayerView {
         metaTitleTv.isSelected = true
         metaSubtitleTv.isSelected = true
         simpleMetaTv.isSelected = true
-        equalizerBt.visible(AudioEffects.isEqualizerSupported())
         playPauseBt.setManualMode(true)
 
         favoriteBt.setOnClickListener { presenter.switchFavorite() }
@@ -89,11 +89,26 @@ class PlayerFragment : BaseFragment<PlayerPresenter, PlayerView>(), PlayerView {
         }
     }
 
-    override fun setMedia(media: Media) {
-        titleTv.text = media.name
+    override fun setStation(station: Station) {
+        titleTv.text = station.name
+        specsTv.text = station.specs
+        addShortcutBt.visible(true)
+        equalizerBt.visible(AudioEffects.isEqualizerSupported())
+        favoriteBt.visible(true)
+        recordBt.visible(true)
+    }
+
+    override fun setRecord(record: Record) {
+        titleTv.text = record.name
+        setGroup(null)
+        addShortcutBt.visible(false)
+        equalizerBt.visible(false)
+        favoriteBt.visible(false)
+        recordBt.visible(false)
     }
 
     override fun setFavorite(isFavorite: Boolean) {
+        //todo refactor (create field inside station)
         val tint = if (isFavorite) R.color.orange_500 else R.color.primary_variant
         favoriteBt.background.setTintExt(context!!.color(tint))
     }
@@ -104,10 +119,6 @@ class PlayerFragment : BaseFragment<PlayerPresenter, PlayerView>(), PlayerView {
 
     override fun setStatus(resId: Int) {
         statusTv.setText(resId)
-    }
-
-    override fun setSpecs(specs: String) {
-        specsTv.text = specs
     }
 
     override fun showPlaying(isPlaying: Boolean) {

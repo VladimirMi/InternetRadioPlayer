@@ -169,7 +169,7 @@ class SearchFragment : BaseFragment<SearchPresenter, SearchView>(), SearchView,
                 if (oldVisibleHeight == newVisibleHeight) return@waitForLayout false
 
                 adjustSuggestionsRecyclerHeight(rect)
-                return@waitForLayout true
+                true
             }
         } else {
             val lp = suggestionsRv.layoutParams

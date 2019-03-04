@@ -10,6 +10,7 @@ import android.support.v4.media.session.PlaybackStateCompat
 import androidx.media.MediaBrowserServiceCompat
 import io.github.vladimirmi.internetradioplayer.R
 import io.github.vladimirmi.internetradioplayer.data.db.entity.Station
+import io.github.vladimirmi.internetradioplayer.data.utils.AudioEffects
 import io.github.vladimirmi.internetradioplayer.di.Scopes
 import io.github.vladimirmi.internetradioplayer.domain.interactor.EqualizerInteractor
 import io.github.vladimirmi.internetradioplayer.domain.interactor.FavoriteListInteractor
@@ -62,14 +63,7 @@ class PlayerService : MediaBrowserServiceCompat(), SessionCallback.Interface {
 
         playback = Playback(this, playerCallback)
         initSession()
-
-        equalizerInteractor.initPresets()
-                .subscribe()
-                .addTo(subs)
-
-        equalizerInteractor.initEqualizer()
-                .subscribe()
-                .addTo(subs)
+        initEqualizer()
 
         mediaInteractor.currentMediaObs
                 .distinctUntilChanged(Media::uri)
@@ -84,6 +78,17 @@ class PlayerService : MediaBrowserServiceCompat(), SessionCallback.Interface {
         sessionToken = session.sessionToken
         notification = MediaNotification(this, session)
         playerCallback.initDefault()
+    }
+
+    private fun initEqualizer() {
+        if (!AudioEffects.isEqualizerSupported()) return
+        equalizerInteractor.initPresets()
+                .subscribe()
+                .addTo(subs)
+
+        equalizerInteractor.initEqualizer()
+                .subscribe()
+                .addTo(subs)
     }
 
     override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {

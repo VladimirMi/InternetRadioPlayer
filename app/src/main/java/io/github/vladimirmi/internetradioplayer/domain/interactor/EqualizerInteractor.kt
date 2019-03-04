@@ -3,7 +3,6 @@ package io.github.vladimirmi.internetradioplayer.domain.interactor
 import io.github.vladimirmi.internetradioplayer.data.repository.EqualizerRepository
 import io.github.vladimirmi.internetradioplayer.data.repository.MediaRepository
 import io.github.vladimirmi.internetradioplayer.data.repository.PlayerRepository
-import io.github.vladimirmi.internetradioplayer.data.repository.StationRepository
 import io.github.vladimirmi.internetradioplayer.data.service.EVENT_SESSION_END
 import io.github.vladimirmi.internetradioplayer.data.service.EVENT_SESSION_START
 import io.github.vladimirmi.internetradioplayer.data.service.PlayerService
@@ -20,7 +19,6 @@ import javax.inject.Inject
 class EqualizerInteractor
 @Inject constructor(private val playerRepository: PlayerRepository,
                     private val equalizerRepository: EqualizerRepository,
-                    private val stationRepository: StationRepository,
                     private val mediaRepository: MediaRepository) {
 
     val currentPresetObs: Observable<EqualizerPreset> get() = equalizerRepository.currentPreset
@@ -43,17 +41,14 @@ class EqualizerInteractor
 
     fun initPresets(): Completable {
         return equalizerRepository.getSavedPresets().map { entities ->
-            val presets = entities.map { EqualizerPreset.create(it) }
-            val defaultPresets = equalizerRepository.equalizerConfig.defaultPresets
-            val result = ArrayList<EqualizerPreset>(presets.size + defaultPresets.size)
-            result.addAll(defaultPresets)
-            presets.forEach { preset ->
-                val index = result.indexOfFirst { it.name == preset.name }
-                if (index != -1) result[index] = preset
-                else result += preset
+            val savedPresets = entities.map { EqualizerPreset.create(it) }
+            val presets = equalizerRepository.equalizerConfig.defaultPresets.toMutableList()
+            presets.forEachIndexed { index, preset ->
+                savedPresets.find { it.name == preset.name }?.let { presets[index] = it }
             }
-            equalizerRepository.presets = result
-        }.ignoreElement()
+            equalizerRepository.presets = presets
+        }
+                .ignoreElement()
                 .andThen(initCurrentPreset())
     }
 

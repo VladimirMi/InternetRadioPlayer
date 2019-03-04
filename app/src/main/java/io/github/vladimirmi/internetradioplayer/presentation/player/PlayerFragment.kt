@@ -13,6 +13,7 @@ import androidx.core.content.ContextCompat
 import com.google.android.exoplayer2.util.Util
 import com.google.android.material.bottomsheet.BottomSheetBehavior
 import io.github.vladimirmi.internetradioplayer.R
+import io.github.vladimirmi.internetradioplayer.data.utils.AudioEffects
 import io.github.vladimirmi.internetradioplayer.di.Scopes
 import io.github.vladimirmi.internetradioplayer.domain.model.Media
 import io.github.vladimirmi.internetradioplayer.extensions.*
@@ -41,14 +42,15 @@ class PlayerFragment : BaseFragment<PlayerPresenter, PlayerView>(), PlayerView {
     }
 
     override fun setupView(view: View) {
-        favoriteBt.setOnClickListener { presenter.switchFavorite() }
-        addShortcutBt.setOnClickListener { openAddShortcutDialog() }
-
         metaTitleTv.isSelected = true
         metaSubtitleTv.isSelected = true
         simpleMetaTv.isSelected = true
-        playPauseBt.setOnClickListener { presenter.playPause(progressSb.progress) }
+        equalizerBt.visible(AudioEffects.isEqualizerSupported())
         playPauseBt.setManualMode(true)
+
+        favoriteBt.setOnClickListener { presenter.switchFavorite() }
+        addShortcutBt.setOnClickListener { openAddShortcutDialog() }
+        playPauseBt.setOnClickListener { presenter.playPause(progressSb.progress) }
         previousBt.setOnClickListener { presenter.skipToPrevious() }
         nextBt.setOnClickListener { presenter.skipToNext() }
         stopBt.setOnClickListener { presenter.stop() }

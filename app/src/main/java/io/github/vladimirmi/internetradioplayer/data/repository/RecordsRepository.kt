@@ -22,8 +22,7 @@ private const val RECORDS_DIRECTORY = "records"
 private const val RECORD_EXT = "mp3"
 
 class RecordsRepository
-@Inject constructor(private val context: Context,
-                    private val mediaRepository: MediaRepository) {
+@Inject constructor(private val context: Context) {
 
     private val recordsDirectory: File by lazy {
         val dir = File(context.getExternalFilesDir(null), RECORDS_DIRECTORY)
@@ -31,23 +30,22 @@ class RecordsRepository
         dir
     }
 
-    private val currentRecording = HashSet<String>()
+    val currentRecordingObs: BehaviorRelay<Set<String>> = BehaviorRelay.createDefault(emptySet())
 
     val recordsObs by lazy {
         BehaviorRelay.createDefault(initRecords())
     }
 
-    fun startCurrentRecord() {
-        val station = mediaRepository.currentMedia as? Station ?: return
+    fun startRecording(station: Station) {
         val name = getNewRecordName(station.name)
 
         val intent = Intent(context, RecorderService::class.java).apply {
-            if (currentRecording.contains(station.name)) {
+            if (currentRecordingObs.value!!.contains(station.id)) {
                 putExtra(RecorderService.EXTRA_STOP_RECORD, name)
-                currentRecording.remove(station.name)
+                currentRecordingObs.accept(HashSet(currentRecordingObs.value).apply { remove(station.id) })
             } else {
                 putExtra(RecorderService.EXTRA_START_RECORD, name)
-                currentRecording.add(station.name)
+                currentRecordingObs.accept(HashSet(currentRecordingObs.value).apply { add(station.id) })
             }
             data = station.uri.toUri()
         }

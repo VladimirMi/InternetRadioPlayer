@@ -5,12 +5,8 @@ import android.support.v4.media.MediaMetadataCompat
 import android.support.v4.media.session.PlaybackStateCompat
 import io.github.vladimirmi.internetradioplayer.R
 import io.github.vladimirmi.internetradioplayer.data.db.entity.Station
-import io.github.vladimirmi.internetradioplayer.data.repository.RecordsRepository
 import io.github.vladimirmi.internetradioplayer.data.service.*
-import io.github.vladimirmi.internetradioplayer.domain.interactor.FavoriteListInteractor
-import io.github.vladimirmi.internetradioplayer.domain.interactor.MediaInteractor
-import io.github.vladimirmi.internetradioplayer.domain.interactor.PlayerInteractor
-import io.github.vladimirmi.internetradioplayer.domain.interactor.StationInteractor
+import io.github.vladimirmi.internetradioplayer.domain.interactor.*
 import io.github.vladimirmi.internetradioplayer.extensions.subscribeX
 import io.github.vladimirmi.internetradioplayer.navigation.Router
 import io.github.vladimirmi.internetradioplayer.presentation.base.BasePresenter
@@ -28,7 +24,7 @@ class PlayerPresenter
 @Inject constructor(private val stationInteractor: StationInteractor,
                     private val favoriteListInteractor: FavoriteListInteractor,
                     private val playerInteractor: PlayerInteractor,
-                    private val recordsRepository: RecordsRepository,
+                    private val recordsInteractor: RecordsInteractor,
                     private val mediaInteractor: MediaInteractor,
                     private val router: Router)
     : BasePresenter<PlayerView>() {
@@ -58,15 +54,23 @@ class PlayerPresenter
 
     private fun setupPlayer() {
         playerInteractor.playbackStateObs
+                .observeOn(AndroidSchedulers.mainThread())
                 .subscribeX(onNext = { handleState(it) })
                 .addTo(viewSubs)
 
         playerInteractor.metadataObs
+                .observeOn(AndroidSchedulers.mainThread())
                 .subscribeX(onNext = { handleMetadata(it) })
                 .addTo(viewSubs)
 
         playerInteractor.sessionEventObs
+                .observeOn(AndroidSchedulers.mainThread())
                 .subscribeX(onNext = { handleSessionEvent(it) })
+                .addTo(viewSubs)
+
+        recordsInteractor.isCurrentRecordingObs()
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribeX(onNext = { view?.setRecording(it) })
                 .addTo(viewSubs)
     }
 
@@ -150,6 +154,6 @@ class PlayerPresenter
     }
 
     fun scheduleRecord() {
-        recordsRepository.startCurrentRecord()
+        recordsInteractor.startRecordingCurrentStation()
     }
 }

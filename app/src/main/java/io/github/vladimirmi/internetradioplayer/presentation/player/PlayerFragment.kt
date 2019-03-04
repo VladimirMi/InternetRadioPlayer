@@ -80,7 +80,6 @@ class PlayerFragment : BaseFragment<PlayerPresenter, PlayerView>(), PlayerView {
 
     //region =============== PlayerView ==============
 
-
     override fun showPlayerView(visible: Boolean) {
         if (requireView().isVisible == visible) return
         requireView().visible(visible)
@@ -121,6 +120,11 @@ class PlayerFragment : BaseFragment<PlayerPresenter, PlayerView>(), PlayerView {
 
     override fun showPrevious() {
         previousBt.bounceXAnimation(-200f).start()
+    }
+
+    override fun setRecording(isRecording: Boolean) {
+        val tint = requireContext().color(if (isRecording) R.color.secondary else R.color.primary_variant)
+        recordBt.setColorFilter(tint)
     }
 
     override fun setMetadata(artist: String, title: String) {

@@ -27,6 +27,8 @@ interface PlayerView : BaseView {
 
     fun showNext()
 
+    fun setRecording(isRecording: Boolean)
+
     fun setGroup(group: String?)
 
     fun setSpecs(specs: String)

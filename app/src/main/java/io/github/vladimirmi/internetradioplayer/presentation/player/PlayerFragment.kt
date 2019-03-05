@@ -107,6 +107,7 @@ class PlayerFragment : BaseFragment<PlayerPresenter, PlayerView>(), PlayerView {
 
     override fun setRecord(record: Record) {
         titleTv.text = record.name
+        specsTv.text = record.createdAtString
         setGroup(null)
         addShortcutBt.visible(false)
         equalizerBt.visible(false)

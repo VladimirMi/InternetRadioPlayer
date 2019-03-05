@@ -13,16 +13,29 @@
 
     <TextView
         android:id="@+id/titleTv"
-        style="@style/TextAppearance.AppCompat.Subhead"
+        style="@style/TextAppearance.MaterialComponents.Subtitle1"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1"
         android:gravity="center_vertical"
         android:ellipsize="end"
         android:maxLines="1"
+        android:textStyle="bold"
         android:layout_marginLeft="8dp"
         android:layout_marginRight="8dp"
-        android:textStyle="bold"
-        tools:text="Speciess favere! A falsis, epos bassus pes."
+        tools:text="Record name"
+        />
+
+    <TextView
+        android:id="@+id/createdAtTv"
+        style="@style/TextAppearance.MaterialComponents.Body2"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1"
+        android:gravity="center_vertical|end"
+        android:layout_marginLeft="8dp"
+        android:layout_marginRight="8dp"
+        tools:text="5/03/1989"
         />
 
 </LinearLayout>

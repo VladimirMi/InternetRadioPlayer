@@ -1,6 +1,9 @@
 package io.github.vladimirmi.internetradioplayer.domain.model
 
+import android.annotation.SuppressLint
 import java.io.File
+import java.text.SimpleDateFormat
+import java.util.*
 
 /**
  * Created by Vladimir Mikhalev 02.02.2019.
@@ -24,4 +27,9 @@ data class Record(override val id: String,
             )
         }
     }
+
+    val createdAtString: String get() = format.format(createdAt)
 }
+
+@SuppressLint("ConstantLocale")
+private val format = SimpleDateFormat("dd/MM/yy  HH:mm:ss", Locale.getDefault())

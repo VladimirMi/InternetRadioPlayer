@@ -20,6 +20,10 @@ class RecordsInteractor
 
     val recordsObs: Observable<List<Record>> get() = recordsRepository.recordsObs
 
+    val sortedRecordsObs: Observable<List<Record>>
+        get() = recordsRepository.recordsObs
+                .map { records -> records.sortedBy(Record::createdAt) }
+
     fun deleteRecord(record: Record): Completable {
         return recordsRepository.deleteRecord(record)
     }

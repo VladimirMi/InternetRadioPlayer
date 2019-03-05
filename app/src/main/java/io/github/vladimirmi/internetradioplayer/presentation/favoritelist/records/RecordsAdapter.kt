@@ -16,12 +16,11 @@ import io.github.vladimirmi.internetradioplayer.presentation.favoritelist.statio
 import io.github.vladimirmi.internetradioplayer.presentation.favoritelist.stations.PAYLOAD_SELECTED_CHANGE
 import io.github.vladimirmi.internetradioplayer.presentation.favoritelist.stations.defaultOutline
 import io.github.vladimirmi.internetradioplayer.presentation.favoritelist.stations.fixedOutline
-import kotlinx.android.synthetic.main.item_station.view.*
+import kotlinx.android.synthetic.main.item_record.view.*
 
 /**
  * Created by Vladimir Mikhalev 15.02.2019.
  */
-
 
 class RecordsAdapter : RecyclerView.Adapter<RecordVH>() {
 
@@ -84,9 +83,11 @@ class RecordsAdapter : RecyclerView.Adapter<RecordVH>() {
     }
 }
 
+
 class RecordVH(itemView: View) : RecyclerView.ViewHolder(itemView), View.OnCreateContextMenuListener {
 
     private val titleTv = itemView.titleTv
+    private val createdAtTv = itemView.createdAtTv
 
     private var bgColor: Int = itemView.context.color(R.color.grey_50)
 
@@ -100,6 +101,7 @@ class RecordVH(itemView: View) : RecyclerView.ViewHolder(itemView), View.OnCreat
 
     fun bind(record: Record) {
         titleTv.text = record.name
+        createdAtTv.text = record.createdAtString
     }
 
     fun select(selected: Boolean) {

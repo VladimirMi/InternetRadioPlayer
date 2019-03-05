@@ -108,4 +108,8 @@ class PlayerRepository
     fun seekTo(position: Long) {
         controller?.transportControls?.seekTo(position)
     }
+
+    fun sendCommand(command: String) {
+        controller?.sendCommand(command, null, null)
+    }
 }

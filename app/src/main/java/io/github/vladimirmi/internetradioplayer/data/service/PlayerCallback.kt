@@ -40,6 +40,11 @@ abstract class PlayerCallback : Player.EventListener {
         onMediaMetadataChanged(mediaMetadata)
     }
 
+    fun changeActions(changer: (Long) -> Long) {
+        playbackStateCompat = playbackStateCompat.changeActions(changer)
+        onPlaybackStateChanged(playbackStateCompat)
+    }
+
     //region =============== Player.EventListener ==============
 
     override fun onPlaybackParametersChanged(playbackParameters: PlaybackParameters) {

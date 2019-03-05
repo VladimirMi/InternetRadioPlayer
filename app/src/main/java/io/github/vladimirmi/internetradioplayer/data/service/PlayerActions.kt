@@ -16,7 +16,26 @@ object PlayerActions {
     const val DEFAULT_ACTIONS = (PlaybackStateCompat.ACTION_PLAY_PAUSE
             or PlaybackStateCompat.ACTION_STOP
             or PlaybackStateCompat.ACTION_SKIP_TO_NEXT
-            or PlaybackStateCompat.ACTION_SKIP_TO_PREVIOUS)
+            or PlaybackStateCompat.ACTION_SKIP_TO_PREVIOUS
+            or PlaybackStateCompat.ACTION_SEEK_TO)
+
+    fun enableSkip(actions: Long): Long {
+        return (actions or PlaybackStateCompat.ACTION_SKIP_TO_NEXT
+                or PlaybackStateCompat.ACTION_SKIP_TO_PREVIOUS)
+    }
+
+    fun disableSkip(actions: Long): Long {
+        return actions and (PlaybackStateCompat.ACTION_SKIP_TO_NEXT
+                or PlaybackStateCompat.ACTION_SKIP_TO_PREVIOUS).inv()
+    }
+
+    fun enableSeek(actions: Long): Long {
+        return actions or PlaybackStateCompat.ACTION_SEEK_TO
+    }
+
+    fun disableSeek(actions: Long): Long {
+        return actions and (PlaybackStateCompat.ACTION_SEEK_TO).inv()
+    }
 
     fun playPauseIntent(context: Context): PendingIntent {
         return MediaButtonReceiver.buildMediaButtonPendingIntent(context,

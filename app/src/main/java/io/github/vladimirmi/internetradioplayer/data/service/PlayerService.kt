@@ -194,6 +194,10 @@ class PlayerService : MediaBrowserServiceCompat(), SessionCallback.Interface {
         playback.seekTo(pos)
     }
 
+    override fun onActionsChangeCommand(changer: (Long) -> Long) {
+        playerCallback.changeActions(changer)
+    }
+
     //endregion
 
     private val playerCallback = object : PlayerCallback() {

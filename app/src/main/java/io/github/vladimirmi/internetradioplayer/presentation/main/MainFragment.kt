@@ -45,9 +45,6 @@ class MainFragment : BaseFragment<MainPresenter, MainView>(), MainView {
             override fun onPageSelected(position: Int) {
                 presenter.selectPage(position)
             }
-
-            override fun onPageScrolled(position: Int, positionOffset: Float, positionOffsetPixels: Int) {
-            }
         })
     }
 

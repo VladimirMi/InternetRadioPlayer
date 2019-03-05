@@ -9,4 +9,8 @@ import io.github.vladimirmi.internetradioplayer.presentation.base.BaseView
 interface FavoriteListView: BaseView {
 
     fun showTabs(visible: Boolean)
+
+    fun showPage(position: Int)
+
+    fun selectTab(position: Int)
 }

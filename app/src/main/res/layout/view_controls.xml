@@ -90,25 +90,33 @@
         tools:ignore="UnusedAttribute"
         />
 
-    <TextView
-        android:id="@+id/simpleMetaTv"
+    <FrameLayout
+        android:id="@+id/simpleMetaFl"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        app:layout_constraintTop_toTopOf="parent"
         android:layout_marginStart="16dp"
         android:layout_marginLeft="16dp"
         android:layout_marginTop="16dp"
         android:layout_marginEnd="48dp"
         android:layout_marginRight="48dp"
         android:layout_marginBottom="16dp"
-        android:ellipsize="marquee"
-        android:marqueeRepeatLimit="marquee_forever"
-        android:singleLine="true"
-        android:textAppearance="@style/TextAppearance.MaterialComponents.Headline6"
-        android:textColor="?attr/colorOnPrimary"
         android:visibility="gone"
-        app:layout_constraintTop_toTopOf="parent"
-        tools:text="Festus vigils ducunt ad gemna. Ubi est fidelis canis?"
-        />
+        >
+
+        <TextView
+            android:id="@+id/simpleMetaTv"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:ellipsize="marquee"
+            android:marqueeRepeatLimit="marquee_forever"
+            android:singleLine="true"
+            android:textAppearance="@style/TextAppearance.MaterialComponents.Headline6"
+            android:textColor="?attr/colorOnPrimary"
+            tools:text="Festus vigils ducunt ad gemna. Ubi est fidelis canis?"
+            />
+    </FrameLayout>
+
 
     <SeekBar
         android:id="@+id/progressSb"

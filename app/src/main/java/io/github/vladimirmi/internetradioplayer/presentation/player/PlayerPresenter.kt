@@ -130,7 +130,7 @@ class PlayerPresenter
             PlaybackStateCompat.STATE_PLAYING -> {
                 view?.showPlaying(true)
                 view?.setStatus(R.string.status_playing)
-                playTask = Timer().schedule(0, 300) { view?.increasePosition(300) }
+                playTask = Timer().schedule(0, 300) { view?.incrementPositionBy(300) }
             }
         }
     }

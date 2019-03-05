@@ -147,20 +147,20 @@ class PlayerFragment : BaseFragment<PlayerPresenter, PlayerView>(), PlayerView {
     }
 
     override fun setMetadata(artist: String, title: String) {
-        metaTitleTv.setTextOrHide(artist)
-        metaSubtitleTv.setTextOrHide(title)
+        if (metaTitleTv.text != artist) metaTitleTv.setTextOrHide(artist)
+        if (metaSubtitleTv.text != title) metaSubtitleTv.setTextOrHide(title)
     }
 
     override fun setSimpleMetadata(metadata: String) {
-        simpleMetaTv.text = metadata
+        if (simpleMetaTv.text != metadata) simpleMetaTv.text = metadata
     }
 
     override fun setPosition(position: Long) {
         progressSb.progress = position.toInt()
     }
 
-    override fun increasePosition(duration: Long) {
-        progressSb.progress = (progressSb.progress + duration).toInt()
+    override fun incrementPositionBy(duration: Long) {
+        progressSb.incrementProgressBy(duration.toInt())
     }
 
     override fun setDuration(duration: Long) {
@@ -209,7 +209,7 @@ class PlayerFragment : BaseFragment<PlayerPresenter, PlayerView>(), PlayerView {
         stopBt.visible(visible, false)
         progressSb.visible(visible, false)
 
-        simpleMetaTv.visible(state == 0f)
+        simpleMetaFl.visible(state == 0f)
 
         playPauseBt.x = playPauseBtStart.x + (playPauseBtEnd.x - playPauseBtStart.x) * state
         playPauseBt.y = playPauseBtStart.y + (playPauseBtEnd.y - playPauseBtStart.y) * state

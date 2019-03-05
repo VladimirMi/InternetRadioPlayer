@@ -38,5 +38,5 @@ interface PlayerView : BaseView {
 
     fun setPosition(position: Long)
 
-    fun increasePosition(duration: Long)
+    fun incrementPositionBy(duration: Long)
 }

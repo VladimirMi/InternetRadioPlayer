@@ -78,6 +78,13 @@ class PlayerFragment : BaseFragment<PlayerPresenter, PlayerView>(), PlayerView {
         }
     }
 
+    override fun handleBackPressed(): Boolean {
+        return if (sheetBehavior.state == BottomSheetBehavior.STATE_EXPANDED) {
+            sheetBehavior.state = BottomSheetBehavior.STATE_COLLAPSED
+            true
+        } else false
+    }
+
     //region =============== PlayerView ==============
 
     override fun showPlayerView(visible: Boolean) {

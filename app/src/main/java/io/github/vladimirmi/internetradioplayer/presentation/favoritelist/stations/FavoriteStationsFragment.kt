@@ -167,7 +167,7 @@ class FavoriteStationsFragment : BaseFragment<FavoriteStationsPresenter, Favorit
         when (tag) {
             EDIT_STATION_DIALOG -> presenter.editStation(stationListAdapter.longClickedItem as Station, newText)
             EDIT_GROUP_DIALOG -> presenter.editGroup(stationListAdapter.longClickedItem as Group, newText)
-            NEW_GROUP_DIALOG -> presenter.createGroup(newText)
+            NEW_GROUP_DIALOG -> presenter.createGroup(Group.getDbName(newText, requireContext()))
         }
     }
 

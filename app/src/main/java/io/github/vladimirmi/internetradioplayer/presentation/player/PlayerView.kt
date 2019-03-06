@@ -32,7 +32,7 @@ interface PlayerView : BaseView {
 
     fun setRecording(isRecording: Boolean)
 
-    fun setGroup(group: String?)
+    fun setGroup(group: String)
 
     fun setDuration(duration: Long)
 

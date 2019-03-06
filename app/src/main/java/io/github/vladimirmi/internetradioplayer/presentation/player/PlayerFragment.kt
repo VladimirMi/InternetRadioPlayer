@@ -13,6 +13,7 @@ import androidx.core.content.ContextCompat
 import com.google.android.exoplayer2.util.Util
 import com.google.android.material.bottomsheet.BottomSheetBehavior
 import io.github.vladimirmi.internetradioplayer.R
+import io.github.vladimirmi.internetradioplayer.data.db.entity.Group
 import io.github.vladimirmi.internetradioplayer.data.db.entity.Station
 import io.github.vladimirmi.internetradioplayer.data.utils.AudioEffects
 import io.github.vladimirmi.internetradioplayer.di.Scopes
@@ -108,7 +109,7 @@ class PlayerFragment : BaseFragment<PlayerPresenter, PlayerView>(), PlayerView {
     override fun setRecord(record: Record) {
         titleTv.text = record.name
         specsTv.text = record.createdAtString
-        setGroup(null)
+        setGroup("")
         addShortcutBt.visible(false)
         equalizerBt.visible(false)
         favoriteBt.visible(false)
@@ -121,8 +122,8 @@ class PlayerFragment : BaseFragment<PlayerPresenter, PlayerView>(), PlayerView {
         favoriteBt.background.setTintExt(context!!.color(tint))
     }
 
-    override fun setGroup(group: String?) {
-        groupTv.setTextOrHide(group)
+    override fun setGroup(group: String) {
+        groupTv.setTextOrHide(Group.getViewName(group, requireContext()))
     }
 
     override fun setStatus(resId: Int) {

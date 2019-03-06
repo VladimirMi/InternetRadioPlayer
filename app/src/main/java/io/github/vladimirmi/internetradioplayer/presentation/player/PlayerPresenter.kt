@@ -45,7 +45,7 @@ class PlayerPresenter
                     if (it is Station) {
                         view?.setStation(it)
                         view?.setFavorite(favoriteListInteractor.isFavorite(it))
-                        view?.setGroup(favoriteListInteractor.findGroup(it.groupId)?.name)
+                        view?.setGroup(favoriteListInteractor.findGroup(it.groupId)?.name ?: "")
                     } else if (it is Record) {
                         view?.setRecord(it)
                     }

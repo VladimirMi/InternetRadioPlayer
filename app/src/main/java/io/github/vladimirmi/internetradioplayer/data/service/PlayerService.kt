@@ -179,15 +179,13 @@ class PlayerService : MediaBrowserServiceCompat(), SessionCallback.Interface {
     }
 
     override fun onSkipToPreviousCommand() {
-        if (currentStationId == null) return
-        val changed = favoriteListInteractor.previousStation(currentStationId!!)
-        if (changed) session.sendSessionEvent(EVENT_SESSION_PREVIOUS, Bundle.EMPTY)
+        mediaInteractor.previousMedia()
+        session.sendSessionEvent(EVENT_SESSION_PREVIOUS, Bundle.EMPTY)
     }
 
     override fun onSkipToNextCommand() {
-        if (currentStationId == null) return
-        val changed = favoriteListInteractor.nextStation(currentStationId!!)
-        if (changed) session.sendSessionEvent(EVENT_SESSION_NEXT, Bundle.EMPTY)
+        mediaInteractor.nextMedia()
+        session.sendSessionEvent(EVENT_SESSION_NEXT, Bundle.EMPTY)
     }
 
     override fun onSeekCommand(pos: Long) {

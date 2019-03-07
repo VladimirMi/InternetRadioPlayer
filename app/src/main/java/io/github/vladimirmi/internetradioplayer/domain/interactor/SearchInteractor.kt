@@ -2,7 +2,6 @@ package io.github.vladimirmi.internetradioplayer.domain.interactor
 
 import io.github.vladimirmi.internetradioplayer.data.net.model.StationSearchRes
 import io.github.vladimirmi.internetradioplayer.data.repository.FavoritesRepository
-import io.github.vladimirmi.internetradioplayer.data.repository.MediaRepository
 import io.github.vladimirmi.internetradioplayer.data.repository.SearchRepository
 import io.github.vladimirmi.internetradioplayer.domain.model.Suggestion
 import io.reactivex.Completable
@@ -18,7 +17,7 @@ import javax.inject.Inject
 class SearchInteractor
 @Inject constructor(private val searchRepository: SearchRepository,
                     private val favoritesRepository: FavoritesRepository,
-                    private val mediaRepository: MediaRepository) {
+                    private val mediaInteractor: MediaInteractor) {
 
     private var suggestions: List<Suggestion> = emptyList()
 
@@ -48,7 +47,7 @@ class SearchInteractor
     fun selectUberStation(id: Int): Completable {
         return searchRepository.findUberStation(id)
                 .doOnNext { station ->
-                    mediaRepository.currentMedia = favoritesRepository.getStation { it.uri == station.uri }
+                    mediaInteractor.currentMedia = favoritesRepository.getStation { it.uri == station.uri }
                             ?: station
                 }.ignoreElements()
     }

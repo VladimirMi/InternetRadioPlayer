@@ -5,7 +5,6 @@ import io.github.vladimirmi.internetradioplayer.R
 import io.github.vladimirmi.internetradioplayer.data.db.entity.Group
 import io.github.vladimirmi.internetradioplayer.data.db.entity.Station
 import io.github.vladimirmi.internetradioplayer.data.repository.FavoritesRepository
-import io.github.vladimirmi.internetradioplayer.data.repository.MediaRepository
 import io.github.vladimirmi.internetradioplayer.data.repository.StationRepository
 import io.github.vladimirmi.internetradioplayer.data.utils.ShortcutHelper
 import io.github.vladimirmi.internetradioplayer.utils.MessageResException
@@ -23,11 +22,11 @@ class StationInteractor
 @Inject constructor(private val stationRepository: StationRepository,
                     private val favoritesRepository: FavoritesRepository,
                     private val favoriteListInteractor: FavoriteListInteractor,
-                    private val mediaRepository: MediaRepository,
+                    private val mediaInteractor: MediaInteractor,
                     private val shortcutHelper: ShortcutHelper) {
 
     fun addCurrentShortcut(startPlay: Boolean): Boolean {
-        val station = mediaRepository.currentMedia as? Station ?: return false
+        val station = mediaInteractor.currentMedia as? Station ?: return false
         return shortcutHelper.pinShortcut(station, startPlay)
     }
 
@@ -35,27 +34,13 @@ class StationInteractor
         return stationRepository.createStation(uri)
                 .doOnSuccess { newStation ->
                     val favoriteStation = favoritesRepository.getStation { it.uri == newStation.uri }
-                    mediaRepository.currentMedia = favoriteStation ?: newStation
+                    mediaInteractor.currentMedia = favoriteStation ?: newStation
                 }
     }
 
     fun switchFavorite(station: Station): Completable {
         return if (isFavorite(station.id)) removeFromFavorite(station)
         else addToFavorite(station)
-    }
-
-    fun changeGroup(groupName: String): Completable {
-        val station = mediaRepository.currentMedia as? Station ?: return Completable.complete()
-        return Single.fromCallable { favoritesRepository.groups.find { it.name == groupName } }
-                .flatMapCompletable {
-                    if (it.id == station.groupId) Completable.complete()
-                    else {
-                        val newStation = station.copy(groupId = it.id, order = it.stations.size)
-                        favoritesRepository.updateStations(listOf(newStation))
-                                .andThen(setStation(newStation))
-                                .andThen(favoriteListInteractor.initFavoriteList())
-                    }
-                }
     }
 
     fun updateStation(station: Station): Completable {
@@ -66,7 +51,7 @@ class StationInteractor
     }
 
     private fun setStation(station: Station): Completable {
-        return { mediaRepository.currentMedia = station }.toCompletable()
+        return { mediaInteractor.currentMedia = station }.toCompletable()
     }
 
     private fun addToFavorite(station: Station): Completable {

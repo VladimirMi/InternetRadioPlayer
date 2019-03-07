@@ -102,7 +102,7 @@ class FavoriteListInteractor
                 .flatMapCompletable { favoritesRepository.updateGroups(it) }
 
         val updateStations = Single.fromCallable { favoritesRepository.stations.getStationDifference(stations) }
-                .doOnSuccess { list -> updateCurrentStation(list) }
+//                .doOnSuccess { list -> updateCurrentStation(list) }
                 .flatMapCompletable { favoritesRepository.updateStations(it) }
 
         return updateGroups.andThen(updateStations).andThen(initFavoriteList())
@@ -112,24 +112,12 @@ class FavoriteListInteractor
         return favoritesRepository.getStation { it.id == id }
     }
 
-    fun nextStation(id: String): Boolean {
-        val next = favoritesRepository.stations.getNextStationFrom(id)
-        next?.let { mediaRepository.currentMedia = it }
-        return next != null
-    }
-
-    fun previousStation(id: String): Boolean {
-        val previous = favoritesRepository.stations.getPreviousStationFrom(id)
-        previous?.let { mediaRepository.currentMedia = it }
-        return previous != null
-    }
-
     private fun isFavorite(id: String) = favoritesRepository.getStation { it.id == id } != null
 
-    private fun updateCurrentStation(list: List<Station>) {
-        val station = mediaRepository.currentMedia as? Station ?: return
-        list.find { it.id == station.id }?.let {
-            mediaRepository.currentMedia = it
-        }
-    }
+//    private fun updateCurrentStation(list: List<Station>) {
+//        val station = mediaRepository.currentMedia as? Station ?: return
+//        list.find { it.id == station.id }?.let {
+//            mediaRepository.currentMedia = it
+//        }
+//    }
 }

@@ -36,6 +36,8 @@ class RecordsRepository
         BehaviorRelay.createDefault(initRecords())
     }
 
+    val records: List<Record> get() = recordsObs.value ?: emptyList()
+
     fun startRecording(station: Station) {
         val name = getNewRecordName(station.name)
 

@@ -10,7 +10,7 @@ import kotlin.collections.ArrayList
  * Created by Vladimir Mikhalev 12.09.2018.
  */
 
-class FlatStationsList(private val flatList: MutableList<Any> = arrayListOf()) {
+class FlatStationsList(private val flatList: MutableList<Any> = arrayListOf()) : MediaQueue {
 
     val size: Int get() = flatList.size
 
@@ -29,6 +29,20 @@ class FlatStationsList(private val flatList: MutableList<Any> = arrayListOf()) {
         }
     }
 
+    override fun getNext(id: String): Media {
+        val stations = getStations()
+        val currIndex = stations.indexOfFirst { it.id == id }
+        if (currIndex == -1) throw IllegalStateException("Can't find station with id $id")
+        return stations[(currIndex + 1) % stations.size]
+    }
+
+    override fun getPrevious(id: String): Media {
+        val stations = getStations()
+        val currIndex = stations.indexOfFirst { it.id == id }
+        if (currIndex == -1) throw IllegalStateException("Can't find station with id $id")
+        return stations[(stations.size + currIndex - 1) % stations.size]
+    }
+
     fun isGroup(position: Int) = flatList[position] is Group
 
     fun isStation(position: Int) = flatList[position] is Station
@@ -45,31 +59,6 @@ class FlatStationsList(private val flatList: MutableList<Any> = arrayListOf()) {
 
     fun getId(position: Int): String {
         return if (isGroup(position)) getGroup(position).id else getStation(position).id
-    }
-
-    fun getPreviousStationFrom(id: String): Station? {
-        var previous: Station? = null
-        for (element in flatList) {
-            if (element is Group) continue
-            element as Station
-            if (element.id == id && previous != null) return previous
-            previous = element
-        }
-        previous = previous ?: flatList.lastOrNull { it is Station } as? Station
-        return if (previous?.id == id) null else previous
-    }
-
-    fun getNextStationFrom(id: String): Station? {
-        var next: Station? = null
-        for (i in flatList.size - 1 downTo 0) {
-            val element = flatList[i]
-            if (element is Group) continue
-            element as Station
-            if (element.id == id && next != null) return next
-            next = element
-        }
-        next = next ?: flatList.firstOrNull { it is Station } as? Station
-        return if (next?.id == id) null else next
     }
 
     fun isLastStationInGroup(position: Int): Boolean {

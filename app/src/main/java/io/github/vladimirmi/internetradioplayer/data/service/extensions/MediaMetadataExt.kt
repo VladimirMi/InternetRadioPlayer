@@ -1,4 +1,4 @@
-package io.github.vladimirmi.internetradioplayer.data.service
+package io.github.vladimirmi.internetradioplayer.data.service.extensions
 
 import android.graphics.Bitmap
 import android.support.v4.media.MediaMetadataCompat

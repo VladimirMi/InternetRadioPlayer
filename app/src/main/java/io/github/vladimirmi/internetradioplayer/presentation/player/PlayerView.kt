@@ -39,4 +39,6 @@ interface PlayerView : BaseView {
     fun setPosition(position: Long)
 
     fun incrementPositionBy(duration: Long)
+
+    fun enableSeek(isEnabled: Boolean)
 }

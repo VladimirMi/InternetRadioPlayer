@@ -1,4 +1,4 @@
-package io.github.vladimirmi.internetradioplayer.data.service
+package io.github.vladimirmi.internetradioplayer.data.service.player
 
 import com.google.android.exoplayer2.upstream.DefaultLoadErrorHandlingPolicy
 

@@ -11,7 +11,7 @@ import io.github.vladimirmi.internetradioplayer.data.net.UberStationsService
 import io.github.vladimirmi.internetradioplayer.data.net.createClient
 import io.github.vladimirmi.internetradioplayer.data.net.getUberStationsService
 import io.github.vladimirmi.internetradioplayer.data.repository.*
-import io.github.vladimirmi.internetradioplayer.data.service.LoadControl
+import io.github.vladimirmi.internetradioplayer.data.service.player.LoadControl
 import io.github.vladimirmi.internetradioplayer.data.service.recorder.Recorder
 import io.github.vladimirmi.internetradioplayer.data.utils.ShortcutHelper
 import io.github.vladimirmi.internetradioplayer.data.utils.StationParser

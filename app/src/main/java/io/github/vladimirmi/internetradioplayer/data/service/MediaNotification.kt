@@ -11,6 +11,7 @@ import android.support.v4.media.session.PlaybackStateCompat
 import androidx.core.app.NotificationCompat
 import androidx.media.app.NotificationCompat.MediaStyle
 import io.github.vladimirmi.internetradioplayer.R
+import io.github.vladimirmi.internetradioplayer.data.service.extensions.PlayerActions
 import io.github.vladimirmi.internetradioplayer.extensions.notificationManager
 
 /**

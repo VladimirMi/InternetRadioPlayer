@@ -1,4 +1,4 @@
-package io.github.vladimirmi.internetradioplayer.data.service
+package io.github.vladimirmi.internetradioplayer.data.service.player
 
 import android.bluetooth.BluetoothHeadset
 import android.content.BroadcastReceiver
@@ -21,6 +21,8 @@ import com.google.android.exoplayer2.upstream.FileDataSource
 import com.google.android.exoplayer2.util.Util
 import io.github.vladimirmi.internetradioplayer.BuildConfig
 import io.github.vladimirmi.internetradioplayer.R
+import io.github.vladimirmi.internetradioplayer.data.service.PlayerCallback
+import io.github.vladimirmi.internetradioplayer.data.service.PlayerService
 import io.github.vladimirmi.internetradioplayer.di.Scopes
 import io.github.vladimirmi.internetradioplayer.extensions.runOnUiThread
 import io.github.vladimirmi.internetradioplayer.extensions.wifiManager

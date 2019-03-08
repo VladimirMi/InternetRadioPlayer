@@ -15,9 +15,9 @@ import com.google.android.exoplayer2.upstream.TeeDataSource
 import com.google.android.exoplayer2.util.Util
 import io.github.vladimirmi.internetradioplayer.BuildConfig
 import io.github.vladimirmi.internetradioplayer.R
-import io.github.vladimirmi.internetradioplayer.data.service.AudioRenderersFactory
-import io.github.vladimirmi.internetradioplayer.data.service.ErrorHandlingPolicy
-import io.github.vladimirmi.internetradioplayer.data.service.IcyHttpDataSource
+import io.github.vladimirmi.internetradioplayer.data.service.player.AudioRenderersFactory
+import io.github.vladimirmi.internetradioplayer.data.service.player.ErrorHandlingPolicy
+import io.github.vladimirmi.internetradioplayer.data.service.player.IcyHttpDataSource
 import io.github.vladimirmi.internetradioplayer.extensions.runOnUiThread
 import io.github.vladimirmi.internetradioplayer.extensions.wifiManager
 import okhttp3.OkHttpClient

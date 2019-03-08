@@ -10,10 +10,12 @@ import android.support.v4.media.session.PlaybackStateCompat
 import androidx.media.MediaBrowserServiceCompat
 import io.github.vladimirmi.internetradioplayer.R
 import io.github.vladimirmi.internetradioplayer.data.db.entity.Station
+import io.github.vladimirmi.internetradioplayer.data.service.extensions.PlayerActions
+import io.github.vladimirmi.internetradioplayer.data.service.player.Playback
+import io.github.vladimirmi.internetradioplayer.data.service.player.STOP_DELAY
 import io.github.vladimirmi.internetradioplayer.data.utils.AudioEffects
 import io.github.vladimirmi.internetradioplayer.di.Scopes
 import io.github.vladimirmi.internetradioplayer.domain.interactor.EqualizerInteractor
-import io.github.vladimirmi.internetradioplayer.domain.interactor.FavoriteListInteractor
 import io.github.vladimirmi.internetradioplayer.domain.interactor.HistoryInteractor
 import io.github.vladimirmi.internetradioplayer.domain.interactor.MediaInteractor
 import io.github.vladimirmi.internetradioplayer.domain.model.Media
@@ -43,7 +45,6 @@ class PlayerService : MediaBrowserServiceCompat(), SessionCallback.Interface {
 
     @Inject lateinit var mediaInteractor: MediaInteractor
     @Inject lateinit var equalizerInteractor: EqualizerInteractor
-    @Inject lateinit var favoriteListInteractor: FavoriteListInteractor
     @Inject lateinit var historyInteractor: HistoryInteractor
 
     private val subs = CompositeDisposable()

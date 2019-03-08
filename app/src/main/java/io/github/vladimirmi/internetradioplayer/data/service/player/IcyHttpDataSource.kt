@@ -1,7 +1,8 @@
-package io.github.vladimirmi.internetradioplayer.data.service
+package io.github.vladimirmi.internetradioplayer.data.service.player
 
 import com.google.android.exoplayer2.ext.okhttp.OkHttpDataSource
 import com.google.android.exoplayer2.upstream.DataSpec
+import io.github.vladimirmi.internetradioplayer.data.service.PlayerCallback
 import okhttp3.Call
 import timber.log.Timber
 import java.io.InputStream

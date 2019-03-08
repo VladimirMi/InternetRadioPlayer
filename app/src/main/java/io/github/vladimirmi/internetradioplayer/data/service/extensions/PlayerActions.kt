@@ -1,4 +1,4 @@
-package io.github.vladimirmi.internetradioplayer.data.service
+package io.github.vladimirmi.internetradioplayer.data.service.extensions
 
 import android.app.PendingIntent
 import android.content.Context
@@ -11,6 +11,7 @@ import io.github.vladimirmi.internetradioplayer.presentation.root.RootActivity
  * Created by Vladimir Mikhalev 20.12.2017.
  */
 
+@Suppress("MemberVisibilityCanBePrivate")
 object PlayerActions {
 
     const val DEFAULT_ACTIONS = (PlaybackStateCompat.ACTION_PLAY_PAUSE
@@ -18,6 +19,22 @@ object PlayerActions {
             or PlaybackStateCompat.ACTION_SKIP_TO_NEXT
             or PlaybackStateCompat.ACTION_SKIP_TO_PREVIOUS
             or PlaybackStateCompat.ACTION_SEEK_TO)
+
+    fun isSeekEnabled(sourceActions: Long): Boolean {
+        return haveActions(sourceActions, PlaybackStateCompat.ACTION_SEEK_TO)
+    }
+
+    fun isSkipEnabled(sourceActions: Long): Boolean {
+        return haveActions(sourceActions, PlaybackStateCompat.ACTION_SKIP_TO_NEXT,
+                PlaybackStateCompat.ACTION_SKIP_TO_PREVIOUS)
+    }
+
+    fun haveActions(sourceActions: Long, vararg actions: Long): Boolean {
+        for (action in actions) {
+            if (sourceActions and action != action) return false
+        }
+        return true
+    }
 
     fun enableSkip(actions: Long): Long {
         return (actions or PlaybackStateCompat.ACTION_SKIP_TO_NEXT

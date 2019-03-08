@@ -5,7 +5,8 @@ import android.support.v4.media.MediaMetadataCompat
 import android.support.v4.media.session.PlaybackStateCompat
 import io.github.vladimirmi.internetradioplayer.R
 import io.github.vladimirmi.internetradioplayer.data.db.entity.Station
-import io.github.vladimirmi.internetradioplayer.data.service.*
+import io.github.vladimirmi.internetradioplayer.data.service.PlayerService
+import io.github.vladimirmi.internetradioplayer.data.service.extensions.*
 import io.github.vladimirmi.internetradioplayer.domain.interactor.*
 import io.github.vladimirmi.internetradioplayer.domain.model.Record
 import io.github.vladimirmi.internetradioplayer.extensions.subscribeX
@@ -133,6 +134,7 @@ class PlayerPresenter
                 playTask = Timer().schedule(0, 300) { view?.incrementPositionBy(300) }
             }
         }
+        view?.enableSeek(PlayerActions.isSeekEnabled(state.actions))
     }
 
     private fun handleMetadata(metadata: MediaMetadataCompat) {

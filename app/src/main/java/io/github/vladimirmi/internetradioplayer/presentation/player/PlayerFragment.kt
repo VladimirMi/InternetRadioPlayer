@@ -36,6 +36,7 @@ class PlayerFragment : BaseFragment<PlayerPresenter, PlayerView>(), PlayerView {
     override val layout = R.layout.fragment_player
 
     private lateinit var sheetBehavior: BottomSheetBehavior<View>
+    private var isSeekEnabled = false
 
     override fun providePresenter(): PlayerPresenter {
         return Toothpick.openScopes(Scopes.ROOT_ACTIVITY, this)
@@ -182,6 +183,13 @@ class PlayerFragment : BaseFragment<PlayerPresenter, PlayerView>(), PlayerView {
         })
     }
 
+    override fun enableSeek(isEnabled: Boolean) {
+        isSeekEnabled = isEnabled
+        progressSb.visible(isEnabled)
+        positionTv.visible(isEnabled)
+        durationTv.visible(isEnabled)
+    }
+
     //endregion
 
     private fun switchState() {
@@ -208,8 +216,11 @@ class PlayerFragment : BaseFragment<PlayerPresenter, PlayerView>(), PlayerView {
         nextBt.visible(visible, false)
         previousBt.visible(visible, false)
         stopBt.visible(visible, false)
-        progressSb.visible(visible, false)
-
+        if (isSeekEnabled) {
+            progressSb.visible(visible, false)
+            positionTv.visible(visible, false)
+            durationTv.visible(visible, false)
+        }
         simpleMetaFl.visible(state == 0f)
 
         playPauseBt.x = playPauseBtStart.x + (playPauseBtEnd.x - playPauseBtStart.x) * state

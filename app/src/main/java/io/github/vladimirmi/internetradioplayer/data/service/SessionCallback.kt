@@ -3,6 +3,8 @@ package io.github.vladimirmi.internetradioplayer.data.service
 import android.os.Bundle
 import android.os.ResultReceiver
 import android.support.v4.media.session.MediaSessionCompat
+import io.github.vladimirmi.internetradioplayer.data.service.extensions.PlayerActions
+import io.github.vladimirmi.internetradioplayer.data.service.player.STOP_DELAY
 
 /**
  * Created by Vladimir Mikhalev 12.12.2017.

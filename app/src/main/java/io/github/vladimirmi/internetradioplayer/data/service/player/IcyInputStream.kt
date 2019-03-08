@@ -1,5 +1,6 @@
-package io.github.vladimirmi.internetradioplayer.data.service
+package io.github.vladimirmi.internetradioplayer.data.service.player
 
+import io.github.vladimirmi.internetradioplayer.data.service.PlayerCallback
 import java.io.FilterInputStream
 import java.io.InputStream
 

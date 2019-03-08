@@ -6,6 +6,8 @@ package io.github.vladimirmi.internetradioplayer.domain.model
 
 class RecordsQueue(private val records: List<Record>) : List<Record> by records, MediaQueue {
 
+    override val queueSize = size
+
     override fun getNext(id: String): Media {
         val currIndex = records.indexOfFirst { it.id == id }
         if (currIndex == -1) throw IllegalStateException("Can't find record with id $id")

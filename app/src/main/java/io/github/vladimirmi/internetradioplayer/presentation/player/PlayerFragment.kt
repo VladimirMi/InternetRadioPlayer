@@ -149,12 +149,12 @@ class PlayerFragment : BaseFragment<PlayerPresenter, PlayerView>(), PlayerView {
     }
 
     override fun setMetadata(artist: String, title: String) {
-        if (metaTitleTv.text != artist) metaTitleTv.setTextOrHide(artist)
-        if (metaSubtitleTv.text != title) metaSubtitleTv.setTextOrHide(title)
+        metaTitleTv.setTextOrHide(artist)
+        metaSubtitleTv.setTextOrHide(title)
     }
 
     override fun setSimpleMetadata(metadata: String) {
-        if (simpleMetaTv.text != metadata) simpleMetaTv.text = metadata
+        simpleMetaTv.text = metadata
     }
 
     override fun setPosition(position: Long) {
@@ -188,6 +188,14 @@ class PlayerFragment : BaseFragment<PlayerPresenter, PlayerView>(), PlayerView {
         progressSb.visible(isEnabled)
         positionTv.visible(isEnabled)
         durationTv.visible(isEnabled)
+    }
+
+    override fun enableSkip(isEnabled: Boolean) {
+        val tint = requireContext().color(if (isEnabled) R.color.grey_50 else R.color.grey_600)
+        nextBt.setColorFilter(tint)
+        previousBt.setColorFilter(tint)
+        nextBt.isEnabled = isEnabled
+        previousBt.isEnabled = isEnabled
     }
 
     //endregion

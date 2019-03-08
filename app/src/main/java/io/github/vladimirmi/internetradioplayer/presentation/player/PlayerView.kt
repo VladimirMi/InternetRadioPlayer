@@ -41,4 +41,6 @@ interface PlayerView : BaseView {
     fun incrementPositionBy(duration: Long)
 
     fun enableSeek(isEnabled: Boolean)
+
+    fun enableSkip(isEnabled: Boolean)
 }

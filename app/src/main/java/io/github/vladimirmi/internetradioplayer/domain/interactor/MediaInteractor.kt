@@ -6,7 +6,9 @@ import io.github.vladimirmi.internetradioplayer.data.repository.MediaRepository
 import io.github.vladimirmi.internetradioplayer.data.repository.PlayerRepository
 import io.github.vladimirmi.internetradioplayer.data.repository.RecordsRepository
 import io.github.vladimirmi.internetradioplayer.data.service.COMMAND_DISABLE_SEEK
+import io.github.vladimirmi.internetradioplayer.data.service.COMMAND_DISABLE_SKIP
 import io.github.vladimirmi.internetradioplayer.data.service.COMMAND_ENABLE_SEEK
+import io.github.vladimirmi.internetradioplayer.data.service.COMMAND_ENABLE_SKIP
 import io.github.vladimirmi.internetradioplayer.domain.model.Media
 import io.github.vladimirmi.internetradioplayer.domain.model.Record
 import io.github.vladimirmi.internetradioplayer.domain.model.RecordsQueue
@@ -38,6 +40,10 @@ class MediaInteractor
                 is Record -> setRecord(value)
                 is Station -> setStation(value)
             }
+            playerRepository.sendCommand(
+                    if (mediaRepository.mediaQueue.queueSize > 1) COMMAND_ENABLE_SKIP
+                    else COMMAND_DISABLE_SKIP
+            )
         }
 
     private fun setRecord(record: Record) {
@@ -51,6 +57,7 @@ class MediaInteractor
         val queue = if (favoritesRepository.getStation { it.id == station.id } != null) {
             favoritesRepository.stations
         } else {
+            playerRepository.sendCommand(COMMAND_DISABLE_SKIP)
             SingletonMediaQueue(station)
         }
         mediaRepository.mediaQueue = queue

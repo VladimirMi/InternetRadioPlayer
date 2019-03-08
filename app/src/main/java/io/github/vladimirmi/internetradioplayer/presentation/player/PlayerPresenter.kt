@@ -135,6 +135,7 @@ class PlayerPresenter
             }
         }
         view?.enableSeek(PlayerActions.isSeekEnabled(state.actions))
+        view?.enableSkip(PlayerActions.isSkipEnabled(state.actions))
     }
 
     private fun handleMetadata(metadata: MediaMetadataCompat) {

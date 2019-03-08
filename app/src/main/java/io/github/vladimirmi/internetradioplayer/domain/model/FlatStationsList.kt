@@ -12,8 +12,6 @@ import kotlin.collections.ArrayList
 
 class FlatStationsList(private val flatList: MutableList<Any> = arrayListOf()) : MediaQueue {
 
-    val size: Int get() = flatList.size
-
     companion object {
         fun createFrom(groups: List<Group>): FlatStationsList {
             val flatList = arrayListOf<Any>()
@@ -28,6 +26,9 @@ class FlatStationsList(private val flatList: MutableList<Any> = arrayListOf()) :
             return FlatStationsList(flatList)
         }
     }
+
+    val size: Int get() = flatList.size
+    override val queueSize: Int get() = getStations().size
 
     override fun getNext(id: String): Media {
         val stations = getStations()

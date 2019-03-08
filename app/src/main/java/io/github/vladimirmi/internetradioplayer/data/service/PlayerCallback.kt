@@ -37,6 +37,7 @@ abstract class PlayerCallback : Player.EventListener {
     }
 
     fun setArtistTitle(artistTitle: String) {
+        Timber.e("setArtistTitle: $artistTitle")
         mediaMetadata = mediaMetadata.setArtistTitle(artistTitle)
         onMediaMetadataChanged(mediaMetadata)
     }

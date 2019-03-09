@@ -28,14 +28,16 @@ class RootPresenter
 
     override fun onFirstAttach(view: RootView) {
         playerInteractor.connect()
-        val pageId = mainInteractor.getMainPageId()
-        router.newRootScreen(pageId)
-
-        favoriteListInteractor.initFavoriteList()
-                .andThen(recordsInteractor.initRecords())
-                .andThen(historyInteractor.initHistory())
+                .andThen(favoriteListInteractor.initFavoriteList()
+                        .mergeWith(recordsInteractor.initRecords())
+                        .mergeWith(historyInteractor.initHistory()))
                 .observeOn(AndroidSchedulers.mainThread())
-                .subscribeX { view.checkIntent() }
+                .doOnSubscribe { view.showLoadingIndicator(true) }
+                .doOnTerminate { view.showLoadingIndicator(false) }
+                .subscribeX(onComplete = {
+                    router.newRootScreen(mainInteractor.getMainPageId())
+                    view.checkIntent()
+                })
                 .addTo(dataSubs)
     }
 

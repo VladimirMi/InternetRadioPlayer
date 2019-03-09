@@ -37,6 +37,7 @@
             android:paddingTop="8dp"
             android:paddingBottom="8dp"
             tools:listitem="@layout/item_station"
+            android:animateLayoutChanges="false"
             />
 
     </androidx.swiperefreshlayout.widget.SwipeRefreshLayout>

@@ -27,6 +27,8 @@ class RootPresenter
     : BasePresenter<RootView>() {
 
     override fun onFirstAttach(view: RootView) {
+        router.newRootScreen(mainInteractor.getMainPageId())
+
         playerInteractor.connect()
                 .andThen(favoriteListInteractor.initFavoriteList()
                         .mergeWith(recordsInteractor.initRecords())
@@ -34,10 +36,7 @@ class RootPresenter
                 .observeOn(AndroidSchedulers.mainThread())
                 .doOnSubscribe { view.showLoadingIndicator(true) }
                 .doOnTerminate { view.showLoadingIndicator(false) }
-                .subscribeX(onComplete = {
-                    router.newRootScreen(mainInteractor.getMainPageId())
-                    view.checkIntent()
-                })
+                .subscribeX(onComplete = { view.checkIntent() })
                 .addTo(dataSubs)
     }
 

@@ -16,28 +16,17 @@ import java.util.*
         indices = [Index(value = ["uri"], unique = true), Index(value = ["group_id"])])
 
 data class Station(
-        @PrimaryKey override val id: String,
+        @PrimaryKey override val id: String = UUID.randomUUID().toString(),
         override val name: String,
         override val uri: String,
         val url: String?,
         val encoding: String?,
         val bitrate: String?,
         val sample: String?,
-        val order: Int,
-        @ColumnInfo(name = "group_id") val groupId: String,
+        val order: Int = 0,
+        @ColumnInfo(name = "group_id") val groupId: String = Group.DEFAULT_ID,
         val equalizerPreset: String? = null
 ) : Media {
-
-    @Ignore
-    constructor(name: String,
-                uri: String,
-                url: String?,
-                encoding: String?,
-                bitrate: String?,
-                sample: String?)
-            : this(UUID.randomUUID().toString(),
-            name, uri, url, encoding, bitrate, sample,
-            0, Group.DEFAULT_ID)
 
     @Ignore val specs: String
 

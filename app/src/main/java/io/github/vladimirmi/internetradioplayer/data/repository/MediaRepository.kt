@@ -20,10 +20,8 @@ class MediaRepository
     var currentMedia: Media
         get() = currentMediaObs.value ?: Media.nullObj()
         set(value) {
-            if (value != currentMedia) {
-                prefs.mediaId = value.id
-                currentMediaObs.accept(value)
-            }
+            prefs.mediaId = value.id
+            currentMediaObs.accept(value)
         }
 
     fun getNext(id: String): Media? {

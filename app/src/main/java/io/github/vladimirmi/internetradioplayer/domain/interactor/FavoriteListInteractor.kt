@@ -33,16 +33,13 @@ class FavoriteListInteractor
     fun isFavorite(station: Station) = isFavorite(station.id)
 
     fun createGroup(groupName: String): Completable {
-        return Single.fromCallable { favoritesRepository.groups }
-                .map { groups -> groups.find { groupName == it.name } ?: Group.nullObj() }
-                .flatMapCompletable {
-                    if (!it.isNull()) Completable.complete()
-                    else {
-                        val group = if (groupName == Group.DEFAULT_NAME) Group.default()
-                        else Group(groupName)
-                        favoritesRepository.addGroup(group)
-                    }
-                }.andThen(initFavoriteList())
+        if (favoritesRepository.groups.find { groupName == it.name } != null) {
+            return Completable.complete()
+        }
+        val group = if (groupName == Group.DEFAULT_NAME) Group.default()
+        else Group(name = groupName, order = -1)
+        return favoritesRepository.addGroup(group)
+                .andThen(initFavoriteList())
     }
 
     fun findGroup(id: String): Group? {

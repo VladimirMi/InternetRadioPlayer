@@ -31,13 +31,16 @@ class RecordsRepository
     }
 
     val currentRecordingObs: BehaviorRelay<Set<String>> = BehaviorRelay.createDefault(emptySet())
+    val recordsObs: BehaviorRelay<List<Record>> = BehaviorRelay.create()
 
-    val recordsObs: BehaviorRelay<List<Record>> = BehaviorRelay.createDefault(emptyList())
-
-    val records: List<Record> get() = recordsObs.value ?: emptyList()
+    var records: List<Record>
+        get() = recordsObs.value ?: emptyList()
+        private set(value) {
+            recordsObs.accept(value)
+        }
 
     fun initRecords(): Completable {
-        return Completable.fromAction { recordsObs.accept(loadRecords()) }
+        return Completable.fromAction { records = loadRecords() }
     }
 
     fun startRecording(station: Station) {
@@ -63,8 +66,7 @@ class RecordsRepository
 
     fun commitRecord(record: Record) {
         val newRecord = record.copy(createdAt = System.currentTimeMillis())
-        val list = (recordsObs.value ?: emptyList()) + newRecord
-        recordsObs.accept(list)
+        records = records + newRecord
     }
 
     fun deleteRecord(record: Record): Single<Boolean> {
@@ -80,7 +82,7 @@ class RecordsRepository
 
     private fun getNewRecordName(stationName: String): String {
         val regex = "^$stationName(_\\d)?".toRegex()
-        val list = recordsObs.value?.filter { it.name.matches(regex) } ?: emptyList()
+        val list = records.filter { it.name.matches(regex) }
         return if (list.isEmpty()) stationName
         else "${stationName}_${list.size}"
     }

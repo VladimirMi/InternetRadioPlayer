@@ -16,7 +16,7 @@
 
     <TextView
         android:id="@+id/nameTv"
-        style="@style/TextAppearance.AppCompat.Subhead"
+        style="@style/TextAppearance.MaterialComponents.Subtitle1"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_marginLeft="8dp"

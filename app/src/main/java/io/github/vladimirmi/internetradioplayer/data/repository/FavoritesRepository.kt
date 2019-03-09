@@ -4,7 +4,6 @@ import com.jakewharton.rxrelay2.BehaviorRelay
 import io.github.vladimirmi.internetradioplayer.data.db.StationsDatabase
 import io.github.vladimirmi.internetradioplayer.data.db.entity.Group
 import io.github.vladimirmi.internetradioplayer.data.db.entity.Station
-import io.github.vladimirmi.internetradioplayer.data.utils.Preferences
 import io.github.vladimirmi.internetradioplayer.domain.model.FlatStationsList
 import io.reactivex.Completable
 import io.reactivex.Single
@@ -16,19 +15,18 @@ import javax.inject.Inject
  */
 
 class FavoritesRepository
-@Inject constructor(private val db: StationsDatabase,
-                    private val prefs: Preferences) {
+@Inject constructor(private val db: StationsDatabase) {
 
     private val dao = db.stationDao()
 
-    val stationsListObs = BehaviorRelay.createDefault(FlatStationsList())
+    val stationsListObs = BehaviorRelay.create<FlatStationsList>()
 
     var groups: List<Group> = emptyList()
         private set
 
     var stations: FlatStationsList
-        get() = stationsListObs.value!!
-        set(value) = stationsListObs.accept(value)
+        get() = stationsListObs.value ?: FlatStationsList()
+        private set(value) = stationsListObs.accept(value)
 
 
     fun initStationsList(groups: List<Group>): Completable {

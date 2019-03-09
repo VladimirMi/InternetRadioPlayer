@@ -69,6 +69,7 @@
         android:layout_height="48dp"
         android:layout_marginTop="24dp"
         android:layout_marginBottom="24dp"
+        app:layout_goneMarginBottom="72dp"
         android:contentDescription="@string/desc_play_pause_button"
         android:foreground="?actionBarItemBackground"
         app:layout_constraintBottom_toTopOf="@id/progressSb"
@@ -135,7 +136,6 @@
         android:focusable="true"
         android:padding="16dp"
         app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_goneMarginBottom="16dp"
         />
 
     <TextView

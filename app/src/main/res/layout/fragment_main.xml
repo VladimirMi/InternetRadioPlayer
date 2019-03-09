@@ -27,6 +27,8 @@
             app:layout_constraintTop_toTopOf="parent"
             app:tabMode="scrollable"
             tools:ignore="UnusedAttribute"
+            app:tabIndicatorColor="@color/secondary"
+            app:tabIndicatorHeight="8dp"
             />
 
         <androidx.viewpager.widget.ViewPager

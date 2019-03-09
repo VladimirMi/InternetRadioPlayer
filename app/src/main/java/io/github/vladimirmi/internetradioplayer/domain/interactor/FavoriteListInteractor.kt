@@ -104,9 +104,10 @@ class FavoriteListInteractor
                     .andThen(initFavoriteList())
         } else {
             favoritesRepository.initStationsList(groups)
-                    .andThen(getStation(mediaInteractor.getSavedMediaId())?.let {
-                        mediaInteractor.setMedia(it)
-                    } ?: Completable.complete())
+                    .doOnComplete {
+                        getStation(mediaInteractor.getSavedMediaId())
+                                ?.let { mediaInteractor.currentMedia = it }
+                    }
         }
     }
 }

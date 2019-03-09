@@ -18,10 +18,10 @@ class HistoryInteractor
     fun initHistory(): Completable {
         return getHistoryObs()
                 .first(emptyList())
-                .flatMapCompletable { stations ->
+                .doOnSuccess { stations ->
                     stations.find { mediaInteractor.getSavedMediaId() == it.id }
-                            ?.let { mediaInteractor.setMedia(it) } ?: Completable.complete()
-                }
+                            ?.let { mediaInteractor.currentMedia = it }
+                }.ignoreElement()
     }
 
     fun getHistoryObs(): Observable<List<Station>> {

@@ -26,11 +26,11 @@ class MediaRepository
             }
         }
 
-    fun getNext(id: String): Media {
+    fun getNext(id: String): Media? {
         return mediaQueue.getNext(id)
     }
 
-    fun getPrevious(id: String): Media {
+    fun getPrevious(id: String): Media? {
         return mediaQueue.getPrevious(id)
     }
 

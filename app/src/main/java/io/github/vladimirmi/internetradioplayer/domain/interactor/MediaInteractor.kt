@@ -44,7 +44,7 @@ class MediaInteractor
             }
             mediaRepository.currentMedia = value
             playerRepository.sendCommand(
-                    if (mediaRepository.mediaQueue.queueSize > 1) COMMAND_ENABLE_SKIP
+                    if (mediaRepository.getNext(value.id) != null) COMMAND_ENABLE_SKIP
                     else COMMAND_DISABLE_SKIP
             )
         }
@@ -54,11 +54,15 @@ class MediaInteractor
     }
 
     fun nextMedia() {
-        mediaRepository.currentMedia = mediaRepository.getNext(currentMedia.id)
+        mediaRepository.getNext(currentMedia.id)?.let {
+            mediaRepository.currentMedia = it
+        }
     }
 
     fun previousMedia() {
-        mediaRepository.currentMedia = mediaRepository.getPrevious(currentMedia.id)
+        mediaRepository.getPrevious(currentMedia.id)?.let {
+            mediaRepository.currentMedia = it
+        }
     }
 
     fun getSavedMediaId(): String {
@@ -76,7 +80,7 @@ class MediaInteractor
             favoritesRepository.stations
         } else {
             playerRepository.sendCommand(COMMAND_DISABLE_SKIP)
-            SingletonMediaQueue(station)
+            SingletonMediaQueue()
         }
         mediaRepository.mediaQueue = queue
         playerRepository.sendCommand(COMMAND_DISABLE_SEEK)

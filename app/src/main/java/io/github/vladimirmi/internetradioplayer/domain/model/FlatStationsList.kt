@@ -28,19 +28,18 @@ class FlatStationsList(private val flatList: MutableList<Any> = arrayListOf()) :
     }
 
     val size: Int get() = flatList.size
-    override val queueSize: Int get() = getStations().size
 
-    override fun getNext(id: String): Media {
+    override fun getNext(id: String): Media? {
         val stations = getStations()
         val currIndex = stations.indexOfFirst { it.id == id }
-        if (currIndex == -1) throw IllegalStateException("Can't find station with id $id")
+        if (currIndex == -1 || stations.size == 1) return null
         return stations[(currIndex + 1) % stations.size]
     }
 
-    override fun getPrevious(id: String): Media {
+    override fun getPrevious(id: String): Media? {
         val stations = getStations()
         val currIndex = stations.indexOfFirst { it.id == id }
-        if (currIndex == -1) throw IllegalStateException("Can't find station with id $id")
+        if (currIndex == -1 || stations.size == 1) return null
         return stations[(stations.size + currIndex - 1) % stations.size]
     }
 

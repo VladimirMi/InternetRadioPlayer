@@ -8,8 +8,6 @@ import com.google.android.exoplayer2.source.TrackGroupArray
 import com.google.android.exoplayer2.trackselection.TrackSelectionArray
 import com.google.android.exoplayer2.upstream.DefaultAllocator
 import com.google.android.exoplayer2.util.Util
-import io.github.vladimirmi.internetradioplayer.data.utils.BUFFER_LENGTH_KEY
-import io.github.vladimirmi.internetradioplayer.data.utils.INITIAL_BUFFER_LENGTH_KEY
 import io.github.vladimirmi.internetradioplayer.data.utils.Preferences
 import javax.inject.Inject
 
@@ -39,11 +37,11 @@ class LoadControl
 
 
     private val listener = SharedPreferences.OnSharedPreferenceChangeListener { _, key ->
-        if (key == INITIAL_BUFFER_LENGTH_KEY) {
+        if (key == Preferences.KEY_INITIAL_BUFFER_LENGTH) {
             initialBufferUs = prefs.initialBufferLength * 1000000L
             reset(true)
 
-        } else if (key == BUFFER_LENGTH_KEY) {
+        } else if (key == Preferences.KEY_BUFFER_LENGTH) {
             bufferUs = prefs.bufferLength * 1000000L
             reset(true)
         }

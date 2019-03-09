@@ -64,6 +64,7 @@ class RecordsAdapter : RecyclerView.Adapter<RecordVH>() {
     override fun onBindViewHolder(holder: RecordVH, position: Int) {
         val record = records[position]
         holder.bind(record)
+        holder.select(record.id == selectedId)
         holder.setBackground(position, itemCount)
         holder.itemView.setOnClickListener { onItemClickListener?.invoke(record) }
         holder.itemView.setOnLongClickListener { longClickedItem = record; false }

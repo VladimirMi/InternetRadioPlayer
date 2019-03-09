@@ -1,6 +1,7 @@
 package io.github.vladimirmi.internetradioplayer.data.repository
 
 import com.jakewharton.rxrelay2.BehaviorRelay
+import io.github.vladimirmi.internetradioplayer.data.utils.Preferences
 import io.github.vladimirmi.internetradioplayer.domain.model.Media
 import io.github.vladimirmi.internetradioplayer.domain.model.MediaQueue
 import javax.inject.Inject
@@ -10,7 +11,7 @@ import javax.inject.Inject
  */
 
 class MediaRepository
-@Inject constructor() {
+@Inject constructor(private val prefs: Preferences) {
 
     lateinit var mediaQueue: MediaQueue
 
@@ -19,7 +20,10 @@ class MediaRepository
     var currentMedia: Media
         get() = currentMediaObs.value ?: Media.nullObj()
         set(value) {
-            currentMediaObs.accept(value)
+            if (value != currentMedia) {
+                prefs.mediaId = value.id
+                currentMediaObs.accept(value)
+            }
         }
 
     fun getNext(id: String): Media {
@@ -28,5 +32,9 @@ class MediaRepository
 
     fun getPrevious(id: String): Media {
         return mediaQueue.getPrevious(id)
+    }
+
+    fun getSavedMediaId(): String {
+        return prefs.mediaId
     }
 }

@@ -32,11 +32,13 @@ class RecordsRepository
 
     val currentRecordingObs: BehaviorRelay<Set<String>> = BehaviorRelay.createDefault(emptySet())
 
-    val recordsObs by lazy {
-        BehaviorRelay.createDefault(initRecords())
-    }
+    val recordsObs: BehaviorRelay<List<Record>> = BehaviorRelay.createDefault(emptyList())
 
     val records: List<Record> get() = recordsObs.value ?: emptyList()
+
+    fun initRecords(): Completable {
+        return Completable.fromAction { recordsObs.accept(loadRecords()) }
+    }
 
     fun startRecording(station: Station) {
         val name = getNewRecordName(station.name)
@@ -65,16 +67,12 @@ class RecordsRepository
         recordsObs.accept(list)
     }
 
-    fun deleteRecord(record: Record): Completable {
+    fun deleteRecord(record: Record): Single<Boolean> {
         return Single.fromCallable { record.file.delete() }
-                .flatMapCompletable { deleted ->
-                    if (deleted) Completable.fromAction { recordsObs.accept(initRecords()) }
-                    else Completable.error(IllegalStateException("Can not delete record"))
-                }
                 .subscribeOn(Schedulers.io())
     }
 
-    private fun initRecords(): List<Record> {
+    private fun loadRecords(): List<Record> {
         return recordsDirectory
                 .listFiles { pathname -> pathname.extension == RECORD_EXT }
                 .map { Record.fromFile(it) }

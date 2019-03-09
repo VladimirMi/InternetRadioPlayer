@@ -22,7 +22,8 @@ class RootPresenter
                     private val favoriteListInteractor: FavoriteListInteractor,
                     private val mediaInteractor: MediaInteractor,
                     private val mainInteractor: MainInteractor,
-                    private val historyInteractor: HistoryInteractor)
+                    private val historyInteractor: HistoryInteractor,
+                    private val recordsInteractor: RecordsInteractor)
     : BasePresenter<RootView>() {
 
     override fun onFirstAttach(view: RootView) {
@@ -31,7 +32,8 @@ class RootPresenter
         router.newRootScreen(pageId)
 
         favoriteListInteractor.initFavoriteList()
-                .andThen(historyInteractor.selectRecentStation())
+                .andThen(recordsInteractor.initRecords())
+                .andThen(historyInteractor.initHistory())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribeX { view.checkIntent() }
                 .addTo(dataSubs)

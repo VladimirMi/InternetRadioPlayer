@@ -58,9 +58,8 @@ class SearchRepository
         return uberStationsService.getStation(id)
                 .map { it.result[0].stations[0].toStation() }
                 .flatMapObservable {
-                    Observable.fromCallable {
-                        parser.parseFromUberStation(it)
-                    }.startWith(it)
+                    Observable.fromCallable { parser.parseFromUberStation(it) }
+                            .startWith(it)
                 }
                 .subscribeOn(Schedulers.io())
 

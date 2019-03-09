@@ -10,7 +10,6 @@ import io.github.vladimirmi.internetradioplayer.data.utils.ShortcutHelper
 import io.github.vladimirmi.internetradioplayer.utils.MessageResException
 import io.reactivex.Completable
 import io.reactivex.Single
-import io.reactivex.rxkotlin.toCompletable
 import javax.inject.Inject
 
 
@@ -50,24 +49,20 @@ class StationInteractor
                 .andThen(favoriteListInteractor.initFavoriteList())
     }
 
-    private fun setStation(station: Station): Completable {
-        return { mediaInteractor.currentMedia = station }.toCompletable()
-    }
-
     private fun addToFavorite(station: Station): Completable {
         return favoriteListInteractor.getGroup(station.groupId)
                 .flatMapCompletable {
                     val newStation = station.copy(order = it.stations.size, groupId = Group.DEFAULT_ID)
                     favoritesRepository.addStation(newStation)
                             .andThen(favoriteListInteractor.initFavoriteList())
-                            .andThen(setStation(newStation))
+                            .andThen(mediaInteractor.setMedia(newStation))
                 }
     }
 
     private fun removeFromFavorite(station: Station): Completable {
         return favoritesRepository.removeStation(station)
                 .andThen(favoriteListInteractor.initFavoriteList())
-                .andThen(setStation(station))
+                .andThen(mediaInteractor.setMedia(station))
     }
 
     private fun isFavorite(id: String) = favoritesRepository.getStation { it.id == id } != null

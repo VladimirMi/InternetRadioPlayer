@@ -6,6 +6,7 @@ import com.google.android.exoplayer2.util.ReusableBufferedOutputStream
 import com.google.android.exoplayer2.util.Util
 import io.github.vladimirmi.internetradioplayer.data.repository.RecordsRepository
 import io.github.vladimirmi.internetradioplayer.domain.model.Record
+import io.github.vladimirmi.internetradioplayer.extensions.subscribeX
 import java.io.FileOutputStream
 import java.io.IOException
 import javax.inject.Inject
@@ -62,7 +63,7 @@ class RecorderDataSink
             fileOutputStream.fd.sync()
             repository.commitRecord(record!!)
         } catch (ex: IOException) {
-            repository.deleteRecord(record!!)
+            repository.deleteRecord(record!!).subscribeX()
         } finally {
             Util.closeQuietly(outputStream)
             outputStream = null

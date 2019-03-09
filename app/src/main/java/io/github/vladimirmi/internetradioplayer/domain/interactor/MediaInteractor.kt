@@ -13,7 +13,9 @@ import io.github.vladimirmi.internetradioplayer.domain.model.Media
 import io.github.vladimirmi.internetradioplayer.domain.model.Record
 import io.github.vladimirmi.internetradioplayer.domain.model.RecordsQueue
 import io.github.vladimirmi.internetradioplayer.domain.model.SingletonMediaQueue
+import io.reactivex.Completable
 import io.reactivex.Observable
+import io.reactivex.rxkotlin.toCompletable
 import javax.inject.Inject
 
 /**
@@ -37,32 +39,18 @@ class MediaInteractor
         get() = mediaRepository.currentMedia
         set(value) {
             when (value) {
-                is Record -> setRecord(value)
-                is Station -> setStation(value)
+                is Record -> setRecordsQueue()
+                is Station -> setStationsQueue(value)
             }
+            mediaRepository.currentMedia = value
             playerRepository.sendCommand(
                     if (mediaRepository.mediaQueue.queueSize > 1) COMMAND_ENABLE_SKIP
                     else COMMAND_DISABLE_SKIP
             )
         }
 
-    private fun setRecord(record: Record) {
-        mediaRepository.mediaQueue = RecordsQueue(recordsRepository.records)
-        mediaRepository.currentMedia = record
-        playerRepository.sendCommand(COMMAND_ENABLE_SEEK)
-    }
-
-    private fun setStation(station: Station) {
-        //todo refactor (favorite field)
-        val queue = if (favoritesRepository.getStation { it.id == station.id } != null) {
-            favoritesRepository.stations
-        } else {
-            playerRepository.sendCommand(COMMAND_DISABLE_SKIP)
-            SingletonMediaQueue(station)
-        }
-        mediaRepository.mediaQueue = queue
-        mediaRepository.currentMedia = station
-        playerRepository.sendCommand(COMMAND_DISABLE_SEEK)
+    fun setMedia(media: Media): Completable {
+        return { currentMedia = media }.toCompletable()
     }
 
     fun nextMedia() {
@@ -71,5 +59,26 @@ class MediaInteractor
 
     fun previousMedia() {
         mediaRepository.currentMedia = mediaRepository.getPrevious(currentMedia.id)
+    }
+
+    fun getSavedMediaId(): String {
+        return mediaRepository.getSavedMediaId()
+    }
+
+    private fun setRecordsQueue() {
+        mediaRepository.mediaQueue = RecordsQueue(recordsRepository.records)
+        playerRepository.sendCommand(COMMAND_ENABLE_SEEK)
+    }
+
+    private fun setStationsQueue(station: Station) {
+        //todo refactor (favorite field)
+        val queue = if (favoritesRepository.getStation { it.id == station.id } != null) {
+            favoritesRepository.stations
+        } else {
+            playerRepository.sendCommand(COMMAND_DISABLE_SKIP)
+            SingletonMediaQueue(station)
+        }
+        mediaRepository.mediaQueue = queue
+        playerRepository.sendCommand(COMMAND_DISABLE_SEEK)
     }
 }

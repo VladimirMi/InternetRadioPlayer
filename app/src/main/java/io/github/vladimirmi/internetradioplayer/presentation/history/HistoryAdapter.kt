@@ -70,8 +70,8 @@ class HistoryAdapter : RecyclerView.Adapter<StationVH>() {
     override fun onBindViewHolder(holder: StationVH, position: Int) {
         val station = stations[position]
         holder.bind(station.first)
-        holder.setBackground(position, itemCount)
         holder.select(station)
+        holder.setBackground(position, itemCount)
         holder.itemView.setOnClickListener { onItemClickListener?.invoke(station.first) }
         holder.itemView.setOnLongClickListener { longClickedItem = station.first; false }
     }

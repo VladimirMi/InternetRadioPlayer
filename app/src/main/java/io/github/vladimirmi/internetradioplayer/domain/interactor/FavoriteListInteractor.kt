@@ -3,8 +3,6 @@ package io.github.vladimirmi.internetradioplayer.domain.interactor
 import io.github.vladimirmi.internetradioplayer.data.db.entity.Group
 import io.github.vladimirmi.internetradioplayer.data.db.entity.Station
 import io.github.vladimirmi.internetradioplayer.data.repository.FavoritesRepository
-import io.github.vladimirmi.internetradioplayer.data.repository.MediaRepository
-import io.github.vladimirmi.internetradioplayer.data.repository.StationRepository
 import io.github.vladimirmi.internetradioplayer.domain.model.FlatStationsList
 import io.reactivex.Completable
 import io.reactivex.Observable
@@ -18,8 +16,7 @@ import javax.inject.Inject
 
 class FavoriteListInteractor
 @Inject constructor(private val favoritesRepository: FavoritesRepository,
-                    private val stationRepository: StationRepository,
-                    private val mediaRepository: MediaRepository) {
+                    private val mediaInteractor: MediaInteractor) {
 
     val stationsListObs: Observable<FlatStationsList>
         get() = favoritesRepository.stationsListObs
@@ -30,24 +27,7 @@ class FavoriteListInteractor
             val map = stations.groupBy { it.groupId }
             groups.forEach { group -> group.stations = map[group.id] ?: emptyList() }
             groups
-        }.flatMapCompletable { groups ->
-            val groupUpdates = arrayListOf<Group>()
-            val stationUpdates = arrayListOf<Station>()
-
-            groups.forEachIndexed { i, group ->
-                if (group.order != i) groupUpdates.add(group.copy(order = i))
-                group.stations.forEachIndexed { j, station ->
-                    if (station.order != j) stationUpdates.add(station.copy(order = j))
-                }
-            }
-            if (groupUpdates.isNotEmpty() || stationUpdates.isNotEmpty()) {
-                favoritesRepository.updateGroups(groupUpdates)
-                        .andThen(favoritesRepository.updateStations(stationUpdates))
-                        .andThen(initFavoriteList())
-            } else {
-                favoritesRepository.initStationsList(groups)
-            }
-        }
+        }.flatMapCompletable(this::adjustOrderThenInit)
     }
 
     fun isFavorite(station: Station) = isFavorite(station.id)
@@ -78,11 +58,6 @@ class FavoriteListInteractor
                 }
     }
 
-    fun getGroupsObs(): Observable<List<Group>> {
-        return favoritesRepository.stationsListObs
-                .map { favoritesRepository.groups }
-    }
-
     fun expandOrCollapseGroup(group: Group): Completable {
         return updateGroup(group.copy(expanded = !group.expanded))
     }
@@ -102,7 +77,6 @@ class FavoriteListInteractor
                 .flatMapCompletable { favoritesRepository.updateGroups(it) }
 
         val updateStations = Single.fromCallable { favoritesRepository.stations.getStationDifference(stations) }
-//                .doOnSuccess { list -> updateCurrentStation(list) }
                 .flatMapCompletable { favoritesRepository.updateStations(it) }
 
         return updateGroups.andThen(updateStations).andThen(initFavoriteList())
@@ -114,10 +88,25 @@ class FavoriteListInteractor
 
     private fun isFavorite(id: String) = favoritesRepository.getStation { it.id == id } != null
 
-//    private fun updateCurrentStation(list: List<Station>) {
-//        val station = mediaRepository.currentMedia as? Station ?: return
-//        list.find { it.id == station.id }?.let {
-//            mediaRepository.currentMedia = it
-//        }
-//    }
+    private fun adjustOrderThenInit(groups: List<Group>): Completable {
+        val groupUpdates = arrayListOf<Group>()
+        val stationUpdates = arrayListOf<Station>()
+
+        groups.forEachIndexed { i, group ->
+            if (group.order != i) groupUpdates.add(group.copy(order = i))
+            group.stations.forEachIndexed { j, station ->
+                if (station.order != j) stationUpdates.add(station.copy(order = j))
+            }
+        }
+        return if (groupUpdates.isNotEmpty() || stationUpdates.isNotEmpty()) {
+            favoritesRepository.updateGroups(groupUpdates)
+                    .andThen(favoritesRepository.updateStations(stationUpdates))
+                    .andThen(initFavoriteList())
+        } else {
+            favoritesRepository.initStationsList(groups)
+                    .andThen(getStation(mediaInteractor.getSavedMediaId())?.let {
+                        mediaInteractor.setMedia(it)
+                    } ?: Completable.complete())
+        }
+    }
 }

@@ -9,7 +9,7 @@ import androidx.preference.PreferenceFragmentCompat
 import io.github.vladimirmi.internetradioplayer.R
 import io.github.vladimirmi.internetradioplayer.data.utils.BACKUP_TYPE
 import io.github.vladimirmi.internetradioplayer.data.utils.BackupRestoreHelper
-import io.github.vladimirmi.internetradioplayer.data.utils.PREFERENCES_NAME
+import io.github.vladimirmi.internetradioplayer.data.utils.Preferences
 import io.github.vladimirmi.internetradioplayer.di.Scopes
 import io.github.vladimirmi.internetradioplayer.domain.interactor.FavoriteListInteractor
 import io.github.vladimirmi.internetradioplayer.extensions.startActivitySafe
@@ -36,7 +36,7 @@ class SettingsFragment : PreferenceFragmentCompat(), BackPressListener {
     }
 
     override fun onCreatePreferences(savedInstanceState: Bundle?, rootKey: String?) {
-        preferenceManager.sharedPreferencesName = PREFERENCES_NAME
+        preferenceManager.sharedPreferencesName = Preferences.PREFERENCES_NAME
         addPreferencesFromResource(R.xml.settings_screen)
 
         findPreference<Preference>("BACKUP_STATIONS").setOnPreferenceClickListener {

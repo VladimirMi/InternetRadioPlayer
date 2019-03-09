@@ -31,13 +31,11 @@ class HistoryPresenter
         }.observeOn(AndroidSchedulers.mainThread())
                 .subscribeX(onNext = {
                     view.setHistory(it)
-                    //todo fix unnecessary selection after delete
-                    view.selectStation(mediaInteractor.currentMedia.id)
                     view.showPlaceholder(it.isEmpty())
                 })
                 .addTo(viewSubs)
 
-        mediaInteractor.currentStationObs
+        mediaInteractor.currentMediaObs
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribeX(onNext = { view.selectStation(it.id) })
                 .addTo(viewSubs)

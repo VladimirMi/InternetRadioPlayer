@@ -14,11 +14,7 @@ import io.github.vladimirmi.internetradioplayer.extensions.notificationManager
  * Created by Vladimir Mikhalev 09.02.2019.
  */
 
-class RecorderNotification(private val service: Service) {
-
-    companion object {
-        private const val NOTIFICATION_ID = 74
-    }
+class RecorderNotificationFactory(private val service: Service) {
 
     private val notificationManager = service.notificationManager
 
@@ -26,20 +22,30 @@ class RecorderNotification(private val service: Service) {
         createNotificationChannel()
     }
 
-    fun start() {
-        service.startForeground(NOTIFICATION_ID, createNotification())
+    fun createAndStart(id: Int, name: String, isForeground: Boolean): RecorderNotification {
+        val notification = createNotification(name)
+        if (isForeground) {
+            service.startForeground(id, notification)
+        } else {
+            notificationManager.notify(id, notification)
+        }
+        return RecorderNotification(id, notification, isForeground)
     }
 
-    fun stop() {
-        service.stopForeground(true)
-        service.stopSelf()
+    fun startForeground(notification: RecorderNotification) {
+        service.startForeground(notification.id, notification.notification)
     }
 
-    private fun createNotification(): Notification {
+    fun cancel(notification: RecorderNotification) {
+        notificationManager.cancel(notification.id)
+    }
+
+    private fun createNotification(name: String): Notification {
         return NotificationCompat.Builder(service, CHANNEL_ID)
                 .setVisibility(NotificationCompat.VISIBILITY_PUBLIC)
                 .setSmallIcon(R.drawable.ic_station_1)
-                .setContentTitle("Recording...")
+                .setContentTitle(name)
+                .setContentText("Recording...")
                 .setPriority(NotificationCompat.PRIORITY_HIGH)
                 .setUsesChronometer(true)
                 .build()
@@ -56,3 +62,5 @@ class RecorderNotification(private val service: Service) {
         }
     }
 }
+
+data class RecorderNotification(val id: Int, val notification: Notification, val isForeground: Boolean)

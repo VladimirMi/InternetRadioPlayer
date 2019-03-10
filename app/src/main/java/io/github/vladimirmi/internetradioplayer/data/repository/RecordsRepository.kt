@@ -2,7 +2,6 @@ package io.github.vladimirmi.internetradioplayer.data.repository
 
 import android.content.Context
 import android.content.Intent
-import androidx.core.content.ContextCompat
 import com.jakewharton.rxrelay2.BehaviorRelay
 import io.github.vladimirmi.internetradioplayer.data.db.entity.Station
 import io.github.vladimirmi.internetradioplayer.data.service.recorder.RecorderService
@@ -43,7 +42,7 @@ class RecordsRepository
         return Completable.fromAction { records = loadRecords() }
     }
 
-    fun startRecording(station: Station) {
+    fun startStopRecording(station: Station) {
         val name = getNewRecordName(station.name)
 
         val intent = Intent(context, RecorderService::class.java).apply {
@@ -56,7 +55,7 @@ class RecordsRepository
             }
             data = station.uri.toUri()
         }
-        ContextCompat.startForegroundService(context, intent)
+        context.startService(intent)
     }
 
     fun createNewRecord(name: String): Record {

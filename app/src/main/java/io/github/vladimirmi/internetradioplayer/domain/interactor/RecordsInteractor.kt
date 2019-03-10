@@ -41,7 +41,7 @@ class RecordsInteractor
 
     fun startRecordingCurrentStation() {
         val station = mediaInteractor.currentMedia as? Station ?: return
-        recordsRepository.startRecording(station)
+        recordsRepository.startStopRecording(station)
     }
 
     fun isCurrentRecordingObs(): Observable<Boolean> {

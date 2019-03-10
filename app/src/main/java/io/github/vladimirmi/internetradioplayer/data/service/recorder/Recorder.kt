@@ -37,6 +37,7 @@ class Recorder
     private val wifiLock = context.wifiManager
             .createWifiLock(WifiManager.WIFI_MODE_FULL, BuildConfig.APPLICATION_ID)
 
+
     fun startRecord(name: String, uri: Uri) {
         runOnUiThread {
             if (player == null) createPlayer()

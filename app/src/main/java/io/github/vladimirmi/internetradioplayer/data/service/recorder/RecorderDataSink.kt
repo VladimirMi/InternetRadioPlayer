@@ -61,7 +61,7 @@ class RecorderDataSink
         try {
             outputStream!!.flush()
             fileOutputStream.fd.sync()
-            repository.commitRecord(record!!)
+            repository.commitRecord(dataSpec.uri, record!!)
         } catch (ex: IOException) {
             repository.deleteRecord(record!!).subscribeX()
         } finally {
@@ -77,7 +77,7 @@ class RecorderDataSink
 //            Math.min(dataSpec.length - dataSpecBytesWritten, DEFAULT_MAX_FILE_SIZE)
 //        }
         //todo ensure that there is enough space
-        record = repository.createNewRecord(dataSpec.key ?: "new_record")
+        record = repository.createNewRecord(dataSpec.uri, dataSpec.key ?: "new_record")
         fileOutputStream = FileOutputStream(record!!.file)
 
         if (outputStream == null) {

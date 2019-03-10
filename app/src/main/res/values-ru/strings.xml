@@ -40,8 +40,6 @@
 
     <string name="station_title">Название</string>
 
-    <string name="notification_name">Уведомление Radio Player</string>
-
     <string name="dialog_start_playback">Начать воспроизведение</string>
     <string name="default_folder">Разное</string>
     <string name="menu_settings">Настройки</string>

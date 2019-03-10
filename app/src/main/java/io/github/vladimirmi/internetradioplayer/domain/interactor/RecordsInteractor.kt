@@ -45,9 +45,9 @@ class RecordsInteractor
     }
 
     fun isCurrentRecordingObs(): Observable<Boolean> {
-        return Observables.combineLatest(recordsRepository.currentRecordingObs,
+        return Observables.combineLatest(recordsRepository.currentRecordingUrisObs,
                 mediaInteractor.currentMediaObs) { set: Set<String>, media: Media ->
-            set.contains(media.id)
+            set.contains(media.uri)
         }.distinctUntilChanged()
     }
 }

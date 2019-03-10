@@ -1,13 +1,11 @@
 package io.github.vladimirmi.internetradioplayer.data.service.recorder
 
-import android.app.Notification
-import android.app.NotificationChannel
-import android.app.NotificationManager
-import android.app.Service
+import android.app.*
+import android.content.Intent
+import android.net.Uri
 import android.os.Build
 import androidx.core.app.NotificationCompat
 import io.github.vladimirmi.internetradioplayer.R
-import io.github.vladimirmi.internetradioplayer.data.service.CHANNEL_ID
 import io.github.vladimirmi.internetradioplayer.extensions.notificationManager
 
 /**
@@ -16,14 +14,18 @@ import io.github.vladimirmi.internetradioplayer.extensions.notificationManager
 
 class RecorderNotificationFactory(private val service: Service) {
 
+    companion object {
+        const val CHANNEL_ID = "internet_radio_recorder_channel"
+    }
+
     private val notificationManager = service.notificationManager
 
     init {
         createNotificationChannel()
     }
 
-    fun createAndStart(id: Int, name: String, isForeground: Boolean): RecorderNotification {
-        val notification = createNotification(name)
+    fun createAndStart(id: Int, uri: Uri, name: String, isForeground: Boolean): RecorderNotification {
+        val notification = createNotification(uri, name)
         if (isForeground) {
             service.startForeground(id, notification)
         } else {
@@ -40,26 +42,36 @@ class RecorderNotificationFactory(private val service: Service) {
         notificationManager.cancel(notification.id)
     }
 
-    private fun createNotification(name: String): Notification {
+    private fun createNotification(uri: Uri, name: String): Notification {
+        val stopPendingIntent = stopPendingIntent(uri)
         return NotificationCompat.Builder(service, CHANNEL_ID)
                 .setVisibility(NotificationCompat.VISIBILITY_PUBLIC)
                 .setSmallIcon(R.drawable.ic_station_1)
                 .setContentTitle(name)
                 .setContentText("Recording...")
-                .setPriority(NotificationCompat.PRIORITY_HIGH)
+                .setPriority(NotificationCompat.PRIORITY_MAX)
                 .setUsesChronometer(true)
+                .setDeleteIntent(stopPendingIntent)
+                .addAction(0, "Stop", stopPendingIntent)
                 .build()
     }
 
     private fun createNotificationChannel() {
-        //todo Refactor duplicate code
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-            val channelName = service.getString(R.string.notification_name)
-            val channel = NotificationChannel(CHANNEL_ID, channelName, NotificationManager.IMPORTANCE_LOW)
+            val channelName = service.getString(R.string.recorder_channel_name)
+            val channel = NotificationChannel(CHANNEL_ID, channelName, NotificationManager.IMPORTANCE_HIGH)
 
-            channel.description = service.getString(R.string.notification_name)
+            channel.description = service.getString(R.string.player_channel_name)
             notificationManager.createNotificationChannel(channel)
         }
+    }
+
+    private fun stopPendingIntent(uri: Uri): PendingIntent {
+        val intent = Intent(service, RecorderService::class.java).apply {
+            putExtra(RecorderService.EXTRA_STOP_RECORD, "")
+            data = uri
+        }
+        return PendingIntent.getService(service, 0, intent, 0)
     }
 }
 

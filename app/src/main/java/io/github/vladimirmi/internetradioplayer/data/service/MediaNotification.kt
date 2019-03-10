@@ -17,12 +17,12 @@ import io.github.vladimirmi.internetradioplayer.extensions.notificationManager
 /**
  * Created by Vladimir Mikhalev 20.10.2017.
  */
-const val CHANNEL_ID = "internet_radio_player_channel"
 
 class MediaNotification(private val service: PlayerService,
                         private val session: MediaSessionCompat) {
 
     companion object {
+        const val CHANNEL_ID = "internet_radio_player_channel"
         private const val NOTIFICATION_ID = 73
     }
 
@@ -92,10 +92,10 @@ class MediaNotification(private val service: PlayerService,
 
     private fun createNotificationChannel() {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-            val channelName = service.getString(R.string.notification_name)
+            val channelName = service.getString(R.string.player_channel_name)
             val channel = NotificationChannel(CHANNEL_ID, channelName, NotificationManager.IMPORTANCE_LOW)
 
-            channel.description = service.getString(R.string.notification_name)
+            channel.description = service.getString(R.string.player_channel_name)
             notificationManager.createNotificationChannel(channel)
         }
     }

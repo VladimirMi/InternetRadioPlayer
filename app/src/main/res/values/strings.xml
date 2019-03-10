@@ -77,7 +77,8 @@
     <string name="create_new_group">Create new group</string>
     <string name="station_title">Title</string>
 
-    <string name="notification_name">Radio Player notification</string>
+    <string name="player_channel_name" translatable="false">Radio player notifications</string>
+    <string name="recorder_channel_name" translatable="false">Radio recorder notification</string>
 
     <string name="default_folder">Other</string>
 

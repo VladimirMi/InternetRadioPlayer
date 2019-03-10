@@ -2,6 +2,8 @@ package io.github.vladimirmi.internetradioplayer.data.repository
 
 import android.content.Context
 import android.content.Intent
+import android.net.Uri
+import androidx.core.content.ContextCompat
 import com.jakewharton.rxrelay2.BehaviorRelay
 import io.github.vladimirmi.internetradioplayer.data.db.entity.Station
 import io.github.vladimirmi.internetradioplayer.data.service.recorder.RecorderService
@@ -29,7 +31,7 @@ class RecordsRepository
         dir
     }
 
-    val currentRecordingObs: BehaviorRelay<Set<String>> = BehaviorRelay.createDefault(emptySet())
+    val currentRecordingUrisObs: BehaviorRelay<Set<String>> = BehaviorRelay.createDefault(emptySet())
     val recordsObs: BehaviorRelay<List<Record>> = BehaviorRelay.create()
 
     var records: List<Record>
@@ -46,26 +48,26 @@ class RecordsRepository
         val name = getNewRecordName(station.name)
 
         val intent = Intent(context, RecorderService::class.java).apply {
-            if (currentRecordingObs.value!!.contains(station.id)) {
-                putExtra(RecorderService.EXTRA_STOP_RECORD, name)
-                currentRecordingObs.accept(HashSet(currentRecordingObs.value).apply { remove(station.id) })
+            if (currentRecordingUrisObs.value!!.contains(station.uri)) {
+                putExtra(RecorderService.EXTRA_STOP_RECORD, "")
             } else {
                 putExtra(RecorderService.EXTRA_START_RECORD, name)
-                currentRecordingObs.accept(HashSet(currentRecordingObs.value).apply { add(station.id) })
             }
             data = station.uri.toUri()
         }
-        context.startService(intent)
+        ContextCompat.startForegroundService(context, intent)
     }
 
-    fun createNewRecord(name: String): Record {
+    fun createNewRecord(stationUri: Uri, name: String): Record {
+        addToCurrentRecordings(stationUri)
         val file = File(recordsDirectory, "$name.$RECORD_EXT")
         return Record.fromFile(file)
     }
 
-    fun commitRecord(record: Record) {
+    fun commitRecord(stationUri: Uri, record: Record) {
         val newRecord = record.copy(createdAt = System.currentTimeMillis())
         records = records + newRecord
+        removeFromCurrentRecordings(stationUri)
     }
 
     fun deleteRecord(record: Record): Single<Boolean> {
@@ -84,5 +86,13 @@ class RecordsRepository
         val list = records.filter { it.name.matches(regex) }
         return if (list.isEmpty()) stationName
         else "${stationName}_${list.size}"
+    }
+
+    private fun addToCurrentRecordings(stationUri: Uri) {
+        currentRecordingUrisObs.accept(currentRecordingUrisObs.value!! + stationUri.toString())
+    }
+
+    private fun removeFromCurrentRecordings(stationUri: Uri) {
+        currentRecordingUrisObs.accept(currentRecordingUrisObs.value!! - stationUri.toString())
     }
 }

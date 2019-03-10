@@ -20,13 +20,13 @@ class RecordersPool(private val service: Service) {
     private val notificationFactory = RecorderNotificationFactory(service)
     private val notifications = HashMap<Uri, RecorderNotification>(MAX_RECORDERS)
 
-    fun startRecord(name: String, uri: Uri) {
+    fun startRecord(uri: Uri, name: String) {
         if (available == 0) return
         val recorder = createRecorder()
         recorder.startRecord(name, uri)
         inUse[uri] = recorder
         val notificationId = NOTIFICATION_ID_OFFSET + available
-        val notification = notificationFactory.createAndStart(notificationId, name, notifications.isEmpty())
+        val notification = notificationFactory.createAndStart(notificationId, uri, name, notifications.isEmpty())
         notifications[uri] = notification
         available -= 1
     }

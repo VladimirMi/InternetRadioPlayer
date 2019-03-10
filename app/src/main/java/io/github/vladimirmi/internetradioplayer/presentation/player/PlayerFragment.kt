@@ -44,6 +44,7 @@ class PlayerFragment : BaseFragment<PlayerPresenter, PlayerView>(), PlayerView {
     }
 
     override fun setupView(view: View) {
+        titleTv.isSelected = true
         metaTitleTv.isSelected = true
         metaSubtitleTv.isSelected = true
         simpleMetaTv.isSelected = true
@@ -62,7 +63,7 @@ class PlayerFragment : BaseFragment<PlayerPresenter, PlayerView>(), PlayerView {
         nextBt.setOnClickListener { presenter.skipToNext() }
         stopBt.setOnClickListener { presenter.stop() }
         equalizerBt.setOnClickListener { presenter.openEqualizer() }
-        recordBt.setOnClickListener { presenter.scheduleRecord() }
+        recordBt.setOnClickListener { presenter.startStopRecording() }
         pointerIv.setOnClickListener { switchState() }
     }
 

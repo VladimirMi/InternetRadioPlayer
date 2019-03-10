@@ -158,7 +158,7 @@ class PlayerPresenter
         router.navigateTo(R.id.nav_equalizer)
     }
 
-    fun scheduleRecord() {
+    fun startStopRecording() {
         recordsInteractor.startStopRecordingCurrentStation()
                 .subscribeX()
     }

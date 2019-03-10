@@ -22,6 +22,7 @@ import javax.inject.Inject
 
 private const val RECORDS_DIRECTORY = "records"
 private const val RECORD_EXT = "mp3"
+private const val RECORD_SUFFIX = " Record"
 
 class RecordsRepository
 @Inject constructor(private val context: Context) {
@@ -96,9 +97,9 @@ class RecordsRepository
     }
 
     private fun getNewRecordName(stationName: String): String {
-        val regex = "^$stationName(_\\d)?".toRegex()
+        val regex = "^$stationName$RECORD_SUFFIX( \\d)?".toRegex()
         val list = records.filter { it.name.matches(regex) }
-        return if (list.isEmpty()) stationName
-        else "${stationName}_${list.size}"
+        return if (list.isEmpty()) "$stationName$RECORD_SUFFIX"
+        else "$stationName$RECORD_SUFFIX ${list.size}"
     }
 }

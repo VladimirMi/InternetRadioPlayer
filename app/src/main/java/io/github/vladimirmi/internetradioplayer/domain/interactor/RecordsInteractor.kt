@@ -5,6 +5,7 @@ import io.github.vladimirmi.internetradioplayer.data.db.entity.Station
 import io.github.vladimirmi.internetradioplayer.data.repository.RecordsRepository
 import io.github.vladimirmi.internetradioplayer.domain.model.Media
 import io.github.vladimirmi.internetradioplayer.domain.model.Record
+import io.github.vladimirmi.internetradioplayer.utils.MessageException
 import io.reactivex.Completable
 import io.reactivex.Observable
 import io.reactivex.rxkotlin.Observables
@@ -30,7 +31,10 @@ class RecordsInteractor
     }
 
     fun commitRecord(stationUri: Uri, record: Record) {
-        val newRecord = record.copy(createdAt = System.currentTimeMillis())
+        val newRecord = record.copy(
+                createdAt = System.currentTimeMillis(),
+                duration = record.culculateDuration()
+        )
         recordsRepository.records += newRecord
         mediaInteractor.resetCurrentMediaAndQueue()
         recordsRepository.removeFromCurrentRecording(stationUri)
@@ -50,7 +54,7 @@ class RecordsInteractor
                             recordsRepository.records -= record
                             mediaInteractor.resetCurrentMediaAndQueue()
                         }
-                    } else Completable.error(IllegalStateException("Can not delete record"))
+                    } else Completable.error(MessageException("Can not delete record"))
                 }
     }
 

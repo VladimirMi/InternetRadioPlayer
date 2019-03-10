@@ -73,7 +73,7 @@ class RecordsRepository
     fun createNewRecord(name: String): Record {
         val newName = getNewRecordName(name)
         val file = File(recordsDirectory, "$newName.$RECORD_EXT")
-        return Record.fromFile(file)
+        return Record.newRecord(file)
     }
 
     fun deleteRecord(record: Record): Single<Boolean> {

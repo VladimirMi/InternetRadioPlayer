@@ -30,6 +30,18 @@ data class Record(override val id: String,
             )
         }
 
+        fun newRecord(file: File): Record {
+            val uri = file.toURI().toString()
+            return Record(
+                    id = uri,
+                    name = file.name.substringBeforeLast('.'),
+                    uri = uri,
+                    file = file,
+                    createdAt = 0,
+                    duration = 0
+            )
+        }
+
         private fun getDuration(file: File): Long {
             val mmr = Scopes.app.getInstance(MediaMetadataRetriever::class.java)
             mmr.setDataSource(file.absolutePath)
@@ -39,6 +51,8 @@ data class Record(override val id: String,
 
     val createdAtString = Formats.dateTime(createdAt)
     val durationString = Formats.duration(duration)
+
+    fun culculateDuration() = getDuration(file)
 }
 
 

@@ -159,6 +159,7 @@ class PlayerPresenter
     }
 
     fun scheduleRecord() {
-        recordsInteractor.startRecordingCurrentStation()
+        recordsInteractor.startStopRecordingCurrentStation()
+                .subscribeX()
     }
 }

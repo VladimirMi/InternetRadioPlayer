@@ -19,7 +19,7 @@ class RecordsPresenter
     : BasePresenter<RecordsView>() {
 
     override fun onAttach(view: RecordsView) {
-        recordsInteractor.sortedRecordsObs
+        recordsInteractor.recordsObs
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribeX(onNext = { view.setRecords(it) })
                 .addTo(viewSubs)

@@ -64,7 +64,7 @@ private String generateVersionName() {
 
 ext {
     ROOM_VERSION = "2.1.0-alpha04"
-    EXOPLAYER_VERSION = "2.9.2"
+    EXOPLAYER_VERSION = "2.9.6"
     OKHHP_VERSION = "3.12.1"
 }
 

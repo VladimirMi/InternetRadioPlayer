@@ -4,7 +4,7 @@ import com.google.android.exoplayer2.upstream.DataSink
 import com.google.android.exoplayer2.upstream.DataSpec
 import com.google.android.exoplayer2.util.ReusableBufferedOutputStream
 import com.google.android.exoplayer2.util.Util
-import io.github.vladimirmi.internetradioplayer.data.repository.RecordsRepository
+import io.github.vladimirmi.internetradioplayer.domain.interactor.RecordsInteractor
 import io.github.vladimirmi.internetradioplayer.domain.model.Record
 import io.github.vladimirmi.internetradioplayer.extensions.subscribeX
 import java.io.FileOutputStream
@@ -16,10 +16,10 @@ import javax.inject.Inject
  */
 
 private const val DEFAULT_BUFFER_SIZE = 20480
-private const val DEFAULT_MAX_FILE_SIZE: Long = 10 * 1024 * 1024
+private const val DEFAULT_MAX_FILE_SIZE: Long = 50 * 1024 * 1024
 
 class RecorderDataSink
-@Inject constructor(private val repository: RecordsRepository) : DataSink {
+@Inject constructor(private val interactor: RecordsInteractor) : DataSink {
 
     private var dataSpecBytesWritten: Long = 0
     private var outputStreamBytesWritten: Long = 0
@@ -43,7 +43,8 @@ class RecorderDataSink
         while (bytesWritten < length) {
             if (outputStreamBytesWritten == DEFAULT_MAX_FILE_SIZE) {
                 close()
-                openNextOutputStream()
+                //todo protect by MAX_FILE_SIZE once (implement scheduling for recording)
+//                openNextOutputStream()
             }
             val bytesToWrite = Math.min(length - bytesWritten,
                     (DEFAULT_MAX_FILE_SIZE - outputStreamBytesWritten).toInt())
@@ -56,14 +57,22 @@ class RecorderDataSink
     }
 
     override fun close() {
+        try {
+            closeInternal()
+        } finally {
+            interactor.stopRecording(dataSpec.uri)
+        }
+    }
+
+    private fun closeInternal() {
         if (outputStream == null) return
 
         try {
             outputStream!!.flush()
             fileOutputStream.fd.sync()
-            repository.commitRecord(dataSpec.uri, record!!)
+            interactor.commitRecord(dataSpec.uri, record!!)
         } catch (ex: IOException) {
-            repository.deleteRecord(record!!).subscribeX()
+            interactor.deleteRecord(record!!).subscribeX()
         } finally {
             Util.closeQuietly(outputStream)
             outputStream = null
@@ -77,7 +86,7 @@ class RecorderDataSink
 //            Math.min(dataSpec.length - dataSpecBytesWritten, DEFAULT_MAX_FILE_SIZE)
 //        }
         //todo ensure that there is enough space
-        record = repository.createNewRecord(dataSpec.uri, dataSpec.key ?: "new_record")
+        record = interactor.createNewRecord(dataSpec.uri, dataSpec.key ?: "new_record")
         fileOutputStream = FileOutputStream(record!!.file)
 
         if (outputStream == null) {

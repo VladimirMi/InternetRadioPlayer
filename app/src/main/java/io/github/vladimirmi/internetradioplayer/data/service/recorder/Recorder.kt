@@ -7,7 +7,6 @@ import com.google.android.exoplayer2.C
 import com.google.android.exoplayer2.DefaultLoadControl
 import com.google.android.exoplayer2.ExoPlayerFactory
 import com.google.android.exoplayer2.SimpleExoPlayer
-import com.google.android.exoplayer2.audio.AudioAttributes
 import com.google.android.exoplayer2.source.ExtractorMediaSource
 import com.google.android.exoplayer2.trackselection.DefaultTrackSelector
 import com.google.android.exoplayer2.upstream.DefaultAllocator
@@ -15,6 +14,7 @@ import com.google.android.exoplayer2.upstream.TeeDataSource
 import com.google.android.exoplayer2.util.Util
 import io.github.vladimirmi.internetradioplayer.BuildConfig
 import io.github.vladimirmi.internetradioplayer.R
+import io.github.vladimirmi.internetradioplayer.data.service.PlayerCallback
 import io.github.vladimirmi.internetradioplayer.data.service.player.AudioRenderersFactory
 import io.github.vladimirmi.internetradioplayer.data.service.player.ErrorHandlingPolicy
 import io.github.vladimirmi.internetradioplayer.data.service.player.IcyHttpDataSource
@@ -32,6 +32,7 @@ class Recorder
                     private val httpClient: OkHttpClient,
                     private val recorderDataSink: RecorderDataSink) {
 
+    var playerCallback: PlayerCallback? = null
     private var player: SimpleExoPlayer? = null
 
     private val wifiLock = context.wifiManager
@@ -62,15 +63,11 @@ class Recorder
 
         player = ExoPlayerFactory.newSimpleInstance(context, AudioRenderersFactory(context),
                 DefaultTrackSelector(), loadControl)
-
-        val audioAttributes = AudioAttributes.Builder()
-                .setUsage(C.USAGE_MEDIA)
-                .setContentType(C.CONTENT_TYPE_MUSIC)
-                .build()
-        player?.setAudioAttributes(audioAttributes, true)
+        player?.addListener(playerCallback)
     }
 
     private fun releasePlayer() {
+        player?.removeListener(playerCallback)
         player?.release()
         player = null
     }

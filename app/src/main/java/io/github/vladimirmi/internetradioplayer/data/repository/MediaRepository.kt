@@ -24,12 +24,12 @@ class MediaRepository
             currentMediaObs.accept(value)
         }
 
-    fun getNext(id: String): Media? {
-        return mediaQueue.getNext(id)
+    fun getNext(id: String): Media {
+        return mediaQueue.getNext(id) ?: Media.nullObj()
     }
 
-    fun getPrevious(id: String): Media? {
-        return mediaQueue.getPrevious(id)
+    fun getPrevious(id: String): Media {
+        return mediaQueue.getPrevious(id) ?: Media.nullObj()
     }
 
     fun getSavedMediaId(): String {

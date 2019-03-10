@@ -43,6 +43,7 @@ class RecorderNotificationFactory(private val service: Service) {
     }
 
     private fun createNotification(uri: Uri, name: String): Notification {
+        //todo to strings
         val stopPendingIntent = stopPendingIntent(uri)
         return NotificationCompat.Builder(service, CHANNEL_ID)
                 .setVisibility(NotificationCompat.VISIBILITY_PUBLIC)

@@ -39,13 +39,13 @@ class MediaInteractor
         get() = mediaRepository.currentMedia
         set(value) {
             when (value) {
-                is Record -> setRecordsQueue()
-                is Station -> setStationsQueue(value)
+                is Record -> setupRecordsQueue()
+                is Station -> setupStationsQueue(value)
             }
             mediaRepository.currentMedia = value
             playerRepository.sendCommand(
-                    if (mediaRepository.getNext(value.id) != null) COMMAND_ENABLE_SKIP
-                    else COMMAND_DISABLE_SKIP
+                    if (mediaRepository.getNext(value.id).isNull()) COMMAND_DISABLE_SKIP
+                    else COMMAND_ENABLE_SKIP
             )
         }
 
@@ -54,27 +54,27 @@ class MediaInteractor
     }
 
     fun nextMedia() {
-        mediaRepository.getNext(currentMedia.id)?.let {
-            mediaRepository.currentMedia = it
-        }
+        mediaRepository.currentMedia = mediaRepository.getNext(currentMedia.id)
     }
 
     fun previousMedia() {
-        mediaRepository.getPrevious(currentMedia.id)?.let {
-            mediaRepository.currentMedia = it
-        }
+        mediaRepository.currentMedia = mediaRepository.getPrevious(currentMedia.id)
     }
 
     fun getSavedMediaId(): String {
         return mediaRepository.getSavedMediaId()
     }
 
-    private fun setRecordsQueue() {
+    fun resetCurrentMediaAndQueue() {
+        currentMedia = currentMedia
+    }
+
+    private fun setupRecordsQueue() {
         mediaRepository.mediaQueue = RecordsQueue(recordsRepository.records)
         playerRepository.sendCommand(COMMAND_ENABLE_SEEK)
     }
 
-    private fun setStationsQueue(station: Station) {
+    private fun setupStationsQueue(station: Station) {
         //todo refactor (favorite field)
         val queue = if (favoritesRepository.getStation { it.id == station.id } != null) {
             favoritesRepository.stations

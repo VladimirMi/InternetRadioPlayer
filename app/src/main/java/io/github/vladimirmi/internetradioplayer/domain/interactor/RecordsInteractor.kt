@@ -1,5 +1,6 @@
 package io.github.vladimirmi.internetradioplayer.domain.interactor
 
+import android.net.Uri
 import io.github.vladimirmi.internetradioplayer.data.db.entity.Station
 import io.github.vladimirmi.internetradioplayer.data.repository.RecordsRepository
 import io.github.vladimirmi.internetradioplayer.domain.model.Media
@@ -19,29 +20,47 @@ class RecordsInteractor
 
     val recordsObs: Observable<List<Record>> get() = recordsRepository.recordsObs
 
-    val sortedRecordsObs: Observable<List<Record>>
-        get() = recordsRepository.recordsObs
-                .map { records -> records.sortedBy(Record::createdAt) }
-
     fun initRecords(): Completable {
         return recordsRepository.initRecords()
-                .andThen(recordsObs.firstElement().flatMapCompletable { records ->
-                    records.find { mediaInteractor.getSavedMediaId() == it.id }
-                            ?.let { mediaInteractor.setMedia(it) } ?: Completable.complete()
-                })
+                .doOnComplete {
+                    recordsRepository.records
+                            .find { mediaInteractor.getSavedMediaId() == it.id }
+                            ?.let { mediaInteractor.currentMedia = it }
+                }
+    }
+
+    fun commitRecord(stationUri: Uri, record: Record) {
+        val newRecord = record.copy(createdAt = System.currentTimeMillis())
+        recordsRepository.records += newRecord
+        mediaInteractor.resetCurrentMediaAndQueue()
+        recordsRepository.removeFromCurrentRecording(stationUri)
+    }
+
+    fun createNewRecord(stationUri: Uri, name: String): Record {
+        recordsRepository.addToCurrentRecording(stationUri)
+        return recordsRepository.createNewRecord(name)
     }
 
     fun deleteRecord(record: Record): Completable {
         return recordsRepository.deleteRecord(record)
                 .flatMapCompletable { deleted ->
-                    if (deleted) recordsRepository.initRecords()
-                    else Completable.error(IllegalStateException("Can not delete record"))
+                    if (deleted) {
+                        Completable.fromAction {
+                            if (mediaInteractor.currentMedia == record) mediaInteractor.previousMedia()
+                            recordsRepository.records -= record
+                            mediaInteractor.resetCurrentMediaAndQueue()
+                        }
+                    } else Completable.error(IllegalStateException("Can not delete record"))
                 }
     }
 
-    fun startRecordingCurrentStation() {
-        val station = mediaInteractor.currentMedia as? Station ?: return
-        recordsRepository.startStopRecording(station)
+    fun startStopRecordingCurrentStation(): Completable {
+        val station = mediaInteractor.currentMedia as? Station ?: return Completable.complete()
+        return Completable.fromAction { recordsRepository.startStopRecording(station) }
+    }
+
+    fun stopRecording(uri: Uri) {
+        recordsRepository.stopRecording(uri)
     }
 
     fun isCurrentRecordingObs(): Observable<Boolean> {

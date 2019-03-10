@@ -2,6 +2,9 @@ package io.github.vladimirmi.internetradioplayer.data.service.recorder
 
 import android.app.Service
 import android.net.Uri
+import android.support.v4.media.MediaMetadataCompat
+import android.support.v4.media.session.PlaybackStateCompat
+import io.github.vladimirmi.internetradioplayer.data.service.PlayerCallback
 import io.github.vladimirmi.internetradioplayer.di.Scopes
 
 /**
@@ -22,7 +25,7 @@ class RecordersPool(private val service: Service) {
 
     fun startRecord(uri: Uri, name: String) {
         if (available == 0) return
-        val recorder = createRecorder()
+        val recorder = createRecorder(uri)
         recorder.startRecord(name, uri)
         inUse[uri] = recorder
         val notificationId = NOTIFICATION_ID_OFFSET + available
@@ -32,7 +35,8 @@ class RecordersPool(private val service: Service) {
     }
 
     fun stopRecord(uri: Uri) {
-        inUse[uri]?.stopRecord()
+        val recorder = inUse[uri] ?: return
+        recorder.stopRecord()
         inUse.remove(uri)
         notifications[uri]?.let { notification ->
             // if that notification is started with service.startForeground()
@@ -50,7 +54,22 @@ class RecordersPool(private val service: Service) {
         if (available == MAX_RECORDERS) service.stopForeground(true)
     }
 
-    private fun createRecorder(): Recorder {
-        return Scopes.app.getInstance(Recorder::class.java)
+    private fun createRecorder(uri: Uri): Recorder {
+        return Scopes.app.getInstance(Recorder::class.java).apply {
+            playerCallback = object : PlayerCallback() {
+                override fun onPlayerError(error: Exception) {
+                    stopRecord(uri)
+                }
+
+                override fun onAudioSessionId(event: String, audioSessionId: Int) {
+                }
+
+                override fun onPlaybackStateChanged(state: PlaybackStateCompat) {
+                }
+
+                override fun onMediaMetadataChanged(mediaMetadata: MediaMetadataCompat) {
+                }
+            }
+        }
     }
 }

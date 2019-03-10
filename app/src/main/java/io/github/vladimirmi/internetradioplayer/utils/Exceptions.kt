@@ -7,3 +7,5 @@ import androidx.annotation.StringRes
  */
 
 class MessageResException(@StringRes val resId: Int) : Exception()
+
+class MessageException(message: String) : Exception(message)

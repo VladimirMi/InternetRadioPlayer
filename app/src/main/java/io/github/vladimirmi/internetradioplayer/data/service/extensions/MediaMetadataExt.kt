@@ -2,6 +2,7 @@ package io.github.vladimirmi.internetradioplayer.data.service.extensions
 
 import android.graphics.Bitmap
 import android.support.v4.media.MediaMetadataCompat
+import com.google.android.exoplayer2.C
 import io.github.vladimirmi.internetradioplayer.R
 import io.github.vladimirmi.internetradioplayer.di.Scopes
 import io.github.vladimirmi.internetradioplayer.domain.model.Media
@@ -21,7 +22,9 @@ val MediaMetadataCompat.art: Bitmap?
 val MediaMetadataCompat.duration: Long
     get() = getLong(MediaMetadataCompat.METADATA_KEY_DURATION)
 
-val EMPTY_METADATA: MediaMetadataCompat get() = MediaMetadataCompat.Builder().build()
+val EMPTY_METADATA: MediaMetadataCompat
+    get() = MediaMetadataCompat.Builder().build()
+            .setDuration(C.TIME_UNSET)
 
 fun MediaMetadataCompat.setArtistTitle(metadata: String): MediaMetadataCompat {
 

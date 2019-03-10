@@ -12,14 +12,12 @@ import io.github.vladimirmi.internetradioplayer.R
 import io.github.vladimirmi.internetradioplayer.data.db.entity.Station
 import io.github.vladimirmi.internetradioplayer.data.service.extensions.PlayerActions
 import io.github.vladimirmi.internetradioplayer.data.service.player.Playback
-import io.github.vladimirmi.internetradioplayer.data.service.player.STOP_DELAY
 import io.github.vladimirmi.internetradioplayer.data.utils.AudioEffects
 import io.github.vladimirmi.internetradioplayer.di.Scopes
 import io.github.vladimirmi.internetradioplayer.domain.interactor.EqualizerInteractor
 import io.github.vladimirmi.internetradioplayer.domain.interactor.HistoryInteractor
 import io.github.vladimirmi.internetradioplayer.domain.interactor.MediaInteractor
 import io.github.vladimirmi.internetradioplayer.domain.model.Media
-import io.github.vladimirmi.internetradioplayer.domain.model.Record
 import io.github.vladimirmi.internetradioplayer.extensions.errorHandler
 import io.github.vladimirmi.internetradioplayer.extensions.toUri
 import io.reactivex.disposables.CompositeDisposable
@@ -129,14 +127,8 @@ class PlayerService : MediaBrowserServiceCompat(), SessionCallback.Interface {
     private fun handleCurrentMedia(media: Media) {
         playerCallback.setMedia(media)
         currentStationId = media.id
-        if (isPlaying && currentStationId != playingMediaId) {
-            prepareAndPlay()
-        } else if (media is Record) {
-            playback.prepare(media.uri.toUri()) // prepare anyway for duration init
-            scheduleStopTask(STOP_DELAY)
-        } else {
-            playback.stop()
-        }
+        if (isPlaying && currentStationId != playingMediaId) prepareAndPlay()
+        else playback.stop()
     }
 
     private val isPlaying: Boolean

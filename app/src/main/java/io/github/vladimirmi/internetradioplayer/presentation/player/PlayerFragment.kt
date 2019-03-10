@@ -58,13 +58,16 @@ class PlayerFragment : BaseFragment<PlayerPresenter, PlayerView>(), PlayerView {
     private fun setupButtons() {
         favoriteBt.setOnClickListener { presenter.switchFavorite() }
         addShortcutBt.setOnClickListener { openAddShortcutDialog() }
-        playPauseBt.setOnClickListener { presenter.playPause(progressSb.progress) }
         previousBt.setOnClickListener { presenter.skipToPrevious() }
         nextBt.setOnClickListener { presenter.skipToNext() }
         stopBt.setOnClickListener { presenter.stop() }
         equalizerBt.setOnClickListener { presenter.openEqualizer() }
         recordBt.setOnClickListener { presenter.startStopRecording() }
         pointerIv.setOnClickListener { switchState() }
+        playPauseBt.setOnClickListener {
+            presenter.playPause()
+            if (isSeekEnabled) presenter.seekTo(progressSb.progress)
+        }
     }
 
     private fun setupBehavior(view: View) {

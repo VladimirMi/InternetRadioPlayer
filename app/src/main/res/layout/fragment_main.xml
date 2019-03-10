@@ -28,7 +28,7 @@
             app:tabMode="scrollable"
             tools:ignore="UnusedAttribute"
             app:tabIndicatorColor="@color/secondary"
-            app:tabIndicatorHeight="8dp"
+            app:tabIndicatorHeight="6dp"
             />
 
         <androidx.viewpager.widget.ViewPager

@@ -3,6 +3,7 @@ package io.github.vladimirmi.internetradioplayer.presentation.player
 import android.os.Bundle
 import android.support.v4.media.MediaMetadataCompat
 import android.support.v4.media.session.PlaybackStateCompat
+import com.google.android.exoplayer2.C
 import io.github.vladimirmi.internetradioplayer.R
 import io.github.vladimirmi.internetradioplayer.data.db.entity.Station
 import io.github.vladimirmi.internetradioplayer.data.service.PlayerService
@@ -49,6 +50,7 @@ class PlayerPresenter
                         view?.setGroup(favoriteListInteractor.findGroup(it.groupId)?.name ?: "")
                     } else if (it is Record) {
                         view?.setRecord(it)
+                        view?.setDuration(it.duration)
                     }
                 })
                 .addTo(viewSubs)
@@ -85,13 +87,12 @@ class PlayerPresenter
                 .addTo(dataSubs)
     }
 
-    fun playPause(position: Int) {
+    fun playPause() {
         with(playerInteractor) {
             if (!isPlaying && !isNetAvail) {
                 view?.showSnackbar(R.string.msg_net_error)
             } else {
                 playPause()
-                seekTo(position)
             }
         }
     }
@@ -143,8 +144,7 @@ class PlayerPresenter
         val metadataLine = if (metadata.isEmpty() || metadata.isNotSupported()) metadata.album
         else "${metadata.artist} - ${metadata.title}"
         view?.setSimpleMetadata(metadataLine)
-
-        view?.setDuration(metadata.duration)
+        if (metadata.duration != C.TIME_UNSET) view?.setDuration(metadata.duration)
     }
 
     private fun handleSessionEvent(event: Pair<String, Bundle>) {

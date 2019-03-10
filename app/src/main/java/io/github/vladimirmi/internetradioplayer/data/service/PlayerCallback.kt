@@ -86,9 +86,9 @@ abstract class PlayerCallback : Player.EventListener {
         if (playbackState == Player.STATE_READY) {
             mediaMetadata = mediaMetadata.setDuration(player?.duration ?: 0)
             playbackStateCompat = playbackStateCompat.setPosition(player?.currentPosition ?: 0)
-            val actionsChanger = if (player?.isCurrentWindowSeekable == true) PlayerActions::enableSeek
-            else PlayerActions::disableSeek
-            playbackStateCompat = playbackStateCompat.changeActions(actionsChanger)
+//            val actionsChanger = if (player?.isCurrentWindowSeekable == true) PlayerActions::enableSeek
+//            else PlayerActions::disableSeek
+//            playbackStateCompat = playbackStateCompat.changeActions(actionsChanger)
         }
 
         if (state == PlaybackStateCompat.STATE_STOPPED) {

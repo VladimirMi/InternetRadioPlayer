@@ -9,7 +9,6 @@ import android.widget.Toast
 import androidx.annotation.Nullable
 import androidx.fragment.app.Fragment
 import com.google.android.material.snackbar.Snackbar
-import timber.log.Timber
 
 /**
  * Created by Vladimir Mikhalev 10.11.2018.
@@ -31,7 +30,6 @@ abstract class BaseFragment<P : BasePresenter<V>, V : BaseView> : Fragment(), Ba
     }
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {
-        Timber.d("onCreateView: ${this.javaClass.simpleName}")
         return inflater.inflate(layout, container, false)
     }
 

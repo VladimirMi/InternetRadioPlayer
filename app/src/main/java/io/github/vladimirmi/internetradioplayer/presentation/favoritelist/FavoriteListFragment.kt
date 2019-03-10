@@ -51,14 +51,20 @@ class FavoriteListFragment : BaseFragment<FavoriteListPresenter, FavoriteListVie
         val fragment = when (position) {
             0 -> FavoriteStationsFragment()
             1 -> RecordsFragment()
-            else -> throw IllegalStateException()
+            else -> return
         }
+        fragment.setUserVisibleHint(userVisibleHint)
         childFragmentManager.beginTransaction()
                 .replace(R.id.container, fragment)
                 .addToBackStack(null)
                 .commit()
 
         selectTab(position)
+    }
+
+    override fun setUserVisibleHint(isVisibleToUser: Boolean) {
+        super.setUserVisibleHint(isVisibleToUser)
+        if (isAdded) childFragmentManager.fragments.forEach { it.userVisibleHint = isVisibleToUser }
     }
 
     override fun selectTab(position: Int) {

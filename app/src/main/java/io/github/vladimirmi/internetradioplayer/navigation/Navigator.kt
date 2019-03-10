@@ -28,7 +28,7 @@ class Navigator(private val activity: RootActivity, private val containerId: Int
         get() {
             return with(activity.supportFragmentManager) {
                 if (backStackEntryCount > 0) {
-                    getBackStackEntryAt(backStackEntryCount - 1).name!!
+                    getBackStackEntryAt(backStackEntryCount - 1).name ?: Router.ROOT_SCREEN
                 } else Router.ROOT_SCREEN
             }
         }

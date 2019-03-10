@@ -74,6 +74,7 @@ class FavoriteStationsFragment : BaseFragment<FavoriteStationsPresenter, Favorit
     @SuppressLint("RestrictedApi")
     override fun onPrepareOptionsMenu(menu: Menu) {
         super.onPrepareOptionsMenu(menu)
+        if (!userVisibleHint) return
         if (changeOrderMode) {
             menu.add(Menu.NONE, R.string.menu_change_order, Menu.NONE, R.string.menu_change_order).apply {
                 setShowAsAction(MenuItem.SHOW_AS_ACTION_IF_ROOM)

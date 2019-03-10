@@ -152,8 +152,7 @@ class RootActivity : BaseActivity<RootPresenter, RootView>(), RootView {
         drawerLayout.lock(isHomeAsUp)
         val anim = if (isHomeAsUp) ValueAnimator.ofFloat(0f, 1f) else ValueAnimator.ofFloat(1f, 0f)
         anim.addUpdateListener { valueAnimator ->
-            val slideOffset = valueAnimator.animatedValue as Float
-            toggle.onDrawerSlide(drawerLayout, slideOffset)
+            toggle.onDrawerSlide(drawerLayout, valueAnimator.animatedValue as Float)
         }
         anim.interpolator = DecelerateInterpolator()
         anim.duration = 400

@@ -32,7 +32,7 @@ class Preferences
     var bufferLength: Int by Preference(sharedPreferences, KEY_BUFFER_LENGTH, 6)
     var globalPreset: String by Preference(sharedPreferences, KEY_GLOBAL_PRESET, "")
     var mainPageId: Int by Preference(sharedPreferences, KEY_MAIN_PAGE_ID, R.id.nav_search)
-    var favoritePageId: Int by Preference(sharedPreferences, KEY_FAVORITE_PAGE_ID, 0)
+    var favoritePageId: Int by Preference(sharedPreferences, KEY_FAVORITE_PAGE_ID, -1)
     var mediaId: String by Preference(sharedPreferences, KEY_SELECTED_MEDIA_ID, "")
 
 }

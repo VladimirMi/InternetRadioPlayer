@@ -88,6 +88,7 @@ class RecordsAdapter : RecyclerView.Adapter<RecordVH>() {
 class RecordVH(itemView: View) : RecyclerView.ViewHolder(itemView), View.OnCreateContextMenuListener {
 
     private val titleTv = itemView.titleTv
+    private val durationTv = itemView.durationTv
     private val createdAtTv = itemView.createdAtTv
 
     private var bgColor: Int = itemView.context.color(R.color.grey_50)
@@ -103,6 +104,7 @@ class RecordVH(itemView: View) : RecyclerView.ViewHolder(itemView), View.OnCreat
     fun bind(record: Record) {
         titleTv.text = record.name
         createdAtTv.text = record.createdAtString
+        durationTv.text = record.durationString
     }
 
     fun select(selected: Boolean) {

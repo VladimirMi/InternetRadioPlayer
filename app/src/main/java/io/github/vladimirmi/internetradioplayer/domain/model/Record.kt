@@ -1,9 +1,10 @@
 package io.github.vladimirmi.internetradioplayer.domain.model
 
-import android.annotation.SuppressLint
+import android.media.MediaMetadataRetriever
+import io.github.vladimirmi.internetradioplayer.di.Scopes
+import io.github.vladimirmi.internetradioplayer.extensions.Formats
 import java.io.File
-import java.text.SimpleDateFormat
-import java.util.*
+
 
 /**
  * Created by Vladimir Mikhalev 02.02.2019.
@@ -13,23 +14,31 @@ data class Record(override val id: String,
                   override val name: String,
                   override val uri: String,
                   val file: File,
-                  val createdAt: Long) : Media {
+                  val createdAt: Long,
+                  val duration: Long) : Media {
 
     companion object {
         fun fromFile(file: File): Record {
             val uri = file.toURI().toString()
             return Record(
-                    uri,
-                    file.name.substringBeforeLast('.'),
-                    uri,
-                    file,
-                    file.lastModified()
+                    id = uri,
+                    name = file.name.substringBeforeLast('.'),
+                    uri = uri,
+                    file = file,
+                    createdAt = file.lastModified(),
+                    duration = getDuration(file)
             )
+        }
+
+        private fun getDuration(file: File): Long {
+            val mmr = Scopes.app.getInstance(MediaMetadataRetriever::class.java)
+            mmr.setDataSource(file.absolutePath)
+            return mmr.extractMetadata(MediaMetadataRetriever.METADATA_KEY_DURATION).toLong()
         }
     }
 
-    val createdAtString: String get() = format.format(createdAt)
+    val createdAtString = Formats.dateTime(createdAt)
+    val durationString = Formats.duration(duration)
 }
 
-@SuppressLint("ConstantLocale")
-private val format = SimpleDateFormat("dd/MM/yy  HH:mm:ss", Locale.getDefault())
+

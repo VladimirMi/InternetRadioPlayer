@@ -10,7 +10,6 @@ import android.widget.TextView
 import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.constraintlayout.widget.ConstraintSet
 import androidx.core.content.ContextCompat
-import com.google.android.exoplayer2.util.Util
 import com.google.android.material.bottomsheet.BottomSheetBehavior
 import io.github.vladimirmi.internetradioplayer.R
 import io.github.vladimirmi.internetradioplayer.data.db.entity.Group
@@ -25,7 +24,6 @@ import kotlinx.android.synthetic.main.fragment_player.*
 import kotlinx.android.synthetic.main.view_controls.*
 import kotlinx.android.synthetic.main.view_station_info.*
 import toothpick.Toothpick
-import java.util.*
 
 /**
  * Created by Vladimir Mikhalev 20.02.2019.
@@ -51,6 +49,12 @@ class PlayerFragment : BaseFragment<PlayerPresenter, PlayerView>(), PlayerView {
         simpleMetaTv.isSelected = true
         playPauseBt.setManualMode(true)
 
+        setupButtons()
+        setupBehavior(view)
+        setupSeekBar()
+    }
+
+    private fun setupButtons() {
         favoriteBt.setOnClickListener { presenter.switchFavorite() }
         addShortcutBt.setOnClickListener { openAddShortcutDialog() }
         playPauseBt.setOnClickListener { presenter.playPause(progressSb.progress) }
@@ -60,8 +64,6 @@ class PlayerFragment : BaseFragment<PlayerPresenter, PlayerView>(), PlayerView {
         equalizerBt.setOnClickListener { presenter.openEqualizer() }
         recordBt.setOnClickListener { presenter.scheduleRecord() }
         pointerIv.setOnClickListener { switchState() }
-
-        setupBehavior(view)
     }
 
     private fun setupBehavior(view: View) {
@@ -78,6 +80,21 @@ class PlayerFragment : BaseFragment<PlayerPresenter, PlayerView>(), PlayerView {
             setupOffset()
             true
         }
+    }
+
+    private fun setupSeekBar() {
+        progressSb.setOnSeekBarChangeListener(object : SeekBar.OnSeekBarChangeListener {
+            override fun onProgressChanged(seekBar: SeekBar?, progress: Int, fromUser: Boolean) {
+                if (fromUser) presenter.seekTo(progress)
+                positionTv.text = Formats.duration(progress.toLong())
+            }
+
+            override fun onStartTrackingTouch(seekBar: SeekBar?) {
+            }
+
+            override fun onStopTrackingTouch(seekBar: SeekBar?) {
+            }
+        })
     }
 
     override fun handleBackPressed(): Boolean {
@@ -166,21 +183,8 @@ class PlayerFragment : BaseFragment<PlayerPresenter, PlayerView>(), PlayerView {
     }
 
     override fun setDuration(duration: Long) {
-        durationTv.text = Util.getStringForTime(StringBuilder(), Formatter(), duration)
+        durationTv.text = Formats.duration(duration)
         progressSb.max = duration.toInt()
-        progressSb.setOnSeekBarChangeListener(object : SeekBar.OnSeekBarChangeListener {
-            override fun onProgressChanged(seekBar: SeekBar?, progress: Int, fromUser: Boolean) {
-                if (fromUser) presenter.seekTo(progress)
-                //todo do not create sb and formatter
-                positionTv.text = Util.getStringForTime(StringBuilder(), Formatter(), progress.toLong())
-            }
-
-            override fun onStartTrackingTouch(seekBar: SeekBar?) {
-            }
-
-            override fun onStopTrackingTouch(seekBar: SeekBar?) {
-            }
-        })
     }
 
     override fun enableSeek(isEnabled: Boolean) {

@@ -1,6 +1,7 @@
 package io.github.vladimirmi.internetradioplayer.di.module
 
 import android.content.Context
+import android.media.MediaMetadataRetriever
 import com.google.gson.Gson
 import com.google.gson.GsonBuilder
 import io.github.vladimirmi.internetradioplayer.data.db.EqualizerDatabase
@@ -45,8 +46,8 @@ class AppModule(context: Context) : Module() {
         bind(EqualizerDatabase::class.java).toInstance(EqualizerDatabase.newInstance(context))
 
         bind(StationParser::class.java).singletonInScope()
-
         bind(ShortcutHelper::class.java).singletonInScope()
+        bind(MediaMetadataRetriever::class.java).toInstance(MediaMetadataRetriever())
 
         bind(SearchRepository::class.java).singletonInScope()
         bind(FavoritesRepository::class.java).singletonInScope()

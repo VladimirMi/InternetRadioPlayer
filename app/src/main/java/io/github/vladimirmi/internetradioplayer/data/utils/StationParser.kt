@@ -4,10 +4,7 @@ import android.content.Context
 import android.net.Uri
 import io.github.vladimirmi.internetradioplayer.data.db.entity.Station
 import io.github.vladimirmi.internetradioplayer.extensions.toURL
-import okhttp3.Headers
-import okhttp3.MediaType
-import okhttp3.OkHttpClient
-import okhttp3.Request
+import okhttp3.*
 import timber.log.Timber
 import java.io.InputStream
 import java.net.MalformedURLException
@@ -111,8 +108,8 @@ class StationParser
             else body.string().parseM3u()
 
         } else if (type.isAudioStream()) {
-            val stationName = name ?: response.request().url().host()
-            createStation(stationName, url, response.headers(), type.encoding)
+            val finalUrl = response.request().url()
+            createStation(name, finalUrl, response.headers(), type.encoding)
 
         } else {
             throw IllegalStateException("Error: Unsupported content type $type")
@@ -120,11 +117,11 @@ class StationParser
         }).also { body.close() }
     }
 
-    private fun createStation(name: String, url: URL, headers: Headers, encoding: String): Station {
+    private fun createStation(name: String?, url: HttpUrl, headers: Headers, encoding: String): Station {
         Timber.d("createStation: $headers")
 
         return Station(
-                name = name,
+                name = name ?: headers[HEADER_NAME] ?: url.host(),
                 uri = url.toString(),
                 url = headers[HEADER_URL],
                 encoding = encoding,

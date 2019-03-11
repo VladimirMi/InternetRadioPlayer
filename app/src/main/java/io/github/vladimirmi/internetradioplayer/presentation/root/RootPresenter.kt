@@ -9,6 +9,7 @@ import io.github.vladimirmi.internetradioplayer.navigation.Router
 import io.github.vladimirmi.internetradioplayer.presentation.base.BasePresenter
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.rxkotlin.addTo
+import timber.log.Timber
 import javax.inject.Inject
 
 /**
@@ -49,13 +50,17 @@ class RootPresenter
     }
 
     @SuppressLint("CheckResult")
-    fun addOrShowStation(uri: Uri, startPlay: Boolean) {
+    fun addOrShowStation(uri: Uri, addToFavorite: Boolean, startPlay: Boolean) {
         stationInteractor.createStation(uri)
-                .doOnSuccess { if (startPlay) playerInteractor.play() }
+                .flatMapCompletable {
+                    if (addToFavorite) stationInteractor.addToFavorite(it)
+                    else mediaInteractor.setMedia(it)
+                }
+                .doOnComplete { if (startPlay) playerInteractor.play() }
                 .observeOn(AndroidSchedulers.mainThread())
                 .doOnSubscribe { view?.showLoadingIndicator(true) }
                 .doFinally { view?.showLoadingIndicator(false) }
-                .subscribeX(onSuccess = {
+                .subscribeX(onComplete = {
                     navigateTo(R.id.nav_favorites)
                 }).addTo(viewSubs)
     }
@@ -63,6 +68,7 @@ class RootPresenter
     @SuppressLint("CheckResult")
     fun showStation(id: String, startPlay: Boolean) {
         //todo legacy
+        Timber.e("showStation: $id $startPlay")
         val station = favoriteListInteractor.getStation(id)
         if (station != null) {
             mediaInteractor.currentMedia = station

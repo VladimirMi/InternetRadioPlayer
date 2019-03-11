@@ -118,10 +118,9 @@ class RootActivity : BaseActivity<RootPresenter, RootView>(), RootView {
         if (intent == null) return
         val startPlay = intent.getBooleanExtra(EXTRA_PLAY, false)
         if (intent.hasExtra(PlayerService.EXTRA_STATION_ID)) {
-            //todo legacy
             presenter.showStation(intent.getStringExtra(PlayerService.EXTRA_STATION_ID), startPlay)
         } else {
-            intent.data?.let { addOrShowStation(it, startPlay) }
+            intent.data?.let { createStation(it, addToFavorite = false, startPlay = startPlay) }
         }
         intent = null
     }
@@ -134,8 +133,8 @@ class RootActivity : BaseActivity<RootPresenter, RootView>(), RootView {
         loadingPb.visible(visible)
     }
 
-    fun addOrShowStation(uri: Uri, startPlay: Boolean = false) {
-        presenter.addOrShowStation(uri, startPlay)
+    fun createStation(uri: Uri, addToFavorite: Boolean, startPlay: Boolean) {
+        presenter.addOrShowStation(uri, addToFavorite, startPlay)
     }
 
     //endregion

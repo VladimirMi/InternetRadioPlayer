@@ -31,9 +31,8 @@ class StationInteractor
 
     fun createStation(uri: Uri): Single<Station> {
         return stationRepository.createStation(uri)
-                .doOnSuccess { newStation ->
-                    val favoriteStation = favoritesRepository.getStation { it.uri == newStation.uri }
-                    mediaInteractor.currentMedia = favoriteStation ?: newStation
+                .map { newStation ->
+                    favoritesRepository.getStation { it.uri == newStation.uri } ?: newStation
                 }
     }
 
@@ -49,7 +48,7 @@ class StationInteractor
                 .andThen(favoriteListInteractor.initFavoriteList())
     }
 
-    private fun addToFavorite(station: Station): Completable {
+    fun addToFavorite(station: Station): Completable {
         return favoriteListInteractor.getGroup(station.groupId)
                 .flatMapCompletable {
                     val newStation = station.copy(order = it.stations.size, groupId = Group.DEFAULT_ID)

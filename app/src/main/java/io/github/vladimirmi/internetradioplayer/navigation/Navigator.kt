@@ -33,7 +33,6 @@ class Navigator(private val activity: RootActivity, private val containerId: Int
             }
         }
 
-
     init {
         activity.supportFragmentManager.addOnBackStackChangedListener {
             applyToStack(BackStackScreenNameChange(currScreenKeyFromBackStack.screenName))

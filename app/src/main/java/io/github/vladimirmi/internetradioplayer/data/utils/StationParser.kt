@@ -49,7 +49,6 @@ private val MediaType.encoding: String
         else -> "MP3"
     }
 
-
 private fun MediaType.isPlaylistFile() = suppotedPlaylists.contains(subtype())
 
 private fun MediaType.isPlsFile() = subtype() == "x-scpls"

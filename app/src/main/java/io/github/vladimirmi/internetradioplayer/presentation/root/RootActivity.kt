@@ -22,7 +22,6 @@ import io.github.vladimirmi.internetradioplayer.presentation.base.BaseActivity
 import kotlinx.android.synthetic.main.activity_root.*
 import kotlinx.android.synthetic.main.view_toolbar.*
 import ru.terrakok.cicerone.NavigatorHolder
-import timber.log.Timber
 import toothpick.Toothpick
 import javax.inject.Inject
 
@@ -101,7 +100,6 @@ class RootActivity : BaseActivity<RootPresenter, RootView>(), RootView {
     }
 
     override fun onNewIntent(intent: Intent?) {
-        Timber.e("onNewIntent: $intent")
         super.onNewIntent(intent)
         this.intent = intent
         if (isPresenterInitialized) checkIntent()

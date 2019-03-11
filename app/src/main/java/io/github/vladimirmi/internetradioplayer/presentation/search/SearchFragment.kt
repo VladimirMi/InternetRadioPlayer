@@ -50,7 +50,7 @@ class SearchFragment : BaseFragment<SearchPresenter, SearchView>(), SearchView,
         searchView.setIconifiedByDefault(false)
         searchView.setOnQueryTextFocusChangeListener { _, hasFocus ->
             adjustSuggestionsRecyclerHeight(hasFocus)
-            suggestionsRv.visible(hasFocus)
+            suggestionsRv.itemAnimator?.isRunning { suggestionsRv.visible(hasFocus) }
             presenter.intervalSearchEnabled = !hasFocus
         }
 

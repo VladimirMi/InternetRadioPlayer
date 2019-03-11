@@ -16,7 +16,7 @@ import javax.inject.Inject
  */
 
 private const val DEFAULT_BUFFER_SIZE = 20480
-private const val DEFAULT_MAX_FILE_SIZE: Long = 50 * 1024 * 1024
+private const val DEFAULT_MAX_FILE_SIZE: Long = 50 * 1024 * 1024 //50 Mb
 
 class RecorderDataSink
 @Inject constructor(private val interactor: RecordsInteractor) : DataSink {

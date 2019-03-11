@@ -36,7 +36,6 @@ class MediaNotification(private val service: PlayerService,
     private val mediaStyle = MediaStyle()
             .setMediaSession(session.sessionToken)
             .setShowCancelButton(true)
-            .setShowActionsInCompactView(0, 1, 2)
             .setCancelButtonIntent(stopIntent)
 
     private var isActive = false
@@ -67,7 +66,7 @@ class MediaNotification(private val service: PlayerService,
     private fun createNotification(): Notification {
         val builder = createBuilder()
         val metadata: MediaMetadataCompat? = session.controller.metadata
-        val playbackState = session.controller.playbackState.state
+        val playbackState = session.controller.playbackState
 
         metadata?.apply {
             builder.setContentTitle(description.title)
@@ -75,19 +74,29 @@ class MediaNotification(private val service: PlayerService,
                     .setSubText(description.description)
         }
 
-        if (playbackState == PlaybackStateCompat.STATE_BUFFERING) {
+        if (playbackState.state == PlaybackStateCompat.STATE_BUFFERING) {
             builder.setContentTitle(service.getString(R.string.metadata_buffering))
         }
 
-        builder.addAction(generateAction(R.drawable.ic_skip_previous, "Previous", previousIntent))
-        if (playbackState == PlaybackStateCompat.STATE_STOPPED || playbackState == PlaybackStateCompat.STATE_PAUSED) {
+        setupActions(builder, playbackState)
+
+        return builder.build()
+    }
+
+    private fun setupActions(builder: NotificationCompat.Builder, playbackState: PlaybackStateCompat) {
+        val isSkipEnabled = PlayerActions.isSkipEnabled(playbackState.actions)
+
+        val actionsInCompactView = if (isSkipEnabled) intArrayOf(0, 1, 2) else intArrayOf(0)
+        builder.setStyle(mediaStyle.setShowActionsInCompactView(*actionsInCompactView))
+
+        if (isSkipEnabled) builder.addAction(generateAction(R.drawable.ic_skip_previous, "Previous", previousIntent))
+        if (playbackState.state == PlaybackStateCompat.STATE_STOPPED
+                || playbackState.state == PlaybackStateCompat.STATE_PAUSED) {
             builder.addAction(generateAction(R.drawable.ic_play, "Play", playPauseIntent))
         } else {
             builder.addAction(generateAction(R.drawable.ic_pause, "Pause", playPauseIntent))
         }
-        builder.addAction(generateAction(R.drawable.ic_skip_next, "Next", nextIntent))
-
-        return builder.build()
+        if (isSkipEnabled) builder.addAction(generateAction(R.drawable.ic_skip_next, "Next", nextIntent))
     }
 
     private fun createNotificationChannel() {
@@ -112,6 +121,5 @@ class MediaNotification(private val service: PlayerService,
                 .setContentIntent(session.controller.sessionActivity)
                 .setDeleteIntent(stopIntent)
                 .setPriority(NotificationCompat.PRIORITY_HIGH)
-                .setStyle(mediaStyle)
     }
 }

@@ -5,6 +5,7 @@ import io.github.vladimirmi.internetradioplayer.data.db.entity.Station
 import io.github.vladimirmi.internetradioplayer.data.repository.RecordsRepository
 import io.github.vladimirmi.internetradioplayer.domain.model.Media
 import io.github.vladimirmi.internetradioplayer.domain.model.Record
+import io.github.vladimirmi.internetradioplayer.extensions.toUri
 import io.github.vladimirmi.internetradioplayer.utils.MessageException
 import io.reactivex.Completable
 import io.reactivex.Observable
@@ -67,10 +68,15 @@ class RecordsInteractor
         recordsRepository.stopRecording(uri)
     }
 
+    fun stopAllRecordings() {
+        recordsRepository.currentRecordingUrisObs.value
+                ?.forEach { stopRecording(it.toUri()) }
+    }
+
     fun isCurrentRecordingObs(): Observable<Boolean> {
         return Observables.combineLatest(recordsRepository.currentRecordingUrisObs,
-                mediaInteractor.currentMediaObs) { set: Set<String>, media: Media ->
-            set.contains(media.uri)
+                mediaInteractor.currentMediaObs) { uris: Set<String>, media: Media ->
+            uris.contains(media.uri)
         }.distinctUntilChanged()
     }
 }

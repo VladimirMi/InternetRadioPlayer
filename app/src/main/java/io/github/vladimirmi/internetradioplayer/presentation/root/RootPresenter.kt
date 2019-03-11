@@ -88,8 +88,8 @@ class RootPresenter
     }
 
     private fun exitApp() {
-        //todo stop recordings
         playerInteractor.stop()
+        recordsInteractor.stopAllRecordings()
         router.finishChain()
     }
 }

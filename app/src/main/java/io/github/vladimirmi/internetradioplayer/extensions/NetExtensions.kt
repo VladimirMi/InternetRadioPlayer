@@ -2,7 +2,6 @@ package io.github.vladimirmi.internetradioplayer.extensions
 
 import android.app.DownloadManager
 import android.net.Uri
-import java.net.URI
 import java.net.URL
 
 /**
@@ -13,11 +12,7 @@ fun String.toURL(): URL = URL(this.trim())
 
 fun Uri.toURL(): URL = this.toString().toURL()
 
-fun URI.toUri(): Uri = Uri.parse(toString())
-
-fun String.toURI(): URI = URI(this.trim())
-
-fun String.toUri(): Uri = toURI().toUri()
+fun String.toUri(): Uri = Uri.parse(this)
 
 
 

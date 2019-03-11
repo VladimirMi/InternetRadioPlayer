@@ -79,6 +79,7 @@ class SearchSuggestionsAdapter(private val callback: SearchSuggestionsAdapter.Ca
 
 class SuggestionVH(itemView: View) : RecyclerView.ViewHolder(itemView), View.OnCreateContextMenuListener {
 
+
     override fun onCreateContextMenu(menu: ContextMenu?, v: View?, menuInfo: ContextMenu.ContextMenuInfo?) {
         menu?.add(R.id.context_menu_suggestion, R.id.context_menu_action_delete, 0, R.string.menu_delete)
     }
@@ -89,6 +90,7 @@ class SuggestionVH(itemView: View) : RecyclerView.ViewHolder(itemView), View.OnC
             itemView.setOnCreateContextMenuListener(this)
             R.drawable.ic_history
         } else {
+            itemView.setOnCreateContextMenuListener(null)
             R.drawable.ic_search
         }
         itemView.iconIv.setImageResource(icon)

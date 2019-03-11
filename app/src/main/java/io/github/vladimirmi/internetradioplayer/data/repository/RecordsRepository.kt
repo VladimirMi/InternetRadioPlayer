@@ -20,7 +20,7 @@ import javax.inject.Inject
  * Created by Vladimir Mikhalev 02.02.2019.
  */
 
-private const val RECORDS_DIRECTORY = "records"
+private const val RECORDS_DIRECTORY = "Records"
 private const val RECORD_EXT = "mp3"
 private const val RECORD_SUFFIX = " Record"
 

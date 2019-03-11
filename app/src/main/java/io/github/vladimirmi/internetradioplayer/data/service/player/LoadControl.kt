@@ -29,20 +29,20 @@ class LoadControl
         DEFAULT_RETAIN_BACK_BUFFER_FROM_KEYFRAME) {
 
     private var targetBufferSize = DEFAULT_TARGET_BUFFER_BYTES
-    private var initialBufferUs = prefs.initialBufferLength * 1000000L
-    private var bufferUs = prefs.bufferLength * 1000000L
-    private val minBufferUs = DEFAULT_MIN_BUFFER_MS * 1000L
-    private val maxBufferUs = DEFAULT_MAX_BUFFER_MS * 1000L
+    private var initialBufferUs = C.msToUs(prefs.initialBufferLength * 1000L)
+    private var bufferUs = C.msToUs(prefs.bufferLength * 1000L)
+    private val minBufferUs = C.msToUs(DEFAULT_MIN_BUFFER_MS.toLong())
+    private val maxBufferUs = C.msToUs(DEFAULT_MAX_BUFFER_MS.toLong())
     private var isBuffering: Boolean = false
 
 
     private val listener = SharedPreferences.OnSharedPreferenceChangeListener { _, key ->
         if (key == Preferences.KEY_INITIAL_BUFFER_LENGTH) {
-            initialBufferUs = prefs.initialBufferLength * 1000000L
+            initialBufferUs = C.msToUs(prefs.initialBufferLength * 1000L)
             reset(true)
 
         } else if (key == Preferences.KEY_BUFFER_LENGTH) {
-            bufferUs = prefs.bufferLength * 1000000L
+            bufferUs = C.msToUs(prefs.bufferLength * 1000L)
             reset(true)
         }
     }

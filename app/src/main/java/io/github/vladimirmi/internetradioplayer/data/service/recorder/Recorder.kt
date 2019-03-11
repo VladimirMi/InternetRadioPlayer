@@ -3,13 +3,10 @@ package io.github.vladimirmi.internetradioplayer.data.service.recorder
 import android.content.Context
 import android.net.Uri
 import android.net.wifi.WifiManager
-import com.google.android.exoplayer2.C
-import com.google.android.exoplayer2.DefaultLoadControl
 import com.google.android.exoplayer2.ExoPlayerFactory
 import com.google.android.exoplayer2.SimpleExoPlayer
 import com.google.android.exoplayer2.source.ExtractorMediaSource
 import com.google.android.exoplayer2.trackselection.DefaultTrackSelector
-import com.google.android.exoplayer2.upstream.DefaultAllocator
 import com.google.android.exoplayer2.upstream.TeeDataSource
 import com.google.android.exoplayer2.util.Util
 import io.github.vladimirmi.internetradioplayer.BuildConfig
@@ -38,7 +35,6 @@ class Recorder
     private val wifiLock = context.wifiManager
             .createWifiLock(WifiManager.WIFI_MODE_FULL, BuildConfig.APPLICATION_ID)
 
-
     fun startRecord(name: String, uri: Uri) {
         runOnUiThread {
             if (player == null) createPlayer()
@@ -57,12 +53,8 @@ class Recorder
     }
 
     private fun createPlayer() {
-        val loadControl = DefaultLoadControl.Builder()
-                .setAllocator(DefaultAllocator(true, C.DEFAULT_AUDIO_BUFFER_SIZE))
-                .createDefaultLoadControl()
-
         player = ExoPlayerFactory.newSimpleInstance(context, AudioRenderersFactory(context),
-                DefaultTrackSelector(), loadControl)
+                DefaultTrackSelector(), RecorderLoadControl())
         player?.addListener(playerCallback)
     }
 

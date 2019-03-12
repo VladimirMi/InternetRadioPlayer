@@ -5,6 +5,7 @@ import io.github.vladimirmi.internetradioplayer.data.db.entity.Station
 import io.github.vladimirmi.internetradioplayer.data.db.entity.SuggestionEntity
 import io.github.vladimirmi.internetradioplayer.data.net.UberStationsService
 import io.github.vladimirmi.internetradioplayer.data.net.model.StationSearchRes
+import io.github.vladimirmi.internetradioplayer.data.net.model.StationsResult
 import io.github.vladimirmi.internetradioplayer.data.utils.StationParser
 import io.github.vladimirmi.internetradioplayer.domain.model.Suggestion
 import io.reactivex.Completable
@@ -56,7 +57,7 @@ class SearchRepository
 
     fun findUberStation(id: Int): Observable<Station> {
         return uberStationsService.getStation(id)
-                .map { it.result[0].stations[0].toStation() }
+                .map(StationsResult::getStation)
                 .flatMapObservable {
                     Observable.fromCallable { parser.parseFromUberStation(it) }
                             .startWith(it)

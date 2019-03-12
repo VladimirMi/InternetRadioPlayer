@@ -64,14 +64,8 @@
         <item>@string/tab_history</item>
     </string-array>
 
-    <string-array name="favorite_tabs">
-        <item>@string/tab_stations</item>
-        <item>@string/tab_records</item>
-    </string-array>
-
     <string name="history_placeholder">History is empty</string>
     <string name="favorite_list_placeholder">Stations list is empty</string>
-    <string name="player_placeholder">No station is selected</string>
     <string name="search_placeholder">Search result is empty</string>
 
     <string name="player_channel_name" translatable="false">Radio player notifications</string>

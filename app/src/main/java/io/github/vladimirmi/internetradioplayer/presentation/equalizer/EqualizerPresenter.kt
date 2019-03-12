@@ -107,7 +107,7 @@ class EqualizerPresenter
     private fun handleMetadata(metadata: MediaMetadataCompat) {
         when {
             metadata.isNotSupported() -> view?.setMetadata("${metadata.album} - ${metadata.title}")
-            metadata.isEmpty() -> view?.setMetadata("${metadata.album}")
+            metadata.isEmpty() -> view?.setMetadata(metadata.album)
             else -> view?.setMetadata("${metadata.artist} - ${metadata.title}")
         }
     }

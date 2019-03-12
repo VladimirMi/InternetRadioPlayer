@@ -65,7 +65,7 @@
         android:layout_height="40dp"
         android:layout_marginTop="16dp"
         android:background="@null"
-        android:contentDescription="@string/desc_open_equalizer"
+        android:contentDescription="@string/desc_equalizer"
         android:foreground="?actionBarItemBackground"
         android:padding="4dp"
         android:scaleType="fitCenter"

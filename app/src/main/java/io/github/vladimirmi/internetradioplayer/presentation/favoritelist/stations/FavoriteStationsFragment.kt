@@ -174,7 +174,7 @@ class FavoriteStationsFragment : BaseFragment<FavoriteStationsPresenter, Favorit
 
     private fun openStationEditDialog(station: Station) {
         EditDialog.newInstance(getString(R.string.dialog_edit_station),
-                getString(R.string.dialog_edit_station_hint), station.name)
+                getString(R.string.title), station.name)
                 .show(childFragmentManager, EDIT_STATION_DIALOG)
     }
 
@@ -184,13 +184,13 @@ class FavoriteStationsFragment : BaseFragment<FavoriteStationsPresenter, Favorit
 
     private fun openAddGroupDialog() {
         EditDialog.newInstance(getString(R.string.dialog_new_group),
-                getString(R.string.dialog_new_group_hint), "")
+                getString(R.string.title), "")
                 .show(childFragmentManager, NEW_GROUP_DIALOG)
     }
 
     private fun openGroupEditDialog(group: Group) {
         EditDialog.newInstance(getString(R.string.dialog_edit_group),
-                getString(R.string.dialog_new_group_hint), group.name)
+                getString(R.string.title), group.name)
                 .show(childFragmentManager, EDIT_GROUP_DIALOG)
     }
 

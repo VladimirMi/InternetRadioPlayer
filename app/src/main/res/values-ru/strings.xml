@@ -12,40 +12,37 @@
     <string name="dialog_ok">OK</string>
     <string name="dialog_cancel">Отмена</string>
     <string name="dialog_new_group">Создать новую группу</string>
-    <string name="dialog_new_group_hint">Название группы</string>
 
     <string name="menu_exit">Выход</string>
 
     <string name="metadata_buffering">Загрузка…</string>
     <string name="metadata_not_available">Метаданные не доступны</string>
 
-    <string name="desc_expand_collapse">развернуть/свернуть</string>
-    <string name="desc_station_icon">иконка станции</string>
-    <string name="desc_play_pause_button">воспроизвести/приостановить</string>
-    <string name="desc_skip_previous_button">предыдущая станция</string>
-    <string name="desc_skip_next_button">следующая станция</string>
-    <string name="desc_stop_button">кнопка стоп</string>
-    <string name="desc_edit_title_button">редактирования названия</string>
-    <string name="desc_add_remove_favorite">добавить/удалить  из избранного</string>
+    <string name="desc_expand_collapse">Развернуть/Свернуть</string>
+    <string name="desc_station_icon">Иконка станции</string>
+    <string name="desc_play_pause_button">Воспроизвести/Приостановить</string>
+    <string name="desc_skip_previous_button">Предыдущая станция</string>
+    <string name="desc_skip_next_button">Следующая станция</string>
+    <string name="desc_stop_button">Остановить</string>
+    <string name="desc_add_remove_favorite">Добавить/Удалить  из избранного</string>
     <string name="desc_create_shortcut_button">Создать ярлык</string>
-    <string name="desc_directory_logo">логотип директории</string>
-    <string name="desc_open_drawer">открыть меню</string>
-    <string name="desc_close_drawer">закрыть меню</string>
-    <string name="desc_remove_folder">удалить пустую группу</string>
-    <string name="desc_add_station">добавить станцию</string>
+    <string name="desc_directory_logo">Логотип директории</string>
+    <string name="desc_open_drawer">Открыть меню</string>
+    <string name="desc_close_drawer">Закрыть меню</string>
+    <string name="desc_add_station">Добавить станцию</string>
 
     <string name="tab_search">Поиск</string>
     <string name="tab_favorite">Избранное</string>
     <string name="tab_history">История</string>
 
-    <string name="station_title">Название</string>
+    <string name="title">Название</string>
 
     <string name="dialog_start_playback">Начать воспроизведение</string>
     <string name="default_folder">Разное</string>
     <string name="menu_settings">Настройки</string>
     <string name="second">%1$d секунда</string>
     <string name="seconds">%1$d секунды</string>
-    <string name="chooser_backup">Сохранить с помощью</string>
+    <string name="chooser_save">Сохранить с помощью</string>
     <string name="setting_initial_buffer">Начальный размер буфера</string>
     <string name="setting_buffer">Размер буфера</string>
     <string name="setting_initial_buffer_desc">Начальный размер буфера для старта воспроизведения</string>
@@ -61,9 +58,22 @@
     <string name="favorite_list_placeholder">Список станций пуст</string>
     <string name="player_placeholder">Не выбранна станция</string>
     <string name="search_placeholder">Результат поиска пуст</string>
-    <string name="create_new_group">Создать новую группу</string>
     <string name="preset_bind_station">Применить к станции</string>
     <string name="preset_bind_group">Применить к группе</string>
     <string name="preset_bind_all">Применить ко всем</string>
     <string name="reset">Сброс</string>
+    <string name="tab_records">Записи</string>
+    <string name="tab_stations">Станции</string>
+    <string name="desc_record">Запись</string>
+    <string name="desc_equalizer">Эквалайзер</string>
+    <string name="status_recording">Записывается</string>
+    <string name="status_paused">Приостановлено</string>
+    <string name="status_stopped">Остановлено</string>
+    <string name="status_playing">Проигрывается</string>
+    <string name="menu_add_group">Добавить группу</string>
+    <string name="menu_change_order">Изменить порядок</string>
+    <string name="menu_delete">Удалить</string>
+    <string name="menu_edit">Редактировать</string>
+    <string name="dialog_edit_station">Редактировать станцию</string>
+    <string name="dialog_edit_group">Редактировать группу</string>
 </resources>

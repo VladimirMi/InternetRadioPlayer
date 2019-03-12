@@ -45,7 +45,7 @@ class SettingsFragment : PreferenceFragmentCompat(), BackPressListener {
                     .setType(BACKUP_TYPE)
                     .setSubject(getString(R.string.full_app_name))
                     .setStream(uri)
-                    .setChooserTitle(getString(R.string.chooser_backup))
+                    .setChooserTitle(getString(R.string.chooser_save))
                     .createChooserIntent()
                     .addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION)
             context!!.startActivitySafe(intent)

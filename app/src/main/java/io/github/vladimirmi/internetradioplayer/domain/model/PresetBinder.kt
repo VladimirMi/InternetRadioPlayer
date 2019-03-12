@@ -30,9 +30,9 @@ abstract class PresetBinder(val stationId: String,
 
     companion object {
         fun create(dao: StationDao, stationId: String, globalPreset: String): Single<PresetBinder> {
-            return dao.getStationMaybe(stationId)
+            return dao.getStation(stationId)
                     .flatMap { station ->
-                        dao.getGroupMaybe(station.groupId)
+                        dao.getGroup(station.groupId)
                                 .map { group -> createBinder(station, group, globalPreset) }
                     }.toSingle(GlobalPresetBinder(stationId, false, globalPreset))
         }

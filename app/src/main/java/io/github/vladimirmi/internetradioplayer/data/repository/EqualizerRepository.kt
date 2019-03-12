@@ -136,8 +136,7 @@ class EqualizerRepository
     }
 
     fun resetCurrentPreset(): Completable {
-        val defaultPreset = equalizerConfig?.defaultPresets
-                ?.find { it.name == currentPreset.value?.name }
+        val defaultPreset = equalizerConfig.defaultPresets.find { it.name == currentPreset.value?.name }
         updatePresetsWith(defaultPreset)
         equalizer?.ifHasControl {
             defaultPreset?.applyTo(equalizer, bassBoost, virtualizer)

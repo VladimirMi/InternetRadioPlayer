@@ -20,16 +20,10 @@ interface StationDao {
     fun getAllGroups(): Single<List<Group>>
 
     @Query("SELECT * FROM station WHERE id = :id")
-    fun getStation(id: String): Single<Station>
-
-    @Query("SELECT * FROM station WHERE id = :id")
-    fun getStationMaybe(id: String): Maybe<Station>
+    fun getStation(id: String): Maybe<Station>
 
     @Query("SELECT * FROM `group` WHERE id = :id")
-    fun getGroup(id: String): Single<Group>
-
-    @Query("SELECT * FROM `group` WHERE id = :id")
-    fun getGroupMaybe(id: String): Maybe<Group>
+    fun getGroup(id: String): Maybe<Group>
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     fun insertStation(station: Station): Long

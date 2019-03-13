@@ -24,6 +24,7 @@
         app:tabIndicatorColor="@color/secondary"
         app:tabIndicatorHeight="4dp"
         app:tabIndicatorGravity="top"
+        android:visibility="gone"
         app:tabBackground="@color/primary_variant"
         />
 

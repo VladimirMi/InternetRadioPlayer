@@ -135,9 +135,9 @@ class FavoriteStationsFragment : BaseFragment<FavoriteStationsPresenter, Favorit
         stationListAdapter.setData(stationList)
     }
 
-    override fun selectStation(station: Station) {
-        stationListAdapter.selectStation(station)
-        val position = stationListAdapter.getPosition(station)
+    override fun selectStation(id: String) {
+        stationListAdapter.selectStation(id)
+        val position = stationListAdapter.getPosition(id)
         if (position != -1) stationsRv.scrollToPosition(position)
     }
 

@@ -10,6 +10,8 @@ import android.support.v4.media.MediaMetadataCompat
 import android.support.v4.media.session.MediaControllerCompat
 import android.support.v4.media.session.PlaybackStateCompat
 import com.jakewharton.rxrelay2.BehaviorRelay
+import io.github.vladimirmi.internetradioplayer.data.service.EVENT_SESSION_END
+import io.github.vladimirmi.internetradioplayer.data.service.EVENT_SESSION_START
 import io.github.vladimirmi.internetradioplayer.data.service.PlayerService
 import timber.log.Timber
 import javax.inject.Inject
@@ -19,7 +21,8 @@ import javax.inject.Inject
  */
 
 class PlayerRepository
-@Inject constructor(context: Context) {
+@Inject constructor(context: Context,
+                    private val equalizerRepository: EqualizerRepository) {
 
     private lateinit var mediaBrowser: MediaBrowserCompat
     private var controller: MediaControllerCompat? = null
@@ -61,12 +64,13 @@ class PlayerRepository
             playbackState.accept(state)
         }
 
-        override fun onMetadataChanged(metadata: MediaMetadataCompat) {
-            this@PlayerRepository.metadata.accept(metadata)
+        override fun onMetadataChanged(metadataCompat: MediaMetadataCompat) {
+            metadata.accept(metadataCompat)
         }
 
         override fun onSessionEvent(event: String, extras: Bundle) {
             sessionEvent.accept(event to extras)
+            setupEqualizer(extras, event)
         }
     }
 
@@ -112,5 +116,16 @@ class PlayerRepository
 
     fun sendCommand(command: String) {
         controller?.sendCommand(command, null, null)
+    }
+
+    private fun setupEqualizer(extras: Bundle, event: String) {
+        val sessionId = extras.getInt(PlayerService.EXTRA_SESSION_ID)
+        if (sessionId != 0) {
+            if (event == EVENT_SESSION_START) {
+                equalizerRepository.createEqualizer(sessionId)
+            } else if (event == EVENT_SESSION_END) {
+                equalizerRepository.releaseEqualizer(sessionId)
+            }
+        }
     }
 }

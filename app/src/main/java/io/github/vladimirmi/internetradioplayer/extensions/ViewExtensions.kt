@@ -38,9 +38,7 @@ inline fun View.waitForMeasure(crossinline block: () -> Unit) {
     viewTreeObserver.addOnPreDrawListener(object : ViewTreeObserver.OnPreDrawListener {
         override fun onPreDraw(): Boolean {
             val observer = viewTreeObserver
-            if (observer.isAlive) {
-                observer.removeOnPreDrawListener(this)
-            }
+            if (observer.isAlive) observer.removeOnPreDrawListener(this)
             block()
             return true
         }
@@ -50,8 +48,9 @@ inline fun View.waitForMeasure(crossinline block: () -> Unit) {
 inline fun View.waitForLayout(crossinline handler: () -> Boolean) {
     viewTreeObserver.addOnGlobalLayoutListener(object : ViewTreeObserver.OnGlobalLayoutListener {
         override fun onGlobalLayout() {
-            if (viewTreeObserver.isAlive && handler.invoke()) {
-                viewTreeObserver.removeOnGlobalLayoutListener(this)
+            val observer = viewTreeObserver
+            if (handler.invoke() && observer.isAlive) {
+                observer.removeOnGlobalLayoutListener(this)
             }
         }
     })

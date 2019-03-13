@@ -43,7 +43,6 @@ class PlayerPresenter
         mediaInteractor.currentMediaObs
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribeX(onNext = {
-                    view?.showPlayerView(!it.isNull())
                     if (it is Station) {
                         view?.setStation(it)
                         view?.setFavorite(favoriteListInteractor.isFavorite(it))
@@ -58,6 +57,13 @@ class PlayerPresenter
 
 
     private fun setupPlayer() {
+        mediaInteractor.currentMediaObs
+                .map { !it.isNull() }
+                .distinctUntilChanged()
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribeX(onNext = { view?.showPlayerView(it) })
+                .addTo(viewSubs)
+
         playerInteractor.playbackStateObs
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribeX(onNext = { handleState(it) })

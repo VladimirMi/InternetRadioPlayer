@@ -16,7 +16,6 @@
         android:text="@string/search_placeholder"
         android:layout_gravity="center_vertical"
         android:gravity="center"
-        android:visibility="gone"
         android:textAppearance="@style/TextAppearance.MaterialComponents.Subtitle1"
         />
 

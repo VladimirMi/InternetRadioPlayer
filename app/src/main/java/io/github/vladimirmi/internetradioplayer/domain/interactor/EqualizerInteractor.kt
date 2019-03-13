@@ -2,10 +2,6 @@ package io.github.vladimirmi.internetradioplayer.domain.interactor
 
 import io.github.vladimirmi.internetradioplayer.data.repository.EqualizerRepository
 import io.github.vladimirmi.internetradioplayer.data.repository.MediaRepository
-import io.github.vladimirmi.internetradioplayer.data.repository.PlayerRepository
-import io.github.vladimirmi.internetradioplayer.data.service.EVENT_SESSION_END
-import io.github.vladimirmi.internetradioplayer.data.service.EVENT_SESSION_START
-import io.github.vladimirmi.internetradioplayer.data.service.PlayerService
 import io.github.vladimirmi.internetradioplayer.domain.model.EqualizerPreset
 import io.github.vladimirmi.internetradioplayer.domain.model.PresetBinderView
 import io.reactivex.Completable
@@ -17,27 +13,12 @@ import javax.inject.Inject
  */
 
 class EqualizerInteractor
-@Inject constructor(private val playerRepository: PlayerRepository,
-                    private val equalizerRepository: EqualizerRepository,
+@Inject constructor(private val equalizerRepository: EqualizerRepository,
                     private val mediaRepository: MediaRepository) {
 
-    val currentPresetObs: Observable<EqualizerPreset> get() = equalizerRepository.currentPreset
+    val currentPresetObs: Observable<EqualizerPreset> get() = equalizerRepository.currentPresetObs
     val presetBinder: PresetBinderView get() = equalizerRepository.binder
     val equalizerConfig get() = equalizerRepository.equalizerConfig
-
-    fun initEqualizer(): Completable {
-        return playerRepository.sessionEvent
-                .map {
-                    val sessionId = it.second.getInt(PlayerService.EXTRA_SESSION_ID)
-                    if (sessionId != 0) {
-                        if (it.first == EVENT_SESSION_START) {
-                            equalizerRepository.createEqualizer(sessionId)
-                        } else if (it.first == EVENT_SESSION_END) {
-                            equalizerRepository.releaseEqualizer(sessionId)
-                        }
-                    }
-                }.ignoreElements()
-    }
 
     fun initPresets(): Completable {
         return equalizerRepository.getSavedPresets().map { entities ->
@@ -97,8 +78,8 @@ class EqualizerInteractor
     }
 
     fun isCurrentPresetCanReset(): Boolean {
-        val preset = equalizerRepository.currentPreset.value
-        val defaultPreset = equalizerConfig.defaultPresets.find { it.name == preset?.name }
+        val preset = equalizerRepository.currentPreset
+        val defaultPreset = equalizerConfig.defaultPresets.find { it.name == preset.name }
         return preset != defaultPreset
     }
 }

@@ -1,6 +1,5 @@
 package io.github.vladimirmi.internetradioplayer.presentation.favoritelist.stations
 
-import io.github.vladimirmi.internetradioplayer.data.db.entity.Station
 import io.github.vladimirmi.internetradioplayer.domain.model.FlatStationsList
 import io.github.vladimirmi.internetradioplayer.presentation.base.BaseView
 
@@ -12,7 +11,7 @@ interface FavoriteStationsView : BaseView {
 
     fun setStations(stationList: FlatStationsList)
 
-    fun selectStation(station: Station)
+    fun selectStation(id: String)
 
     fun showPlaceholder(show: Boolean)
 }

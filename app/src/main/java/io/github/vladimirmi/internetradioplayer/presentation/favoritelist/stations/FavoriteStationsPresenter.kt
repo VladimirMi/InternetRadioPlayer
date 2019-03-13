@@ -31,9 +31,9 @@ class FavoriteStationsPresenter
                 })
                 .addTo(viewSubs)
 
-        mediaInteractor.currentStationObs
+        mediaInteractor.currentMediaObs
                 .observeOn(AndroidSchedulers.mainThread())
-                .subscribeX(onNext = { view.selectStation(it) })
+                .subscribeX(onNext = { view.selectStation(it.id) })
                 .addTo(viewSubs)
     }
 

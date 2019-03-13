@@ -111,12 +111,16 @@ class PlayerFragment : BaseFragment<PlayerPresenter, PlayerView>(), PlayerView {
     //region =============== PlayerView ==============
 
     override fun showPlayerView(visible: Boolean) {
-        if (requireView().isVisible == visible) return
-        requireView().visible(visible)
-        (parentFragment as MainFragment?)?.showPlayerView(visible)
-        if (visible) requireView().waitForLayout {
-            setupOffset(); true
+        requireView().waitForLayout {
+            if (!visible) {
+                sheetBehavior.state = BottomSheetBehavior.STATE_HIDDEN
+            } else {
+                sheetBehavior.state = BottomSheetBehavior.STATE_COLLAPSED
+            }
+            setupOffset()
+            true
         }
+        (parentFragment as MainFragment?)?.showPlayerView(visible)
     }
 
     override fun setStation(station: Station) {
@@ -217,7 +221,8 @@ class PlayerFragment : BaseFragment<PlayerPresenter, PlayerView>(), PlayerView {
     }
 
     private fun setupOffset() {
-        if (sheetBehavior.state == BottomSheetBehavior.STATE_COLLAPSED) setOffset(0f)
+        if (sheetBehavior.state == BottomSheetBehavior.STATE_COLLAPSED ||
+                sheetBehavior.state == BottomSheetBehavior.STATE_HIDDEN) setOffset(0f)
         else if (sheetBehavior.state == BottomSheetBehavior.STATE_EXPANDED) setOffset(1f)
     }
 

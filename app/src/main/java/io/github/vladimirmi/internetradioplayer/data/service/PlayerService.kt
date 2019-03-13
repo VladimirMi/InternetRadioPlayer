@@ -83,10 +83,6 @@ class PlayerService : MediaBrowserServiceCompat(), SessionCallback.Interface {
         equalizerInteractor.initPresets()
                 .subscribe()
                 .addTo(subs)
-
-        equalizerInteractor.initEqualizer()
-                .subscribe()
-                .addTo(subs)
     }
 
     override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {

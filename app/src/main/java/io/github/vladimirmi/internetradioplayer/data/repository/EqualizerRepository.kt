@@ -41,7 +41,10 @@ class EqualizerRepository
     val equalizerConfig: EqualizerConfig
     var presets: List<EqualizerPreset> = emptyList()
 
-    val currentPreset = BehaviorRelay.create<EqualizerPreset>()
+    val currentPresetObs = BehaviorRelay.create<EqualizerPreset>()
+    var currentPreset: EqualizerPreset
+        get() = currentPresetObs.value ?: EqualizerPreset.empty()
+        private set(value) = currentPresetObs.accept(value)
     lateinit var binder: PresetBinder
 
     init {
@@ -67,7 +70,7 @@ class EqualizerRepository
             virtualizer = Virtualizer(0, sessionId).apply { enabled = true }
         }
         equalizer?.ifHasControl {
-            currentPreset.value?.applyTo(equalizer, bassBoost, virtualizer)
+            currentPreset.applyTo(equalizer, bassBoost, virtualizer)
         }
     }
 
@@ -82,7 +85,7 @@ class EqualizerRepository
     }
 
     fun setBandLevel(band: Int, level: Int) {
-        val preset = currentPreset.value?.let {
+        val preset = currentPreset.let {
             val bands = it.bandLevels.toMutableList()
             bands[band] = level
             it.copy(bandLevels = bands)
@@ -94,14 +97,14 @@ class EqualizerRepository
     }
 
     fun setBassBoostStrength(strength: Int) {
-        updatePresetsWith(currentPreset.value?.copy(bassBoostStrength = strength))
+        updatePresetsWith(currentPreset.copy(bassBoostStrength = strength))
         bassBoost?.ifHasControl {
             it.setStrength(strength.toShort())
         }
     }
 
     fun setVirtualizerStrength(strength: Int) {
-        updatePresetsWith(currentPreset.value?.copy(virtualizerStrength = strength))
+        updatePresetsWith(currentPreset.copy(virtualizerStrength = strength))
         virtualizer?.ifHasControl {
             it.setStrength(strength.toShort())
         }
@@ -109,7 +112,7 @@ class EqualizerRepository
 
     fun saveCurrentPreset(): Completable {
         return Completable.fromCallable {
-            currentPreset.value?.let { dao.insert(it.toEntity()) }
+            currentPreset.let { dao.insert(it.toEntity()) }
         }.subscribeOn(Schedulers.io())
     }
 
@@ -122,7 +125,7 @@ class EqualizerRepository
 
     fun selectPreset(index: Int) {
         val preset = if (index >= 0) presets[index] else getGlobalPreset()
-        currentPreset.accept(preset)
+        currentPreset = preset
         if (::binder.isInitialized) binder.presetName = preset.name
 
         equalizer?.ifHasControl {
@@ -136,10 +139,11 @@ class EqualizerRepository
     }
 
     fun resetCurrentPreset(): Completable {
-        val defaultPreset = equalizerConfig.defaultPresets.find { it.name == currentPreset.value?.name }
+        val defaultPreset = equalizerConfig.defaultPresets.find { it.name == currentPreset.name }
+                ?: return Completable.complete()
         updatePresetsWith(defaultPreset)
         equalizer?.ifHasControl {
-            defaultPreset?.applyTo(equalizer, bassBoost, virtualizer)
+            defaultPreset.applyTo(equalizer, bassBoost, virtualizer)
         }
         return saveCurrentPreset()
     }
@@ -154,11 +158,9 @@ class EqualizerRepository
         return presets.find { it.name == preferences.globalPreset } ?: presets.first()
     }
 
-    private fun updatePresetsWith(preset: EqualizerPreset?) {
-        preset?.let {
-            presets = presets.map { p -> if (p.name == preset.name) preset else p }
-            currentPreset.accept(it)
-        }
+    private fun updatePresetsWith(preset: EqualizerPreset) {
+        presets = presets.map { p -> if (p.name == preset.name) preset else p }
+        currentPreset = preset
     }
 
     private fun unbindEqualizer(sessionId: Int) {

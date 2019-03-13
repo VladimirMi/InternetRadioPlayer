@@ -163,6 +163,7 @@ class SearchFragment : BaseFragment<SearchPresenter, SearchView>(), SearchView,
             val rect = Rect()
             suggestionsRv.getWindowVisibleDisplayFrame(rect)
             frameLayout.waitForLayout {
+                if (view == null) return@waitForLayout true
                 val oldVisibleHeight = rect.bottom - rect.top
                 suggestionsRv.getWindowVisibleDisplayFrame(rect)
                 val newVisibleHeight = rect.bottom - rect.top

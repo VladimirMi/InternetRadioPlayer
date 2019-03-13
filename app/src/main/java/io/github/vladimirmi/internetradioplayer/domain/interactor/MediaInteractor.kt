@@ -30,11 +30,6 @@ class MediaInteractor
 
     val currentMediaObs: Observable<Media> get() = mediaRepository.currentMediaObs
 
-    val currentStationObs: Observable<Station>
-        get() = currentMediaObs
-                .filter { it is Station }
-                .cast(Station::class.java)
-
     var currentMedia: Media
         get() = mediaRepository.currentMedia
         set(value) {

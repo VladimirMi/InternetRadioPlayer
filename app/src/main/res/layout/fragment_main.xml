@@ -5,6 +5,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:background="@color/grey_300"
     >
 
     <LinearLayout
@@ -12,7 +13,6 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:orientation="vertical"
-        android:paddingBottom="@dimen/player_collapsed_height"
         >
 
         <io.github.vladimirmi.internetradioplayer.ui.ScrollableTabLayout
@@ -45,6 +45,8 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         app:behavior_peekHeight="@dimen/player_collapsed_height"
+        app:behavior_hideable="true"
+        app:behavior_skipCollapsed="false"
         app:layout_behavior="@string/bottom_sheet_behavior"
         />
 

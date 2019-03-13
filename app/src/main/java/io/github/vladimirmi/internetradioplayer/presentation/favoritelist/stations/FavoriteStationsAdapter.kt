@@ -41,7 +41,7 @@ class StationListAdapter(private val callback: FavoriteStationsAdapterCallback)
     private var stations = FlatStationsList()
     private var dragEnabled = false
     private var dragged = false
-    private var selectedStation: Station? = null
+    private var selectedStationId: String? = null
 
     fun setData(data: FlatStationsList) {
         if (dragged) {
@@ -56,12 +56,12 @@ class StationListAdapter(private val callback: FavoriteStationsAdapterCallback)
         }
     }
 
-    fun getPosition(station: Station): Int {
-        return stations.positionOfStation(station.id)
+    fun getPosition(id: String): Int {
+        return stations.positionOfStation(id)
     }
 
-    fun selectStation(station: Station) {
-        selectedStation = station
+    fun selectStation(id: String) {
+        selectedStationId = id
         notifyItemRangeChanged(0, itemCount, PAYLOAD_SELECTED_CHANGE)
     }
 
@@ -134,10 +134,10 @@ class StationListAdapter(private val callback: FavoriteStationsAdapterCallback)
     private fun GroupElementVH.select(position: Int) {
         val selected = if (stations.isGroup(position)) {
             val group = stations.getGroup(position)
-            !group.expanded && group.stations.find { selectedStation?.uri == it.uri } != null
+            !group.expanded && group.stations.find { selectedStationId == it.id } != null
         } else {
             val station = stations.getStation(position)
-            station.id == selectedStation?.id
+            station.id == selectedStationId
         }
         select(selected)
     }

@@ -37,6 +37,7 @@ class FavoriteStationsFragment : BaseFragment<FavoriteStationsPresenter, Favorit
 
     private val stationListAdapter by lazy { StationListAdapter(this) }
     private var changeOrderMode = false
+    private var enableMenu = false
 
     private val itemTouchHelper by lazy {
         ItemTouchHelper(object : ItemSwipeCallback() {
@@ -74,7 +75,7 @@ class FavoriteStationsFragment : BaseFragment<FavoriteStationsPresenter, Favorit
     @SuppressLint("RestrictedApi")
     override fun onPrepareOptionsMenu(menu: Menu) {
         super.onPrepareOptionsMenu(menu)
-        if (!userVisibleHint) return
+        if (!userVisibleHint || !enableMenu) return
         if (changeOrderMode) {
             menu.add(Menu.NONE, R.string.menu_change_order, Menu.NONE, R.string.menu_change_order).apply {
                 setShowAsAction(MenuItem.SHOW_AS_ACTION_IF_ROOM)
@@ -144,6 +145,8 @@ class FavoriteStationsFragment : BaseFragment<FavoriteStationsPresenter, Favorit
     override fun showPlaceholder(show: Boolean) {
         stationsRv.visible(!show)
         placeholderView.visible(show)
+        enableMenu = !show
+        activity?.invalidateOptionsMenu()
     }
 
     //endregion

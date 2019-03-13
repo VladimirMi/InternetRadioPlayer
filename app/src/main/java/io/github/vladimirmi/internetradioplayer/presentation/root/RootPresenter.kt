@@ -56,12 +56,13 @@ class RootPresenter
                     if (addToFavorite) stationInteractor.addToFavorite(it)
                     else mediaInteractor.setMedia(it)
                 }
-                .doOnComplete { if (startPlay) playerInteractor.play() }
                 .observeOn(AndroidSchedulers.mainThread())
                 .doOnSubscribe { view?.showLoadingIndicator(true) }
                 .doFinally { view?.showLoadingIndicator(false) }
                 .subscribeX(onComplete = {
-                    navigateTo(R.id.nav_favorites)
+                    if (addToFavorite) navigateTo(R.id.nav_favorites)
+                    if (startPlay) playerInteractor.play()
+                    view?.showPlayer()
                 }).addTo(viewSubs)
     }
 

@@ -19,6 +19,7 @@ import io.github.vladimirmi.internetradioplayer.extensions.lock
 import io.github.vladimirmi.internetradioplayer.extensions.visible
 import io.github.vladimirmi.internetradioplayer.navigation.Navigator
 import io.github.vladimirmi.internetradioplayer.presentation.base.BaseActivity
+import io.github.vladimirmi.internetradioplayer.presentation.player.PlayerView
 import kotlinx.android.synthetic.main.activity_root.*
 import kotlinx.android.synthetic.main.view_toolbar.*
 import ru.terrakok.cicerone.NavigatorHolder
@@ -129,6 +130,16 @@ class RootActivity : BaseActivity<RootPresenter, RootView>(), RootView {
 
     override fun showLoadingIndicator(visible: Boolean) {
         loadingPb.visible(visible)
+    }
+
+    override fun showPlayer() {
+        for (fragment in supportFragmentManager.fragments) {
+            for (child in fragment.childFragmentManager.fragments) {
+                if (child is PlayerView) {
+                    child.expandPlayerView(); return
+                }
+            }
+        }
     }
 
     fun createStation(uri: Uri, addToFavorite: Boolean, startPlay: Boolean) {

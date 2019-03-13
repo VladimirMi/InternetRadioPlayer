@@ -20,6 +20,7 @@ import io.github.vladimirmi.internetradioplayer.domain.model.Record
 import io.github.vladimirmi.internetradioplayer.extensions.*
 import io.github.vladimirmi.internetradioplayer.presentation.base.BaseFragment
 import io.github.vladimirmi.internetradioplayer.presentation.main.MainFragment
+import io.github.vladimirmi.internetradioplayer.utils.SimpleOnSeekBarChangeListener
 import kotlinx.android.synthetic.main.fragment_player.*
 import kotlinx.android.synthetic.main.view_controls.*
 import kotlinx.android.synthetic.main.view_station_info.*
@@ -33,7 +34,7 @@ class PlayerFragment : BaseFragment<PlayerPresenter, PlayerView>(), PlayerView {
 
     override val layout = R.layout.fragment_player
 
-    private lateinit var sheetBehavior: BottomSheetBehavior<View>
+    private lateinit var playerBehavior: BottomSheetBehavior<View>
     private var isSeekEnabled = false
 
     override fun providePresenter(): PlayerPresenter {
@@ -72,8 +73,9 @@ class PlayerFragment : BaseFragment<PlayerPresenter, PlayerView>(), PlayerView {
 
     private fun setupBehavior(view: View) {
         view.waitForLayout {
-            sheetBehavior = BottomSheetBehavior.from(view)
-            sheetBehavior.setBottomSheetCallback(object : BottomSheetBehavior.BottomSheetCallback() {
+            playerBehavior = BottomSheetBehavior.from(view)
+            playerBehavior.isHidden = true
+            playerBehavior.setBottomSheetCallback(object : BottomSheetBehavior.BottomSheetCallback() {
                 override fun onSlide(bottomSheet: View, slideOffset: Float) {
                     setOffset(slideOffset)
                 }
@@ -87,23 +89,17 @@ class PlayerFragment : BaseFragment<PlayerPresenter, PlayerView>(), PlayerView {
     }
 
     private fun setupSeekBar() {
-        progressSb.setOnSeekBarChangeListener(object : SeekBar.OnSeekBarChangeListener {
+        progressSb.setOnSeekBarChangeListener(object : SimpleOnSeekBarChangeListener() {
             override fun onProgressChanged(seekBar: SeekBar?, progress: Int, fromUser: Boolean) {
                 if (fromUser) presenter.seekTo(progress)
                 positionTv.text = Formats.duration(progress.toLong())
-            }
-
-            override fun onStartTrackingTouch(seekBar: SeekBar?) {
-            }
-
-            override fun onStopTrackingTouch(seekBar: SeekBar?) {
             }
         })
     }
 
     override fun handleBackPressed(): Boolean {
-        return if (sheetBehavior.state == BottomSheetBehavior.STATE_EXPANDED) {
-            sheetBehavior.state = BottomSheetBehavior.STATE_COLLAPSED
+        return if (playerBehavior.isExpanded) {
+            switchState()
             true
         } else false
     }
@@ -112,15 +108,17 @@ class PlayerFragment : BaseFragment<PlayerPresenter, PlayerView>(), PlayerView {
 
     override fun showPlayerView(visible: Boolean) {
         requireView().waitForLayout {
-            if (!visible) {
-                sheetBehavior.state = BottomSheetBehavior.STATE_HIDDEN
-            } else {
-                sheetBehavior.state = BottomSheetBehavior.STATE_COLLAPSED
-            }
+            playerBehavior.isHideable = !visible
+            if (!visible) playerBehavior.isHidden = true
+            else playerBehavior.isCollapsed = true
             setupOffset()
             true
         }
         (parentFragment as MainFragment?)?.showPlayerView(visible)
+    }
+
+    override fun expandPlayerView() {
+        playerBehavior.isExpanded = true
     }
 
     override fun setStation(station: Station) {
@@ -212,18 +210,9 @@ class PlayerFragment : BaseFragment<PlayerPresenter, PlayerView>(), PlayerView {
 
     //endregion
 
-    private fun switchState() {
-        if (sheetBehavior.state == BottomSheetBehavior.STATE_COLLAPSED) {
-            sheetBehavior.state = BottomSheetBehavior.STATE_EXPANDED
-        } else if (sheetBehavior.state == BottomSheetBehavior.STATE_EXPANDED) {
-            sheetBehavior.state = BottomSheetBehavior.STATE_COLLAPSED
-        }
-    }
-
     private fun setupOffset() {
-        if (sheetBehavior.state == BottomSheetBehavior.STATE_COLLAPSED ||
-                sheetBehavior.state == BottomSheetBehavior.STATE_HIDDEN) setOffset(0f)
-        else if (sheetBehavior.state == BottomSheetBehavior.STATE_EXPANDED) setOffset(1f)
+        if (playerBehavior.isCollapsed || playerBehavior.isHidden) setOffset(0f)
+        else if (playerBehavior.isExpanded) setOffset(1f)
     }
 
     private fun setOffset(state: Float) {
@@ -280,4 +269,28 @@ class PlayerFragment : BaseFragment<PlayerPresenter, PlayerView>(), PlayerView {
             string
         }
     }
+
+    private fun switchState() {
+        if (playerBehavior.isCollapsed) {
+            playerBehavior.isExpanded = true
+        } else if (playerBehavior.isExpanded) {
+            playerBehavior.isCollapsed = true
+        }
+    }
+
+    private var BottomSheetBehavior<View>.isExpanded
+        get() = state == BottomSheetBehavior.STATE_EXPANDED
+        set(value) {
+            if (value) state = BottomSheetBehavior.STATE_EXPANDED
+        }
+    private var BottomSheetBehavior<View>.isCollapsed
+        get() = state == BottomSheetBehavior.STATE_COLLAPSED
+        set(value) {
+            if (value) state = BottomSheetBehavior.STATE_COLLAPSED
+        }
+    private var BottomSheetBehavior<View>.isHidden
+        get() = state == BottomSheetBehavior.STATE_HIDDEN
+        set(value) {
+            if (value) state = BottomSheetBehavior.STATE_HIDDEN
+        }
 }

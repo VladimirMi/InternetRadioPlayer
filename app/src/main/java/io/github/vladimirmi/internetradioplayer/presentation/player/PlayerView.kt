@@ -12,6 +12,8 @@ interface PlayerView : BaseView {
 
     fun showPlayerView(visible: Boolean)
 
+    fun expandPlayerView()
+
     fun setStation(station: Station)
 
     fun setRecord(record: Record)

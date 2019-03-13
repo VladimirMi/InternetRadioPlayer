@@ -11,4 +11,6 @@ interface RootView : BaseView {
     fun checkIntent()
 
     fun showLoadingIndicator(visible: Boolean)
+
+    fun showPlayer()
 }

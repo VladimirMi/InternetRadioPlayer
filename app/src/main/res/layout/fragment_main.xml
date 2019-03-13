@@ -47,6 +47,7 @@
         app:behavior_peekHeight="@dimen/player_collapsed_height"
         app:behavior_hideable="true"
         app:behavior_skipCollapsed="false"
+        app:behavior_saveFlags="all"
         app:layout_behavior="@string/bottom_sheet_behavior"
         />
 

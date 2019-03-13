@@ -81,7 +81,7 @@ class SearchFragment : BaseFragment<SearchPresenter, SearchView>(), SearchView,
         val lm = LinearLayoutManager(context)
         suggestionsRv.layoutManager = lm
         suggestionsRv.adapter = suggestionsAdapter
-        suggestionsRv.visible(false)
+        suggestionsRv.itemAnimator?.isRunning { suggestionsRv.visible(false) }
     }
 
     private fun setupSwipeToRefresh() {

@@ -1,5 +1,7 @@
 package io.github.vladimirmi.internetradioplayer.presentation.player
 
+import android.os.Bundle
+import android.os.Parcelable
 import android.text.Spannable
 import android.text.SpannableString
 import android.text.style.ForegroundColorSpan
@@ -9,6 +11,7 @@ import android.widget.SeekBar
 import android.widget.TextView
 import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.constraintlayout.widget.ConstraintSet
+import androidx.coordinatorlayout.widget.CoordinatorLayout
 import androidx.core.content.ContextCompat
 import com.google.android.material.bottomsheet.BottomSheetBehavior
 import io.github.vladimirmi.internetradioplayer.R
@@ -30,7 +33,10 @@ import toothpick.Toothpick
  * Created by Vladimir Mikhalev 20.02.2019.
  */
 
+const val PLAYER_STATE = "PLAYER_STATE"
+
 class PlayerFragment : BaseFragment<PlayerPresenter, PlayerView>(), PlayerView {
+
 
     override val layout = R.layout.fragment_player
 
@@ -52,8 +58,8 @@ class PlayerFragment : BaseFragment<PlayerPresenter, PlayerView>(), PlayerView {
         playPauseBt.setManualMode(true)
 
         setupButtons()
-        setupBehavior(view)
         setupSeekBar()
+        setupBehavior()
     }
 
     private fun setupButtons() {
@@ -71,23 +77,6 @@ class PlayerFragment : BaseFragment<PlayerPresenter, PlayerView>(), PlayerView {
         }
     }
 
-    private fun setupBehavior(view: View) {
-        view.waitForLayout {
-            playerBehavior = BottomSheetBehavior.from(view)
-            playerBehavior.isHidden = true
-            playerBehavior.setBottomSheetCallback(object : BottomSheetBehavior.BottomSheetCallback() {
-                override fun onSlide(bottomSheet: View, slideOffset: Float) {
-                    setOffset(slideOffset)
-                }
-
-                override fun onStateChanged(bottomSheet: View, newState: Int) {
-                }
-            })
-            setupOffset()
-            true
-        }
-    }
-
     private fun setupSeekBar() {
         progressSb.setOnSeekBarChangeListener(object : SimpleOnSeekBarChangeListener() {
             override fun onProgressChanged(seekBar: SeekBar?, progress: Int, fromUser: Boolean) {
@@ -97,6 +86,27 @@ class PlayerFragment : BaseFragment<PlayerPresenter, PlayerView>(), PlayerView {
         })
     }
 
+    private fun setupBehavior() {
+        requireView().post {
+            playerBehavior = BottomSheetBehavior.from(view)
+            arguments?.getParcelable<Parcelable>(PLAYER_STATE)?.let {
+                playerBehavior.onRestoreInstanceState(requireView().parent as CoordinatorLayout,
+                        requireView(), it)
+            }
+            playerBehavior.setBottomSheetCallback(object : BottomSheetBehavior.BottomSheetCallback() {
+                override fun onSlide(bottomSheet: View, slideOffset: Float) {
+                    setOffset(slideOffset)
+                }
+
+                override fun onStateChanged(bottomSheet: View, newState: Int) {
+                    setupOffset()
+                }
+            })
+            requireView().waitForLayout { setupOffset(); true }
+        }
+    }
+
+
     override fun handleBackPressed(): Boolean {
         return if (playerBehavior.isExpanded) {
             switchState()
@@ -104,21 +114,43 @@ class PlayerFragment : BaseFragment<PlayerPresenter, PlayerView>(), PlayerView {
         } else false
     }
 
+    override fun onPause() {
+        val bundle = Bundle().apply {
+            putParcelable(PLAYER_STATE, playerBehavior.onSaveInstanceState(
+                    requireView().parent as CoordinatorLayout,
+                    requireView()
+            ))
+        }
+        arguments = bundle
+        super.onPause()
+    }
+
     //region =============== PlayerView ==============
 
-    override fun showPlayerView(visible: Boolean) {
-        requireView().waitForLayout {
-            playerBehavior.isHideable = !visible
-            if (!visible) playerBehavior.isHidden = true
-            else playerBehavior.isCollapsed = true
-            setupOffset()
-            true
+    override fun showPlayerView(show: Boolean) {
+        (parentFragment as MainFragment?)?.showPlayerView(show)
+        if (!show) {
+            requireView().post {
+                if (!playerBehavior.isHidden) {
+                    playerBehavior.isHideable = true
+                    playerBehavior.isHidden = true
+                }
+            }
+        } else {
+            requireView().postDelayed({
+                if (playerBehavior.isHidden) {
+                    playerBehavior.isHideable = false
+                    playerBehavior.isHidden = false
+                }
+            }, 300)
         }
-        (parentFragment as MainFragment?)?.showPlayerView(visible)
     }
 
     override fun expandPlayerView() {
-        playerBehavior.isExpanded = true
+        requireView().post {
+            playerBehavior.isHideable = false
+            playerBehavior.isExpanded = true
+        }
     }
 
     override fun setStation(station: Station) {
@@ -215,14 +247,15 @@ class PlayerFragment : BaseFragment<PlayerPresenter, PlayerView>(), PlayerView {
         else if (playerBehavior.isExpanded) setOffset(1f)
     }
 
-    private fun setOffset(state: Float) {
+    private fun setOffset(offset: Float) {
+        if (offset < 0) return
         val playerView = view as? ConstraintLayout ?: return
         val set = ConstraintSet()
         set.clone(playerView)
-        set.setVerticalBias(R.id.controlsView, state)
+        set.setVerticalBias(R.id.controlsView, offset)
         set.applyTo(playerView)
 
-        val visible = state > 0.9
+        val visible = offset > 0.9
         nextBt.visible(visible, false)
         previousBt.visible(visible, false)
         stopBt.visible(visible, false)
@@ -231,13 +264,13 @@ class PlayerFragment : BaseFragment<PlayerPresenter, PlayerView>(), PlayerView {
             positionTv.visible(visible, false)
             durationTv.visible(visible, false)
         }
-        simpleMetaFl.visible(state == 0f)
+        simpleMetaFl.visible(offset == 0f)
 
-        playPauseBt.x = playPauseBtStart.x + (playPauseBtEnd.x - playPauseBtStart.x) * state
-        playPauseBt.y = playPauseBtStart.y + (playPauseBtEnd.y - playPauseBtStart.y) * state
-        statusTv.y = statusTvStart.y + (playerView.height - statusTv.height - statusTvStart.y) * state
+        playPauseBt.x = playPauseBtStart.x + (playPauseBtEnd.x - playPauseBtStart.x) * offset
+        playPauseBt.y = playPauseBtStart.y + (playPauseBtEnd.y - playPauseBtStart.y) * offset
+        statusTv.y = statusTvStart.y + (playerView.height - statusTv.height - statusTvStart.y) * offset
 
-        pointerIv.rotationX = 180 * state
+        pointerIv.rotationX = 180 * offset
     }
 
     private fun openLinkDialog(url: String) {
@@ -281,7 +314,8 @@ class PlayerFragment : BaseFragment<PlayerPresenter, PlayerView>(), PlayerView {
     private var BottomSheetBehavior<View>.isExpanded
         get() = state == BottomSheetBehavior.STATE_EXPANDED
         set(value) {
-            if (value) state = BottomSheetBehavior.STATE_EXPANDED
+            state = if (value) BottomSheetBehavior.STATE_EXPANDED
+            else BottomSheetBehavior.STATE_COLLAPSED
         }
     private var BottomSheetBehavior<View>.isCollapsed
         get() = state == BottomSheetBehavior.STATE_COLLAPSED
@@ -291,6 +325,7 @@ class PlayerFragment : BaseFragment<PlayerPresenter, PlayerView>(), PlayerView {
     private var BottomSheetBehavior<View>.isHidden
         get() = state == BottomSheetBehavior.STATE_HIDDEN
         set(value) {
-            if (value) state = BottomSheetBehavior.STATE_HIDDEN
+            state = if (value) BottomSheetBehavior.STATE_HIDDEN
+            else BottomSheetBehavior.STATE_COLLAPSED
         }
 }

@@ -3,6 +3,7 @@
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/playerFragment"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:clickable="true"
@@ -16,13 +17,13 @@
         android:background="@null"
         android:contentDescription="@string/desc_expand_collapse"
         android:elevation="4dp"
+        android:foreground="?actionBarItemBackground"
         android:scaleType="fitXY"
         android:src="@drawable/ic_collapse"
-        android:foreground="?actionBarItemBackground"
+        android:tint="?attr/colorOnPrimary"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        android:tint="?attr/colorOnPrimary"
         tools:ignore="UnusedAttribute"
         />
 

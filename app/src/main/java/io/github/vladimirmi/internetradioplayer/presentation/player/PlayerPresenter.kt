@@ -55,7 +55,6 @@ class PlayerPresenter
                 .addTo(viewSubs)
     }
 
-
     private fun setupPlayer() {
         mediaInteractor.currentMediaObs
                 .map { !it.isNull() }

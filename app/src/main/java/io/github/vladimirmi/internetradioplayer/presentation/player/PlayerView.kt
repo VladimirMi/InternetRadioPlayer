@@ -10,7 +10,7 @@ import io.github.vladimirmi.internetradioplayer.presentation.base.BaseView
 
 interface PlayerView : BaseView {
 
-    fun showPlayerView(visible: Boolean)
+    fun showPlayerView(show: Boolean)
 
     fun expandPlayerView()
 

@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+              xmlns:app="http://schemas.android.com/apk/res-auto"
               xmlns:tools="http://schemas.android.com/tools"
               android:layout_width="match_parent"
               android:layout_height="match_parent"
-              xmlns:app="http://schemas.android.com/apk/res-auto"
               android:orientation="vertical"
     >
 
@@ -14,18 +14,19 @@
         android:layout_weight="1"
         />
 
-    <com.google.android.material.tabs.TabLayout
+    <io.github.vladimirmi.internetradioplayer.ui.FilledTabLayout
         android:id="@+id/navigationTl"
-        android:layout_width="match_parent"
         style="@style/Widget.MaterialComponents.TabLayout.Colored"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:elevation="8dp"
-        tools:ignore="UnusedAttribute"
-        app:tabIndicatorColor="@color/secondary"
-        app:tabIndicatorHeight="4dp"
-        app:tabIndicatorGravity="top"
         android:visibility="gone"
         app:tabBackground="@color/primary_variant"
+        app:tabIndicatorColor="@color/secondary"
+        app:tabIndicatorGravity="top"
+        app:tabIndicatorHeight="4dp"
+        app:tabsNumber="2"
+        tools:ignore="UnusedAttribute"
         />
 
 </LinearLayout>

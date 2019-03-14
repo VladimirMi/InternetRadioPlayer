@@ -3,4 +3,7 @@
     <declare-styleable name="ColorSeekBar">
         <attr name="color" format="color"/>
     </declare-styleable>
+    <declare-styleable name="FilledTabLayout">
+        <attr name="tabsNumber" format="integer"/>
+    </declare-styleable>
 </resources>

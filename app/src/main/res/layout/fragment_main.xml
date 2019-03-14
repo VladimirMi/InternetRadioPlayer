@@ -15,7 +15,7 @@
         android:orientation="vertical"
         >
 
-        <io.github.vladimirmi.internetradioplayer.ui.ScrollableTabLayout
+        <io.github.vladimirmi.internetradioplayer.ui.FilledTabLayout
             android:id="@+id/mainTl"
             style="@style/Widget.MaterialComponents.TabLayout.Colored"
             android:layout_width="match_parent"
@@ -24,10 +24,10 @@
             app:layout_constraintLeft_toLeftOf="parent"
             app:layout_constraintRight_toRightOf="parent"
             app:layout_constraintTop_toTopOf="parent"
-            app:tabMode="scrollable"
-            tools:ignore="UnusedAttribute"
             app:tabIndicatorColor="@color/secondary"
             app:tabIndicatorHeight="6dp"
+            app:tabsNumber="3"
+            tools:ignore="UnusedAttribute"
             />
 
         <androidx.viewpager.widget.ViewPager
@@ -44,10 +44,10 @@
         android:name="io.github.vladimirmi.internetradioplayer.presentation.player.PlayerFragment"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        app:behavior_peekHeight="@dimen/player_collapsed_height"
         app:behavior_hideable="true"
-        app:behavior_skipCollapsed="false"
+        app:behavior_peekHeight="@dimen/player_collapsed_height"
         app:behavior_saveFlags="all"
+        app:behavior_skipCollapsed="false"
         app:layout_behavior="@string/bottom_sheet_behavior"
         />
 

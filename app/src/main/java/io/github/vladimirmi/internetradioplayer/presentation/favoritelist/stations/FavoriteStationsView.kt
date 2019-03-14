@@ -11,7 +11,7 @@ interface FavoriteStationsView : BaseView {
 
     fun setStations(stationList: FlatStationsList)
 
-    fun selectStation(id: String)
+    fun selectStation(uri: String)
 
     fun showPlaceholder(show: Boolean)
 }

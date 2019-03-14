@@ -39,8 +39,8 @@ class HistoryFragment : BaseFragment<HistoryPresenter, HistoryView>(), HistoryVi
         historyAdapter.stations = list
     }
 
-    override fun selectStation(id: String) {
-        val position = historyAdapter.selectStation(id)
+    override fun selectStation(uri: String) {
+        val position = historyAdapter.selectStation(uri)
         historyRv.scrollToPosition(position)
     }
 

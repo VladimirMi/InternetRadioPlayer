@@ -107,7 +107,8 @@ class StationParser
 
         } else if (type.isAudioStream()) {
             val finalUrl = response.request().url()
-            createStation(name, finalUrl, response.headers(), type.encoding)
+            val originUrl = HttpUrl.get(url) ?: finalUrl
+            createStation(name, originUrl, finalUrl, response.headers(), type.encoding)
 
         } else {
             throw IllegalStateException("Error: Unsupported content type $type")
@@ -115,12 +116,18 @@ class StationParser
         }).also { body.close() }
     }
 
-    private fun createStation(name: String?, url: HttpUrl, headers: Headers, encoding: String): Station {
+    private fun createStation(
+            name: String?,
+            originUrl: HttpUrl,
+            finalUrl: HttpUrl,
+            headers: Headers,
+            encoding: String
+    ): Station {
         Timber.d("createStation: $headers")
 
         return Station(
-                name = headers[HEADER_NAME] ?: name ?: url.host(),
-                uri = url.toString(),
+                name = headers[HEADER_NAME] ?: name ?: finalUrl.host(),
+                uri = originUrl.toString(),
                 url = headers[HEADER_URL],
                 encoding = encoding,
                 bitrate = headers[HEADER_BITRATE],

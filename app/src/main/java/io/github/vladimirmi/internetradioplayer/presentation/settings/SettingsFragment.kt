@@ -17,7 +17,6 @@ import io.github.vladimirmi.internetradioplayer.extensions.subscribeX
 import io.github.vladimirmi.internetradioplayer.navigation.Router
 import io.github.vladimirmi.internetradioplayer.presentation.base.BackPressListener
 import io.reactivex.android.schedulers.AndroidSchedulers
-import io.reactivex.rxkotlin.toCompletable
 
 /**
  * Created by Vladimir Mikhalev 30.09.2018.
@@ -39,7 +38,7 @@ class SettingsFragment : PreferenceFragmentCompat(), BackPressListener {
         preferenceManager.sharedPreferencesName = Preferences.PREFERENCES_NAME
         addPreferencesFromResource(R.xml.settings_screen)
 
-        findPreference<Preference>("BACKUP_STATIONS").setOnPreferenceClickListener {
+        findPreference<Preference>("BACKUP_STATIONS")?.setOnPreferenceClickListener {
             val uri = backupRestoreHelper.createBackup()
             val intent = ShareCompat.IntentBuilder.from(activity)
                     .setType(BACKUP_TYPE)
@@ -48,13 +47,13 @@ class SettingsFragment : PreferenceFragmentCompat(), BackPressListener {
                     .setChooserTitle(getString(R.string.chooser_save))
                     .createChooserIntent()
                     .addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION)
-            context!!.startActivitySafe(intent)
+            requireContext().startActivitySafe(intent)
             true
         }
-        findPreference<Preference>("RESTORE_STATIONS").setOnPreferenceClickListener {
+        findPreference<Preference>("RESTORE_STATIONS")?.setOnPreferenceClickListener {
             val intent = Intent(Intent.ACTION_GET_CONTENT)
             intent.type = BACKUP_TYPE
-            if (context!!.packageManager.resolveActivity(intent, 0) != null) {
+            if (requireContext().packageManager.resolveActivity(intent, 0) != null) {
                 startActivityForResult(intent, PICK_BACKUP_REQUEST_CODE)
             }
             true
@@ -65,23 +64,17 @@ class SettingsFragment : PreferenceFragmentCompat(), BackPressListener {
         if (preference is SeekBarDialogPreference) {
             val fragment = SeekBarDialogFragment.newInstance(preference.key)
             fragment.setTargetFragment(this, 0)
-            fragment.show(fragmentManager!!, "SeekBarDialogFragment")
+            fragment.show(requireFragmentManager(), "SeekBarDialogFragment")
         } else {
             super.onDisplayPreferenceDialog(preference)
         }
     }
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
-        if (requestCode == PICK_BACKUP_REQUEST_CODE && resultCode == Activity.RESULT_OK
-                && data?.data != null) {
+        if (requestCode == PICK_BACKUP_REQUEST_CODE && resultCode == Activity.RESULT_OK && data?.data != null) {
             //todo to interactor
-            backupRestoreHelper.restoreBackup(context!!.contentResolver.openInputStream(data.data!!)!!)
+            backupRestoreHelper.restoreBackup(requireContext().contentResolver.openInputStream(data.data!!)!!)
                     .andThen(Scopes.app.getInstance(FavoriteListInteractor::class.java).initFavoriteList())
-                    .andThen({
-                        //                        if (Scopes.app.getInstance(StationInteractor::class.java).station.isNull()) {
-//                            Scopes.app.getInstance(FavoriteListInteractor::class.java).nextStation("")
-//                        }
-                    }.toCompletable())
                     .observeOn(AndroidSchedulers.mainThread())
                     .subscribeX(onComplete = { router.exit() })
         }

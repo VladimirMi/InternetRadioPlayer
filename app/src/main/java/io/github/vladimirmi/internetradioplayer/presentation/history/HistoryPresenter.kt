@@ -37,7 +37,7 @@ class HistoryPresenter
 
         mediaInteractor.currentMediaObs
                 .observeOn(AndroidSchedulers.mainThread())
-                .subscribeX(onNext = { view.selectStation(it.id) })
+                .subscribeX(onNext = { view.selectStation(it.uri) })
                 .addTo(viewSubs)
     }
 

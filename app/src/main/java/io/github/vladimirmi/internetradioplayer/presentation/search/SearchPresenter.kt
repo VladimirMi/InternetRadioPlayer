@@ -34,8 +34,8 @@ class SearchPresenter
     private var selectSub: Disposable? = null
 
     override fun onFirstAttach(view: SearchView) {
-        view.showPlaceholder(true)
         searchInteractor.queryRecentSuggestions("")
+                .doOnSuccess { view.showPlaceholder(it.isEmpty()) }
                 .filter { it.isNotEmpty() }
                 .map { it.first() }
                 .observeOn(AndroidSchedulers.mainThread())
@@ -87,7 +87,7 @@ class SearchPresenter
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribeX(onNext = {
                     view?.setStations(it)
-                    view?.selectStation(mediaInteractor.currentMedia.id)
+                    view?.selectStation(mediaInteractor.currentMedia.uri)
                     view?.showLoading(false)
                     view?.showPlaceholder(it.isEmpty())
                 }, onError = {

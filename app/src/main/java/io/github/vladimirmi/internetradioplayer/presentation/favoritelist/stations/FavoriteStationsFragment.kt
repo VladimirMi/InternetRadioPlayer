@@ -35,7 +35,7 @@ class FavoriteStationsFragment : BaseFragment<FavoriteStationsPresenter, Favorit
 
     override val layout = R.layout.fragment_favorite_stations
 
-    private val stationListAdapter by lazy { StationListAdapter(this) }
+    private val stationListAdapter by lazy { FavoriteStationAdapter(this) }
     private var changeOrderMode = false
     private var enableMenu = false
 
@@ -136,9 +136,9 @@ class FavoriteStationsFragment : BaseFragment<FavoriteStationsPresenter, Favorit
         stationListAdapter.setData(stationList)
     }
 
-    override fun selectStation(id: String) {
-        stationListAdapter.selectStation(id)
-        val position = stationListAdapter.getPosition(id)
+    override fun selectStation(uri: String) {
+        stationListAdapter.selectStation(uri)
+        val position = stationListAdapter.getPosition(uri)
         if (position != -1) stationsRv.scrollToPosition(position)
     }
 

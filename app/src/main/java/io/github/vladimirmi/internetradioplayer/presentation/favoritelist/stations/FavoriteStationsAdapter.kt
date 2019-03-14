@@ -33,7 +33,7 @@ private const val GROUP_ITEM = 1
 val defaultOutline = if (Build.VERSION.SDK_INT >= 21) ViewOutlineProvider.BACKGROUND else null
 val fixedOutline = if (Build.VERSION.SDK_INT >= 21) FixedOutlineProvider() else null
 
-class StationListAdapter(private val callback: FavoriteStationsAdapterCallback)
+class FavoriteStationAdapter(private val callback: FavoriteStationsAdapterCallback)
     : RecyclerView.Adapter<GroupElementVH>() {
 
     var longClickedItem: Any? = null
@@ -41,7 +41,7 @@ class StationListAdapter(private val callback: FavoriteStationsAdapterCallback)
     private var stations = FlatStationsList()
     private var dragEnabled = false
     private var dragged = false
-    private var selectedStationId: String? = null
+    private var selectedStationUri: String? = null
 
     fun setData(data: FlatStationsList) {
         if (dragged) {
@@ -60,8 +60,8 @@ class StationListAdapter(private val callback: FavoriteStationsAdapterCallback)
         return stations.positionOfStation(id)
     }
 
-    fun selectStation(id: String) {
-        selectedStationId = id
+    fun selectStation(uri: String) {
+        selectedStationUri = uri
         notifyItemRangeChanged(0, itemCount, PAYLOAD_SELECTED_CHANGE)
     }
 
@@ -134,10 +134,10 @@ class StationListAdapter(private val callback: FavoriteStationsAdapterCallback)
     private fun GroupElementVH.select(position: Int) {
         val selected = if (stations.isGroup(position)) {
             val group = stations.getGroup(position)
-            !group.expanded && group.stations.find { selectedStationId == it.id } != null
+            !group.expanded && group.stations.find { selectedStationUri == it.uri } != null
         } else {
             val station = stations.getStation(position)
-            station.id == selectedStationId
+            station.uri == selectedStationUri
         }
         select(selected)
     }

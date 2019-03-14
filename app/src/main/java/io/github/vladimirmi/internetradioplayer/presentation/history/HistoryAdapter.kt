@@ -26,7 +26,7 @@ import kotlinx.android.synthetic.main.item_station.view.*
 
 class HistoryAdapter : RecyclerView.Adapter<StationVH>() {
 
-    private var selectedStationId: String? = null
+    private var selectedStationUri: String? = null
 
     var longClickedItem: Station? = null
 
@@ -80,17 +80,17 @@ class HistoryAdapter : RecyclerView.Adapter<StationVH>() {
         return stations.size
     }
 
-    fun selectStation(id: String): Int {
-        val oldPos = stations.indexOfFirst { it.first.id == selectedStationId }
-        val newPos = stations.indexOfFirst { it.first.id == id }
-        selectedStationId = id
+    fun selectStation(uri: String): Int {
+        val oldPos = stations.indexOfFirst { it.first.uri == selectedStationUri }
+        val newPos = stations.indexOfFirst { it.first.uri == uri }
+        selectedStationUri = uri
         notifyItemChanged(oldPos, PAYLOAD_SELECTED_CHANGE)
         notifyItemChanged(newPos, PAYLOAD_SELECTED_CHANGE)
         return newPos
     }
 
     private fun StationVH.select(station: Pair<Station, Boolean>) {
-        val selected = station.first.id == selectedStationId
+        val selected = station.first.uri == selectedStationUri
         select(selected, station.second)
         if (selected) {
             itemView.favoriteBt?.setOnClickListener { onAddToFavListener?.invoke(station) }

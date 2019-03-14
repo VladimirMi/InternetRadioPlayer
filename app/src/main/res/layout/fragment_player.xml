@@ -10,22 +10,6 @@
     android:focusable="true"
     >
 
-    <ImageButton
-        android:id="@+id/pointerIv"
-        android:layout_width="48dp"
-        android:layout_height="16dp"
-        android:background="@null"
-        android:contentDescription="@string/desc_expand_collapse"
-        android:elevation="4dp"
-        android:foreground="?actionBarItemBackground"
-        android:scaleType="fitXY"
-        android:src="@color/white"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        tools:ignore="UnusedAttribute"
-        />
-
     <include
         android:id="@+id/stationInfoView"
         layout="@layout/view_station_info"
@@ -117,6 +101,22 @@
         android:layout_height="wrap_content"
         android:orientation="horizontal"
         app:layout_constraintGuide_begin="@dimen/player_collapsed_height"
+        />
+
+    <ImageButton
+        android:id="@+id/pointerIv"
+        android:layout_width="48dp"
+        android:layout_height="16dp"
+        android:background="@null"
+        android:contentDescription="@string/desc_expand_collapse"
+        android:foreground="?actionBarItemBackground"
+        android:scaleType="fitXY"
+        android:src="@drawable/ic_collapse"
+        android:tint="?attr/colorOnPrimary"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        tools:ignore="UnusedAttribute"
         />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

@@ -9,6 +9,7 @@ import io.github.vladimirmi.internetradioplayer.navigation.Router
 import io.github.vladimirmi.internetradioplayer.presentation.base.BasePresenter
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.rxkotlin.addTo
+import timber.log.Timber
 import javax.inject.Inject
 
 /**
@@ -20,19 +21,23 @@ class RootPresenter
                     private val playerInteractor: PlayerInteractor,
                     private val stationInteractor: StationInteractor,
                     private val favoriteListInteractor: FavoriteListInteractor,
+                    private val mediaInteractor: MediaInteractor,
                     private val mainInteractor: MainInteractor,
-                    private val historyInteractor: HistoryInteractor)
+                    private val historyInteractor: HistoryInteractor,
+                    private val recordsInteractor: RecordsInteractor)
     : BasePresenter<RootView>() {
 
     override fun onFirstAttach(view: RootView) {
-        playerInteractor.connect()
-        val pageId = mainInteractor.getMainPageId()
-        router.newRootScreen(pageId)
+        router.newRootScreen(mainInteractor.getMainPageId())
 
-        favoriteListInteractor.initFavoriteList()
-                .andThen(historyInteractor.selectRecentStation())
+        playerInteractor.connect()
+                .andThen(favoriteListInteractor.initFavoriteList()
+                        .mergeWith(recordsInteractor.initRecords())
+                        .mergeWith(historyInteractor.initHistory()))
                 .observeOn(AndroidSchedulers.mainThread())
-                .subscribeX { view.checkIntent() }
+                .doOnSubscribe { view.showLoadingIndicator(true) }
+                .doOnTerminate { view.showLoadingIndicator(false) }
+                .subscribeX(onComplete = { view.checkIntent() })
                 .addTo(dataSubs)
     }
 
@@ -45,24 +50,30 @@ class RootPresenter
     }
 
     @SuppressLint("CheckResult")
-    fun addOrShowStation(uri: Uri, startPlay: Boolean) {
+    fun addOrShowStation(uri: Uri, addToFavorite: Boolean, startPlay: Boolean) {
         stationInteractor.createStation(uri)
-                .doOnSuccess { if (startPlay) playerInteractor.play() }
+                .flatMapCompletable {
+                    if (addToFavorite) stationInteractor.addToFavorite(it)
+                    else mediaInteractor.setMedia(it)
+                }
                 .observeOn(AndroidSchedulers.mainThread())
                 .doOnSubscribe { view?.showLoadingIndicator(true) }
                 .doFinally { view?.showLoadingIndicator(false) }
-                .subscribeX(onSuccess = {
-                    navigateTo(R.id.nav_player)
+                .subscribeX(onComplete = {
+                    if (addToFavorite) navigateTo(R.id.nav_favorites)
+                    if (startPlay) playerInteractor.play()
+                    view?.showPlayer()
                 }).addTo(viewSubs)
     }
 
     @SuppressLint("CheckResult")
     fun showStation(id: String, startPlay: Boolean) {
         //todo legacy
+        Timber.e("showStation: $id $startPlay")
         val station = favoriteListInteractor.getStation(id)
         if (station != null) {
-            stationInteractor.station = station
-            navigateTo(R.id.nav_player)
+            mediaInteractor.currentMedia = station
+            navigateTo(R.id.nav_favorites)
             if (startPlay) playerInteractor.play()
         } else {
             view?.showSnackbar(R.string.msg_shortcut_remove)
@@ -79,6 +90,7 @@ class RootPresenter
 
     private fun exitApp() {
         playerInteractor.stop()
+        recordsInteractor.stopAllRecordings()
         router.finishChain()
     }
 }

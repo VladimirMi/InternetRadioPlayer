@@ -1,5 +1,6 @@
 package io.github.vladimirmi.internetradioplayer.presentation.search
 
+import android.view.ContextMenu
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -17,6 +18,7 @@ import kotlinx.android.synthetic.main.item_suggestion.view.*
 class SearchSuggestionsAdapter(private val callback: SearchSuggestionsAdapter.Callback)
     : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
 
+    var longClickedItem: Suggestion? = null
     private var suggestions = SuggestionList()
 
     fun addRecentSuggestions(list: List<Suggestion>) {
@@ -43,6 +45,7 @@ class SearchSuggestionsAdapter(private val callback: SearchSuggestionsAdapter.Ca
         val suggestion = suggestions[position]
         holder.bind(suggestion)
         holder.itemView.setOnClickListener { callback.onSuggestionSelected(suggestion) }
+        holder.itemView.setOnLongClickListener { longClickedItem = suggestion; false }
     }
 
     override fun getItemCount(): Int {
@@ -74,14 +77,23 @@ class SearchSuggestionsAdapter(private val callback: SearchSuggestionsAdapter.Ca
     }
 }
 
-open class SuggestionVH(itemView: View) : RecyclerView.ViewHolder(itemView) {
+class SuggestionVH(itemView: View) : RecyclerView.ViewHolder(itemView), View.OnCreateContextMenuListener {
+
+
+    override fun onCreateContextMenu(menu: ContextMenu?, v: View?, menuInfo: ContextMenu.ContextMenuInfo?) {
+        menu?.add(R.id.context_menu_suggestion, R.id.context_menu_action_delete, 0, R.string.menu_delete)
+    }
 
     fun bind(suggestion: Suggestion) {
         itemView.suggestionTv.text = suggestion.value
-        itemView.iconIv.setImageResource(
-                if (suggestion is Suggestion.Recent) R.drawable.ic_history
-                else R.drawable.ic_search
-        )
+        val icon = if (suggestion is Suggestion.Recent) {
+            itemView.setOnCreateContextMenuListener(this)
+            R.drawable.ic_history
+        } else {
+            itemView.setOnCreateContextMenuListener(null)
+            R.drawable.ic_search
+        }
+        itemView.iconIv.setImageResource(icon)
     }
 
 }

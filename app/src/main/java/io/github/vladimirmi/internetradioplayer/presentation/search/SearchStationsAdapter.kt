@@ -6,16 +6,15 @@ import android.os.Build
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import androidx.core.content.ContextCompat
 import androidx.recyclerview.widget.RecyclerView
 import io.github.vladimirmi.internetradioplayer.R
-import io.github.vladimirmi.internetradioplayer.data.db.entity.Station
 import io.github.vladimirmi.internetradioplayer.data.net.model.StationSearchRes
 import io.github.vladimirmi.internetradioplayer.domain.model.FlatStationsList
 import io.github.vladimirmi.internetradioplayer.extensions.color
+import io.github.vladimirmi.internetradioplayer.extensions.themeAttrData
 import io.github.vladimirmi.internetradioplayer.extensions.visible
-import io.github.vladimirmi.internetradioplayer.presentation.favoritelist.defaultOutline
-import io.github.vladimirmi.internetradioplayer.presentation.favoritelist.fixedOutline
+import io.github.vladimirmi.internetradioplayer.presentation.favoritelist.stations.defaultOutline
+import io.github.vladimirmi.internetradioplayer.presentation.favoritelist.stations.fixedOutline
 import kotlinx.android.synthetic.main.item_station.view.*
 
 /**
@@ -26,7 +25,7 @@ private const val PAYLOAD_SELECTED_CHANGE = "PAYLOAD_SELECTED_CHANGE"
 
 class SearchStationsAdapter : RecyclerView.Adapter<SearchStationVH>() {
 
-    private var selectedStation: StationSearchRes? = null
+    private var selectedStationUri: String? = null
     private var favorites = FlatStationsList()
 
     var onItemClickListener: ((StationSearchRes) -> Unit)? = null
@@ -66,10 +65,10 @@ class SearchStationsAdapter : RecyclerView.Adapter<SearchStationVH>() {
         return stations.size
     }
 
-    fun selectStation(station: Station): Int {
-        val oldPos = stations.indexOf(selectedStation)
-        val newPos = stations.indexOfFirst { it.uri == station.uri }
-        selectedStation = if (newPos == -1) null else stations[newPos]
+    fun selectStation(uri: String): Int {
+        val oldPos = stations.indexOfFirst { it.uri == selectedStationUri }
+        val newPos = stations.indexOfFirst { it.uri == uri }
+        selectedStationUri = uri
         notifyItemChanged(oldPos, PAYLOAD_SELECTED_CHANGE)
         notifyItemChanged(newPos, PAYLOAD_SELECTED_CHANGE)
         return newPos
@@ -82,7 +81,7 @@ class SearchStationsAdapter : RecyclerView.Adapter<SearchStationVH>() {
 
     private fun SearchStationVH.select(station: StationSearchRes) {
         val isFavorite = favorites.findStation { it.uri == station.uri } != null
-        val selected = station.id == selectedStation?.id
+        val selected = station.uri == selectedStationUri
         select(selected, isFavorite)
     }
 }
@@ -99,12 +98,14 @@ class SearchStationVH(itemView: View) : RecyclerView.ViewHolder(itemView) {
     }
 
     fun select(selected: Boolean, isFavorite: Boolean) {
-        val bg = itemView.context.color(if (selected) R.color.accent_light else R.color.grey_50)
+        val bg = if (selected) itemView.context.themeAttrData(R.attr.colorSecondaryVariant)
+        else itemView.context.themeAttrData(R.attr.colorSurface)
+
         (itemView.background as? GradientDrawable)?.setColor(bg)
 
         favoriteBt.visible(selected || isFavorite)
         if (selected || isFavorite) {
-            val tint = if (isFavorite) R.color.orange_500 else R.color.primary_light
+            val tint = if (isFavorite) R.color.orange_500 else R.color.primary_variant
             itemView.favoriteBt.setColorFilter(itemView.context.color(tint))
         }
     }
@@ -120,7 +121,7 @@ class SearchStationVH(itemView: View) : RecyclerView.ViewHolder(itemView) {
                 R.drawable.bg_item_middle
             }
         }
-        itemView.background = ContextCompat.getDrawable(itemView.context, bg)
+        itemView.setBackgroundResource(bg)
 
         if (Build.VERSION.SDK_INT < 21) return
         itemView.outlineProvider = if (middle) fixedOutline else defaultOutline

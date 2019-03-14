@@ -3,47 +3,34 @@
     <color name="orange_500">#ff9800</color>
     <color name="red_500">#F44336</color>
     <color name="blue_500">#2196F3</color>
-    <color name="teal_a100">#a7ffeb</color>
-    <color name="teal_a700">#00bfa5</color>
     <color name="green_500">#4caf50</color>
     <color name="grey_50">#fafafa</color>
     <color name="grey_300">#e0e0e0</color>
     <color name="grey_400">#bdbdbd</color>
     <color name="grey_600">#757575</color>
     <color name="grey_900">#212121</color>
-    <color name="blue_grey_50">#eceff1</color>
-    <color name="blue_grey_100">#cfd8dc</color>
-    <color name="blue_grey_200">#b0bec5</color>
-    <color name="blue_grey_400">#78909c</color>
-    <color name="blue_grey_600">#546e7a</color>
-    <color name="blue_grey_800">#37474f</color>
 
     <color name="black">#000000</color>
     <color name="white">#ffffff</color>
     <color name="transparent">#00ffffff</color>
 
     <color name="primary">#2A586E</color>
-    <color name="primary_darker">#0C3A50</color>
     <color name="primary_dark">#012130</color>
-    <color name="primary_lighter">#567B8D</color>
-    <color name="primary_light">#94A9B4</color>
-    <color name="accent">#AE493C</color>
-    <color name="accent_lighter">#E08E83</color>
-    <color name="accent_light">#FFD5D0</color>
-    <color name="accent_darker">#7E1B0E</color>
-    <color name="accent_dark">#4C0900</color>
-    <color name="primary_text">@color/grey_900</color>
-    <color name="secondary_text">@color/grey_600</color>
+    <color name="primary_variant">#94A9B4</color>
+    <color name="secondary">#D32F2F</color>
+    <color name="secondary_variant">#FFD5D0</color>
+    <color name="on_primary">@color/grey_50</color>
+    <color name="on_secondary">@color/grey_50</color>
+    <color name="surface">@color/grey_50</color>
+    <color name="on_surface">@color/grey_900</color>
+    <color name="background">@color/grey_50</color>
     <color name="divider">@color/grey_400</color>
-    <color name="window">@color/blue_grey_50</color>
-    <color name="secondary">#AE923C</color>
-    <color name="secondary_lighter">#E0C983</color>
-    <color name="secondary_light">#FFF3D0</color>
 
+    <color name="group">#E0C983</color>
+    <color name="accent_light">#FFD5D0</color>
     <color name="shadow">#44616161</color>
-
-    <color name="play_button">#64dd17</color>
-    <color name="pause_button">#ffa726</color>
-    <color name="stop_button">#e57373</color>
+    <color name="play">#64dd17</color>
+    <color name="pause">#ffa726</color>
+    <color name="stop">#e57373</color>
 
 </resources>

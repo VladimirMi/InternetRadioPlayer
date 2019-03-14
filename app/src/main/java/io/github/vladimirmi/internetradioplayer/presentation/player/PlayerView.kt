@@ -1,7 +1,7 @@
 package io.github.vladimirmi.internetradioplayer.presentation.player
 
-import android.support.v4.media.MediaMetadataCompat
 import io.github.vladimirmi.internetradioplayer.data.db.entity.Station
+import io.github.vladimirmi.internetradioplayer.domain.model.Record
 import io.github.vladimirmi.internetradioplayer.presentation.base.BaseView
 
 /**
@@ -10,33 +10,39 @@ import io.github.vladimirmi.internetradioplayer.presentation.base.BaseView
 
 interface PlayerView : BaseView {
 
+    fun showPlayerView(show: Boolean)
+
+    fun expandPlayerView()
+
     fun setStation(station: Station)
 
-    fun openLinkDialog(url: String)
-
-    fun openAddShortcutDialog()
-
-    fun openNewGroupDialog()
+    fun setRecord(record: Record)
 
     fun setFavorite(isFavorite: Boolean)
 
-    fun setMetadata(metadata: MediaMetadataCompat)
+    fun setMetadata(artist: String, title: String)
 
-    fun showStopped()
+    fun setSimpleMetadata(metadata: String)
 
-    fun showBuffering()
+    fun setStatus(resId: Int)
 
-    fun showPlaying()
+    fun showPlaying(isPlaying: Boolean)
 
     fun showPrevious()
 
     fun showNext()
 
-    fun setGroups(list: List<String>)
+    fun setRecording(isRecording: Boolean)
 
-    fun setGroup(position: Int)
+    fun setGroup(group: String)
 
-    fun showPlaceholder(show: Boolean)
+    fun setDuration(duration: Long)
 
-    fun switchTitleEditable()
+    fun setPosition(position: Long)
+
+    fun incrementPositionBy(duration: Long)
+
+    fun enableSeek(isEnabled: Boolean)
+
+    fun enableSkip(isEnabled: Boolean)
 }

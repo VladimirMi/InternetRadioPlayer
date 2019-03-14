@@ -3,104 +3,61 @@
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/playerFragment"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:clickable="true"
+    android:focusable="true"
     >
 
-    <com.google.android.material.card.MaterialCardView
-        android:id="@+id/infoCv"
-        style="@style/CustomCardView"
+    <include
+        android:id="@+id/stationInfoView"
+        layout="@layout/view_station_info"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginLeft="16dp"
-        android:layout_marginTop="16dp"
-        android:layout_marginRight="16dp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        >
+        />
 
-        <include layout="@layout/view_station_info"/>
-
-    </com.google.android.material.card.MaterialCardView>
-
-    <com.google.android.material.card.MaterialCardView
-        android:id="@+id/metadataCv"
-        style="@style/CustomCardView"
+    <LinearLayout
+        android:id="@+id/metadataInfoView"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginLeft="16dp"
-        android:layout_marginRight="16dp"
-        android:visibility="gone"
+        android:layout_height="0dp"
+        android:background="@color/surface"
+        android:orientation="vertical"
+        android:padding="8dp"
         app:layout_constraintBottom_toTopOf="@id/controlsView"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/infoCv"
+        app:layout_constraintTop_toBottomOf="@id/stationInfoView"
         >
 
-        <LinearLayout
+        <TextView
+            android:id="@+id/metaTitleTv"
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:orientation="vertical"
-            >
+            android:layout_height="wrap_content"
+            android:ellipsize="marquee"
+            android:marqueeRepeatLimit="marquee_forever"
+            android:padding="8dp"
+            android:singleLine="true"
+            android:textAppearance="@style/TextAppearance.AppCompat.Title"
+            tools:text="Festus vigils ducunt ad gemna."
+            />
 
-            <TextView
-                android:id="@+id/metaTitleTv"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:ellipsize="marquee"
-                android:marqueeRepeatLimit="marquee_forever"
-                android:padding="8dp"
-                android:singleLine="true"
-                android:textAppearance="@style/TextAppearance.AppCompat.Title"
-                tools:text="Festus vigils ducunt ad gemna."
-                />
+        <TextView
+            android:id="@+id/metaSubtitleTv"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:ellipsize="marquee"
+            android:marqueeRepeatLimit="marquee_forever"
+            android:padding="8dp"
+            android:singleLine="true"
+            android:textAppearance="@style/TextAppearance.AppCompat.Subhead"
+            tools:text="Festus vigils ducunt ad gemna."
+            />
 
-            <TextView
-                android:id="@+id/metaSubtitleTv"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:ellipsize="marquee"
-                android:marqueeRepeatLimit="marquee_forever"
-                android:padding="8dp"
-                android:singleLine="true"
-                android:textAppearance="@style/TextAppearance.AppCompat.Subhead"
-                tools:text="Festus vigils ducunt ad gemna."
-                />
-
-        </LinearLayout>
-
-    </com.google.android.material.card.MaterialCardView>
-
-    <ProgressBar
-        android:id="@+id/bufferingPb"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        app:layout_constraintBottom_toTopOf="@id/controlsView"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/infoCv"
-        />
-
-    <View
-        android:id="@+id/shadow"
-        android:layout_width="match_parent"
-        android:layout_height="4dp"
-        android:background="@drawable/shadow_reverse"
-        app:layout_constraintBottom_toTopOf="@id/controlsView"
-        />
-
-    <TextView
-        android:id="@+id/placeholderView"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:gravity="center"
-        android:text="@string/player_placeholder"
-        android:textAppearance="@style/TextAppearance.AppCompat.Title"
-        android:visibility="gone"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        />
+    </LinearLayout>
 
     <include
         android:id="@+id/controlsView"
@@ -108,6 +65,58 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.0"
+        tools:layout_constraintVertical_bias="1.0"
+        />
+
+    <TextView
+        android:id="@+id/statusTv"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:paddingLeft="16dp"
+        android:paddingRight="16dp"
+        android:textAllCaps="true"
+        android:textAppearance="@style/TextAppearance.MaterialComponents.Caption"
+        android:textColor="?attr/colorOnPrimary"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        tools:text="playing"
+        />
+
+    <TextView
+        android:id="@+id/statusTvStart"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textAllCaps="true"
+        android:textAppearance="@style/TextAppearance.MaterialComponents.Caption"
+        android:visibility="invisible"
+        app:layout_constraintBottom_toTopOf="@id/guideline"
+        app:layout_constraintStart_toStartOf="parent"
+        />
+
+    <androidx.constraintlayout.widget.Guideline
+        android:id="@+id/guideline"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        app:layout_constraintGuide_begin="@dimen/player_collapsed_height"
+        />
+
+    <ImageButton
+        android:id="@+id/pointerIv"
+        android:layout_width="48dp"
+        android:layout_height="16dp"
+        android:background="@null"
+        android:contentDescription="@string/desc_expand_collapse"
+        android:foreground="?actionBarItemBackground"
+        android:scaleType="fitXY"
+        android:src="@drawable/ic_collapse"
+        android:tint="?attr/colorOnPrimary"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        tools:ignore="UnusedAttribute"
         />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

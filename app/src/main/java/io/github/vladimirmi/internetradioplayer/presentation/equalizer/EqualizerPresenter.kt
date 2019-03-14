@@ -3,7 +3,7 @@ package io.github.vladimirmi.internetradioplayer.presentation.equalizer
 import android.support.v4.media.MediaMetadataCompat
 import android.support.v4.media.session.PlaybackStateCompat
 import io.github.vladimirmi.internetradioplayer.R
-import io.github.vladimirmi.internetradioplayer.data.service.*
+import io.github.vladimirmi.internetradioplayer.data.service.extensions.*
 import io.github.vladimirmi.internetradioplayer.domain.interactor.EqualizerInteractor
 import io.github.vladimirmi.internetradioplayer.domain.interactor.PlayerInteractor
 import io.github.vladimirmi.internetradioplayer.extensions.subscribeX
@@ -107,7 +107,7 @@ class EqualizerPresenter
     private fun handleMetadata(metadata: MediaMetadataCompat) {
         when {
             metadata.isNotSupported() -> view?.setMetadata("${metadata.album} - ${metadata.title}")
-            metadata.isEmpty() -> view?.setMetadata("${metadata.album}")
+            metadata.isEmpty() -> view?.setMetadata(metadata.album)
             else -> view?.setMetadata("${metadata.artist} - ${metadata.title}")
         }
     }

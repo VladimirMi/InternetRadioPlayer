@@ -5,6 +5,7 @@ import android.support.v4.media.MediaMetadataCompat
 import android.support.v4.media.session.PlaybackStateCompat
 import io.github.vladimirmi.internetradioplayer.data.repository.PlayerRepository
 import io.github.vladimirmi.internetradioplayer.data.utils.NetworkChecker
+import io.reactivex.Completable
 import io.reactivex.Observable
 import javax.inject.Inject
 
@@ -19,6 +20,7 @@ class PlayerInteractor
     val playbackStateObs: Observable<PlaybackStateCompat> get() = player.playbackState
     val metadataObs: Observable<MediaMetadataCompat> get() = player.metadata
     val sessionEventObs: Observable<Pair<String, Bundle>> get() = player.sessionEvent
+    val connectedObs: Observable<Boolean> get() = player.connectedObs
 
     val isPlaying: Boolean
         get() = with(player.playbackState) {
@@ -33,7 +35,10 @@ class PlayerInteractor
 
     val isNetAvail: Boolean get() = networkChecker.isAvailable()
 
-    fun connect() = player.connect()
+    fun connect(): Completable {
+        player.connect()
+        return connectedObs.filter { it }.first(true).ignoreElement()
+    }
 
     fun disconnect() = player.disconnect()
 
@@ -52,4 +57,6 @@ class PlayerInteractor
     fun skipToPrevious() = player.skipToPrevious()
 
     fun skipToNext() = player.skipToNext()
+
+    fun seekTo(position: Int) = player.seekTo(position.toLong())
 }

@@ -6,7 +6,6 @@ import io.github.vladimirmi.internetradioplayer.data.db.entity.Group
 import io.github.vladimirmi.internetradioplayer.data.db.entity.Station
 import io.github.vladimirmi.internetradioplayer.domain.model.FlatStationsList
 import io.reactivex.Completable
-import io.reactivex.Observable
 import io.reactivex.Single
 import io.reactivex.schedulers.Schedulers
 import javax.inject.Inject
@@ -20,14 +19,14 @@ class FavoritesRepository
 
     private val dao = db.stationDao()
 
-    private val _stationsListObs = BehaviorRelay.createDefault(FlatStationsList())
-    val stationsListObs: Observable<FlatStationsList> get() = _stationsListObs
+    val stationsListObs = BehaviorRelay.create<FlatStationsList>()
 
-    var groups: List<Group> = ArrayList()
+    var groups: List<Group> = emptyList()
         private set
+
     var stations: FlatStationsList
-        get() = _stationsListObs.value!!
-        set(value) = _stationsListObs.accept(value)
+        get() = stationsListObs.value ?: FlatStationsList()
+        private set(value) = stationsListObs.accept(value)
 
 
     fun initStationsList(groups: List<Group>): Completable {

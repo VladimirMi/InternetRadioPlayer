@@ -26,7 +26,8 @@ class NewStationDialog : BaseDialogFragment() {
 
     override fun onPositive() {
         dialogView?.let {
-            (activity as? RootActivity)?.addOrShowStation(Uri.parse(it.linkEt.text.toString()))
+            val uri = Uri.parse(it.linkEt.text.toString())
+            (activity as? RootActivity)?.createStation(uri, addToFavorite = true, startPlay = false)
         }
     }
 

@@ -1,49 +1,47 @@
 package io.github.vladimirmi.internetradioplayer.presentation.player
 
-import android.os.Handler
-import android.support.v4.media.MediaMetadataCompat
+import android.os.Bundle
+import android.os.Parcelable
 import android.text.Spannable
 import android.text.SpannableString
 import android.text.style.ForegroundColorSpan
 import android.text.style.URLSpan
-import android.util.TypedValue
 import android.view.View
-import android.view.inputmethod.EditorInfo
-import android.view.inputmethod.InputMethodManager
-import android.widget.AdapterView
-import android.widget.ArrayAdapter
-import android.widget.EditText
+import android.widget.SeekBar
 import android.widget.TextView
+import androidx.constraintlayout.widget.ConstraintLayout
+import androidx.constraintlayout.widget.ConstraintSet
+import androidx.coordinatorlayout.widget.CoordinatorLayout
 import androidx.core.content.ContextCompat
-import androidx.interpolator.view.animation.FastOutSlowInInterpolator
+import com.google.android.material.bottomsheet.BottomSheetBehavior
 import io.github.vladimirmi.internetradioplayer.R
 import io.github.vladimirmi.internetradioplayer.data.db.entity.Group
 import io.github.vladimirmi.internetradioplayer.data.db.entity.Station
-import io.github.vladimirmi.internetradioplayer.data.service.EMPTY_METADATA
-import io.github.vladimirmi.internetradioplayer.data.service.artist
-import io.github.vladimirmi.internetradioplayer.data.service.isEmpty
-import io.github.vladimirmi.internetradioplayer.data.service.title
+import io.github.vladimirmi.internetradioplayer.data.utils.AudioEffects
 import io.github.vladimirmi.internetradioplayer.di.Scopes
+import io.github.vladimirmi.internetradioplayer.domain.model.Record
 import io.github.vladimirmi.internetradioplayer.extensions.*
 import io.github.vladimirmi.internetradioplayer.presentation.base.BaseFragment
-import io.github.vladimirmi.internetradioplayer.presentation.favoritelist.NewGroupDialog
+import io.github.vladimirmi.internetradioplayer.presentation.main.MainFragment
+import io.github.vladimirmi.internetradioplayer.utils.SimpleOnSeekBarChangeListener
 import kotlinx.android.synthetic.main.fragment_player.*
 import kotlinx.android.synthetic.main.view_controls.*
 import kotlinx.android.synthetic.main.view_station_info.*
 import toothpick.Toothpick
 
-
 /**
- * Created by Vladimir Mikhalev 18.11.2017.
+ * Created by Vladimir Mikhalev 20.02.2019.
  */
 
-class PlayerFragment : BaseFragment<PlayerPresenter, PlayerView>(), PlayerView, NewGroupDialog.Callback {
+const val PLAYER_STATE = "PLAYER_STATE"
+
+class PlayerFragment : BaseFragment<PlayerPresenter, PlayerView>(), PlayerView {
+
 
     override val layout = R.layout.fragment_player
 
-    private var editTextBg: Int = 0
-    private lateinit var adapter: ArrayAdapter<String>
-    private var blockSpinnerSelection = false
+    private lateinit var playerBehavior: BottomSheetBehavior<View>
+    private var isSeekEnabled = false
 
     override fun providePresenter(): PlayerPresenter {
         return Toothpick.openScopes(Scopes.ROOT_ACTIVITY, this)
@@ -53,129 +51,143 @@ class PlayerFragment : BaseFragment<PlayerPresenter, PlayerView>(), PlayerView, 
     }
 
     override fun setupView(view: View) {
-        setupTitle()
-        setupGroupSpinner()
-
-        favoriteBt.setOnClickListener { presenter.switchFavorite() }
-        addShortcutBt.setOnClickListener { openAddShortcutDialog() }
-
+        titleTv.isSelected = true
         metaTitleTv.isSelected = true
         metaSubtitleTv.isSelected = true
-        playPauseBt.setOnClickListener { presenter.playPause() }
+        simpleMetaTv.isSelected = true
         playPauseBt.setManualMode(true)
+
+        setupButtons()
+        setupSeekBar()
+        setupBehavior()
+    }
+
+    private fun setupButtons() {
+        favoriteBt.setOnClickListener { presenter.switchFavorite() }
+        addShortcutBt.setOnClickListener { openAddShortcutDialog() }
         previousBt.setOnClickListener { presenter.skipToPrevious() }
         nextBt.setOnClickListener { presenter.skipToNext() }
         stopBt.setOnClickListener { presenter.stop() }
         equalizerBt.setOnClickListener { presenter.openEqualizer() }
-    }
-
-    private fun setupTitle() {
-        val typedValue = TypedValue() // save default edit text background
-        activity?.theme?.resolveAttribute(android.R.attr.editTextBackground, typedValue, true)
-        editTextBg = typedValue.resourceId
-
-        titleEt.setEditable(false)
-        editTitleBt.setOnClickListener { presenter.editStationTitle(titleEt.text.toString()) }
-        titleEt.setOnEditorActionListener { _, actionId, _ ->
-            if (actionId == EditorInfo.IME_ACTION_DONE) {
-                presenter.editStationTitle(titleEt.text.toString())
-                true
-            } else false
+        recordBt.setOnClickListener { presenter.startStopRecording() }
+        pointerIv.setOnClickListener { switchState() }
+        playPauseBt.setOnClickListener {
+            presenter.playPause()
+            if (isSeekEnabled) presenter.seekTo(progressSb.progress)
         }
     }
 
-    private fun setupGroupSpinner() {
-        adapter = ArrayAdapter(context!!, android.R.layout.simple_spinner_item)
-        adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
-        groupSpinner.adapter = adapter
-        groupSpinner.onItemSelectedListener = object : AdapterView.OnItemSelectedListener {
-            override fun onNothingSelected(parent: AdapterView<*>?) {
+    private fun setupSeekBar() {
+        progressSb.setOnSeekBarChangeListener(object : SimpleOnSeekBarChangeListener() {
+            override fun onProgressChanged(seekBar: SeekBar?, progress: Int, fromUser: Boolean) {
+                if (fromUser) presenter.seekTo(progress)
+                positionTv.text = Formats.duration(progress.toLong())
             }
+        })
+    }
 
-            override fun onItemSelected(parent: AdapterView<*>?, view: View?, position: Int, id: Long) {
-                if (blockSpinnerSelection) return
-                val groupName = Group.getDbName(adapter.getItem(position)!!, context!!)
-                presenter.selectGroup(position, groupName)
+    private fun setupBehavior() {
+        requireView().post {
+            playerBehavior = BottomSheetBehavior.from(view)
+            arguments?.getParcelable<Parcelable>(PLAYER_STATE)?.let {
+                playerBehavior.onRestoreInstanceState(requireView().parent as CoordinatorLayout,
+                        requireView(), it)
             }
+            playerBehavior.setBottomSheetCallback(object : BottomSheetBehavior.BottomSheetCallback() {
+                override fun onSlide(bottomSheet: View, slideOffset: Float) {
+                    setOffset(slideOffset)
+                }
+
+                override fun onStateChanged(bottomSheet: View, newState: Int) {
+                    setupOffset()
+                }
+            })
+            requireView().waitForLayout { setupOffset(); true }
         }
     }
 
-    override fun setUserVisibleHint(isVisibleToUser: Boolean) {
-        super.setUserVisibleHint(isVisibleToUser)
-        if (view != null && !isVisibleToUser && titleEt.isClickable) {
-            requireContext().inputMethodManager.hideSoftInputFromWindow(view?.windowToken, 0)
-        }
-    }
 
     override fun handleBackPressed(): Boolean {
-        if (titleEt.isClickable) {
-            switchTitleEditable()
-            return true
+        return if (playerBehavior.isExpanded) {
+            switchState()
+            true
+        } else false
+    }
+
+    override fun onPause() {
+        val bundle = Bundle().apply {
+            putParcelable(PLAYER_STATE, playerBehavior.onSaveInstanceState(
+                    requireView().parent as CoordinatorLayout,
+                    requireView()
+            ))
         }
-        return super.handleBackPressed()
+        arguments = bundle
+        super.onPause()
     }
 
     //region =============== PlayerView ==============
 
+    override fun showPlayerView(show: Boolean) {
+        (parentFragment as MainFragment?)?.showPlayerView(show)
+        if (!show) {
+            requireView().post {
+                if (!playerBehavior.isHidden) {
+                    playerBehavior.isHideable = true
+                    playerBehavior.isHidden = true
+                }
+            }
+        } else {
+            requireView().postDelayed({
+                if (playerBehavior.isHidden) {
+                    playerBehavior.isHideable = false
+                    playerBehavior.isHidden = false
+                }
+            }, 300)
+        }
+    }
+
+    override fun expandPlayerView() {
+        requireView().post {
+            playerBehavior.isHideable = false
+            playerBehavior.isExpanded = true
+        }
+    }
+
     override fun setStation(station: Station) {
-        titleEt.setText(station.name)
-        specsTv.setTextOrHide(station.specs)
+        titleTv.text = station.name
+        specsTv.text = station.specs
+        addShortcutBt.visible(true)
+        equalizerBt.visible(AudioEffects.isEqualizerSupported())
+        favoriteBt.visible(true)
+        recordBt.visible(true)
+    }
+
+    override fun setRecord(record: Record) {
+        titleTv.text = record.name
+        specsTv.text = record.createdAtString
+        setGroup("")
+        addShortcutBt.visible(false)
+        equalizerBt.visible(false)
+        favoriteBt.visible(false)
+        recordBt.visible(false)
     }
 
     override fun setFavorite(isFavorite: Boolean) {
-        val tint = if (isFavorite) R.color.orange_500 else R.color.primary_light
+        //todo refactor (create field inside station)
+        val tint = if (isFavorite) R.color.orange_500 else R.color.primary_variant
         favoriteBt.background.setTintExt(context!!.color(tint))
-        groupSpinnerWrapper.visible(isFavorite, false)
-        editTitleBt.visible(isFavorite)
     }
 
-    override fun setGroups(list: List<String>) {
-        adapter.clear()
-        adapter.add(getString(R.string.create_new_group))
-        adapter.addAll(list.map { Group.getViewName(it, context!!) })
+    override fun setGroup(group: String) {
+        groupTv.setTextOrHide(Group.getViewName(group, requireContext()))
     }
 
-    override fun setGroup(position: Int) {
-        //todo try refactor
-        blockSpinnerSelection = true
-        groupSpinner.setSelection(position)
-        Handler().postDelayed({ blockSpinnerSelection = false }, 100)
+    override fun setStatus(resId: Int) {
+        statusTv.setText(resId)
     }
 
-    override fun openLinkDialog(url: String) {
-        LinkDialog.newInstance(url).show(childFragmentManager, "link_dialog")
-    }
-
-    override fun openAddShortcutDialog() {
-        AddShortcutDialog().show(childFragmentManager, "add_shortcut_dialog")
-    }
-
-    override fun openNewGroupDialog() {
-        NewGroupDialog().show(childFragmentManager, "new_group_dialog")
-    }
-
-    override fun onGroupCreate(group: String) {
-        presenter.createGroup(group)
-    }
-
-    override fun onCancelGroupCreate() {
-        presenter.setupGroups()
-    }
-
-    override fun showStopped() {
-        playPauseBt.setPlaying(false, userVisibleHint)
-        bufferingPb.visible(false)
-    }
-
-    override fun showPlaying() {
-        playPauseBt.setPlaying(true, userVisibleHint)
-        bufferingPb.visible(false)
-    }
-
-    override fun showBuffering() {
-        playPauseBt.setPlaying(true, userVisibleHint)
-        bufferingPb.visible(true)
-        setMetadata(EMPTY_METADATA)
+    override fun showPlaying(isPlaying: Boolean) {
+        playPauseBt.isPlaying = isPlaying
     }
 
     override fun showNext() {
@@ -186,45 +198,97 @@ class PlayerFragment : BaseFragment<PlayerPresenter, PlayerView>(), PlayerView, 
         previousBt.bounceXAnimation(-200f).start()
     }
 
-    override fun setMetadata(metadata: MediaMetadataCompat) {
-        if (metadataCv == null) return
-        val visible = !metadata.isEmpty()
-        val scale = if (visible) 1f else 0f
-
-        metadataCv.animate()
-                .scaleX(scale).scaleY(scale)
-                .setDuration(300)
-                .setInterpolator(FastOutSlowInInterpolator())
-                .start()
-        if (visible) metadataCv.visible(true)
-        else Handler().postDelayed({ metadataCv?.visible(false) }, 300)
-        with(metadata) {
-            metaTitleTv.setTextOrHide(artist)
-            metaSubtitleTv.setTextOrHide(title)
-        }
+    override fun setRecording(isRecording: Boolean) {
+        val tint = requireContext().color(if (isRecording) R.color.secondary else R.color.primary_variant)
+        recordBt.setColorFilter(tint)
     }
 
-
-    override fun showPlaceholder(show: Boolean) {
-        infoCv.visible(!show)
-        controlsView.visible(!show)
-        placeholderView.visible(show)
+    override fun setMetadata(artist: String, title: String) {
+        metaTitleTv.setTextOrHide(artist)
+        metaSubtitleTv.setTextOrHide(title)
     }
 
-    override fun switchTitleEditable() {
-        val enabled = titleEt.isClickable
-        titleEt.setEditable(!enabled)
-        editTitleBt.setImageResource(if (enabled) R.drawable.ic_edit else R.drawable.ic_submit)
-        if (enabled) {
-            requireContext().inputMethodManager.hideSoftInputFromWindow(view?.windowToken, 0)
-        } else {
-            titleEt.setSelection(titleEt.length())
-            titleEt.requestFocus()
-            requireContext().inputMethodManager.showSoftInput(titleEt, InputMethodManager.SHOW_IMPLICIT)
-        }
+    override fun setSimpleMetadata(metadata: String) {
+        simpleMetaTv.text = metadata
+    }
+
+    override fun setPosition(position: Long) {
+        progressSb.progress = position.toInt()
+    }
+
+    override fun incrementPositionBy(duration: Long) {
+        progressSb.incrementProgressBy(duration.toInt())
+    }
+
+    override fun setDuration(duration: Long) {
+        durationTv.text = Formats.duration(duration)
+        progressSb.max = duration.toInt()
+    }
+
+    override fun enableSeek(isEnabled: Boolean) {
+        isSeekEnabled = isEnabled
+        progressSb.visible(isEnabled)
+        positionTv.visible(isEnabled)
+        durationTv.visible(isEnabled)
+    }
+
+    override fun enableSkip(isEnabled: Boolean) {
+        val tint = requireContext().color(if (isEnabled) R.color.grey_50 else R.color.grey_600)
+        nextBt.setColorFilter(tint)
+        previousBt.setColorFilter(tint)
+        nextBt.isEnabled = isEnabled
+        previousBt.isEnabled = isEnabled
     }
 
     //endregion
+
+    private fun setupOffset() {
+        if (playerBehavior.isCollapsed || playerBehavior.isHidden) setOffset(0f)
+        else if (playerBehavior.isExpanded) setOffset(1f)
+    }
+
+    private fun setOffset(offset: Float) {
+        if (offset < 0) return
+        val playerView = view as? ConstraintLayout ?: return
+        val set = ConstraintSet()
+        set.clone(playerView)
+        set.setVerticalBias(R.id.controlsView, offset)
+        set.applyTo(playerView)
+
+        val visible = offset > 0.9
+        nextBt.visible(visible, false)
+        previousBt.visible(visible, false)
+        stopBt.visible(visible, false)
+        if (isSeekEnabled) {
+            progressSb.visible(visible, false)
+            positionTv.visible(visible, false)
+            durationTv.visible(visible, false)
+        }
+        simpleMetaFl.visible(offset == 0f)
+
+        playPauseBt.x = playPauseBtStart.x + (playPauseBtEnd.x - playPauseBtStart.x) * offset
+        playPauseBt.y = playPauseBtStart.y + (playPauseBtEnd.y - playPauseBtStart.y) * offset
+        statusTv.y = statusTvStart.y + (playerView.height - statusTv.height - statusTvStart.y) * offset
+
+        pointerIv.rotationX = 180 * offset
+    }
+
+    private fun openLinkDialog(url: String) {
+        LinkDialog.newInstance(url).show(childFragmentManager, "link_dialog")
+    }
+
+    private fun openAddShortcutDialog() {
+        AddShortcutDialog().show(childFragmentManager, "add_shortcut_dialog")
+    }
+
+    private fun TextView.setTextOrHide(text: String?) {
+        if (text == null || text.isBlank()) {
+            visible(false)
+        } else {
+            visible(true)
+            this.text = text
+        }
+    }
 
     private fun TextView.linkStyle(enable: Boolean) {
         val string = text.toString()
@@ -239,20 +303,29 @@ class PlayerFragment : BaseFragment<PlayerPresenter, PlayerView>(), PlayerView, 
         }
     }
 
-    private fun TextView.setTextOrHide(text: String?) {
-        if (text == null || text.isBlank()) {
-            visible(false)
-        } else {
-            visible(true)
-            this.text = text
+    private fun switchState() {
+        if (playerBehavior.isCollapsed) {
+            playerBehavior.isExpanded = true
+        } else if (playerBehavior.isExpanded) {
+            playerBehavior.isCollapsed = true
         }
     }
 
-    private fun EditText.setEditable(enable: Boolean) {
-        isClickable = enable
-        isFocusable = enable
-        isFocusableInTouchMode = enable
-        isCursorVisible = enable
-        setBackgroundResource(if (enable) editTextBg else 0)
-    }
+    private var BottomSheetBehavior<View>.isExpanded
+        get() = state == BottomSheetBehavior.STATE_EXPANDED
+        set(value) {
+            state = if (value) BottomSheetBehavior.STATE_EXPANDED
+            else BottomSheetBehavior.STATE_COLLAPSED
+        }
+    private var BottomSheetBehavior<View>.isCollapsed
+        get() = state == BottomSheetBehavior.STATE_COLLAPSED
+        set(value) {
+            if (value) state = BottomSheetBehavior.STATE_COLLAPSED
+        }
+    private var BottomSheetBehavior<View>.isHidden
+        get() = state == BottomSheetBehavior.STATE_HIDDEN
+        set(value) {
+            state = if (value) BottomSheetBehavior.STATE_HIDDEN
+            else BottomSheetBehavior.STATE_COLLAPSED
+        }
 }

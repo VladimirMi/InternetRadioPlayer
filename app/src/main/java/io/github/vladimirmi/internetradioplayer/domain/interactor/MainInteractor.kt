@@ -20,4 +20,12 @@ class MainInteractor
         return if (id == R.id.nav_settings || id == R.id.nav_equalizer) R.id.nav_search
         else id
     }
+
+    fun saveFavoritePageId(pageId: Int) {
+        prefs.favoritePageId = pageId
+    }
+
+    fun getFavoritePageId(): Int {
+        return prefs.favoritePageId
+    }
 }

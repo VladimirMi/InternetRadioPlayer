@@ -5,8 +5,8 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:orientation="horizontal"
     android:background="@color/primary"
+    android:orientation="horizontal"
     >
 
     <TextView
@@ -27,28 +27,15 @@
         tools:ignore="RtlSymmetry"
         />
 
-    <FrameLayout
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        >
 
-        <ProgressBar
-            android:id="@+id/sBufferingPb"
-            android:layout_width="48dp"
-            android:layout_height="48dp"
-            app:tint="@color/pause_button"
-            android:indeterminate="true"
-            />
-
-        <io.github.vladimirmi.playerbutton.PlayerButton
-            android:id="@+id/sPlayPauseBt"
-            android:layout_width="48dp"
-            android:layout_height="48dp"
-            android:foreground="?actionBarItemBackground"
-            app:pb_pauseColor="@color/pause_button"
-            app:pb_playColor="@color/play_button"
-            tools:ignore="UnusedAttribute"
-            />
-    </FrameLayout>
+    <io.github.vladimirmi.playerbutton.PlayerButton
+        android:id="@+id/sPlayPauseBt"
+        android:layout_width="48dp"
+        android:layout_height="48dp"
+        android:foreground="?actionBarItemBackground"
+        app:pb_pauseColor="@color/pause"
+        app:pb_playColor="@color/play"
+        tools:ignore="UnusedAttribute"
+        />
 
 </LinearLayout>

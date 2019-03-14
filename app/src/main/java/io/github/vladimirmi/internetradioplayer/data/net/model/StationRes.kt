@@ -4,16 +4,20 @@ package io.github.vladimirmi.internetradioplayer.data.net.model
 
 import com.google.gson.annotations.SerializedName
 import io.github.vladimirmi.internetradioplayer.data.db.entity.Station
+import io.github.vladimirmi.internetradioplayer.utils.MessageException
 
 /**
  * Created by Vladimir Mikhalev 15.11.2018.
  */
 const val URI_BASE = "http://stream.dar.fm/"
 
-class StationsResult(
-        val success: Boolean,
-        val result: List<StationsRes>
-)
+class StationsResult(val success: Boolean, val result: List<StationsRes>) {
+
+    fun getStation(): Station {
+        return result.firstOrNull()?.stations?.firstOrNull()?.toStation()
+                ?: throw MessageException("Can't retrieve a station")
+    }
+}
 
 class StationsRes(val stations: List<StationRes>)
 

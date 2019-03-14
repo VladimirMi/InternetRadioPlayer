@@ -33,7 +33,7 @@ data class Icon(val res: Int,
         val canvas = Canvas(bitmap)
 
         if (withBackground) {
-            with(ContextCompat.getDrawable(context, R.drawable.ic_background)!!) {
+            with(ContextCompat.getDrawable(context, R.drawable.bg_icon)!!) {
                 setTintExt(bg)
                 setBounds(0, 0, canvas.width, canvas.height)
                 draw(canvas)

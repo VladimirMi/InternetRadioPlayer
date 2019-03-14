@@ -13,56 +13,63 @@
     <string name="dialog_new_station_description">Paste link to the audio stream or playlist</string>
     <string name="dialog_new_station_hint">Link</string>
     <string name="dialog_new_group">Create new group</string>
-    <string name="dialog_new_group_hint">Group name</string>
+    <string name="dialog_edit_station">Edit station</string>
+    <string name="dialog_edit_group">Edit group</string>
     <string name="dialog_start_playback">Start playback</string>
     <string name="dialog_ok">OK</string>
     <string name="dialog_cancel">Cancel</string>
 
-    <string name="menu_station_shortcut">Add station shortcut</string>
-    <string name="menu_add_station">Add station</string>
     <string name="menu_settings">Settings</string>
     <string name="menu_exit">Exit</string>
+    <string name="menu_edit">Edit</string>
+    <string name="menu_delete">Delete</string>
+    <string name="menu_change_order">Change order</string>
+    <string name="menu_add_group">Add group</string>
 
     <string name="metadata_buffering">Loading…</string>
     <string name="metadata_not_available">Metadata not available</string>
+    <string name="default_folder">Other</string>
+    <string name="title">Title</string>
+    <string name="reset">Reset</string>
 
-    <string name="desc_expand_collapse">expand/collapse</string>
-    <string name="desc_station_icon">station icon</string>
-    <string name="desc_play_pause_button">play/pause</string>
-    <string name="desc_skip_previous_button">skip previous</string>
-    <string name="desc_skip_next_button">skip next</string>
-    <string name="desc_stop_button">stop</string>
-    <string name="desc_edit_title_button">edit title</string>
-    <string name="desc_add_remove_favorite">add/remove favorite</string>
-    <string name="desc_create_shortcut_button">create shortcut</string>
-    <string name="desc_open_equalizer" translatable="false">open equalizer</string>
-    <string name="desc_directory_logo">directory logo</string>
-    <string name="desc_open_drawer">open drawer</string>
-    <string name="desc_close_drawer">close drawer</string>
-    <string name="desc_remove_folder">remove empty group</string>
+    <string name="status_playing">Playing</string>
+    <string name="status_stopped">Stopped</string>
+    <string name="status_paused">Paused</string>
+    <string name="status_recording">Recording</string>
 
-    <string name="tabs_search">Search</string>
-    <string name="tabs_stations">Stations</string>
-    <string name="tabs_player">Player</string>
-    <string name="tabs_history">History</string>
-    <string-array name="uber_stations_tabs">
-        <item>@string/tabs_search</item>
-        <item>@string/tabs_stations</item>
-        <item>@string/tabs_player</item>
-        <item>@string/tabs_history</item>
+    <string name="desc_expand_collapse">Expand/Collapse</string>
+    <string name="desc_station_icon">Station icon</string>
+    <string name="desc_play_pause_button">Play/Pause</string>
+    <string name="desc_skip_previous_button">Skip to previous</string>
+    <string name="desc_skip_next_button">Skip to next</string>
+    <string name="desc_stop_button">Stop</string>
+    <string name="desc_add_remove_favorite">Add/Remove favorite</string>
+    <string name="desc_create_shortcut_button">Create shortcut</string>
+    <string name="desc_equalizer">Equalizer</string>
+    <string name="desc_record">Record</string>
+    <string name="desc_directory_logo">Directory logo</string>
+    <string name="desc_open_drawer">Open drawer</string>
+    <string name="desc_close_drawer">Close drawer</string>
+    <string name="desc_add_station">Add station</string>
+
+    <string name="tab_search">Search</string>
+    <string name="tab_favorite">Favorite</string>
+    <string name="tab_history">History</string>
+    <string name="tab_stations">Stations</string>
+    <string name="tab_records">Records</string>
+
+    <string-array name="main_tabs">
+        <item>@string/tab_search</item>
+        <item>@string/tab_favorite</item>
+        <item>@string/tab_history</item>
     </string-array>
 
     <string name="history_placeholder">History is empty</string>
     <string name="favorite_list_placeholder">Stations list is empty</string>
-    <string name="player_placeholder">No station is selected</string>
     <string name="search_placeholder">Search result is empty</string>
 
-    <string name="create_new_group">Create new group</string>
-    <string name="station_title">Title</string>
-
-    <string name="notification_name">Radio Player notification</string>
-
-    <string name="default_folder">Other</string>
+    <string name="player_channel_name" translatable="false">Radio player notifications</string>
+    <string name="recorder_channel_name" translatable="false">Radio recorder notification</string>
 
     <string name="settings_stream">Stream settings</string>
     <string name="settings_backup_restore">Backup and restore</string>
@@ -81,9 +88,8 @@
 
     <string name="second">%1$d second</string>
     <string name="seconds">%1$d seconds</string>
-    <string name="chooser_backup">Save with</string>
+    <string name="chooser_save">Save with</string>
 
-    <string name="reset">Reset</string>
     <string name="bass_boost" translatable="false">BassBoost</string>
     <string name="virtualizer" translatable="false">Virtualizer</string>
     <string name="min" translatable="false">min</string>

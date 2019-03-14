@@ -3,6 +3,7 @@ package io.github.vladimirmi.internetradioplayer.presentation.history
 import android.annotation.SuppressLint
 import android.graphics.drawable.GradientDrawable
 import android.os.Build
+import android.view.ContextMenu
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -13,23 +14,23 @@ import io.github.vladimirmi.internetradioplayer.R
 import io.github.vladimirmi.internetradioplayer.data.db.entity.Station
 import io.github.vladimirmi.internetradioplayer.extensions.color
 import io.github.vladimirmi.internetradioplayer.extensions.visible
-import io.github.vladimirmi.internetradioplayer.presentation.favoritelist.defaultOutline
-import io.github.vladimirmi.internetradioplayer.presentation.favoritelist.fixedOutline
+import io.github.vladimirmi.internetradioplayer.presentation.favoritelist.stations.PAYLOAD_BACKGROUND_CHANGE
+import io.github.vladimirmi.internetradioplayer.presentation.favoritelist.stations.PAYLOAD_SELECTED_CHANGE
+import io.github.vladimirmi.internetradioplayer.presentation.favoritelist.stations.defaultOutline
+import io.github.vladimirmi.internetradioplayer.presentation.favoritelist.stations.fixedOutline
 import kotlinx.android.synthetic.main.item_station.view.*
 
 /**
  * Created by Vladimir Mikhalev 15.11.2018.
  */
 
-private const val PAYLOAD_SELECTED_CHANGE = "PAYLOAD_SELECTED_CHANGE"
-private const val PAYLOAD_BACKGROUND_CHANGE = "PAYLOAD_BACKGROUND_CHANGE"
-
 class HistoryAdapter : RecyclerView.Adapter<StationVH>() {
 
-    private var selectedStation: Station? = null
+    private var selectedStationUri: String? = null
+
+    var longClickedItem: Station? = null
 
     var onItemClickListener: ((Station) -> Unit)? = null
-
     var onAddToFavListener: ((Pair<Station, Boolean>) -> Unit)? = null
 
     var stations: List<Pair<Station, Boolean>> = emptyList()
@@ -69,26 +70,27 @@ class HistoryAdapter : RecyclerView.Adapter<StationVH>() {
     override fun onBindViewHolder(holder: StationVH, position: Int) {
         val station = stations[position]
         holder.bind(station.first)
-        holder.setBackground(position, itemCount)
         holder.select(station)
+        holder.setBackground(position, itemCount)
         holder.itemView.setOnClickListener { onItemClickListener?.invoke(station.first) }
+        holder.itemView.setOnLongClickListener { longClickedItem = station.first; false }
     }
 
     override fun getItemCount(): Int {
         return stations.size
     }
 
-    fun selectStation(station: Station): Int {
-        val oldPos = stations.indexOfFirst { it.first.uri == selectedStation?.uri }
-        val newPos = stations.indexOfFirst { it.first.uri == station.uri }
-        selectedStation = station
+    fun selectStation(uri: String): Int {
+        val oldPos = stations.indexOfFirst { it.first.uri == selectedStationUri }
+        val newPos = stations.indexOfFirst { it.first.uri == uri }
+        selectedStationUri = uri
         notifyItemChanged(oldPos, PAYLOAD_SELECTED_CHANGE)
         notifyItemChanged(newPos, PAYLOAD_SELECTED_CHANGE)
         return newPos
     }
 
     private fun StationVH.select(station: Pair<Station, Boolean>) {
-        val selected = station.first.uri == selectedStation?.uri
+        val selected = station.first.uri == selectedStationUri
         select(selected, station.second)
         if (selected) {
             itemView.favoriteBt?.setOnClickListener { onAddToFavListener?.invoke(station) }
@@ -98,11 +100,20 @@ class HistoryAdapter : RecyclerView.Adapter<StationVH>() {
     }
 }
 
-class StationVH(itemView: View) : RecyclerView.ViewHolder(itemView) {
+class StationVH(itemView: View) : RecyclerView.ViewHolder(itemView), View.OnCreateContextMenuListener {
     private val titleTv = itemView.titleTv
+
     private val subtitleTv = itemView.subtitleTv
     private val favoriteBt = itemView.favoriteBt
     private var bgColor: Int = 0
+
+    init {
+        itemView.setOnCreateContextMenuListener(this)
+    }
+
+    override fun onCreateContextMenu(menu: ContextMenu?, v: View?, menuInfo: ContextMenu.ContextMenuInfo?) {
+        menu?.add(R.id.context_menu_history, R.id.context_menu_action_delete, 0, R.string.menu_delete)
+    }
 
     @SuppressLint("SetTextI18n")
     fun bind(station: Station) {
@@ -116,7 +127,7 @@ class StationVH(itemView: View) : RecyclerView.ViewHolder(itemView) {
 
         favoriteBt.visible(selected || isFavorite)
         if (selected || isFavorite) {
-            val tint = if (isFavorite) R.color.orange_500 else R.color.primary_light
+            val tint = if (isFavorite) R.color.orange_500 else R.color.primary_variant
             itemView.favoriteBt.setColorFilter(itemView.context.color(tint))
         }
     }

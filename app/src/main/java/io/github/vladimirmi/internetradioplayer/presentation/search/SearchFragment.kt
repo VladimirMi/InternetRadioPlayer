@@ -2,21 +2,19 @@ package io.github.vladimirmi.internetradioplayer.presentation.search
 
 import android.graphics.Rect
 import android.os.Bundle
+import android.view.MenuItem
 import android.view.View
 import android.view.ViewGroup
 import androidx.recyclerview.widget.LinearLayoutManager
 import io.github.vladimirmi.internetradioplayer.R
-import io.github.vladimirmi.internetradioplayer.data.db.entity.Station
 import io.github.vladimirmi.internetradioplayer.data.net.model.StationSearchRes
 import io.github.vladimirmi.internetradioplayer.di.Scopes
 import io.github.vladimirmi.internetradioplayer.domain.model.FlatStationsList
 import io.github.vladimirmi.internetradioplayer.domain.model.Suggestion
-import io.github.vladimirmi.internetradioplayer.extensions.dp
 import io.github.vladimirmi.internetradioplayer.extensions.isVisible
 import io.github.vladimirmi.internetradioplayer.extensions.visible
 import io.github.vladimirmi.internetradioplayer.extensions.waitForLayout
 import io.github.vladimirmi.internetradioplayer.presentation.base.BaseFragment
-import io.github.vladimirmi.internetradioplayer.presentation.main.SimpleControlsView
 import kotlinx.android.synthetic.main.fragment_search.*
 import toothpick.Toothpick
 import androidx.appcompat.widget.SearchView as SearchViewAndroid
@@ -26,7 +24,7 @@ import androidx.appcompat.widget.SearchView as SearchViewAndroid
  */
 
 class SearchFragment : BaseFragment<SearchPresenter, SearchView>(), SearchView,
-        SearchSuggestionsAdapter.Callback, SimpleControlsView {
+        SearchSuggestionsAdapter.Callback {
 
     override val layout = R.layout.fragment_search
 
@@ -52,7 +50,7 @@ class SearchFragment : BaseFragment<SearchPresenter, SearchView>(), SearchView,
         searchView.setIconifiedByDefault(false)
         searchView.setOnQueryTextFocusChangeListener { _, hasFocus ->
             adjustSuggestionsRecyclerHeight(hasFocus)
-            suggestionsRv.visible(hasFocus)
+            suggestionsRv.itemAnimator?.isRunning { suggestionsRv.visible(hasFocus) }
             presenter.intervalSearchEnabled = !hasFocus
         }
 
@@ -83,7 +81,7 @@ class SearchFragment : BaseFragment<SearchPresenter, SearchView>(), SearchView,
         val lm = LinearLayoutManager(context)
         suggestionsRv.layoutManager = lm
         suggestionsRv.adapter = suggestionsAdapter
-        suggestionsRv.visible(false)
+        suggestionsRv.itemAnimator?.isRunning { suggestionsRv.visible(false) }
     }
 
     private fun setupSwipeToRefresh() {
@@ -91,6 +89,16 @@ class SearchFragment : BaseFragment<SearchPresenter, SearchView>(), SearchView,
             presenter.submitSearch(searchView.query.toString())
             swipeToRefresh.isRefreshing = false
         }
+    }
+
+    override fun onContextItemSelected(item: MenuItem): Boolean {
+        if (item.groupId != R.id.context_menu_suggestion) return false
+        val selectedItem = suggestionsAdapter.longClickedItem
+        if (item.itemId == R.id.context_menu_action_delete && selectedItem != null) {
+            presenter.deleteRecentSuggestion(selectedItem, searchView.query.toString())
+            return true
+        }
+        return false
     }
 
     override fun onSuggestionSelected(suggestion: Suggestion) {
@@ -135,8 +143,8 @@ class SearchFragment : BaseFragment<SearchPresenter, SearchView>(), SearchView,
         stationsAdapter.setFavorites(favorites)
     }
 
-    override fun selectStation(station: Station) {
-        val position = stationsAdapter.selectStation(station)
+    override fun selectStation(uri: String) {
+        val position = stationsAdapter.selectStation(uri)
         stationsRv.scrollToPosition(position)
     }
 
@@ -148,11 +156,6 @@ class SearchFragment : BaseFragment<SearchPresenter, SearchView>(), SearchView,
         placeholderView.visible(show)
     }
 
-    override fun showControls(visibility: Float) {
-        val pb = ((48 * (1 - visibility) + 16) * context!!.dp).toInt()
-        stationsRv.setPadding(0, stationsRv.paddingTop, 0, pb)
-    }
-
     //endregion
 
     private fun adjustSuggestionsRecyclerHeight(keyboardDisplayed: Boolean) {
@@ -160,13 +163,14 @@ class SearchFragment : BaseFragment<SearchPresenter, SearchView>(), SearchView,
             val rect = Rect()
             suggestionsRv.getWindowVisibleDisplayFrame(rect)
             frameLayout.waitForLayout {
+                if (view == null) return@waitForLayout true
                 val oldVisibleHeight = rect.bottom - rect.top
                 suggestionsRv.getWindowVisibleDisplayFrame(rect)
                 val newVisibleHeight = rect.bottom - rect.top
                 if (oldVisibleHeight == newVisibleHeight) return@waitForLayout false
 
                 adjustSuggestionsRecyclerHeight(rect)
-                return@waitForLayout true
+                true
             }
         } else {
             val lp = suggestionsRv.layoutParams

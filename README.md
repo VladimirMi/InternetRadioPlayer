@@ -12,8 +12,13 @@ Internet Radio Player is a simple app for listening to radio broadcasts or audio
 - Control playback and navigation using the headset or notification on the lock screen or the notification panel.
 - Change the order of stations or sort them into groups for easier navigation using the Previous/Next buttons.
 - Use the equalizer to adjust the sound. Each station or group can be assigned its own equalizer preset.
+- Station recording feature. Records are displayed on the favorites screen.
 - Supports audio encoded in MP3, AAC, AAC+, Ogg Vorbis, Opus.
 - M3U, M3U8, RAM or PLS playlist file extensions are supported.
+
+##### Important notice:
+The recording feature is currently in beta. The record size limit is 50 MB.
+Records are stored in /Android/data/io.github.vladimirmi.internetradioplayer/files/Records
  
 ## Install
 

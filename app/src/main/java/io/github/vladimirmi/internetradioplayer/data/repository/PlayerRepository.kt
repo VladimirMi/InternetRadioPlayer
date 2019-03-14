@@ -10,8 +10,9 @@ import android.support.v4.media.MediaMetadataCompat
 import android.support.v4.media.session.MediaControllerCompat
 import android.support.v4.media.session.PlaybackStateCompat
 import com.jakewharton.rxrelay2.BehaviorRelay
+import io.github.vladimirmi.internetradioplayer.data.service.EVENT_SESSION_END
+import io.github.vladimirmi.internetradioplayer.data.service.EVENT_SESSION_START
 import io.github.vladimirmi.internetradioplayer.data.service.PlayerService
-import io.reactivex.rxkotlin.subscribeBy
 import timber.log.Timber
 import javax.inject.Inject
 
@@ -19,9 +20,9 @@ import javax.inject.Inject
  * Created by Vladimir Mikhalev 13.10.2017.
  */
 
-
 class PlayerRepository
-@Inject constructor(context: Context) {
+@Inject constructor(context: Context,
+                    private val equalizerRepository: EqualizerRepository) {
 
     private lateinit var mediaBrowser: MediaBrowserCompat
     private var controller: MediaControllerCompat? = null
@@ -29,7 +30,7 @@ class PlayerRepository
     val playbackState: BehaviorRelay<PlaybackStateCompat> = BehaviorRelay.create()
     val metadata: BehaviorRelay<MediaMetadataCompat> = BehaviorRelay.create()
     val sessionEvent: BehaviorRelay<Pair<String, Bundle>> = BehaviorRelay.create()
-    private val connected = BehaviorRelay.createDefault(false)
+    val connectedObs = BehaviorRelay.createDefault(false)
 
     private val connectionCallbacks = object : MediaBrowserCompat.ConnectionCallback() {
         override fun onConnected() {
@@ -39,7 +40,7 @@ class PlayerRepository
                     controllerCallback.onPlaybackStateChanged(playbackState)
                     controllerCallback.onMetadataChanged(metadata)
                 }
-                connected.accept(true)
+                connectedObs.accept(true)
             } catch (e: RemoteException) {
                 Timber.e(e)
             }
@@ -49,9 +50,11 @@ class PlayerRepository
             Timber.d("onConnectionSuspended")
             controller?.unregisterCallback(controllerCallback)
             controller = null
+            connectedObs.accept(false)
         }
 
         override fun onConnectionFailed() {
+            connectedObs.accept(false)
             Timber.d("onConnectionFailed")
         }
     }
@@ -59,17 +62,15 @@ class PlayerRepository
     private val controllerCallback = object : MediaControllerCompat.Callback() {
         override fun onPlaybackStateChanged(state: PlaybackStateCompat) {
             playbackState.accept(state)
-            if (state.state == PlaybackStateCompat.STATE_STOPPED) {
-                onSessionEvent(PlayerService.EVENT_SESSION_ID, Bundle.EMPTY)
-            }
         }
 
-        override fun onMetadataChanged(metadata: MediaMetadataCompat) {
-            this@PlayerRepository.metadata.accept(metadata)
+        override fun onMetadataChanged(metadataCompat: MediaMetadataCompat) {
+            metadata.accept(metadataCompat)
         }
 
         override fun onSessionEvent(event: String, extras: Bundle) {
             sessionEvent.accept(event to extras)
+            setupEqualizer(extras, event)
         }
     }
 
@@ -85,12 +86,12 @@ class PlayerRepository
 
     fun disconnect() {
         mediaBrowser.disconnect()
-        connected.accept(false)
+        connectedObs.accept(false)
     }
 
     @SuppressLint("CheckResult")
     fun play() {
-        connected.filter { it }.first(true).subscribeBy { controller?.transportControls?.play() }
+        controller?.transportControls?.play()
     }
 
     fun pause() {
@@ -107,5 +108,24 @@ class PlayerRepository
 
     fun skipToNext() {
         controller?.transportControls?.skipToNext()
+    }
+
+    fun seekTo(position: Long) {
+        controller?.transportControls?.seekTo(position)
+    }
+
+    fun sendCommand(command: String) {
+        controller?.sendCommand(command, null, null)
+    }
+
+    private fun setupEqualizer(extras: Bundle, event: String) {
+        val sessionId = extras.getInt(PlayerService.EXTRA_SESSION_ID)
+        if (sessionId != 0) {
+            if (event == EVENT_SESSION_START) {
+                equalizerRepository.createEqualizer(sessionId)
+            } else if (event == EVENT_SESSION_END) {
+                equalizerRepository.releaseEqualizer(sessionId)
+            }
+        }
     }
 }

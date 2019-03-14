@@ -31,5 +31,7 @@ class EqualizerConfig(val bands: List<String>,
                     presets
             )
         }
+
+        fun empty() = EqualizerConfig(emptyList(), 0, 0, emptyList())
     }
 }

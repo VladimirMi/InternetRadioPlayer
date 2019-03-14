@@ -19,10 +19,10 @@ import io.github.vladimirmi.internetradioplayer.extensions.lock
 import io.github.vladimirmi.internetradioplayer.extensions.visible
 import io.github.vladimirmi.internetradioplayer.navigation.Navigator
 import io.github.vladimirmi.internetradioplayer.presentation.base.BaseActivity
+import io.github.vladimirmi.internetradioplayer.presentation.player.PlayerView
 import kotlinx.android.synthetic.main.activity_root.*
 import kotlinx.android.synthetic.main.view_toolbar.*
 import ru.terrakok.cicerone.NavigatorHolder
-import timber.log.Timber
 import toothpick.Toothpick
 import javax.inject.Inject
 
@@ -101,7 +101,6 @@ class RootActivity : BaseActivity<RootPresenter, RootView>(), RootView {
     }
 
     override fun onNewIntent(intent: Intent?) {
-        Timber.e("onNewIntent: $intent")
         super.onNewIntent(intent)
         this.intent = intent
         if (isPresenterInitialized) checkIntent()
@@ -118,10 +117,9 @@ class RootActivity : BaseActivity<RootPresenter, RootView>(), RootView {
         if (intent == null) return
         val startPlay = intent.getBooleanExtra(EXTRA_PLAY, false)
         if (intent.hasExtra(PlayerService.EXTRA_STATION_ID)) {
-            //todo legacy
             presenter.showStation(intent.getStringExtra(PlayerService.EXTRA_STATION_ID), startPlay)
         } else {
-            intent.data?.let { addOrShowStation(it, startPlay) }
+            intent.data?.let { createStation(it, addToFavorite = false, startPlay = startPlay) }
         }
         intent = null
     }
@@ -134,8 +132,18 @@ class RootActivity : BaseActivity<RootPresenter, RootView>(), RootView {
         loadingPb.visible(visible)
     }
 
-    fun addOrShowStation(uri: Uri, startPlay: Boolean = false) {
-        presenter.addOrShowStation(uri, startPlay)
+    override fun showPlayer() {
+        for (fragment in supportFragmentManager.fragments) {
+            for (child in fragment.childFragmentManager.fragments) {
+                if (child is PlayerView) {
+                    child.expandPlayerView(); return
+                }
+            }
+        }
+    }
+
+    fun createStation(uri: Uri, addToFavorite: Boolean, startPlay: Boolean) {
+        presenter.addOrShowStation(uri, addToFavorite, startPlay)
     }
 
     //endregion
@@ -152,8 +160,7 @@ class RootActivity : BaseActivity<RootPresenter, RootView>(), RootView {
         drawerLayout.lock(isHomeAsUp)
         val anim = if (isHomeAsUp) ValueAnimator.ofFloat(0f, 1f) else ValueAnimator.ofFloat(1f, 0f)
         anim.addUpdateListener { valueAnimator ->
-            val slideOffset = valueAnimator.animatedValue as Float
-            toggle.onDrawerSlide(drawerLayout, slideOffset)
+            toggle.onDrawerSlide(drawerLayout, valueAnimator.animatedValue as Float)
         }
         anim.interpolator = DecelerateInterpolator()
         anim.duration = 400

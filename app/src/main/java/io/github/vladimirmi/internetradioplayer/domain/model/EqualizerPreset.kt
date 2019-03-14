@@ -31,10 +31,16 @@ data class EqualizerPreset(val name: String,
                     bS.strength.toInt(),
                     vS.strength.toInt())
         }
+
+        fun empty(): EqualizerPreset {
+            return EqualizerPreset("", emptyList(), 0, 0)
+        }
     }
 
     fun applyTo(equalizer: Equalizer?, bassBoost: BassBoost?, virtualizer: Virtualizer?) {
-        equalizer?.properties = equalizerSettings()
+        bandLevels.forEachIndexed { band, level ->
+            equalizer?.setBandLevel(band.toShort(), level.toShort())
+        }
         bassBoost?.setStrength(bassBoostStrength.toShort())
         virtualizer?.setStrength(virtualizerStrength.toShort())
     }

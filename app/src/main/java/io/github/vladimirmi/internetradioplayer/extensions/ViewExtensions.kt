@@ -1,6 +1,7 @@
 package io.github.vladimirmi.internetradioplayer.extensions
 
 import android.animation.ObjectAnimator
+import android.os.Build
 import android.os.Handler
 import android.os.Looper
 import android.text.Editable
@@ -37,9 +38,7 @@ inline fun View.waitForMeasure(crossinline block: () -> Unit) {
     viewTreeObserver.addOnPreDrawListener(object : ViewTreeObserver.OnPreDrawListener {
         override fun onPreDraw(): Boolean {
             val observer = viewTreeObserver
-            if (observer.isAlive) {
-                observer.removeOnPreDrawListener(this)
-            }
+            if (observer.isAlive) observer.removeOnPreDrawListener(this)
             block()
             return true
         }
@@ -49,8 +48,9 @@ inline fun View.waitForMeasure(crossinline block: () -> Unit) {
 inline fun View.waitForLayout(crossinline handler: () -> Boolean) {
     viewTreeObserver.addOnGlobalLayoutListener(object : ViewTreeObserver.OnGlobalLayoutListener {
         override fun onGlobalLayout() {
-            if (viewTreeObserver.isAlive && handler.invoke()) {
-                viewTreeObserver.removeOnGlobalLayoutListener(this)
+            val observer = viewTreeObserver
+            if (handler.invoke() && observer.isAlive) {
+                observer.removeOnGlobalLayoutListener(this)
             }
         }
     })
@@ -76,10 +76,14 @@ fun TextView.onTextChanges(listener: (String) -> Unit) {
 
 fun SeekBar.setProgressX(progress: Int, animate: Boolean) {
     if (animate) {
-        with(ObjectAnimator.ofInt(this, "progress", progress)) {
-            duration = 300
-            interpolator = AccelerateDecelerateInterpolator()
-            start()
+        if (Build.VERSION.SDK_INT >= 24) {
+            setProgress(progress, animate)
+        } else {
+            with(ObjectAnimator.ofInt(this, "progress", progress)) {
+                duration = 300
+                interpolator = AccelerateDecelerateInterpolator()
+                start()
+            }
         }
     } else {
         setProgress(progress)

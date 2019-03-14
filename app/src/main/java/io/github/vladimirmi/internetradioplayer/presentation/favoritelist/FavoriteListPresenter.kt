@@ -1,9 +1,7 @@
 package io.github.vladimirmi.internetradioplayer.presentation.favoritelist
 
-import io.github.vladimirmi.internetradioplayer.data.db.entity.Station
-import io.github.vladimirmi.internetradioplayer.domain.interactor.FavoriteListInteractor
-import io.github.vladimirmi.internetradioplayer.domain.interactor.StationInteractor
-import io.github.vladimirmi.internetradioplayer.domain.model.FlatStationsList
+import io.github.vladimirmi.internetradioplayer.domain.interactor.MainInteractor
+import io.github.vladimirmi.internetradioplayer.domain.interactor.RecordsInteractor
 import io.github.vladimirmi.internetradioplayer.extensions.subscribeX
 import io.github.vladimirmi.internetradioplayer.presentation.base.BasePresenter
 import io.reactivex.android.schedulers.AndroidSchedulers
@@ -15,46 +13,28 @@ import javax.inject.Inject
  */
 
 class FavoriteListPresenter
-@Inject constructor(private val stationInteractor: StationInteractor,
-                    private val favoriteListInteractor: FavoriteListInteractor)
-    : BasePresenter<StationListView>() {
+@Inject constructor(private val recordsInteractor: RecordsInteractor,
+                    private val mainInteractor: MainInteractor)
+    : BasePresenter<FavoriteListView>() {
 
-    override fun onAttach(view: StationListView) {
-        favoriteListInteractor.stationsListObs
-                .observeOn(AndroidSchedulers.mainThread())
-                .subscribeX(onNext = {
-                    view.setStations(it)
-                    view.showPlaceholder(it.size == 0)
-                })
-                .addTo(viewSubs)
+    override fun onFirstAttach(view: FavoriteListView) {
+        view.showPage(mainInteractor.getFavoritePageId())
+    }
 
-        stationInteractor.stationObs
+    override fun onAttach(view: FavoriteListView) {
+        view.selectTab(mainInteractor.getFavoritePageId())
+
+        recordsInteractor.recordsObs
                 .observeOn(AndroidSchedulers.mainThread())
-                .subscribeX(onNext = { view.selectStation(it) })
+                .subscribeX(onNext = { view.showTabs(it.isNotEmpty()) })
                 .addTo(viewSubs)
     }
 
-    fun selectStation(station: Station) {
-        stationInteractor.station = station
+    fun selectTab(position: Int) {
+        mainInteractor.saveFavoritePageId(position)
+        view?.showPage(position)
     }
 
-    fun selectGroup(id: String) {
-        favoriteListInteractor.expandOrCollapseGroup(id)
-                .subscribeX()
-                .addTo(dataSubs)
-    }
-
-    fun removeGroup(id: String) {
-        favoriteListInteractor.removeGroup(id)
-                .subscribeX()
-                .addTo(dataSubs)
-    }
-
-    fun moveGroupElements(stations: FlatStationsList) {
-        favoriteListInteractor.moveGroupElements(stations)
-                .subscribeX()
-                .addTo(dataSubs)
-    }
 }
 
 

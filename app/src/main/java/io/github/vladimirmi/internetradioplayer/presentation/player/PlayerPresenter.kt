@@ -3,19 +3,21 @@ package io.github.vladimirmi.internetradioplayer.presentation.player
 import android.os.Bundle
 import android.support.v4.media.MediaMetadataCompat
 import android.support.v4.media.session.PlaybackStateCompat
+import com.google.android.exoplayer2.C
 import io.github.vladimirmi.internetradioplayer.R
+import io.github.vladimirmi.internetradioplayer.data.db.entity.Station
 import io.github.vladimirmi.internetradioplayer.data.service.PlayerService
-import io.github.vladimirmi.internetradioplayer.domain.interactor.FavoriteListInteractor
-import io.github.vladimirmi.internetradioplayer.domain.interactor.PlayerInteractor
-import io.github.vladimirmi.internetradioplayer.domain.interactor.StationInteractor
+import io.github.vladimirmi.internetradioplayer.data.service.extensions.*
+import io.github.vladimirmi.internetradioplayer.domain.interactor.*
+import io.github.vladimirmi.internetradioplayer.domain.model.Record
 import io.github.vladimirmi.internetradioplayer.extensions.subscribeX
 import io.github.vladimirmi.internetradioplayer.navigation.Router
 import io.github.vladimirmi.internetradioplayer.presentation.base.BasePresenter
 import io.reactivex.android.schedulers.AndroidSchedulers
-import io.reactivex.disposables.Disposable
-import io.reactivex.rxkotlin.Observables
 import io.reactivex.rxkotlin.addTo
+import java.util.*
 import javax.inject.Inject
+import kotlin.concurrent.schedule
 
 /**
  * Created by Vladimir Mikhalev 18.11.2017.
@@ -25,93 +27,69 @@ class PlayerPresenter
 @Inject constructor(private val stationInteractor: StationInteractor,
                     private val favoriteListInteractor: FavoriteListInteractor,
                     private val playerInteractor: PlayerInteractor,
+                    private val recordsInteractor: RecordsInteractor,
+                    private val mediaInteractor: MediaInteractor,
                     private val router: Router)
     : BasePresenter<PlayerView>() {
 
-    private var groupSub: Disposable? = null
+    private var playTask: TimerTask? = null
 
     override fun onAttach(view: PlayerView) {
         setupStation()
-        setupGroups()
         setupPlayer()
     }
 
     private fun setupStation() {
-        stationInteractor.stationObs
+        mediaInteractor.currentMediaObs
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribeX(onNext = {
-                    view?.setStation(it)
-                    view?.showPlaceholder(it.isNull())
-                    view?.setFavorite(favoriteListInteractor.isFavorite(it))
+                    if (it is Station) {
+                        view?.setStation(it)
+                        view?.setFavorite(favoriteListInteractor.isFavorite(it))
+                        view?.setGroup(favoriteListInteractor.findGroup(it.groupId)?.name ?: "")
+                    } else if (it is Record) {
+                        view?.setRecord(it)
+                        view?.setDuration(it.duration)
+                    }
                 })
                 .addTo(viewSubs)
     }
 
-    fun setupGroups() {
-        groupSub?.dispose()
-        val groupObs = stationInteractor.stationObs
-                .flatMapSingle { favoriteListInteractor.getGroup(it.groupId) }
-                .map { it.name }
-                .observeOn(AndroidSchedulers.mainThread())
-
-        val groupsObs = favoriteListInteractor.getGroupsObs()
-                .map { groups -> groups.map { it.name } }
-                .observeOn(AndroidSchedulers.mainThread())
-
-        groupSub = Observables.combineLatest(groupsObs, groupObs) { list, group ->
-            view?.setGroups(list)
-            list.indexOf(group) + 1 //new folder option offset
-        }.subscribeX(onNext = { view?.setGroup(it) })
-    }
-
     private fun setupPlayer() {
+        mediaInteractor.currentMediaObs
+                .map { !it.isNull() }
+                .distinctUntilChanged()
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribeX(onNext = { view?.showPlayerView(it) })
+                .addTo(viewSubs)
+
         playerInteractor.playbackStateObs
+                .observeOn(AndroidSchedulers.mainThread())
                 .subscribeX(onNext = { handleState(it) })
                 .addTo(viewSubs)
 
         playerInteractor.metadataObs
+                .observeOn(AndroidSchedulers.mainThread())
                 .subscribeX(onNext = { handleMetadata(it) })
                 .addTo(viewSubs)
 
         playerInteractor.sessionEventObs
+                .observeOn(AndroidSchedulers.mainThread())
                 .subscribeX(onNext = { handleSessionEvent(it) })
+                .addTo(viewSubs)
+
+        recordsInteractor.isCurrentRecordingObs()
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribeX(onNext = { view?.setRecording(it) })
                 .addTo(viewSubs)
     }
 
     fun switchFavorite() {
-        val isFavorite = favoriteListInteractor.isFavorite(stationInteractor.station)
-        val changeFavorite = if (isFavorite) stationInteractor.removeFromFavorite()
-        else stationInteractor.addToFavorite()
-        changeFavorite.observeOn(AndroidSchedulers.mainThread())
+        val station = mediaInteractor.currentMedia as? Station ?: return
+        stationInteractor.switchFavorite(station)
+                .observeOn(AndroidSchedulers.mainThread())
                 .subscribeX()
                 .addTo(dataSubs)
-    }
-
-    fun selectGroup(position: Int, group: String) {
-        if (position == 0) view?.openNewGroupDialog()
-        else stationInteractor.changeGroup(group)
-                .subscribeX()
-                .addTo(viewSubs)
-    }
-
-    fun createGroup(groupName: String) {
-        favoriteListInteractor.createGroup(groupName)
-                .andThen(stationInteractor.changeGroup(groupName))
-                .subscribeX()
-                .addTo(viewSubs)
-    }
-
-    fun editStationTitle(title: String) {
-        stationInteractor.editStationTitle(title)
-                .observeOn(AndroidSchedulers.mainThread())
-                .subscribeX(onComplete = { view?.switchTitleEditable() })
-                .addTo(viewSubs)
-    }
-
-    fun addShortcut(startPlay: Boolean) {
-        if (stationInteractor.addCurrentShortcut(startPlay)) {
-            view?.showSnackbar(R.string.msg_add_shortcut_success)
-        }
     }
 
     fun playPause() {
@@ -136,16 +114,42 @@ class PlayerPresenter
         playerInteractor.skipToNext()
     }
 
+    fun seekTo(position: Int) {
+        playerInteractor.seekTo(position)
+    }
+
     private fun handleState(state: PlaybackStateCompat) {
+        playTask?.cancel()
+        view?.setPosition(state.position)
         when (state.state) {
-            PlaybackStateCompat.STATE_PAUSED, PlaybackStateCompat.STATE_STOPPED -> view?.showStopped()
-            PlaybackStateCompat.STATE_BUFFERING -> view?.showBuffering()
-            PlaybackStateCompat.STATE_PLAYING -> view?.showPlaying()
+            PlaybackStateCompat.STATE_PAUSED -> {
+                view?.showPlaying(false)
+                view?.setStatus(R.string.status_paused)
+            }
+            PlaybackStateCompat.STATE_STOPPED -> {
+                view?.showPlaying(false)
+                view?.setStatus(R.string.status_stopped)
+            }
+            PlaybackStateCompat.STATE_BUFFERING -> {
+                view?.showPlaying(true)
+                view?.setStatus(R.string.metadata_buffering)
+            }
+            PlaybackStateCompat.STATE_PLAYING -> {
+                view?.showPlaying(true)
+                view?.setStatus(R.string.status_playing)
+                playTask = Timer().schedule(0, 300) { view?.incrementPositionBy(300) }
+            }
         }
+        view?.enableSeek(PlayerActions.isSeekEnabled(state.actions))
+        view?.enableSkip(PlayerActions.isSkipEnabled(state.actions))
     }
 
     private fun handleMetadata(metadata: MediaMetadataCompat) {
-        view?.setMetadata(metadata)
+        view?.setMetadata(metadata.artist, metadata.title)
+        val metadataLine = if (metadata.isEmpty() || metadata.isNotSupported()) metadata.album
+        else "${metadata.artist} - ${metadata.title}"
+        view?.setSimpleMetadata(metadataLine)
+        if (metadata.duration != C.TIME_UNSET) view?.setDuration(metadata.duration)
     }
 
     private fun handleSessionEvent(event: Pair<String, Bundle>) {
@@ -157,5 +161,10 @@ class PlayerPresenter
 
     fun openEqualizer() {
         router.navigateTo(R.id.nav_equalizer)
+    }
+
+    fun startStopRecording() {
+        recordsInteractor.startStopRecordingCurrentStation()
+                .subscribeX()
     }
 }

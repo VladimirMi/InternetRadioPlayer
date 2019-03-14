@@ -4,16 +4,20 @@ import android.app.Service
 import android.content.Intent
 import android.os.Bundle
 import android.support.v4.media.MediaBrowserCompat
+import android.support.v4.media.MediaMetadataCompat
 import android.support.v4.media.session.MediaSessionCompat
 import android.support.v4.media.session.PlaybackStateCompat
 import androidx.media.MediaBrowserServiceCompat
 import io.github.vladimirmi.internetradioplayer.R
 import io.github.vladimirmi.internetradioplayer.data.db.entity.Station
+import io.github.vladimirmi.internetradioplayer.data.service.extensions.PlayerActions
+import io.github.vladimirmi.internetradioplayer.data.service.player.Playback
+import io.github.vladimirmi.internetradioplayer.data.utils.AudioEffects
 import io.github.vladimirmi.internetradioplayer.di.Scopes
 import io.github.vladimirmi.internetradioplayer.domain.interactor.EqualizerInteractor
-import io.github.vladimirmi.internetradioplayer.domain.interactor.FavoriteListInteractor
 import io.github.vladimirmi.internetradioplayer.domain.interactor.HistoryInteractor
-import io.github.vladimirmi.internetradioplayer.domain.interactor.StationInteractor
+import io.github.vladimirmi.internetradioplayer.domain.interactor.MediaInteractor
+import io.github.vladimirmi.internetradioplayer.domain.model.Media
 import io.github.vladimirmi.internetradioplayer.extensions.errorHandler
 import io.github.vladimirmi.internetradioplayer.extensions.toUri
 import io.reactivex.disposables.CompositeDisposable
@@ -33,13 +37,12 @@ class PlayerService : MediaBrowserServiceCompat(), SessionCallback.Interface {
     companion object {
         const val EVENT_SESSION_NEXT = "EVENT_SESSION_NEXT"
         const val EVENT_SESSION_PREVIOUS = "EVENT_SESSION_PREVIOUS"
-        const val EVENT_SESSION_ID = "EVENT_SESSION_ID"
+        const val EXTRA_SESSION_ID = "EXTRA_SESSION_ID"
         const val EXTRA_STATION_ID = "EXTRA_STATION_ID"
     }
 
-    @Inject lateinit var stationInteractor: StationInteractor
+    @Inject lateinit var mediaInteractor: MediaInteractor
     @Inject lateinit var equalizerInteractor: EqualizerInteractor
-    @Inject lateinit var favoriteListInteractor: FavoriteListInteractor
     @Inject lateinit var historyInteractor: HistoryInteractor
 
     private val subs = CompositeDisposable()
@@ -47,45 +50,39 @@ class PlayerService : MediaBrowserServiceCompat(), SessionCallback.Interface {
     private lateinit var playback: Playback
     private lateinit var notification: MediaNotification
 
-    private var playbackState = PlaybackStateCompat.Builder()
-            .setState(PlaybackStateCompat.STATE_STOPPED, 0, 1F)
-            .setActions(PlayerActions.DEFAULT_ACTIONS).build()
-    private var mediaMetadata = EMPTY_METADATA
-
     private var serviceStarted = false
     private var currentStationId: String? = null
-    private var playingStationId: String? = null
+    private var playingMediaId: String? = null
     private var stopTask: TimerTask? = null
 
     override fun onCreate() {
         super.onCreate()
         Toothpick.inject(this, Scopes.app)
-        initSession()
 
         playback = Playback(this, playerCallback)
-        notification = MediaNotification(this, session)
+        initSession()
+        initEqualizer()
 
-        equalizerInteractor.initPresets()
-                .subscribe()
-                .addTo(subs)
-
-        equalizerInteractor.initEqualizer()
-                .subscribe()
-                .addTo(subs)
-
-        stationInteractor.stationObs
-                .distinctUntilChanged(Station::id)
-                .subscribe { handleCurrentStation(it) }
+        mediaInteractor.currentMediaObs
+                .distinctUntilChanged(Media::uri)
+                .subscribe { handleCurrentMedia(it) }
                 .addTo(subs)
     }
 
     private fun initSession() {
         session = MediaSessionCompat(this, javaClass.simpleName)
         session.setCallback(SessionCallback(this))
-        session.setPlaybackState(playbackState)
-        session.setMetadata(mediaMetadata)
         session.setSessionActivity(PlayerActions.sessionActivity(this))
         sessionToken = session.sessionToken
+        notification = MediaNotification(this, session)
+        playerCallback.initDefault()
+    }
+
+    private fun initEqualizer() {
+        if (!AudioEffects.isEqualizerSupported()) return
+        equalizerInteractor.initPresets()
+                .subscribe()
+                .addTo(subs)
     }
 
     override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
@@ -123,13 +120,11 @@ class PlayerService : MediaBrowserServiceCompat(), SessionCallback.Interface {
         }
     }
 
-    private fun handleCurrentStation(station: Station) {
-        currentStationId = station.id
-        if (isPlaying) historyInteractor.createHistory(station)
-        if (isPlaying && currentStationId != playingStationId) playCurrent()
-        mediaMetadata = EMPTY_METADATA.setStation(station, this)
-        session.setMetadata(mediaMetadata)
-        notification.update()
+    private fun handleCurrentMedia(media: Media) {
+        playerCallback.setMedia(media)
+        currentStationId = media.id
+        if (isPlaying && currentStationId != playingMediaId) prepareAndPlay()
+        else playback.stop()
     }
 
     private val isPlaying: Boolean
@@ -143,10 +138,14 @@ class PlayerService : MediaBrowserServiceCompat(), SessionCallback.Interface {
         get() = session.controller.playbackState.state == PlaybackStateCompat.STATE_PAUSED
 
 
-    private fun playCurrent() {
-        val station = stationInteractor.station
-        playingStationId = station.id
-        playback.play(station.uri.toUri())
+    private fun prepareAndPlay() {
+        stopTask?.cancel()
+        val media = mediaInteractor.currentMedia
+        //todo refactor (move)
+        if (media is Station) historyInteractor.createHistory(media)
+        playingMediaId = media.id
+        playback.prepare(media.uri.toUri())
+        playback.play()
     }
 
     //region =============== SessionCallback ==============
@@ -154,11 +153,8 @@ class PlayerService : MediaBrowserServiceCompat(), SessionCallback.Interface {
     override fun onPlayCommand() {
         stopTask?.cancel()
         startService()
-        if (isPaused && currentStationId == playingStationId) playback.resume()
-        else {
-            historyInteractor.createHistory(stationInteractor.station)
-            playCurrent()
-        }
+        if (isPaused && currentStationId == playingMediaId) playback.play()
+        else prepareAndPlay()
     }
 
     override fun onPauseCommand(stopDelay: Long) { // default is 1 min
@@ -172,28 +168,29 @@ class PlayerService : MediaBrowserServiceCompat(), SessionCallback.Interface {
     }
 
     override fun onSkipToPreviousCommand() {
-        val changed = favoriteListInteractor.previousStation(stationInteractor.station.id)
-        if (changed) session.sendSessionEvent(EVENT_SESSION_PREVIOUS, Bundle.EMPTY)
+        mediaInteractor.previousMedia()
+        session.sendSessionEvent(EVENT_SESSION_PREVIOUS, Bundle.EMPTY)
     }
 
     override fun onSkipToNextCommand() {
-        val changed = favoriteListInteractor.nextStation(stationInteractor.station.id)
-        if (changed) session.sendSessionEvent(EVENT_SESSION_NEXT, Bundle.EMPTY)
+        mediaInteractor.nextMedia()
+        session.sendSessionEvent(EVENT_SESSION_NEXT, Bundle.EMPTY)
+    }
+
+    override fun onSeekCommand(pos: Long) {
+        playback.seekTo(pos)
+    }
+
+    override fun onActionsChangeCommand(changer: (Long) -> Long) {
+        playerCallback.changeActions(changer)
     }
 
     //endregion
 
     private val playerCallback = object : PlayerCallback() {
 
-        override fun onPlayerStateChanged(state: Int) {
-            playbackState = PlaybackStateCompat.Builder(playbackState)
-                    .setState(state, 0, 1f)
-                    .build()
-            session.setPlaybackState(playbackState)
-            if (state == PlaybackStateCompat.STATE_STOPPED) {
-                mediaMetadata = mediaMetadata.clear()
-                session.setMetadata(mediaMetadata)
-            }
+        override fun onPlaybackStateChanged(state: PlaybackStateCompat) {
+            session.setPlaybackState(state)
             notification.update()
         }
 
@@ -201,18 +198,18 @@ class PlayerService : MediaBrowserServiceCompat(), SessionCallback.Interface {
             errorHandler.invoke(error)
         }
 
-        override fun onMetadata(metadata: String) {
-            mediaMetadata = mediaMetadata.setArtistTitle(metadata)
+        override fun onMediaMetadataChanged(mediaMetadata: MediaMetadataCompat) {
             session.setMetadata(mediaMetadata)
             notification.update()
         }
 
-        override fun onAudioSessionId(audioSessionId: Int) {
-            session.sendSessionEvent(EVENT_SESSION_ID, Bundle().apply { putInt(EVENT_SESSION_ID, audioSessionId) })
+        override fun onAudioSessionId(event: String, audioSessionId: Int) {
+            session.sendSessionEvent(event, Bundle().apply { putInt(EXTRA_SESSION_ID, audioSessionId) })
         }
     }
 
     private fun scheduleStopTask(stopDelay: Long) {
+        //todo move to SessionCallback
         stopTask?.cancel()
         stopTask = Timer().schedule(stopDelay) {
             onStopCommand()

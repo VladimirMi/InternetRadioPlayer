@@ -10,7 +10,6 @@ import io.github.vladimirmi.internetradioplayer.data.utils.ShortcutHelper
 import io.github.vladimirmi.internetradioplayer.utils.MessageResException
 import io.reactivex.Completable
 import io.reactivex.Single
-import io.reactivex.rxkotlin.toCompletable
 import javax.inject.Inject
 
 
@@ -22,72 +21,49 @@ class StationInteractor
 @Inject constructor(private val stationRepository: StationRepository,
                     private val favoritesRepository: FavoritesRepository,
                     private val favoriteListInteractor: FavoriteListInteractor,
+                    private val mediaInteractor: MediaInteractor,
                     private val shortcutHelper: ShortcutHelper) {
 
-    val stationObs get() = stationRepository.stationObs
-    var station
-        get() = stationRepository.station
-        set(value) {
-            stationRepository.station = value
-        }
-
     fun addCurrentShortcut(startPlay: Boolean): Boolean {
+        val station = mediaInteractor.currentMedia as? Station ?: return false
         return shortcutHelper.pinShortcut(station, startPlay)
     }
 
     fun createStation(uri: Uri): Single<Station> {
         return stationRepository.createStation(uri)
-                .doOnSuccess { newStation ->
-                    val favoriteStation = favoritesRepository.getStation { it.uri == newStation.uri }
-                    station = favoriteStation ?: newStation
+                .map { newStation ->
+                    favoritesRepository.getStation { it.uri == newStation.uri } ?: newStation
                 }
     }
 
-    fun addToFavorite(): Completable {
+    fun switchFavorite(station: Station): Completable {
+        return if (isFavorite(station.id)) removeFromFavorite(station)
+        else addToFavorite(station)
+    }
+
+    fun updateStation(station: Station): Completable {
+        if (station.name.isBlank()) return Completable.error(MessageResException(R.string.msg_name_empty_error))
+
+        return favoritesRepository.updateStations(listOf(station))
+                .andThen(favoriteListInteractor.initFavoriteList())
+    }
+
+    fun addToFavorite(station: Station): Completable {
         return favoriteListInteractor.getGroup(station.groupId)
                 .flatMapCompletable {
                     val newStation = station.copy(order = it.stations.size, groupId = Group.DEFAULT_ID)
                     favoritesRepository.addStation(newStation)
                             .andThen(favoriteListInteractor.initFavoriteList())
-                            .andThen(setStation(newStation))
+                            .andThen(mediaInteractor.setMedia(newStation))
                 }
     }
 
-    fun removeFromFavorite(): Completable {
+    private fun removeFromFavorite(station: Station): Completable {
         return favoritesRepository.removeStation(station)
                 .andThen(favoriteListInteractor.initFavoriteList())
-                .andThen(setStation(station))
+                .andThen(mediaInteractor.setMedia(station))
     }
 
-    fun changeGroup(groupName: String): Completable {
-        return Single.fromCallable { favoritesRepository.groups.find { it.name == groupName } }
-                .flatMapCompletable {
-                    if (it.id == station.groupId) Completable.complete()
-                    else {
-                        val newStation = station.copy(groupId = it.id, order = it.stations.size)
-                        favoritesRepository.updateStations(listOf(newStation))
-                                .andThen(setStation(newStation))
-                                .andThen(favoriteListInteractor.initFavoriteList())
-                    }
-                }
-    }
-
-    fun editStationTitle(title: String): Completable {
-        if (title == station.name) return Completable.complete()
-        if (title.isBlank()) return Completable.error(MessageResException(R.string.msg_name_empty_error))
-
-        val newStation = station.copy(name = title)
-        return favoritesRepository.updateStations(listOf(newStation))
-                .andThen(setStation(newStation))
-                .andThen(if (favoriteListInteractor.isFavorite(newStation)) {
-                    favoriteListInteractor.initFavoriteList()
-                } else {
-                    Completable.complete()
-                })
-    }
-
-    private fun setStation(station: Station): Completable {
-        return { this.station = station }.toCompletable()
-    }
+    private fun isFavorite(id: String) = favoritesRepository.getStation { it.id == id } != null
 }
 

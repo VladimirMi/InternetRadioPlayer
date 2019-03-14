@@ -39,4 +39,10 @@ class HistoryRepository
             }
         }.subscribeOn(Schedulers.io())
     }
+
+    fun deleteHistory(stationId: String): Completable {
+        return dao.getHistory(stationId)
+                .flatMapCompletable { Completable.fromAction { dao.delete(it) } }
+                .subscribeOn(Schedulers.io())
+    }
 }

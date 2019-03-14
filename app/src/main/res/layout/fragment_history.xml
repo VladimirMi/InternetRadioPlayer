@@ -24,7 +24,7 @@
         android:layout_gravity="center_vertical"
         android:gravity="center"
         android:text="@string/history_placeholder"
-        android:textAppearance="@style/TextAppearance.AppCompat.Title"
+        android:textAppearance="@style/TextAppearance.MaterialComponents.Subtitle1"
         android:visibility="gone"
         />
 

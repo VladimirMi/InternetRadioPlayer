@@ -1,17 +1,56 @@
 package io.github.vladimirmi.internetradioplayer.data.service
 
 import android.annotation.SuppressLint
+import android.support.v4.media.MediaMetadataCompat
 import android.support.v4.media.session.PlaybackStateCompat
 import com.google.android.exoplayer2.*
 import com.google.android.exoplayer2.source.TrackGroupArray
 import com.google.android.exoplayer2.trackselection.TrackSelectionArray
+import io.github.vladimirmi.internetradioplayer.data.service.extensions.*
+import io.github.vladimirmi.internetradioplayer.domain.model.Media
 import timber.log.Timber
 import java.net.ConnectException
 
+const val EVENT_SESSION_START = "EVENT_SESSION_START"
+const val EVENT_SESSION_END = "EVENT_SESSION_END"
 
 abstract class PlayerCallback : Player.EventListener {
 
-    override fun onPlaybackParametersChanged(playbackParameters: PlaybackParameters) {}
+    private var sessionId = 0
+    private var playbackStateCompat = DEFAULT_PLAYBACK_STATE
+    private var mediaMetadata = EMPTY_METADATA
+    var player: ExoPlayer? = null
+
+    fun initDefault() {
+        onPlaybackStateChanged(playbackStateCompat)
+        onMediaMetadataChanged(mediaMetadata)
+    }
+
+    fun setStartAudioSessionId(audioSessionId: Int) {
+        sessionId = audioSessionId
+        onAudioSessionId(EVENT_SESSION_START, audioSessionId)
+    }
+
+    fun setMedia(media: Media) {
+        mediaMetadata = EMPTY_METADATA.setMedia(media)
+        onMediaMetadataChanged(mediaMetadata)
+    }
+
+    fun setArtistTitle(artistTitle: String) {
+        mediaMetadata = mediaMetadata.setArtistTitle(artistTitle)
+        onMediaMetadataChanged(mediaMetadata)
+    }
+
+    fun changeActions(changer: (Long) -> Long) {
+        playbackStateCompat = playbackStateCompat.changeActions(changer)
+        onPlaybackStateChanged(playbackStateCompat)
+    }
+
+    //region =============== Player.EventListener ==============
+
+    override fun onPlaybackParametersChanged(playbackParameters: PlaybackParameters) {
+        Timber.d("onPlaybackParametersChanged: ${playbackParameters.speed}")
+    }
 
     override fun onTracksChanged(trackGroups: TrackGroupArray, trackSelections: TrackSelectionArray) {
         if (trackGroups.length > 0) {
@@ -36,7 +75,67 @@ abstract class PlayerCallback : Player.EventListener {
     }
 
     override fun onPlayerStateChanged(playWhenReady: Boolean, playbackState: Int) {
-        val state = when {
+        val state = mapPlaybackState(playbackState, playWhenReady)
+        playbackStateCompat = playbackStateCompat.setState(state)
+
+        if (playbackState == Player.STATE_ENDED) {
+            //todo implement "play next"
+            player?.stop()
+        }
+
+        if (playbackState == Player.STATE_READY) {
+            mediaMetadata = mediaMetadata.setDuration(player?.duration ?: 0)
+            playbackStateCompat = playbackStateCompat.setPosition(player?.currentPosition ?: 0)
+//            val actionsChanger = if (player?.isCurrentWindowSeekable == true) PlayerActions::enableSeek
+//            else PlayerActions::disableSeek
+//            playbackStateCompat = playbackStateCompat.changeActions(actionsChanger)
+        }
+
+        if (state == PlaybackStateCompat.STATE_STOPPED) {
+            playbackStateCompat = playbackStateCompat.setPosition(0)
+            onAudioSessionId(EVENT_SESSION_END, sessionId)
+            sessionId = 0
+            mediaMetadata = mediaMetadata.clearArtistTitle()
+        }
+
+        onPlaybackStateChanged(playbackStateCompat)
+        onMediaMetadataChanged(mediaMetadata)
+    }
+
+    override fun onSeekProcessed() {
+        player?.let {
+            playbackStateCompat = playbackStateCompat.setPosition(it.currentPosition)
+            onPlaybackStateChanged(playbackStateCompat)
+        }
+    }
+
+    override fun onTimelineChanged(timeline: Timeline, manifest: Any?, reason: Int) {
+    }
+
+    override fun onLoadingChanged(isLoading: Boolean) {
+    }
+
+    override fun onPositionDiscontinuity(reason: Int) {
+    }
+
+    override fun onRepeatModeChanged(repeatMode: Int) {
+    }
+
+    override fun onShuffleModeEnabledChanged(shuffleModeEnabled: Boolean) {
+    }
+
+    //endregion
+
+    protected abstract fun onPlayerError(error: Exception)
+
+    protected abstract fun onAudioSessionId(event: String, audioSessionId: Int)
+
+    protected abstract fun onPlaybackStateChanged(state: PlaybackStateCompat)
+
+    protected abstract fun onMediaMetadataChanged(mediaMetadata: MediaMetadataCompat)
+
+    private fun mapPlaybackState(playbackState: Int, playWhenReady: Boolean): Int {
+        return when {
             playbackState == Player.STATE_IDLE -> PlaybackStateCompat.STATE_STOPPED
             playbackState == Player.STATE_BUFFERING && playWhenReady -> PlaybackStateCompat.STATE_BUFFERING
             playbackState == Player.STATE_BUFFERING && !playWhenReady -> PlaybackStateCompat.STATE_PAUSED
@@ -45,32 +144,5 @@ abstract class PlayerCallback : Player.EventListener {
             playbackState == Player.STATE_ENDED -> PlaybackStateCompat.STATE_STOPPED
             else -> PlaybackStateCompat.STATE_NONE
         }
-        onPlayerStateChanged(state)
     }
-
-    override fun onLoadingChanged(isLoading: Boolean) {
-    }
-
-    override fun onRepeatModeChanged(repeatMode: Int) {
-    }
-
-    override fun onSeekProcessed() {
-    }
-
-    override fun onPositionDiscontinuity(reason: Int) {
-    }
-
-    override fun onShuffleModeEnabledChanged(shuffleModeEnabled: Boolean) {
-    }
-
-    override fun onTimelineChanged(timeline: Timeline?, manifest: Any?, reason: Int) {
-    }
-
-    abstract fun onPlayerStateChanged(state: Int)
-
-    abstract fun onMetadata(metadata: String)
-
-    abstract fun onPlayerError(error: Exception)
-
-    abstract fun onAudioSessionId(audioSessionId: Int)
 }

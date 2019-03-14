@@ -3,6 +3,7 @@ package io.github.vladimirmi.internetradioplayer.data.repository
 import android.content.Context
 import android.content.Intent
 import android.net.Uri
+import android.widget.Toast
 import com.jakewharton.rxrelay2.BehaviorRelay
 import io.github.vladimirmi.internetradioplayer.data.db.entity.Station
 import io.github.vladimirmi.internetradioplayer.data.service.recorder.RecorderService
@@ -56,6 +57,9 @@ class RecordsRepository
     }
 
     private fun startRecording(station: Station) {
+        Toast.makeText(context,
+                "Feature is in beta. The current record size limit is 50 Mb",
+                Toast.LENGTH_LONG).show()
         val intent = Intent(context, RecorderService::class.java).apply {
             putExtra(RecorderService.EXTRA_START_RECORD, station.name)
             data = station.uri.toUri()

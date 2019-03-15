@@ -39,16 +39,4 @@
 
     </LinearLayout>
 
-    <fragment
-        android:id="@+id/playerFragment"
-        android:name="io.github.vladimirmi.internetradioplayer.presentation.player.PlayerFragment"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        app:behavior_hideable="true"
-        app:behavior_peekHeight="@dimen/player_collapsed_height"
-        app:behavior_saveFlags="all"
-        app:behavior_skipCollapsed="false"
-        app:layout_behavior="@string/bottom_sheet_behavior"
-        />
-
 </androidx.coordinatorlayout.widget.CoordinatorLayout>

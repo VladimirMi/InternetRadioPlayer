@@ -18,6 +18,7 @@ import io.github.vladimirmi.internetradioplayer.domain.model.PresetBinder
 import io.reactivex.Completable
 import io.reactivex.Single
 import io.reactivex.schedulers.Schedulers
+import timber.log.Timber
 import javax.inject.Inject
 
 /**
@@ -58,19 +59,27 @@ class EqualizerRepository
         }
     }
 
-    fun createEqualizer(sessionId: Int) {
-        this.sessionId = sessionId
-        if (audioEffects.isEqualizerSupported()) {
-            equalizer = Equalizer(0, sessionId).apply { enabled = true }
-        }
-        if (audioEffects.isBassBoostSupported()) {
-            bassBoost = BassBoost(0, sessionId).apply { enabled = true }
-        }
-        if (audioEffects.isVirtualizerSupported()) {
-            virtualizer = Virtualizer(0, sessionId).apply { enabled = true }
-        }
-        equalizer?.ifHasControl {
-            currentPreset.applyTo(equalizer, bassBoost, virtualizer)
+    fun createEqualizer(sessionId: Int, checkControl: Boolean = true) {
+        try {
+            this.sessionId = sessionId
+            if (audioEffects.isEqualizerSupported()) {
+                equalizer = Equalizer(0, sessionId).apply { enabled = true }
+            }
+            if (audioEffects.isBassBoostSupported()) {
+                bassBoost = BassBoost(0, sessionId).apply { enabled = true }
+            }
+            if (audioEffects.isVirtualizerSupported()) {
+                virtualizer = Virtualizer(0, sessionId).apply { enabled = true }
+            }
+            if (checkControl) {
+                equalizer?.ifHasControl {
+                    currentPreset.applyTo(equalizer, bassBoost, virtualizer)
+                }
+            } else {
+                currentPreset.applyTo(equalizer, bassBoost, virtualizer)
+            }
+        } catch (e: Exception) {
+            Timber.e(e)
         }
     }
 
@@ -176,7 +185,7 @@ class EqualizerRepository
             block(this)
         } else if (sessionId != 0) {
             releaseEqualizer(sessionId)
-            createEqualizer(sessionId)
+            createEqualizer(sessionId, checkControl = false)
         }
     }
 }

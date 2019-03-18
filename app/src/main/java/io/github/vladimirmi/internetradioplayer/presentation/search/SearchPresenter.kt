@@ -39,7 +39,7 @@ class SearchPresenter
                 .doOnSuccess { view.showPlaceholder(it.isEmpty()) }
                 .filter { it.isNotEmpty() }
                 .map { it.first() }
-                .subscribeX(onNext = { view.onSuggestionSelected(it) })
+                .subscribeX(onNext = { view.selectSuggestion(it) })
                 .addTo(viewSubs)
     }
 

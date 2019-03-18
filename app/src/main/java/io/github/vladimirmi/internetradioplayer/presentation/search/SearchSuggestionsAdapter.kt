@@ -15,24 +15,22 @@ import kotlinx.android.synthetic.main.item_suggestion.view.*
  * Created by Vladimir Mikhalev 12.11.2018.
  */
 
-class SearchSuggestionsAdapter(private val callback: SearchSuggestionsAdapter.Callback)
-    : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
+class SearchSuggestionsAdapter : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
 
     var longClickedItem: Suggestion? = null
+    var onItemClickListener: ((Suggestion) -> Unit)? = null
     private var suggestions = SuggestionList()
 
     fun addRecentSuggestions(list: List<Suggestion>) {
-        val newList = suggestions.copy()
-        newList.recent = list
-        getDiffResult(newList).dispatchUpdatesTo(this)
-        suggestions = newList
+        val old = suggestions.copy()
+        suggestions = suggestions.apply { recent = list }
+        getDiffResult(old, suggestions).dispatchUpdatesTo(this)
     }
 
     fun addRegularSuggestions(list: List<Suggestion>) {
-        val newList = suggestions.copy()
-        newList.regular = list
-        getDiffResult(newList).dispatchUpdatesTo(this)
-        suggestions = newList
+        val old = suggestions.copy()
+        suggestions = suggestions.apply { regular = list }
+        getDiffResult(old, suggestions).dispatchUpdatesTo(this)
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): RecyclerView.ViewHolder {
@@ -44,7 +42,7 @@ class SearchSuggestionsAdapter(private val callback: SearchSuggestionsAdapter.Ca
         holder as SuggestionVH
         val suggestion = suggestions[position]
         holder.bind(suggestion)
-        holder.itemView.setOnClickListener { callback.onSuggestionSelected(suggestion) }
+        holder.itemView.setOnClickListener { onItemClickListener?.invoke(suggestion) }
         holder.itemView.setOnLongClickListener { longClickedItem = suggestion; false }
     }
 
@@ -52,10 +50,10 @@ class SearchSuggestionsAdapter(private val callback: SearchSuggestionsAdapter.Ca
         return suggestions.size
     }
 
-    private fun getDiffResult(new: List<Suggestion>): DiffUtil.DiffResult {
+    private fun getDiffResult(old: List<Suggestion>, new: List<Suggestion>): DiffUtil.DiffResult {
         return DiffUtil.calculateDiff(object : DiffUtil.Callback() {
             override fun getOldListSize(): Int {
-                return suggestions.size
+                return old.size
             }
 
             override fun getNewListSize(): Int {
@@ -63,17 +61,13 @@ class SearchSuggestionsAdapter(private val callback: SearchSuggestionsAdapter.Ca
             }
 
             override fun areItemsTheSame(oldItemPosition: Int, newItemPosition: Int): Boolean {
-                return suggestions[oldItemPosition] == new[newItemPosition]
+                return old[oldItemPosition] == new[newItemPosition]
             }
 
             override fun areContentsTheSame(oldItemPosition: Int, newItemPosition: Int): Boolean {
                 return true
             }
         })
-    }
-
-    interface Callback {
-        fun onSuggestionSelected(suggestion: Suggestion)
     }
 }
 

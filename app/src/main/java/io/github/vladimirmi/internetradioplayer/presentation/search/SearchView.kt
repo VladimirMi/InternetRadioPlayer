@@ -9,7 +9,7 @@ import io.github.vladimirmi.internetradioplayer.presentation.base.BaseView
  * Created by Vladimir Mikhalev 12.11.2018.
  */
 
-interface SearchView : BaseView, SearchSuggestionsAdapter.Callback {
+interface SearchView : BaseView {
 
     fun addRecentSuggestions(list: List<Suggestion>)
 
@@ -20,6 +20,8 @@ interface SearchView : BaseView, SearchSuggestionsAdapter.Callback {
     fun setFavorites(favorites: FlatStationsList)
 
     fun selectStation(uri: String)
+
+    fun selectSuggestion(suggestion: Suggestion)
 
     fun showLoading(loading: Boolean)
 

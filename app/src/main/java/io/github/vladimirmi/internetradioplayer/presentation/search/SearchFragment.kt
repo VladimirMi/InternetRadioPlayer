@@ -23,12 +23,11 @@ import androidx.appcompat.widget.SearchView as SearchViewAndroid
  * Created by Vladimir Mikhalev 12.11.2018.
  */
 
-class SearchFragment : BaseFragment<SearchPresenter, SearchView>(), SearchView,
-        SearchSuggestionsAdapter.Callback {
+class SearchFragment : BaseFragment<SearchPresenter, SearchView>(), SearchView {
 
     override val layout = R.layout.fragment_search
 
-    private val suggestionsAdapter = SearchSuggestionsAdapter(this)
+    private val suggestionsAdapter = SearchSuggestionsAdapter()
     private val stationsAdapter = SearchStationsAdapter()
 
 
@@ -81,6 +80,7 @@ class SearchFragment : BaseFragment<SearchPresenter, SearchView>(), SearchView,
         val lm = LinearLayoutManager(context)
         suggestionsRv.layoutManager = lm
         suggestionsRv.adapter = suggestionsAdapter
+        suggestionsAdapter.onItemClickListener = this::selectSuggestion
         suggestionsRv.itemAnimator?.isRunning { suggestionsRv.visible(false) }
     }
 
@@ -99,10 +99,6 @@ class SearchFragment : BaseFragment<SearchPresenter, SearchView>(), SearchView,
             return true
         }
         return false
-    }
-
-    override fun onSuggestionSelected(suggestion: Suggestion) {
-        searchView.setQuery(suggestion.value, true)
     }
 
     override fun setUserVisibleHint(isVisibleToUser: Boolean) {
@@ -126,13 +122,13 @@ class SearchFragment : BaseFragment<SearchPresenter, SearchView>(), SearchView,
     override fun addRecentSuggestions(list: List<Suggestion>) {
         suggestionsAdapter.addRecentSuggestions(list)
         adjustSuggestionsRecyclerHeight()
-        suggestionsRv.scrollToPosition(0)
+        suggestionsRv.itemAnimator?.isRunning { suggestionsRv.scrollToPosition(0) }
     }
 
     override fun addRegularSuggestions(list: List<Suggestion>) {
         suggestionsAdapter.addRegularSuggestions(list)
         adjustSuggestionsRecyclerHeight()
-        suggestionsRv.scrollToPosition(0)
+        suggestionsRv.itemAnimator?.isRunning { suggestionsRv.scrollToPosition(0) }
     }
 
     override fun setStations(stations: List<StationSearchRes>) {
@@ -146,6 +142,10 @@ class SearchFragment : BaseFragment<SearchPresenter, SearchView>(), SearchView,
     override fun selectStation(uri: String) {
         val position = stationsAdapter.selectStation(uri)
         stationsRv.scrollToPosition(position)
+    }
+
+    override fun selectSuggestion(suggestion: Suggestion) {
+        searchView.setQuery(suggestion.value, true)
     }
 
     override fun showLoading(loading: Boolean) {

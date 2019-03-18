@@ -19,7 +19,7 @@ interface RootView : BaseView {
 
     fun expandPlayer()
 
-    fun createStation(uri: Uri, addToFavorite: Boolean, startPlay: Boolean)
+    fun createStation(uri: Uri, name: String?, addToFavorite: Boolean, startPlay: Boolean)
 
     fun setOffset(offset: Float)
 }

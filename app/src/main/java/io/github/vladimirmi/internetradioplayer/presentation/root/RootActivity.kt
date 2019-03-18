@@ -13,7 +13,7 @@ import com.google.android.material.bottomsheet.BottomSheetBehavior
 import com.google.android.material.snackbar.Snackbar
 import io.github.vladimirmi.internetradioplayer.R
 import io.github.vladimirmi.internetradioplayer.data.service.PlayerService
-import io.github.vladimirmi.internetradioplayer.data.utils.EXTRA_PLAY
+import io.github.vladimirmi.internetradioplayer.data.utils.ShortcutHelper
 import io.github.vladimirmi.internetradioplayer.di.Scopes
 import io.github.vladimirmi.internetradioplayer.di.module.RootActivityModule
 import io.github.vladimirmi.internetradioplayer.extensions.lock
@@ -120,11 +120,14 @@ class RootActivity : BaseActivity<RootPresenter, RootView>(), RootView {
 
     override fun checkIntent() {
         if (intent == null) return
-        val startPlay = intent.getBooleanExtra(EXTRA_PLAY, false)
+        val startPlay = intent.getBooleanExtra(ShortcutHelper.EXTRA_PLAY, false)
+        val stationName = intent.getStringExtra(ShortcutHelper.EXTRA_STATION_NAME)
         if (intent.hasExtra(PlayerService.EXTRA_STATION_ID)) {
             presenter.showStation(intent.getStringExtra(PlayerService.EXTRA_STATION_ID), startPlay)
         } else {
-            intent.data?.let { createStation(it, addToFavorite = false, startPlay = startPlay) }
+            intent.data?.let {
+                createStation(it, stationName, addToFavorite = false, startPlay = startPlay)
+            }
         }
         intent = null
     }
@@ -155,8 +158,8 @@ class RootActivity : BaseActivity<RootPresenter, RootView>(), RootView {
         playerBehavior.isExpanded = true
     }
 
-    override fun createStation(uri: Uri, addToFavorite: Boolean, startPlay: Boolean) {
-        presenter.addOrShowStation(uri, addToFavorite, startPlay)
+    override fun createStation(uri: Uri, name: String?, addToFavorite: Boolean, startPlay: Boolean) {
+        presenter.createStation(uri, name, addToFavorite, startPlay)
     }
 
     override fun setOffset(offset: Float) {

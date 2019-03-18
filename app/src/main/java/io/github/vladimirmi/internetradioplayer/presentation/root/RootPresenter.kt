@@ -65,8 +65,8 @@ class RootPresenter
     }
 
     @SuppressLint("CheckResult")
-    fun addOrShowStation(uri: Uri, addToFavorite: Boolean, startPlay: Boolean) {
-        stationInteractor.createStation(uri)
+    fun createStation(uri: Uri, name: String?, addToFavorite: Boolean, startPlay: Boolean) {
+        stationInteractor.createStation(uri, name)
                 .flatMapCompletable {
                     if (addToFavorite) stationInteractor.addToFavorite(it)
                     else mediaInteractor.setMedia(it)

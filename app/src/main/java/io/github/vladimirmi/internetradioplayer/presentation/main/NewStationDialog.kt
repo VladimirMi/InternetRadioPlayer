@@ -6,7 +6,7 @@ import android.view.LayoutInflater
 import android.view.View
 import io.github.vladimirmi.internetradioplayer.R
 import io.github.vladimirmi.internetradioplayer.presentation.base.BaseDialogFragment
-import io.github.vladimirmi.internetradioplayer.presentation.root.RootActivity
+import io.github.vladimirmi.internetradioplayer.presentation.root.RootView
 import kotlinx.android.synthetic.main.dialog_new_station.view.*
 
 /**
@@ -27,7 +27,7 @@ class NewStationDialog : BaseDialogFragment() {
     override fun onPositive() {
         dialogView?.let {
             val uri = Uri.parse(it.linkEt.text.toString())
-            (activity as? RootActivity)?.createStation(uri, addToFavorite = true, startPlay = false)
+            (activity as? RootView)?.createStation(uri, addToFavorite = true, startPlay = false)
         }
     }
 

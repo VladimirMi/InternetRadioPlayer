@@ -20,6 +20,7 @@ import java.util.*
 class Navigator(private val activity: RootActivity, private val containerId: Int)
     : SupportAppNavigator(activity, containerId) {
 
+    private var currentNavId = 0
     var navigationIdListener: ((Int) -> Unit)? = null
 
     private val screenStack = LinkedList<String>()
@@ -43,6 +44,8 @@ class Navigator(private val activity: RootActivity, private val containerId: Int
     override fun createActivityIntent(context: Context, screenKey: String, data: Any?) = null
 
     override fun createFragment(screenKey: String, data: Any?): Fragment? {
+        if (screenKey.navId == currentNavId) return null
+
         return when (screenKey.screenName) {
             Router.MAIN_SCREEN -> {
                 val navId = screenKey.navId
@@ -88,7 +91,10 @@ class Navigator(private val activity: RootActivity, private val containerId: Int
 
     private fun notifyNavigationListener() {
         val navId = screenStack.peek()?.navId
-        if (navId != null) navigationIdListener?.invoke(navId)
+        if (navId != null && navId != currentNavId) {
+            navigationIdListener?.invoke(navId)
+            currentNavId = navId
+        }
     }
 
     private fun applyToStack(command: Command?) {

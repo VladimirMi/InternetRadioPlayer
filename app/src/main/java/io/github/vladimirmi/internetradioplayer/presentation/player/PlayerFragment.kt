@@ -1,7 +1,5 @@
 package io.github.vladimirmi.internetradioplayer.presentation.player
 
-import android.os.Bundle
-import android.os.Parcelable
 import android.text.Spannable
 import android.text.SpannableString
 import android.text.style.ForegroundColorSpan
@@ -11,8 +9,8 @@ import android.widget.SeekBar
 import android.widget.TextView
 import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.constraintlayout.widget.ConstraintSet
-import androidx.coordinatorlayout.widget.CoordinatorLayout
 import androidx.core.content.ContextCompat
+import com.google.android.exoplayer2.util.Util
 import com.google.android.material.bottomsheet.BottomSheetBehavior
 import io.github.vladimirmi.internetradioplayer.R
 import io.github.vladimirmi.internetradioplayer.data.db.entity.Group
@@ -22,7 +20,7 @@ import io.github.vladimirmi.internetradioplayer.di.Scopes
 import io.github.vladimirmi.internetradioplayer.domain.model.Record
 import io.github.vladimirmi.internetradioplayer.extensions.*
 import io.github.vladimirmi.internetradioplayer.presentation.base.BaseFragment
-import io.github.vladimirmi.internetradioplayer.presentation.main.MainFragment
+import io.github.vladimirmi.internetradioplayer.presentation.root.RootView
 import io.github.vladimirmi.internetradioplayer.utils.SimpleOnSeekBarChangeListener
 import kotlinx.android.synthetic.main.fragment_player.*
 import kotlinx.android.synthetic.main.view_controls.*
@@ -68,9 +66,12 @@ class PlayerFragment : BaseFragment<PlayerPresenter, PlayerView>(), PlayerView {
         previousBt.setOnClickListener { presenter.skipToPrevious() }
         nextBt.setOnClickListener { presenter.skipToNext() }
         stopBt.setOnClickListener { presenter.stop() }
-        equalizerBt.setOnClickListener { presenter.openEqualizer() }
         recordBt.setOnClickListener { presenter.startStopRecording() }
         pointerIv.setOnClickListener { switchState() }
+        equalizerBt.setOnClickListener {
+            if (playerBehavior.isExpanded) switchState()
+            presenter.openEqualizer()
+        }
         playPauseBt.setOnClickListener {
             presenter.playPause()
             if (isSeekEnabled) presenter.seekTo(progressSb.progress)
@@ -89,23 +90,17 @@ class PlayerFragment : BaseFragment<PlayerPresenter, PlayerView>(), PlayerView {
     private fun setupBehavior() {
         requireView().post {
             playerBehavior = BottomSheetBehavior.from(view)
-            arguments?.getParcelable<Parcelable>(PLAYER_STATE)?.let {
-                playerBehavior.onRestoreInstanceState(requireView().parent as CoordinatorLayout,
-                        requireView(), it)
-            }
             playerBehavior.setBottomSheetCallback(object : BottomSheetBehavior.BottomSheetCallback() {
                 override fun onSlide(bottomSheet: View, slideOffset: Float) {
                     setOffset(slideOffset)
                 }
 
                 override fun onStateChanged(bottomSheet: View, newState: Int) {
-                    setupOffset()
                 }
             })
-            requireView().waitForLayout { setupOffset(); true }
+            setupOffset()
         }
     }
-
 
     override fun handleBackPressed(): Boolean {
         return if (playerBehavior.isExpanded) {
@@ -114,44 +109,7 @@ class PlayerFragment : BaseFragment<PlayerPresenter, PlayerView>(), PlayerView {
         } else false
     }
 
-    override fun onPause() {
-        val bundle = Bundle().apply {
-            putParcelable(PLAYER_STATE, playerBehavior.onSaveInstanceState(
-                    requireView().parent as CoordinatorLayout,
-                    requireView()
-            ))
-        }
-        arguments = bundle
-        super.onPause()
-    }
-
     //region =============== PlayerView ==============
-
-    override fun showPlayerView(show: Boolean) {
-        (parentFragment as MainFragment?)?.showPlayerView(show)
-        if (!show) {
-            requireView().post {
-                if (!playerBehavior.isHidden) {
-                    playerBehavior.isHideable = true
-                    playerBehavior.isHidden = true
-                }
-            }
-        } else {
-            requireView().postDelayed({
-                if (playerBehavior.isHidden) {
-                    playerBehavior.isHideable = false
-                    playerBehavior.isHidden = false
-                }
-            }, 300)
-        }
-    }
-
-    override fun expandPlayerView() {
-        requireView().post {
-            playerBehavior.isHideable = false
-            playerBehavior.isExpanded = true
-        }
-    }
 
     override fun setStation(station: Station) {
         titleTv.text = station.name
@@ -243,19 +201,25 @@ class PlayerFragment : BaseFragment<PlayerPresenter, PlayerView>(), PlayerView {
     //endregion
 
     private fun setupOffset() {
-        if (playerBehavior.isCollapsed || playerBehavior.isHidden) setOffset(0f)
-        else if (playerBehavior.isExpanded) setOffset(1f)
+        when {
+            playerBehavior.isCollapsed -> setOffset(0f)
+            playerBehavior.isExpanded -> setOffset(1f)
+            playerBehavior.isHidden -> setOffset(-1f)
+        }
     }
 
     private fun setOffset(offset: Float) {
-        if (offset < 0) return
+        val parentState = Util.constrainValue(offset + 1, 0f, 1f)
+        val state = Util.constrainValue(offset, 0f, 1f)
+        (activity as? RootView)?.setOffset(parentState)
+
         val playerView = view as? ConstraintLayout ?: return
         val set = ConstraintSet()
         set.clone(playerView)
-        set.setVerticalBias(R.id.controlsView, offset)
+        set.setVerticalBias(R.id.controlsView, state)
         set.applyTo(playerView)
 
-        val visible = offset > 0.9
+        val visible = state > 0.9
         nextBt.visible(visible, false)
         previousBt.visible(visible, false)
         stopBt.visible(visible, false)
@@ -264,13 +228,13 @@ class PlayerFragment : BaseFragment<PlayerPresenter, PlayerView>(), PlayerView {
             positionTv.visible(visible, false)
             durationTv.visible(visible, false)
         }
-        simpleMetaFl.visible(offset == 0f)
+        simpleMetaFl.visible(state == 0f)
 
-        playPauseBt.x = playPauseBtStart.x + (playPauseBtEnd.x - playPauseBtStart.x) * offset
-        playPauseBt.y = playPauseBtStart.y + (playPauseBtEnd.y - playPauseBtStart.y) * offset
-        statusTv.y = statusTvStart.y + (playerView.height - statusTv.height - statusTvStart.y) * offset
+        playPauseBt.x = playPauseBtStart.x + (playPauseBtEnd.x - playPauseBtStart.x) * state
+        playPauseBt.y = playPauseBtStart.y + (playPauseBtEnd.y - playPauseBtStart.y) * state
+        statusTv.y = statusTvStart.y + (playerView.height - statusTv.height - statusTvStart.y) * state
 
-        pointerIv.rotationX = 180 * offset
+        pointerIv.rotationX = 180 * state
     }
 
     private fun openLinkDialog(url: String) {
@@ -310,22 +274,22 @@ class PlayerFragment : BaseFragment<PlayerPresenter, PlayerView>(), PlayerView {
             playerBehavior.isCollapsed = true
         }
     }
-
-    private var BottomSheetBehavior<View>.isExpanded
-        get() = state == BottomSheetBehavior.STATE_EXPANDED
-        set(value) {
-            state = if (value) BottomSheetBehavior.STATE_EXPANDED
-            else BottomSheetBehavior.STATE_COLLAPSED
-        }
-    private var BottomSheetBehavior<View>.isCollapsed
-        get() = state == BottomSheetBehavior.STATE_COLLAPSED
-        set(value) {
-            if (value) state = BottomSheetBehavior.STATE_COLLAPSED
-        }
-    private var BottomSheetBehavior<View>.isHidden
-        get() = state == BottomSheetBehavior.STATE_HIDDEN
-        set(value) {
-            state = if (value) BottomSheetBehavior.STATE_HIDDEN
-            else BottomSheetBehavior.STATE_COLLAPSED
-        }
 }
+
+var BottomSheetBehavior<View>.isExpanded
+    get() = state == BottomSheetBehavior.STATE_EXPANDED
+    set(value) {
+        state = if (value) BottomSheetBehavior.STATE_EXPANDED
+        else BottomSheetBehavior.STATE_COLLAPSED
+    }
+var BottomSheetBehavior<View>.isCollapsed
+    get() = state == BottomSheetBehavior.STATE_COLLAPSED
+    set(value) {
+        if (value) state = BottomSheetBehavior.STATE_COLLAPSED
+    }
+var BottomSheetBehavior<View>.isHidden
+    get() = state == BottomSheetBehavior.STATE_HIDDEN
+    set(value) {
+        state = if (value) BottomSheetBehavior.STATE_HIDDEN
+        else BottomSheetBehavior.STATE_COLLAPSED
+    }

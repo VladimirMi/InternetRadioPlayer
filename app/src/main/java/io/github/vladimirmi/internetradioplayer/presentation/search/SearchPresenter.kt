@@ -35,10 +35,10 @@ class SearchPresenter
 
     override fun onFirstAttach(view: SearchView) {
         searchInteractor.queryRecentSuggestions("")
+                .observeOn(AndroidSchedulers.mainThread())
                 .doOnSuccess { view.showPlaceholder(it.isEmpty()) }
                 .filter { it.isNotEmpty() }
                 .map { it.first() }
-                .observeOn(AndroidSchedulers.mainThread())
                 .subscribeX(onNext = { view.onSuggestionSelected(it) })
                 .addTo(viewSubs)
     }

@@ -28,7 +28,7 @@
 
     <color name="group">#E0C983</color>
     <color name="accent_light">#FFD5D0</color>
-    <color name="shadow">#44616161</color>
+    <color name="shadow">#80616161</color>
     <color name="play">#64dd17</color>
     <color name="pause">#ffa726</color>
     <color name="stop">#e57373</color>

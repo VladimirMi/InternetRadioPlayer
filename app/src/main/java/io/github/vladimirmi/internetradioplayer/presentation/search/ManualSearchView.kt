@@ -9,7 +9,7 @@ import io.github.vladimirmi.internetradioplayer.presentation.base.BaseView
  * Created by Vladimir Mikhalev 12.11.2018.
  */
 
-interface SearchView : BaseView {
+interface ManualSearchView : BaseView {
 
     fun addRecentSuggestions(list: List<Suggestion>)
 

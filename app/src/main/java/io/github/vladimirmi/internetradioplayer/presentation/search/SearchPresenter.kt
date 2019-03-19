@@ -26,14 +26,14 @@ class SearchPresenter
                     private val stationInteractor: StationInteractor,
                     private val mediaInteractor: MediaInteractor,
                     private val favoriteListInteractor: FavoriteListInteractor)
-    : BasePresenter<SearchView>() {
+    : BasePresenter<ManualSearchView>() {
 
     var intervalSearchEnabled: Boolean = false
     private var searchSub: Disposable? = null
     private var suggestionSub: Disposable? = null
     private var selectSub: Disposable? = null
 
-    override fun onFirstAttach(view: SearchView) {
+    override fun onFirstAttach(view: ManualSearchView) {
         searchInteractor.queryRecentSuggestions("")
                 .observeOn(AndroidSchedulers.mainThread())
                 .doOnSuccess { view.showPlaceholder(it.isEmpty()) }
@@ -43,7 +43,7 @@ class SearchPresenter
                 .addTo(viewSubs)
     }
 
-    override fun onAttach(view: SearchView) {
+    override fun onAttach(view: ManualSearchView) {
         //todo refactor like in history
         mediaInteractor.currentMediaObs
                 .observeOn(AndroidSchedulers.mainThread())

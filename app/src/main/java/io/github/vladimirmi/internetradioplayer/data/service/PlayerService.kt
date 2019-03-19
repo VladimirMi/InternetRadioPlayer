@@ -76,6 +76,7 @@ class PlayerService : MediaBrowserServiceCompat(), SessionCallback.Interface {
         sessionToken = session.sessionToken
         notification = MediaNotification(this, session)
         playerCallback.initDefault()
+        session.isActive = true
     }
 
     private fun initEqualizer() {
@@ -112,14 +113,6 @@ class PlayerService : MediaBrowserServiceCompat(), SessionCallback.Interface {
         result.sendResult(emptyList())
     }
 
-    private fun startService() {
-        if (!serviceStarted) {
-            startService(Intent(applicationContext, PlayerService::class.java))
-            serviceStarted = true
-            session.isActive = true
-        }
-    }
-
     private fun handleCurrentMedia(media: Media) {
         playerCallback.setMedia(media)
         currentStationId = media.id
@@ -152,7 +145,6 @@ class PlayerService : MediaBrowserServiceCompat(), SessionCallback.Interface {
 
     override fun onPlayCommand() {
         stopTask?.cancel()
-        startService()
         if (isPaused && currentStationId == playingMediaId) playback.play()
         else prepareAndPlay()
     }

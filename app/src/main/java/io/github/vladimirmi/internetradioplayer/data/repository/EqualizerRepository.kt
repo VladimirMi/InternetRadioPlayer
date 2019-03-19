@@ -73,18 +73,15 @@ class EqualizerRepository
         try {
             this.sessionId = sessionId
 
-            if (audioEffects.isEqualizerSupported()) {
-                equalizer = Equalizer(0, sessionId).apply { enabled = true }
-            }
-            if (audioEffects.isBassBoostSupported()) {
-                bassBoost = BassBoost(0, sessionId).apply { enabled = true }
-            }
-            if (audioEffects.isVirtualizerSupported()) {
-                virtualizer = Virtualizer(0, sessionId).apply { enabled = true }
-            }
-
+            if (audioEffects.isEqualizerSupported()) equalizer = Equalizer(0, sessionId)
+            if (audioEffects.isBassBoostSupported()) bassBoost = BassBoost(0, sessionId)
+            if (audioEffects.isVirtualizerSupported()) virtualizer = Virtualizer(0, sessionId)
+//
             // on some devices with built-in equalizer the audio effect loses control right after creation
             runOnUiThreadDelayed(300) {
+                equalizer?.enabled = true
+                bassBoost?.enabled = true
+                virtualizer?.enabled = true
                 if (checkControl) equalizer?.ifHasControl {
                     currentPreset.applyTo(equalizer, bassBoost, virtualizer)
                 } else {

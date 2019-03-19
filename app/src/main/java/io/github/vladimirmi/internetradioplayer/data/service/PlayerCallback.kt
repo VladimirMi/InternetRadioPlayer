@@ -1,5 +1,6 @@
 package io.github.vladimirmi.internetradioplayer.data.service
 
+import android.animation.ValueAnimator
 import android.annotation.SuppressLint
 import android.support.v4.media.MediaMetadataCompat
 import android.support.v4.media.session.PlaybackStateCompat
@@ -23,7 +24,7 @@ abstract class PlayerCallback : Player.EventListener {
     private var playbackStateCompat = DEFAULT_PLAYBACK_STATE
     private var mediaMetadata = EMPTY_METADATA
     private var metadataPostTask: TimerTask? = null
-    var player: ExoPlayer? = null
+    var player: SimpleExoPlayer? = null
 
     fun initDefault() {
         onPlaybackStateChanged(playbackStateCompat)
@@ -35,6 +36,13 @@ abstract class PlayerCallback : Player.EventListener {
             onAudioSessionId(EVENT_SESSION_END, sessionId)
             sessionId = audioSessionId
             onAudioSessionId(EVENT_SESSION_START, audioSessionId)
+
+            player?.volume = 0f
+            val animator = ValueAnimator.ofFloat(0f, 1f)
+                    .setDuration(3000)
+
+            animator.addUpdateListener { player?.volume = it.animatedValue as Float }
+            animator.start()
         }
     }
 
@@ -43,9 +51,9 @@ abstract class PlayerCallback : Player.EventListener {
         onMediaMetadataChanged(mediaMetadata)
     }
 
-    fun setArtistTitle(artistTitle: String) {
+    fun setMetadata(metadata: String) {
         fun postMetadata() {
-            mediaMetadata = mediaMetadata.setArtistTitle(artistTitle)
+            mediaMetadata = mediaMetadata.setArtistTitle(metadata)
             onMediaMetadataChanged(mediaMetadata)
         }
         runOnUiThread {
@@ -53,6 +61,7 @@ abstract class PlayerCallback : Player.EventListener {
             if (player == null) {
                 postMetadata()
             } else {
+                // take in to account buffered duration
                 val bufferedMs = player!!.bufferedPosition - player!!.currentPosition
                 metadataPostTask = Timer().schedule(bufferedMs) { postMetadata() }
             }

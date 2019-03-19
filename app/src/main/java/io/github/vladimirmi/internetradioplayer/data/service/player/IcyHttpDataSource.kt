@@ -39,7 +39,7 @@ class IcyHttpDataSource(callFactory: Call.Factory,
         }
 
         if (metadataWindow == 0) {
-            playerCallback?.setArtistTitle("")
+            playerCallback?.setMetadata("")
             Timber.d("stream does not support icy metadata")
         }
 

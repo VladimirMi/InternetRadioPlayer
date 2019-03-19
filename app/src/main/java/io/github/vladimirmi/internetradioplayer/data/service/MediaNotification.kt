@@ -75,7 +75,7 @@ class MediaNotification(private val service: PlayerService,
         }
 
         if (playbackState.state == PlaybackStateCompat.STATE_BUFFERING) {
-            builder.setContentTitle(service.getString(R.string.metadata_buffering))
+            builder.setContentText(service.getString(R.string.metadata_buffering))
         }
 
         setupActions(builder, playbackState)

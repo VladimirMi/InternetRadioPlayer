@@ -31,8 +31,11 @@ abstract class PlayerCallback : Player.EventListener {
     }
 
     fun setStartAudioSessionId(audioSessionId: Int) {
-        sessionId = audioSessionId
-        onAudioSessionId(EVENT_SESSION_START, audioSessionId)
+        if (sessionId != audioSessionId) {
+            onAudioSessionId(EVENT_SESSION_END, sessionId)
+            sessionId = audioSessionId
+            onAudioSessionId(EVENT_SESSION_START, audioSessionId)
+        }
     }
 
     fun setMedia(media: Media) {

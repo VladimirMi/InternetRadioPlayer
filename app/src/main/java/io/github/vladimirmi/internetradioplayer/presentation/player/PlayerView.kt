@@ -10,10 +10,6 @@ import io.github.vladimirmi.internetradioplayer.presentation.base.BaseView
 
 interface PlayerView : BaseView {
 
-    fun showPlayerView(show: Boolean)
-
-    fun expandPlayerView()
-
     fun setStation(station: Station)
 
     fun setRecord(record: Record)

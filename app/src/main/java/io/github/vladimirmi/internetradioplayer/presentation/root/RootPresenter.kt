@@ -8,6 +8,7 @@ import io.github.vladimirmi.internetradioplayer.extensions.subscribeX
 import io.github.vladimirmi.internetradioplayer.navigation.Router
 import io.github.vladimirmi.internetradioplayer.presentation.base.BasePresenter
 import io.reactivex.android.schedulers.AndroidSchedulers
+import io.reactivex.disposables.Disposable
 import io.reactivex.rxkotlin.addTo
 import timber.log.Timber
 import javax.inject.Inject
@@ -26,6 +27,8 @@ class RootPresenter
                     private val historyInteractor: HistoryInteractor,
                     private val recordsInteractor: RecordsInteractor)
     : BasePresenter<RootView>() {
+
+    private var playerVisibilitySub: Disposable? = null
 
     override fun onFirstAttach(view: RootView) {
         router.newRootScreen(mainInteractor.getMainPageId())
@@ -49,9 +52,21 @@ class RootPresenter
         playerInteractor.disconnect()
     }
 
+    fun checkPlayerVisibility(isPlayerEnabled: Boolean) {
+        playerVisibilitySub?.dispose(); playerVisibilitySub = null
+        playerVisibilitySub = mediaInteractor.currentMediaObs
+                .map { !it.isNull() }
+                .distinctUntilChanged()
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribeX(onNext = {
+                    if (it && isPlayerEnabled) view?.collapsePlayer()
+                    else view?.hidePlayer()
+                })
+    }
+
     @SuppressLint("CheckResult")
-    fun addOrShowStation(uri: Uri, addToFavorite: Boolean, startPlay: Boolean) {
-        stationInteractor.createStation(uri)
+    fun createStation(uri: Uri, name: String?, addToFavorite: Boolean, startPlay: Boolean) {
+        stationInteractor.createStation(uri, name)
                 .flatMapCompletable {
                     if (addToFavorite) stationInteractor.addToFavorite(it)
                     else mediaInteractor.setMedia(it)
@@ -62,7 +77,7 @@ class RootPresenter
                 .subscribeX(onComplete = {
                     if (addToFavorite) navigateTo(R.id.nav_favorites)
                     if (startPlay) playerInteractor.play()
-                    view?.showPlayer()
+                    view?.expandPlayer()
                 }).addTo(viewSubs)
     }
 

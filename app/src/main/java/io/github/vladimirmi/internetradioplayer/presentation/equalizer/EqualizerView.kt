@@ -20,12 +20,4 @@ interface EqualizerView : BaseView {
 
     fun showReset(show: Boolean)
 
-    fun setMetadata(metadata: String)
-
-    fun showStopped()
-
-    fun showBuffering()
-
-    fun showPlaying()
-
 }

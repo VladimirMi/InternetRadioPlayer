@@ -2,7 +2,6 @@ package io.github.vladimirmi.internetradioplayer.presentation.main
 
 import android.os.Bundle
 import android.view.View
-import android.view.ViewGroup
 import androidx.viewpager.widget.ViewPager
 import io.github.vladimirmi.internetradioplayer.R
 import io.github.vladimirmi.internetradioplayer.data.utils.Preferences
@@ -58,17 +57,6 @@ class MainFragment : BaseFragment<MainPresenter, MainView>(), MainView {
             else -> PAGE_HISTORY
         }
         mainPager.setCurrentItem(page, false)
-    }
-
-    override fun showPlayerView(visible: Boolean) {
-        val bottomMargin: Int = if (visible) {
-            requireContext().resources.getDimension(R.dimen.player_collapsed_height).toInt()
-        } else {
-            0
-        }
-        val lp: ViewGroup.MarginLayoutParams = mainContent.layoutParams as ViewGroup.MarginLayoutParams
-        lp.bottomMargin = bottomMargin
-        mainContent.layoutParams = lp
     }
 
     //endregion

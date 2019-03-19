@@ -30,6 +30,11 @@ fun runOnUiThread(action: () -> Unit) {
     }
 }
 
+fun runOnUiThreadDelayed(delayMs: Long, action: () -> Unit) {
+    val mainLooper = Looper.getMainLooper()
+    Handler(mainLooper).postDelayed(action, delayMs)
+}
+
 inline fun View.waitForMeasure(crossinline block: () -> Unit) {
     if (width > 0 && height > 0) {
         block()

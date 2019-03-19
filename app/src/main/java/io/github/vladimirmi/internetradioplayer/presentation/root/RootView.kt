@@ -1,5 +1,6 @@
 package io.github.vladimirmi.internetradioplayer.presentation.root
 
+import android.net.Uri
 import io.github.vladimirmi.internetradioplayer.presentation.base.BaseView
 
 /**
@@ -12,5 +13,13 @@ interface RootView : BaseView {
 
     fun showLoadingIndicator(visible: Boolean)
 
-    fun showPlayer()
+    fun hidePlayer()
+
+    fun collapsePlayer()
+
+    fun expandPlayer()
+
+    fun createStation(uri: Uri, name: String?, addToFavorite: Boolean, startPlay: Boolean)
+
+    fun setOffset(offset: Float)
 }

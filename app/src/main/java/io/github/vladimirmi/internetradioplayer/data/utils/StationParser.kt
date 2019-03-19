@@ -67,10 +67,10 @@ class StationParser
         )
     }
 
-    fun parseFromUri(uri: Uri): Station {
+    fun parseFromUri(uri: Uri, name: String?): Station {
         Timber.d("parseFromUri: $uri")
         return when {
-            uri.scheme?.startsWith(SCHEME_HTTP, true) == true -> parseFromNet(uri.toURL(), null) // also https
+            uri.scheme?.startsWith(SCHEME_HTTP, true) == true -> parseFromNet(uri.toURL(), name) // also https
             uri.scheme == SCHEME_FILE || uri.scheme == SCHEME_CONTENT -> parseFromPlaylistFile(uri)
             else -> throw IllegalArgumentException("Error: Unsupported uri $uri")
         }

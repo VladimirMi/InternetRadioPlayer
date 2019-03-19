@@ -22,6 +22,12 @@ import javax.inject.Inject
 class ShortcutHelper
 @Inject constructor(private val context: Context) {
 
+    companion object {
+        const val EXTRA_PLAY = "play"
+        const val EXTRA_STATION_NAME = "station_name"
+        const val EXTRA_DUPLICATE = "duplicate"
+    }
+
     fun pinShortcut(station: Station, startPlay: Boolean): Boolean {
         val label = if (station.name.isBlank()) "Default name" else station.name
         val icon = Icon.randomIcon(label.hashCode().toLong())
@@ -45,7 +51,6 @@ class ShortcutHelper
             shortcutManager.disableShortcuts(listOf(station.id),
                     context.getString(R.string.msg_shortcut_remove))
         } else {
-            //todo valid startPlay
             val removeIntent = Intent().apply {
                 putExtra(Intent.EXTRA_SHORTCUT_INTENT, createShortcutIntent(station, true))
                 putExtra(Intent.EXTRA_SHORTCUT_NAME, station.name)
@@ -57,12 +62,11 @@ class ShortcutHelper
 
     private fun createShortcutIntent(station: Station, startPlay: Boolean): Intent {
         return Intent(context, RootActivity::class.java).apply {
-            putExtra("duplicate", false)
+            putExtra(EXTRA_STATION_NAME, station.name)
             putExtra(EXTRA_PLAY, startPlay)
+            putExtra(EXTRA_DUPLICATE, false)
             data = station.uri.toUri()
             action = Intent.ACTION_VIEW
         }
     }
 }
-
-const val EXTRA_PLAY = "play"

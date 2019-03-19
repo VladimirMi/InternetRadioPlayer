@@ -14,9 +14,9 @@ import javax.inject.Inject
 class StationRepository
 @Inject constructor(private val stationParser: StationParser) {
 
-    fun createStation(uri: Uri): Single<Station> {
+    fun createStation(uri: Uri, name: String?): Single<Station> {
         return Single.fromCallable {
-            stationParser.parseFromUri(uri)
+            stationParser.parseFromUri(uri, name)
         }.subscribeOn(Schedulers.io())
     }
 }

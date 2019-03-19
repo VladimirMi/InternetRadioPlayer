@@ -6,20 +6,23 @@ import android.net.Uri
 import android.os.Bundle
 import android.os.Handler
 import android.view.View
+import android.view.ViewGroup
 import android.view.animation.DecelerateInterpolator
 import androidx.appcompat.app.ActionBarDrawerToggle
 import androidx.drawerlayout.widget.DrawerLayout
+import com.google.android.material.bottomsheet.BottomSheetBehavior
 import com.google.android.material.snackbar.Snackbar
 import io.github.vladimirmi.internetradioplayer.R
 import io.github.vladimirmi.internetradioplayer.data.service.PlayerService
-import io.github.vladimirmi.internetradioplayer.data.utils.EXTRA_PLAY
+import io.github.vladimirmi.internetradioplayer.data.utils.ShortcutHelper
 import io.github.vladimirmi.internetradioplayer.di.Scopes
 import io.github.vladimirmi.internetradioplayer.di.module.RootActivityModule
 import io.github.vladimirmi.internetradioplayer.extensions.lock
 import io.github.vladimirmi.internetradioplayer.extensions.visible
 import io.github.vladimirmi.internetradioplayer.navigation.Navigator
 import io.github.vladimirmi.internetradioplayer.presentation.base.BaseActivity
-import io.github.vladimirmi.internetradioplayer.presentation.player.PlayerView
+import io.github.vladimirmi.internetradioplayer.presentation.player.isExpanded
+import io.github.vladimirmi.internetradioplayer.presentation.player.isHidden
 import kotlinx.android.synthetic.main.activity_root.*
 import kotlinx.android.synthetic.main.view_toolbar.*
 import ru.terrakok.cicerone.NavigatorHolder
@@ -37,6 +40,7 @@ class RootActivity : BaseActivity<RootPresenter, RootView>(), RootView {
 
     override val layout = R.layout.activity_root
     private val navigator by lazy { Navigator(this, R.id.mainFr) }
+    private lateinit var playerBehavior: BottomSheetBehavior<View>
 
     override fun providePresenter(): RootPresenter = Scopes.rootActivity.getInstance(RootPresenter::class.java)
 
@@ -56,6 +60,7 @@ class RootActivity : BaseActivity<RootPresenter, RootView>(), RootView {
     override fun setupView() {
         setupDrawer()
         setupToolbar()
+        playerBehavior = BottomSheetBehavior.from(findViewById(R.id.playerFragment))
     }
 
     private fun setupDrawer() {
@@ -90,6 +95,7 @@ class RootActivity : BaseActivity<RootPresenter, RootView>(), RootView {
             navigationView.setCheckedItem(it)
             showDirectory(it == R.id.nav_search)
             setHomeAsUp(it == R.id.nav_settings || it == R.id.nav_equalizer)
+            presenter.checkPlayerVisibility(isPlayerEnabled = it != R.id.nav_settings)
         }
         super.onStart()
     }
@@ -115,11 +121,14 @@ class RootActivity : BaseActivity<RootPresenter, RootView>(), RootView {
 
     override fun checkIntent() {
         if (intent == null) return
-        val startPlay = intent.getBooleanExtra(EXTRA_PLAY, false)
+        val startPlay = intent.getBooleanExtra(ShortcutHelper.EXTRA_PLAY, false)
+        val stationName = intent.getStringExtra(ShortcutHelper.EXTRA_STATION_NAME)
         if (intent.hasExtra(PlayerService.EXTRA_STATION_ID)) {
             presenter.showStation(intent.getStringExtra(PlayerService.EXTRA_STATION_ID), startPlay)
         } else {
-            intent.data?.let { createStation(it, addToFavorite = false, startPlay = startPlay) }
+            intent.data?.let {
+                createStation(it, stationName, addToFavorite = false, startPlay = startPlay)
+            }
         }
         intent = null
     }
@@ -132,18 +141,32 @@ class RootActivity : BaseActivity<RootPresenter, RootView>(), RootView {
         loadingPb.visible(visible)
     }
 
-    override fun showPlayer() {
-        for (fragment in supportFragmentManager.fragments) {
-            for (child in fragment.childFragmentManager.fragments) {
-                if (child is PlayerView) {
-                    child.expandPlayerView(); return
-                }
-            }
-        }
+    override fun hidePlayer() {
+        playerBehavior.isHideable = true
+        playerBehavior.isHidden = true
     }
 
-    fun createStation(uri: Uri, addToFavorite: Boolean, startPlay: Boolean) {
-        presenter.addOrShowStation(uri, addToFavorite, startPlay)
+    override fun collapsePlayer() {
+        activityView.postDelayed({
+            playerBehavior.isHideable = false
+            playerBehavior.isHidden = false
+
+        }, 300)
+    }
+
+    override fun expandPlayer() {
+        playerBehavior.isHideable = false
+        playerBehavior.isExpanded = true
+    }
+
+    override fun createStation(uri: Uri, name: String?, addToFavorite: Boolean, startPlay: Boolean) {
+        presenter.createStation(uri, name, addToFavorite, startPlay)
+    }
+
+    override fun setOffset(offset: Float) {
+        val lp = mainFr.layoutParams as ViewGroup.MarginLayoutParams
+        lp.bottomMargin = (resources.getDimension(R.dimen.player_collapsed_height) * offset).toInt()
+        mainFr.layoutParams = lp
     }
 
     //endregion

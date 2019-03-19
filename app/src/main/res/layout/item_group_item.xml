@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 
-<androidx.constraintlayout.widget.ConstraintLayout
+<LinearLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
@@ -11,51 +11,53 @@
     android:background="@drawable/bg_item_middle"
     android:elevation="2dp"
     android:foreground="?android:attr/selectableItemBackground"
+    android:orientation="horizontal"
     tools:ignore="UnusedAttribute"
     >
 
-    <TextView
-        android:id="@+id/nameTv"
-        style="@style/TextAppearance.MaterialComponents.Subtitle1"
+    <LinearLayout
         android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        android:layout_marginLeft="8dp"
-        android:textStyle="bold"
-        android:layout_marginRight="8dp"
-        app:layout_constraintBottom_toTopOf="@+id/specsTv"
-        app:layout_constraintEnd_toStartOf="@id/handleIv"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        tools:text="Item name"
-        />
+        android:layout_height="match_parent"
+        android:layout_weight="1"
+        android:orientation="vertical"
+        android:padding="8dp"
+        >
 
-    <TextView
-        android:id="@+id/specsTv"
-        style="@style/TextAppearance.AppCompat.Caption"
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        android:layout_marginLeft="8dp"
-        android:layout_marginRight="8dp"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toStartOf="@id/handleIv"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/nameTv"
-        tools:text="Item name"
-        />
+        <TextView
+            android:id="@+id/nameTv"
+            style="@style/TextAppearance.MaterialComponents.Subtitle1"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="8dp"
+            android:textStyle="bold"
+            tools:text="Item name"
+            />
+
+        <TextView
+            android:id="@+id/specsTv"
+            style="@style/TextAppearance.AppCompat.Caption"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            app:layout_constraintBottom_toBottomOf="parent"
+            tools:text="Item name"
+            />
+    </LinearLayout>
+
 
     <ImageView
         android:id="@+id/handleIv"
         android:layout_width="48dp"
         android:layout_height="48dp"
-        android:src="@drawable/ic_handle"
-        android:padding="12dp"
+        android:layout_gravity="center_vertical"
+        android:clickable="true"
+        android:focusable="true"
         android:foreground="?actionBarItemBackground"
+        android:padding="12dp"
+        android:src="@drawable/ic_handle"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toTopOf="parent"
         tools:ignore="ContentDescription"
-        android:clickable="true"
-        android:focusable="true"
         />
 
-</androidx.constraintlayout.widget.ConstraintLayout>
+</LinearLayout>

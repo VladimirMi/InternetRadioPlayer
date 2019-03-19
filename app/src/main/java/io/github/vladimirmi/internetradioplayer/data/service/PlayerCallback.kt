@@ -1,5 +1,6 @@
 package io.github.vladimirmi.internetradioplayer.data.service
 
+import android.animation.ValueAnimator
 import android.annotation.SuppressLint
 import android.support.v4.media.MediaMetadataCompat
 import android.support.v4.media.session.PlaybackStateCompat
@@ -8,8 +9,11 @@ import com.google.android.exoplayer2.source.TrackGroupArray
 import com.google.android.exoplayer2.trackselection.TrackSelectionArray
 import io.github.vladimirmi.internetradioplayer.data.service.extensions.*
 import io.github.vladimirmi.internetradioplayer.domain.model.Media
+import io.github.vladimirmi.internetradioplayer.extensions.runOnUiThread
 import timber.log.Timber
 import java.net.ConnectException
+import java.util.*
+import kotlin.concurrent.schedule
 
 const val EVENT_SESSION_START = "EVENT_SESSION_START"
 const val EVENT_SESSION_END = "EVENT_SESSION_END"
@@ -19,7 +23,8 @@ abstract class PlayerCallback : Player.EventListener {
     private var sessionId = 0
     private var playbackStateCompat = DEFAULT_PLAYBACK_STATE
     private var mediaMetadata = EMPTY_METADATA
-    var player: ExoPlayer? = null
+    private var metadataPostTask: TimerTask? = null
+    var player: SimpleExoPlayer? = null
 
     fun initDefault() {
         onPlaybackStateChanged(playbackStateCompat)
@@ -27,8 +32,18 @@ abstract class PlayerCallback : Player.EventListener {
     }
 
     fun setStartAudioSessionId(audioSessionId: Int) {
-        sessionId = audioSessionId
-        onAudioSessionId(EVENT_SESSION_START, audioSessionId)
+        if (sessionId != audioSessionId) {
+            onAudioSessionId(EVENT_SESSION_END, sessionId)
+            sessionId = audioSessionId
+            onAudioSessionId(EVENT_SESSION_START, audioSessionId)
+
+            player?.volume = 0f
+            val animator = ValueAnimator.ofFloat(0f, 1f)
+                    .setDuration(3000)
+
+            animator.addUpdateListener { player?.volume = it.animatedValue as Float }
+            animator.start()
+        }
     }
 
     fun setMedia(media: Media) {
@@ -36,9 +51,21 @@ abstract class PlayerCallback : Player.EventListener {
         onMediaMetadataChanged(mediaMetadata)
     }
 
-    fun setArtistTitle(artistTitle: String) {
-        mediaMetadata = mediaMetadata.setArtistTitle(artistTitle)
-        onMediaMetadataChanged(mediaMetadata)
+    fun setMetadata(metadata: String) {
+        fun postMetadata() {
+            mediaMetadata = mediaMetadata.setArtistTitle(metadata)
+            onMediaMetadataChanged(mediaMetadata)
+        }
+        runOnUiThread {
+            metadataPostTask?.cancel()
+            if (player == null) {
+                postMetadata()
+            } else {
+                // take in to account buffered duration
+                val bufferedMs = player!!.bufferedPosition - player!!.currentPosition
+                metadataPostTask = Timer().schedule(bufferedMs) { postMetadata() }
+            }
+        }
     }
 
     fun changeActions(changer: (Long) -> Long) {

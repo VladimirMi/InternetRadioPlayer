@@ -29,8 +29,8 @@ class StationInteractor
         return shortcutHelper.pinShortcut(station, startPlay)
     }
 
-    fun createStation(uri: Uri): Single<Station> {
-        return stationRepository.createStation(uri)
+    fun createStation(uri: Uri, name: String?): Single<Station> {
+        return stationRepository.createStation(uri, name)
                 .map { newStation ->
                     favoritesRepository.getStation { it.uri == newStation.uri } ?: newStation
                 }

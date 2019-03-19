@@ -8,8 +8,11 @@ import com.google.android.exoplayer2.source.TrackGroupArray
 import com.google.android.exoplayer2.trackselection.TrackSelectionArray
 import io.github.vladimirmi.internetradioplayer.data.service.extensions.*
 import io.github.vladimirmi.internetradioplayer.domain.model.Media
+import io.github.vladimirmi.internetradioplayer.extensions.runOnUiThread
 import timber.log.Timber
 import java.net.ConnectException
+import java.util.*
+import kotlin.concurrent.schedule
 
 const val EVENT_SESSION_START = "EVENT_SESSION_START"
 const val EVENT_SESSION_END = "EVENT_SESSION_END"
@@ -19,6 +22,7 @@ abstract class PlayerCallback : Player.EventListener {
     private var sessionId = 0
     private var playbackStateCompat = DEFAULT_PLAYBACK_STATE
     private var mediaMetadata = EMPTY_METADATA
+    private var metadataPostTask: TimerTask? = null
     var player: ExoPlayer? = null
 
     fun initDefault() {
@@ -37,8 +41,19 @@ abstract class PlayerCallback : Player.EventListener {
     }
 
     fun setArtistTitle(artistTitle: String) {
-        mediaMetadata = mediaMetadata.setArtistTitle(artistTitle)
-        onMediaMetadataChanged(mediaMetadata)
+        fun postMetadata() {
+            mediaMetadata = mediaMetadata.setArtistTitle(artistTitle)
+            onMediaMetadataChanged(mediaMetadata)
+        }
+        runOnUiThread {
+            metadataPostTask?.cancel()
+            if (player == null) {
+                postMetadata()
+            } else {
+                val bufferedMs = player!!.bufferedPosition - player!!.currentPosition
+                metadataPostTask = Timer().schedule(bufferedMs) { postMetadata() }
+            }
+        }
     }
 
     fun changeActions(changer: (Long) -> Long) {

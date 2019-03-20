@@ -13,8 +13,8 @@ import io.github.vladimirmi.internetradioplayer.domain.model.FlatStationsList
 import io.github.vladimirmi.internetradioplayer.extensions.color
 import io.github.vladimirmi.internetradioplayer.extensions.themeAttrData
 import io.github.vladimirmi.internetradioplayer.extensions.visible
-import io.github.vladimirmi.internetradioplayer.presentation.favoritelist.stations.defaultOutline
-import io.github.vladimirmi.internetradioplayer.presentation.favoritelist.stations.fixedOutline
+import io.github.vladimirmi.internetradioplayer.presentation.favorite.stations.defaultOutline
+import io.github.vladimirmi.internetradioplayer.presentation.favorite.stations.fixedOutline
 import kotlinx.android.synthetic.main.item_station.view.*
 
 /**

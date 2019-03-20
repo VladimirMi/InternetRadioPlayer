@@ -1,4 +1,4 @@
-package io.github.vladimirmi.internetradioplayer.presentation.favoritelist
+package io.github.vladimirmi.internetradioplayer.presentation.favorite
 
 import io.github.vladimirmi.internetradioplayer.domain.interactor.MainInteractor
 import io.github.vladimirmi.internetradioplayer.domain.interactor.RecordsInteractor
@@ -12,16 +12,16 @@ import javax.inject.Inject
  * Created by Vladimir Mikhalev 30.09.2017.
  */
 
-class FavoriteListPresenter
+class FavoritePresenter
 @Inject constructor(private val recordsInteractor: RecordsInteractor,
                     private val mainInteractor: MainInteractor)
-    : BasePresenter<FavoriteListView>() {
+    : BasePresenter<FavoriteView>() {
 
-    override fun onFirstAttach(view: FavoriteListView) {
+    override fun onFirstAttach(view: FavoriteView) {
         view.showPage(mainInteractor.getFavoritePageId())
     }
 
-    override fun onAttach(view: FavoriteListView) {
+    override fun onAttach(view: FavoriteView) {
         view.selectTab(mainInteractor.getFavoritePageId())
 
         recordsInteractor.recordsObs

@@ -1,4 +1,4 @@
-package io.github.vladimirmi.internetradioplayer.presentation.favoritelist.stations
+package io.github.vladimirmi.internetradioplayer.presentation.favorite.stations
 
 import androidx.recyclerview.widget.DiffUtil
 import io.github.vladimirmi.internetradioplayer.domain.model.FlatStationsList

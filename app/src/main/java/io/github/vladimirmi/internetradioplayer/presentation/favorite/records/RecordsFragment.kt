@@ -1,4 +1,4 @@
-package io.github.vladimirmi.internetradioplayer.presentation.favoritelist.records
+package io.github.vladimirmi.internetradioplayer.presentation.favorite.records
 
 import android.view.MenuItem
 import android.view.View

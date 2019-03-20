@@ -5,9 +5,9 @@ import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentManager
 import androidx.fragment.app.FragmentPagerAdapter
 import io.github.vladimirmi.internetradioplayer.R
-import io.github.vladimirmi.internetradioplayer.presentation.favoritelist.FavoriteListFragment
+import io.github.vladimirmi.internetradioplayer.presentation.favorite.FavoriteFragment
 import io.github.vladimirmi.internetradioplayer.presentation.history.HistoryFragment
-import io.github.vladimirmi.internetradioplayer.presentation.search.ManualSearchFragment
+import io.github.vladimirmi.internetradioplayer.presentation.search.SearchFragment
 
 /**
  * Created by Vladimir Mikhalev 11.11.2018.
@@ -23,8 +23,8 @@ class MainPagerAdapter(context: Context, fm: FragmentManager) : FragmentPagerAda
 
     override fun getItem(position: Int): Fragment {
         return when (position) {
-            PAGE_SEARCH -> ManualSearchFragment()
-            PAGE_FAVORITES -> FavoriteListFragment()
+            PAGE_SEARCH -> SearchFragment()
+            PAGE_FAVORITES -> FavoriteFragment()
             else -> HistoryFragment()
         }
     }

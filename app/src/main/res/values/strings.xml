@@ -57,6 +57,8 @@
     <string name="tab_history">History</string>
     <string name="tab_stations">Stations</string>
     <string name="tab_records">Records</string>
+    <string name="tab_talk">Talk</string>
+    <string name="tab_music">Music</string>
 
     <string-array name="main_tabs">
         <item>@string/tab_search</item>

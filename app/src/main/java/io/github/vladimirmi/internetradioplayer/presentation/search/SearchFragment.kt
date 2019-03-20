@@ -1,26 +1,23 @@
-package io.github.vladimirmi.internetradioplayer.presentation.favoritelist
+package io.github.vladimirmi.internetradioplayer.presentation.search
 
 import android.view.View
 import com.google.android.material.tabs.TabLayout
 import io.github.vladimirmi.internetradioplayer.R
 import io.github.vladimirmi.internetradioplayer.di.Scopes
-import io.github.vladimirmi.internetradioplayer.extensions.visible
 import io.github.vladimirmi.internetradioplayer.presentation.base.BaseFragment
-import io.github.vladimirmi.internetradioplayer.presentation.favoritelist.records.RecordsFragment
-import io.github.vladimirmi.internetradioplayer.presentation.favoritelist.stations.FavoriteStationsFragment
+import io.github.vladimirmi.internetradioplayer.presentation.favorite.records.RecordsFragment
+import io.github.vladimirmi.internetradioplayer.presentation.search.manual.ManualSearchFragment
 import io.github.vladimirmi.internetradioplayer.utils.SimpleOnTabSelectedListener
-import kotlinx.android.synthetic.main.fragment_favorite_list.*
+import kotlinx.android.synthetic.main.fragment_search.*
 import toothpick.Toothpick
 
-
 /**
- * Created by Vladimir Mikhalev 30.09.2017.
+ * Created by Vladimir Mikhalev 20.03.2019.
  */
 
-class FavoriteListFragment : BaseFragment<FavoriteListPresenter, FavoriteListView>(),
-        FavoriteListView {
+class SearchFragment : BaseFragment<SearchPresenter, SearchView>(), SearchView {
 
-    override val layout = R.layout.fragment_favorite_list
+    override val layout = R.layout.fragment_search
 
     private val onTabSelectedListener = object : SimpleOnTabSelectedListener() {
         override fun onTabSelected(tab: TabLayout.Tab) {
@@ -28,29 +25,26 @@ class FavoriteListFragment : BaseFragment<FavoriteListPresenter, FavoriteListVie
         }
     }
 
-    override fun providePresenter(): FavoriteListPresenter {
+    override fun providePresenter(): SearchPresenter {
         return Toothpick.openScopes(Scopes.ROOT_ACTIVITY, this)
-                .getInstance(FavoriteListPresenter::class.java).also {
+                .getInstance(SearchPresenter::class.java).also {
                     Toothpick.closeScope(this)
                 }
     }
 
     override fun setupView(view: View) {
-        navigationTl.addTab(navigationTl.newTab().apply { text = getString(R.string.tab_stations) })
-        navigationTl.addTab(navigationTl.newTab().apply { text = getString(R.string.tab_records) })
+        navigationTl.addTab(navigationTl.newTab().apply { text = getString(R.string.tab_search) })
+        navigationTl.addTab(navigationTl.newTab().apply { text = getString(R.string.tab_talk) })
+        navigationTl.addTab(navigationTl.newTab().apply { text = getString(R.string.tab_music) })
         navigationTl.selectTab(null)
         navigationTl.addOnTabSelectedListener(onTabSelectedListener)
     }
 
-    override fun showTabs(visible: Boolean) {
-        navigationTl.visible(visible)
-        if (!visible) presenter.selectTab(0)
-    }
-
     override fun showPage(position: Int) {
         val fragment = when (position) {
-            0 -> FavoriteStationsFragment()
+            0 -> ManualSearchFragment()
             1 -> RecordsFragment()
+            2 -> RecordsFragment()
             else -> return
         }
         fragment.setUserVisibleHint(userVisibleHint)

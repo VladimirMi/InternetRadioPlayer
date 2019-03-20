@@ -1,4 +1,4 @@
-package io.github.vladimirmi.internetradioplayer.presentation.favoritelist.records
+package io.github.vladimirmi.internetradioplayer.presentation.favorite.records
 
 import android.graphics.drawable.GradientDrawable
 import android.os.Build
@@ -12,10 +12,10 @@ import androidx.recyclerview.widget.RecyclerView
 import io.github.vladimirmi.internetradioplayer.R
 import io.github.vladimirmi.internetradioplayer.domain.model.Record
 import io.github.vladimirmi.internetradioplayer.extensions.color
-import io.github.vladimirmi.internetradioplayer.presentation.favoritelist.stations.PAYLOAD_BACKGROUND_CHANGE
-import io.github.vladimirmi.internetradioplayer.presentation.favoritelist.stations.PAYLOAD_SELECTED_CHANGE
-import io.github.vladimirmi.internetradioplayer.presentation.favoritelist.stations.defaultOutline
-import io.github.vladimirmi.internetradioplayer.presentation.favoritelist.stations.fixedOutline
+import io.github.vladimirmi.internetradioplayer.presentation.favorite.stations.PAYLOAD_BACKGROUND_CHANGE
+import io.github.vladimirmi.internetradioplayer.presentation.favorite.stations.PAYLOAD_SELECTED_CHANGE
+import io.github.vladimirmi.internetradioplayer.presentation.favorite.stations.defaultOutline
+import io.github.vladimirmi.internetradioplayer.presentation.favorite.stations.fixedOutline
 import kotlinx.android.synthetic.main.item_record.view.*
 
 /**

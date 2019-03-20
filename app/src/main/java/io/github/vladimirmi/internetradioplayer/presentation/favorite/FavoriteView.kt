@@ -1,4 +1,4 @@
-package io.github.vladimirmi.internetradioplayer.presentation.favoritelist
+package io.github.vladimirmi.internetradioplayer.presentation.favorite
 
 import io.github.vladimirmi.internetradioplayer.presentation.base.BaseView
 
@@ -6,7 +6,7 @@ import io.github.vladimirmi.internetradioplayer.presentation.base.BaseView
  * Created by Vladimir Mikhalev 25.02.2019.
  */
 
-interface FavoriteListView: BaseView {
+interface FavoriteView : BaseView {
 
     fun showTabs(visible: Boolean)
 

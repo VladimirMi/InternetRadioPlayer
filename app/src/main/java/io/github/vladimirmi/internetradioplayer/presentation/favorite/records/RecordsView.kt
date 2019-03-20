@@ -1,4 +1,4 @@
-package io.github.vladimirmi.internetradioplayer.presentation.favoritelist.records
+package io.github.vladimirmi.internetradioplayer.presentation.favorite.records
 
 import io.github.vladimirmi.internetradioplayer.domain.model.Record
 import io.github.vladimirmi.internetradioplayer.presentation.base.BaseView

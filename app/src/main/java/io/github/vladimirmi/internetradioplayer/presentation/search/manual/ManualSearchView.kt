@@ -1,4 +1,4 @@
-package io.github.vladimirmi.internetradioplayer.presentation.search
+package io.github.vladimirmi.internetradioplayer.presentation.search.manual
 
 import io.github.vladimirmi.internetradioplayer.data.net.model.StationSearchRes
 import io.github.vladimirmi.internetradioplayer.domain.model.FlatStationsList

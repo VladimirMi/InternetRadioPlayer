@@ -1,4 +1,4 @@
-package io.github.vladimirmi.internetradioplayer.presentation.search
+package io.github.vladimirmi.internetradioplayer.presentation.search.manual
 
 import android.graphics.Rect
 import android.os.Bundle
@@ -18,24 +18,25 @@ import io.github.vladimirmi.internetradioplayer.extensions.isVisible
 import io.github.vladimirmi.internetradioplayer.extensions.visible
 import io.github.vladimirmi.internetradioplayer.extensions.waitForLayout
 import io.github.vladimirmi.internetradioplayer.presentation.base.BaseFragment
-import kotlinx.android.synthetic.main.fragment_search.*
+import io.github.vladimirmi.internetradioplayer.presentation.search.SearchStationsAdapter
+import kotlinx.android.synthetic.main.fragment_search_manual.*
 import toothpick.Toothpick
 
 /**
  * Created by Vladimir Mikhalev 12.11.2018.
  */
 
-class ManualSearchFragment : BaseFragment<SearchPresenter, ManualSearchView>(), ManualSearchView {
+class ManualSearchFragment : BaseFragment<ManualSearchPresenter, ManualSearchView>(), ManualSearchView {
 
-    override val layout = R.layout.fragment_search
+    override val layout = R.layout.fragment_search_manual
 
     private val suggestionsAdapter = SearchSuggestionsAdapter()
     private val stationsAdapter = SearchStationsAdapter()
 
 
-    override fun providePresenter(): SearchPresenter {
+    override fun providePresenter(): ManualSearchPresenter {
         return Toothpick.openScopes(Scopes.ROOT_ACTIVITY, this)
-                .getInstance(SearchPresenter::class.java).also {
+                .getInstance(ManualSearchPresenter::class.java).also {
                     Toothpick.closeScope(this)
                 }
     }

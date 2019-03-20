@@ -1,4 +1,4 @@
-package io.github.vladimirmi.internetradioplayer.presentation.favoritelist.stations
+package io.github.vladimirmi.internetradioplayer.presentation.favorite.stations
 
 import android.graphics.drawable.GradientDrawable
 import android.os.Build

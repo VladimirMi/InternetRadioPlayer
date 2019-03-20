@@ -51,7 +51,7 @@ class ManualSearchFragment : BaseFragment<SearchPresenter, ManualSearchView>(), 
         searchView.setIconifiedByDefault(false)
         searchView.setOnQueryTextFocusChangeListener { _, hasFocus ->
             adjustSuggestionsRecyclerHeight(hasFocus)
-            suggestionsRv.itemAnimator?.isRunning { suggestionsRv.visible(hasFocus) }
+            suggestionsRv.visible(hasFocus)
             presenter.intervalSearchEnabled = !hasFocus
         }
 
@@ -82,9 +82,10 @@ class ManualSearchFragment : BaseFragment<SearchPresenter, ManualSearchView>(), 
         val lm = LinearLayoutManager(context)
         suggestionsRv.layoutManager = lm
         suggestionsRv.adapter = suggestionsAdapter
+        suggestionsRv.itemAnimator = null
         suggestionsRv.addItemDecoration(DividerItemDecoration(context, lm.orientation))
         suggestionsAdapter.onItemClickListener = this::selectSuggestion
-        suggestionsRv.itemAnimator?.isRunning { suggestionsRv.visible(false) }
+        suggestionsRv.visible(false)
 
         suggestionsRv.addOnScrollListener(object : RecyclerView.OnScrollListener() {
             override fun onScrolled(recyclerView: RecyclerView, dx: Int, dy: Int) {
@@ -136,13 +137,13 @@ class ManualSearchFragment : BaseFragment<SearchPresenter, ManualSearchView>(), 
     override fun addRecentSuggestions(list: List<Suggestion>) {
         suggestionsAdapter.addRecentSuggestions(list)
         adjustSuggestionsRecyclerHeight()
-        suggestionsRv.itemAnimator?.isRunning { suggestionsRv.scrollToPosition(0) }
+        suggestionsRv.scrollToPosition(0)
     }
 
     override fun addRegularSuggestions(list: List<Suggestion>) {
         suggestionsAdapter.addRegularSuggestions(list)
         adjustSuggestionsRecyclerHeight()
-        suggestionsRv.itemAnimator?.isRunning { suggestionsRv.scrollToPosition(0) }
+        suggestionsRv.scrollToPosition(0)
     }
 
     override fun setStations(stations: List<StationSearchRes>) {

@@ -1,29 +1,39 @@
 <?xml version="1.0" encoding="utf-8"?>
-<FrameLayout
+<androidx.constraintlayout.widget.ConstraintLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
-    android:id="@+id/frameLayout"
     android:layout_height="match_parent"
-    android:focusableInTouchMode="true"
     >
 
-    <TextView
-        android:id="@+id/placeholderView"
+    <com.google.android.material.button.MaterialButton
+        android:id="@+id/parentBt"
+        style="@style/Widget.MaterialComponents.Button.TextButton"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="@string/search_placeholder"
-        android:layout_gravity="center_vertical"
-        android:gravity="center"
-        android:textAppearance="@style/TextAppearance.MaterialComponents.Subtitle1"
+        app:layout_constraintTop_toTopOf="parent"
+        tools:text="Parent"
+        />
+
+    <androidx.appcompat.widget.SearchView
+        android:id="@+id/searchView"
+        style="@style/Widget.AppCompat.SearchView.ActionBar"
+        android:layout_width="match_parent"
+        android:layout_height="48dp"
+        android:background="?attr/colorSurface"
+        android:elevation="2dp"
+        android:stateListAnimator="@animator/search_view_animator"
+        app:layout_constraintTop_toBottomOf="@id/parentBt"
+        tools:ignore="UnusedAttribute"
         />
 
     <androidx.swiperefreshlayout.widget.SwipeRefreshLayout
         xmlns:android="http://schemas.android.com/apk/res/android"
         android:id="@+id/swipeToRefresh"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:layout_marginTop="48dp"
+        android:layout_height="wrap_content"
+        app:layout_constraintTop_toBottomOf="@id/searchView"
         >
 
         <androidx.recyclerview.widget.RecyclerView
@@ -39,34 +49,27 @@
 
     </androidx.swiperefreshlayout.widget.SwipeRefreshLayout>
 
-    <LinearLayout
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/suggestionsRv"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:orientation="vertical"
+        android:animateLayoutChanges="false"
         android:background="?attr/colorSurface"
-        android:elevation="2dp"
-        tools:ignore="UnusedAttribute"
-        >
-
-        <androidx.appcompat.widget.SearchView
-            android:id="@+id/searchView"
-            style="@style/Widget.AppCompat.SearchView.ActionBar"
-            android:layout_width="match_parent"
-            android:layout_height="48dp"
-            tools:ignore="UnusedAttribute"
-            android:background="?attr/colorSurface"
-            android:stateListAnimator="@animator/search_view_animator"
-            />
-
-        <androidx.recyclerview.widget.RecyclerView
-            android:id="@+id/suggestionsRv"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:overScrollMode="never"
-            tools:listitem="@layout/item_suggestion"
-            android:animateLayoutChanges="false"
-            />
-    </LinearLayout>
+        android:overScrollMode="never"
+        app:layout_constraintTop_toBottomOf="@id/searchView"
+        tools:listitem="@layout/item_suggestion"
+        tools:visibility="gone"
+        />
 
 
-</FrameLayout>
+    <TextView
+        android:id="@+id/placeholderView"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_gravity="center_vertical"
+        android:gravity="center"
+        android:text="@string/search_placeholder"
+        android:textAppearance="@style/TextAppearance.MaterialComponents.Subtitle1"
+        />
+
+</androidx.constraintlayout.widget.ConstraintLayout>

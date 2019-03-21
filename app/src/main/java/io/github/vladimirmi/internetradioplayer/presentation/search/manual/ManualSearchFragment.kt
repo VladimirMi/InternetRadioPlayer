@@ -17,6 +17,7 @@ import io.github.vladimirmi.internetradioplayer.domain.model.Suggestion
 import io.github.vladimirmi.internetradioplayer.extensions.isVisible
 import io.github.vladimirmi.internetradioplayer.extensions.visible
 import io.github.vladimirmi.internetradioplayer.extensions.waitForLayout
+import io.github.vladimirmi.internetradioplayer.navigation.NavigationView
 import io.github.vladimirmi.internetradioplayer.presentation.base.BaseFragment
 import io.github.vladimirmi.internetradioplayer.presentation.search.SearchStationsAdapter
 import kotlinx.android.synthetic.main.fragment_search_manual.*
@@ -33,7 +34,6 @@ class ManualSearchFragment : BaseFragment<ManualSearchPresenter, ManualSearchVie
     private val suggestionsAdapter = SearchSuggestionsAdapter()
     private val stationsAdapter = SearchStationsAdapter()
 
-
     override fun providePresenter(): ManualSearchPresenter {
         return Toothpick.openScopes(Scopes.ROOT_ACTIVITY, this)
                 .getInstance(ManualSearchPresenter::class.java).also {
@@ -46,6 +46,12 @@ class ManualSearchFragment : BaseFragment<ManualSearchPresenter, ManualSearchVie
         setupSuggestions()
         setupStations()
         setupSwipeToRefresh()
+
+        parentBt.setOnClickListener { (parentFragment as? NavigationView)?.back() }
+    }
+
+    override fun handleBackPressed(): Boolean {
+        return super.handleBackPressed() || parentBt.callOnClick()
     }
 
     private fun setupSearchView() {
@@ -54,6 +60,7 @@ class ManualSearchFragment : BaseFragment<ManualSearchPresenter, ManualSearchVie
             adjustSuggestionsRecyclerHeight(hasFocus)
             suggestionsRv.visible(hasFocus)
             presenter.intervalSearchEnabled = !hasFocus
+            if (!hasFocus && !stationsRv.canScrollVertically(-1)) searchView.isSelected = false
         }
 
         searchView.setOnQueryTextListener(object : SearchView.OnQueryTextListener {
@@ -77,6 +84,12 @@ class ManualSearchFragment : BaseFragment<ManualSearchPresenter, ManualSearchVie
 
         stationsAdapter.onAddToFavListener = { presenter.switchFavorite() }
         stationsAdapter.onItemClickListener = { presenter.selectStation(it) }
+
+        stationsRv.addOnScrollListener(object : RecyclerView.OnScrollListener() {
+            override fun onScrolled(recyclerView: RecyclerView, dx: Int, dy: Int) {
+                searchView.isSelected = recyclerView.canScrollVertically(-1)
+            }
+        })
     }
 
     private fun setupSuggestions() {
@@ -90,7 +103,7 @@ class ManualSearchFragment : BaseFragment<ManualSearchPresenter, ManualSearchVie
 
         suggestionsRv.addOnScrollListener(object : RecyclerView.OnScrollListener() {
             override fun onScrolled(recyclerView: RecyclerView, dx: Int, dy: Int) {
-                searchView.isSelected = suggestionsRv.canScrollVertically(-1)
+                searchView.isSelected = recyclerView.canScrollVertically(-1)
             }
         })
     }
@@ -178,8 +191,7 @@ class ManualSearchFragment : BaseFragment<ManualSearchPresenter, ManualSearchVie
         if (keyboardDisplayed) {
             val rect = Rect()
             suggestionsRv.getWindowVisibleDisplayFrame(rect)
-            frameLayout.waitForLayout {
-                if (view == null) return@waitForLayout true
+            requireView().waitForLayout {
                 val oldVisibleHeight = rect.bottom - rect.top
                 suggestionsRv.getWindowVisibleDisplayFrame(rect)
                 val newVisibleHeight = rect.bottom - rect.top
@@ -201,7 +213,7 @@ class ManualSearchFragment : BaseFragment<ManualSearchPresenter, ManualSearchVie
         }
         val xy = IntArray(2)
         suggestionsRv.getLocationInWindow(xy)
-        val maxHeight = Math.min(visibleRect.bottom - xy[1], frameLayout.height)
+        val maxHeight = Math.min(visibleRect.bottom - xy[1], requireView().height)
 
         val heightSpec = View.MeasureSpec.makeMeasureSpec(maxHeight, View.MeasureSpec.AT_MOST)
         val widthSpec = View.MeasureSpec.makeMeasureSpec(0, View.MeasureSpec.UNSPECIFIED)

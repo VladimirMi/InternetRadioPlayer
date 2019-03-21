@@ -79,6 +79,17 @@ fun TextView.onTextChanges(listener: (String) -> Unit) {
     })
 }
 
+
+fun TextView.setTextOrHide(text: String?) {
+    if (text == null || text.isBlank()) {
+        visible(false)
+    } else {
+        visible(true)
+        this.text = text
+    }
+}
+
+
 fun SeekBar.setProgressX(progress: Int, animate: Boolean) {
     if (animate) {
         if (Build.VERSION.SDK_INT >= 24) {

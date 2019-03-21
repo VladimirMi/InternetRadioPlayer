@@ -245,15 +245,6 @@ class PlayerFragment : BaseFragment<PlayerPresenter, PlayerView>(), PlayerView {
         AddShortcutDialog().show(childFragmentManager, "add_shortcut_dialog")
     }
 
-    private fun TextView.setTextOrHide(text: String?) {
-        if (text == null || text.isBlank()) {
-            visible(false)
-        } else {
-            visible(true)
-            this.text = text
-        }
-    }
-
     private fun TextView.linkStyle(enable: Boolean) {
         val string = text.toString()
         val color = ContextCompat.getColor(context, R.color.blue_500)

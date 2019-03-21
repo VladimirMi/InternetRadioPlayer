@@ -1,6 +1,6 @@
 package io.github.vladimirmi.internetradioplayer.navigation
 
-import io.github.vladimirmi.internetradioplayer.presentation.search.manual.ManualSearchFragment
+import io.github.vladimirmi.internetradioplayer.presentation.search.ManualSearchFragment
 
 /**
  * Created by Vladimir Mikhalev 20.03.2019.
@@ -17,39 +17,39 @@ object NavigationTree {
             screen("B")
         }
         screen("Music") {
-            screen("70s")
-            screen("80s")
-            screen("90s")
-            screen("00s")
-            screen("Adult Contemporary")
-            screen("Alternative")
-            screen("Christian")
-            screen("Christmas")
-            screen("ClassicCountry")
-            screen("Classical")
-            screen("Country")
+            stationsScreen("70's")
+            stationsScreen("80's")
+            stationsScreen("90's")
+            stationsScreen("00's")
+            stationsScreen("Adult Contemporary")
+            stationsScreen("Alternative")
+            stationsScreen("Christian")
+            stationsScreen("Christmas")
+            stationsScreen("ClassicCountry")
+            stationsScreen("Classical")
+            stationsScreen("Country")
             screen("Electronic") {
-                screen("Chill")
-                screen("Dubstep")
-                screen("House")
-                screen("Industrial")
-                screen("Techno")
-                screen("Trance")
+                stationsScreen("Chill")
+                stationsScreen("Dubstep")
+                stationsScreen("House")
+                stationsScreen("Industrial")
+                stationsScreen("Techno")
+                stationsScreen("Trance")
             }
-            screen("Hip Hop")
-            screen("Hit Music")
-            screen("Indian")
-            screen("Jazz")
-            screen("Latin Hits")
-            screen("Metal")
-            screen("Oldies")
-            screen("Rap")
-            screen("Reggae")
-            screen("Rock")
-            screen("Roots")
-            screen("Soul")
-            screen("Standards")
-            screen("World")
+            stationsScreen("Hip Hop")
+            stationsScreen("Hit Music")
+            stationsScreen("Indian")
+            stationsScreen("Jazz")
+            stationsScreen("Latin Hits")
+            stationsScreen("Metal")
+            stationsScreen("Oldies")
+            stationsScreen("Rap")
+            stationsScreen("Reggae")
+            stationsScreen("Rock")
+            stationsScreen("Roots")
+            stationsScreen("Soul")
+            stationsScreen("Standards")
+            stationsScreen("World")
         }
     }
 

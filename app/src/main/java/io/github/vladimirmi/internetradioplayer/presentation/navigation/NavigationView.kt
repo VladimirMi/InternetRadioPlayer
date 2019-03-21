@@ -1,5 +1,6 @@
-package io.github.vladimirmi.internetradioplayer.navigation
+package io.github.vladimirmi.internetradioplayer.presentation.navigation
 
+import io.github.vladimirmi.internetradioplayer.navigation.NavigationScreen
 import io.github.vladimirmi.internetradioplayer.presentation.base.BackPressListener
 
 /**
@@ -11,4 +12,5 @@ interface NavigationView : BackPressListener {
     fun navigateTo(screen: NavigationScreen)
 
     fun back()
+
 }

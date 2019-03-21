@@ -1,4 +1,4 @@
-package io.github.vladimirmi.internetradioplayer.presentation.search.manual
+package io.github.vladimirmi.internetradioplayer.presentation.search
 
 import android.view.ContextMenu
 import android.view.LayoutInflater

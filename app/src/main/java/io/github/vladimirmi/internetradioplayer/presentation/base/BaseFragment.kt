@@ -73,9 +73,7 @@ abstract class BaseFragment<P : BasePresenter<V>, V : BaseView> : Fragment(), Ba
     }
 
     override fun showSnackbar(resId: Int) {
-        view?.let {
-            Snackbar.make(it, resId, Snackbar.LENGTH_SHORT).show()
-        }
+        Snackbar.make(requireView(), resId, Snackbar.LENGTH_SHORT).show()
     }
 
     //endregion

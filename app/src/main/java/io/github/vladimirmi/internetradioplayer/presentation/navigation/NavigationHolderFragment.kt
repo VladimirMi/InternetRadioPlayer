@@ -1,4 +1,4 @@
-package io.github.vladimirmi.internetradioplayer.navigation
+package io.github.vladimirmi.internetradioplayer.presentation.navigation
 
 import android.os.Bundle
 import android.view.LayoutInflater
@@ -6,6 +6,7 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import io.github.vladimirmi.internetradioplayer.R
+import io.github.vladimirmi.internetradioplayer.navigation.NavigationScreen
 import io.github.vladimirmi.internetradioplayer.presentation.base.BackPressListener
 
 /**

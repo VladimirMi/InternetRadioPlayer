@@ -14,8 +14,6 @@ import java.util.concurrent.TimeUnit
  * Created by Vladimir Mikhalev 13.11.2018.
  */
 
-private const val HOST = "api.dar.fm"
-private const val BASE_URL = "http://$HOST"
 private const val CONNECT_TIMEOUT = 5000L
 private const val READ_TIMEOUT = 5000L
 private const val WRITE_TIMEOUT = 5000L
@@ -35,7 +33,7 @@ fun OkHttpClient.Builder.createClient(): OkHttpClient {
 }
 
 private fun Retrofit.Builder.createRetrofit(okHttp: OkHttpClient, factory: Converter.Factory): Retrofit {
-    return baseUrl(BASE_URL)
+    return baseUrl(UberStationsService.BASE_URL)
             .addConverterFactory(factory)
             .addCallAdapterFactory(RxJava2CallAdapterFactory.createWithScheduler(Schedulers.io()))
             .client(okHttp)
@@ -45,7 +43,7 @@ private fun Retrofit.Builder.createRetrofit(okHttp: OkHttpClient, factory: Conve
 private fun apiKeyInterceptor(): Interceptor {
     return Interceptor { chain ->
         val originalRequest = chain.request()
-        if (originalRequest.url().host() == HOST) {
+        if (originalRequest.url().host() == UberStationsService.HOST) {
             val url = originalRequest.url().newBuilder()
                     .addQueryParameter("callback", "json")
                     .addQueryParameter("partner_token", BuildConfig.PARTNER_TOKEN)

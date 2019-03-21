@@ -1,4 +1,4 @@
-package io.github.vladimirmi.internetradioplayer.presentation.search.manual
+package io.github.vladimirmi.internetradioplayer.presentation.search
 
 import android.graphics.Rect
 import android.os.Bundle
@@ -17,9 +17,8 @@ import io.github.vladimirmi.internetradioplayer.domain.model.Suggestion
 import io.github.vladimirmi.internetradioplayer.extensions.isVisible
 import io.github.vladimirmi.internetradioplayer.extensions.visible
 import io.github.vladimirmi.internetradioplayer.extensions.waitForLayout
-import io.github.vladimirmi.internetradioplayer.navigation.NavigationView
 import io.github.vladimirmi.internetradioplayer.presentation.base.BaseFragment
-import io.github.vladimirmi.internetradioplayer.presentation.search.SearchStationsAdapter
+import io.github.vladimirmi.internetradioplayer.presentation.navigation.NavigationView
 import kotlinx.android.synthetic.main.fragment_search_manual.*
 import toothpick.Toothpick
 

@@ -33,6 +33,7 @@ class DataPresenter
         if (endpoint == UberStationsService.STATIONS_ENDPOINT) {
             searchInteractor.searchStations(query!!)
                     .observeOn(AndroidSchedulers.mainThread())
+                    .doOnSubscribe { view?.showLoading(true) }
                     .subscribeX(onSuccess = {
                         view?.setData(it)
                         view?.selectData(mediaInteractor.currentMedia.uri)

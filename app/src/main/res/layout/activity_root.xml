@@ -17,7 +17,7 @@
         <include layout="@layout/view_toolbar"/>
 
         <FrameLayout
-            android:id="@+id/mainFr"
+            android:id="@+id/rootContainer"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             app:layout_behavior="@string/appbar_scrolling_view_behavior"
@@ -27,9 +27,9 @@
             android:id="@+id/loadingPb"
             android:layout_width="48dp"
             android:layout_height="48dp"
+            android:layout_gravity="center"
             android:indeterminate="true"
             android:visibility="gone"
-            android:layout_gravity="center"
             tools:visibility="visible"
             />
 
@@ -59,10 +59,10 @@
         android:layout_width="wrap_content"
         android:layout_height="match_parent"
         android:layout_gravity="start"
+        android:background="?attr/colorSurface"
         android:fitsSystemWindows="false"
         app:headerLayout="@layout/view_drawer_header"
         app:menu="@menu/menu_drawer"
-        android:background="?attr/colorSurface"
         />
 
 </androidx.drawerlayout.widget.DrawerLayout>

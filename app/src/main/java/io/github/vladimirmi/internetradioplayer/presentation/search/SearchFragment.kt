@@ -9,5 +9,5 @@ import io.github.vladimirmi.internetradioplayer.presentation.navigation.Navigati
 
 class SearchFragment : NavigationHolderFragment() {
 
-    override val rootScreen = NavigationTree.rootScreen
+    override val rootScreenContext = NavigationTree.rootScreen
 }

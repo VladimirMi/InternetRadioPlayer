@@ -7,15 +7,6 @@
     android:layout_height="match_parent"
     >
 
-    <com.google.android.material.button.MaterialButton
-        android:id="@+id/parentBt"
-        style="@style/Widget.MaterialComponents.Button.TextButton"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        app:layout_constraintTop_toTopOf="parent"
-        tools:text="Parent"
-        />
-
     <androidx.appcompat.widget.SearchView
         android:id="@+id/searchView"
         style="@style/Widget.AppCompat.SearchView.ActionBar"
@@ -24,12 +15,11 @@
         android:background="?attr/colorSurface"
         android:elevation="2dp"
         android:stateListAnimator="@animator/search_view_animator"
-        app:layout_constraintTop_toBottomOf="@id/parentBt"
+        app:layout_constraintTop_toTopOf="parent"
         tools:ignore="UnusedAttribute"
         />
 
     <androidx.swiperefreshlayout.widget.SwipeRefreshLayout
-        xmlns:android="http://schemas.android.com/apk/res/android"
         android:id="@+id/swipeToRefresh"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -60,7 +50,6 @@
         tools:listitem="@layout/item_suggestion"
         tools:visibility="gone"
         />
-
 
     <TextView
         android:id="@+id/placeholderView"

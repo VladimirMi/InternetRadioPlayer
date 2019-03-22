@@ -39,7 +39,7 @@ class RootActivity : BaseActivity<RootPresenter, RootView>(), RootView {
     @Inject lateinit var navigatorHolder: NavigatorHolder
 
     override val layout = R.layout.activity_root
-    private val navigator by lazy { Navigator(this, R.id.mainFr) }
+    private val navigator by lazy { Navigator(this, R.id.rootContainer) }
     private lateinit var playerBehavior: BottomSheetBehavior<View>
 
     override fun providePresenter(): RootPresenter = Scopes.rootActivity.getInstance(RootPresenter::class.java)
@@ -164,9 +164,9 @@ class RootActivity : BaseActivity<RootPresenter, RootView>(), RootView {
     }
 
     override fun setOffset(offset: Float) {
-        val lp = mainFr.layoutParams as ViewGroup.MarginLayoutParams
+        val lp = rootContainer.layoutParams as ViewGroup.MarginLayoutParams
         lp.bottomMargin = (resources.getDimension(R.dimen.player_collapsed_height) * offset).toInt()
-        mainFr.layoutParams = lp
+        rootContainer.layoutParams = lp
     }
 
     //endregion

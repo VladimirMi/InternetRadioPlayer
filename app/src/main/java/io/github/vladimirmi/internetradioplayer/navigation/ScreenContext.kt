@@ -7,15 +7,15 @@ import android.widget.Button
 import androidx.fragment.app.Fragment
 import io.github.vladimirmi.internetradioplayer.R
 import io.github.vladimirmi.internetradioplayer.data.net.UberStationsService
-import io.github.vladimirmi.internetradioplayer.presentation.navigation.NavigationFragment
+import io.github.vladimirmi.internetradioplayer.presentation.navigation.DataFragment
 
 /**
  * Created by Vladimir Mikhalev 21.03.2019.
  */
 
-class NavigationScreen(val title: String, val parent: NavigationScreen?) {
+class ScreenContext(val title: String, val parent: ScreenContext?) {
 
-    var children = ArrayList<NavigationScreen>()
+    var children = ArrayList<ScreenContext>()
         private set
     var endpoint: String? = null
         private set
@@ -23,14 +23,14 @@ class NavigationScreen(val title: String, val parent: NavigationScreen?) {
         private set
     private var fragment: Class<out Fragment>? = null
 
-    fun screen(title: String, init: NavigationScreen.() -> Unit = {}): NavigationScreen {
-        val child = NavigationScreen(title, this)
+    fun screen(title: String, init: ScreenContext.() -> Unit = {}): ScreenContext {
+        val child = ScreenContext(title, this)
         child.init()
         children.add(child)
         return child
     }
 
-    fun stationsScreen(title: String, query: String = title, init: NavigationScreen.() -> Unit = {}) {
+    fun stationsScreen(title: String, query: String = title, init: ScreenContext.() -> Unit = {}) {
         screen(title, init).stationsData(query)
     }
 
@@ -38,7 +38,7 @@ class NavigationScreen(val title: String, val parent: NavigationScreen?) {
         fragment = clazz
     }
 
-    fun findScreen(title: String): NavigationScreen? {
+    fun findScreen(title: String): ScreenContext? {
         if (this.title == title) return this
 
         for (child in children) {
@@ -49,7 +49,7 @@ class NavigationScreen(val title: String, val parent: NavigationScreen?) {
     }
 
     fun createFragment(): Fragment {
-        return fragment?.newInstance() ?: NavigationFragment.newInstance(this)
+        return fragment?.newInstance() ?: DataFragment.newInstance(this)
     }
 
     fun createSmallView(inflater: LayoutInflater, root: ViewGroup): View {
@@ -64,6 +64,6 @@ class NavigationScreen(val title: String, val parent: NavigationScreen?) {
     }
 
     override fun toString(): String {
-        return "NavigationScreen(title='$title', parent=${parent?.title}, children=${children.size})"
+        return "ScreenContext(title='$title', parent=${parent?.title}, children=${children.size})"
     }
 }

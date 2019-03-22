@@ -17,7 +17,9 @@ object NavigationTree {
             screen("B")
         }
         screen("Music") {
-            stationsScreen("70's")
+            stationsScreen("70's") {
+                screen("Top songs")
+            }
             stationsScreen("80's")
             stationsScreen("90's")
             stationsScreen("00's")
@@ -54,7 +56,7 @@ object NavigationTree {
     }
 
 
-    fun findScreen(title: String): NavigationScreen {
+    fun findScreen(title: String): ScreenContext {
         return rootScreen.findScreen(title)
                 ?: throw IllegalStateException("Can not find screen $title")
     }
@@ -62,7 +64,7 @@ object NavigationTree {
 
 private object RootScreen {
 
-    operator fun invoke(title: String, init: NavigationScreen.() -> Unit): NavigationScreen {
-        return NavigationScreen(title, null).apply { init() }
+    operator fun invoke(title: String, init: ScreenContext.() -> Unit): ScreenContext {
+        return ScreenContext(title, null).apply { init() }
     }
 }

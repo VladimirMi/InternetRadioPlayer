@@ -18,7 +18,6 @@ import io.github.vladimirmi.internetradioplayer.extensions.isVisible
 import io.github.vladimirmi.internetradioplayer.extensions.visible
 import io.github.vladimirmi.internetradioplayer.extensions.waitForLayout
 import io.github.vladimirmi.internetradioplayer.presentation.base.BaseFragment
-import io.github.vladimirmi.internetradioplayer.presentation.navigation.NavigationView
 import kotlinx.android.synthetic.main.fragment_search_manual.*
 import toothpick.Toothpick
 
@@ -45,12 +44,6 @@ class ManualSearchFragment : BaseFragment<ManualSearchPresenter, ManualSearchVie
         setupSuggestions()
         setupStations()
         setupSwipeToRefresh()
-
-        parentBt.setOnClickListener { (parentFragment as? NavigationView)?.back() }
-    }
-
-    override fun handleBackPressed(): Boolean {
-        return super.handleBackPressed() || parentBt.callOnClick()
     }
 
     private fun setupSearchView() {

@@ -2,8 +2,17 @@
 <com.google.android.material.button.MaterialButton
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
-    style="@style/Widget.MaterialComponents.Button.TextButton"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    style="@style/Widget.MaterialComponents.Button.TextButton.Icon"
     android:layout_width="match_parent"
     android:layout_height="48dp"
+    android:layout_marginLeft="16dp"
+    android:layout_marginRight="16dp"
     tools:text="Child"
+    app:icon="@drawable/ic_play"
+    app:iconSize="20dp"
+    app:iconTint="?attr/colorOnSurface"
+    android:gravity="start|center_vertical"
+    android:layoutDirection="rtl"
+    tools:ignore="UnusedAttribute"
     />

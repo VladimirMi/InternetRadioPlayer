@@ -1,13 +1,15 @@
 <?xml version="1.0" encoding="utf-8"?>
-<FrameLayout
+<androidx.swiperefreshlayout.widget.SwipeRefreshLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/swipeToRefresh"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     >
 
     <androidx.recyclerview.widget.RecyclerView
-        android:id="@+id/historyRv"
+        xmlns:android="http://schemas.android.com/apk/res/android"
+        android:id="@+id/dataRv"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:clipToPadding="false"
@@ -16,16 +18,4 @@
         android:paddingBottom="8dp"
         tools:listitem="@layout/item_station"
         />
-
-    <TextView
-        android:id="@+id/placeholderView"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_gravity="center_vertical"
-        android:gravity="center"
-        android:text="@string/history_placeholder"
-        android:textAppearance="@style/TextAppearance.MaterialComponents.Subtitle1"
-        android:visibility="gone"
-        />
-
-</FrameLayout>
+</androidx.swiperefreshlayout.widget.SwipeRefreshLayout>

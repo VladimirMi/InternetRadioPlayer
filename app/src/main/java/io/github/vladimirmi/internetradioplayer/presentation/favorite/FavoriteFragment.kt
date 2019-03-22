@@ -54,7 +54,7 @@ class FavoriteFragment : BaseFragment<FavoritePresenter, FavoriteView>(), Favori
         }
         fragment.setUserVisibleHint(userVisibleHint)
         childFragmentManager.beginTransaction()
-                .replace(R.id.container, fragment)
+                .replace(R.id.dataContainer, fragment)
                 .addToBackStack(null)
                 .commit()
 

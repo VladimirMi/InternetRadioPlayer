@@ -1,8 +1,9 @@
 package io.github.vladimirmi.internetradioplayer.domain.interactor
 
-import io.github.vladimirmi.internetradioplayer.data.net.model.StationSearchRes
+import io.github.vladimirmi.internetradioplayer.data.net.model.StationResult
 import io.github.vladimirmi.internetradioplayer.data.repository.FavoritesRepository
 import io.github.vladimirmi.internetradioplayer.data.repository.SearchRepository
+import io.github.vladimirmi.internetradioplayer.domain.model.Data
 import io.github.vladimirmi.internetradioplayer.domain.model.Suggestion
 import io.reactivex.Completable
 import io.reactivex.Observable
@@ -39,13 +40,17 @@ class SearchInteractor
         return searchRepository.deleteRecentSuggestion(suggestion)
     }
 
-    fun searchStations(query: String): Single<List<StationSearchRes>> {
+    fun searchStations(query: String): Single<List<Data>> {
         return searchRepository.saveQuery(query)
                 .andThen(searchRepository.searchStations(query))
+                .map { list -> list.map(StationResult::toData) }
     }
 
     fun selectUberStation(id: Int): Completable {
-        return searchRepository.findUberStation(id)
+        return searchRepository.searchStation(id)
+                .flatMapObservable {
+                    searchRepository.parseFromNet(it).toObservable().startWith(it)
+                }
                 .doOnNext { station ->
                     mediaInteractor.currentMedia = favoritesRepository.getStation { it.uri == station.uri }
                             ?: station

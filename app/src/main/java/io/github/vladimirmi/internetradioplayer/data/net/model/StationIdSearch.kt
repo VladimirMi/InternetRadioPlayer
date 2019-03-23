@@ -11,7 +11,7 @@ import io.github.vladimirmi.internetradioplayer.utils.MessageException
  */
 const val URI_BASE = "http://stream.dar.fm/"
 
-class StationsResult(val success: Boolean, val result: List<StationsRes>) {
+class StationIdSearch(val success: Boolean, val result: List<StationsIdResult>) {
 
     fun getStation(): Station {
         return result.firstOrNull()?.stations?.firstOrNull()?.toStation()
@@ -19,9 +19,9 @@ class StationsResult(val success: Boolean, val result: List<StationsRes>) {
     }
 }
 
-class StationsRes(val stations: List<StationRes>)
+class StationsIdResult(val stations: List<StationIdResult>)
 
-class StationRes(
+class StationIdResult(
         @SerializedName("station_id") val id: Int,
         @SerializedName("callsign") val name: String,
         @SerializedName("band") val band: String,

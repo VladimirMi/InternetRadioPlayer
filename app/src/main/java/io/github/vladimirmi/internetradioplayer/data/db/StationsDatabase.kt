@@ -24,7 +24,7 @@ abstract class StationsDatabase : RoomDatabase() {
     companion object {
         fun newInstance(context: Context): StationsDatabase {
             return Room.databaseBuilder(context.applicationContext,
-                    StationsDatabase::class.java, "stations.db")
+                    StationsDatabase::class.java, "data.db")
                     .addMigrations(MIGRATION_1_2, MIGRATION_2_3)
                     .build()
         }

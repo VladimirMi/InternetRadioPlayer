@@ -1,9 +1,9 @@
-package io.github.vladimirmi.internetradioplayer.presentation.navigation
+package io.github.vladimirmi.internetradioplayer.presentation.data
 
 import io.github.vladimirmi.internetradioplayer.data.net.UberStationsService
-import io.github.vladimirmi.internetradioplayer.data.net.model.StationSearchRes
 import io.github.vladimirmi.internetradioplayer.domain.interactor.MediaInteractor
 import io.github.vladimirmi.internetradioplayer.domain.interactor.SearchInteractor
+import io.github.vladimirmi.internetradioplayer.domain.model.Data
 import io.github.vladimirmi.internetradioplayer.extensions.subscribeX
 import io.github.vladimirmi.internetradioplayer.presentation.base.BasePresenter
 import io.reactivex.android.schedulers.AndroidSchedulers
@@ -44,9 +44,9 @@ class DataPresenter
         }
     }
 
-    fun selectData(station: StationSearchRes) {
+    fun selectData(data: Data) {
         selectSub?.dispose()
-        selectSub = searchInteractor.selectUberStation(station.id)
+        selectSub = searchInteractor.selectUberStation(data.id)
                 .subscribeX()
     }
 }

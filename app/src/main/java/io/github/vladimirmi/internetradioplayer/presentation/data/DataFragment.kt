@@ -1,16 +1,15 @@
-package io.github.vladimirmi.internetradioplayer.presentation.navigation
+package io.github.vladimirmi.internetradioplayer.presentation.data
 
 import android.os.Bundle
 import android.view.View
 import androidx.recyclerview.widget.LinearLayoutManager
 import io.github.vladimirmi.internetradioplayer.R
-import io.github.vladimirmi.internetradioplayer.data.net.model.StationSearchRes
 import io.github.vladimirmi.internetradioplayer.di.Scopes
+import io.github.vladimirmi.internetradioplayer.domain.model.Data
 import io.github.vladimirmi.internetradioplayer.extensions.visible
 import io.github.vladimirmi.internetradioplayer.navigation.NavigationTree
 import io.github.vladimirmi.internetradioplayer.navigation.ScreenContext
 import io.github.vladimirmi.internetradioplayer.presentation.base.BaseFragment
-import io.github.vladimirmi.internetradioplayer.presentation.search.SearchStationsAdapter
 import kotlinx.android.synthetic.main.fragment_data.*
 import toothpick.Toothpick
 
@@ -31,7 +30,7 @@ class DataFragment : BaseFragment<DataPresenter, DataView>(), DataView {
 
     override val layout = R.layout.fragment_data
     private lateinit var screenContext: ScreenContext
-    private val dataAdapter = SearchStationsAdapter()
+    private val dataAdapter = DataAdapter()
 
     override fun providePresenter(): DataPresenter {
         return Toothpick.openScopes(Scopes.ROOT_ACTIVITY, this)
@@ -58,19 +57,19 @@ class DataFragment : BaseFragment<DataPresenter, DataView>(), DataView {
 
     //region =============== DataView ==============
 
-    override fun setData(data: List<StationSearchRes>) {
-        dataAdapter.stations = data
+    override fun setData(data: List<Data>) {
+        dataAdapter.data = data
         dataAdapter.onItemClickListener = { presenter.selectData(it) }
         dataRv.visible(true)
     }
 
     override fun selectData(uri: String) {
-        val position = dataAdapter.selectStation(uri)
+        val position = dataAdapter.selectData(uri)
         dataRv.scrollToPosition(position)
     }
 
-    override fun showLoading(show: Boolean) {
-        swipeToRefresh.isRefreshing = show
+    override fun showLoading(loading: Boolean) {
+        swipeToRefresh.isRefreshing = loading
     }
 
     //endregion

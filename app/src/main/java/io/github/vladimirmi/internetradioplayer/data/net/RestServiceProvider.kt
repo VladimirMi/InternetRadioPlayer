@@ -46,6 +46,7 @@ private fun apiKeyInterceptor(): Interceptor {
         if (originalRequest.url().host() == UberStationsService.HOST) {
             val url = originalRequest.url().newBuilder()
                     .addQueryParameter("callback", "json")
+                    .addQueryParameter("intl", "1")
                     .addQueryParameter("partner_token", BuildConfig.PARTNER_TOKEN)
                     .build()
 

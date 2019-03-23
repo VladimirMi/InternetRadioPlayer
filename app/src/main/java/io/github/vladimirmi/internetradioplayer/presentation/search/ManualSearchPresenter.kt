@@ -2,11 +2,11 @@ package io.github.vladimirmi.internetradioplayer.presentation.search
 
 import io.github.vladimirmi.internetradioplayer.R
 import io.github.vladimirmi.internetradioplayer.data.db.entity.Station
-import io.github.vladimirmi.internetradioplayer.data.net.model.StationSearchRes
 import io.github.vladimirmi.internetradioplayer.domain.interactor.FavoriteListInteractor
 import io.github.vladimirmi.internetradioplayer.domain.interactor.MediaInteractor
 import io.github.vladimirmi.internetradioplayer.domain.interactor.SearchInteractor
 import io.github.vladimirmi.internetradioplayer.domain.interactor.StationInteractor
+import io.github.vladimirmi.internetradioplayer.domain.model.Data
 import io.github.vladimirmi.internetradioplayer.domain.model.Suggestion
 import io.github.vladimirmi.internetradioplayer.extensions.subscribeX
 import io.github.vladimirmi.internetradioplayer.presentation.base.BasePresenter
@@ -47,13 +47,13 @@ class ManualSearchPresenter
         //todo refactor like in history
         mediaInteractor.currentMediaObs
                 .observeOn(AndroidSchedulers.mainThread())
-                .subscribeX(onNext = { view.selectStation(it.uri) })
+                .subscribeX(onNext = { view.selectData(it.uri) })
                 .addTo(viewSubs)
 
-        favoriteListInteractor.stationsListObs
-                .observeOn(AndroidSchedulers.mainThread())
-                .subscribeX(onNext = { view.setFavorites(it) })
-                .addTo(viewSubs)
+//        favoriteListInteractor.stationsListObs
+//                .observeOn(AndroidSchedulers.mainThread())
+//                .subscribeX(onNext = { view.setFavorites(it) })
+//                .addTo(viewSubs)
     }
 
     override fun onDetach() {
@@ -61,9 +61,9 @@ class ManualSearchPresenter
         suggestionSub?.dispose()
     }
 
-    fun selectStation(station: StationSearchRes) {
+    fun selectData(data: Data) {
         selectSub?.dispose()
-        selectSub = searchInteractor.selectUberStation(station.id)
+        selectSub = searchInteractor.selectUberStation(data.id)
                 .subscribeX()
     }
 
@@ -86,8 +86,8 @@ class ManualSearchPresenter
                 .flatMapSingle { searchInteractor.searchStations(it) }
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribeX(onNext = {
-                    view?.setStations(it)
-                    view?.selectStation(mediaInteractor.currentMedia.uri)
+                    view?.setData(it)
+                    view?.selectData(mediaInteractor.currentMedia.uri)
                     view?.showLoading(false)
                     view?.showPlaceholder(it.isEmpty())
                 }, onError = {

@@ -4,12 +4,11 @@ import io.github.vladimirmi.internetradioplayer.data.db.SuggestionsDatabase
 import io.github.vladimirmi.internetradioplayer.data.db.entity.Station
 import io.github.vladimirmi.internetradioplayer.data.db.entity.SuggestionEntity
 import io.github.vladimirmi.internetradioplayer.data.net.UberStationsService
-import io.github.vladimirmi.internetradioplayer.data.net.model.StationSearchRes
-import io.github.vladimirmi.internetradioplayer.data.net.model.StationsResult
+import io.github.vladimirmi.internetradioplayer.data.net.model.StationIdSearch
+import io.github.vladimirmi.internetradioplayer.data.net.model.StationResult
 import io.github.vladimirmi.internetradioplayer.data.utils.StationParser
 import io.github.vladimirmi.internetradioplayer.domain.model.Suggestion
 import io.reactivex.Completable
-import io.reactivex.Observable
 import io.reactivex.Single
 import io.reactivex.schedulers.Schedulers
 import javax.inject.Inject
@@ -49,20 +48,20 @@ class SearchRepository
                 .subscribeOn(Schedulers.io())
     }
 
-    fun searchStations(query: String): Single<List<StationSearchRes>> {
+    fun searchStations(query: String): Single<List<StationResult>> {
         return uberStationsService.searchStations(query)
                 .map { it.result }
                 .subscribeOn(Schedulers.io())
     }
 
-    fun findUberStation(id: Int): Observable<Station> {
+    fun searchStation(id: Int): Single<Station> {
         return uberStationsService.getStation(id)
-                .map(StationsResult::getStation)
-                .flatMapObservable {
-                    Observable.fromCallable { parser.parseFromUberStation(it) }
-                            .startWith(it)
-                }
+                .map(StationIdSearch::getStation)
                 .subscribeOn(Schedulers.io())
+    }
 
+    fun parseFromNet(station: Station): Single<Station> {
+        return Single.fromCallable { parser.parseFromStation(station) }
+                .subscribeOn(Schedulers.io())
     }
 }

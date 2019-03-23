@@ -10,14 +10,14 @@ import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import io.github.vladimirmi.internetradioplayer.R
-import io.github.vladimirmi.internetradioplayer.data.net.model.StationSearchRes
 import io.github.vladimirmi.internetradioplayer.di.Scopes
-import io.github.vladimirmi.internetradioplayer.domain.model.FlatStationsList
+import io.github.vladimirmi.internetradioplayer.domain.model.Data
 import io.github.vladimirmi.internetradioplayer.domain.model.Suggestion
 import io.github.vladimirmi.internetradioplayer.extensions.isVisible
 import io.github.vladimirmi.internetradioplayer.extensions.visible
 import io.github.vladimirmi.internetradioplayer.extensions.waitForLayout
 import io.github.vladimirmi.internetradioplayer.presentation.base.BaseFragment
+import io.github.vladimirmi.internetradioplayer.presentation.data.DataAdapter
 import kotlinx.android.synthetic.main.fragment_search_manual.*
 import toothpick.Toothpick
 
@@ -30,7 +30,7 @@ class ManualSearchFragment : BaseFragment<ManualSearchPresenter, ManualSearchVie
     override val layout = R.layout.fragment_search_manual
 
     private val suggestionsAdapter = SearchSuggestionsAdapter()
-    private val stationsAdapter = SearchStationsAdapter()
+    private val dataAdapter = DataAdapter()
 
     override fun providePresenter(): ManualSearchPresenter {
         return Toothpick.openScopes(Scopes.ROOT_ACTIVITY, this)
@@ -72,10 +72,10 @@ class ManualSearchFragment : BaseFragment<ManualSearchPresenter, ManualSearchVie
     private fun setupStations() {
         val lm = LinearLayoutManager(context)
         stationsRv.layoutManager = lm
-        stationsRv.adapter = stationsAdapter
+        stationsRv.adapter = dataAdapter
 
-        stationsAdapter.onAddToFavListener = { presenter.switchFavorite() }
-        stationsAdapter.onItemClickListener = { presenter.selectStation(it) }
+        dataAdapter.onAddToFavListener = { presenter.switchFavorite() }
+        dataAdapter.onItemClickListener = { presenter.selectData(it) }
 
         stationsRv.addOnScrollListener(object : RecyclerView.OnScrollListener() {
             override fun onScrolled(recyclerView: RecyclerView, dx: Int, dy: Int) {
@@ -152,16 +152,12 @@ class ManualSearchFragment : BaseFragment<ManualSearchPresenter, ManualSearchVie
         suggestionsRv.scrollToPosition(0)
     }
 
-    override fun setStations(stations: List<StationSearchRes>) {
-        stationsAdapter.stations = stations
+    override fun setData(data: List<Data>) {
+        dataAdapter.data = data
     }
 
-    override fun setFavorites(favorites: FlatStationsList) {
-        stationsAdapter.setFavorites(favorites)
-    }
-
-    override fun selectStation(uri: String) {
-        val position = stationsAdapter.selectStation(uri)
+    override fun selectData(uri: String) {
+        val position = dataAdapter.selectData(uri)
         stationsRv.scrollToPosition(position)
     }
 

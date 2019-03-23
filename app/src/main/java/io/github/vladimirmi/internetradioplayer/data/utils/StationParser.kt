@@ -57,7 +57,7 @@ class StationParser
                     private val client: OkHttpClient,
                     private val networkChecker: NetworkChecker) {
 
-    fun parseFromUberStation(station: Station): Station {
+    fun parseFromStation(station: Station): Station {
         val newStation = parseFromNet(station.uri.toURL(), station.name)
 
         return station.copy(

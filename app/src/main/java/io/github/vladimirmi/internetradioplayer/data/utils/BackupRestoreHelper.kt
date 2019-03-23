@@ -28,7 +28,7 @@ private const val BACKUP_ENCODING = "UTF-8"
 private const val BACKUP_VERSION = 2
 
 private const val DATA_TAG = "data"
-private const val STATIONS_TAG = "stations"
+private const val STATIONS_TAG = "data"
 private const val STATION_TAG = "station"
 private const val GROUPS_TAG = "groups"
 private const val GROUP_TAG = "group"

@@ -7,7 +7,7 @@ import android.widget.Button
 import androidx.fragment.app.Fragment
 import io.github.vladimirmi.internetradioplayer.R
 import io.github.vladimirmi.internetradioplayer.data.net.UberStationsService
-import io.github.vladimirmi.internetradioplayer.presentation.navigation.DataFragment
+import io.github.vladimirmi.internetradioplayer.presentation.data.DataFragment
 
 /**
  * Created by Vladimir Mikhalev 21.03.2019.

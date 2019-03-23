@@ -1,4 +1,4 @@
-package io.github.vladimirmi.internetradioplayer.presentation.navigation
+package io.github.vladimirmi.internetradioplayer.presentation.data
 
 import android.os.Bundle
 import android.view.Gravity

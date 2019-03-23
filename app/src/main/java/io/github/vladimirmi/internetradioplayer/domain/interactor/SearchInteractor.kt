@@ -1,6 +1,7 @@
 package io.github.vladimirmi.internetradioplayer.domain.interactor
 
 import io.github.vladimirmi.internetradioplayer.data.net.model.StationResult
+import io.github.vladimirmi.internetradioplayer.data.net.model.TopSongResult
 import io.github.vladimirmi.internetradioplayer.data.repository.FavoritesRepository
 import io.github.vladimirmi.internetradioplayer.data.repository.SearchRepository
 import io.github.vladimirmi.internetradioplayer.domain.model.Data
@@ -44,6 +45,11 @@ class SearchInteractor
         return searchRepository.saveQuery(query)
                 .andThen(searchRepository.searchStations(query))
                 .map { list -> list.map(StationResult::toData) }
+    }
+
+    fun searchTopSongs(query: String): Single<List<Data>> {
+        return searchRepository.searchTopSongs(query)
+                .map { list -> list.map(TopSongResult::toData) }
     }
 
     fun selectUberStation(id: Int): Completable {

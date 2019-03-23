@@ -17,41 +17,40 @@ object NavigationTree {
             screen("B")
         }
         screen("Music") {
-            stationsScreen("70's") {
-                screen("Top songs")
-            }
-            stationsScreen("80's")
-            stationsScreen("90's")
-            stationsScreen("00's")
-            stationsScreen("Adult Contemporary")
-            stationsScreen("Alternative")
-            stationsScreen("Christian")
-            stationsScreen("Christmas")
-            stationsScreen("ClassicCountry")
-            stationsScreen("Classical")
-            stationsScreen("Country")
+            stationsScreen("70's") { topSongsScreen() }
+            stationsScreen("80's") { topSongsScreen() }
+            stationsScreen("90's") { topSongsScreen() }
+            stationsScreen("00's") { topSongsScreen() }
+            stationsScreen("Adult Contemporary") { topSongsScreen() }
+            stationsScreen("Alternative") { topSongsScreen() }
+            stationsScreen("Christian") { topSongsScreen() }
+            stationsScreen("Christmas") { topSongsScreen() }
+            stationsScreen("Country") { topSongsScreen() }
+            stationsScreen("Classical") { topSongsScreen() }
+            stationsScreen("Country") { topSongsScreen() }
             screen("Electronic") {
-                stationsScreen("Chill")
-                stationsScreen("Dubstep")
-                stationsScreen("House")
-                stationsScreen("Industrial")
-                stationsScreen("Techno")
-                stationsScreen("Trance")
+                topSongsScreen()
+                stationsScreen("Chill") { topSongsScreen() }
+                stationsScreen("Dubstep") { topSongsScreen() }
+                stationsScreen("House") { topSongsScreen() }
+                stationsScreen("Industrial") { topSongsScreen() }
+                stationsScreen("Techno") { topSongsScreen() }
+                stationsScreen("Trance") { topSongsScreen() }
             }
-            stationsScreen("Hip Hop")
-            stationsScreen("Hit Music")
-            stationsScreen("Indian")
-            stationsScreen("Jazz")
-            stationsScreen("Latin Hits")
-            stationsScreen("Metal")
-            stationsScreen("Oldies")
-            stationsScreen("Rap")
-            stationsScreen("Reggae")
-            stationsScreen("Rock")
-            stationsScreen("Roots")
-            stationsScreen("Soul")
-            stationsScreen("Standards")
-            stationsScreen("World")
+            stationsScreen("Hip Hop") { topSongsScreen() }
+            stationsScreen("Hit Music") { topSongsScreen() }
+            stationsScreen("Indian") { topSongsScreen() }
+            stationsScreen("Jazz") { topSongsScreen() }
+            stationsScreen("Latin Hits") { topSongsScreen() }
+            stationsScreen("Metal") { topSongsScreen() }
+            stationsScreen("Oldies") { topSongsScreen() }
+            stationsScreen("Rap") { topSongsScreen() }
+            stationsScreen("Reggae") { topSongsScreen() }
+            stationsScreen("Rock") { topSongsScreen() }
+            stationsScreen("Roots") { topSongsScreen() }
+            stationsScreen("Soul / R&B", "Soul") { topSongsScreen("Soul") }
+            stationsScreen("Standards") { topSongsScreen() }
+            stationsScreen("World") { topSongsScreen() }
         }
     }
 

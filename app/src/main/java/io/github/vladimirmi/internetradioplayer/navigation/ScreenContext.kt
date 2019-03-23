@@ -8,12 +8,15 @@ import androidx.fragment.app.Fragment
 import io.github.vladimirmi.internetradioplayer.R
 import io.github.vladimirmi.internetradioplayer.data.net.UberStationsService
 import io.github.vladimirmi.internetradioplayer.presentation.data.DataFragment
+import java.util.*
 
 /**
  * Created by Vladimir Mikhalev 21.03.2019.
  */
 
 class ScreenContext(val title: String, val parent: ScreenContext?) {
+
+    val id = UUID.randomUUID().toString()
 
     var children = ArrayList<ScreenContext>()
         private set
@@ -31,18 +34,22 @@ class ScreenContext(val title: String, val parent: ScreenContext?) {
     }
 
     fun stationsScreen(title: String, query: String = title, init: ScreenContext.() -> Unit = {}) {
-        screen(title, init).stationsData(query)
+        screen(title, init).data(UberStationsService.STATIONS_ENDPOINT, query)
+    }
+
+    fun topSongsScreen(query: String = title) {
+        screen("Top songs").data(UberStationsService.TOPSONGS_ENDPOINT, query)
     }
 
     fun <T : Class<out Fragment>> fragment(clazz: T) {
         fragment = clazz
     }
 
-    fun findScreen(title: String): ScreenContext? {
-        if (this.title == title) return this
+    fun findScreen(id: String): ScreenContext? {
+        if (this.id == id) return this
 
         for (child in children) {
-            val screen = child.findScreen(title)
+            val screen = child.findScreen(id)
             if (screen != null) return screen
         }
         return null
@@ -58,8 +65,8 @@ class ScreenContext(val title: String, val parent: ScreenContext?) {
         }
     }
 
-    private fun stationsData(query: String) {
-        this.endpoint = UberStationsService.STATIONS_ENDPOINT
+    private fun data(endpoint: String, query: String) {
+        this.endpoint = endpoint
         this.query = query
     }
 

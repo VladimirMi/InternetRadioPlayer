@@ -30,18 +30,24 @@ class DataPresenter
 
 
     fun fetchData(endpoint: String?, query: String?) {
-        if (endpoint == UberStationsService.STATIONS_ENDPOINT) {
-            searchInteractor.searchStations(query!!)
-                    .observeOn(AndroidSchedulers.mainThread())
-                    .doOnSubscribe { view?.showLoading(true) }
-                    .subscribeX(onSuccess = {
-                        view?.setData(it)
-                        view?.selectData(mediaInteractor.currentMedia.uri)
-                        view?.showLoading(false)
-                    }, onError = {
-                        view?.showLoading(false)
-                    })
+        if (endpoint == null || query == null) return
+
+        val fetchData = when (endpoint) {
+            UberStationsService.STATIONS_ENDPOINT -> searchInteractor.searchStations(query)
+            UberStationsService.TOPSONGS_ENDPOINT -> searchInteractor.searchTopSongs(query)
+            else -> return
         }
+
+        fetchData.observeOn(AndroidSchedulers.mainThread())
+                .doOnSubscribe { view?.showLoading(true) }
+                .subscribeX(onSuccess = {
+                    view?.setData(it)
+                    view?.selectData(mediaInteractor.currentMedia.uri)
+                    view?.showLoading(false)
+                }, onError = {
+                    view?.showLoading(false)
+                })
+
     }
 
     fun selectData(data: Data) {

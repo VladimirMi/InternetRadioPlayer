@@ -20,10 +20,10 @@ import toothpick.Toothpick
 class DataFragment : BaseFragment<DataPresenter, DataView>(), DataView {
 
     companion object {
-        private const val EXTRA_NAV_SCREEN = "EXTRA_NAV_SCREEN"
+        private const val EXTRA_SCREEN_ID = "EXTRA_SCREEN_ID"
 
         fun newInstance(screenContext: ScreenContext): DataFragment {
-            val args = Bundle().apply { putString(EXTRA_NAV_SCREEN, screenContext.title) }
+            val args = Bundle().apply { putString(EXTRA_SCREEN_ID, screenContext.id) }
             return DataFragment().apply { arguments = args }
         }
     }
@@ -41,8 +41,8 @@ class DataFragment : BaseFragment<DataPresenter, DataView>(), DataView {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        val key = arguments?.getString(EXTRA_NAV_SCREEN) ?: return
-        screenContext = NavigationTree.findScreen(key)
+        val id = arguments?.getString(EXTRA_SCREEN_ID) ?: return
+        screenContext = NavigationTree.findScreen(id)
     }
 
     override fun onStart() {

@@ -5,42 +5,54 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:animateLayoutChanges="true"
     android:orientation="vertical"
     >
 
-    <LinearLayout
+    <RelativeLayout
         android:id="@+id/navigationContainer"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:background="?attr/colorPrimaryVariant"
-        android:orientation="horizontal"
         >
 
         <com.google.android.material.button.MaterialButton
             android:id="@+id/parentBt"
             style="@style/Widget.MaterialComponents.Button.TextButton.Icon"
-            android:layout_width="wrap_content"
+            android:layout_width="120dp"
             android:layout_height="wrap_content"
-            android:gravity="start|center_vertical"
             android:insetTop="0dp"
             android:insetBottom="0dp"
             android:paddingLeft="16dp"
             android:paddingRight="16dp"
-            android:textColor="?attr/colorOnPrimary"
             app:cornerRadius="0dp"
             app:icon="@drawable/ic_back"
             app:iconPadding="16dp"
             app:iconSize="20dp"
             app:iconTint="?attr/colorOnPrimary"
+            />
+
+        <TextView
+            android:id="@+id/parentTitleTv"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerVertical="true"
+            android:layout_marginStart="32dp"
+            android:layout_marginLeft="32dp"
+            android:paddingLeft="16dp"
+            android:paddingRight="16dp"
+            android:textAppearance="@style/TextAppearance.MaterialComponents.Button"
+            android:textColor="?attr/colorOnPrimary"
             tools:text="Parent"
             />
 
         <TextView
             android:id="@+id/screenTitleTv"
-            android:layout_width="0dp"
-            android:layout_height="match_parent"
-            android:layout_weight="1"
-            android:gravity="center_vertical|end"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentEnd="true"
+            android:layout_centerVertical="true"
+            android:layout_alignParentRight="true"
             android:paddingLeft="16dp"
             android:paddingRight="16dp"
             android:textAppearance="@style/TextAppearance.MaterialComponents.Button"
@@ -48,14 +60,14 @@
             tools:text="Screen title"
             />
 
-    </LinearLayout>
+    </RelativeLayout>
 
     <ScrollView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         >
 
-        <LinearLayout
+        <FrameLayout
             android:id="@+id/childrenContainer"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"

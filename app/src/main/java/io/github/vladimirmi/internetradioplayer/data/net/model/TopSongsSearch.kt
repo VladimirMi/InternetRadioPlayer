@@ -21,7 +21,7 @@ class TopSongResult(
 
     fun toData(): Data {
         return Data(
-                id = id,
+                stationId = id,
                 title = callsign,
                 subtitle = "$artist - $title",
                 uri = uri

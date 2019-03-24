@@ -32,9 +32,11 @@ class DataPresenter
     fun fetchData(endpoint: String?, query: String?) {
         if (endpoint == null || query == null) return
 
+        //todo to interactor
         val fetchData = when (endpoint) {
             UberStationsService.STATIONS_ENDPOINT -> searchInteractor.searchStations(query)
             UberStationsService.TOPSONGS_ENDPOINT -> searchInteractor.searchTopSongs(query)
+            UberStationsService.TALKS_ENDPOINT -> searchInteractor.searchTalks(query)
             else -> return
         }
 
@@ -52,7 +54,7 @@ class DataPresenter
 
     fun selectData(data: Data) {
         selectSub?.dispose()
-        selectSub = searchInteractor.selectUberStation(data.id)
+        selectSub = searchInteractor.selectUberStation(data.stationId)
                 .subscribeX()
     }
 }

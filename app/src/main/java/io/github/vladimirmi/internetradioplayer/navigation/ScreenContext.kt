@@ -41,6 +41,10 @@ class ScreenContext(val title: String, val parent: ScreenContext?) {
         screen("Top songs").data(UberStationsService.TOPSONGS_ENDPOINT, query)
     }
 
+    fun talksScreen(title: String, query: String = title) {
+        screen(title).data(UberStationsService.TALKS_ENDPOINT, query)
+    }
+
     fun <T : Class<out Fragment>> fragment(clazz: T) {
         fragment = clazz
     }

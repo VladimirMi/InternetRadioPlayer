@@ -1,6 +1,7 @@
 package io.github.vladimirmi.internetradioplayer.domain.interactor
 
 import io.github.vladimirmi.internetradioplayer.data.net.model.StationResult
+import io.github.vladimirmi.internetradioplayer.data.net.model.TalkResult
 import io.github.vladimirmi.internetradioplayer.data.net.model.TopSongResult
 import io.github.vladimirmi.internetradioplayer.data.repository.FavoritesRepository
 import io.github.vladimirmi.internetradioplayer.data.repository.SearchRepository
@@ -21,6 +22,7 @@ class SearchInteractor
                     private val favoritesRepository: FavoritesRepository,
                     private val mediaInteractor: MediaInteractor) {
 
+    //todo suggestions interactor and repo
     private var suggestions: List<Suggestion> = emptyList()
 
     fun queryRecentSuggestions(query: String): Single<out List<Suggestion>> {
@@ -50,6 +52,11 @@ class SearchInteractor
     fun searchTopSongs(query: String): Single<List<Data>> {
         return searchRepository.searchTopSongs(query)
                 .map { list -> list.map(TopSongResult::toData) }
+    }
+
+    fun searchTalks(query: String): Single<List<Data>> {
+        return searchRepository.searchTalks(query)
+                .map { list -> list.map(TalkResult::toData) }
     }
 
     fun selectUberStation(id: Int): Completable {

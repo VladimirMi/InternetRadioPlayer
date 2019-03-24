@@ -4,7 +4,8 @@ package io.github.vladimirmi.internetradioplayer.domain.model
  * Created by Vladimir Mikhalev 23.03.2019.
  */
 
-class Data(val id: Int,
+class Data(val stationId: Int,
+           val id: String = stationId.toString(),
            val title: String,
            val subtitle: String,
            val uri: String) {

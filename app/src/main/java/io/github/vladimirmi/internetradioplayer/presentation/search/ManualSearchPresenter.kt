@@ -63,7 +63,7 @@ class ManualSearchPresenter
 
     fun selectData(data: Data) {
         selectSub?.dispose()
-        selectSub = searchInteractor.selectUberStation(data.id)
+        selectSub = searchInteractor.selectUberStation(data.stationId)
                 .subscribeX()
     }
 

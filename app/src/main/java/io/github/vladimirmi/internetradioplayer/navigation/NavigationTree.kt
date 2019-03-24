@@ -13,8 +13,13 @@ object NavigationTree {
             fragment(ManualSearchFragment::class.java)
         }
         screen("Talks") {
-            screen("A")
-            screen("B")
+            talksScreen("Arts/Culture/Entertainment", "ACE")
+            talksScreen("Music")
+            talksScreen("News")
+            talksScreen("Other")
+            talksScreen("Politics")
+            talksScreen("Public")
+            talksScreen("Sports")
         }
         screen("Music") {
             stationsScreen("70's") { topSongsScreen() }

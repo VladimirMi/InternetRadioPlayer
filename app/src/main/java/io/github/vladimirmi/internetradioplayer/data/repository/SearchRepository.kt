@@ -6,6 +6,7 @@ import io.github.vladimirmi.internetradioplayer.data.db.entity.SuggestionEntity
 import io.github.vladimirmi.internetradioplayer.data.net.UberStationsService
 import io.github.vladimirmi.internetradioplayer.data.net.model.StationIdSearch
 import io.github.vladimirmi.internetradioplayer.data.net.model.StationResult
+import io.github.vladimirmi.internetradioplayer.data.net.model.TalkResult
 import io.github.vladimirmi.internetradioplayer.data.net.model.TopSongResult
 import io.github.vladimirmi.internetradioplayer.data.utils.StationParser
 import io.github.vladimirmi.internetradioplayer.domain.model.Suggestion
@@ -69,6 +70,12 @@ class SearchRepository
     fun searchTopSongs(query: String): Single<List<TopSongResult>> {
         return uberStationsService.searchTopSongs(query)
                 .map { it.result }
+                .subscribeOn(Schedulers.io())
+    }
+
+    fun searchTalks(query: String): Single<List<TalkResult>> {
+        return uberStationsService.getTalks()
+                .map { search -> search.result.filter { it.genre == query } }
                 .subscribeOn(Schedulers.io())
     }
 }

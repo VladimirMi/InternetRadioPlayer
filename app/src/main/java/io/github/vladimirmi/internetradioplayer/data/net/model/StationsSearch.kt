@@ -13,7 +13,6 @@ class StationResult(
         @SerializedName("station_id") val id: Int,
         val callsign: String,
         val genre: String,
-        val band: String,
         val artist: String,
         val title: String
 ) {
@@ -22,7 +21,7 @@ class StationResult(
 
     fun toData(): Data {
         return Data(
-                id = id,
+                stationId = id,
                 title = callsign,
                 subtitle = "$artist - $title",
                 uri = uri

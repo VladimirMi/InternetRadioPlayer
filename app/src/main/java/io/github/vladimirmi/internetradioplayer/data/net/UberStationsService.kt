@@ -1,6 +1,6 @@
 package io.github.vladimirmi.internetradioplayer.data.net
 
-import io.github.vladimirmi.internetradioplayer.data.net.model.*
+import io.github.vladimirmi.internetradioplayer.data.net.ubermodel.*
 import io.reactivex.Single
 import retrofit2.http.GET
 import retrofit2.http.Query

@@ -4,7 +4,7 @@ import io.github.vladimirmi.internetradioplayer.data.db.SuggestionsDatabase
 import io.github.vladimirmi.internetradioplayer.data.db.entity.Station
 import io.github.vladimirmi.internetradioplayer.data.db.entity.SuggestionEntity
 import io.github.vladimirmi.internetradioplayer.data.net.UberStationsService
-import io.github.vladimirmi.internetradioplayer.data.net.model.*
+import io.github.vladimirmi.internetradioplayer.data.net.ubermodel.*
 import io.github.vladimirmi.internetradioplayer.data.utils.StationParser
 import io.github.vladimirmi.internetradioplayer.domain.model.Suggestion
 import io.reactivex.Completable

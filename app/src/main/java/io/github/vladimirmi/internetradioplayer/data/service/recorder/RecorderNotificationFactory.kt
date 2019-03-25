@@ -49,7 +49,7 @@ class RecorderNotificationFactory(private val service: Service) {
                 .setVisibility(NotificationCompat.VISIBILITY_PUBLIC)
                 .setSmallIcon(R.drawable.ic_station_1)
                 .setContentTitle(name)
-                .setContentText("Recording...")
+                .setContentText("RecordingMbId...")
                 .setPriority(NotificationCompat.PRIORITY_MAX)
                 .setUsesChronometer(true)
                 .setDeleteIntent(stopPendingIntent)

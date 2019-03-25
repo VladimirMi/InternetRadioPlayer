@@ -1,6 +1,6 @@
 @file:Suppress("unused")
 
-package io.github.vladimirmi.internetradioplayer.data.net.model
+package io.github.vladimirmi.internetradioplayer.data.net.ubermodel
 
 import com.google.gson.annotations.SerializedName
 import io.github.vladimirmi.internetradioplayer.data.db.entity.Station

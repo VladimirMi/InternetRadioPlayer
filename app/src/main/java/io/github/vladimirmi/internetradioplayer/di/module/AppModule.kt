@@ -3,21 +3,19 @@ package io.github.vladimirmi.internetradioplayer.di.module
 import android.content.Context
 import android.media.MediaMetadataRetriever
 import com.google.gson.Gson
-import com.google.gson.GsonBuilder
 import io.github.vladimirmi.internetradioplayer.data.db.EqualizerDatabase
 import io.github.vladimirmi.internetradioplayer.data.db.HistoryDatabase
 import io.github.vladimirmi.internetradioplayer.data.db.StationsDatabase
 import io.github.vladimirmi.internetradioplayer.data.db.SuggestionsDatabase
+import io.github.vladimirmi.internetradioplayer.data.net.CoverArtService
+import io.github.vladimirmi.internetradioplayer.data.net.RestServiceProvider
 import io.github.vladimirmi.internetradioplayer.data.net.UberStationsService
-import io.github.vladimirmi.internetradioplayer.data.net.createClient
-import io.github.vladimirmi.internetradioplayer.data.net.getUberStationsService
 import io.github.vladimirmi.internetradioplayer.data.repository.*
 import io.github.vladimirmi.internetradioplayer.data.service.player.LoadControl
 import io.github.vladimirmi.internetradioplayer.data.utils.ShortcutHelper
 import io.github.vladimirmi.internetradioplayer.data.utils.StationParser
 import io.github.vladimirmi.internetradioplayer.domain.interactor.*
 import okhttp3.OkHttpClient
-import retrofit2.converter.gson.GsonConverterFactory
 import toothpick.config.Module
 
 /**
@@ -29,16 +27,10 @@ class AppModule(context: Context) : Module() {
     init {
         bind(Context::class.java).toInstance(context)
 
-        bind(OkHttpClient::class.java).toInstance(OkHttpClient())
-
-        val gson = GsonBuilder().create()
-        val gsonConverterFactory = GsonConverterFactory.create(gson)
-        val httpClient = OkHttpClient.Builder().createClient()
-
-        bind(Gson::class.java).toInstance(gson)
-        bind(OkHttpClient::class.java).toInstance(httpClient)
-        bind(UberStationsService::class.java)
-                .toInstance(httpClient.getUberStationsService(gsonConverterFactory))
+        bind(Gson::class.java).toInstance(RestServiceProvider.gson)
+        bind(OkHttpClient::class.java).toInstance(RestServiceProvider.okHttpClient)
+        bind(UberStationsService::class.java).toInstance(RestServiceProvider.getUberStationsService())
+        bind(CoverArtService::class.java).toInstance(RestServiceProvider.getCoverArtService())
 
         bind(StationsDatabase::class.java).toInstance(StationsDatabase.newInstance(context))
         bind(SuggestionsDatabase::class.java).toInstance(SuggestionsDatabase.newInstance(context))

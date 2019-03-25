@@ -1,9 +1,9 @@
 package io.github.vladimirmi.internetradioplayer.domain.interactor
 
 import io.github.vladimirmi.internetradioplayer.data.net.UberStationsService
-import io.github.vladimirmi.internetradioplayer.data.net.model.StationResult
-import io.github.vladimirmi.internetradioplayer.data.net.model.TalkResult
-import io.github.vladimirmi.internetradioplayer.data.net.model.TopSongResult
+import io.github.vladimirmi.internetradioplayer.data.net.ubermodel.StationResult
+import io.github.vladimirmi.internetradioplayer.data.net.ubermodel.TalkResult
+import io.github.vladimirmi.internetradioplayer.data.net.ubermodel.TopSongResult
 import io.github.vladimirmi.internetradioplayer.data.repository.FavoritesRepository
 import io.github.vladimirmi.internetradioplayer.data.repository.SearchRepository
 import io.github.vladimirmi.internetradioplayer.domain.model.Data

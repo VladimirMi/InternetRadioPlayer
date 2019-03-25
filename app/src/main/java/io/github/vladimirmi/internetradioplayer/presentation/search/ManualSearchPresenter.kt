@@ -2,6 +2,7 @@ package io.github.vladimirmi.internetradioplayer.presentation.search
 
 import io.github.vladimirmi.internetradioplayer.R
 import io.github.vladimirmi.internetradioplayer.data.db.entity.Station
+import io.github.vladimirmi.internetradioplayer.data.net.UberStationsService
 import io.github.vladimirmi.internetradioplayer.domain.interactor.FavoriteListInteractor
 import io.github.vladimirmi.internetradioplayer.domain.interactor.MediaInteractor
 import io.github.vladimirmi.internetradioplayer.domain.interactor.SearchInteractor
@@ -47,7 +48,7 @@ class ManualSearchPresenter
         //todo refactor like in history
         mediaInteractor.currentMediaObs
                 .observeOn(AndroidSchedulers.mainThread())
-                .subscribeX(onNext = { view.selectData(it.uri) })
+                .subscribeX(onNext = { view.selectData(it.remoteId) })
                 .addTo(viewSubs)
 
 //        favoriteListInteractor.stationsListObs
@@ -63,7 +64,7 @@ class ManualSearchPresenter
 
     fun selectData(data: Data) {
         selectSub?.dispose()
-        selectSub = searchInteractor.selectUberStation(data.stationId)
+        selectSub = searchInteractor.selectData(data, UberStationsService.STATIONS_ENDPOINT)
                 .subscribeX()
     }
 
@@ -87,7 +88,7 @@ class ManualSearchPresenter
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribeX(onNext = {
                     view?.setData(it)
-                    view?.selectData(mediaInteractor.currentMedia.uri)
+                    view?.selectData(mediaInteractor.currentMedia.remoteId)
                     view?.showLoading(false)
                     view?.showPlaceholder(it.isEmpty())
                 }, onError = {

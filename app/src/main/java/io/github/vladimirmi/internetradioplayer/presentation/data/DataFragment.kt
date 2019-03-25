@@ -63,8 +63,8 @@ class DataFragment : BaseFragment<DataPresenter, DataView>(), DataView {
         dataRv.visible(true)
     }
 
-    override fun selectData(uri: String) {
-        val position = dataAdapter.selectData(uri)
+    override fun selectData(id: String) {
+        val position = dataAdapter.selectData(id)
         dataRv.scrollToPosition(position)
     }
 

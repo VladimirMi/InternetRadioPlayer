@@ -23,7 +23,7 @@ private const val PAYLOAD_SELECTED_CHANGE = "PAYLOAD_SELECTED_CHANGE"
 
 class DataAdapter : RecyclerView.Adapter<DataVH>() {
 
-    private var selectedDataUri: String? = null
+    private var selectedDataId: String? = null
 
     var onItemClickListener: ((Data) -> Unit)? = null
 
@@ -43,7 +43,7 @@ class DataAdapter : RecyclerView.Adapter<DataVH>() {
 
     override fun onBindViewHolder(holder: DataVH, position: Int, payloads: MutableList<Any>) {
         when {
-            payloads.contains(PAYLOAD_SELECTED_CHANGE) -> holder.select(data[position], selectedDataUri)
+            payloads.contains(PAYLOAD_SELECTED_CHANGE) -> holder.select(data[position], selectedDataId)
             else -> super.onBindViewHolder(holder, position, payloads)
         }
     }
@@ -52,7 +52,7 @@ class DataAdapter : RecyclerView.Adapter<DataVH>() {
         val item = data[position]
         holder.bind(item)
         holder.setBackground(position, itemCount)
-        holder.select(item, selectedDataUri)
+        holder.select(item, selectedDataId)
         holder.itemView.setOnClickListener { onItemClickListener?.invoke(item) }
         holder.itemView.favoriteBt?.setOnClickListener { onAddToFavListener?.invoke(item) }
     }
@@ -61,10 +61,10 @@ class DataAdapter : RecyclerView.Adapter<DataVH>() {
         return data.size
     }
 
-    fun selectData(uri: String): Int {
-        val oldPos = data.indexOfFirst { it.uri == selectedDataUri }
-        val newPos = data.indexOfFirst { it.uri == uri }
-        selectedDataUri = uri
+    fun selectData(id: String): Int {
+        val oldPos = data.indexOfFirst { it.id == selectedDataId }
+        val newPos = data.indexOfFirst { it.id == id }
+        selectedDataId = id
         notifyItemChanged(oldPos, PAYLOAD_SELECTED_CHANGE)
         notifyItemChanged(newPos, PAYLOAD_SELECTED_CHANGE)
         return newPos
@@ -81,8 +81,8 @@ class DataVH(itemView: View) : RecyclerView.ViewHolder(itemView) {
         subtitleTv.text = data.subtitle
     }
 
-    fun select(data: Data, selectedUri: String?) {
-        val selected = data.uri == selectedUri
+    fun select(data: Data, selectedId: String?) {
+        val selected = data.id == selectedId
         val bg = if (selected) itemView.context.themeAttrData(R.attr.colorSecondaryVariant)
         else itemView.context.themeAttrData(R.attr.colorSurface)
 

@@ -156,8 +156,8 @@ class ManualSearchFragment : BaseFragment<ManualSearchPresenter, ManualSearchVie
         dataAdapter.data = data
     }
 
-    override fun selectData(uri: String) {
-        val position = dataAdapter.selectData(uri)
+    override fun selectData(id: String) {
+        val position = dataAdapter.selectData(id)
         stationsRv.scrollToPosition(position)
     }
 

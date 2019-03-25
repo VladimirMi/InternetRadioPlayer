@@ -20,16 +20,20 @@ class DataPresenter
                     private val mediaInteractor: MediaInteractor) : BasePresenter<DataView>() {
 
     private var selectSub: Disposable? = null
+    private var endpoint: String? = null
+    private var query: String? = null
 
     override fun onAttach(view: DataView) {
         mediaInteractor.currentMediaObs
                 .observeOn(AndroidSchedulers.mainThread())
-                .subscribeX(onNext = { view.selectData(it.uri) })
+                .subscribeX(onNext = { view.selectData(it.remoteId) })
                 .addTo(viewSubs)
     }
 
 
     fun fetchData(endpoint: String?, query: String?) {
+        this.endpoint = endpoint
+        this.query = query
         if (endpoint == null || query == null) return
 
         //todo to interactor
@@ -44,7 +48,7 @@ class DataPresenter
                 .doOnSubscribe { view?.showLoading(true) }
                 .subscribeX(onSuccess = {
                     view?.setData(it)
-                    view?.selectData(mediaInteractor.currentMedia.uri)
+                    view?.selectData(mediaInteractor.currentMedia.remoteId)
                     view?.showLoading(false)
                 }, onError = {
                     view?.showLoading(false)
@@ -54,7 +58,8 @@ class DataPresenter
 
     fun selectData(data: Data) {
         selectSub?.dispose()
-        selectSub = searchInteractor.selectUberStation(data.stationId)
+        selectSub = searchInteractor
+                .selectData(data, endpoint)
                 .subscribeX()
     }
 }

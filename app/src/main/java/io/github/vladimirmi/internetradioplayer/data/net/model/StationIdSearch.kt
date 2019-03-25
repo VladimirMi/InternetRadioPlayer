@@ -47,6 +47,7 @@ class StationIdResult(
                 name = name,
                 uri = uri,
                 url = websiteUrl,
+                remoteId = id.toString(),
                 encoding = encoding,
                 bitrate = null,
                 sample = null

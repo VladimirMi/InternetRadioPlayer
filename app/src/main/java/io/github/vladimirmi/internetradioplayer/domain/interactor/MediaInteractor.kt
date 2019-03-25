@@ -9,10 +9,7 @@ import io.github.vladimirmi.internetradioplayer.data.service.COMMAND_DISABLE_SEE
 import io.github.vladimirmi.internetradioplayer.data.service.COMMAND_DISABLE_SKIP
 import io.github.vladimirmi.internetradioplayer.data.service.COMMAND_ENABLE_SEEK
 import io.github.vladimirmi.internetradioplayer.data.service.COMMAND_ENABLE_SKIP
-import io.github.vladimirmi.internetradioplayer.domain.model.Media
-import io.github.vladimirmi.internetradioplayer.domain.model.Record
-import io.github.vladimirmi.internetradioplayer.domain.model.RecordsQueue
-import io.github.vladimirmi.internetradioplayer.domain.model.SingletonMediaQueue
+import io.github.vladimirmi.internetradioplayer.domain.model.*
 import io.reactivex.Completable
 import io.reactivex.Observable
 import io.reactivex.rxkotlin.toCompletable
@@ -36,6 +33,7 @@ class MediaInteractor
             when (value) {
                 is Record -> setupRecordsQueue()
                 is Station -> setupStationsQueue(value)
+                is Talk -> setupTalksQueue(value)
             }
             mediaRepository.currentMedia = value
             playerRepository.sendCommand(
@@ -79,5 +77,10 @@ class MediaInteractor
         }
         mediaRepository.mediaQueue = queue
         playerRepository.sendCommand(COMMAND_DISABLE_SEEK)
+    }
+
+    private fun setupTalksQueue(talk: Talk) {
+        mediaRepository.mediaQueue = SingletonMediaQueue()
+        playerRepository.sendCommand(if (talk.isLive) COMMAND_DISABLE_SEEK else COMMAND_ENABLE_SEEK)
     }
 }

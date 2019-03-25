@@ -49,10 +49,11 @@ data class Record(override val id: String,
         }
     }
 
+    override val remoteId = id
     val createdAtString = Formats.dateTime(createdAt)
     val durationString = Formats.duration(duration)
 
-    fun culculateDuration() = getDuration(file)
+    fun calculateDuration() = getDuration(file)
 }
 
 

@@ -1,5 +1,6 @@
 package io.github.vladimirmi.internetradioplayer.domain.interactor
 
+import io.github.vladimirmi.internetradioplayer.data.net.UberStationsService
 import io.github.vladimirmi.internetradioplayer.data.net.model.StationResult
 import io.github.vladimirmi.internetradioplayer.data.net.model.TalkResult
 import io.github.vladimirmi.internetradioplayer.data.net.model.TopSongResult
@@ -7,6 +8,7 @@ import io.github.vladimirmi.internetradioplayer.data.repository.FavoritesReposit
 import io.github.vladimirmi.internetradioplayer.data.repository.SearchRepository
 import io.github.vladimirmi.internetradioplayer.domain.model.Data
 import io.github.vladimirmi.internetradioplayer.domain.model.Suggestion
+import io.github.vladimirmi.internetradioplayer.utils.MessageException
 import io.reactivex.Completable
 import io.reactivex.Observable
 import io.reactivex.Single
@@ -59,8 +61,17 @@ class SearchInteractor
                 .map { list -> list.map(TalkResult::toData) }
     }
 
-    fun selectUberStation(id: Int): Completable {
-        return searchRepository.searchStation(id)
+    fun selectData(data: Data, endpoint: String?): Completable {
+        return when (endpoint) {
+            UberStationsService.STATIONS_ENDPOINT,
+            UberStationsService.TOPSONGS_ENDPOINT -> selectStation(data)
+            UberStationsService.TALKS_ENDPOINT -> selectTalk(data)
+            else -> Completable.complete()
+        }
+    }
+
+    private fun selectStation(data: Data): Completable {
+        return searchRepository.searchStation(data.stationId)
                 .flatMapObservable {
                     searchRepository.parseFromNet(it).toObservable().startWith(it)
                 }
@@ -68,5 +79,16 @@ class SearchInteractor
                     mediaInteractor.currentMedia = favoritesRepository.getStation { it.uri == station.uri }
                             ?: station
                 }.ignoreElements()
+    }
+
+    private fun selectTalk(data: Data): Completable {
+        return searchRepository.searchTalk(data.id)
+                .flatMapCompletable {
+                    if (it.uri.isBlank()) {
+                        Completable.error(MessageException("No stations currently airing this show"))
+                    } else {
+                        mediaInteractor.setMedia(it.toTalk(data))
+                    }
+                }
     }
 }

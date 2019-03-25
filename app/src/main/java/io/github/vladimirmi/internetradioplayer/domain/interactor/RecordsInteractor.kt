@@ -34,7 +34,7 @@ class RecordsInteractor
     fun commitRecord(stationUri: Uri, record: Record) {
         val newRecord = record.copy(
                 createdAt = System.currentTimeMillis(),
-                duration = record.culculateDuration()
+                duration = record.calculateDuration()
         )
         recordsRepository.records += newRecord
         mediaInteractor.resetCurrentMediaAndQueue()

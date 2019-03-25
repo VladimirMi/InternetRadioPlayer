@@ -15,7 +15,7 @@ import io.github.vladimirmi.internetradioplayer.data.db.entity.Station
  */
 
 @Database(entities = [Station::class, Group::class],
-        version = 3, exportSchema = true)
+        version = 4, exportSchema = true)
 abstract class StationsDatabase : RoomDatabase() {
 
     //todo rename dao to favorites
@@ -25,7 +25,7 @@ abstract class StationsDatabase : RoomDatabase() {
         fun newInstance(context: Context): StationsDatabase {
             return Room.databaseBuilder(context.applicationContext,
                     StationsDatabase::class.java, "data.db")
-                    .addMigrations(MIGRATION_1_2, MIGRATION_2_3)
+                    .addMigrations(MIGRATION_1_2, MIGRATION_2_3, MIGRATION_3_4)
                     .build()
         }
     }
@@ -52,5 +52,11 @@ private val MIGRATION_2_3 = object : Migration(2, 3) {
     override fun migrate(database: SupportSQLiteDatabase) {
         database.execSQL("ALTER TABLE station ADD COLUMN equalizerPreset TEXT")
         database.execSQL("ALTER TABLE `group` ADD COLUMN equalizerPreset TEXT")
+    }
+}
+
+private val MIGRATION_3_4 = object : Migration(3, 4) {
+    override fun migrate(database: SupportSQLiteDatabase) {
+        database.execSQL("ALTER TABLE station ADD COLUMN remoteId TEXT DEFAULT '' NOT NULL")
     }
 }

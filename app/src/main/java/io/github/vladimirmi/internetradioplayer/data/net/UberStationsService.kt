@@ -36,4 +36,7 @@ interface UberStationsService {
 
     @GET(TALKS_ENDPOINT)
     fun getTalks(): Single<TalksSearch>
+
+    @GET("uberurl.php")
+    fun searchTalk(@Query("showinfo_id") id: String): Single<TalkIdSearch>
 }

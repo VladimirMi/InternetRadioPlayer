@@ -14,7 +14,7 @@ import io.github.vladimirmi.internetradioplayer.data.db.entity.History
  */
 
 @Database(entities = [History::class],
-        version = 3, exportSchema = true)
+        version = 4, exportSchema = true)
 abstract class HistoryDatabase : RoomDatabase() {
 
     abstract fun historyDao(): HistoryDao
@@ -23,7 +23,7 @@ abstract class HistoryDatabase : RoomDatabase() {
         fun newInstance(context: Context): HistoryDatabase {
             return Room.databaseBuilder(context.applicationContext,
                     HistoryDatabase::class.java, "history.db")
-                    .addMigrations(MIGRATION_2_3)
+                    .addMigrations(MIGRATION_2_3, MIGRATION_3_4)
                     .fallbackToDestructiveMigrationFrom(1)
                     .build()
         }
@@ -33,5 +33,11 @@ abstract class HistoryDatabase : RoomDatabase() {
 private val MIGRATION_2_3 = object : Migration(2, 3) {
     override fun migrate(database: SupportSQLiteDatabase) {
         database.execSQL("ALTER TABLE history ADD COLUMN equalizerPreset TEXT")
+    }
+}
+
+private val MIGRATION_3_4 = object : Migration(3, 4) {
+    override fun migrate(database: SupportSQLiteDatabase) {
+        database.execSQL("ALTER TABLE history ADD COLUMN remoteId TEXT DEFAULT '' NOT NULL")
     }
 }

@@ -4,6 +4,7 @@ import com.jakewharton.rxrelay2.BehaviorRelay
 import io.github.vladimirmi.internetradioplayer.data.utils.Preferences
 import io.github.vladimirmi.internetradioplayer.domain.model.Media
 import io.github.vladimirmi.internetradioplayer.domain.model.MediaQueue
+import io.github.vladimirmi.internetradioplayer.domain.model.SingletonMediaQueue
 import javax.inject.Inject
 
 /**
@@ -13,8 +14,7 @@ import javax.inject.Inject
 class MediaRepository
 @Inject constructor(private val prefs: Preferences) {
 
-    lateinit var mediaQueue: MediaQueue
-
+    var mediaQueue: MediaQueue = SingletonMediaQueue()
     val currentMediaObs = BehaviorRelay.createDefault(Media.nullObj())
 
     var currentMedia: Media

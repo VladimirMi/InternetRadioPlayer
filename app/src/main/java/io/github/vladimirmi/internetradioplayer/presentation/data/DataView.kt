@@ -11,7 +11,7 @@ interface DataView : BaseView {
 
     fun setData(data: List<Data>)
 
-    fun selectData(uri: String)
+    fun selectData(id: String)
 
     fun showLoading(loading: Boolean)
 }

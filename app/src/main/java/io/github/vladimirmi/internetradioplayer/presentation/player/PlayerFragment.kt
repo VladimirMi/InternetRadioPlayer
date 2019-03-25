@@ -10,6 +10,7 @@ import android.widget.TextView
 import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.constraintlayout.widget.ConstraintSet
 import androidx.core.content.ContextCompat
+import com.bumptech.glide.Glide
 import com.google.android.exoplayer2.util.Util
 import com.google.android.material.bottomsheet.BottomSheetBehavior
 import io.github.vladimirmi.internetradioplayer.R
@@ -25,6 +26,7 @@ import io.github.vladimirmi.internetradioplayer.utils.SimpleOnSeekBarChangeListe
 import kotlinx.android.synthetic.main.fragment_player.*
 import kotlinx.android.synthetic.main.view_controls.*
 import kotlinx.android.synthetic.main.view_station_info.*
+import timber.log.Timber
 import toothpick.Toothpick
 
 /**
@@ -196,6 +198,13 @@ class PlayerFragment : BaseFragment<PlayerPresenter, PlayerView>(), PlayerView {
         previousBt.setColorFilter(tint)
         nextBt.isEnabled = isEnabled
         previousBt.isEnabled = isEnabled
+    }
+
+    override fun setCoverArt(uri: String) {
+        Timber.e("setCoverArt: $uri")
+        Glide.with(this)
+                .load(uri)
+                .into(coverArtIv)
     }
 
     //endregion

@@ -14,6 +14,7 @@ import io.github.vladimirmi.internetradioplayer.extensions.subscribeX
 import io.github.vladimirmi.internetradioplayer.navigation.Router
 import io.github.vladimirmi.internetradioplayer.presentation.base.BasePresenter
 import io.reactivex.android.schedulers.AndroidSchedulers
+import io.reactivex.disposables.Disposable
 import io.reactivex.rxkotlin.addTo
 import java.util.*
 import javax.inject.Inject
@@ -29,10 +30,12 @@ class PlayerPresenter
                     private val playerInteractor: PlayerInteractor,
                     private val recordsInteractor: RecordsInteractor,
                     private val mediaInteractor: MediaInteractor,
+                    private val coverArtInteractor: CoverArtInteractor,
                     private val router: Router)
     : BasePresenter<PlayerView>() {
 
     private var playTask: TimerTask? = null
+    private var coverArtLoad: Disposable? = null
 
     override fun onAttach(view: PlayerView) {
         setupStation()
@@ -111,6 +114,15 @@ class PlayerPresenter
         playerInteractor.seekTo(position)
     }
 
+    fun openEqualizer() {
+        router.navigateTo(R.id.nav_equalizer)
+    }
+
+    fun startStopRecording() {
+        recordsInteractor.startStopRecordingCurrentStation()
+                .subscribeX()
+    }
+
     private fun handleState(state: PlaybackStateCompat) {
         playTask?.cancel()
         view?.setPosition(state.position)
@@ -143,6 +155,7 @@ class PlayerPresenter
         else "${metadata.artist} - ${metadata.title}"
         view?.setSimpleMetadata(metadataLine)
         if (metadata.duration != C.TIME_UNSET) view?.setDuration(metadata.duration)
+        loadCoverArt(metadata)
     }
 
     private fun handleSessionEvent(event: Pair<String, Bundle>) {
@@ -152,12 +165,12 @@ class PlayerPresenter
         }
     }
 
-    fun openEqualizer() {
-        router.navigateTo(R.id.nav_equalizer)
+    private fun loadCoverArt(metadata: MediaMetadataCompat) {
+        coverArtLoad?.dispose()
+        if (metadata.isEmpty() || metadata.isNotSupported()) return
+        coverArtLoad = coverArtInteractor.getCoverArtUri(metadata.artist, metadata.title)
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribeX(onSuccess = { view?.setCoverArt(it) })
     }
 
-    fun startStopRecording() {
-        recordsInteractor.startStopRecordingCurrentStation()
-                .subscribeX()
-    }
 }

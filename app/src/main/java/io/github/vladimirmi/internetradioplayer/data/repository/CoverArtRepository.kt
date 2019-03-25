@@ -1,6 +1,8 @@
 package io.github.vladimirmi.internetradioplayer.data.repository
 
 import io.github.vladimirmi.internetradioplayer.data.net.CoverArtService
+import io.reactivex.Single
+import io.reactivex.schedulers.Schedulers
 import javax.inject.Inject
 
 /**
@@ -8,7 +10,12 @@ import javax.inject.Inject
  */
 
 class CoverArtRepository
-@Inject constructor(service: CoverArtService) {
+@Inject constructor(private val service: CoverArtService) {
 
+    fun getCoverArtUri(query: String): Single<String> {
+        return service.searchRecordings(query)
+                .map { CoverArtService.getCoverArtUri(it.getReleaseGroupId(), CoverArtService.QUALITY_LOW) }
+                .subscribeOn(Schedulers.io())
+    }
 
 }

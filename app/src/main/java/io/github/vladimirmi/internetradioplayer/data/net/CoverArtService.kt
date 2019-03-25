@@ -17,14 +17,16 @@ interface CoverArtService {
         const val QUALITY_LOW = "250"
         const val QUALITY_MID = "500"
         const val QUALITY_HIGH = "1200"
+        const val FIELD_ARTIST = "artist"
+        const val FIELD_TITLE = "recording"
+
+        fun getCoverArtUri(mbId: String, quality: String): String {
+            return "http://coverartarchive.org/release-group/$mbId/front-$quality"
+        }
     }
 
     @GET("ws/2/recording")
     fun searchRecordings(@Query("query") query: String,
                          @Query("limit") limit: Int = 1,
                          @Query("fmt") format: String = "json"): Single<SearchRecordingsMbid>
-
-    fun getCoverArtUri(mbId: String, quality: String = QUALITY_LOW): String {
-        return "http://coverartarchive.org/release-group/$mbId/front-$quality"
-    }
 }

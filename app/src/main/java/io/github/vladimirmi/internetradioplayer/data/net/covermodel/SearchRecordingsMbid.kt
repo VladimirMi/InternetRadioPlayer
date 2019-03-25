@@ -8,7 +8,19 @@ import com.google.gson.annotations.SerializedName
  */
 class SearchRecordingsMbid(
         val recordings: List<RecordingMbId>
-)
+) {
+
+    fun getReleaseGroupId(): String {
+        return recordings.flatMap { it.releases }
+                .asSequence()
+                .filter { it.status == "Official" }
+                .map { it.releaseGroup }
+                .filter { it.primaryType == "Album" }
+                .map { it.id }
+                .distinct()
+                .firstOrNull() ?: ""
+    }
+}
 
 class RecordingMbId(
         val id: String,

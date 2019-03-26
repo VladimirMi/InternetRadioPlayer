@@ -13,10 +13,7 @@ class SearchRecordingsMbid(
     fun getReleaseGroupId(): String {
         return recordings.flatMap { it.releases }
                 .asSequence()
-                .filter { it.status == "Official" }
-                .map { it.releaseGroup }
-                .filter { it.primaryType == "Album" }
-                .map { it.id }
+                .map { it.releaseGroup.id }
                 .distinct()
                 .firstOrNull() ?: ""
     }

@@ -12,7 +12,7 @@ import retrofit2.http.Query
 interface CoverArtService {
 
     companion object {
-        const val HOST = "www.musicbrainz.org"
+        const val HOST = "musicbrainz.org"
         const val BASE_URL = "http://$HOST"
         const val QUALITY_LOW = "250"
         const val QUALITY_MID = "500"

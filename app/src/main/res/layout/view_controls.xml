@@ -8,6 +8,75 @@
     android:background="@color/primary"
     >
 
+
+    <ImageButton
+        android:id="@+id/addShortcutBt"
+        android:layout_width="40dp"
+        android:layout_height="40dp"
+        android:layout_marginTop="16dp"
+        android:background="@null"
+        android:contentDescription="@string/desc_create_shortcut_button"
+        android:foreground="?actionBarItemBackground"
+        android:padding="4dp"
+        android:scaleType="fitCenter"
+        android:src="@drawable/ic_label_plus"
+        app:layout_constraintEnd_toStartOf="@+id/equalizerBt"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        android:visibility="gone"
+        tools:ignore="UnusedAttribute"
+        />
+
+    <ImageButton
+        android:id="@+id/equalizerBt"
+        android:layout_width="40dp"
+        android:layout_height="40dp"
+        android:layout_marginTop="16dp"
+        android:background="@null"
+        android:contentDescription="@string/desc_equalizer"
+        android:foreground="?actionBarItemBackground"
+        android:padding="4dp"
+        android:visibility="gone"
+        android:scaleType="fitCenter"
+        android:src="@drawable/ic_equalizer"
+        app:layout_constraintEnd_toStartOf="@+id/recordBt"
+        app:layout_constraintStart_toEndOf="@+id/addShortcutBt"
+        app:layout_constraintTop_toTopOf="parent"
+        tools:ignore="UnusedAttribute"
+        />
+
+    <ImageButton
+        android:id="@+id/recordBt"
+        android:layout_width="40dp"
+        android:layout_height="40dp"
+        android:layout_marginTop="16dp"
+        android:background="@null"
+        android:contentDescription="@string/desc_record"
+        android:foreground="?actionBarItemBackground"
+        android:scaleType="fitCenter"
+        android:visibility="gone"
+        android:src="@drawable/ic_recorder"
+        app:layout_constraintEnd_toStartOf="@+id/favoriteBt"
+        app:layout_constraintStart_toEndOf="@+id/equalizerBt"
+        app:layout_constraintTop_toTopOf="parent"
+        tools:ignore="UnusedAttribute"
+        />
+
+    <ImageButton
+        android:id="@+id/favoriteBt"
+        android:layout_width="40dp"
+        android:layout_height="40dp"
+        android:layout_marginTop="16dp"
+        android:background="@drawable/ic_star"
+        android:visibility="gone"
+        android:contentDescription="@string/desc_add_remove_favorite"
+        android:foreground="?actionBarItemBackground"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toEndOf="@+id/recordBt"
+        app:layout_constraintTop_toTopOf="parent"
+        tools:ignore="UnusedAttribute"
+        />
+
     <ImageButton
         android:id="@+id/previousBt"
         android:layout_width="48dp"
@@ -44,12 +113,12 @@
         android:id="@+id/playPauseBtEnd"
         android:layout_width="48dp"
         android:layout_height="48dp"
-        android:layout_marginTop="24dp"
-        android:layout_marginBottom="24dp"
+        android:layout_marginTop="16dp"
+        android:layout_marginBottom="16dp"
         app:layout_constraintBottom_toTopOf="@id/progressSb"
         app:layout_constraintEnd_toStartOf="@id/nextBt"
         app:layout_constraintStart_toEndOf="@id/stopBt"
-        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/recordBt"
         />
 
     <Space
@@ -67,15 +136,15 @@
         android:id="@+id/playPauseBt"
         android:layout_width="48dp"
         android:layout_height="48dp"
-        android:layout_marginTop="24dp"
-        android:layout_marginBottom="24dp"
+        android:layout_marginTop="16dp"
+        android:layout_marginBottom="16dp"
         app:layout_goneMarginBottom="72dp"
         android:contentDescription="@string/desc_play_pause_button"
         android:foreground="?actionBarItemBackground"
         app:layout_constraintBottom_toTopOf="@id/progressSb"
         app:layout_constraintEnd_toStartOf="@id/nextBt"
         app:layout_constraintStart_toEndOf="@id/stopBt"
-        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/recordBt"
         app:pb_pauseColor="@color/pause"
         app:pb_playColor="@color/play"
         tools:ignore="UnusedAttribute"
@@ -107,12 +176,12 @@
         android:layout_marginEnd="48dp"
         android:layout_marginRight="48dp"
         android:layout_marginBottom="16dp"
-        android:visibility="gone"
+        tools:visibility="gone"
         app:layout_constraintTop_toTopOf="parent"
         >
 
         <TextView
-            android:id="@+id/simpleMetaTv"
+            android:id="@+id/metadataTv"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:ellipsize="marquee"
@@ -134,7 +203,7 @@
         android:layout_marginBottom="32dp"
         android:clickable="true"
         android:focusable="true"
-        android:padding="16dp"
+        android:padding="8dp"
         app:layout_constraintBottom_toBottomOf="parent"
         />
 

@@ -11,12 +11,11 @@ import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.constraintlayout.widget.ConstraintSet
 import androidx.core.content.ContextCompat
 import com.bumptech.glide.Glide
+import com.bumptech.glide.load.resource.drawable.DrawableTransitionOptions.withCrossFade
 import com.google.android.exoplayer2.util.Util
 import com.google.android.material.bottomsheet.BottomSheetBehavior
 import io.github.vladimirmi.internetradioplayer.R
-import io.github.vladimirmi.internetradioplayer.data.db.entity.Group
 import io.github.vladimirmi.internetradioplayer.data.db.entity.Station
-import io.github.vladimirmi.internetradioplayer.data.utils.AudioEffects
 import io.github.vladimirmi.internetradioplayer.di.Scopes
 import io.github.vladimirmi.internetradioplayer.domain.model.Record
 import io.github.vladimirmi.internetradioplayer.extensions.*
@@ -25,8 +24,8 @@ import io.github.vladimirmi.internetradioplayer.presentation.root.RootView
 import io.github.vladimirmi.internetradioplayer.utils.SimpleOnSeekBarChangeListener
 import kotlinx.android.synthetic.main.fragment_player.*
 import kotlinx.android.synthetic.main.view_controls.*
+import kotlinx.android.synthetic.main.view_cover_art.*
 import kotlinx.android.synthetic.main.view_station_info.*
-import timber.log.Timber
 import toothpick.Toothpick
 
 /**
@@ -52,14 +51,13 @@ class PlayerFragment : BaseFragment<PlayerPresenter, PlayerView>(), PlayerView {
 
     override fun setupView(view: View) {
         titleTv.isSelected = true
-        metaTitleTv.isSelected = true
-        metaSubtitleTv.isSelected = true
-        simpleMetaTv.isSelected = true
+        metadataTv.isSelected = true
         playPauseBt.setManualMode(true)
 
         setupButtons()
         setupSeekBar()
         setupBehavior()
+        setupInfo()
     }
 
     private fun setupButtons() {
@@ -104,6 +102,11 @@ class PlayerFragment : BaseFragment<PlayerPresenter, PlayerView>(), PlayerView {
         }
     }
 
+    private fun setupInfo() {
+        infoVp.adapter = InfoAdapter()
+        infoVp.currentItem = 0
+    }
+
     override fun handleBackPressed(): Boolean {
         return if (playerBehavior.isExpanded) {
             switchState()
@@ -115,21 +118,21 @@ class PlayerFragment : BaseFragment<PlayerPresenter, PlayerView>(), PlayerView {
 
     override fun setStation(station: Station) {
         titleTv.text = station.name
-        specsTv.text = station.specs
-        addShortcutBt.visible(true)
-        equalizerBt.visible(AudioEffects.isEqualizerSupported())
-        favoriteBt.visible(true)
-        recordBt.visible(true)
+//        specsTv.text = station.specs
+//        addShortcutBt.visible(true)
+//        equalizerBt.visible(AudioEffects.isEqualizerSupported())
+//        favoriteBt.visible(true)
+//        recordBt.visible(true)
     }
 
     override fun setRecord(record: Record) {
         titleTv.text = record.name
-        specsTv.text = record.createdAtString
-        setGroup("")
-        addShortcutBt.visible(false)
-        equalizerBt.visible(false)
-        favoriteBt.visible(false)
-        recordBt.visible(false)
+//        specsTv.text = record.createdAtString
+//        setGroup("")
+//        addShortcutBt.visible(false)
+//        equalizerBt.visible(false)
+//        favoriteBt.visible(false)
+//        recordBt.visible(false)
     }
 
     override fun setFavorite(isFavorite: Boolean) {
@@ -139,7 +142,7 @@ class PlayerFragment : BaseFragment<PlayerPresenter, PlayerView>(), PlayerView {
     }
 
     override fun setGroup(group: String) {
-        groupTv.setTextOrHide(Group.getViewName(group, requireContext()))
+//        groupTv.setTextOrHide(Group.getViewName(group, requireContext()))
     }
 
     override fun setStatus(resId: Int) {
@@ -164,12 +167,12 @@ class PlayerFragment : BaseFragment<PlayerPresenter, PlayerView>(), PlayerView {
     }
 
     override fun setMetadata(artist: String, title: String) {
-        metaTitleTv.setTextOrHide(artist)
-        metaSubtitleTv.setTextOrHide(title)
+//        metaTitleTv.setTextOrHide(artist)
+//        metaSubtitleTv.setTextOrHide(title)
     }
 
     override fun setSimpleMetadata(metadata: String) {
-        simpleMetaTv.text = metadata
+        metadataTv.text = metadata
     }
 
     override fun setPosition(position: Long) {
@@ -201,9 +204,9 @@ class PlayerFragment : BaseFragment<PlayerPresenter, PlayerView>(), PlayerView {
     }
 
     override fun setCoverArt(uri: String) {
-        Timber.e("setCoverArt: $uri")
         Glide.with(this)
                 .load(uri)
+                .transition(withCrossFade())
                 .into(coverArtIv)
     }
 
@@ -237,7 +240,6 @@ class PlayerFragment : BaseFragment<PlayerPresenter, PlayerView>(), PlayerView {
             positionTv.visible(visible, false)
             durationTv.visible(visible, false)
         }
-        simpleMetaFl.visible(state == 0f)
 
         playPauseBt.x = playPauseBtStart.x + (playPauseBtEnd.x - playPauseBtStart.x) * state
         playPauseBt.y = playPauseBtStart.y + (playPauseBtEnd.y - playPauseBtStart.y) * state

@@ -14,7 +14,7 @@ class CoverArtRepository
 
     fun getCoverArtUri(query: String): Single<String> {
         return service.searchRecordings(query)
-                .map { CoverArtService.getCoverArtUri(it.getReleaseGroupId(), CoverArtService.QUALITY_LOW) }
+                .map { CoverArtService.getCoverArtUri(it.getReleaseGroupId(), CoverArtService.QUALITY_MID) }
                 .subscribeOn(Schedulers.io())
     }
 

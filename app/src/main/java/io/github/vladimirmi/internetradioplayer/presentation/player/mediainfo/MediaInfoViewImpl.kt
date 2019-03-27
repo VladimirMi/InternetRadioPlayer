@@ -12,7 +12,9 @@ import androidx.fragment.app.FragmentActivity
 import androidx.fragment.app.FragmentManager
 import io.github.vladimirmi.internetradioplayer.R
 import io.github.vladimirmi.internetradioplayer.data.db.entity.Group
+import io.github.vladimirmi.internetradioplayer.data.db.entity.Station
 import io.github.vladimirmi.internetradioplayer.di.Scopes
+import io.github.vladimirmi.internetradioplayer.domain.model.Record
 import io.github.vladimirmi.internetradioplayer.extensions.color
 import io.github.vladimirmi.internetradioplayer.extensions.setTextOrHide
 import io.github.vladimirmi.internetradioplayer.presentation.base.BaseCustomView
@@ -50,6 +52,25 @@ class MediaInfoViewImpl @JvmOverloads constructor(
 
     override fun setGroup(group: String) {
         groupTv.setTextOrHide(Group.getViewName(group, context))
+    }
+
+    override fun setStation(station: Station) {
+//        titleTv.text = station.name
+//        specsTv.text = station.specs
+//        addShortcutBt.visible(true)
+//        equalizerBt.visible(AudioEffects.isEqualizerSupported())
+//        favoriteBt.visible(true)
+//        recordBt.visible(true)
+    }
+
+    override fun setRecord(record: Record) {
+//        titleTv.text = record.name
+//        specsTv.text = record.createdAtString
+//        setGroup("")
+//        addShortcutBt.visible(false)
+//        equalizerBt.visible(false)
+//        favoriteBt.visible(false)
+//        recordBt.visible(false)
     }
 
     private fun openAddShortcutDialog() {

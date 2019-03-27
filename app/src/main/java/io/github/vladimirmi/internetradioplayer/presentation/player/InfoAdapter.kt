@@ -1,12 +1,11 @@
 package io.github.vladimirmi.internetradioplayer.presentation.player
 
-import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.LifecycleObserver
 import androidx.viewpager.widget.PagerAdapter
-import io.github.vladimirmi.internetradioplayer.R
+import io.github.vladimirmi.internetradioplayer.presentation.player.coverart.CoverArtViewImpl
 import io.github.vladimirmi.internetradioplayer.presentation.player.mediainfo.MediaInfoViewImpl
 
 /**
@@ -16,11 +15,11 @@ import io.github.vladimirmi.internetradioplayer.presentation.player.mediainfo.Me
 class InfoAdapter(private val lifecycle: Lifecycle) : PagerAdapter() {
 
     override fun instantiateItem(container: ViewGroup, position: Int): Any {
-        val layout = if (position == 0) R.layout.view_cover_art
-        else R.layout.view_media_info
-
-        val view = if (position == 0) LayoutInflater.from(container.context).inflate(layout, container, false)
-        else MediaInfoViewImpl(container.context)
+        val view = if (position == 0) {
+            CoverArtViewImpl(container.context)
+        } else {
+            MediaInfoViewImpl(container.context)
+        }
         (view as? LifecycleObserver)?.let { lifecycle.addObserver(it) }
         container.addView(view)
         return view
@@ -36,10 +35,5 @@ class InfoAdapter(private val lifecycle: Lifecycle) : PagerAdapter() {
 
     override fun getCount(): Int {
         return 2
-    }
-
-    override fun finishUpdate(container: ViewGroup) {
-//        onAdd.invoke()
-
     }
 }

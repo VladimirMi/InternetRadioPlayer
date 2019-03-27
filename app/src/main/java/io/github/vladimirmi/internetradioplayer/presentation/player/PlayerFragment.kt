@@ -4,21 +4,17 @@ import android.view.View
 import android.widget.SeekBar
 import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.constraintlayout.widget.ConstraintSet
-import com.bumptech.glide.Glide
-import com.bumptech.glide.load.resource.drawable.DrawableTransitionOptions.withCrossFade
 import com.google.android.exoplayer2.util.Util
 import com.google.android.material.bottomsheet.BottomSheetBehavior
 import io.github.vladimirmi.internetradioplayer.R
-import io.github.vladimirmi.internetradioplayer.data.db.entity.Station
 import io.github.vladimirmi.internetradioplayer.di.Scopes
-import io.github.vladimirmi.internetradioplayer.domain.model.Record
+import io.github.vladimirmi.internetradioplayer.domain.model.Media
 import io.github.vladimirmi.internetradioplayer.extensions.*
 import io.github.vladimirmi.internetradioplayer.presentation.base.BaseFragment
 import io.github.vladimirmi.internetradioplayer.presentation.root.RootView
 import io.github.vladimirmi.internetradioplayer.utils.SimpleOnSeekBarChangeListener
 import kotlinx.android.synthetic.main.fragment_player.*
 import kotlinx.android.synthetic.main.view_controls.*
-import kotlinx.android.synthetic.main.view_cover_art.*
 import kotlinx.android.synthetic.main.view_media_title.*
 import toothpick.Toothpick
 
@@ -43,7 +39,6 @@ class PlayerFragment : BaseFragment<PlayerPresenter, PlayerView>(), PlayerView {
     override fun setupView(view: View) {
         titleTv.isSelected = true
         metadataTv.isSelected = true
-        playPauseBt.setManualMode(true)
 
         setupButtons()
         setupSeekBar()
@@ -61,6 +56,7 @@ class PlayerFragment : BaseFragment<PlayerPresenter, PlayerView>(), PlayerView {
             presenter.playPause()
             if (isSeekEnabled) presenter.seekTo(progressSb.progress)
         }
+        playPauseBt.setManualMode(true)
     }
 
     private fun setupSeekBar() {
@@ -102,23 +98,8 @@ class PlayerFragment : BaseFragment<PlayerPresenter, PlayerView>(), PlayerView {
 
     //region =============== PlayerView ==============
 
-    override fun setStation(station: Station) {
-        titleTv.text = station.name
-//        specsTv.text = station.specs
-//        addShortcutBt.visible(true)
-//        equalizerBt.visible(AudioEffects.isEqualizerSupported())
-//        favoriteBt.visible(true)
-//        recordBt.visible(true)
-    }
-
-    override fun setRecord(record: Record) {
-        titleTv.text = record.name
-//        specsTv.text = record.createdAtString
-//        setGroup("")
-//        addShortcutBt.visible(false)
-//        equalizerBt.visible(false)
-//        favoriteBt.visible(false)
-//        recordBt.visible(false)
+    override fun setMedia(media: Media) {
+        titleTv.text = media.name
     }
 
     override fun setFavorite(isFavorite: Boolean) {
@@ -173,13 +154,6 @@ class PlayerFragment : BaseFragment<PlayerPresenter, PlayerView>(), PlayerView {
         previousBt.setColorFilter(tint)
         nextBt.isEnabled = isEnabled
         previousBt.isEnabled = isEnabled
-    }
-
-    override fun setCoverArt(uri: String) {
-        Glide.with(this)
-                .load(uri)
-                .transition(withCrossFade())
-                .into(coverArtIv)
     }
 
     //endregion

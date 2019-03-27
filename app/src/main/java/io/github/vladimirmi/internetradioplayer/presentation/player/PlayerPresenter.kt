@@ -13,7 +13,6 @@ import io.github.vladimirmi.internetradioplayer.domain.model.Record
 import io.github.vladimirmi.internetradioplayer.extensions.subscribeX
 import io.github.vladimirmi.internetradioplayer.presentation.base.BasePresenter
 import io.reactivex.android.schedulers.AndroidSchedulers
-import io.reactivex.disposables.Disposable
 import io.reactivex.rxkotlin.addTo
 import java.util.*
 import javax.inject.Inject
@@ -32,7 +31,6 @@ class PlayerPresenter
     : BasePresenter<PlayerView>() {
 
     private var playTask: TimerTask? = null
-    private var coverArtLoad: Disposable? = null
 
     override fun onAttach(view: PlayerView) {
         setupStation()
@@ -43,11 +41,10 @@ class PlayerPresenter
         mediaInteractor.currentMediaObs
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribeX(onNext = {
+                    view?.setMedia(it)
                     if (it is Station) {
-                        view?.setStation(it)
                         view?.setFavorite(favoriteListInteractor.isFavorite(it))
                     } else if (it is Record) {
-                        view?.setRecord(it)
                         view?.setDuration(it.duration)
                     }
                 })
@@ -136,7 +133,6 @@ class PlayerPresenter
         else "${metadata.artist} - ${metadata.title}"
         view?.setMetadata(metadataLine)
         if (metadata.duration != C.TIME_UNSET) view?.setDuration(metadata.duration)
-        loadCoverArt(metadata)
     }
 
     private fun handleSessionEvent(event: Pair<String, Bundle>) {
@@ -144,14 +140,6 @@ class PlayerPresenter
             PlayerService.EVENT_SESSION_PREVIOUS -> view?.showPrevious()
             PlayerService.EVENT_SESSION_NEXT -> view?.showNext()
         }
-    }
-
-    private fun loadCoverArt(metadata: MediaMetadataCompat) {
-        coverArtLoad?.dispose()
-        if (metadata.isEmpty() || metadata.isNotSupported()) return
-        coverArtLoad = coverArtInteractor.getCoverArtUri(metadata.artist, metadata.title)
-                .observeOn(AndroidSchedulers.mainThread())
-                .subscribeX(onSuccess = { view?.setCoverArt(it) })
     }
 
 }

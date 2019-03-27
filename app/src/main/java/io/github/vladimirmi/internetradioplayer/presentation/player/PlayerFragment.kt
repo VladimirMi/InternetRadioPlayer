@@ -1,15 +1,9 @@
 package io.github.vladimirmi.internetradioplayer.presentation.player
 
-import android.text.Spannable
-import android.text.SpannableString
-import android.text.style.ForegroundColorSpan
-import android.text.style.URLSpan
 import android.view.View
 import android.widget.SeekBar
-import android.widget.TextView
 import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.constraintlayout.widget.ConstraintSet
-import androidx.core.content.ContextCompat
 import com.bumptech.glide.Glide
 import com.bumptech.glide.load.resource.drawable.DrawableTransitionOptions.withCrossFade
 import com.google.android.exoplayer2.util.Util
@@ -25,7 +19,6 @@ import io.github.vladimirmi.internetradioplayer.utils.SimpleOnSeekBarChangeListe
 import kotlinx.android.synthetic.main.fragment_player.*
 import kotlinx.android.synthetic.main.view_controls.*
 import kotlinx.android.synthetic.main.view_cover_art.*
-import kotlinx.android.synthetic.main.view_media_info.*
 import kotlinx.android.synthetic.main.view_media_title.*
 import toothpick.Toothpick
 
@@ -33,10 +26,7 @@ import toothpick.Toothpick
  * Created by Vladimir Mikhalev 20.02.2019.
  */
 
-const val PLAYER_STATE = "PLAYER_STATE"
-
 class PlayerFragment : BaseFragment<PlayerPresenter, PlayerView>(), PlayerView {
-
 
     override val layout = R.layout.fragment_player
 
@@ -67,12 +57,6 @@ class PlayerFragment : BaseFragment<PlayerPresenter, PlayerView>(), PlayerView {
         nextBt.setOnClickListener { presenter.skipToNext() }
         stopBt.setOnClickListener { presenter.stop() }
         pointerIv.setOnClickListener { switchState() }
-//        recordBt.setOnClickListener { presenter.startStopRecording() }
-//        addShortcutBt.setOnClickListener { openAddShortcutDialog() }
-//        equalizerBt.setOnClickListener {
-//            if (playerBehavior.isExpanded) switchState()
-//            presenter.openEqualizer()
-//        }
         playPauseBt.setOnClickListener {
             presenter.playPause()
             if (isSeekEnabled) presenter.seekTo(progressSb.progress)
@@ -104,7 +88,7 @@ class PlayerFragment : BaseFragment<PlayerPresenter, PlayerView>(), PlayerView {
     }
 
     private fun setupInfo() {
-        mediaInfoVp.adapter = InfoAdapter()
+        mediaInfoVp.adapter = InfoAdapter(lifecycle)
         mediaInfoVp.currentItem = 0
         pagerIndicator.setupWithViewPager(mediaInfoVp)
     }
@@ -143,10 +127,6 @@ class PlayerFragment : BaseFragment<PlayerPresenter, PlayerView>(), PlayerView {
         favoriteBt.background.setTintExt(context!!.color(tint))
     }
 
-    override fun setGroup(group: String) {
-//        groupTv.setTextOrHide(Group.getViewName(group, requireContext()))
-    }
-
     override fun setStatus(resId: Int) {
         statusTv.setText(resId)
     }
@@ -161,11 +141,6 @@ class PlayerFragment : BaseFragment<PlayerPresenter, PlayerView>(), PlayerView {
 
     override fun showPrevious() {
         previousBt.bounceXAnimation(-200f).start()
-    }
-
-    override fun setRecording(isRecording: Boolean) {
-        val tint = requireContext().color(if (isRecording) R.color.secondary else R.color.primary_variant)
-        recordBt.setColorFilter(tint)
     }
 
     override fun setMetadata(metadata: String) {
@@ -243,27 +218,6 @@ class PlayerFragment : BaseFragment<PlayerPresenter, PlayerView>(), PlayerView {
         statusTv.y = statusTvStart.y + (playerView.height - statusTv.height - statusTvStart.y) * state
 
         pointerIv.rotationX = 180 * state
-    }
-
-    private fun openLinkDialog(url: String) {
-        LinkDialog.newInstance(url).show(childFragmentManager, "link_dialog")
-    }
-
-    private fun openAddShortcutDialog() {
-        AddShortcutDialog().show(childFragmentManager, "add_shortcut_dialog")
-    }
-
-    private fun TextView.linkStyle(enable: Boolean) {
-        val string = text.toString()
-        val color = ContextCompat.getColor(context, R.color.blue_500)
-        text = if (enable) {
-            val spannable = SpannableString(string)
-            spannable.setSpan(URLSpan(string), 0, spannable.length, Spannable.SPAN_EXCLUSIVE_EXCLUSIVE)
-            spannable.setSpan(ForegroundColorSpan(color), 0, spannable.length, Spannable.SPAN_EXCLUSIVE_EXCLUSIVE)
-            spannable
-        } else {
-            string
-        }
     }
 
     private fun switchState() {

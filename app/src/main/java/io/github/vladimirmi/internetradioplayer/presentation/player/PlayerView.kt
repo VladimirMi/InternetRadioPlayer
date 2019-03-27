@@ -26,10 +26,6 @@ interface PlayerView : BaseView {
 
     fun showNext()
 
-    fun setRecording(isRecording: Boolean)
-
-    fun setGroup(group: String)
-
     fun setDuration(duration: Long)
 
     fun setPosition(position: Long)

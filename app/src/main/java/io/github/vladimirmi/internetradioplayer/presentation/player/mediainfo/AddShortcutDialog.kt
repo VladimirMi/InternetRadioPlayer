@@ -1,4 +1,4 @@
-package io.github.vladimirmi.internetradioplayer.presentation.player
+package io.github.vladimirmi.internetradioplayer.presentation.player.mediainfo
 
 import android.annotation.SuppressLint
 import android.view.LayoutInflater
@@ -28,8 +28,12 @@ class AddShortcutDialog : BaseDialogFragment() {
     override fun onPositive() {
         dialogView?.let {
             if (Scopes.app.getInstance(StationInteractor::class.java)
-                            .addCurrentShortcut(it.checkbox.isChecked))
+                            .addCurrentShortcut(it.checkbox.isChecked)) {
                 Snackbar.make(it, R.string.msg_add_shortcut_success, Snackbar.LENGTH_SHORT).show()
+            } else {
+                //todo describe error
+                Snackbar.make(it, "Error", Snackbar.LENGTH_SHORT).show()
+            }
         }
     }
 

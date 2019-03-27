@@ -11,7 +11,6 @@ import io.github.vladimirmi.internetradioplayer.data.service.extensions.*
 import io.github.vladimirmi.internetradioplayer.domain.interactor.*
 import io.github.vladimirmi.internetradioplayer.domain.model.Record
 import io.github.vladimirmi.internetradioplayer.extensions.subscribeX
-import io.github.vladimirmi.internetradioplayer.navigation.Router
 import io.github.vladimirmi.internetradioplayer.presentation.base.BasePresenter
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.disposables.Disposable
@@ -28,10 +27,8 @@ class PlayerPresenter
 @Inject constructor(private val stationInteractor: StationInteractor,
                     private val favoriteListInteractor: FavoriteListInteractor,
                     private val playerInteractor: PlayerInteractor,
-                    private val recordsInteractor: RecordsInteractor,
                     private val mediaInteractor: MediaInteractor,
-                    private val coverArtInteractor: CoverArtInteractor,
-                    private val router: Router)
+                    private val coverArtInteractor: CoverArtInteractor)
     : BasePresenter<PlayerView>() {
 
     private var playTask: TimerTask? = null
@@ -49,7 +46,6 @@ class PlayerPresenter
                     if (it is Station) {
                         view?.setStation(it)
                         view?.setFavorite(favoriteListInteractor.isFavorite(it))
-                        view?.setGroup(favoriteListInteractor.findGroup(it.groupId)?.name ?: "")
                     } else if (it is Record) {
                         view?.setRecord(it)
                         view?.setDuration(it.duration)
@@ -72,11 +68,6 @@ class PlayerPresenter
         playerInteractor.sessionEventObs
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribeX(onNext = { handleSessionEvent(it) })
-                .addTo(viewSubs)
-
-        recordsInteractor.isCurrentRecordingObs()
-                .observeOn(AndroidSchedulers.mainThread())
-                .subscribeX(onNext = { view?.setRecording(it) })
                 .addTo(viewSubs)
     }
 
@@ -112,15 +103,6 @@ class PlayerPresenter
 
     fun seekTo(position: Int) {
         playerInteractor.seekTo(position)
-    }
-
-    fun openEqualizer() {
-        router.navigateTo(R.id.nav_equalizer)
-    }
-
-    fun startStopRecording() {
-        recordsInteractor.startStopRecordingCurrentStation()
-                .subscribeX()
     }
 
     private fun handleState(state: PlaybackStateCompat) {

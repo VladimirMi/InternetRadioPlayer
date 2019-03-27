@@ -16,9 +16,7 @@ interface PlayerView : BaseView {
 
     fun setFavorite(isFavorite: Boolean)
 
-    fun setMetadata(artist: String, title: String)
-
-    fun setSimpleMetadata(metadata: String)
+    fun setMetadata(metadata: String)
 
     fun setStatus(resId: Int)
 

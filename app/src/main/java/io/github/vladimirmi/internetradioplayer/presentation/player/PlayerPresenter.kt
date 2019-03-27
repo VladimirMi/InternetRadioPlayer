@@ -150,10 +150,9 @@ class PlayerPresenter
     }
 
     private fun handleMetadata(metadata: MediaMetadataCompat) {
-        view?.setMetadata(metadata.artist, metadata.title)
         val metadataLine = if (metadata.isEmpty() || metadata.isNotSupported()) metadata.album
         else "${metadata.artist} - ${metadata.title}"
-        view?.setSimpleMetadata(metadataLine)
+        view?.setMetadata(metadataLine)
         if (metadata.duration != C.TIME_UNSET) view?.setDuration(metadata.duration)
         loadCoverArt(metadata)
     }

@@ -8,74 +8,30 @@
     android:background="@color/primary"
     >
 
-
-    <ImageButton
-        android:id="@+id/addShortcutBt"
-        android:layout_width="40dp"
-        android:layout_height="40dp"
+    <FrameLayout
+        android:id="@+id/metadataFl"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="16dp"
+        android:layout_marginLeft="16dp"
         android:layout_marginTop="16dp"
-        android:background="@null"
-        android:contentDescription="@string/desc_create_shortcut_button"
-        android:foreground="?actionBarItemBackground"
-        android:padding="4dp"
-        android:scaleType="fitCenter"
-        android:src="@drawable/ic_label_plus"
-        app:layout_constraintEnd_toStartOf="@+id/equalizerBt"
-        app:layout_constraintStart_toStartOf="parent"
+        android:layout_marginEnd="48dp"
+        android:layout_marginRight="48dp"
         app:layout_constraintTop_toTopOf="parent"
-        android:visibility="gone"
-        tools:ignore="UnusedAttribute"
-        />
+        >
 
-    <ImageButton
-        android:id="@+id/equalizerBt"
-        android:layout_width="40dp"
-        android:layout_height="40dp"
-        android:layout_marginTop="16dp"
-        android:background="@null"
-        android:contentDescription="@string/desc_equalizer"
-        android:foreground="?actionBarItemBackground"
-        android:padding="4dp"
-        android:visibility="gone"
-        android:scaleType="fitCenter"
-        android:src="@drawable/ic_equalizer"
-        app:layout_constraintEnd_toStartOf="@+id/recordBt"
-        app:layout_constraintStart_toEndOf="@+id/addShortcutBt"
-        app:layout_constraintTop_toTopOf="parent"
-        tools:ignore="UnusedAttribute"
-        />
-
-    <ImageButton
-        android:id="@+id/recordBt"
-        android:layout_width="40dp"
-        android:layout_height="40dp"
-        android:layout_marginTop="16dp"
-        android:background="@null"
-        android:contentDescription="@string/desc_record"
-        android:foreground="?actionBarItemBackground"
-        android:scaleType="fitCenter"
-        android:visibility="gone"
-        android:src="@drawable/ic_recorder"
-        app:layout_constraintEnd_toStartOf="@+id/favoriteBt"
-        app:layout_constraintStart_toEndOf="@+id/equalizerBt"
-        app:layout_constraintTop_toTopOf="parent"
-        tools:ignore="UnusedAttribute"
-        />
-
-    <ImageButton
-        android:id="@+id/favoriteBt"
-        android:layout_width="40dp"
-        android:layout_height="40dp"
-        android:layout_marginTop="16dp"
-        android:background="@drawable/ic_star"
-        android:visibility="gone"
-        android:contentDescription="@string/desc_add_remove_favorite"
-        android:foreground="?actionBarItemBackground"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toEndOf="@+id/recordBt"
-        app:layout_constraintTop_toTopOf="parent"
-        tools:ignore="UnusedAttribute"
-        />
+        <TextView
+            android:id="@+id/metadataTv"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:ellipsize="marquee"
+            android:marqueeRepeatLimit="marquee_forever"
+            android:singleLine="true"
+            android:textAppearance="@style/TextAppearance.MaterialComponents.Headline6"
+            android:textColor="?attr/colorOnPrimary"
+            tools:text="Festus vigils ducunt ad gemna. Ubi est fidelis canis?"
+            />
+    </FrameLayout>
 
     <ImageButton
         android:id="@+id/previousBt"
@@ -113,12 +69,13 @@
         android:id="@+id/playPauseBtEnd"
         android:layout_width="48dp"
         android:layout_height="48dp"
-        android:layout_marginTop="16dp"
-        android:layout_marginBottom="16dp"
+        android:layout_marginBottom="8dp"
+        app:layout_goneMarginBottom="48dp"
+        android:layout_marginTop="8dp"
         app:layout_constraintBottom_toTopOf="@id/progressSb"
         app:layout_constraintEnd_toStartOf="@id/nextBt"
         app:layout_constraintStart_toEndOf="@id/stopBt"
-        app:layout_constraintTop_toBottomOf="@id/recordBt"
+        app:layout_constraintTop_toBottomOf="@id/metadataFl"
         />
 
     <Space
@@ -136,9 +93,8 @@
         android:id="@+id/playPauseBt"
         android:layout_width="48dp"
         android:layout_height="48dp"
-        android:layout_marginTop="16dp"
-        android:layout_marginBottom="16dp"
-        app:layout_goneMarginBottom="72dp"
+        android:layout_marginTop="8dp"
+        android:layout_marginBottom="8dp"
         android:contentDescription="@string/desc_play_pause_button"
         android:foreground="?actionBarItemBackground"
         app:layout_constraintBottom_toTopOf="@id/progressSb"
@@ -165,34 +121,6 @@
         app:tint="@color/grey_50"
         tools:ignore="UnusedAttribute"
         />
-
-    <FrameLayout
-        android:id="@+id/simpleMetaFl"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="16dp"
-        android:layout_marginLeft="16dp"
-        android:layout_marginTop="16dp"
-        android:layout_marginEnd="48dp"
-        android:layout_marginRight="48dp"
-        android:layout_marginBottom="16dp"
-        tools:visibility="gone"
-        app:layout_constraintTop_toTopOf="parent"
-        >
-
-        <TextView
-            android:id="@+id/metadataTv"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:ellipsize="marquee"
-            android:marqueeRepeatLimit="marquee_forever"
-            android:singleLine="true"
-            android:textAppearance="@style/TextAppearance.MaterialComponents.Headline6"
-            android:textColor="?attr/colorOnPrimary"
-            tools:text="Festus vigils ducunt ad gemna. Ubi est fidelis canis?"
-            />
-    </FrameLayout>
-
 
     <SeekBar
         android:id="@+id/progressSb"

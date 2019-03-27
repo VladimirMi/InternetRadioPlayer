@@ -13,8 +13,10 @@ import io.github.vladimirmi.internetradioplayer.R
 class InfoAdapter : PagerAdapter() {
 
     override fun instantiateItem(container: ViewGroup, position: Int): Any {
-        val view = LayoutInflater.from(container.context)
-                .inflate(R.layout.view_cover_art, container, false)
+        val layout = if (position == 0) R.layout.view_cover_art
+        else R.layout.view_media_info
+
+        val view = LayoutInflater.from(container.context).inflate(layout, container, false)
         container.addView(view)
         return view
     }

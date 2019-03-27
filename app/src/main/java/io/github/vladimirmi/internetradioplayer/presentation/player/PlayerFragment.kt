@@ -25,7 +25,8 @@ import io.github.vladimirmi.internetradioplayer.utils.SimpleOnSeekBarChangeListe
 import kotlinx.android.synthetic.main.fragment_player.*
 import kotlinx.android.synthetic.main.view_controls.*
 import kotlinx.android.synthetic.main.view_cover_art.*
-import kotlinx.android.synthetic.main.view_station_info.*
+import kotlinx.android.synthetic.main.view_media_info.*
+import kotlinx.android.synthetic.main.view_media_title.*
 import toothpick.Toothpick
 
 /**
@@ -62,16 +63,16 @@ class PlayerFragment : BaseFragment<PlayerPresenter, PlayerView>(), PlayerView {
 
     private fun setupButtons() {
         favoriteBt.setOnClickListener { presenter.switchFavorite() }
-        addShortcutBt.setOnClickListener { openAddShortcutDialog() }
         previousBt.setOnClickListener { presenter.skipToPrevious() }
         nextBt.setOnClickListener { presenter.skipToNext() }
         stopBt.setOnClickListener { presenter.stop() }
-        recordBt.setOnClickListener { presenter.startStopRecording() }
         pointerIv.setOnClickListener { switchState() }
-        equalizerBt.setOnClickListener {
-            if (playerBehavior.isExpanded) switchState()
-            presenter.openEqualizer()
-        }
+//        recordBt.setOnClickListener { presenter.startStopRecording() }
+//        addShortcutBt.setOnClickListener { openAddShortcutDialog() }
+//        equalizerBt.setOnClickListener {
+//            if (playerBehavior.isExpanded) switchState()
+//            presenter.openEqualizer()
+//        }
         playPauseBt.setOnClickListener {
             presenter.playPause()
             if (isSeekEnabled) presenter.seekTo(progressSb.progress)
@@ -103,8 +104,9 @@ class PlayerFragment : BaseFragment<PlayerPresenter, PlayerView>(), PlayerView {
     }
 
     private fun setupInfo() {
-        infoVp.adapter = InfoAdapter()
-        infoVp.currentItem = 0
+        mediaInfoVp.adapter = InfoAdapter()
+        mediaInfoVp.currentItem = 0
+        pagerIndicator.setupWithViewPager(mediaInfoVp)
     }
 
     override fun handleBackPressed(): Boolean {
@@ -166,12 +168,7 @@ class PlayerFragment : BaseFragment<PlayerPresenter, PlayerView>(), PlayerView {
         recordBt.setColorFilter(tint)
     }
 
-    override fun setMetadata(artist: String, title: String) {
-//        metaTitleTv.setTextOrHide(artist)
-//        metaSubtitleTv.setTextOrHide(title)
-    }
-
-    override fun setSimpleMetadata(metadata: String) {
+    override fun setMetadata(metadata: String) {
         metadataTv.text = metadata
     }
 

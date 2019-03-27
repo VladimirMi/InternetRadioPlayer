@@ -1,0 +1,78 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:padding="16dp"
+    >
+
+    <TextView
+        android:id="@+id/groupTv"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:padding="4dp"
+        android:textAppearance="@style/TextAppearance.MaterialComponents.Body1"
+        tools:text="Station group"
+        app:layout_constraintTop_toTopOf="parent"
+        />
+
+    <TextView
+        android:id="@+id/specsTv"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        app:layout_constraintTop_toBottomOf="@id/groupTv"
+        android:padding="4dp"
+        android:textAppearance="@style/TextAppearance.MaterialComponents.Body2"
+        tools:text="22100 kHz, 128 kbps"
+        />
+
+    <ImageButton
+        android:id="@+id/addShortcutBt"
+        android:layout_width="40dp"
+        android:layout_height="40dp"
+        android:background="@null"
+        android:contentDescription="@string/desc_create_shortcut_button"
+        android:foreground="?actionBarItemBackground"
+        android:padding="4dp"
+        android:scaleType="fitCenter"
+        android:src="@drawable/ic_label_plus"
+        app:layout_constraintEnd_toStartOf="@+id/equalizerBt"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintBottom_toBottomOf="parent"
+        tools:ignore="UnusedAttribute"
+        />
+
+    <ImageButton
+        android:id="@+id/equalizerBt"
+        android:layout_width="40dp"
+        android:layout_height="40dp"
+        android:background="@null"
+        android:contentDescription="@string/desc_equalizer"
+        android:foreground="?actionBarItemBackground"
+        android:padding="4dp"
+        android:scaleType="fitCenter"
+        android:src="@drawable/ic_equalizer"
+        app:layout_constraintEnd_toStartOf="@+id/recordBt"
+        app:layout_constraintStart_toEndOf="@+id/addShortcutBt"
+        app:layout_constraintBottom_toBottomOf="parent"
+        tools:ignore="UnusedAttribute"
+        />
+
+    <ImageButton
+        android:id="@+id/recordBt"
+        android:layout_width="40dp"
+        android:layout_height="40dp"
+        android:background="@null"
+        android:contentDescription="@string/desc_record"
+        android:foreground="?actionBarItemBackground"
+        android:scaleType="fitCenter"
+        android:src="@drawable/ic_recorder"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toEndOf="@+id/equalizerBt"
+        app:layout_constraintBottom_toBottomOf="parent"
+        tools:ignore="UnusedAttribute"
+        />
+
+</androidx.constraintlayout.widget.ConstraintLayout>

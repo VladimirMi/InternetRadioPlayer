@@ -3,9 +3,8 @@ package io.github.vladimirmi.internetradioplayer.data.net
 import com.google.gson.Gson
 import com.google.gson.GsonBuilder
 import com.jakewharton.retrofit2.adapter.rxjava2.RxJava2CallAdapterFactory
-import io.github.vladimirmi.internetradioplayer.BuildConfig
+import io.github.vladimirmi.internetradioplayer.data.utils.DiskCacheManager
 import io.reactivex.schedulers.Schedulers
-import okhttp3.Interceptor
 import okhttp3.OkHttpClient
 import okhttp3.logging.HttpLoggingInterceptor
 import retrofit2.Converter
@@ -25,7 +24,15 @@ object RestServiceProvider {
 
 
     val okHttpClient: OkHttpClient = OkHttpClient.Builder()
-            .addNetworkInterceptor(apiKeyInterceptor())
+            .addNetworkInterceptor(HttpLoggingInterceptor().setLevel(HttpLoggingInterceptor.Level.BASIC))
+            .connectTimeout(CONNECT_TIMEOUT, TimeUnit.MILLISECONDS)
+            .readTimeout(READ_TIMEOUT, TimeUnit.MILLISECONDS)
+            .writeTimeout(WRITE_TIMEOUT, TimeUnit.MILLISECONDS)
+            .build()
+
+    fun cachedOkHttpClient(cacheManager: DiskCacheManager): OkHttpClient = OkHttpClient.Builder()
+            .addInterceptor(DiskCahceInterceptor(cacheManager))
+            .addNetworkInterceptor(ApiKeyInterceptor())
             .addNetworkInterceptor(HttpLoggingInterceptor().setLevel(HttpLoggingInterceptor.Level.BASIC))
             .connectTimeout(CONNECT_TIMEOUT, TimeUnit.MILLISECONDS)
             .readTimeout(READ_TIMEOUT, TimeUnit.MILLISECONDS)
@@ -33,16 +40,17 @@ object RestServiceProvider {
             .build()
 
     val gson: Gson = GsonBuilder().create()
+    private val converterFactory: GsonConverterFactory = GsonConverterFactory.create(gson)
 
-    fun getUberStationsService(): UberStationsService {
-        return setupRetrofit(okHttpClient, GsonConverterFactory.create(gson))
+    fun getUberStationsService(client: OkHttpClient): UberStationsService {
+        return setupRetrofit(client, converterFactory)
                 .baseUrl(UberStationsService.BASE_URL)
                 .build()
                 .create(UberStationsService::class.java)
     }
 
-    fun getCoverArtService(): CoverArtService {
-        return setupRetrofit(okHttpClient, GsonConverterFactory.create(gson))
+    fun getCoverArtService(client: OkHttpClient): CoverArtService {
+        return setupRetrofit(client, converterFactory)
                 .baseUrl(CoverArtService.BASE_URL)
                 .build()
                 .create(CoverArtService::class.java)
@@ -53,25 +61,5 @@ object RestServiceProvider {
                 .addConverterFactory(factory)
                 .addCallAdapterFactory(RxJava2CallAdapterFactory.createWithScheduler(Schedulers.io()))
                 .client(okHttp)
-    }
-
-    private fun apiKeyInterceptor(): Interceptor {
-        return Interceptor { chain ->
-            val originalRequest = chain.request()
-            if (originalRequest.url().host() == UberStationsService.HOST) {
-                val url = originalRequest.url().newBuilder()
-                        .addQueryParameter("callback", "json")
-                        .addQueryParameter("intl", "1")
-                        .addQueryParameter("partner_token", BuildConfig.PARTNER_TOKEN)
-                        .build()
-
-                val request = originalRequest.newBuilder()
-                        .url(url)
-                        .build()
-                chain.proceed(request)
-            } else {
-                chain.proceed(originalRequest)
-            }
-        }
     }
 }

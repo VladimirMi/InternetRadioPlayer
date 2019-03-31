@@ -14,6 +14,7 @@ interface CoverArtService {
     companion object {
         const val HOST = "musicbrainz.org"
         const val BASE_URL = "http://$HOST"
+        const val RECORDING_ENDPOINT = "ws/2/recording"
         const val QUALITY_LOW = "250"
         const val QUALITY_MID = "500"
         const val QUALITY_HIGH = "1200"
@@ -25,7 +26,7 @@ interface CoverArtService {
         }
     }
 
-    @GET("ws/2/recording")
+    @GET(RECORDING_ENDPOINT)
     fun searchRecordings(@Query("query") query: String,
                          @Query("limit") limit: Int = 1,
                          @Query("fmt") format: String = "json"): Single<SearchRecordingsMbid>

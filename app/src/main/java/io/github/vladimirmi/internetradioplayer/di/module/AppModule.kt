@@ -12,6 +12,7 @@ import io.github.vladimirmi.internetradioplayer.data.net.RestServiceProvider
 import io.github.vladimirmi.internetradioplayer.data.net.UberStationsService
 import io.github.vladimirmi.internetradioplayer.data.repository.*
 import io.github.vladimirmi.internetradioplayer.data.service.player.LoadControl
+import io.github.vladimirmi.internetradioplayer.data.utils.DiskCacheManager
 import io.github.vladimirmi.internetradioplayer.data.utils.ShortcutHelper
 import io.github.vladimirmi.internetradioplayer.data.utils.StationParser
 import io.github.vladimirmi.internetradioplayer.domain.interactor.*
@@ -27,10 +28,15 @@ class AppModule(context: Context) : Module() {
     init {
         bind(Context::class.java).toInstance(context)
 
+        val cacheManager = DiskCacheManager(context)
+        val cachedOkHttpClient = RestServiceProvider.cachedOkHttpClient(cacheManager)
+
         bind(Gson::class.java).toInstance(RestServiceProvider.gson)
         bind(OkHttpClient::class.java).toInstance(RestServiceProvider.okHttpClient)
-        bind(UberStationsService::class.java).toInstance(RestServiceProvider.getUberStationsService())
-        bind(CoverArtService::class.java).toInstance(RestServiceProvider.getCoverArtService())
+        bind(UberStationsService::class.java)
+                .toInstance(RestServiceProvider.getUberStationsService(cachedOkHttpClient))
+        bind(CoverArtService::class.java)
+                .toInstance(RestServiceProvider.getCoverArtService(cachedOkHttpClient))
 
         bind(StationsDatabase::class.java).toInstance(StationsDatabase.newInstance(context))
         bind(SuggestionsDatabase::class.java).toInstance(SuggestionsDatabase.newInstance(context))

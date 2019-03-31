@@ -14,12 +14,15 @@ interface UberStationsService {
     companion object {
         const val HOST = "api.dar.fm"
         const val BASE_URL = "http://$HOST"
+        const val PRESEARCH_ENDPOINT = "presearch.php"
         const val STATIONS_ENDPOINT = "playlist.php"
+        const val STATION_ENDPOINT = "darstations.php"
         const val TOPSONGS_ENDPOINT = "topsongs.php"
         const val TALKS_ENDPOINT = "uberguide.php"
+        const val TALK_ENDPOINT = "darstations.php"
     }
 
-    @GET("presearch.php")
+    @GET(PRESEARCH_ENDPOINT)
     fun getSuggestions(@Query("q") query: String): Single<SuggestionsSearch>
 
 
@@ -27,7 +30,7 @@ interface UberStationsService {
     fun searchStations(@Query("q") query: String,
                        @Query("pagesize") pageSize: Int = 50): Single<StationsSearch>
 
-    @GET("darstations.php")
+    @GET(STATION_ENDPOINT)
     fun getStation(@Query("station_id") id: Int): Single<StationIdSearch>
 
     @GET(TOPSONGS_ENDPOINT)
@@ -37,6 +40,6 @@ interface UberStationsService {
     @GET(TALKS_ENDPOINT)
     fun getTalks(): Single<TalksSearch>
 
-    @GET("uberurl.php")
+    @GET(TALK_ENDPOINT)
     fun searchTalk(@Query("showinfo_id") id: String): Single<TalkIdSearch>
 }

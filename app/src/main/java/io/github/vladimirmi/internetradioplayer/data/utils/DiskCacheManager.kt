@@ -40,7 +40,7 @@ class DiskCacheManager(context: Context) {
         val expirationTime = System.currentTimeMillis() + expirationDurationSec * 1000
 
         val query = (0 until url.querySize())
-                .map { url.queryParameterName(it) }
+                .map { url.queryParameterValue(it) }
                 .toTypedArray()
         val urlNamePart = buildUrlNamePart(pathNamePart, *query)
 
@@ -65,7 +65,7 @@ class DiskCacheManager(context: Context) {
     }
 
     private fun buildUrlNamePart(vararg query: String): String {
-        return query.joinToString("_", transform = { it.replace('/', '\u0000') })
+        return query.joinToString("_", transform = { it.replace("/", "") })
     }
 
     private fun findCache(namePart: String): File? {

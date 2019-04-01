@@ -30,7 +30,6 @@ class DataPresenter
                 .addTo(viewSubs)
     }
 
-
     fun fetchData(endpoint: String?, query: String?) {
         this.endpoint = endpoint
         this.query = query

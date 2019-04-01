@@ -5,6 +5,7 @@ package io.github.vladimirmi.internetradioplayer.data.net.ubermodel
 import com.google.gson.annotations.SerializedName
 import io.github.vladimirmi.internetradioplayer.data.db.entity.Station
 import io.github.vladimirmi.internetradioplayer.data.net.UberStationsService
+import io.github.vladimirmi.internetradioplayer.domain.model.MediaInfo
 import io.github.vladimirmi.internetradioplayer.utils.MessageException
 
 /**
@@ -14,8 +15,8 @@ const val URI_BASE = "http://stream.dar.fm/"
 
 class StationIdSearch(val result: List<StationsIdResult>) {
 
-    fun getStation(): Station {
-        return result.firstOrNull()?.stations?.firstOrNull()?.toStation()
+    fun getResult(): StationIdResult {
+        return result.firstOrNull()?.stations?.firstOrNull()
                 ?: throw MessageException("Can't retrieve a station")
     }
 }
@@ -43,6 +44,15 @@ class StationIdResult(
 
     val uri get() = "$URI_BASE$id"
 
+    fun getLocation(): String? {
+        return when {
+            city.isEmpty() && countryCode.isEmpty() -> null
+            city.isNotEmpty() && countryCode.isEmpty() -> city
+            city.isEmpty() && countryCode.isNotEmpty() -> countryCode
+            else -> "$city, $countryCode"
+        }
+    }
+
     fun toStation(): Station {
         return Station(
                 name = name,
@@ -51,6 +61,19 @@ class StationIdResult(
                 remoteId = id.toString(),
                 encoding = encoding,
                 source = UberStationsService.SOURCE
+        )
+    }
+
+    fun toMediaInfo(): MediaInfo {
+        return MediaInfo(
+                group = null,
+                specs = null,
+                slogan = slogan,
+                description = description,
+                genre = genre,
+                language = language,
+                location = getLocation(),
+                website = websiteUrl
         )
     }
 }

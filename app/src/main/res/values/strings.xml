@@ -28,7 +28,7 @@
 
     <string name="metadata_buffering">Loading…</string>
     <string name="metadata_not_available">Metadata not available</string>
-    <string name="default_folder">Other</string>
+    <string name="default_group">Other</string>
     <string name="title">Title</string>
     <string name="reset">Reset</string>
 
@@ -83,6 +83,13 @@
     <string name="setting_backup">Backup stations</string>
     <string name="setting_restore">Restore stations</string>
     <string name="setting_privacy">Privacy policy</string>
+
+    <string name="info_group">Group</string>
+    <string name="info_genre">Genre</string>
+    <string name="info_lang">Language</string>
+    <string name="info_location">Location</string>
+    <string name="info_specs">Specs</string>
+    <string name="info_website">Website</string>
 
     <string name="preset_bind_station">Apply to station</string>
     <string name="preset_bind_group">Apply to group</string>

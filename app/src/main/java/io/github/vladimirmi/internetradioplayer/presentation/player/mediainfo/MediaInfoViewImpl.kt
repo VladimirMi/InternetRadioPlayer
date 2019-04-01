@@ -11,10 +11,8 @@ import androidx.core.content.ContextCompat
 import androidx.fragment.app.FragmentActivity
 import androidx.fragment.app.FragmentManager
 import io.github.vladimirmi.internetradioplayer.R
-import io.github.vladimirmi.internetradioplayer.data.db.entity.Group
-import io.github.vladimirmi.internetradioplayer.data.db.entity.Station
 import io.github.vladimirmi.internetradioplayer.di.Scopes
-import io.github.vladimirmi.internetradioplayer.domain.model.Record
+import io.github.vladimirmi.internetradioplayer.domain.model.MediaInfo
 import io.github.vladimirmi.internetradioplayer.extensions.color
 import io.github.vladimirmi.internetradioplayer.extensions.setTextOrHide
 import io.github.vladimirmi.internetradioplayer.presentation.base.BaseCustomView
@@ -45,25 +43,36 @@ class MediaInfoViewImpl @JvmOverloads constructor(
         equalizerBt.setOnClickListener { presenter.openEqualizer() }
     }
 
+    override fun setMediaInfo(mediaInfo: MediaInfo) {
+        sloganTv.setTextOrHide(mediaInfo.slogan)
+        descTv.setTextOrHide(mediaInfo.description)
+        groupTv.setTextOrHide(mediaInfo.group)
+        genreTv.setTextOrHide(mediaInfo.genre)
+        specsTv.setTextOrHide(mediaInfo.specs)
+        langTv.setTextOrHide(mediaInfo.language)
+        locationTv.setTextOrHide(mediaInfo.location)
+        websiteTv.setTextOrHide(mediaInfo.website)
+    }
+
     override fun setRecording(isRecording: Boolean) {
         val tint = context.color(if (isRecording) R.color.secondary else R.color.primary_variant)
         recordBt.setColorFilter(tint)
     }
 
-    override fun setGroup(group: String) {
-        groupTv.setTextOrHide(Group.getViewName(group, context))
-    }
+//    override fun setGroup(group: String) {
+//        groupTv.setTextOrHide(Group.getViewName(group, context))
+//    }
 
-    override fun setStation(station: Station) {
+//    override fun setStation(station: Station) {
 //        titleTv.text = station.name
 //        specsTv.text = station.specs
 //        addShortcutBt.visible(true)
 //        equalizerBt.visible(AudioEffects.isEqualizerSupported())
 //        favoriteBt.visible(true)
 //        recordBt.visible(true)
-    }
+//    }
 
-    override fun setRecord(record: Record) {
+//    override fun setRecord(record: Record) {
 //        titleTv.text = record.name
 //        specsTv.text = record.createdAtString
 //        setGroup("")
@@ -71,7 +80,7 @@ class MediaInfoViewImpl @JvmOverloads constructor(
 //        equalizerBt.visible(false)
 //        favoriteBt.visible(false)
 //        recordBt.visible(false)
-    }
+//    }
 
     private fun openAddShortcutDialog() {
         fragmentManager {

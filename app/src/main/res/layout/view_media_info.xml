@@ -10,13 +10,43 @@
     >
 
     <TextView
-        android:id="@+id/groupTv"
+        android:id="@+id/sloganTv"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:padding="4dp"
         android:textAppearance="@style/TextAppearance.MaterialComponents.Body1"
         app:layout_constraintTop_toTopOf="parent"
+        tools:text="Station slogan"
+        />
+
+    <TextView
+        android:id="@+id/descTv"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:padding="4dp"
+        android:textAppearance="@style/TextAppearance.MaterialComponents.Body1"
+        app:layout_constraintTop_toBottomOf="@id/sloganTv"
+        tools:text="Station description. Manducare unus ducunt ad talis capio.Pulchritudines congregabo!Cur sectam manducare?"
+        />
+
+    <TextView
+        android:id="@+id/groupTv"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:padding="4dp"
+        android:textAppearance="@style/TextAppearance.MaterialComponents.Body1"
+        app:layout_constraintTop_toBottomOf="@id/descTv"
         tools:text="Station group"
+        />
+
+    <TextView
+        android:id="@+id/genreTv"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:padding="4dp"
+        android:textAppearance="@style/TextAppearance.MaterialComponents.Body1"
+        app:layout_constraintTop_toBottomOf="@id/groupTv"
+        tools:text="Station genre"
         />
 
     <TextView
@@ -25,8 +55,38 @@
         android:layout_height="wrap_content"
         android:padding="4dp"
         android:textAppearance="@style/TextAppearance.MaterialComponents.Body2"
-        app:layout_constraintTop_toBottomOf="@id/groupTv"
+        app:layout_constraintTop_toBottomOf="@id/genreTv"
         tools:text="22100 kHz, 128 kbps"
+        />
+
+    <TextView
+        android:id="@+id/langTv"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:padding="4dp"
+        android:textAppearance="@style/TextAppearance.MaterialComponents.Body1"
+        app:layout_constraintTop_toBottomOf="@id/specsTv"
+        tools:text="Station language"
+        />
+
+    <TextView
+        android:id="@+id/locationTv"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:padding="4dp"
+        android:textAppearance="@style/TextAppearance.MaterialComponents.Body1"
+        app:layout_constraintTop_toBottomOf="@id/langTv"
+        tools:text="Station location"
+        />
+
+    <TextView
+        android:id="@+id/websiteTv"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:padding="4dp"
+        android:textAppearance="@style/TextAppearance.MaterialComponents.Body1"
+        app:layout_constraintTop_toBottomOf="@id/locationTv"
+        tools:text="Station website"
         />
 
     <ImageButton

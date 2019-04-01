@@ -7,6 +7,7 @@ import io.github.vladimirmi.internetradioplayer.data.net.ubermodel.TopSongResult
 import io.github.vladimirmi.internetradioplayer.data.repository.FavoritesRepository
 import io.github.vladimirmi.internetradioplayer.data.repository.SearchRepository
 import io.github.vladimirmi.internetradioplayer.domain.model.Data
+import io.github.vladimirmi.internetradioplayer.domain.model.MediaInfo
 import io.github.vladimirmi.internetradioplayer.domain.model.Suggestion
 import io.github.vladimirmi.internetradioplayer.utils.MessageException
 import io.reactivex.Completable
@@ -22,7 +23,8 @@ import javax.inject.Inject
 class SearchInteractor
 @Inject constructor(private val searchRepository: SearchRepository,
                     private val favoritesRepository: FavoritesRepository,
-                    private val mediaInteractor: MediaInteractor) {
+                    private val mediaInteractor: MediaInteractor,
+                    private val mediaInfoInteractor: MediaInfoInteractor) {
 
     //todo suggestions interactor and repo
     private var suggestions: List<Suggestion> = emptyList()
@@ -72,12 +74,17 @@ class SearchInteractor
 
     private fun selectStation(data: Data): Completable {
         return searchRepository.searchStation(data.stationId)
-                .flatMapObservable {
-                    searchRepository.parseFromNet(it).toObservable().startWith(it)
+                .doOnSuccess { mediaInfoInteractor.setMediaInfo(it.toMediaInfo()) }
+                .flatMapObservable { response ->
+                    val station = response.toStation()
+                    searchRepository.parseFromNet(station)
+                            .toObservable()
+                            .startWith(station)
                 }
                 .doOnNext { station ->
-                    mediaInteractor.currentMedia = favoritesRepository.getStation { it.uri == station.uri }
-                            ?: station
+                    val result = favoritesRepository.getStation { it.uri == station.uri } ?: station
+                    mediaInteractor.currentMedia = result
+                    mediaInfoInteractor.updateMediaInfo(MediaInfo.fromStation(result))
                 }.ignoreElements()
     }
 

@@ -32,12 +32,12 @@ data class Group(@PrimaryKey
         fun nullObj() = Group(NULL_ID, "", true, 0)
 
         fun getViewName(name: String, context: Context): String {
-            return if (name == DEFAULT_NAME) context.getString(R.string.default_folder)
+            return if (name == DEFAULT_NAME) context.getString(R.string.default_group)
             else name
         }
 
         fun getDbName(name: String, context: Context): String {
-            return if (name == context.getString(R.string.default_folder) || name.isBlank()) {
+            return if (name == context.getString(R.string.default_group) || name.isBlank()) {
                 Group.DEFAULT_NAME
             } else name
         }

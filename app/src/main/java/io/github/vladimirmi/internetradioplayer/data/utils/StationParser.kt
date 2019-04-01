@@ -60,6 +60,7 @@ class StationParser
     fun parseFromStation(station: Station): Station {
         val newStation = parseFromNet(station.uri.toURL(), station.name)
 
+        //todo try use MediaExtractor
         return station.copy(
                 bitrate = newStation.bitrate,
                 encoding = newStation.encoding,
@@ -131,7 +132,9 @@ class StationParser
                 url = headers[HEADER_URL],
                 encoding = encoding,
                 bitrate = headers[HEADER_BITRATE],
-                sample = headers[HEADER_SAMPLE]
+                sample = headers[HEADER_SAMPLE],
+                remoteId = "",
+                source = null
         )
     }
 

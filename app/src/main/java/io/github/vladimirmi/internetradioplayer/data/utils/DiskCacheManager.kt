@@ -24,7 +24,7 @@ class DiskCacheManager(context: Context) {
         val EXPIRATION_MAP = mapOf(
                 UberStationsService.PRESEARCH_ENDPOINT to HOUR,
                 UberStationsService.STATIONS_ENDPOINT to MINUTE,
-                UberStationsService.STATION_ENDPOINT to DAY,
+                UberStationsService.STATION_ENDPOINT to 3 * DAY,
                 UberStationsService.TOPSONGS_ENDPOINT to MINUTE,
                 UberStationsService.TALKS_ENDPOINT to HOUR,
                 UberStationsService.TALK_ENDPOINT to DAY,

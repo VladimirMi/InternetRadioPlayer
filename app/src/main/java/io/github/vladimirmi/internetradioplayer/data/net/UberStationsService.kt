@@ -12,6 +12,7 @@ import retrofit2.http.Query
 interface UberStationsService {
 
     companion object {
+        const val SOURCE = "UberStations"
         const val HOST = "api.dar.fm"
         const val BASE_URL = "http://$HOST"
         const val PRESEARCH_ENDPOINT = "presearch.php"

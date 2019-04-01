@@ -4,6 +4,7 @@ package io.github.vladimirmi.internetradioplayer.data.net.ubermodel
 
 import com.google.gson.annotations.SerializedName
 import io.github.vladimirmi.internetradioplayer.data.db.entity.Station
+import io.github.vladimirmi.internetradioplayer.data.net.UberStationsService
 import io.github.vladimirmi.internetradioplayer.utils.MessageException
 
 /**
@@ -49,8 +50,7 @@ class StationIdResult(
                 url = websiteUrl,
                 remoteId = id.toString(),
                 encoding = encoding,
-                bitrate = null,
-                sample = null
+                source = UberStationsService.SOURCE
         )
     }
 }

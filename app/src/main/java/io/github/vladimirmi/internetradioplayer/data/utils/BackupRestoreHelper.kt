@@ -25,7 +25,7 @@ import javax.inject.Inject
 const val BACKUP_TYPE = "text/xml"
 private const val BACKUP_NAME = "stations_backup.xml"
 private const val BACKUP_ENCODING = "UTF-8"
-private const val BACKUP_VERSION = 2
+private const val BACKUP_VERSION = 3
 
 private const val DATA_TAG = "data"
 private const val STATIONS_TAG = "data"
@@ -158,8 +158,10 @@ class BackupRestoreHelper
                         bitrate = parser.getAttributeValue(ns, BITRATE_ATTR),
                         sample = parser.getAttributeValue(ns, SAMPLE_ATTR),
                         order = parser.getAttributeValue(ns, ORDER_ATTR).toInt(),
-                        groupId = Group.DEFAULT_ID
-                        //todo save/restore remoteId
+                        groupId = Group.DEFAULT_ID,
+                        remoteId = "",
+                        source = null
+                        //todo save/restore remoteId, source
                 )
                 val groupName = parser.getAttributeValue(ns, GROUP_NAME_ATTR)
                 list.add(station to groupName)

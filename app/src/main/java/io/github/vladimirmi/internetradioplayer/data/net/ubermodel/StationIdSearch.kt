@@ -4,8 +4,6 @@ package io.github.vladimirmi.internetradioplayer.data.net.ubermodel
 
 import com.google.gson.annotations.SerializedName
 import io.github.vladimirmi.internetradioplayer.data.db.entity.Station
-import io.github.vladimirmi.internetradioplayer.data.net.UberStationsService
-import io.github.vladimirmi.internetradioplayer.domain.model.MediaInfo
 import io.github.vladimirmi.internetradioplayer.utils.MessageException
 
 /**
@@ -60,20 +58,11 @@ class StationIdResult(
                 url = websiteUrl,
                 remoteId = id.toString(),
                 encoding = encoding,
-                source = UberStationsService.SOURCE
-        )
-    }
-
-    fun toMediaInfo(): MediaInfo {
-        return MediaInfo(
-                group = null,
-                specs = null,
-                slogan = slogan,
+                website = websiteUrl,
                 description = description,
                 genre = genre,
                 language = language,
-                location = getLocation(),
-                website = websiteUrl
+                location = getLocation()
         )
     }
 }

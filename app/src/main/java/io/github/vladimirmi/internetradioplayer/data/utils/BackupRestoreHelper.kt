@@ -159,9 +159,8 @@ class BackupRestoreHelper
                         sample = parser.getAttributeValue(ns, SAMPLE_ATTR),
                         order = parser.getAttributeValue(ns, ORDER_ATTR).toInt(),
                         groupId = Group.DEFAULT_ID,
-                        remoteId = "",
-                        source = null
-                        //todo save/restore remoteId, source
+                        remoteId = ""
+                        //todo save/restore remoteId, and other
                 )
                 val groupName = parser.getAttributeValue(ns, GROUP_NAME_ATTR)
                 list.add(station to groupName)

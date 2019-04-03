@@ -11,7 +11,7 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import io.github.vladimirmi.internetradioplayer.R
 import io.github.vladimirmi.internetradioplayer.di.Scopes
-import io.github.vladimirmi.internetradioplayer.domain.model.Data
+import io.github.vladimirmi.internetradioplayer.domain.model.Media
 import io.github.vladimirmi.internetradioplayer.domain.model.Suggestion
 import io.github.vladimirmi.internetradioplayer.extensions.isVisible
 import io.github.vladimirmi.internetradioplayer.extensions.visible
@@ -75,7 +75,7 @@ class ManualSearchFragment : BaseFragment<ManualSearchPresenter, ManualSearchVie
         stationsRv.adapter = dataAdapter
 
         dataAdapter.onAddToFavListener = { presenter.switchFavorite() }
-        dataAdapter.onItemClickListener = { presenter.selectData(it) }
+        dataAdapter.onItemClickListener = { presenter.selectMedia(it) }
 
         stationsRv.addOnScrollListener(object : RecyclerView.OnScrollListener() {
             override fun onScrolled(recyclerView: RecyclerView, dx: Int, dy: Int) {
@@ -152,7 +152,7 @@ class ManualSearchFragment : BaseFragment<ManualSearchPresenter, ManualSearchVie
         suggestionsRv.scrollToPosition(0)
     }
 
-    override fun setData(data: List<Data>) {
+    override fun setData(data: List<Media>) {
         dataAdapter.data = data
     }
 

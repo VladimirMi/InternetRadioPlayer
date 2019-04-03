@@ -1,7 +1,8 @@
 package io.github.vladimirmi.internetradioplayer.data.net.ubermodel
 
 import com.google.gson.annotations.SerializedName
-import io.github.vladimirmi.internetradioplayer.domain.model.Data
+import io.github.vladimirmi.internetradioplayer.domain.model.Talk
+import java.util.*
 
 
 /**
@@ -23,18 +24,16 @@ class TalkResult(
         private const val PODCAST_PREFIX = "RSS_"
     }
 
-    fun toData(): Data {
+    fun toTalk(): Talk {
         val isPodcast = id.startsWith(PODCAST_PREFIX)
-        val stationId = if (isPodcast) id.substringAfter(PODCAST_PREFIX).toInt()
-        else id.toInt()
         val subtitle = if (isPodcast) "Podcast" else "Live"
 
-        return Data(
-                stationId = stationId,
-                id = id,
-                title = title,
-                subtitle = subtitle,
-                uri = ""
+        return Talk(
+                id = UUID.randomUUID().toString(),
+                remoteId = id,
+                uri = "",
+                name = title,
+                description = subtitle
         )
     }
 }

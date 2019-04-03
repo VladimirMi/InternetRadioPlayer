@@ -5,7 +5,7 @@ import android.view.View
 import androidx.recyclerview.widget.LinearLayoutManager
 import io.github.vladimirmi.internetradioplayer.R
 import io.github.vladimirmi.internetradioplayer.di.Scopes
-import io.github.vladimirmi.internetradioplayer.domain.model.Data
+import io.github.vladimirmi.internetradioplayer.domain.model.Media
 import io.github.vladimirmi.internetradioplayer.extensions.visible
 import io.github.vladimirmi.internetradioplayer.navigation.NavigationTree
 import io.github.vladimirmi.internetradioplayer.navigation.ScreenContext
@@ -57,9 +57,9 @@ class DataFragment : BaseFragment<DataPresenter, DataView>(), DataView {
 
     //region =============== DataView ==============
 
-    override fun setData(data: List<Data>) {
+    override fun setData(data: List<Media>) {
         dataAdapter.data = data
-        dataAdapter.onItemClickListener = { presenter.selectData(it) }
+        dataAdapter.onItemClickListener = { presenter.selectMedia(it) }
         dataRv.visible(true)
     }
 

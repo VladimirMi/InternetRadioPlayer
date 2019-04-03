@@ -12,7 +12,6 @@ import retrofit2.http.Query
 interface UberStationsService {
 
     companion object {
-        const val SOURCE = "UberStations"
         const val HOST = "api.dar.fm"
         const val BASE_URL = "http://$HOST"
         const val PRESEARCH_ENDPOINT = "presearch.php"
@@ -20,7 +19,7 @@ interface UberStationsService {
         const val STATION_ENDPOINT = "darstations.php"
         const val TOPSONGS_ENDPOINT = "topsongs.php"
         const val TALKS_ENDPOINT = "uberguide.php"
-        const val TALK_ENDPOINT = "darstations.php"
+        const val TALK_URL_ENDPOINT = "uberurl.php"
     }
 
     @GET(PRESEARCH_ENDPOINT)
@@ -32,7 +31,7 @@ interface UberStationsService {
                        @Query("pagesize") pageSize: Int = 50): Single<StationsSearch>
 
     @GET(STATION_ENDPOINT)
-    fun getStation(@Query("station_id") id: Int): Single<StationIdSearch>
+    fun getStation(@Query("station_id") id: String): Single<StationIdSearch>
 
     @GET(TOPSONGS_ENDPOINT)
     fun searchTopSongs(@Query("q") query: String,
@@ -41,6 +40,6 @@ interface UberStationsService {
     @GET(TALKS_ENDPOINT)
     fun getTalks(): Single<TalksSearch>
 
-    @GET(TALK_ENDPOINT)
+    @GET(TALK_URL_ENDPOINT)
     fun searchTalk(@Query("showinfo_id") id: String): Single<TalkIdSearch>
 }

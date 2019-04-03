@@ -2,12 +2,10 @@ package io.github.vladimirmi.internetradioplayer.presentation.search
 
 import io.github.vladimirmi.internetradioplayer.R
 import io.github.vladimirmi.internetradioplayer.data.db.entity.Station
-import io.github.vladimirmi.internetradioplayer.data.net.UberStationsService
-import io.github.vladimirmi.internetradioplayer.domain.interactor.FavoriteListInteractor
 import io.github.vladimirmi.internetradioplayer.domain.interactor.MediaInteractor
 import io.github.vladimirmi.internetradioplayer.domain.interactor.SearchInteractor
 import io.github.vladimirmi.internetradioplayer.domain.interactor.StationInteractor
-import io.github.vladimirmi.internetradioplayer.domain.model.Data
+import io.github.vladimirmi.internetradioplayer.domain.model.Media
 import io.github.vladimirmi.internetradioplayer.domain.model.Suggestion
 import io.github.vladimirmi.internetradioplayer.extensions.subscribeX
 import io.github.vladimirmi.internetradioplayer.presentation.base.BasePresenter
@@ -25,8 +23,7 @@ import javax.inject.Inject
 class ManualSearchPresenter
 @Inject constructor(private val searchInteractor: SearchInteractor,
                     private val stationInteractor: StationInteractor,
-                    private val mediaInteractor: MediaInteractor,
-                    private val favoriteListInteractor: FavoriteListInteractor)
+                    private val mediaInteractor: MediaInteractor)
     : BasePresenter<ManualSearchView>() {
 
     var intervalSearchEnabled: Boolean = false
@@ -62,9 +59,9 @@ class ManualSearchPresenter
         suggestionSub?.dispose()
     }
 
-    fun selectData(data: Data) {
+    fun selectMedia(media: Media) {
         selectSub?.dispose()
-        selectSub = searchInteractor.selectData(data, UberStationsService.STATIONS_ENDPOINT)
+        selectSub = searchInteractor.selectMedia(media)
                 .subscribeX()
     }
 

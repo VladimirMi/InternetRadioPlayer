@@ -1,14 +1,14 @@
 package io.github.vladimirmi.internetradioplayer.domain.interactor
 
-import io.github.vladimirmi.internetradioplayer.data.net.UberStationsService
+import io.github.vladimirmi.internetradioplayer.data.db.entity.Station
 import io.github.vladimirmi.internetradioplayer.data.net.ubermodel.StationResult
 import io.github.vladimirmi.internetradioplayer.data.net.ubermodel.TalkResult
 import io.github.vladimirmi.internetradioplayer.data.net.ubermodel.TopSongResult
 import io.github.vladimirmi.internetradioplayer.data.repository.FavoritesRepository
 import io.github.vladimirmi.internetradioplayer.data.repository.SearchRepository
-import io.github.vladimirmi.internetradioplayer.domain.model.Data
-import io.github.vladimirmi.internetradioplayer.domain.model.MediaInfo
+import io.github.vladimirmi.internetradioplayer.domain.model.Media
 import io.github.vladimirmi.internetradioplayer.domain.model.Suggestion
+import io.github.vladimirmi.internetradioplayer.domain.model.Talk
 import io.github.vladimirmi.internetradioplayer.utils.MessageException
 import io.reactivex.Completable
 import io.reactivex.Observable
@@ -23,10 +23,9 @@ import javax.inject.Inject
 class SearchInteractor
 @Inject constructor(private val searchRepository: SearchRepository,
                     private val favoritesRepository: FavoritesRepository,
-                    private val mediaInteractor: MediaInteractor,
-                    private val mediaInfoInteractor: MediaInfoInteractor) {
+                    private val mediaInteractor: MediaInteractor) {
 
-    //todo suggestions interactor and repo
+    //todo the suggestions interactor and repo
     private var suggestions: List<Suggestion> = emptyList()
 
     fun queryRecentSuggestions(query: String): Single<out List<Suggestion>> {
@@ -47,54 +46,52 @@ class SearchInteractor
         return searchRepository.deleteRecentSuggestion(suggestion)
     }
 
-    fun searchStations(query: String): Single<List<Data>> {
+    fun searchStations(query: String): Single<List<Media>> {
         return searchRepository.saveQuery(query)
                 .andThen(searchRepository.searchStations(query))
-                .map { list -> list.map(StationResult::toData) }
+                .map { list -> list.map(StationResult::toStation) }
     }
 
-    fun searchTopSongs(query: String): Single<List<Data>> {
+    fun searchTopSongs(query: String): Single<List<Media>> {
         return searchRepository.searchTopSongs(query)
-                .map { list -> list.map(TopSongResult::toData) }
+                .map { list -> list.map(TopSongResult::toStation) }
     }
 
-    fun searchTalks(query: String): Single<List<Data>> {
+    fun searchTalks(query: String): Single<List<Media>> {
         return searchRepository.searchTalks(query)
-                .map { list -> list.map(TalkResult::toData) }
+                .map { list -> list.map(TalkResult::toTalk) }
     }
 
-    fun selectData(data: Data, endpoint: String?): Completable {
-        return when (endpoint) {
-            UberStationsService.STATIONS_ENDPOINT,
-            UberStationsService.TOPSONGS_ENDPOINT -> selectStation(data)
-            UberStationsService.TALKS_ENDPOINT -> selectTalk(data)
+    fun selectMedia(media: Media): Completable {
+        return when (media) {
+            is Station -> selectStation(media)
+            is Talk -> selectTalk(media)
             else -> Completable.complete()
         }
     }
 
-    private fun selectStation(data: Data): Completable {
-        return searchRepository.searchStation(data.stationId)
-                .doOnSuccess { mediaInfoInteractor.setMediaInfo(it.toMediaInfo()) }
+    private fun selectStation(station: Station): Completable {
+        return searchRepository.searchStation(station.remoteId)
                 .flatMapObservable { response ->
-                    val station = response.toStation()
-                    searchRepository.parseFromNet(station)
+                    val newStation = response.toStation()
+                    searchRepository.parseFromNet(newStation)
                             .toObservable()
-                            .startWith(station)
+                            .startWith(newStation)
                 }
-                .doOnNext { station ->
-                    val result = favoritesRepository.getStation { it.uri == station.uri } ?: station
-                    mediaInteractor.currentMedia = result
-                    mediaInfoInteractor.updateMediaInfo(MediaInfo.fromStation(result))
+                .doOnNext { newStation ->
+                    mediaInteractor.currentMedia =
+                            favoritesRepository.getStation { it.uri == newStation.uri }
+                                    ?: newStation
                 }.ignoreElements()
     }
 
-    private fun selectTalk(data: Data): Completable {
-        return searchRepository.searchTalk(data.id)
+    private fun selectTalk(talk: Talk): Completable {
+        return searchRepository.searchTalk(talk.remoteId)
                 .flatMapCompletable {
                     if (it.uri.isBlank()) {
                         Completable.error(MessageException("No stations currently airing this show"))
                     } else {
-                        mediaInteractor.setMedia(it.toTalk(data))
+                        mediaInteractor.setMedia(it.toTalk(talk))
                     }
                 }
     }

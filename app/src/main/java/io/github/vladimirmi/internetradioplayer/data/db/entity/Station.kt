@@ -21,7 +21,6 @@ data class Station(
         override val name: String,
         override val uri: String,
         override val remoteId: String,
-        val source: String?,
         val url: String? = null,
         val encoding: String? = null,
         val bitrate: String? = null,
@@ -29,10 +28,16 @@ data class Station(
         val order: Int = 0,
         @ColumnInfo(name = "group_id")
         val groupId: String = Group.DEFAULT_ID,
-        val equalizerPreset: String? = null
+        val equalizerPreset: String? = null,
+        override val description: String? = null,
+        override val genre: String? = null,
+        override val language: String? = null,
+        override val location: String? = null,
+        override val website: String? = null
 ) : Media {
 
-    @Ignore val specs: String
+    @Ignore override val specs: String
+    @Ignore override var group: String = Group.DEFAULT_NAME
 
     init {
         val sb = StringBuilder()
@@ -41,4 +46,6 @@ data class Station(
         bitrate?.let { sb.append(", ").append(it).append(" kbps") }
         specs = sb.trim(' ', ',').toString()
     }
+
+    var isFavorite = false
 }

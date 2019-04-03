@@ -1,6 +1,7 @@
 package io.github.vladimirmi.internetradioplayer.domain.model
 
 import android.media.MediaMetadataRetriever
+import io.github.vladimirmi.internetradioplayer.data.db.entity.Group
 import io.github.vladimirmi.internetradioplayer.di.Scopes
 import io.github.vladimirmi.internetradioplayer.extensions.Formats
 import java.io.File
@@ -16,6 +17,14 @@ data class Record(override val id: String,
                   val file: File,
                   val createdAt: Long,
                   val duration: Long) : Media {
+
+    override val group: String = Group.DEFAULT_NAME
+    override val specs: String? = null
+    override val description: String? = null
+    override val genre: String? = null
+    override val language: String? = null
+    override val location: String? = null
+    override val website: String? = null
 
     companion object {
         fun fromFile(file: File): Record {

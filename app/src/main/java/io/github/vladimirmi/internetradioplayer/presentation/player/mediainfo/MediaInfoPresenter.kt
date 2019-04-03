@@ -1,7 +1,7 @@
 package io.github.vladimirmi.internetradioplayer.presentation.player.mediainfo
 
 import io.github.vladimirmi.internetradioplayer.R
-import io.github.vladimirmi.internetradioplayer.domain.interactor.MediaInfoInteractor
+import io.github.vladimirmi.internetradioplayer.domain.interactor.MediaInteractor
 import io.github.vladimirmi.internetradioplayer.domain.interactor.RecordsInteractor
 import io.github.vladimirmi.internetradioplayer.extensions.subscribeX
 import io.github.vladimirmi.internetradioplayer.navigation.Router
@@ -15,7 +15,7 @@ import javax.inject.Inject
  */
 
 class MediaInfoPresenter
-@Inject constructor(private val mediaInfoInteractor: MediaInfoInteractor,
+@Inject constructor(private val mediaInteractor: MediaInteractor,
                     private val recordsInteractor: RecordsInteractor,
                     private val router: Router)
     : BasePresenter<MediaInfoView>() {
@@ -26,9 +26,9 @@ class MediaInfoPresenter
                 .subscribeX(onNext = { view.setRecording(it) })
                 .addTo(viewSubs)
 
-        mediaInfoInteractor.currentMediaInfo
+        mediaInteractor.currentMediaObs
                 .observeOn(AndroidSchedulers.mainThread())
-                .subscribeX(onNext = { view.setMediaInfo(it) })
+                .subscribeX(onNext = { view.setMedia(it) })
                 .addTo(viewSubs)
     }
 

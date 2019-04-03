@@ -133,8 +133,7 @@ class StationParser
                 encoding = encoding,
                 bitrate = headers[HEADER_BITRATE],
                 sample = headers[HEADER_SAMPLE],
-                remoteId = "",
-                source = null
+                remoteId = ""
         )
     }
 

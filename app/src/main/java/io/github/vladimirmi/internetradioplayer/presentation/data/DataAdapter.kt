@@ -7,7 +7,8 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
 import io.github.vladimirmi.internetradioplayer.R
-import io.github.vladimirmi.internetradioplayer.domain.model.Data
+import io.github.vladimirmi.internetradioplayer.data.db.entity.Station
+import io.github.vladimirmi.internetradioplayer.domain.model.Media
 import io.github.vladimirmi.internetradioplayer.extensions.color
 import io.github.vladimirmi.internetradioplayer.extensions.themeAttrData
 import io.github.vladimirmi.internetradioplayer.extensions.visible
@@ -25,11 +26,11 @@ class DataAdapter : RecyclerView.Adapter<DataVH>() {
 
     private var selectedDataId: String? = null
 
-    var onItemClickListener: ((Data) -> Unit)? = null
+    var onItemClickListener: ((Media) -> Unit)? = null
 
-    var onAddToFavListener: ((Data) -> Unit)? = null
+    var onAddToFavListener: ((Media) -> Unit)? = null
 
-    var data: List<Data> = emptyList()
+    var data: List<Media> = emptyList()
         set(value) {
             field = value
             notifyDataSetChanged()
@@ -76,21 +77,22 @@ class DataVH(itemView: View) : RecyclerView.ViewHolder(itemView) {
     private val subtitleTv = itemView.subtitleTv
     private val favoriteBt = itemView.favoriteBt
 
-    fun bind(data: Data) {
-        titleTv.text = data.title
-        subtitleTv.text = data.subtitle
+    fun bind(media: Media) {
+        titleTv.text = media.name
+        subtitleTv.text = media.description
     }
 
-    fun select(data: Data, selectedId: String?) {
-        val selected = data.id == selectedId
+    fun select(media: Media, selectedId: String?) {
+        val selected = media.remoteId == selectedId
         val bg = if (selected) itemView.context.themeAttrData(R.attr.colorSecondaryVariant)
         else itemView.context.themeAttrData(R.attr.colorSurface)
 
         (itemView.background as? GradientDrawable)?.setColor(bg)
 
-        favoriteBt.visible(selected || data.isFavorite)
-        if (selected || data.isFavorite) {
-            val tint = if (data.isFavorite) R.color.orange_500 else R.color.primary_variant
+        val isFavorite = media is Station && media.isFavorite
+        favoriteBt.visible(selected || isFavorite)
+        if (selected || isFavorite) {
+            val tint = if (isFavorite) R.color.orange_500 else R.color.primary_variant
             itemView.favoriteBt.setColorFilter(itemView.context.color(tint))
         }
     }

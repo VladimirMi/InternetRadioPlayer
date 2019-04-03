@@ -1,6 +1,6 @@
 package io.github.vladimirmi.internetradioplayer.presentation.data
 
-import io.github.vladimirmi.internetradioplayer.domain.model.Data
+import io.github.vladimirmi.internetradioplayer.domain.model.Media
 import io.github.vladimirmi.internetradioplayer.presentation.base.BaseView
 
 /**
@@ -9,7 +9,7 @@ import io.github.vladimirmi.internetradioplayer.presentation.base.BaseView
 
 interface DataView : BaseView {
 
-    fun setData(data: List<Data>)
+    fun setData(data: List<Media>)
 
     fun selectData(id: String)
 

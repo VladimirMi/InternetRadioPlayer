@@ -10,22 +10,12 @@
     >
 
     <TextView
-        android:id="@+id/sloganTv"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:padding="4dp"
-        android:textAppearance="@style/TextAppearance.MaterialComponents.Body1"
-        app:layout_constraintTop_toTopOf="parent"
-        tools:text="Station slogan"
-        />
-
-    <TextView
         android:id="@+id/descTv"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:padding="4dp"
         android:textAppearance="@style/TextAppearance.MaterialComponents.Body1"
-        app:layout_constraintTop_toBottomOf="@id/sloganTv"
+        app:layout_constraintTop_toTopOf="parent"
         tools:text="Station description. Manducare unus ducunt ad talis capio.Pulchritudines congregabo!Cur sectam manducare?"
         />
 

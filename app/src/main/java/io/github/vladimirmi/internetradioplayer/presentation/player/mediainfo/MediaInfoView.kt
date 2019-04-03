@@ -1,6 +1,6 @@
 package io.github.vladimirmi.internetradioplayer.presentation.player.mediainfo
 
-import io.github.vladimirmi.internetradioplayer.domain.model.MediaInfo
+import io.github.vladimirmi.internetradioplayer.domain.model.Media
 import io.github.vladimirmi.internetradioplayer.presentation.base.BaseView
 
 /**
@@ -10,5 +10,5 @@ interface MediaInfoView : BaseView {
 
     fun setRecording(isRecording: Boolean)
 
-    fun setMediaInfo(mediaInfo: MediaInfo)
+    fun setMedia(media: Media)
 }

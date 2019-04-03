@@ -7,9 +7,16 @@ package io.github.vladimirmi.internetradioplayer.domain.model
 interface Media {
 
     val id: String
+    val remoteId: String
     val name: String
     val uri: String
-    val remoteId: String
+    val group: String
+    val specs: String?
+    val description: String?
+    val genre: String?
+    val language: String?
+    val location: String?
+    val website: String?
 
     companion object {
         fun nullObj() = object : Media {
@@ -17,6 +24,13 @@ interface Media {
             override val name = ""
             override val uri = ""
             override val remoteId = ""
+            override val group = ""
+            override val specs = null
+            override val description = null
+            override val genre = null
+            override val language = null
+            override val location = null
+            override val website = null
         }
     }
 

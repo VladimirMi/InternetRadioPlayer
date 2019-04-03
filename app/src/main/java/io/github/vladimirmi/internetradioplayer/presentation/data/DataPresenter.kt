@@ -3,7 +3,7 @@ package io.github.vladimirmi.internetradioplayer.presentation.data
 import io.github.vladimirmi.internetradioplayer.data.net.UberStationsService
 import io.github.vladimirmi.internetradioplayer.domain.interactor.MediaInteractor
 import io.github.vladimirmi.internetradioplayer.domain.interactor.SearchInteractor
-import io.github.vladimirmi.internetradioplayer.domain.model.Data
+import io.github.vladimirmi.internetradioplayer.domain.model.Media
 import io.github.vladimirmi.internetradioplayer.extensions.subscribeX
 import io.github.vladimirmi.internetradioplayer.presentation.base.BasePresenter
 import io.reactivex.android.schedulers.AndroidSchedulers
@@ -20,8 +20,6 @@ class DataPresenter
                     private val mediaInteractor: MediaInteractor) : BasePresenter<DataView>() {
 
     private var selectSub: Disposable? = null
-    private var endpoint: String? = null
-    private var query: String? = null
 
     override fun onAttach(view: DataView) {
         mediaInteractor.currentMediaObs
@@ -31,9 +29,7 @@ class DataPresenter
     }
 
     fun fetchData(endpoint: String?, query: String?) {
-        this.endpoint = endpoint
-        this.query = query
-        if (endpoint == null || query == null) return
+        if (query == null) return
 
         //todo to interactor
         val fetchData = when (endpoint) {
@@ -55,10 +51,10 @@ class DataPresenter
 
     }
 
-    fun selectData(data: Data) {
+    fun selectMedia(media: Media) {
         selectSub?.dispose()
         selectSub = searchInteractor
-                .selectData(data, endpoint)
+                .selectMedia(media)
                 .subscribeX()
     }
 }

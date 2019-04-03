@@ -12,7 +12,7 @@ import androidx.fragment.app.FragmentActivity
 import androidx.fragment.app.FragmentManager
 import io.github.vladimirmi.internetradioplayer.R
 import io.github.vladimirmi.internetradioplayer.di.Scopes
-import io.github.vladimirmi.internetradioplayer.domain.model.MediaInfo
+import io.github.vladimirmi.internetradioplayer.domain.model.Media
 import io.github.vladimirmi.internetradioplayer.extensions.color
 import io.github.vladimirmi.internetradioplayer.extensions.setTextOrHide
 import io.github.vladimirmi.internetradioplayer.presentation.base.BaseCustomView
@@ -43,15 +43,14 @@ class MediaInfoViewImpl @JvmOverloads constructor(
         equalizerBt.setOnClickListener { presenter.openEqualizer() }
     }
 
-    override fun setMediaInfo(mediaInfo: MediaInfo) {
-        sloganTv.setTextOrHide(mediaInfo.slogan)
-        descTv.setTextOrHide(mediaInfo.description)
-        groupTv.setTextOrHide(mediaInfo.group)
-        genreTv.setTextOrHide(mediaInfo.genre)
-        specsTv.setTextOrHide(mediaInfo.specs)
-        langTv.setTextOrHide(mediaInfo.language)
-        locationTv.setTextOrHide(mediaInfo.location)
-        websiteTv.setTextOrHide(mediaInfo.website)
+    override fun setMedia(media: Media) {
+        descTv.setTextOrHide(media.description)
+        groupTv.setTextOrHide(media.group)
+        genreTv.setTextOrHide(media.genre)
+        specsTv.setTextOrHide(media.specs)
+        langTv.setTextOrHide(media.language)
+        locationTv.setTextOrHide(media.location)
+        websiteTv.setTextOrHide(media.website)
     }
 
     override fun setRecording(isRecording: Boolean) {

@@ -55,7 +55,6 @@ class AppModule(context: Context) : Module() {
         bind(EqualizerRepository::class.java).singletonInScope()
         bind(MediaRepository::class.java).singletonInScope()
         bind(RecordsRepository::class.java).singletonInScope()
-        bind(MediaInfoRepository::class.java).singletonInScope()
 
         bind(MainInteractor::class.java).singletonInScope()
         bind(SearchInteractor::class.java).singletonInScope()

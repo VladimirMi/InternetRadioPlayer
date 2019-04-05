@@ -63,6 +63,7 @@
     </RelativeLayout>
 
     <ScrollView
+        android:id="@+id/childrenScroll"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         >
@@ -71,7 +72,6 @@
             android:id="@+id/childrenContainer"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:orientation="vertical"
             />
 
     </ScrollView>

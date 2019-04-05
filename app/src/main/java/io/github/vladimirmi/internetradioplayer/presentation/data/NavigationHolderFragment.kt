@@ -12,6 +12,7 @@ import androidx.transition.Slide
 import androidx.transition.TransitionManager
 import io.github.vladimirmi.internetradioplayer.R
 import io.github.vladimirmi.internetradioplayer.extensions.visible
+import io.github.vladimirmi.internetradioplayer.extensions.waitForLayout
 import io.github.vladimirmi.internetradioplayer.navigation.ScreenContext
 import io.github.vladimirmi.internetradioplayer.presentation.base.BackPressListener
 import kotlinx.android.synthetic.main.fragment_navigation_holder.*
@@ -25,12 +26,17 @@ abstract class NavigationHolderFragment : Fragment(), BackPressListener {
     abstract val rootScreenContext: ScreenContext
     private lateinit var currentScreenContext: ScreenContext
 
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        currentScreenContext = rootScreenContext
+    }
+
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {
         return inflater.inflate(R.layout.fragment_navigation_holder, container, false)
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
-        navigateTo(rootScreenContext)
+        navigateTo(currentScreenContext, animate = false)
     }
 
     override fun setUserVisibleHint(isVisibleToUser: Boolean) {
@@ -43,40 +49,8 @@ abstract class NavigationHolderFragment : Fragment(), BackPressListener {
                 || backTo(currentScreenContext.parent)
     }
 
-    private fun setupNavigation(screenContext: ScreenContext, forward: Boolean) {
-        setupParent(screenContext, forward)
-        setupChildren(screenContext, forward)
-        currentScreenContext = screenContext
-    }
-
-    private fun setupParent(screenContext: ScreenContext, forward: Boolean) {
-        if (screenContext.parent != null) {
-            parentBt.setOnClickListener { backTo(screenContext.parent) }
-            animateParent(forward) {
-                parentTitleTv.text = screenContext.parent.title
-                screenTitleTv.text = screenContext.title
-            }
-        }
-        navigationContainer.visible(screenContext.parent != null, gone = false)
-    }
-
-    private fun setupChildren(screenContext: ScreenContext, forward: Boolean) {
-        val inflater = LayoutInflater.from(requireContext())
-        val container = LinearLayout(requireContext()).apply {
-            orientation = LinearLayout.VERTICAL
-        }
-        screenContext.children.forEach { child ->
-            val view = child.createSmallView(inflater, childrenContainer)
-            view.setOnClickListener { navigateTo(child) }
-            container.addView(view)
-        }
-        animateChildren(container, forward)
-        childrenContainer.removeAllViews()
-        childrenContainer.addView(container)
-    }
-
-    private fun navigateTo(screenContext: ScreenContext) {
-        setupNavigation(screenContext, forward = true)
+    private fun navigateTo(screenContext: ScreenContext, animate: Boolean) {
+        setupNavigation(screenContext, animate, isForward = true)
         val fragment = screenContext.createFragment()
         fragment.userVisibleHint = userVisibleHint
         childFragmentManager.beginTransaction()
@@ -87,22 +61,65 @@ abstract class NavigationHolderFragment : Fragment(), BackPressListener {
 
     private fun backTo(screenContext: ScreenContext?): Boolean {
         if (screenContext == null) return false
-        setupNavigation(screenContext, forward = false)
+        setupNavigation(screenContext, animate = true, isForward = false)
         childFragmentManager.popBackStack()
         return true
     }
 
-    private fun animateChildren(target: View, forward: Boolean) {
+    private fun setupNavigation(screenContext: ScreenContext, animate: Boolean, isForward: Boolean) {
+        setupParent(screenContext, animate, isForward)
+        setupChildren(screenContext, animate, isForward)
+        currentScreenContext = screenContext
+    }
+
+    private fun setupParent(screenContext: ScreenContext, animate: Boolean, isForward: Boolean) {
+        parentBt.setOnClickListener { backTo(screenContext.parent) }
+        parentBt.visible(screenContext.parent != null, gone = false)
+        animateParent(animate, isForward) {
+            parentTitleTv.visible(screenContext.parent != null, gone = false)
+            parentTitleTv.text = screenContext.parent?.title
+            screenTitleTv.text = screenContext.title
+        }
+    }
+
+    private fun setupChildren(screenContext: ScreenContext, animate: Boolean, isForward: Boolean) {
+        val inflater = LayoutInflater.from(requireContext())
+        val container = LinearLayout(requireContext()).apply {
+            orientation = LinearLayout.VERTICAL
+        }
+        screenContext.children.forEach { child ->
+            val view = child.createSmallView(inflater, childrenContainer)
+            view.setOnClickListener { navigateTo(child, animate = true) }
+            container.addView(view)
+        }
+        screenContext.parent?.position = childrenScroll.scrollY
+        animateChildren(container, animate, isForward)
+        childrenContainer.removeAllViews()
+        childrenContainer.addView(container)
+        if (isForward) {
+            screenContext.position = 0
+        } else {
+            childrenContainer.waitForLayout {
+                childrenScroll.scrollTo(0, screenContext.position); true
+            }
+        }
+    }
+
+    private fun animateChildren(target: View, animate: Boolean, isForward: Boolean) {
+        if (!animate) return
         val slideIn = Slide()
-                .apply { slideEdge = if (forward) Gravity.END else Gravity.START }
+                .apply { slideEdge = if (isForward) Gravity.END else Gravity.START }
                 .setInterpolator(FastOutSlowInInterpolator())
         slideIn.addTarget(target)
 
         TransitionManager.beginDelayedTransition(childrenContainer, slideIn)
     }
 
-    private fun animateParent(forward: Boolean, onEnd: () -> Unit) {
-        if (forward) {
+    private fun animateParent(animate: Boolean, isForward: Boolean, onEnd: () -> Unit) {
+        if (!animate) {
+            onEnd(); return
+        }
+        if (isForward) {
             val startX = screenTitleTv.x
             val endX = parentTitleTv.x
             parentTitleTv.visible(false)

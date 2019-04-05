@@ -24,6 +24,7 @@ class ScreenContext(val title: String, val parent: ScreenContext?) {
         private set
     var query: String? = null
         private set
+    var position: Int = 0
     private var fragment: Class<out Fragment>? = null
 
     fun screen(title: String, init: ScreenContext.() -> Unit = {}): ScreenContext {

@@ -42,7 +42,7 @@ class StationIdResult(
 
     val uri get() = "$URI_BASE$id"
 
-    fun getLocation(): String? {
+    private fun getLocation(): String? {
         return when {
             city.isEmpty() && countryCode.isEmpty() -> null
             city.isNotEmpty() && countryCode.isEmpty() -> city

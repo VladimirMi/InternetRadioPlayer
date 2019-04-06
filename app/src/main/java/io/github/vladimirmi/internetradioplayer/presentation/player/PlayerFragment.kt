@@ -47,7 +47,7 @@ class PlayerFragment : BaseFragment<PlayerPresenter, PlayerView>(), PlayerView {
     }
 
     private fun setupButtons() {
-        favoriteBt.setOnClickListener { presenter.switchFavorite() }
+        favoriteIv.setOnClickListener { presenter.switchFavorite() }
         previousBt.setOnClickListener { presenter.skipToPrevious() }
         nextBt.setOnClickListener { presenter.skipToNext() }
         stopBt.setOnClickListener { presenter.stop() }
@@ -105,7 +105,7 @@ class PlayerFragment : BaseFragment<PlayerPresenter, PlayerView>(), PlayerView {
     override fun setFavorite(isFavorite: Boolean) {
         //todo refactor (create field inside station)
         val tint = if (isFavorite) R.color.orange_500 else R.color.primary_variant
-        favoriteBt.background.setTintExt(context!!.color(tint))
+        favoriteIv.background.setTintExt(context!!.color(tint))
     }
 
     override fun setStatus(resId: Int) {

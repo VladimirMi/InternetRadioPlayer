@@ -12,6 +12,9 @@ ext {
         secretsProperties.put("partnerToken", "1234567890")
     }
 }
+androidExtensions {
+    experimental = true
+}
 
 ext.versionMajor = 2
 ext.versionMinor = 2

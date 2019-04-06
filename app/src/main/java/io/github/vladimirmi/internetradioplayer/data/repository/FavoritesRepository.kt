@@ -62,6 +62,7 @@ class FavoritesRepository
 
     fun getAllStations(): Single<List<Station>> {
         return dao.getFavoriteStations()
+                .map { list -> list.map { it.apply { isFavorite = true } } }
                 .subscribeOn(Schedulers.io())
     }
 

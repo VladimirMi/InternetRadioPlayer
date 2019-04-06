@@ -1,10 +1,8 @@
 package io.github.vladimirmi.internetradioplayer.presentation.search
 
 import io.github.vladimirmi.internetradioplayer.R
-import io.github.vladimirmi.internetradioplayer.data.db.entity.Station
 import io.github.vladimirmi.internetradioplayer.domain.interactor.MediaInteractor
 import io.github.vladimirmi.internetradioplayer.domain.interactor.SearchInteractor
-import io.github.vladimirmi.internetradioplayer.domain.interactor.StationInteractor
 import io.github.vladimirmi.internetradioplayer.domain.model.Media
 import io.github.vladimirmi.internetradioplayer.domain.model.Suggestion
 import io.github.vladimirmi.internetradioplayer.extensions.subscribeX
@@ -22,7 +20,6 @@ import javax.inject.Inject
 
 class ManualSearchPresenter
 @Inject constructor(private val searchInteractor: SearchInteractor,
-                    private val stationInteractor: StationInteractor,
                     private val mediaInteractor: MediaInteractor)
     : BasePresenter<ManualSearchView>() {
 
@@ -42,16 +39,10 @@ class ManualSearchPresenter
     }
 
     override fun onAttach(view: ManualSearchView) {
-        //todo refactor like in history
         mediaInteractor.currentMediaObs
                 .observeOn(AndroidSchedulers.mainThread())
-                .subscribeX(onNext = { view.selectData(it.remoteId) })
+                .subscribeX(onNext = { view.selectMedia(it.uri) })
                 .addTo(viewSubs)
-
-//        favoriteListInteractor.stationsListObs
-//                .observeOn(AndroidSchedulers.mainThread())
-//                .subscribeX(onNext = { view.setFavorites(it) })
-//                .addTo(viewSubs)
     }
 
     override fun onDetach() {
@@ -65,13 +56,6 @@ class ManualSearchPresenter
                 .subscribeX()
     }
 
-    fun switchFavorite() {
-        val station = mediaInteractor.currentMedia as? Station ?: return
-        stationInteractor.switchFavorite(station)
-                .subscribeX()
-                .addTo(dataSubs)
-    }
-
     fun submitSearch(query: String) {
         searchSub?.dispose()
 
@@ -81,11 +65,11 @@ class ManualSearchPresenter
                 .doOnNext { if (it.length < 3) view?.showToast(R.string.msg_text_short) }
                 .filter { it.length > 2 }
                 .doOnNext { view?.showLoading(true) }
-                .flatMapSingle { searchInteractor.searchStations(it) }
+                .flatMap { searchInteractor.searchStations(it) }
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribeX(onNext = {
                     view?.setData(it)
-                    view?.selectData(mediaInteractor.currentMedia.remoteId)
+                    view?.selectMedia(mediaInteractor.currentMedia.uri)
                     view?.showLoading(false)
                     view?.showPlaceholder(it.isEmpty())
                 }, onError = {

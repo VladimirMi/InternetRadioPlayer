@@ -73,8 +73,6 @@ class ManualSearchFragment : BaseFragment<ManualSearchPresenter, ManualSearchVie
         val lm = LinearLayoutManager(context)
         stationsRv.layoutManager = lm
         stationsRv.adapter = dataAdapter
-
-        dataAdapter.onAddToFavListener = { presenter.switchFavorite() }
         dataAdapter.onItemClickListener = { presenter.selectMedia(it) }
 
         stationsRv.addOnScrollListener(object : RecyclerView.OnScrollListener() {
@@ -156,8 +154,8 @@ class ManualSearchFragment : BaseFragment<ManualSearchPresenter, ManualSearchVie
         dataAdapter.data = data
     }
 
-    override fun selectData(id: String) {
-        val position = dataAdapter.selectData(id)
+    override fun selectMedia(id: String) {
+        val position = dataAdapter.selectMedia(id)
         stationsRv.scrollToPosition(position)
     }
 

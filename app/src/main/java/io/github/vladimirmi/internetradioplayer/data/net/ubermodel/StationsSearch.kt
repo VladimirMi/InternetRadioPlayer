@@ -21,12 +21,13 @@ class StationResult(
     val uri get() = "$URI_BASE$id"
 
     fun toStation(): Station {
+        val desc = if (artist.isBlank() || title.isBlank()) genre else "$artist - $title"
         return Station(
                 id = UUID.randomUUID().toString(),
                 remoteId = id.toString(),
                 name = callsign,
                 uri = uri,
-                description = "$artist - $title"
+                description = desc
         )
     }
 }

@@ -43,7 +43,7 @@
     <string name="desc_skip_previous_button">Skip to previous</string>
     <string name="desc_skip_next_button">Skip to next</string>
     <string name="desc_stop_button">Stop</string>
-    <string name="desc_add_remove_favorite">Add/Remove favorite</string>
+    <string name="desc_favorite">Favorite</string>
     <string name="desc_create_shortcut_button">Create shortcut</string>
     <string name="desc_equalizer">Equalizer</string>
     <string name="desc_record">Record</string>

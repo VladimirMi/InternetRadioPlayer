@@ -32,15 +32,14 @@ class HistoryFragment : BaseFragment<HistoryPresenter, HistoryView>(), HistoryVi
         historyRv.layoutManager = LinearLayoutManager(context)
         historyRv.adapter = historyAdapter
         historyAdapter.onItemClickListener = { presenter.selectStation(it) }
-        historyAdapter.onAddToFavListener = { presenter.switchFavorite() }
     }
 
-    override fun setHistory(list: List<Pair<Station, Boolean>>) {
-        historyAdapter.stations = list
+    override fun setHistory(list: List<Station>) {
+        historyAdapter.data = list
     }
 
     override fun selectStation(uri: String) {
-        val position = historyAdapter.selectStation(uri)
+        val position = historyAdapter.selectMedia(uri)
         historyRv.scrollToPosition(position)
     }
 

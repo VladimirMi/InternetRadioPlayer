@@ -1,6 +1,5 @@
 package io.github.vladimirmi.internetradioplayer.presentation.history
 
-import android.annotation.SuppressLint
 import android.graphics.drawable.GradientDrawable
 import android.os.Build
 import android.view.ContextMenu
@@ -8,128 +7,124 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.core.content.ContextCompat
+import androidx.core.widget.TextViewCompat
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.RecyclerView
 import io.github.vladimirmi.internetradioplayer.R
 import io.github.vladimirmi.internetradioplayer.data.db.entity.Station
+import io.github.vladimirmi.internetradioplayer.domain.model.Media
 import io.github.vladimirmi.internetradioplayer.extensions.color
-import io.github.vladimirmi.internetradioplayer.extensions.visible
-import io.github.vladimirmi.internetradioplayer.presentation.favorite.stations.PAYLOAD_BACKGROUND_CHANGE
-import io.github.vladimirmi.internetradioplayer.presentation.favorite.stations.PAYLOAD_SELECTED_CHANGE
-import io.github.vladimirmi.internetradioplayer.presentation.favorite.stations.defaultOutline
-import io.github.vladimirmi.internetradioplayer.presentation.favorite.stations.fixedOutline
-import kotlinx.android.synthetic.main.item_station.view.*
+import io.github.vladimirmi.internetradioplayer.presentation.favorite.stations.*
+import kotlinx.android.extensions.LayoutContainer
+import kotlinx.android.synthetic.main.item_station.*
 
 /**
  * Created by Vladimir Mikhalev 15.11.2018.
  */
 
-class HistoryAdapter : RecyclerView.Adapter<StationVH>() {
+class HistoryAdapter : RecyclerView.Adapter<HistoryVH>() {
 
-    private var selectedStationUri: String? = null
+    private var selectedUri: String? = null
 
     var longClickedItem: Station? = null
-
     var onItemClickListener: ((Station) -> Unit)? = null
-    var onAddToFavListener: ((Pair<Station, Boolean>) -> Unit)? = null
 
-    var stations: List<Pair<Station, Boolean>> = emptyList()
+    var data: List<Station> = emptyList()
         set(value) {
-            val diff = DiffUtil.calculateDiff(object : DiffUtil.Callback() {
-                override fun getOldListSize() = field.size
-
-                override fun getNewListSize() = value.size
-
-                override fun areItemsTheSame(oldItemPosition: Int, newItemPosition: Int): Boolean {
-                    return field[oldItemPosition].first.id == value[newItemPosition].first.id
-                }
-
-                override fun areContentsTheSame(oldItemPosition: Int, newItemPosition: Int): Boolean {
-                    return field[oldItemPosition] == value[newItemPosition]
-                }
-            })
+            val diff = getDiff(field, value)
             field = value
             diff.dispatchUpdatesTo(this)
-
             notifyItemRangeChanged(0, itemCount, PAYLOAD_BACKGROUND_CHANGE)
         }
 
-    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): StationVH {
-        val inflater = LayoutInflater.from(parent.context)
-        val view = inflater.inflate(R.layout.item_station, parent, false)
-        return StationVH(view)
+    private fun getDiff(old: List<Station>, new: List<Station>): DiffUtil.DiffResult {
+        return DiffUtil.calculateDiff(object : DiffUtil.Callback() {
+            override fun getOldListSize() = old.size
+
+            override fun getNewListSize() = new.size
+
+            override fun areItemsTheSame(oldItemPosition: Int, newItemPosition: Int): Boolean {
+                return old[oldItemPosition].uri == new[newItemPosition].uri
+            }
+
+            override fun areContentsTheSame(oldItemPosition: Int, newItemPosition: Int): Boolean {
+                return old[oldItemPosition].isFavorite == new[newItemPosition].isFavorite
+            }
+
+            override fun getChangePayload(oldItemPosition: Int, newItemPosition: Int): Any? {
+                return PAYLOAD_FAVORITE_CHANGE
+            }
+        })
     }
 
-    override fun onBindViewHolder(holder: StationVH, position: Int, payloads: MutableList<Any>) {
-        if (payloads.contains(PAYLOAD_SELECTED_CHANGE)) holder.select(stations[position])
+    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): HistoryVH {
+        val inflater = LayoutInflater.from(parent.context)
+        val view = inflater.inflate(R.layout.item_station, parent, false)
+        return HistoryVH(view)
+    }
+
+    override fun onBindViewHolder(holder: HistoryVH, position: Int, payloads: MutableList<Any>) {
+        val media = data[position]
+        if (payloads.contains(PAYLOAD_SELECTED_CHANGE)) holder.select(media.uri == selectedUri)
         if (payloads.contains(PAYLOAD_BACKGROUND_CHANGE)) holder.setBackground(position, itemCount)
+        if (payloads.contains(PAYLOAD_FAVORITE_CHANGE)) holder.setFavorite(media.isFavorite)
         if (payloads.isEmpty()) super.onBindViewHolder(holder, position, payloads)
 
     }
 
-    override fun onBindViewHolder(holder: StationVH, position: Int) {
-        val station = stations[position]
-        holder.bind(station.first)
-        holder.select(station)
+    override fun onBindViewHolder(holder: HistoryVH, position: Int) {
+        val media = data[position]
+        holder.bind(media)
+        holder.setFavorite(media.isFavorite)
+        holder.select(media.uri == selectedUri)
         holder.setBackground(position, itemCount)
-        holder.itemView.setOnClickListener { onItemClickListener?.invoke(station.first) }
-        holder.itemView.setOnLongClickListener { longClickedItem = station.first; false }
+        holder.itemView.setOnClickListener { onItemClickListener?.invoke(media) }
+        holder.itemView.setOnLongClickListener { longClickedItem = media; false }
     }
 
     override fun getItemCount(): Int {
-        return stations.size
+        return data.size
     }
 
-    fun selectStation(uri: String): Int {
-        val oldPos = stations.indexOfFirst { it.first.uri == selectedStationUri }
-        val newPos = stations.indexOfFirst { it.first.uri == uri }
-        selectedStationUri = uri
+    fun selectMedia(id: String): Int {
+        val oldPos = data.indexOfFirst { it.uri == selectedUri }
+        val newPos = data.indexOfFirst { it.uri == id }
+        selectedUri = id
         notifyItemChanged(oldPos, PAYLOAD_SELECTED_CHANGE)
         notifyItemChanged(newPos, PAYLOAD_SELECTED_CHANGE)
         return newPos
     }
-
-    private fun StationVH.select(station: Pair<Station, Boolean>) {
-        val selected = station.first.uri == selectedStationUri
-        select(selected, station.second)
-        if (selected) {
-            itemView.favoriteBt?.setOnClickListener { onAddToFavListener?.invoke(station) }
-        } else {
-            itemView.favoriteBt?.setOnClickListener { onItemClickListener?.invoke(station.first) }
-        }
-    }
 }
 
-class StationVH(itemView: View) : RecyclerView.ViewHolder(itemView), View.OnCreateContextMenuListener {
-    private val titleTv = itemView.titleTv
+class HistoryVH(itemView: View) : RecyclerView.ViewHolder(itemView)
+        , View.OnCreateContextMenuListener, LayoutContainer {
 
-    private val subtitleTv = itemView.subtitleTv
-    private val favoriteBt = itemView.favoriteBt
     private var bgColor: Int = 0
 
     init {
         itemView.setOnCreateContextMenuListener(this)
     }
 
+    override val containerView: View?
+        get() = itemView
+
     override fun onCreateContextMenu(menu: ContextMenu?, v: View?, menuInfo: ContextMenu.ContextMenuInfo?) {
         menu?.add(R.id.context_menu_history, R.id.context_menu_action_delete, 0, R.string.menu_delete)
     }
 
-    @SuppressLint("SetTextI18n")
-    fun bind(station: Station) {
-        titleTv.text = station.name
-        subtitleTv.text = station.specs
+    fun bind(media: Media) {
+        titleTv.text = media.name
+        subtitleTv.text = media.specs
     }
 
-    fun select(selected: Boolean, isFavorite: Boolean) {
+    fun setFavorite(isFavorite: Boolean) {
+        TextViewCompat.setCompoundDrawablesRelativeWithIntrinsicBounds(titleTv, 0, 0,
+                if (isFavorite) R.drawable.ic_star else 0, 0)
+    }
+
+    fun select(selected: Boolean) {
         bgColor = itemView.context.color(if (selected) R.color.accent_light else R.color.grey_50)
         (itemView.background as? GradientDrawable)?.setColor(bgColor)
-
-        favoriteBt.visible(selected || isFavorite)
-        if (selected || isFavorite) {
-            val tint = if (isFavorite) R.color.orange_500 else R.color.primary_variant
-            itemView.favoriteBt.setColorFilter(itemView.context.color(tint))
-        }
     }
 
     fun setBackground(position: Int, itemCount: Int) {

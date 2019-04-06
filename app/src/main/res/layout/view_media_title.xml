@@ -26,13 +26,13 @@
         />
 
     <ImageButton
-        android:id="@+id/favoriteBt"
+        android:id="@+id/favoriteIv"
         android:layout_width="40dp"
         android:layout_height="40dp"
         android:layout_gravity="end|center_vertical"
         android:layout_margin="16dp"
         android:background="@drawable/ic_star"
-        android:contentDescription="@string/desc_add_remove_favorite"
+        android:contentDescription="@string/desc_favorite"
         android:foreground="?actionBarItemBackground"
         tools:ignore="UnusedAttribute"
         />

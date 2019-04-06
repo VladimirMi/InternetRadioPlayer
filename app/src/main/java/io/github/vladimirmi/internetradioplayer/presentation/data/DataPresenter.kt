@@ -24,12 +24,15 @@ class DataPresenter
     override fun onAttach(view: DataView) {
         mediaInteractor.currentMediaObs
                 .observeOn(AndroidSchedulers.mainThread())
-                .subscribeX(onNext = { view.selectData(it.remoteId) })
+                .subscribeX(onNext = { view.selectMedia(it.remoteId) })
                 .addTo(viewSubs)
     }
 
     fun fetchData(endpoint: String?, query: String?) {
-        if (query == null) return
+        if (query == null) {
+            view?.setData(emptyList())
+            return
+        }
 
         //todo to interactor
         val fetchData = when (endpoint) {
@@ -41,9 +44,9 @@ class DataPresenter
 
         fetchData.observeOn(AndroidSchedulers.mainThread())
                 .doOnSubscribe { view?.showLoading(true) }
-                .subscribeX(onSuccess = {
+                .subscribeX(onNext = {
                     view?.setData(it)
-                    view?.selectData(mediaInteractor.currentMedia.remoteId)
+                    view?.selectMedia(mediaInteractor.currentMedia.remoteId)
                     view?.showLoading(false)
                 }, onError = {
                     view?.showLoading(false)

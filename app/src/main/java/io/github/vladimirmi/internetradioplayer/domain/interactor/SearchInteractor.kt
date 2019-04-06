@@ -1,9 +1,7 @@
 package io.github.vladimirmi.internetradioplayer.domain.interactor
 
 import io.github.vladimirmi.internetradioplayer.data.db.entity.Station
-import io.github.vladimirmi.internetradioplayer.data.net.ubermodel.StationResult
 import io.github.vladimirmi.internetradioplayer.data.net.ubermodel.TalkResult
-import io.github.vladimirmi.internetradioplayer.data.net.ubermodel.TopSongResult
 import io.github.vladimirmi.internetradioplayer.data.repository.FavoritesRepository
 import io.github.vladimirmi.internetradioplayer.data.repository.SearchRepository
 import io.github.vladimirmi.internetradioplayer.domain.model.Media
@@ -13,6 +11,7 @@ import io.github.vladimirmi.internetradioplayer.utils.MessageException
 import io.reactivex.Completable
 import io.reactivex.Observable
 import io.reactivex.Single
+import io.reactivex.rxkotlin.Observables
 import java.util.concurrent.TimeUnit
 import javax.inject.Inject
 
@@ -46,19 +45,20 @@ class SearchInteractor
         return searchRepository.deleteRecentSuggestion(suggestion)
     }
 
-    fun searchStations(query: String): Single<List<Media>> {
-        return searchRepository.saveQuery(query)
-                .andThen(searchRepository.searchStations(query))
-                .map { list -> list.map(StationResult::toStation) }
+    fun searchStations(query: String): Observable<List<Media>> {
+        return searchStationsWithFavorites(searchRepository.searchStations(query)) {
+            it.toStation()
+        }
     }
 
-    fun searchTopSongs(query: String): Single<List<Media>> {
-        return searchRepository.searchTopSongs(query)
-                .map { list -> list.map(TopSongResult::toStation) }
+    fun searchTopSongs(query: String): Observable<List<Media>> {
+        return searchStationsWithFavorites(searchRepository.searchTopSongs(query)) {
+            it.toStation()
+        }
     }
 
-    fun searchTalks(query: String): Single<List<Media>> {
-        return searchRepository.searchTalks(query)
+    fun searchTalks(query: String): Observable<List<Media>> {
+        return searchRepository.searchTalks(query).toObservable()
                 .map { list -> list.map(TalkResult::toTalk) }
     }
 
@@ -89,10 +89,21 @@ class SearchInteractor
         return searchRepository.searchTalk(talk.remoteId)
                 .flatMapCompletable {
                     if (it.uri.isBlank()) {
-                        Completable.error(MessageException("No stations currently airing this show"))
+                        Completable.error(MessageException("No data currently airing this show"))
                     } else {
                         mediaInteractor.setMedia(it.toTalk(talk))
                     }
                 }
+    }
+
+    private fun <T> searchStationsWithFavorites(searchObs: Single<List<T>>, transform: (T) -> Station)
+            : Observable<List<Media>> {
+        return Observables.combineLatest(favoritesRepository.stationsListObs, searchObs.toObservable())
+        { _, result ->
+            result.map { element ->
+                val station = transform(element)
+                favoritesRepository.getStation { it.uri == station.uri } ?: station
+            }
+        }
     }
 }

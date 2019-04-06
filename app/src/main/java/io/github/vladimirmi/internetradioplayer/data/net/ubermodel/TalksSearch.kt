@@ -10,7 +10,7 @@ import java.util.*
  */
 
 class TalksSearch(
-        @SerializedName("stations")
+        @SerializedName("data")
         val result: List<TalkResult>
 )
 

@@ -24,6 +24,7 @@ abstract class HistoryDatabase : RoomDatabase() {
             return Room.databaseBuilder(context.applicationContext,
                     HistoryDatabase::class.java, "history.db")
                     .addMigrations(MIGRATION_2_3, MIGRATION_3_4)
+                    .fallbackToDestructiveMigration()
                     .fallbackToDestructiveMigrationFrom(1)
                     .build()
         }
@@ -43,6 +44,5 @@ private val MIGRATION_3_4 = object : Migration(3, 4) {
         database.execSQL("ALTER TABLE history ADD COLUMN genre TEXT")
         database.execSQL("ALTER TABLE history ADD COLUMN language TEXT")
         database.execSQL("ALTER TABLE history ADD COLUMN location TEXT")
-        database.execSQL("ALTER TABLE history ADD COLUMN website TEXT")
     }
 }

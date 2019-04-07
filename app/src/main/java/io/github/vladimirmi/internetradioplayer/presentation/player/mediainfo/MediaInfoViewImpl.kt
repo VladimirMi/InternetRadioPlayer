@@ -50,7 +50,7 @@ class MediaInfoViewImpl @JvmOverloads constructor(
         specsTv.setTextOrHide(media.specs)
         langTv.setTextOrHide(media.language)
         locationTv.setTextOrHide(media.location)
-        websiteTv.setTextOrHide(media.website)
+        websiteTv.setTextOrHide(media.url)
     }
 
     override fun setRecording(isRecording: Boolean) {

@@ -16,9 +16,9 @@ class InfoAdapter(private val lifecycle: Lifecycle) : PagerAdapter() {
 
     override fun instantiateItem(container: ViewGroup, position: Int): Any {
         val view = if (position == 0) {
-            CoverArtViewImpl(container.context)
-        } else {
             MediaInfoViewImpl(container.context)
+        } else {
+            CoverArtViewImpl(container.context)
         }
         (view as? LifecycleObserver)?.let { lifecycle.addObserver(it) }
         container.addView(view)

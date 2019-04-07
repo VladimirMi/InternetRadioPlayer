@@ -14,14 +14,16 @@ class StationResult(
         @SerializedName("station_id") val id: Int,
         val callsign: String,
         val genre: String,
-        val artist: String,
-        val title: String
+        val artist: String?,
+        val title: String?
 ) {
 
     val uri get() = "$URI_BASE$id"
 
     fun toStation(): Station {
-        val desc = if (artist.isBlank() || title.isBlank()) genre else "$artist - $title"
+        val a = artist ?: ""
+        val t = title ?: ""
+        val desc = if (a.isBlank() || t.isBlank()) genre else "$a - $t"
         return Station(
                 id = UUID.randomUUID().toString(),
                 remoteId = id.toString(),

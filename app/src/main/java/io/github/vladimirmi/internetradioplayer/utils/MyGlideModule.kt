@@ -17,7 +17,7 @@ import com.bumptech.glide.request.RequestOptions
 class MyGlideModule : AppGlideModule() {
 
     companion object {
-        private const val DISK_CACHE_SIZE = 1024 * 1024 * 100L // 100 MB
+        private const val DISK_CACHE_SIZE = 1024 * 1024 * 50L // 50 MB
     }
 
     override fun applyOptions(context: Context, builder: GlideBuilder) {

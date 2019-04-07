@@ -39,7 +39,7 @@ object RestServiceProvider {
             .writeTimeout(WRITE_TIMEOUT, TimeUnit.MILLISECONDS)
             .build()
 
-    val gson: Gson = GsonBuilder().create()
+    private val gson: Gson = GsonBuilder().create()
     private val converterFactory: GsonConverterFactory = GsonConverterFactory.create(gson)
 
     fun getUberStationsService(client: OkHttpClient): UberStationsService {

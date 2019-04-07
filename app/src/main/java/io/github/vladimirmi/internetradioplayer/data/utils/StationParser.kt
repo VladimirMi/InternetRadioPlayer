@@ -65,7 +65,7 @@ class StationParser
                 bitrate = newStation.bitrate ?: station.bitrate,
                 encoding = newStation.encoding ?: station.encoding,
                 sample = newStation.sample ?: station.sample,
-                website = newStation.website ?: station.website
+                url = newStation.url ?: station.url
         )
     }
 

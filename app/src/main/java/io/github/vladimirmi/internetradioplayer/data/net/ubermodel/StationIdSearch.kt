@@ -58,7 +58,6 @@ class StationIdResult(
                 url = websiteUrl,
                 remoteId = id.toString(),
                 encoding = encoding,
-                website = websiteUrl,
                 description = description,
                 genre = genre,
                 language = language,

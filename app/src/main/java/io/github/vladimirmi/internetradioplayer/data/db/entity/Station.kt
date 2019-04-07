@@ -21,7 +21,6 @@ data class Station(
         override val name: String,
         override val uri: String,
         override val remoteId: String,
-        val url: String? = null,
         val encoding: String? = null,
         val bitrate: String? = null,
         val sample: String? = null,
@@ -33,7 +32,7 @@ data class Station(
         override val genre: String? = null,
         override val language: String? = null,
         override val location: String? = null,
-        override val website: String? = null
+        override val url: String? = null
 ) : Media {
 
     @Ignore override val specs: String

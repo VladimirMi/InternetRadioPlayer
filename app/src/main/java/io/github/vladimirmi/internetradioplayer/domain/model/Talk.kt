@@ -17,7 +17,7 @@ data class Talk(
         override val genre: String? = null,
         override val language: String? = null,
         override val location: String? = null,
-        override val website: String? = null,
+        override val url: String? = null,
         val timeleft: Int = 0,
         val timeplayed: Int = 0
 ) : Media {

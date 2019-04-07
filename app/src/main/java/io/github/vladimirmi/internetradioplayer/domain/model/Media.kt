@@ -16,7 +16,7 @@ interface Media {
     val genre: String?
     val language: String?
     val location: String?
-    val website: String?
+    val url: String?
 
     companion object {
         fun nullObj() = object : Media {
@@ -30,7 +30,7 @@ interface Media {
             override val genre = null
             override val language = null
             override val location = null
-            override val website = null
+            override val url = null
         }
     }
 

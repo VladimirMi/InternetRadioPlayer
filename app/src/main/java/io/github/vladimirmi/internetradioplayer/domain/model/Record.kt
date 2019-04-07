@@ -24,7 +24,7 @@ data class Record(override val id: String,
     override val genre: String? = null
     override val language: String? = null
     override val location: String? = null
-    override val website: String? = null
+    override val url: String? = null
 
     companion object {
         fun fromFile(file: File): Record {

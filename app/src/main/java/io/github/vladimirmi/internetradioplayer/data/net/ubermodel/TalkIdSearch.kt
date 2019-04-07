@@ -27,7 +27,7 @@ class TalkIdResult(
                 uri = uri,
                 timeleft = timeleft,
                 timeplayed = timeplayed,
-                website = websiteUrl
+                url = websiteUrl
         )
     }
 }

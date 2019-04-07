@@ -2,7 +2,6 @@ package io.github.vladimirmi.internetradioplayer.di.module
 
 import android.content.Context
 import android.media.MediaMetadataRetriever
-import com.google.gson.Gson
 import io.github.vladimirmi.internetradioplayer.data.db.EqualizerDatabase
 import io.github.vladimirmi.internetradioplayer.data.db.HistoryDatabase
 import io.github.vladimirmi.internetradioplayer.data.db.StationsDatabase
@@ -31,7 +30,6 @@ class AppModule(context: Context) : Module() {
         val cacheManager = DiskCacheManager(context)
         val cachedOkHttpClient = RestServiceProvider.cachedOkHttpClient(cacheManager)
 
-        bind(Gson::class.java).toInstance(RestServiceProvider.gson)
         bind(OkHttpClient::class.java).toInstance(RestServiceProvider.okHttpClient)
         bind(UberStationsService::class.java)
                 .toInstance(RestServiceProvider.getUberStationsService(cachedOkHttpClient))

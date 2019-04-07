@@ -26,6 +26,7 @@ abstract class StationsDatabase : RoomDatabase() {
             return Room.databaseBuilder(context.applicationContext,
                     StationsDatabase::class.java, "data.db")
                     .addMigrations(MIGRATION_1_2, MIGRATION_2_3, MIGRATION_3_4)
+                    .fallbackToDestructiveMigration()
                     .build()
         }
     }
@@ -62,6 +63,5 @@ private val MIGRATION_3_4 = object : Migration(3, 4) {
         database.execSQL("ALTER TABLE station ADD COLUMN genre TEXT")
         database.execSQL("ALTER TABLE station ADD COLUMN language TEXT")
         database.execSQL("ALTER TABLE station ADD COLUMN location TEXT")
-        database.execSQL("ALTER TABLE station ADD COLUMN website TEXT")
     }
 }

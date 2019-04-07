@@ -17,4 +17,6 @@ interface ManualSearchView : BaseView, DataView {
     fun selectSuggestion(suggestion: Suggestion)
 
     fun showPlaceholder(show: Boolean)
+
+    fun enableRefresh(enable: Boolean)
 }

@@ -55,6 +55,7 @@ class AppModule(context: Context) : Module() {
         bind(EqualizerRepository::class.java).singletonInScope()
         bind(MediaRepository::class.java).singletonInScope()
         bind(RecordsRepository::class.java).singletonInScope()
+        bind(SuggestionRepository::class.java).singletonInScope()
 
         bind(MainInteractor::class.java).singletonInScope()
         bind(SearchInteractor::class.java).singletonInScope()
@@ -65,6 +66,7 @@ class AppModule(context: Context) : Module() {
         bind(EqualizerInteractor::class.java).singletonInScope()
         bind(MediaInteractor::class.java).singletonInScope()
         bind(RecordsInteractor::class.java).singletonInScope()
+        bind(SuggestionInteractor::class.java).singletonInScope()
 
         bind(LoadControl::class.java).singletonInScope()
     }

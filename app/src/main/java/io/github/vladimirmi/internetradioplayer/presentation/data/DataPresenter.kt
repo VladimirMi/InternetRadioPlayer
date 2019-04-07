@@ -1,11 +1,13 @@
 package io.github.vladimirmi.internetradioplayer.presentation.data
 
-import io.github.vladimirmi.internetradioplayer.data.net.UberStationsService
 import io.github.vladimirmi.internetradioplayer.domain.interactor.MediaInteractor
 import io.github.vladimirmi.internetradioplayer.domain.interactor.SearchInteractor
 import io.github.vladimirmi.internetradioplayer.domain.model.Media
+import io.github.vladimirmi.internetradioplayer.domain.model.SearchState
+import io.github.vladimirmi.internetradioplayer.extensions.errorHandler
 import io.github.vladimirmi.internetradioplayer.extensions.subscribeX
 import io.github.vladimirmi.internetradioplayer.presentation.base.BasePresenter
+import io.github.vladimirmi.internetradioplayer.utils.MessageResException
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.disposables.Disposable
 import io.reactivex.rxkotlin.addTo
@@ -29,28 +31,9 @@ class DataPresenter
     }
 
     fun fetchData(endpoint: String?, query: String?) {
-        if (query == null) {
-            view?.setData(emptyList())
-            return
-        }
-
-        //todo to interactor
-        val fetchData = when (endpoint) {
-            UberStationsService.STATIONS_ENDPOINT -> searchInteractor.searchStations(query)
-            UberStationsService.TOPSONGS_ENDPOINT -> searchInteractor.searchTopSongs(query)
-            UberStationsService.TALKS_ENDPOINT -> searchInteractor.searchTalks(query)
-            else -> return
-        }
-
-        fetchData.observeOn(AndroidSchedulers.mainThread())
-                .doOnSubscribe { view?.showLoading(true) }
-                .subscribeX(onNext = {
-                    view?.setData(it)
-                    view?.selectMedia(mediaInteractor.currentMedia.remoteId)
-                    view?.showLoading(false)
-                }, onError = {
-                    view?.showLoading(false)
-                })
+        searchInteractor.search(endpoint, query)
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribeX(onNext = { handleSearch(it) })
 
     }
 
@@ -59,5 +42,25 @@ class DataPresenter
         selectSub = searchInteractor
                 .selectMedia(media)
                 .subscribeX()
+    }
+
+    private fun handleSearch(state: SearchState) {
+        when (state) {
+            is SearchState.Loading -> {
+                view?.showLoading(true)
+            }
+            is SearchState.Data -> {
+                val data = state.data
+                view?.setData(data)
+                view?.selectMedia(mediaInteractor.currentMedia.remoteId)
+                view?.showLoading(false)
+            }
+            is SearchState.Error -> {
+                val error = state.error
+                if (error is MessageResException) view?.showToast(error.resId)
+                else errorHandler.invoke(error)
+                view?.showLoading(false)
+            }
+        }
     }
 }

@@ -62,9 +62,10 @@ class StationParser
 
         //todo try use MediaExtractor
         return station.copy(
-                bitrate = newStation.bitrate,
-                encoding = newStation.encoding,
-                sample = newStation.sample
+                bitrate = newStation.bitrate ?: station.bitrate,
+                encoding = newStation.encoding ?: station.encoding,
+                sample = newStation.sample ?: station.sample,
+                website = newStation.website ?: station.website
         )
     }
 

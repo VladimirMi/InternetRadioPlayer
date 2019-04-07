@@ -47,25 +47,41 @@ class DataFragment : BaseFragment<DataPresenter, DataView>(), DataView {
 
     override fun onStart() {
         super.onStart()
-        presenter.fetchData(screenContext.endpoint, screenContext.query)
+        fetchData()
     }
 
     override fun setupView(view: View) {
+        setupDataRecycler()
+        setupSwipeToRefresh()
+    }
+
+    private fun setupDataRecycler() {
         dataRv.adapter = dataAdapter
         dataRv.layoutManager = LinearLayoutManager(requireContext())
+        dataAdapter.onItemClickListener = { presenter.selectMedia(it) }
+    }
+
+    private fun setupSwipeToRefresh() {
+        swipeToRefresh.setOnRefreshListener {
+            fetchData()
+            swipeToRefresh.isRefreshing = false
+        }
+    }
+
+    private fun fetchData() {
+        presenter.fetchData(screenContext.endpoint, screenContext.query)
     }
 
     //region =============== DataView ==============
 
     override fun setData(data: List<Media>) {
         dataAdapter.data = data
-        dataAdapter.onItemClickListener = { presenter.selectMedia(it) }
-        dataRv.visible(true)
+        dataRv.scrollToPosition(0)
+        dataRv.visible(data.isNotEmpty())
     }
 
     override fun selectMedia(id: String) {
-        val position = dataAdapter.selectMedia(id)
-        dataRv.scrollToPosition(position)
+        dataAdapter.selectMedia(id)
     }
 
     override fun showLoading(loading: Boolean) {

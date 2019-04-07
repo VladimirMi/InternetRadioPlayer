@@ -36,6 +36,7 @@ class MainFragment : BaseFragment<MainPresenter, MainView>(), MainView {
 
     override fun setupView(view: View) {
         mainPager.adapter = MainPagerAdapter(context!!, childFragmentManager)
+        mainPager.offscreenPageLimit = 2
         mainTl.setupWithViewPager(mainPager)
         val pageId = arguments?.getInt(Preferences.KEY_MAIN_PAGE_ID) ?: 0
         setPageId(pageId)

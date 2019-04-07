@@ -152,11 +152,11 @@ class ManualSearchFragment : BaseFragment<ManualSearchPresenter, ManualSearchVie
 
     override fun setData(data: List<Media>) {
         dataAdapter.data = data
+        stationsRv.scrollToPosition(0)
     }
 
     override fun selectMedia(id: String) {
-        val position = dataAdapter.selectMedia(id)
-        stationsRv.scrollToPosition(position)
+        dataAdapter.selectMedia(id)
     }
 
     override fun selectSuggestion(suggestion: Suggestion) {
@@ -169,6 +169,10 @@ class ManualSearchFragment : BaseFragment<ManualSearchPresenter, ManualSearchVie
 
     override fun showPlaceholder(show: Boolean) {
         placeholderView.visible(show)
+    }
+
+    override fun enableRefresh(enable: Boolean) {
+        swipeToRefresh.isEnabled = enable
     }
 
     //endregion

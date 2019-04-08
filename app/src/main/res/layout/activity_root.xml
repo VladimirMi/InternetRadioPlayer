@@ -56,23 +56,12 @@
 
     <fragment
         android:id="@+id/drawerFr"
-        android:name="io.github.vladimirmi.internetradioplayer.presentation.navigation.DrawerFragment"
+        android:name="io.github.vladimirmi.internetradioplayer.presentation.navigation.drawer.DrawerFragment"
         android:layout_width="260dp"
         android:layout_height="match_parent"
         android:layout_gravity="start"
         app:layout="@layout/fragment_drawer"
         tools:layout="@layout/fragment_drawer"
         />
-
-    <!--<com.google.android.material.navigation.NavigationView-->
-    <!--android:id="@+id/navigationView"-->
-    <!--android:layout_width="wrap_content"-->
-    <!--android:layout_height="match_parent"-->
-    <!--android:layout_gravity="start"-->
-    <!--android:background="?attr/colorSurface"-->
-    <!--android:fitsSystemWindows="false"-->
-    <!--app:headerLayout="@layout/view_drawer_header"-->
-    <!--app:menu="@menu/menu_drawer"-->
-    <!--/>-->
 
 </androidx.drawerlayout.widget.DrawerLayout>

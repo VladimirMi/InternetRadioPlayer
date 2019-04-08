@@ -1,4 +1,4 @@
-package io.github.vladimirmi.internetradioplayer.presentation.navigation
+package io.github.vladimirmi.internetradioplayer.presentation.navigation.drawer
 
 import android.content.Context
 import android.graphics.Canvas
@@ -76,7 +76,8 @@ class DrawerItemDecoration(context: Context) : DividerItemDecoration(context, Re
     }
 
     private fun isAboveDivider(parent: RecyclerView, view: View): Boolean {
-        val adapter = parent.adapter as? DrawerAdapter ?: return false
+        val adapter = parent.adapter as? DrawerAdapter
+                ?: return false
         val position = parent.getChildAdapterPosition(view)
         if (position + 1 == adapter.itemCount) return false
 
@@ -86,7 +87,8 @@ class DrawerItemDecoration(context: Context) : DividerItemDecoration(context, Re
     }
 
     private fun isBelowDivider(parent: RecyclerView, view: View): Boolean {
-        val adapter = parent.adapter as? DrawerAdapter ?: return false
+        val adapter = parent.adapter as? DrawerAdapter
+                ?: return false
         val position = parent.getChildAdapterPosition(view)
         if (position < 1) return false
 
@@ -96,7 +98,8 @@ class DrawerItemDecoration(context: Context) : DividerItemDecoration(context, Re
     }
 
     private fun isIndented(parent: RecyclerView, view: View): Boolean {
-        val adapter = parent.adapter as? DrawerAdapter ?: return false
+        val adapter = parent.adapter as? DrawerAdapter
+                ?: return false
         val position = parent.getChildAdapterPosition(view)
         if (position < 0 || position >= adapter.itemCount) return false
 

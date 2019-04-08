@@ -2,8 +2,8 @@ package io.github.vladimirmi.internetradioplayer.presentation.main
 
 import io.github.vladimirmi.internetradioplayer.R
 import io.github.vladimirmi.internetradioplayer.domain.interactor.MainInteractor
-import io.github.vladimirmi.internetradioplayer.navigation.Router
 import io.github.vladimirmi.internetradioplayer.presentation.base.BasePresenter
+import io.github.vladimirmi.internetradioplayer.presentation.navigation.Router
 import javax.inject.Inject
 
 /**

@@ -1,4 +1,4 @@
-package io.github.vladimirmi.internetradioplayer.navigation
+package io.github.vladimirmi.internetradioplayer.presentation.navigation
 
 import android.view.LayoutInflater
 import android.view.View
@@ -65,7 +65,7 @@ class ScreenContext(val title: String, val parent: ScreenContext?) {
     }
 
     fun createSmallView(inflater: LayoutInflater, root: ViewGroup): View {
-        return inflater.inflate(R.layout.item_navigation, root, false).also {
+        return inflater.inflate(R.layout.item_search_navigation, root, false).also {
             (it as Button).text = title
         }
     }

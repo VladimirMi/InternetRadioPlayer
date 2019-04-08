@@ -1,4 +1,4 @@
-package io.github.vladimirmi.internetradioplayer.presentation.data
+package io.github.vladimirmi.internetradioplayer.presentation.navigation
 
 import android.os.Bundle
 import android.view.Gravity
@@ -13,7 +13,6 @@ import androidx.transition.TransitionManager
 import io.github.vladimirmi.internetradioplayer.R
 import io.github.vladimirmi.internetradioplayer.extensions.visible
 import io.github.vladimirmi.internetradioplayer.extensions.waitForLayout
-import io.github.vladimirmi.internetradioplayer.navigation.ScreenContext
 import io.github.vladimirmi.internetradioplayer.presentation.base.BackPressListener
 import kotlinx.android.synthetic.main.fragment_navigation_holder.*
 

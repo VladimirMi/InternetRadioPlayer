@@ -7,9 +7,9 @@ import io.github.vladimirmi.internetradioplayer.R
 import io.github.vladimirmi.internetradioplayer.di.Scopes
 import io.github.vladimirmi.internetradioplayer.domain.model.Media
 import io.github.vladimirmi.internetradioplayer.extensions.visible
-import io.github.vladimirmi.internetradioplayer.navigation.NavigationTree
-import io.github.vladimirmi.internetradioplayer.navigation.ScreenContext
 import io.github.vladimirmi.internetradioplayer.presentation.base.BaseFragment
+import io.github.vladimirmi.internetradioplayer.presentation.navigation.NavigationTree
+import io.github.vladimirmi.internetradioplayer.presentation.navigation.ScreenContext
 import kotlinx.android.synthetic.main.fragment_data.*
 import toothpick.Toothpick
 

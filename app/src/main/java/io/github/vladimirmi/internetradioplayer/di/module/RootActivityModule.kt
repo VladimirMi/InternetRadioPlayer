@@ -1,6 +1,6 @@
 package io.github.vladimirmi.internetradioplayer.di.module
 
-import io.github.vladimirmi.internetradioplayer.navigation.Router
+import io.github.vladimirmi.internetradioplayer.presentation.navigation.Router
 import io.github.vladimirmi.internetradioplayer.presentation.root.RootPresenter
 import ru.terrakok.cicerone.Cicerone
 import ru.terrakok.cicerone.NavigatorHolder

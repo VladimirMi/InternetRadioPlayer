@@ -1,4 +1,4 @@
-package io.github.vladimirmi.internetradioplayer.navigation
+package io.github.vladimirmi.internetradioplayer.presentation.navigation
 
 import android.content.Context
 import androidx.fragment.app.Fragment

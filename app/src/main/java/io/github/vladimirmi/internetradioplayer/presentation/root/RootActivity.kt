@@ -9,7 +9,6 @@ import android.view.View
 import android.view.ViewGroup
 import android.view.animation.DecelerateInterpolator
 import androidx.appcompat.app.ActionBarDrawerToggle
-import androidx.drawerlayout.widget.DrawerLayout
 import com.google.android.material.bottomsheet.BottomSheetBehavior
 import com.google.android.material.snackbar.Snackbar
 import io.github.vladimirmi.internetradioplayer.R
@@ -19,8 +18,8 @@ import io.github.vladimirmi.internetradioplayer.di.Scopes
 import io.github.vladimirmi.internetradioplayer.di.module.RootActivityModule
 import io.github.vladimirmi.internetradioplayer.extensions.lock
 import io.github.vladimirmi.internetradioplayer.extensions.visible
-import io.github.vladimirmi.internetradioplayer.navigation.Navigator
 import io.github.vladimirmi.internetradioplayer.presentation.base.BaseActivity
+import io.github.vladimirmi.internetradioplayer.presentation.navigation.Navigator
 import io.github.vladimirmi.internetradioplayer.presentation.player.isExpanded
 import io.github.vladimirmi.internetradioplayer.presentation.player.isHidden
 import kotlinx.android.synthetic.main.activity_root.*
@@ -64,17 +63,17 @@ class RootActivity : BaseActivity<RootPresenter, RootView>(), RootView {
     }
 
     private fun setupDrawer() {
-        navigationView.setNavigationItemSelectedListener { menuItem ->
-            menuItem.isChecked = true
-            drawerLayout.closeDrawers()
-            drawerLayout.addDrawerListener(object : DrawerLayout.SimpleDrawerListener() {
-                override fun onDrawerClosed(drawerView: View) {
-                    presenter.navigateTo(menuItem.itemId)
-                    drawerLayout.removeDrawerListener(this)
-                }
-            })
-            true
-        }
+//        navigationView.setNavigationItemSelectedListener { menuItem ->
+//            menuItem.isChecked = true
+//            drawerLayout.closeDrawers()
+//            drawerLayout.addDrawerListener(object : DrawerLayout.SimpleDrawerListener() {
+//                override fun onDrawerClosed(drawerView: View) {
+//                    presenter.navigateTo(menuItem.itemId)
+//                    drawerLayout.removeDrawerListener(this)
+//                }
+//            })
+//            true
+//        }
     }
 
     lateinit var toggle: ActionBarDrawerToggle
@@ -92,7 +91,7 @@ class RootActivity : BaseActivity<RootPresenter, RootView>(), RootView {
     override fun onStart() {
         navigatorHolder.setNavigator(navigator)
         navigator.navigationIdListener = {
-            navigationView.setCheckedItem(it)
+            //            navigationView.setCheckedItem(it)
             showDirectory(it == R.id.nav_search)
             setHomeAsUp(it == R.id.nav_settings || it == R.id.nav_equalizer)
             presenter.checkPlayerVisibility(isPlayerEnabled = it != R.id.nav_settings)

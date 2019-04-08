@@ -1,4 +1,4 @@
-package io.github.vladimirmi.internetradioplayer.navigation
+package io.github.vladimirmi.internetradioplayer.presentation.navigation
 
 import io.github.vladimirmi.internetradioplayer.presentation.search.ManualSearchFragment
 

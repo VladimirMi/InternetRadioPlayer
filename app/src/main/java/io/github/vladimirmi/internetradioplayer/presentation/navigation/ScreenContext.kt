@@ -4,9 +4,11 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Button
+import androidx.annotation.StringRes
 import androidx.fragment.app.Fragment
 import io.github.vladimirmi.internetradioplayer.R
 import io.github.vladimirmi.internetradioplayer.data.net.UberStationsService
+import io.github.vladimirmi.internetradioplayer.di.Scopes
 import io.github.vladimirmi.internetradioplayer.presentation.data.DataFragment
 import java.util.*
 
@@ -14,54 +16,56 @@ import java.util.*
  * Created by Vladimir Mikhalev 21.03.2019.
  */
 
-class ScreenContext(val title: String, val parent: ScreenContext?) {
+open class ScreenContext(val title: String) {
+
+    constructor(@StringRes titleId: Int) : this(Scopes.context.getString(titleId))
 
     val id = UUID.randomUUID().toString()
+    val children = ArrayList<ScreenContext>()
+    var parent: ScreenContext? = null
 
-    var children = ArrayList<ScreenContext>()
-        private set
-    var endpoint: String? = null
-        private set
-    var query: String? = null
-        private set
     var position: Int = 0
-    private var fragment: Class<out Fragment>? = null
 
-    fun screen(title: String, init: ScreenContext.() -> Unit = {}): ScreenContext {
-        val child = ScreenContext(title, this)
-        child.init()
-        children.add(child)
-        return child
+    fun screen(@StringRes titleId: Int, init: ScreenContext.() -> Unit = {}) {
+        ScreenContext(titleId).initScreenContext(this, init)
     }
 
-    fun stationsScreen(title: String, query: String = title, init: ScreenContext.() -> Unit = {}) {
-        screen(title, init).data(UberStationsService.STATIONS_ENDPOINT, query)
+    fun screen(title: String, init: ScreenContext.() -> Unit = {}) {
+        ScreenContext(title).initScreenContext(this, init)
+    }
+
+    fun fragmentScreen(@StringRes titleId: Int, fragment: Class<out Fragment>, init: ScreenContext.() -> Unit = {}) {
+        FragmentScreen(titleId, fragment).initScreenContext(this, init)
+    }
+
+    fun stationsScreen(title: String, query: String = title, init: DataScreen.() -> Unit = {}) {
+        DataScreen(title, UberStationsService.STATIONS_ENDPOINT, query).initScreenContext(this, init)
     }
 
     fun topSongsScreen(query: String = title) {
-        screen("Top songs").data(UberStationsService.TOPSONGS_ENDPOINT, query)
+        DataScreen("Top songs", UberStationsService.TOPSONGS_ENDPOINT, query).initScreenContext<ScreenContext>(this)
     }
 
     fun talksScreen(title: String, query: String = title) {
-        screen(title).data(UberStationsService.TALKS_ENDPOINT, query)
+        DataScreen(title, UberStationsService.TALKS_ENDPOINT, query).initScreenContext<ScreenContext>(this)
     }
 
-    fun <T : Class<out Fragment>> fragment(clazz: T) {
-        fragment = clazz
+    protected fun <T : ScreenContext> initScreenContext(parent: ScreenContext, init: T.() -> Unit = {}) {
+        this.parent = parent
+        @Suppress("UNCHECKED_CAST")
+        (this as T).init()
+        parent.children.add(this)
     }
 
-    fun findScreen(id: String): ScreenContext? {
-        if (this.id == id) return this
+
+    fun findScreen(predicate: (ScreenContext) -> Boolean): ScreenContext? {
+        if (predicate(this)) return this
 
         for (child in children) {
-            val screen = child.findScreen(id)
+            val screen = child.findScreen(predicate)
             if (screen != null) return screen
         }
         return null
-    }
-
-    fun createFragment(): Fragment {
-        return fragment?.newInstance() ?: DataFragment.newInstance(this)
     }
 
     fun createSmallView(inflater: LayoutInflater, root: ViewGroup): View {
@@ -70,12 +74,23 @@ class ScreenContext(val title: String, val parent: ScreenContext?) {
         }
     }
 
-    private fun data(endpoint: String, query: String) {
-        this.endpoint = endpoint
-        this.query = query
-    }
+    open fun createFragment(): Fragment? = null
 
     override fun toString(): String {
         return "ScreenContext(title='$title', parent=${parent?.title}, children=${children.size})"
+    }
+}
+
+class DataScreen(title: String, val endpoint: String, val query: String) : ScreenContext(title) {
+
+    override fun createFragment(): Fragment {
+        return DataFragment.newInstance(this)
+    }
+}
+
+class FragmentScreen(@StringRes titleId: Int, private val fragment: Class<out Fragment>) : ScreenContext(titleId) {
+
+    override fun createFragment(): Fragment? {
+        return fragment.newInstance()
     }
 }

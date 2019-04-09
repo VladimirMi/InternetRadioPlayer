@@ -95,12 +95,7 @@ class DrawerFragment : BaseFragment<DrawerPresenter, DrawerView>(), DrawerView {
 
     private fun navigateTo(item: MenuItem) {
         drawerLayout.closeDrawers()
-        drawerLayout.addDrawerListener(object : DrawerLayout.SimpleDrawerListener() {
-            override fun onDrawerClosed(drawerView: View) {
-                presenter.navigateTo(item.itemId)
-                drawerLayout.removeDrawerListener(this)
-            }
-        })
+        presenter.navigateTo(item)
     }
 
     private fun showDirectory(show: Boolean) {

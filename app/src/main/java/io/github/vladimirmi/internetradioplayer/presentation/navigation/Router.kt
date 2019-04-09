@@ -1,5 +1,6 @@
 package io.github.vladimirmi.internetradioplayer.presentation.navigation
 
+import android.view.MenuItem
 import io.github.vladimirmi.internetradioplayer.R
 
 /**
@@ -16,7 +17,14 @@ class Router : ru.terrakok.cicerone.Router() {
         const val DELIMITER = "$"
     }
 
-    fun navigateTo(navId: Int) {
+    fun navigateTo(item: MenuItem) {
+        when {
+            item.itemId == R.id.nav_settings -> addScreen(item.itemId)
+            else -> replaceScreen(item.itemId)
+        }
+    }
+
+    fun addScreen(navId: Int) {
         navigateTo(navId.toScreenKey())
     }
 

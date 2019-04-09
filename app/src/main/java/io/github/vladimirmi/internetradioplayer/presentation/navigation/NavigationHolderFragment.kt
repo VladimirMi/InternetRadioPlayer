@@ -48,20 +48,21 @@ abstract class NavigationHolderFragment : Fragment(), BackPressListener {
                 || backTo(currentScreenContext.parent)
     }
 
-    private fun navigateTo(screenContext: ScreenContext, animate: Boolean) {
+    fun navigateTo(screenContext: ScreenContext, animate: Boolean) {
         setupNavigation(screenContext, animate, isForward = true)
-        val fragment = screenContext.createFragment()
+        val fragment = screenContext.createFragment() ?: return
         fragment.userVisibleHint = userVisibleHint
         childFragmentManager.beginTransaction()
                 .replace(R.id.dataContainer, fragment)
                 .addToBackStack(null)
                 .commit()
+
     }
 
     private fun backTo(screenContext: ScreenContext?): Boolean {
         if (screenContext == null) return false
-        setupNavigation(screenContext, animate = true, isForward = false)
         childFragmentManager.popBackStack()
+        setupNavigation(screenContext, animate = true, isForward = false)
         return true
     }
 

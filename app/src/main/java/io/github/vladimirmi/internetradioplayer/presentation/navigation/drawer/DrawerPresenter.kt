@@ -1,5 +1,6 @@
 package io.github.vladimirmi.internetradioplayer.presentation.navigation.drawer
 
+import android.view.MenuItem
 import io.github.vladimirmi.internetradioplayer.R
 import io.github.vladimirmi.internetradioplayer.domain.interactor.PlayerInteractor
 import io.github.vladimirmi.internetradioplayer.domain.interactor.RecordsInteractor
@@ -17,11 +18,11 @@ class DrawerPresenter
                     private val recordsInteractor: RecordsInteractor)
     : BasePresenter<DrawerView>() {
 
-    fun navigateTo(navId: Int) {
-        when (navId) {
-            R.id.nav_exit -> exitApp()
-            R.id.nav_settings -> router.navigateTo(navId)
-            else -> router.replaceScreen(navId)
+    fun navigateTo(item: MenuItem) {
+        if (item.itemId == R.id.nav_exit) {
+            exitApp()
+        } else {
+            router.navigateTo(item)
         }
     }
 

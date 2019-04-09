@@ -33,7 +33,7 @@ class MediaInfoPresenter
     }
 
     fun openEqualizer() {
-        router.navigateTo(R.id.nav_equalizer)
+        router.addScreen(R.id.nav_equalizer)
     }
 
     fun startStopRecording() {

@@ -8,8 +8,6 @@
     android:orientation="horizontal"
     android:clickable="true"
     android:focusable="true"
-    android:paddingLeft="24dp"
-    android:paddingRight="24dp"
     >
 
     <TextView
@@ -19,6 +17,8 @@
         android:layout_gravity="center_vertical"
         android:textAppearance="@style/TextAppearance.MaterialComponents.Subtitle2"
         tools:text="Menu Item"
+        android:paddingLeft="24dp"
+        android:paddingRight="24dp"
         />
 
 </LinearLayout>

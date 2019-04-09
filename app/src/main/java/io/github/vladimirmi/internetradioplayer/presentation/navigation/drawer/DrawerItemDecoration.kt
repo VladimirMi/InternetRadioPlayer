@@ -19,7 +19,6 @@ class DrawerItemDecoration(context: Context) : DividerItemDecoration(context, Re
     private var mDivider: Drawable? = null
     private val mBounds = Rect()
     private val divMargin = 8 * context.dp
-    private val indentMargin = 16 * context.dp
 
     init {
         val a = context.obtainStyledAttributes(intArrayOf(android.R.attr.listDivider))
@@ -64,10 +63,6 @@ class DrawerItemDecoration(context: Context) : DividerItemDecoration(context, Re
 
     override fun getItemOffsets(outRect: Rect, view: View, parent: RecyclerView,
                                 state: RecyclerView.State) {
-        val indent = if (isIndented(parent, view)) indentMargin else 0
-        if (indent > 0) {
-            view.setPadding(view.paddingLeft + indent, view.paddingTop, view.paddingRight, view.paddingBottom)
-        }
         when {
             isAboveDivider(parent, view) -> outRect.set(0, 0, 0, divMargin)
             isBelowDivider(parent, view) -> outRect.set(0, divMargin, 0, 0)
@@ -95,15 +90,6 @@ class DrawerItemDecoration(context: Context) : DividerItemDecoration(context, Re
         val cur = adapter.getItem(position)
         val prev = adapter.getItem(position - 1)
         return cur.groupId != prev.groupId
-    }
-
-    private fun isIndented(parent: RecyclerView, view: View): Boolean {
-        val adapter = parent.adapter as? DrawerAdapter
-                ?: return false
-        val position = parent.getChildAdapterPosition(view)
-        if (position < 0 || position >= adapter.itemCount) return false
-
-        return adapter.getItem(position).order % 10 != 0
     }
 
 }

@@ -8,8 +8,9 @@ import io.github.vladimirmi.internetradioplayer.di.Scopes
 import io.github.vladimirmi.internetradioplayer.domain.model.Media
 import io.github.vladimirmi.internetradioplayer.extensions.visible
 import io.github.vladimirmi.internetradioplayer.presentation.base.BaseFragment
-import io.github.vladimirmi.internetradioplayer.presentation.navigation.NavigationTree
+import io.github.vladimirmi.internetradioplayer.presentation.navigation.DataScreen
 import io.github.vladimirmi.internetradioplayer.presentation.navigation.ScreenContext
+import io.github.vladimirmi.internetradioplayer.presentation.navigation.SearchNavigationTree
 import kotlinx.android.synthetic.main.fragment_data.*
 import toothpick.Toothpick
 
@@ -29,7 +30,7 @@ class DataFragment : BaseFragment<DataPresenter, DataView>(), DataView {
     }
 
     override val layout = R.layout.fragment_data
-    private lateinit var screenContext: ScreenContext
+    private lateinit var screenContext: DataScreen
     private val dataAdapter = DataAdapter()
 
     override fun providePresenter(): DataPresenter {
@@ -42,7 +43,7 @@ class DataFragment : BaseFragment<DataPresenter, DataView>(), DataView {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         val id = arguments?.getString(EXTRA_SCREEN_ID) ?: return
-        screenContext = NavigationTree.findScreen(id)
+        screenContext = SearchNavigationTree.findScreen(id) as DataScreen
     }
 
     override fun onStart() {

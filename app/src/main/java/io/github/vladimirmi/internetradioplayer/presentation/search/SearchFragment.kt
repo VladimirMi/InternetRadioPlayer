@@ -1,7 +1,7 @@
 package io.github.vladimirmi.internetradioplayer.presentation.search
 
 import io.github.vladimirmi.internetradioplayer.presentation.navigation.NavigationHolderFragment
-import io.github.vladimirmi.internetradioplayer.presentation.navigation.NavigationTree
+import io.github.vladimirmi.internetradioplayer.presentation.navigation.SearchNavigationTree
 
 /**
  * Created by Vladimir Mikhalev 20.03.2019.
@@ -9,5 +9,5 @@ import io.github.vladimirmi.internetradioplayer.presentation.navigation.Navigati
 
 class SearchFragment : NavigationHolderFragment() {
 
-    override val rootScreenContext = NavigationTree.rootScreen
+    override val rootScreenContext = SearchNavigationTree.rootScreen
 }

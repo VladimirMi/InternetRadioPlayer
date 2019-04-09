@@ -1,18 +1,17 @@
 package io.github.vladimirmi.internetradioplayer.presentation.navigation
 
+import io.github.vladimirmi.internetradioplayer.R
 import io.github.vladimirmi.internetradioplayer.presentation.search.ManualSearchFragment
 
 /**
  * Created by Vladimir Mikhalev 20.03.2019.
  */
 
-object NavigationTree {
+object SearchNavigationTree {
 
-    val rootScreen = RootScreen("Search") {
-        screen("Manual search") {
-            fragment(ManualSearchFragment::class.java)
-        }
-        screen("Talks") {
+    val rootScreen = SearchRootScreen {
+        fragmentScreen(R.string.search_manual, ManualSearchFragment::class.java)
+        screen(R.string.search_talks) {
             talksScreen("Arts/Culture/Entertainment", "ACE")
             talksScreen("Music")
             talksScreen("News")
@@ -21,7 +20,7 @@ object NavigationTree {
             talksScreen("Public")
             talksScreen("Sports")
         }
-        screen("Music") {
+        screen(R.string.search_music) {
             stationsScreen("70's") { topSongsScreen() }
             stationsScreen("80's") { topSongsScreen() }
             stationsScreen("90's") { topSongsScreen() }
@@ -60,15 +59,15 @@ object NavigationTree {
     }
 
 
-    fun findScreen(title: String): ScreenContext {
-        return rootScreen.findScreen(title)
-                ?: throw IllegalStateException("Can not find screen $title")
+    fun findScreen(id: String): ScreenContext {
+        return rootScreen.findScreen { it.id == id }
+                ?: throw IllegalStateException("Can not find screen with id $id")
     }
 }
 
-private object RootScreen {
+private object SearchRootScreen {
 
-    operator fun invoke(title: String, init: ScreenContext.() -> Unit): ScreenContext {
-        return ScreenContext(title, null).apply { init() }
+    operator fun invoke(init: ScreenContext.() -> Unit): ScreenContext {
+        return ScreenContext(R.string.tab_search).apply { init() }
     }
 }

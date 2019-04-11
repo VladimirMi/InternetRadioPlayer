@@ -23,7 +23,7 @@ import kotlinx.android.synthetic.main.fragment_navigation_holder.*
 abstract class NavigationHolderFragment : Fragment(), BackPressListener {
 
     abstract val rootScreenContext: ScreenContext
-    private lateinit var currentScreenContext: ScreenContext
+    protected lateinit var currentScreenContext: ScreenContext
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -48,7 +48,7 @@ abstract class NavigationHolderFragment : Fragment(), BackPressListener {
                 || backTo(currentScreenContext.parent)
     }
 
-    fun navigateTo(screenContext: ScreenContext, animate: Boolean) {
+    private fun navigateTo(screenContext: ScreenContext, animate: Boolean) {
         setupNavigation(screenContext, animate, isForward = true)
         val fragment = screenContext.createFragment() ?: return
         fragment.userVisibleHint = userVisibleHint

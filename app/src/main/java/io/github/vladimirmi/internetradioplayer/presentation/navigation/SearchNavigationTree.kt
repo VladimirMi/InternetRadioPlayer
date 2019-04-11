@@ -58,10 +58,13 @@ object SearchNavigationTree {
         }
     }
 
-
-    fun findScreen(id: String): ScreenContext {
+    fun getScreen(id: String): ScreenContext {
         return rootScreen.findScreen { it.id == id }
                 ?: throw IllegalStateException("Can not find screen with id $id")
+    }
+
+    fun getDefaultScreen(): ScreenContext {
+        return rootScreen.children.first()
     }
 }
 

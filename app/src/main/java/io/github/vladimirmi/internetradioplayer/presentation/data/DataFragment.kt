@@ -43,7 +43,7 @@ class DataFragment : BaseFragment<DataPresenter, DataView>(), DataView {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         val id = arguments?.getString(EXTRA_SCREEN_ID) ?: return
-        screenContext = SearchNavigationTree.findScreen(id) as DataScreen
+        screenContext = SearchNavigationTree.getScreen(id) as DataScreen
     }
 
     override fun onStart() {

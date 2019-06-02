@@ -2,7 +2,10 @@ package io.github.vladimirmi.internetradioplayer.data.repository
 
 import io.github.vladimirmi.internetradioplayer.data.db.entity.Station
 import io.github.vladimirmi.internetradioplayer.data.net.UberStationsService
-import io.github.vladimirmi.internetradioplayer.data.net.ubermodel.*
+import io.github.vladimirmi.internetradioplayer.data.net.ubermodel.StationIdResult
+import io.github.vladimirmi.internetradioplayer.data.net.ubermodel.StationIdSearch
+import io.github.vladimirmi.internetradioplayer.data.net.ubermodel.StationResult
+import io.github.vladimirmi.internetradioplayer.data.net.ubermodel.TopSongResult
 import io.github.vladimirmi.internetradioplayer.data.utils.StationParser
 import io.reactivex.Single
 import io.reactivex.schedulers.Schedulers
@@ -36,18 +39,6 @@ class SearchRepository
     fun searchTopSongs(query: String): Single<List<TopSongResult>> {
         return uberStationsService.searchTopSongs(query)
                 .map { it.result }
-                .subscribeOn(Schedulers.io())
-    }
-
-    fun searchTalks(query: String): Single<List<TalkResult>> {
-        return uberStationsService.getTalks()
-                .map { search -> search.result.filter { it.genre == query } }
-                .subscribeOn(Schedulers.io())
-    }
-
-    fun searchTalk(id: String): Single<TalkIdResult> {
-        return uberStationsService.searchTalk(id)
-                .map { it.result.first() }
                 .subscribeOn(Schedulers.io())
     }
 }

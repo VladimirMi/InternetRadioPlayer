@@ -3,13 +3,10 @@ package io.github.vladimirmi.internetradioplayer.domain.interactor
 import io.github.vladimirmi.internetradioplayer.R
 import io.github.vladimirmi.internetradioplayer.data.db.entity.Station
 import io.github.vladimirmi.internetradioplayer.data.net.UberStationsService
-import io.github.vladimirmi.internetradioplayer.data.net.ubermodel.TalkResult
 import io.github.vladimirmi.internetradioplayer.data.repository.FavoritesRepository
 import io.github.vladimirmi.internetradioplayer.data.repository.SearchRepository
 import io.github.vladimirmi.internetradioplayer.domain.model.Media
 import io.github.vladimirmi.internetradioplayer.domain.model.SearchState
-import io.github.vladimirmi.internetradioplayer.domain.model.Talk
-import io.github.vladimirmi.internetradioplayer.utils.MessageException
 import io.github.vladimirmi.internetradioplayer.utils.MessageResException
 import io.reactivex.Completable
 import io.reactivex.Observable
@@ -32,7 +29,6 @@ class SearchInteractor
         return when (endpoint) {
             UberStationsService.STATIONS_ENDPOINT -> searchStations(q)
             UberStationsService.TOPSONGS_ENDPOINT -> searchTopSongs(q)
-            UberStationsService.TALKS_ENDPOINT -> searchTalks(q)
             else -> Observable.error(IllegalStateException("Can't find endpoint $endpoint"))
         }
     }
@@ -50,17 +46,9 @@ class SearchInteractor
         }
     }
 
-    private fun searchTalks(query: String): Observable<SearchState> {
-        return searchRepository.searchTalks(query.trim()).toObservable()
-                .map<SearchState> { list -> SearchState.Data(list.map(TalkResult::toTalk)) }
-                .startWith(SearchState.Loading)
-                .onErrorReturn { SearchState.Error(it) }
-    }
-
     fun selectMedia(media: Media): Completable {
         return when (media) {
             is Station -> selectStation(media)
-            is Talk -> selectTalk(media)
             else -> Completable.complete()
         }
     }
@@ -78,17 +66,6 @@ class SearchInteractor
                             favoritesRepository.getStation { it.uri == newStation.uri }
                                     ?: newStation
                 }.ignoreElements()
-    }
-
-    private fun selectTalk(talk: Talk): Completable {
-        return searchRepository.searchTalk(talk.remoteId)
-                .flatMapCompletable {
-                    if (it.uri.isBlank()) {
-                        Completable.error(MessageException("No data currently airing this show"))
-                    } else {
-                        mediaInteractor.setMedia(it.toTalk(talk))
-                    }
-                }
     }
 
     private fun <T> searchStationsWithFavorites(searchObs: Single<List<T>>, transform: (T) -> Station)

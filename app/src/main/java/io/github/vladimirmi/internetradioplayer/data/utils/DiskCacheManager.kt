@@ -26,7 +26,6 @@ class DiskCacheManager(context: Context) {
                 UberStationsService.STATIONS_ENDPOINT to MINUTE,
                 UberStationsService.STATION_ENDPOINT to 3 * DAY,
                 UberStationsService.TOPSONGS_ENDPOINT to MINUTE,
-                UberStationsService.TALKS_ENDPOINT to HOUR,
                 UberStationsService.TALK_URL_ENDPOINT to DAY,
                 CoverArtService.RECORDING_ENDPOINT to DAY
         )

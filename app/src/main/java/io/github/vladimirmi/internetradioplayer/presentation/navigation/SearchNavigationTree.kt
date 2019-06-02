@@ -11,16 +11,7 @@ object SearchNavigationTree {
 
     val rootScreen = SearchRootScreen {
         fragmentScreen(R.string.search_manual, ManualSearchFragment::class.java)
-        screen(R.string.search_talks) {
-            talksScreen("Arts/Culture/Entertainment", "ACE")
-            talksScreen("Music")
-            talksScreen("News")
-            talksScreen("Other")
-            talksScreen("Politics")
-            talksScreen("Public")
-            talksScreen("Sports")
-        }
-        screen(R.string.search_music) {
+        screen(R.string.search_genre) {
             stationsScreen("70's") { topSongsScreen() }
             stationsScreen("80's") { topSongsScreen() }
             stationsScreen("90's") { topSongsScreen() }

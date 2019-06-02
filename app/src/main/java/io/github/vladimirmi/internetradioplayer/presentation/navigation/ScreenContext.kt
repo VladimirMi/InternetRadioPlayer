@@ -46,10 +46,6 @@ open class ScreenContext(val title: String) {
         DataScreen("Top songs", UberStationsService.TOPSONGS_ENDPOINT, query).initScreenContext<ScreenContext>(this)
     }
 
-    fun talksScreen(title: String, query: String = title) {
-        DataScreen(title, UberStationsService.TALKS_ENDPOINT, query).initScreenContext<ScreenContext>(this)
-    }
-
     protected fun <T : ScreenContext> initScreenContext(parent: ScreenContext, init: T.() -> Unit = {}) {
         this.parent = parent
         @Suppress("UNCHECKED_CAST")

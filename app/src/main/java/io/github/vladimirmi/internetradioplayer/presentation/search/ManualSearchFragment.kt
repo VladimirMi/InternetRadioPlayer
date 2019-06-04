@@ -70,8 +70,7 @@ class ManualSearchFragment : BaseFragment<ManualSearchPresenter, ManualSearchVie
     }
 
     private fun setupStations() {
-        val lm = LinearLayoutManager(context)
-        stationsRv.layoutManager = lm
+        stationsRv.layoutManager = LinearLayoutManager(context)
         stationsRv.adapter = dataAdapter
         dataAdapter.onItemClickListener = { presenter.selectMedia(it) }
 
@@ -83,13 +82,11 @@ class ManualSearchFragment : BaseFragment<ManualSearchPresenter, ManualSearchVie
     }
 
     private fun setupSuggestions() {
-        val lm = LinearLayoutManager(context)
-        suggestionsRv.layoutManager = lm
+        suggestionsRv.layoutManager = LinearLayoutManager(context)
         suggestionsRv.adapter = suggestionsAdapter
         suggestionsRv.itemAnimator = null
-        suggestionsRv.addItemDecoration(DividerItemDecoration(context, lm.orientation))
+        suggestionsRv.addItemDecoration(DividerItemDecoration(context, RecyclerView.VERTICAL))
         suggestionsAdapter.onItemClickListener = this::selectSuggestion
-        suggestionsRv.visible(false)
 
         suggestionsRv.addOnScrollListener(object : RecyclerView.OnScrollListener() {
             override fun onScrolled(recyclerView: RecyclerView, dx: Int, dy: Int) {

@@ -7,6 +7,14 @@
     android:layout_height="match_parent"
     >
 
+    <EditText
+        android:layout_width="match_parent"
+        android:layout_height="48dp"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        tools:ignore="Autofill,LabelFor,TextFields"
+        />
+
     <androidx.appcompat.widget.SearchView
         android:id="@+id/searchView"
         style="@style/Widget.AppCompat.SearchView.ActionBar"
@@ -22,7 +30,8 @@
     <androidx.swiperefreshlayout.widget.SwipeRefreshLayout
         android:id="@+id/swipeToRefresh"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
+        android:layout_height="0dp"
+        app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintTop_toBottomOf="@id/searchView"
         >
 
@@ -46,9 +55,9 @@
         android:animateLayoutChanges="false"
         android:background="?attr/colorSurface"
         android:overScrollMode="never"
+        android:visibility="gone"
         app:layout_constraintTop_toBottomOf="@id/searchView"
         tools:listitem="@layout/item_suggestion"
-        tools:visibility="gone"
         />
 
     <TextView

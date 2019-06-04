@@ -54,7 +54,7 @@ inline fun View.waitForLayout(crossinline handler: () -> Boolean) {
     viewTreeObserver.addOnGlobalLayoutListener(object : ViewTreeObserver.OnGlobalLayoutListener {
         override fun onGlobalLayout() {
             val observer = viewTreeObserver
-            if (handler.invoke() && observer.isAlive) {
+            if (handler() && observer.isAlive) {
                 observer.removeOnGlobalLayoutListener(this)
             }
         }

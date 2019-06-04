@@ -129,12 +129,12 @@ class Navigator(private val activity: FragmentActivity, private val containerId:
                 R.anim.slide_in_right, R.anim.slide_out_left)
     }
 
-    private fun forwardTransition(fragmentTransaction: androidx.fragment.app.FragmentTransaction?) {
+    private fun forwardTransition(fragmentTransaction: FragmentTransaction?) {
         fragmentTransaction?.setCustomAnimations(R.anim.slide_in_right, R.anim.slide_out_left,
                 R.anim.slide_in_left, R.anim.slide_out_right)
     }
 
-    private fun replaceTransition(fragmentTransaction: androidx.fragment.app.FragmentTransaction?) {
+    private fun replaceTransition(fragmentTransaction: FragmentTransaction?) {
         fragmentTransaction?.setCustomAnimations(android.R.anim.fade_in, android.R.anim.fade_out,
                 android.R.anim.fade_in, android.R.anim.fade_out)
     }

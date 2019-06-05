@@ -43,13 +43,12 @@ class RecorderNotificationFactory(private val service: Service) {
     }
 
     private fun createNotification(uri: Uri, name: String): Notification {
-        //todo to strings
         val stopPendingIntent = stopPendingIntent(uri)
         return NotificationCompat.Builder(service, CHANNEL_ID)
                 .setVisibility(NotificationCompat.VISIBILITY_PUBLIC)
                 .setSmallIcon(R.drawable.ic_station_1)
                 .setContentTitle(name)
-                .setContentText("RecordingMbId...")
+                .setContentText(service.getString(R.string.recording))
                 .setPriority(NotificationCompat.PRIORITY_MAX)
                 .setUsesChronometer(true)
                 .setDeleteIntent(stopPendingIntent)

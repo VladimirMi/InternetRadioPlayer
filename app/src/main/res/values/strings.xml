@@ -106,6 +106,8 @@
     <string name="min" translatable="false">min</string>
     <string name="max" translatable="false">max</string>
 
+    <string name="recording">Recording…</string>
+
     <plurals name="plural_second">
         <item quantity="one">@string/second</item>
         <item quantity="other">@string/seconds</item>

@@ -8,7 +8,10 @@ import io.github.vladimirmi.internetradioplayer.R
 import io.github.vladimirmi.internetradioplayer.data.db.entity.Station
 import io.github.vladimirmi.internetradioplayer.data.service.PlayerService
 import io.github.vladimirmi.internetradioplayer.data.service.extensions.*
-import io.github.vladimirmi.internetradioplayer.domain.interactor.*
+import io.github.vladimirmi.internetradioplayer.domain.interactor.FavoriteListInteractor
+import io.github.vladimirmi.internetradioplayer.domain.interactor.MediaInteractor
+import io.github.vladimirmi.internetradioplayer.domain.interactor.PlayerInteractor
+import io.github.vladimirmi.internetradioplayer.domain.interactor.StationInteractor
 import io.github.vladimirmi.internetradioplayer.domain.model.Record
 import io.github.vladimirmi.internetradioplayer.extensions.subscribeX
 import io.github.vladimirmi.internetradioplayer.presentation.base.BasePresenter
@@ -26,8 +29,7 @@ class PlayerPresenter
 @Inject constructor(private val stationInteractor: StationInteractor,
                     private val favoriteListInteractor: FavoriteListInteractor,
                     private val playerInteractor: PlayerInteractor,
-                    private val mediaInteractor: MediaInteractor,
-                    private val coverArtInteractor: CoverArtInteractor)
+                    private val mediaInteractor: MediaInteractor)
     : BasePresenter<PlayerView>() {
 
     private var playTask: TimerTask? = null

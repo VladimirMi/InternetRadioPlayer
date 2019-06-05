@@ -105,8 +105,7 @@ class FavoriteStationsFragment : BaseFragment<FavoriteStationsPresenter, Favorit
 
     override fun onContextItemSelected(item: MenuItem): Boolean {
         if (item.groupId != R.id.context_menu_stations) return false
-        val selectedItem = stationListAdapter.longClickedItem
-        when (selectedItem) {
+        when (val selectedItem = stationListAdapter.longClickedItem) {
             is Station -> when {
                 item.itemId == R.id.context_menu_action_edit -> openStationEditDialog(selectedItem)
                 item.itemId == R.id.context_menu_action_delete -> presenter.deleteStation(selectedItem)

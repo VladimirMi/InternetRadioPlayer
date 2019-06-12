@@ -11,10 +11,12 @@ import androidx.core.content.ContextCompat
 import androidx.fragment.app.FragmentActivity
 import androidx.fragment.app.FragmentManager
 import io.github.vladimirmi.internetradioplayer.R
+import io.github.vladimirmi.internetradioplayer.data.db.entity.Station
 import io.github.vladimirmi.internetradioplayer.di.Scopes
 import io.github.vladimirmi.internetradioplayer.domain.model.Media
 import io.github.vladimirmi.internetradioplayer.extensions.color
 import io.github.vladimirmi.internetradioplayer.extensions.setTextOrHide
+import io.github.vladimirmi.internetradioplayer.extensions.visible
 import io.github.vladimirmi.internetradioplayer.presentation.base.BaseCustomView
 import kotlinx.android.synthetic.main.view_media_info.view.*
 import toothpick.Toothpick
@@ -51,6 +53,10 @@ class MediaInfoViewImpl @JvmOverloads constructor(
         langTv.setTextOrHide(media.language)
         locationTv.setTextOrHide(media.location)
         websiteTv.setTextOrHide(media.url)
+
+        recordBt.visible(media is Station)
+        addShortcutBt.visible(media is Station)
+        equalizerBt.visible(media is Station)
     }
 
     override fun setRecording(isRecording: Boolean) {

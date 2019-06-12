@@ -42,4 +42,8 @@ class InfoAdapter(private val lifecycle: Lifecycle) : PagerAdapter() {
     override fun getCount(): Int {
         return if (coverArtEnabled) 2 else 1
     }
+
+    override fun getItemPosition(obj: Any): Int {
+        return POSITION_NONE
+    }
 }

@@ -22,7 +22,6 @@ import toothpick.Toothpick
 /**
  * Created by Vladimir Mikhalev 20.02.2019.
  */
-
 class PlayerFragment : BaseFragment<PlayerPresenter, PlayerView>(), PlayerView {
 
     override val layout = R.layout.fragment_player
@@ -103,6 +102,7 @@ class PlayerFragment : BaseFragment<PlayerPresenter, PlayerView>(), PlayerView {
 
     override fun setStation(station: Station) {
         titleTv.text = station.name
+        favoriteIv.visible(true)
         val tint = if (station.isFavorite) R.color.orange_500 else R.color.primary_variant
         favoriteIv.background.setTintExt(requireContext().color(tint))
         infoAdapter.coverArtEnabled = true
@@ -111,6 +111,7 @@ class PlayerFragment : BaseFragment<PlayerPresenter, PlayerView>(), PlayerView {
     override fun setRecord(record: Record) {
         titleTv.text = record.name
         setDuration(record.duration)
+        favoriteIv.visible(false)
         infoAdapter.coverArtEnabled = false
         mediaInfoVp.currentItem = 0
     }

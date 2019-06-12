@@ -8,7 +8,6 @@ import io.github.vladimirmi.internetradioplayer.R
 import io.github.vladimirmi.internetradioplayer.data.db.entity.Station
 import io.github.vladimirmi.internetradioplayer.data.service.PlayerService
 import io.github.vladimirmi.internetradioplayer.data.service.extensions.*
-import io.github.vladimirmi.internetradioplayer.domain.interactor.FavoriteListInteractor
 import io.github.vladimirmi.internetradioplayer.domain.interactor.MediaInteractor
 import io.github.vladimirmi.internetradioplayer.domain.interactor.PlayerInteractor
 import io.github.vladimirmi.internetradioplayer.domain.interactor.StationInteractor
@@ -27,7 +26,6 @@ import kotlin.concurrent.schedule
 
 class PlayerPresenter
 @Inject constructor(private val stationInteractor: StationInteractor,
-                    private val favoriteListInteractor: FavoriteListInteractor,
                     private val playerInteractor: PlayerInteractor,
                     private val mediaInteractor: MediaInteractor)
     : BasePresenter<PlayerView>() {
@@ -43,11 +41,10 @@ class PlayerPresenter
         mediaInteractor.currentMediaObs
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribeX(onNext = {
-                    view?.setMedia(it)
                     if (it is Station) {
-                        view?.setFavorite(favoriteListInteractor.isFavorite(it))
+                        view?.setStation(it)
                     } else if (it is Record) {
-                        view?.setDuration(it.duration)
+                        view?.setRecord(it)
                     }
                 })
                 .addTo(viewSubs)

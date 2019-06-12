@@ -14,6 +14,12 @@ import io.github.vladimirmi.internetradioplayer.presentation.player.mediainfo.Me
 
 class InfoAdapter(private val lifecycle: Lifecycle) : PagerAdapter() {
 
+    var coverArtEnabled = true
+        set(value) {
+            field = value
+            notifyDataSetChanged()
+        }
+
     override fun instantiateItem(container: ViewGroup, position: Int): Any {
         val view = if (position == 0) {
             MediaInfoViewImpl(container.context)
@@ -34,6 +40,6 @@ class InfoAdapter(private val lifecycle: Lifecycle) : PagerAdapter() {
     }
 
     override fun getCount(): Int {
-        return 2
+        return if (coverArtEnabled) 2 else 1
     }
 }

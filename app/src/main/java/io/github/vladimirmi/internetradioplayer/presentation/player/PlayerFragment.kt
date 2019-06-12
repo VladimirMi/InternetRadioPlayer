@@ -7,8 +7,9 @@ import androidx.constraintlayout.widget.ConstraintSet
 import com.google.android.exoplayer2.util.Util
 import com.google.android.material.bottomsheet.BottomSheetBehavior
 import io.github.vladimirmi.internetradioplayer.R
+import io.github.vladimirmi.internetradioplayer.data.db.entity.Station
 import io.github.vladimirmi.internetradioplayer.di.Scopes
-import io.github.vladimirmi.internetradioplayer.domain.model.Media
+import io.github.vladimirmi.internetradioplayer.domain.model.Record
 import io.github.vladimirmi.internetradioplayer.extensions.*
 import io.github.vladimirmi.internetradioplayer.presentation.base.BaseFragment
 import io.github.vladimirmi.internetradioplayer.presentation.root.RootView
@@ -28,6 +29,8 @@ class PlayerFragment : BaseFragment<PlayerPresenter, PlayerView>(), PlayerView {
 
     private lateinit var playerBehavior: BottomSheetBehavior<View>
     private var isSeekEnabled = false
+    private val infoAdapter = InfoAdapter(lifecycle)
+
 
     override fun providePresenter(): PlayerPresenter {
         return Toothpick.openScopes(Scopes.ROOT_ACTIVITY, this)
@@ -84,7 +87,7 @@ class PlayerFragment : BaseFragment<PlayerPresenter, PlayerView>(), PlayerView {
     }
 
     private fun setupInfo() {
-        mediaInfoVp.adapter = InfoAdapter(lifecycle)
+        mediaInfoVp.adapter = infoAdapter
         mediaInfoVp.currentItem = 0
         pagerIndicator.setupWithViewPager(mediaInfoVp)
     }
@@ -98,14 +101,18 @@ class PlayerFragment : BaseFragment<PlayerPresenter, PlayerView>(), PlayerView {
 
     //region =============== PlayerView ==============
 
-    override fun setMedia(media: Media) {
-        titleTv.text = media.name
+    override fun setStation(station: Station) {
+        titleTv.text = station.name
+        val tint = if (station.isFavorite) R.color.orange_500 else R.color.primary_variant
+        favoriteIv.background.setTintExt(requireContext().color(tint))
+        infoAdapter.coverArtEnabled = true
     }
 
-    override fun setFavorite(isFavorite: Boolean) {
-        //todo refactor (create field inside station)
-        val tint = if (isFavorite) R.color.orange_500 else R.color.primary_variant
-        favoriteIv.background.setTintExt(context!!.color(tint))
+    override fun setRecord(record: Record) {
+        titleTv.text = record.name
+        setDuration(record.duration)
+        infoAdapter.coverArtEnabled = false
+        mediaInfoVp.currentItem = 0
     }
 
     override fun setStatus(resId: Int) {

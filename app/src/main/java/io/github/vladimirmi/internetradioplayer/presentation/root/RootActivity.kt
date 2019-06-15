@@ -39,9 +39,6 @@ class RootActivity : BaseActivity<RootPresenter, RootView>(), RootView {
         }
         super.onCreate(savedInstanceState)
 
-        val drawerFragment = supportFragmentManager.findFragmentById(R.id.drawerFr) as DrawerFragment
-        drawerFragment.init(drawerLayout, toolbar)
-
         if (savedInstanceState != null || (intent.flags and Intent.FLAG_ACTIVITY_LAUNCHED_FROM_HISTORY) != 0) {
             intent = null // stop redeliver old intent
         }
@@ -55,6 +52,8 @@ class RootActivity : BaseActivity<RootPresenter, RootView>(), RootView {
     private fun setupToolbar() {
         setSupportActionBar(toolbar)
         supportActionBar?.setDisplayHomeAsUpEnabled(true)
+        val drawerFragment = supportFragmentManager.findFragmentById(R.id.drawerFr) as DrawerFragment
+        drawerFragment.init(drawerLayout, toolbar)
     }
 
     override fun onNewIntent(intent: Intent?) {

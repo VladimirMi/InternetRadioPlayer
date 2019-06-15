@@ -38,7 +38,7 @@ data class Group(@PrimaryKey
 
         fun getDbName(name: String, context: Context): String {
             return if (name == context.getString(R.string.default_group) || name.isBlank()) {
-                Group.DEFAULT_NAME
+                DEFAULT_NAME
             } else name
         }
     }

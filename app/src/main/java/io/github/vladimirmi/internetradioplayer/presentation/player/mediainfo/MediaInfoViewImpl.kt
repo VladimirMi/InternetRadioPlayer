@@ -11,6 +11,7 @@ import androidx.core.content.ContextCompat
 import androidx.fragment.app.FragmentActivity
 import androidx.fragment.app.FragmentManager
 import io.github.vladimirmi.internetradioplayer.R
+import io.github.vladimirmi.internetradioplayer.data.db.entity.Group
 import io.github.vladimirmi.internetradioplayer.data.db.entity.Station
 import io.github.vladimirmi.internetradioplayer.di.Scopes
 import io.github.vladimirmi.internetradioplayer.domain.model.Media
@@ -47,7 +48,7 @@ class MediaInfoViewImpl @JvmOverloads constructor(
 
     override fun setMedia(media: Media) {
         descTv.setTextOrHide(media.description)
-        groupTv.setTextOrHide(media.group)
+        groupTv.setTextOrHide(Group.getViewName(media.group, context))
         genreTv.setTextOrHide(media.genre)
         specsTv.setTextOrHide(media.specs)
         langTv.setTextOrHide(media.language)

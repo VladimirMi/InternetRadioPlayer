@@ -1,6 +1,5 @@
 package io.github.vladimirmi.internetradioplayer.presentation.favorite.stations
 
-import android.annotation.SuppressLint
 import android.view.Menu
 import android.view.MenuItem
 import android.view.View
@@ -72,10 +71,9 @@ class FavoriteStationsFragment : BaseFragment<FavoriteStationsPresenter, Favorit
         itemTouchHelper.attachToRecyclerView(stationsRv)
     }
 
-    @SuppressLint("RestrictedApi")
     override fun onPrepareOptionsMenu(menu: Menu) {
-        super.onPrepareOptionsMenu(menu)
         if (!userVisibleHint || !enableMenu) return
+        menu.clear()
         if (changeOrderMode) {
             menu.add(Menu.NONE, R.string.menu_change_order, Menu.NONE, R.string.menu_change_order).apply {
                 setShowAsAction(MenuItem.SHOW_AS_ACTION_IF_ROOM)

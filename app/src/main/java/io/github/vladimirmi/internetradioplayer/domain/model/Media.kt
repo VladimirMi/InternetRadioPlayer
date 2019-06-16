@@ -35,4 +35,12 @@ interface Media {
     }
 
     fun isNull() = id.isEmpty()
+
+    val languageString: String
+        get() {
+            val sb = StringBuilder()
+            language?.let { sb.append(language) }
+            location?.let { sb.append(", ").append(location) }
+            return sb.trim(' ', ',').toString()
+        }
 }

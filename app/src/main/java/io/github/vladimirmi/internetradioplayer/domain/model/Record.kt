@@ -19,12 +19,21 @@ data class Record(override val id: String,
                   val duration: Long) : Media {
 
     override val group: String = Group.DEFAULT_NAME
-    override val specs: String? = null
+    override val specs: String
     override val description: String? = null
     override val genre: String? = null
     override val language: String? = null
     override val location: String? = null
     override val url: String? = null
+    override val remoteId = id
+
+    val createdAtString = Formats.dateTime(createdAt)
+    val durationString = Formats.duration(duration)
+    private val sizeMb: Double = run { Math.round(file.length() * 100 / 1024.0 / 1024.0) / 100.0 }
+
+    init {
+        specs = "$durationString, $sizeMb MB"
+    }
 
     companion object {
         fun fromFile(file: File): Record {
@@ -57,10 +66,6 @@ data class Record(override val id: String,
             return mmr.extractMetadata(MediaMetadataRetriever.METADATA_KEY_DURATION).toLong()
         }
     }
-
-    override val remoteId = id
-    val createdAtString = Formats.dateTime(createdAt)
-    val durationString = Formats.duration(duration)
 
     fun calculateDuration() = getDuration(file)
 }

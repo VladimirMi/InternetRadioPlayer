@@ -15,6 +15,7 @@ import io.github.vladimirmi.internetradioplayer.data.db.entity.Group
 import io.github.vladimirmi.internetradioplayer.data.db.entity.Station
 import io.github.vladimirmi.internetradioplayer.di.Scopes
 import io.github.vladimirmi.internetradioplayer.domain.model.Media
+import io.github.vladimirmi.internetradioplayer.domain.model.Record
 import io.github.vladimirmi.internetradioplayer.extensions.color
 import io.github.vladimirmi.internetradioplayer.extensions.setTextOrHide
 import io.github.vladimirmi.internetradioplayer.extensions.visible
@@ -44,16 +45,17 @@ class MediaInfoViewImpl @JvmOverloads constructor(
         recordBt.setOnClickListener { presenter.startStopRecording() }
         addShortcutBt.setOnClickListener { openAddShortcutDialog() }
         equalizerBt.setOnClickListener { presenter.openEqualizer() }
+        websiteTv.setOnClickListener { openLinkDialog(websiteTv.text.toString()) }
     }
 
     override fun setMedia(media: Media) {
-        descTv.setTextOrHide(media.description)
-        groupTv.setTextOrHide(Group.getViewName(media.group, context))
+        groupTv.setTextOrHide(if (media.group == Group.DEFAULT_NAME) null else media.group)
         genreTv.setTextOrHide(media.genre)
         specsTv.setTextOrHide(media.specs)
-        langTv.setTextOrHide(media.language)
-        locationTv.setTextOrHide(media.location)
+        locationTv.setTextOrHide(media.languageString)
         websiteTv.setTextOrHide(media.url)
+        websiteTv.linkStyle(true)
+        dateTv.setTextOrHide(if (media is Record) media.createdAtString else null)
 
         recordBt.visible(media is Station)
         addShortcutBt.visible(media is Station)

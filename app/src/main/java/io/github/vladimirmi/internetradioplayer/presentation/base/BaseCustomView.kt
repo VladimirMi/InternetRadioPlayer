@@ -30,25 +30,25 @@ abstract class BaseCustomView<P : BasePresenter<V>, V : BaseView>
     protected abstract fun setupView()
 
     @OnLifecycleEvent(Lifecycle.Event.ON_CREATE)
-    protected fun onCreate() {
+    private fun onCreate() {
         View.inflate(context, layout, this)
         presenter = providePresenter()
         setupView()
     }
 
     @OnLifecycleEvent(Lifecycle.Event.ON_START)
-    fun onStart() {
+    private fun onStart() {
         @Suppress("UNCHECKED_CAST")
         presenter.attachView(this as V)
     }
 
     @OnLifecycleEvent(Lifecycle.Event.ON_STOP)
-    protected fun onStop() {
+    private fun onStop() {
         presenter.detachView()
     }
 
     @OnLifecycleEvent(Lifecycle.Event.ON_DESTROY)
-    protected fun onDestroy() {
+    private fun onDestroy() {
         presenter.destroy()
     }
 

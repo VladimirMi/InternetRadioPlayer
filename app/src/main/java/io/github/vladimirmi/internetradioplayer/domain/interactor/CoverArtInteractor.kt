@@ -17,5 +17,4 @@ class CoverArtInteractor
         return repository.getCoverArtUri(query)
     }
 
-
 }

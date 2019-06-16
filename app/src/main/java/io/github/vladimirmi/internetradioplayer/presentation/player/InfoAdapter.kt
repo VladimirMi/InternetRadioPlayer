@@ -16,6 +16,7 @@ class InfoAdapter(private val lifecycle: Lifecycle) : PagerAdapter() {
 
     var coverArtEnabled = true
         set(value) {
+            if (field == value) return
             field = value
             notifyDataSetChanged()
         }

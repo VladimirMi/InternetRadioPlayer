@@ -107,7 +107,8 @@ class FavoriteStationAdapter(private val callback: FavoriteStationsAdapterCallba
     }
 
     override fun onBindViewHolder(holder: GroupElementVH, position: Int) {
-        holder.itemView.setOnLongClickListener { longClickedItem = stations[position]; false }
+        val station = stations[position]
+        holder.itemView.setOnLongClickListener { longClickedItem = station; false }
         holder.changeBackground(stations, position)
         holder.select(position)
         holder.setDragListener(callback)

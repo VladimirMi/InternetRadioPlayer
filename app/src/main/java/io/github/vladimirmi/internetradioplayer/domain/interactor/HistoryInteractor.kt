@@ -31,7 +31,8 @@ class HistoryInteractor
         return Observables.combineLatest(historyRepository.getHistoryObs(),
                 favoritesRepository.stationsListObs) { history, _ ->
             history.map { station ->
-                favoritesRepository.getStation { it.uri == station.uri } ?: station
+                favoritesRepository.getStation { it.uri == station.uri }
+                        ?: station.apply { isFavorite = false }
             }
         }
     }

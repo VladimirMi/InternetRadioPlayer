@@ -74,7 +74,8 @@ class SearchInteractor
         { _, result ->
             val data = result.map { element ->
                 val station = transform(element)
-                favoritesRepository.getStation { it.uri == station.uri } ?: station
+                favoritesRepository.getStation { it.uri == station.uri }
+                        ?: station.apply { isFavorite = false }
             }
             SearchState.Data(data) as SearchState
         }

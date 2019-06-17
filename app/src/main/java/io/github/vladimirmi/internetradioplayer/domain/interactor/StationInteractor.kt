@@ -52,6 +52,7 @@ class StationInteractor
         return favoriteListInteractor.getGroup(station.groupId)
                 .flatMapCompletable {
                     val newStation = station.copy(order = it.stations.size, groupId = Group.DEFAULT_ID)
+                    newStation.isFavorite = true
                     favoritesRepository.addStation(newStation)
                             .andThen(favoriteListInteractor.initFavoriteList())
                             .andThen(mediaInteractor.setMedia(newStation))
@@ -61,7 +62,7 @@ class StationInteractor
     private fun removeFromFavorite(station: Station): Completable {
         return favoritesRepository.removeStation(station)
                 .andThen(favoriteListInteractor.initFavoriteList())
-                .andThen(mediaInteractor.setMedia(station))
+                .andThen(mediaInteractor.setMedia(station.apply { isFavorite = false }))
     }
 
     private fun isFavorite(id: String) = favoritesRepository.getStation { it.id == id } != null

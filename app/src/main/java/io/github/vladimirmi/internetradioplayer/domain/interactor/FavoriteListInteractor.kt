@@ -24,13 +24,12 @@ class FavoriteListInteractor
     fun initFavoriteList(): Completable {
         return Singles.zip(favoritesRepository.getAllGroups(), favoritesRepository.getAllStations())
         { groups, stations ->
+            stations.forEach { it.isFavorite = true }
             val map = stations.groupBy { it.groupId }
             groups.forEach { group -> group.stations = map[group.id] ?: emptyList() }
             groups
         }.flatMapCompletable(this::adjustOrderThenInit)
     }
-
-    fun isFavorite(station: Station) = isFavorite(station.id)
 
     fun createGroup(groupName: String): Completable {
         if (favoritesRepository.groups.find { groupName == it.name } != null) {
@@ -82,8 +81,6 @@ class FavoriteListInteractor
     fun getStation(id: String): Station? {
         return favoritesRepository.getStation { it.id == id }
     }
-
-    private fun isFavorite(id: String) = favoritesRepository.getStation { it.id == id } != null
 
     private fun adjustOrderThenInit(groups: List<Group>): Completable {
         val groupUpdates = arrayListOf<Group>()

@@ -25,8 +25,12 @@ class FavoriteListInteractor
         return Singles.zip(favoritesRepository.getAllGroups(), favoritesRepository.getAllStations())
         { groups, stations ->
             stations.forEach { it.isFavorite = true }
-            val map = stations.groupBy { it.groupId }
-            groups.forEach { group -> group.stations = map[group.id] ?: emptyList() }
+            val stationsByGroup = stations.groupBy { it.groupId }
+            groups.forEach { group ->
+                val groupStations = stationsByGroup[group.id] ?: emptyList()
+                groupStations.forEach { it.group = group.name }
+                group.stations = groupStations
+            }
             groups
         }.flatMapCompletable(this::adjustOrderThenInit)
     }

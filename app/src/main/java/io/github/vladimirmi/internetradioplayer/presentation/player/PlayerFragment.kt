@@ -157,9 +157,6 @@ class PlayerFragment : BaseFragment<PlayerPresenter, PlayerView>(), PlayerView {
     }
 
     override fun enableSkip(isEnabled: Boolean) {
-        val tint = requireContext().color(if (isEnabled) R.color.grey_50 else R.color.grey_600)
-        nextBt.setColorFilter(tint)
-        previousBt.setColorFilter(tint)
         nextBt.isEnabled = isEnabled
         previousBt.isEnabled = isEnabled
     }

@@ -54,6 +54,7 @@ class CoverArtViewImpl @JvmOverloads constructor(
 
     private val requestListener = object : RequestListener<Bitmap> {
         override fun onLoadFailed(e: GlideException?, model: Any, target: Target<Bitmap>, isFirstResource: Boolean): Boolean {
+            coverArtContainer.setBackgroundColor(context.themeAttrData(R.attr.colorPrimaryDark))
             return false
         }
 

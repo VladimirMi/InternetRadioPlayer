@@ -16,6 +16,7 @@ class EqualizerInteractor
 @Inject constructor(private val equalizerRepository: EqualizerRepository,
                     private val mediaRepository: MediaRepository) {
 
+    val equalizerEnabledObs: Observable<Boolean> get() = equalizerRepository.equalizerEnabledObs
     val currentPresetObs: Observable<EqualizerPreset> get() = equalizerRepository.currentPresetObs
     val presetBinder: PresetBinderView get() = equalizerRepository.binder
     val equalizerConfig get() = equalizerRepository.equalizerConfig
@@ -81,5 +82,9 @@ class EqualizerInteractor
         val preset = equalizerRepository.currentPreset
         val defaultPreset = equalizerConfig.defaultPresets.find { it.name == preset.name }
         return preset != defaultPreset
+    }
+
+    fun enableEqualizer(enabled: Boolean) {
+        equalizerRepository.enableEqualizer(enabled)
     }
 }

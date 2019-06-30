@@ -16,7 +16,7 @@ class EqualizerContainer @JvmOverloads constructor(
 
     var onBandLevelChangeListener: OnBandLevelChangeListener? = null
 
-    fun setBands(bands: List<String>, min: Int, max: Int) {
+    fun setupBands(bands: List<String>, min: Int, max: Int) {
         bands.forEachIndexed { index, band ->
             val seekBar = VerticalSeekBar(context)
             seekBar.layoutParams = LayoutParams(width / bands.size, ViewGroup.LayoutParams.MATCH_PARENT)
@@ -39,6 +39,10 @@ class EqualizerContainer @JvmOverloads constructor(
 
     fun setBandLevels(bandLevels: List<Int>, animate: Boolean) {
         (0 until childCount).map { (getChildAt(it) as? VerticalSeekBar)?.setProgress(bandLevels[it], animate) }
+    }
+
+    override fun setEnabled(enabled: Boolean) {
+        (0 until childCount).map { (getChildAt(it) as? VerticalSeekBar)?.isEnabled = enabled }
     }
 
     interface OnBandLevelChangeListener {

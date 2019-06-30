@@ -6,8 +6,7 @@ import android.media.audiofx.Equalizer
  * Created by Vladimir Mikhalev 16.01.2019.
  */
 
-class EqualizerConfig(val enabled: Boolean,
-                      val bands: List<String>,
+class EqualizerConfig(val bands: List<String>,
                       val minLevel: Int,
                       val maxLevel: Int,
                       val defaultPresets: List<EqualizerPreset>) {
@@ -26,7 +25,6 @@ class EqualizerConfig(val enabled: Boolean,
                         EqualizerPreset.create(equalizer.getPresetName(it.toShort()), equalizer.properties)
                     }
             return EqualizerConfig(
-                    enabled = equalizer.enabled,
                     bands = bands,
                     minLevel = levelRange[0].toInt(),
                     maxLevel = levelRange[1].toInt(),
@@ -35,7 +33,6 @@ class EqualizerConfig(val enabled: Boolean,
         }
 
         fun empty() = EqualizerConfig(
-                enabled = false,
                 bands = emptyList(),
                 minLevel = 0,
                 maxLevel = 0,

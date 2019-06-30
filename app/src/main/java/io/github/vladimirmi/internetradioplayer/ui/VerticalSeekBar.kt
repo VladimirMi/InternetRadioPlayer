@@ -62,6 +62,10 @@ class VerticalSeekBar @JvmOverloads constructor(
         })
     }
 
+    override fun setEnabled(enabled: Boolean) {
+        seekBar.isEnabled = enabled
+    }
+
     override fun onMeasure(widthMeasureSpec: Int, heightMeasureSpec: Int) {
         measureChild(label, widthMeasureSpec, heightMeasureSpec)
         val barHeight = MeasureSpec.getSize(heightMeasureSpec) - label.measuredHeight

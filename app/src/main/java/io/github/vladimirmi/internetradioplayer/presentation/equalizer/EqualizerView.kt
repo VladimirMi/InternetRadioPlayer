@@ -20,4 +20,5 @@ interface EqualizerView : BaseView {
 
     fun showReset(show: Boolean)
 
+    fun enableEqualizer(enabled: Boolean)
 }

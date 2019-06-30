@@ -50,6 +50,13 @@ class EqualizerRepository
             equalizer?.ifHasControl { value.applyTo(equalizer, bassBoost, virtualizer) }
             currentPresetObs.accept(value)
         }
+    private var equalizerEnabled = preferences.equalizerEnabled
+        set(value) {
+            preferences.equalizerEnabled = value
+            field = value
+        }
+    val equalizerEnabledObs = BehaviorRelay.createDefault(equalizerEnabled)
+
     lateinit var binder: PresetBinder
 
     init {
@@ -70,13 +77,14 @@ class EqualizerRepository
     }
 
     fun createEqualizer(sessionId: Int, checkControl: Boolean = true) {
+        if (!equalizerEnabled || sessionId == 0) return
         try {
             this.sessionId = sessionId
 
             if (audioEffects.isEqualizerSupported()) equalizer = Equalizer(0, sessionId)
             if (audioEffects.isBassBoostSupported()) bassBoost = BassBoost(0, sessionId)
             if (audioEffects.isVirtualizerSupported()) virtualizer = Virtualizer(0, sessionId)
-//
+
             // on some devices with built-in equalizer the audio effect loses control right after creation
             runOnUiThreadDelayed(300) {
                 equalizer?.enabled = true
@@ -101,6 +109,18 @@ class EqualizerRepository
         virtualizer?.release()
         virtualizer = null
         unbindEqualizer(sessionId)
+    }
+
+    fun enableEqualizer(enabled: Boolean) {
+        equalizerEnabled = enabled
+        if (enabled && equalizer == null) {
+            createEqualizer(sessionId)
+        } else {
+            equalizer?.enabled = enabled
+            bassBoost?.enabled = enabled
+            virtualizer?.enabled = enabled
+        }
+        equalizerEnabledObs.accept(enabled)
     }
 
     fun setBandLevel(band: Int, level: Int) {
@@ -178,7 +198,7 @@ class EqualizerRepository
             block(this)
         } else if (sessionId != 0) {
             releaseEqualizer(sessionId)
-            createEqualizer(sessionId, false)
+            createEqualizer(sessionId, checkControl = false)
         }
     }
 }

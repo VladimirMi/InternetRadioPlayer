@@ -64,11 +64,12 @@ class EqualizerFragment : BaseFragment<EqualizerPresenter, EqualizerView>(), Equ
         toolbar?.addView(enableSwitch)
         with(ConstraintSet()) {
             clone(toolbar)
-            connect(enableSwitch.id, ConstraintSet.END, ConstraintSet.PARENT_ID, ConstraintSet.END, 8 * view.context.dp)
+            connect(enableSwitch.id, ConstraintSet.END, ConstraintSet.PARENT_ID, ConstraintSet.END, 4 * view.context.dp)
             connect(enableSwitch.id, ConstraintSet.TOP, ConstraintSet.PARENT_ID, ConstraintSet.TOP)
             connect(enableSwitch.id, ConstraintSet.BOTTOM, ConstraintSet.PARENT_ID, ConstraintSet.BOTTOM)
             applyTo(toolbar)
         }
+        enableSwitch.setOnCheckedChangeListener { _, isChecked -> presenter.enableEqualizer(isChecked) }
     }
 
     override fun onDestroy() {
@@ -78,7 +79,7 @@ class EqualizerFragment : BaseFragment<EqualizerPresenter, EqualizerView>(), Equ
 
     override fun setupEqualizer(config: EqualizerConfig) {
         view?.waitForMeasure {
-            equalizerView.setBands(config.bands, config.minLevel, config.maxLevel)
+            equalizerView.setupBands(config.bands, config.minLevel, config.maxLevel)
         }
         equalizerView.onBandLevelChangeListener = object : EqualizerContainer.OnBandLevelChangeListener {
             override fun onBandLevelChange(band: Int, level: Int) {
@@ -117,6 +118,13 @@ class EqualizerFragment : BaseFragment<EqualizerPresenter, EqualizerView>(), Equ
                 change = false
             }
         })
+    }
+
+    override fun enableEqualizer(enabled: Boolean) {
+        equalizerView.isEnabled = enabled
+        bassSb.isEnabled = enabled
+        virtualSb.isEnabled = enabled
+        enableSwitch.isChecked = enabled
     }
 
     override fun setPreset(preset: EqualizerPreset) {

@@ -5,6 +5,7 @@ import io.github.vladimirmi.internetradioplayer.extensions.subscribeX
 import io.github.vladimirmi.internetradioplayer.presentation.base.BasePresenter
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.rxkotlin.addTo
+import timber.log.Timber
 import javax.inject.Inject
 
 /**
@@ -28,6 +29,11 @@ class EqualizerPresenter
                     view.setPreset(it)
                     view.showReset(equalizerInteractor.isCurrentPresetCanReset())
                 })
+                .addTo(viewSubs)
+
+        equalizerInteractor.equalizerEnabledObs
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribeX(onNext = { view.enableEqualizer(it) })
                 .addTo(viewSubs)
     }
 
@@ -68,5 +74,10 @@ class EqualizerPresenter
         equalizerInteractor.resetCurrentPreset()
                 .subscribeX()
                 .addTo(dataSubs)
+    }
+
+    fun enableEqualizer(enabled: Boolean) {
+        Timber.e("enableEqualizer: ")
+        equalizerInteractor.enableEqualizer(enabled)
     }
 }

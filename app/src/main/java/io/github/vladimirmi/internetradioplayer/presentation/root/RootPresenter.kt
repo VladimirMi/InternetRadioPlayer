@@ -77,7 +77,6 @@ class RootPresenter
                 .subscribeX(onComplete = {
                     if (addToFavorite) router.replaceScreen(R.id.nav_favorites)
                     if (startPlay) playerInteractor.play()
-                    view?.expandPlayer()
                 }).addTo(viewSubs)
     }
 

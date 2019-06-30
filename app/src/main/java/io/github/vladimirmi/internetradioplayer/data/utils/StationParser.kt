@@ -28,6 +28,7 @@ private const val HEADER_NAME = "icy-name"
 private const val HEADER_URL = "icy-url"
 private const val HEADER_BITRATE = "icy-br"
 private const val HEADER_SAMPLE = "icy-sr"
+private const val HEADER_GENRE = "icy-genre"
 
 private const val PLS_URI = "File1="
 private const val PLS_TITLE = "Title1="
@@ -70,7 +71,7 @@ class StationParser
     }
 
     fun parseFromUri(uri: Uri, name: String?): Station {
-        Timber.d("parseFromUri: $uri")
+        Timber.d("parseFromUri: $uri, $name")
         return when {
             uri.scheme?.startsWith(SCHEME_HTTP, true) == true -> parseFromNet(uri.toURL(), name) // also https
             uri.scheme == SCHEME_FILE || uri.scheme == SCHEME_CONTENT -> parseFromPlaylistFile(uri)
@@ -126,11 +127,13 @@ class StationParser
             encoding: String
     ): Station {
         Timber.d("createStation: $headers")
-
+        val stationName = if (headers[HEADER_NAME].isNullOrBlank()) name ?: finalUrl.host()
+        else headers[HEADER_NAME]!!
         return Station(
-                name = headers[HEADER_NAME] ?: name ?: finalUrl.host(),
+                name = stationName,
                 uri = originUrl.toString(),
                 url = headers[HEADER_URL],
+                genre = headers[HEADER_GENRE],
                 encoding = encoding,
                 bitrate = headers[HEADER_BITRATE],
                 sample = headers[HEADER_SAMPLE],

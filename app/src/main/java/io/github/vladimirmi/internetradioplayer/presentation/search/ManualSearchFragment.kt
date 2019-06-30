@@ -180,7 +180,7 @@ class ManualSearchFragment : BaseFragment<ManualSearchPresenter, ManualSearchVie
             suggestionsRv.getWindowVisibleDisplayFrame(rect)
             requireView().waitForLayout {
                 val oldVisibleHeight = rect.bottom - rect.top
-                suggestionsRv.getWindowVisibleDisplayFrame(rect)
+                suggestionsRv?.getWindowVisibleDisplayFrame(rect)
                 val newVisibleHeight = rect.bottom - rect.top
                 if (oldVisibleHeight == newVisibleHeight) return@waitForLayout false
 

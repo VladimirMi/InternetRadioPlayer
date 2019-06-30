@@ -22,6 +22,7 @@ class StationInteractor
                     private val favoritesRepository: FavoritesRepository,
                     private val favoriteListInteractor: FavoriteListInteractor,
                     private val mediaInteractor: MediaInteractor,
+                    private val historyInteractor: HistoryInteractor,
                     private val shortcutHelper: ShortcutHelper) {
 
     fun addCurrentShortcut(startPlay: Boolean): Boolean {
@@ -32,7 +33,9 @@ class StationInteractor
     fun createStation(uri: Uri, name: String?): Single<Station> {
         return stationRepository.createStation(uri, name)
                 .map { newStation ->
-                    favoritesRepository.getStation { it.uri == newStation.uri } ?: newStation
+                    favoritesRepository.getStation { it.uri == newStation.uri }
+                            ?: historyInteractor.getStation { it.uri == newStation.uri }
+                            ?: newStation
                 }
     }
 

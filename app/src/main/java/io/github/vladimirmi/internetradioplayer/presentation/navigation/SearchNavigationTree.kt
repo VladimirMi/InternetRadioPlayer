@@ -9,7 +9,7 @@ import io.github.vladimirmi.internetradioplayer.presentation.search.ManualSearch
 
 object SearchNavigationTree {
 
-    val rootScreen = SearchRootScreen {
+    private val rootScreen = SearchRootScreen {
         fragmentScreen(R.string.search_manual, ManualSearchFragment::class.java)
         screen(R.string.search_genre) {
             stationsScreen("70's") { topSongsScreen() }
@@ -52,6 +52,11 @@ object SearchNavigationTree {
     fun getScreen(id: String): ScreenContext {
         return rootScreen.findScreen { it.id == id }
                 ?: throw IllegalStateException("Can not find screen with id $id")
+    }
+
+    fun getScreenByPath(path: String): ScreenContext {
+        return rootScreen.findScreen { it.path == path }
+                ?: throw IllegalStateException("Cannot find screen with path $path")
     }
 
     fun getDefaultScreen(): ScreenContext {

@@ -17,14 +17,12 @@ class HistoryRepository
 @Inject constructor(private val db: HistoryDatabase) {
 
     private val dao = db.historyDao()
-    private var historySize = 0
-    private lateinit var oldestEntry: History
+    private var history: List<History> = emptyList()
 
     fun getHistoryObs(): Observable<List<Station>> {
         return dao.getHistory()
                 .map { history ->
-                    if (history.isNotEmpty()) oldestEntry = history.last()
-                    historySize = history.size
+                    this.history = history
                     history.map { it.station }
                 }
                 .subscribeOn(Schedulers.io())
@@ -33,7 +31,7 @@ class HistoryRepository
     fun createHistory(station: Station): Completable {
         return Completable.fromCallable {
             db.runInTransaction {
-                if (historySize == HISTORY_LIMIT) dao.delete(oldestEntry)
+                if (history.size == HISTORY_LIMIT) dao.delete(history.last())
                 val history = History(System.currentTimeMillis(), station)
                 dao.insert(history)
             }
@@ -44,5 +42,9 @@ class HistoryRepository
         return dao.getHistory(stationId)
                 .flatMapCompletable { Completable.fromAction { dao.delete(it) } }
                 .subscribeOn(Schedulers.io())
+    }
+
+    fun getStation(predicate: (Station) -> Boolean): Station? {
+        return history.find { predicate.invoke(it.station) }?.station
     }
 }

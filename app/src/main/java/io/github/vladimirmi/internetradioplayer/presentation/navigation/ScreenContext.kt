@@ -23,6 +23,7 @@ open class ScreenContext(val title: String) {
     val id = UUID.randomUUID().toString()
     val children = ArrayList<ScreenContext>()
     var parent: ScreenContext? = null
+    val path: String get() = "${parent?.path ?: ""}/$title"
 
     var position: Int = 0
 

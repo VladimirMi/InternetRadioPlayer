@@ -22,6 +22,7 @@ class Preferences
         const val KEY_FAVORITE_PAGE_ID = "FAVORITE_PAGE_ID"
         const val KEY_SELECTED_MEDIA_ID = "SELECTED_MEDIA_ID"
         const val KEY_EQUALIZER_ENABLED = "EQUALIZER_ENABLED"
+        const val KEY_SEARCH_SCREEN_PATH = "SEARCH_SCREEN_PATH"
     }
 
     val sharedPreferences: SharedPreferences by lazy {
@@ -34,4 +35,5 @@ class Preferences
     var favoritePageId: Int by Preference(sharedPreferences, KEY_FAVORITE_PAGE_ID, -1)
     var mediaId: String by Preference(sharedPreferences, KEY_SELECTED_MEDIA_ID, "")
     var equalizerEnabled: Boolean by Preference(sharedPreferences, KEY_EQUALIZER_ENABLED, false)
+    var searchScreenPath: String by Preference(sharedPreferences, KEY_SEARCH_SCREEN_PATH, "")
 }

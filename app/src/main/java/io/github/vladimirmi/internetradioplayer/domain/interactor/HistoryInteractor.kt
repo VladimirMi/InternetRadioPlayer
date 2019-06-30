@@ -44,4 +44,6 @@ class HistoryInteractor
     fun deleteHistory(station: Station): Completable {
         return historyRepository.deleteHistory(station.id)
     }
+
+    fun getStation(predicate: (Station) -> Boolean) = historyRepository.getStation(predicate)
 }

@@ -22,12 +22,15 @@ import kotlinx.android.synthetic.main.fragment_navigation_holder.*
 
 abstract class NavigationHolderFragment : Fragment(), BackPressListener {
 
-    abstract val rootScreenContext: ScreenContext
-    protected lateinit var currentScreenContext: ScreenContext
+    private lateinit var currentScreenContext: ScreenContext
+
+    abstract fun getFirstScreen(): ScreenContext
+
+    abstract fun onScreenChange(screen: ScreenContext)
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        currentScreenContext = rootScreenContext
+        currentScreenContext = getFirstScreen()
     }
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {
@@ -70,6 +73,7 @@ abstract class NavigationHolderFragment : Fragment(), BackPressListener {
         setupParent(screenContext, animate, isForward)
         setupChildren(screenContext, animate, isForward)
         currentScreenContext = screenContext
+        onScreenChange(screenContext)
     }
 
     private fun setupParent(screenContext: ScreenContext, animate: Boolean, isForward: Boolean) {

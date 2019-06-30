@@ -77,10 +77,9 @@ class EqualizerRepository
     }
 
     fun createEqualizer(sessionId: Int, checkControl: Boolean = true) {
+        this.sessionId = sessionId
         if (!equalizerEnabled || sessionId == 0) return
         try {
-            this.sessionId = sessionId
-
             if (audioEffects.isEqualizerSupported()) equalizer = Equalizer(0, sessionId)
             if (audioEffects.isBassBoostSupported()) bassBoost = BassBoost(0, sessionId)
             if (audioEffects.isVirtualizerSupported()) virtualizer = Virtualizer(0, sessionId)

@@ -5,7 +5,6 @@ import io.github.vladimirmi.internetradioplayer.extensions.subscribeX
 import io.github.vladimirmi.internetradioplayer.presentation.base.BasePresenter
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.rxkotlin.addTo
-import timber.log.Timber
 import javax.inject.Inject
 
 /**
@@ -77,7 +76,6 @@ class EqualizerPresenter
     }
 
     fun enableEqualizer(enabled: Boolean) {
-        Timber.e("enableEqualizer: ")
         equalizerInteractor.enableEqualizer(enabled)
     }
 }

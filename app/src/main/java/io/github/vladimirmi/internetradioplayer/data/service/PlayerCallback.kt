@@ -36,13 +36,6 @@ abstract class PlayerCallback : Player.EventListener {
             onAudioSessionId(EVENT_SESSION_END, sessionId)
             sessionId = audioSessionId
             onAudioSessionId(EVENT_SESSION_START, audioSessionId)
-
-            player?.volume = 0f
-            val animator = ValueAnimator.ofFloat(0f, 1f)
-                    .setDuration(3000)
-
-            animator.addUpdateListener { player?.volume = it.animatedValue as Float }
-            animator.start()
         }
     }
 
@@ -113,6 +106,7 @@ abstract class PlayerCallback : Player.EventListener {
         if (playbackState == Player.STATE_READY) {
             mediaMetadata = mediaMetadata.setDuration(player?.duration ?: 0)
             playbackStateCompat = playbackStateCompat.setPosition(player?.currentPosition ?: 0)
+            if (playWhenReady && player?.volume == 0f) fadeInVolume(player)
 //            val actionsChanger = if (player?.isCurrentWindowSeekable == true) PlayerActions::enableSeek
 //            else PlayerActions::disableSeek
 //            playbackStateCompat = playbackStateCompat.changeActions(actionsChanger)
@@ -171,5 +165,12 @@ abstract class PlayerCallback : Player.EventListener {
             playbackState == Player.STATE_ENDED -> PlaybackStateCompat.STATE_STOPPED
             else -> PlaybackStateCompat.STATE_NONE
         }
+    }
+
+    private fun fadeInVolume(player: SimpleExoPlayer?) {
+        player ?: return
+        val volumeAnimator = ValueAnimator.ofFloat(0f, 1f).setDuration(3000)
+        volumeAnimator.addUpdateListener { player.volume = it.animatedValue as Float }
+        volumeAnimator.start()
     }
 }

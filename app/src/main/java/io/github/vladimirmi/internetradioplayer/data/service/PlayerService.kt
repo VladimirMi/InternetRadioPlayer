@@ -101,14 +101,14 @@ class PlayerService : MediaBrowserServiceCompat(), SessionCallback.Interface {
 
     override fun onGetRoot(clientPackageName: String,
                            clientUid: Int,
-                           rootHints: Bundle?): MediaBrowserServiceCompat.BrowserRoot? {
+                           rootHints: Bundle?): BrowserRoot? {
 
-        return MediaBrowserServiceCompat.BrowserRoot(getString(R.string.app_name), null)
+        return BrowserRoot(getString(R.string.app_name), null)
     }
 
     override fun onLoadChildren(
             parentId: String,
-            result: MediaBrowserServiceCompat.Result<List<MediaBrowserCompat.MediaItem>>) {
+            result: Result<List<MediaBrowserCompat.MediaItem>>) {
 
         result.sendResult(emptyList())
     }

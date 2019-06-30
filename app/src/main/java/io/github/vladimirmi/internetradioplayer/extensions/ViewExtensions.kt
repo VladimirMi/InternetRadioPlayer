@@ -11,6 +11,7 @@ import android.view.ViewTreeObserver
 import android.view.animation.AccelerateDecelerateInterpolator
 import android.widget.SeekBar
 import android.widget.TextView
+import androidx.annotation.IdRes
 import androidx.drawerlayout.widget.DrawerLayout
 import androidx.dynamicanimation.animation.DynamicAnimation
 import androidx.dynamicanimation.animation.SpringAnimation
@@ -67,6 +68,12 @@ fun View.visible(visible: Boolean, gone: Boolean = true) {
 
 val View?.isVisible: Boolean
     get() = this?.visibility == View.VISIBLE
+
+fun View.findParent(@IdRes id: Int): View? {
+    val parentView = parent as? View ?: return null
+    return if (parentView.id == id) parentView
+    else parentView.findParent(id)
+}
 
 fun TextView.onTextChanges(listener: (String) -> Unit) {
     addTextChangedListener(object : TextWatcher {

@@ -4,13 +4,14 @@ import android.view.View
 import android.widget.AdapterView
 import android.widget.ArrayAdapter
 import android.widget.SeekBar
+import androidx.constraintlayout.widget.ConstraintLayout
+import androidx.constraintlayout.widget.ConstraintSet
+import com.google.android.material.switchmaterial.SwitchMaterial
 import io.github.vladimirmi.internetradioplayer.R
 import io.github.vladimirmi.internetradioplayer.di.Scopes
 import io.github.vladimirmi.internetradioplayer.domain.model.EqualizerConfig
 import io.github.vladimirmi.internetradioplayer.domain.model.EqualizerPreset
-import io.github.vladimirmi.internetradioplayer.extensions.setProgressX
-import io.github.vladimirmi.internetradioplayer.extensions.visible
-import io.github.vladimirmi.internetradioplayer.extensions.waitForMeasure
+import io.github.vladimirmi.internetradioplayer.extensions.*
 import io.github.vladimirmi.internetradioplayer.presentation.base.BaseFragment
 import io.github.vladimirmi.internetradioplayer.ui.EqualizerContainer
 import io.github.vladimirmi.internetradioplayer.utils.SimpleOnSeekBarChangeListener
@@ -25,6 +26,10 @@ class EqualizerFragment : BaseFragment<EqualizerPresenter, EqualizerView>(), Equ
 
     private lateinit var presetAdapter: ArrayAdapter<String>
     private var change = false
+    private var toolbar: ConstraintLayout? = null
+    private val enableSwitch: SwitchMaterial by lazy {
+        SwitchMaterial(requireContext()).apply { id = R.id.equalizerSwitch }
+    }
 
     override val layout = R.layout.fragment_equalizer
 
@@ -51,6 +56,24 @@ class EqualizerFragment : BaseFragment<EqualizerPresenter, EqualizerView>(), Equ
 
         switchBindBt.setOnClickListener { presenter.switchBind() }
         resetBt.setOnClickListener { presenter.resetCurrentPreset() }
+        setupEnableSwitch(view)
+    }
+
+    private fun setupEnableSwitch(view: View) {
+        toolbar = view.findParent(R.id.drawerLayout)?.findViewById(R.id.toolbarContainer)
+        toolbar?.addView(enableSwitch)
+        with(ConstraintSet()) {
+            clone(toolbar)
+            connect(enableSwitch.id, ConstraintSet.END, ConstraintSet.PARENT_ID, ConstraintSet.END, 8 * view.context.dp)
+            connect(enableSwitch.id, ConstraintSet.TOP, ConstraintSet.PARENT_ID, ConstraintSet.TOP)
+            connect(enableSwitch.id, ConstraintSet.BOTTOM, ConstraintSet.PARENT_ID, ConstraintSet.BOTTOM)
+            applyTo(toolbar)
+        }
+    }
+
+    override fun onDestroy() {
+        super.onDestroy()
+        toolbar?.removeView(enableSwitch)
     }
 
     override fun setupEqualizer(config: EqualizerConfig) {

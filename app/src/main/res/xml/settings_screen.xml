@@ -27,6 +27,26 @@
     </PreferenceCategory>
 
     <PreferenceCategory
+        android:title="Playback"
+        app:iconSpaceReserved="false">
+
+        <SwitchPreference
+            android:key="KEY_COVER_ART"
+            android:title="Show cover art"
+            app:iconSpaceReserved="false"
+            android:defaultValue="true"
+            />
+
+        <Preference
+            android:key="AUDIO_FOCUS"
+            android:title="Audio focus lose"
+            android:persistent="false"
+            app:iconSpaceReserved="false"
+            />
+
+    </PreferenceCategory>
+
+    <PreferenceCategory
         android:title="@string/settings_backup_restore"
         app:iconSpaceReserved="false">
 

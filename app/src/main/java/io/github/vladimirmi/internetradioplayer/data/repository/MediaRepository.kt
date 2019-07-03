@@ -1,7 +1,7 @@
 package io.github.vladimirmi.internetradioplayer.data.repository
 
 import com.jakewharton.rxrelay2.BehaviorRelay
-import io.github.vladimirmi.internetradioplayer.data.utils.Preferences
+import io.github.vladimirmi.internetradioplayer.data.preference.Preferences
 import io.github.vladimirmi.internetradioplayer.domain.model.Media
 import io.github.vladimirmi.internetradioplayer.domain.model.MediaQueue
 import io.github.vladimirmi.internetradioplayer.domain.model.SingletonMediaQueue

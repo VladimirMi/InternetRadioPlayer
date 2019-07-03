@@ -54,7 +54,6 @@ class Playback(private val service: PlayerService,
     fun prepare(uri: Uri) {
         runOnUiThread {
             if (player == null) createPlayer()
-            player?.volume = 0f
             if (Util.isLocalFileUri(uri)) {
                 prepareFilePlayer(uri)
                 registerAudioNoisyReceiver()
@@ -67,6 +66,7 @@ class Playback(private val service: PlayerService,
 
     fun play() {
         runOnUiThread {
+            player?.volume = 0f
             player?.playWhenReady = true
         }
     }

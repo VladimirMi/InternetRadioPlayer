@@ -1,6 +1,6 @@
 package io.github.vladimirmi.internetradioplayer.presentation.search
 
-import io.github.vladimirmi.internetradioplayer.data.utils.Preferences
+import io.github.vladimirmi.internetradioplayer.data.preference.Preferences
 import io.github.vladimirmi.internetradioplayer.di.Scopes
 import io.github.vladimirmi.internetradioplayer.presentation.navigation.NavigationHolderFragment
 import io.github.vladimirmi.internetradioplayer.presentation.navigation.ScreenContext

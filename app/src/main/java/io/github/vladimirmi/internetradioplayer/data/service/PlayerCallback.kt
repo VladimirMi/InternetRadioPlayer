@@ -167,9 +167,11 @@ abstract class PlayerCallback : Player.EventListener {
         }
     }
 
+    private val volumeAnimator = ValueAnimator.ofFloat(0f, 1f).setDuration(3000)
+
     private fun fadeInVolume(player: SimpleExoPlayer?) {
-        player ?: return
-        val volumeAnimator = ValueAnimator.ofFloat(0f, 1f).setDuration(3000)
+        if (player == null) return
+        volumeAnimator.cancel()
         volumeAnimator.addUpdateListener { player.volume = it.animatedValue as Float }
         volumeAnimator.start()
     }

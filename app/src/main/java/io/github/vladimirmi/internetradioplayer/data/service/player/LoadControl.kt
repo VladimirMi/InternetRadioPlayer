@@ -8,7 +8,7 @@ import com.google.android.exoplayer2.source.TrackGroupArray
 import com.google.android.exoplayer2.trackselection.TrackSelectionArray
 import com.google.android.exoplayer2.upstream.DefaultAllocator
 import com.google.android.exoplayer2.util.Util
-import io.github.vladimirmi.internetradioplayer.data.utils.Preferences
+import io.github.vladimirmi.internetradioplayer.data.preference.Preferences
 import javax.inject.Inject
 
 /**

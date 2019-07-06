@@ -1,6 +1,5 @@
 package io.github.vladimirmi.internetradioplayer.data.service.player
 
-import android.content.SharedPreferences
 import com.google.android.exoplayer2.C
 import com.google.android.exoplayer2.DefaultLoadControl
 import com.google.android.exoplayer2.Renderer
@@ -9,6 +8,8 @@ import com.google.android.exoplayer2.trackselection.TrackSelectionArray
 import com.google.android.exoplayer2.upstream.DefaultAllocator
 import com.google.android.exoplayer2.util.Util
 import io.github.vladimirmi.internetradioplayer.data.preference.Preferences
+import io.github.vladimirmi.internetradioplayer.extensions.subscribeX
+import timber.log.Timber
 import javax.inject.Inject
 
 /**
@@ -35,20 +36,20 @@ class LoadControl
     private val maxBufferUs = C.msToUs(DEFAULT_MAX_BUFFER_MS.toLong())
     private var isBuffering: Boolean = false
 
-
-    private val listener = SharedPreferences.OnSharedPreferenceChangeListener { _, key ->
-        if (key == Preferences.KEY_INITIAL_BUFFER_LENGTH) {
-            initialBufferUs = C.msToUs(prefs.initialBufferLength * 1000L)
-            reset(true)
-
-        } else if (key == Preferences.KEY_BUFFER_LENGTH) {
-            bufferUs = C.msToUs(prefs.bufferLength * 1000L)
-            reset(true)
-        }
-    }
-
     init {
-        prefs.sharedPreferences.registerOnSharedPreferenceChangeListener(listener)
+        prefs.observe<Int>(Preferences.KEY_INITIAL_BUFFER_LENGTH)
+                .subscribeX(onNext = {
+                    Timber.e("KEY_INITIAL_BUFFER_LENGTH $it")
+                    initialBufferUs = C.msToUs(it * 1000L)
+                    reset(true)
+                })
+
+        prefs.observe<Int>(Preferences.KEY_BUFFER_LENGTH)
+                .subscribeX(onNext = {
+                    Timber.e("KEY_BUFFER_LENGTH $it")
+                    bufferUs = C.msToUs(it * 1000L)
+                    reset(true)
+                })
     }
 
     override fun onTracksSelected(renderers: Array<Renderer>, trackGroups: TrackGroupArray,

@@ -4,6 +4,7 @@ import android.content.Context
 import android.content.SharedPreferences
 import io.github.vladimirmi.internetradioplayer.R
 import io.github.vladimirmi.internetradioplayer.utils.Preference
+import io.reactivex.Observable
 import javax.inject.Inject
 
 /**
@@ -26,7 +27,7 @@ class Preferences
         const val KEY_AUDIO_FOCUS = "AUDIO_FOCUS"
     }
 
-    val sharedPreferences: SharedPreferences by lazy {
+    private val sharedPreferences: SharedPreferences by lazy {
         context.getSharedPreferences(PREFERENCES_NAME, Context.MODE_PRIVATE)
     }
     var initialBufferLength: Int by Preference(sharedPreferences, KEY_INITIAL_BUFFER_LENGTH, 3)
@@ -38,4 +39,28 @@ class Preferences
     var equalizerEnabled: Boolean by Preference(sharedPreferences, KEY_EQUALIZER_ENABLED, false)
     var searchScreenPath: String by Preference(sharedPreferences, KEY_SEARCH_SCREEN_PATH, "")
     var audioFocus: AudioFocusPreference by AudioFocusPreferenceDelegate(sharedPreferences)
+
+    private val listeners = mutableListOf<SharedPreferences.OnSharedPreferenceChangeListener>()
+
+    @Suppress("ThrowableNotThrown", "UNCHECKED_CAST")
+    fun <T> observe(key: String): Observable<T> {
+        return Observable.create { emitter ->
+            val value = sharedPreferences.all[key]
+            if (value == null) emitter.tryOnError(IllegalStateException("Cannot find Key='$key' in the prefs"))
+
+            (value as? T)?.let { if (!emitter.isDisposed) emitter.onNext(it) }
+                    ?: emitter.tryOnError(IllegalStateException("Preference(key='$key', value='$value') cannot be casted"))
+
+            val listener: SharedPreferences.OnSharedPreferenceChangeListener =
+                    SharedPreferences.OnSharedPreferenceChangeListener { prefs, k ->
+                        if (k == key && !emitter.isDisposed) emitter.onNext(prefs.all[k] as T)
+                    }
+            listeners.add(listener)
+            sharedPreferences.registerOnSharedPreferenceChangeListener(listener)
+            emitter.setCancellable {
+                sharedPreferences.unregisterOnSharedPreferenceChangeListener(listener)
+                listeners.remove(listener)
+            }
+        }
+    }
 }

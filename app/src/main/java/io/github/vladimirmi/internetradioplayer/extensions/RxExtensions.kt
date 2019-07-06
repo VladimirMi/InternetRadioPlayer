@@ -20,11 +20,10 @@ import java.net.SocketException
 
 val errorHandler: (Throwable) -> Unit = {
     runOnUiThread {
-        if (it is MessageResException) {
-            Toast.makeText(Scopes.context, it.resId, Toast.LENGTH_SHORT).show()
-        } else {
-            Toast.makeText(Scopes.context, it.message, Toast.LENGTH_SHORT).show()
-            if (it !is MessageException) Timber.e(it)
+        when (it) {
+            is MessageResException -> Toast.makeText(Scopes.context, it.resId, Toast.LENGTH_SHORT).show()
+            is MessageException -> Toast.makeText(Scopes.context, it.message, Toast.LENGTH_SHORT).show()
+            else -> Timber.e(it)
         }
     }
 }

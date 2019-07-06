@@ -24,6 +24,7 @@ class Preferences
         const val KEY_SELECTED_MEDIA_ID = "SELECTED_MEDIA_ID"
         const val KEY_EQUALIZER_ENABLED = "EQUALIZER_ENABLED"
         const val KEY_SEARCH_SCREEN_PATH = "SEARCH_SCREEN_PATH"
+        const val KEY_COVER_ART_ENABLED = "COVER_ART_ENABLED"
         const val KEY_AUDIO_FOCUS = "AUDIO_FOCUS"
     }
 
@@ -38,6 +39,7 @@ class Preferences
     var mediaId: String by Preference(sharedPreferences, KEY_SELECTED_MEDIA_ID, "")
     var equalizerEnabled: Boolean by Preference(sharedPreferences, KEY_EQUALIZER_ENABLED, false)
     var searchScreenPath: String by Preference(sharedPreferences, KEY_SEARCH_SCREEN_PATH, "")
+    var coverArtEnabled: Boolean by Preference(sharedPreferences, KEY_COVER_ART_ENABLED, true)
     var audioFocus: AudioFocusPreference by AudioFocusPreferenceDelegate(sharedPreferences)
 
     private val listeners = mutableListOf<SharedPreferences.OnSharedPreferenceChangeListener>()

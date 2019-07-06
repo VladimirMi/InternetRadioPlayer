@@ -28,6 +28,7 @@ class PlayerFragment : BaseFragment<PlayerPresenter, PlayerView>(), PlayerView {
 
     private lateinit var playerBehavior: BottomSheetBehavior<View>
     private var isSeekEnabled = false
+    private var isCoverArtEnabled = false
     private val infoAdapter = InfoAdapter(lifecycle)
 
 
@@ -105,7 +106,7 @@ class PlayerFragment : BaseFragment<PlayerPresenter, PlayerView>(), PlayerView {
         favoriteIv.visible(true)
         val tint = if (station.isFavorite) R.color.orange_500 else R.color.primary_variant
         favoriteIv.background.setTintExt(requireContext().color(tint))
-        infoAdapter.coverArtEnabled = true
+        infoAdapter.coverArtEnabled = isCoverArtEnabled
     }
 
     override fun setRecord(record: Record) {
@@ -159,6 +160,11 @@ class PlayerFragment : BaseFragment<PlayerPresenter, PlayerView>(), PlayerView {
     override fun enableSkip(isEnabled: Boolean) {
         nextBt.isEnabled = isEnabled
         previousBt.isEnabled = isEnabled
+    }
+
+    override fun enableCoverArt(isEnabled: Boolean) {
+        isCoverArtEnabled = isEnabled
+        infoAdapter.coverArtEnabled = isEnabled
     }
 
     //endregion

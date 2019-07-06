@@ -5,6 +5,7 @@ import android.view.ViewGroup
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.LifecycleObserver
 import androidx.viewpager.widget.PagerAdapter
+import io.github.vladimirmi.internetradioplayer.presentation.base.BaseCustomView
 import io.github.vladimirmi.internetradioplayer.presentation.player.coverart.CoverArtViewImpl
 import io.github.vladimirmi.internetradioplayer.presentation.player.mediainfo.MediaInfoViewImpl
 
@@ -27,13 +28,16 @@ class InfoAdapter(private val lifecycle: Lifecycle) : PagerAdapter() {
         } else {
             CoverArtViewImpl(container.context)
         }
-        (view as? LifecycleObserver)?.let { lifecycle.addObserver(it) }
         container.addView(view)
+        lifecycle.addObserver(view as LifecycleObserver)
         return view
     }
 
     override fun destroyItem(container: ViewGroup, position: Int, obj: Any) {
-        container.removeView(obj as View)
+        lifecycle.removeObserver(obj as LifecycleObserver)
+        (obj as BaseCustomView<*, *>).onStop()
+        container.removeView(obj)
+        obj.onDestroy()
     }
 
     override fun isViewFromObject(view: View, obj: Any): Boolean {
@@ -45,6 +49,7 @@ class InfoAdapter(private val lifecycle: Lifecycle) : PagerAdapter() {
     }
 
     override fun getItemPosition(obj: Any): Int {
-        return POSITION_NONE
+        return if (!coverArtEnabled && obj is CoverArtViewImpl) POSITION_NONE
+        else POSITION_UNCHANGED
     }
 }

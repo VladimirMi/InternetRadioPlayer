@@ -6,6 +6,7 @@ import android.support.v4.media.session.PlaybackStateCompat
 import com.google.android.exoplayer2.C
 import io.github.vladimirmi.internetradioplayer.R
 import io.github.vladimirmi.internetradioplayer.data.db.entity.Station
+import io.github.vladimirmi.internetradioplayer.data.preference.Preferences
 import io.github.vladimirmi.internetradioplayer.data.service.PlayerService
 import io.github.vladimirmi.internetradioplayer.data.service.extensions.*
 import io.github.vladimirmi.internetradioplayer.domain.interactor.MediaInteractor
@@ -27,7 +28,8 @@ import kotlin.concurrent.schedule
 class PlayerPresenter
 @Inject constructor(private val stationInteractor: StationInteractor,
                     private val playerInteractor: PlayerInteractor,
-                    private val mediaInteractor: MediaInteractor)
+                    private val mediaInteractor: MediaInteractor,
+                    private val preferences: Preferences)
     : BasePresenter<PlayerView>() {
 
     private var playTask: TimerTask? = null
@@ -35,6 +37,9 @@ class PlayerPresenter
     override fun onAttach(view: PlayerView) {
         setupStation()
         setupPlayer()
+        preferences.observe<Boolean>(Preferences.KEY_COVER_ART_ENABLED)
+                .subscribeX(onNext = { view.enableCoverArt(it) })
+                .addTo(viewSubs)
     }
 
     private fun setupStation() {

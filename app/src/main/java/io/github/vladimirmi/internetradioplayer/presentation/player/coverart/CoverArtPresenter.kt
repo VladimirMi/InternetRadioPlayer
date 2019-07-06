@@ -40,4 +40,8 @@ class CoverArtPresenter
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribeX(onSuccess = { view?.setCoverArt(it) })
     }
+
+    override fun onDestroy() {
+        coverArtLoad?.dispose()
+    }
 }

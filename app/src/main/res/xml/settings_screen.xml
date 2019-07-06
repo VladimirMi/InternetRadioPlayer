@@ -31,7 +31,7 @@
         app:iconSpaceReserved="false">
 
         <SwitchPreference
-            android:key="KEY_COVER_ART"
+            android:key="COVER_ART_ENABLED"
             android:title="Show cover art"
             app:iconSpaceReserved="false"
             android:defaultValue="true"

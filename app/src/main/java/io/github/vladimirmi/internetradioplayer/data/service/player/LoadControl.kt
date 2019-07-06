@@ -9,7 +9,6 @@ import com.google.android.exoplayer2.upstream.DefaultAllocator
 import com.google.android.exoplayer2.util.Util
 import io.github.vladimirmi.internetradioplayer.data.preference.Preferences
 import io.github.vladimirmi.internetradioplayer.extensions.subscribeX
-import timber.log.Timber
 import javax.inject.Inject
 
 /**
@@ -39,14 +38,12 @@ class LoadControl
     init {
         prefs.observe<Int>(Preferences.KEY_INITIAL_BUFFER_LENGTH)
                 .subscribeX(onNext = {
-                    Timber.e("KEY_INITIAL_BUFFER_LENGTH $it")
                     initialBufferUs = C.msToUs(it * 1000L)
                     reset(true)
                 })
 
         prefs.observe<Int>(Preferences.KEY_BUFFER_LENGTH)
                 .subscribeX(onNext = {
-                    Timber.e("KEY_BUFFER_LENGTH $it")
                     bufferUs = C.msToUs(it * 1000L)
                     reset(true)
                 })

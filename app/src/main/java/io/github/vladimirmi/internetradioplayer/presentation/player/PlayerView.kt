@@ -33,4 +33,6 @@ interface PlayerView : BaseView {
     fun enableSeek(isEnabled: Boolean)
 
     fun enableSkip(isEnabled: Boolean)
+
+    fun enableCoverArt(isEnabled: Boolean)
 }

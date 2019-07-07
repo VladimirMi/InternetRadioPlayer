@@ -20,10 +20,9 @@ open class ScreenContext(val title: String) {
 
     constructor(@StringRes titleId: Int) : this(Scopes.context.getString(titleId))
 
-    val id = UUID.randomUUID().toString()
+    val id = SearchNavigationTree.screenId++
     val children = ArrayList<ScreenContext>()
     var parent: ScreenContext? = null
-    val path: String get() = "${parent?.path ?: ""}/$title"
 
     var position: Int = 0
 

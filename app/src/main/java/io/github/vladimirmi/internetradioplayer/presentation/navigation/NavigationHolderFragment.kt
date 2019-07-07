@@ -11,6 +11,7 @@ import androidx.interpolator.view.animation.FastOutSlowInInterpolator
 import androidx.transition.Slide
 import androidx.transition.TransitionManager
 import io.github.vladimirmi.internetradioplayer.R
+import io.github.vladimirmi.internetradioplayer.extensions.dp
 import io.github.vladimirmi.internetradioplayer.extensions.visible
 import io.github.vladimirmi.internetradioplayer.extensions.waitForLayout
 import io.github.vladimirmi.internetradioplayer.presentation.base.BackPressListener
@@ -63,13 +64,14 @@ abstract class NavigationHolderFragment : Fragment(), BackPressListener {
     }
 
     private fun backTo(screenContext: ScreenContext?): Boolean {
-        childFragmentManager.popBackStack()
         if (screenContext == null) return false
         setupNavigation(screenContext, animate = true, isForward = false)
+        childFragmentManager.popBackStack()
         return true
     }
 
     private fun setupNavigation(screenContext: ScreenContext, animate: Boolean, isForward: Boolean) {
+        dataContainer.removeAllViews()
         setupParent(screenContext, animate, isForward)
         setupChildren(screenContext, animate, isForward)
         currentScreenContext = screenContext
@@ -123,27 +125,26 @@ abstract class NavigationHolderFragment : Fragment(), BackPressListener {
         if (!animate) {
             onEnd(); return
         }
+        val parentX = 24f * requireContext().dp
+        fun childX(view: View) = (requireView().width - view.width).toFloat()
+
         if (isForward) {
-            val startX = screenTitleTv.x
-            val endX = parentTitleTv.x
             parentTitleTv.visible(false)
             screenTitleTv.animate()
                     .setInterpolator(FastOutSlowInInterpolator())
-                    .x(endX)
+                    .x(parentX)
                     .withEndAction {
-                        screenTitleTv.x = startX
+                        screenTitleTv.x = childX(screenTitleTv)
                         parentTitleTv.visible(true)
                         onEnd()
                     }
         } else {
-            val startX = parentTitleTv.x
-            val endX = (requireView().width - parentTitleTv.width).toFloat()
             screenTitleTv.visible(false)
             parentTitleTv.animate()
                     .setInterpolator(FastOutSlowInInterpolator())
-                    .x(endX)
+                    .x(childX(parentTitleTv))
                     .withEndAction {
-                        parentTitleTv.x = startX
+                        parentTitleTv.x = parentX
                         screenTitleTv.visible(true)
                         onEnd()
                     }

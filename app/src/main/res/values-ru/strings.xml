@@ -75,4 +75,11 @@
     <string name="menu_edit">Редактировать</string>
     <string name="dialog_edit_station">Редактировать станцию</string>
     <string name="dialog_edit_group">Редактировать группу</string>
+    <string name="recording">Запись…</string>
+    <string name="search_genre">Жанры</string>
+    <string name="search_manual">Ручной поиск</string>
+    <string name="setting_audio_focus">Поведение при потере аудио-фокуса</string>
+    <string name="setting_load_cover_art">Загружать обложку</string>
+    <string name="setting_summary_duck">Приглушать звук</string>
+    <string name="setting_summary_pause">Приостанавливать воспроизведение</string>
 </resources>

@@ -57,8 +57,6 @@
     <string name="tab_history">History</string>
     <string name="tab_stations">Stations</string>
     <string name="tab_records">Records</string>
-    <string name="tab_talk">Talk</string>
-    <string name="tab_music">Music</string>
 
     <string-array name="main_tabs">
         <item>@string/tab_search</item>
@@ -87,14 +85,8 @@
     <string name="setting_privacy">Privacy policy</string>
     <string name="setting_audio_focus">Loss of audio focus behavior</string>
     <string name="setting_summary_duck">Ducking audio</string>
-    <string name="setting_summary_pause">Pause</string>
-
-    <string name="info_group">Group</string>
-    <string name="info_genre">Genre</string>
-    <string name="info_lang">Language</string>
-    <string name="info_location">Location</string>
-    <string name="info_specs">Specs</string>
-    <string name="info_website">Website</string>
+    <string name="setting_summary_pause">Pause playback</string>
+    <string name="setting_load_cover_art">Load cover art</string>
 
     <string name="preset_bind_station">Apply to station</string>
     <string name="preset_bind_group">Apply to group</string>

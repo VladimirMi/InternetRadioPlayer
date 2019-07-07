@@ -23,7 +23,7 @@ class Preferences
         const val KEY_FAVORITE_PAGE_ID = "FAVORITE_PAGE_ID"
         const val KEY_SELECTED_MEDIA_ID = "SELECTED_MEDIA_ID"
         const val KEY_EQUALIZER_ENABLED = "EQUALIZER_ENABLED"
-        const val KEY_SEARCH_SCREEN_PATH = "SEARCH_SCREEN_PATH"
+        const val KEY_SEARCH_SCREEN_ID = "SEARCH_SCREEN_ID"
         const val KEY_COVER_ART_ENABLED = "COVER_ART_ENABLED"
         const val KEY_AUDIO_FOCUS = "AUDIO_FOCUS"
     }
@@ -38,7 +38,7 @@ class Preferences
     var favoritePageId: Int by Preference(sharedPreferences, KEY_FAVORITE_PAGE_ID, -1)
     var mediaId: String by Preference(sharedPreferences, KEY_SELECTED_MEDIA_ID, "")
     var equalizerEnabled: Boolean by Preference(sharedPreferences, KEY_EQUALIZER_ENABLED, false)
-    var searchScreenPath: String by Preference(sharedPreferences, KEY_SEARCH_SCREEN_PATH, "")
+    var searchScreenId: Int by Preference(sharedPreferences, KEY_SEARCH_SCREEN_ID, 0)
     var coverArtEnabled: Boolean by Preference(sharedPreferences, KEY_COVER_ART_ENABLED, true)
     var audioFocus: AudioFocusPreference by AudioFocusPreferenceDelegate(sharedPreferences)
 
@@ -52,7 +52,7 @@ class Preferences
             KEY_FAVORITE_PAGE_ID to { favoritePageId },
             KEY_SELECTED_MEDIA_ID to { mediaId },
             KEY_EQUALIZER_ENABLED to { equalizerEnabled },
-            KEY_SEARCH_SCREEN_PATH to { searchScreenPath },
+            KEY_SEARCH_SCREEN_ID to { searchScreenId },
             KEY_COVER_ART_ENABLED to { coverArtEnabled },
             KEY_AUDIO_FOCUS to { audioFocus }
     )

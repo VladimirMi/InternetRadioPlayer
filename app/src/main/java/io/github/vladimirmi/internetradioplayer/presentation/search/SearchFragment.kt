@@ -17,12 +17,10 @@ class SearchFragment : NavigationHolderFragment() {
     }
 
     override fun getFirstScreen(): ScreenContext {
-        val path = preferences.searchScreenPath
-        return if (path.isEmpty()) SearchNavigationTree.getDefaultScreen()
-        else SearchNavigationTree.getScreenByPath(path)
+        return SearchNavigationTree.getScreen(preferences.searchScreenId)
     }
 
     override fun onScreenChange(screen: ScreenContext) {
-        preferences.searchScreenPath = screen.path
+        preferences.searchScreenId = screen.id
     }
 }

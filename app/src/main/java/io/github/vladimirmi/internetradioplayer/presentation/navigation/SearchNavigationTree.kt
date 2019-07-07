@@ -2,12 +2,15 @@ package io.github.vladimirmi.internetradioplayer.presentation.navigation
 
 import io.github.vladimirmi.internetradioplayer.R
 import io.github.vladimirmi.internetradioplayer.presentation.search.ManualSearchFragment
+import timber.log.Timber
 
 /**
  * Created by Vladimir Mikhalev 20.03.2019.
  */
 
 object SearchNavigationTree {
+
+    var screenId = 0
 
     private val rootScreen = SearchRootScreen {
         fragmentScreen(R.string.search_manual, ManualSearchFragment::class.java)
@@ -49,18 +52,9 @@ object SearchNavigationTree {
         }
     }
 
-    fun getScreen(id: String): ScreenContext {
+    fun getScreen(id: Int): ScreenContext {
         return rootScreen.findScreen { it.id == id }
-                ?: throw IllegalStateException("Can not find screen with id $id")
-    }
-
-    fun getScreenByPath(path: String): ScreenContext {
-        return rootScreen.findScreen { it.path == path }
-                ?: throw IllegalStateException("Cannot find screen with path $path")
-    }
-
-    fun getDefaultScreen(): ScreenContext {
-        return rootScreen.children.first()
+                ?: rootScreen.also { Timber.e("Cannot find screen $id") }
     }
 }
 

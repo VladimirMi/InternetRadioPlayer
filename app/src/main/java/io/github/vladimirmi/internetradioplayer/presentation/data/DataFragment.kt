@@ -24,8 +24,11 @@ class DataFragment : BaseFragment<DataPresenter, DataView>(), DataView {
         private const val EXTRA_SCREEN_ID = "EXTRA_SCREEN_ID"
 
         fun newInstance(screenContext: ScreenContext): DataFragment {
-            val args = Bundle().apply { putString(EXTRA_SCREEN_ID, screenContext.id) }
-            return DataFragment().apply { arguments = args }
+            return DataFragment().apply {
+                arguments = Bundle().apply {
+                    putInt(EXTRA_SCREEN_ID, screenContext.id)
+                }
+            }
         }
     }
 
@@ -42,7 +45,7 @@ class DataFragment : BaseFragment<DataPresenter, DataView>(), DataView {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        val id = arguments?.getString(EXTRA_SCREEN_ID) ?: return
+        val id = arguments?.getInt(EXTRA_SCREEN_ID) ?: return
         screenContext = SearchNavigationTree.getScreen(id) as DataScreen
     }
 

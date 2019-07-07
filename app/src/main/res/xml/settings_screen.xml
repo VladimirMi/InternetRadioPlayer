@@ -33,7 +33,7 @@
 
         <SwitchPreference
             android:key="COVER_ART_ENABLED"
-            android:title="Show cover art"
+            android:title="@string/setting_load_cover_art"
             app:iconSpaceReserved="false"
             android:defaultValue="true"
             />

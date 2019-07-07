@@ -6,6 +6,7 @@ package io.github.vladimirmi.internetradioplayer.domain.model
 
 interface MediaQueue {
 
+    //todo refactor: return not null
     fun getNext(id: String): Media?
 
     fun getPrevious(id: String): Media?

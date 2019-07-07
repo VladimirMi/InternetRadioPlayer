@@ -26,7 +26,7 @@ class PlayerFragment : BaseFragment<PlayerPresenter, PlayerView>(), PlayerView {
 
     override val layout = R.layout.fragment_player
 
-    private lateinit var playerBehavior: BottomSheetBehavior<View>
+    private var playerBehavior: BottomSheetBehavior<View>? = null
     private var isSeekEnabled = false
     private var isCoverArtEnabled = false
     private val infoAdapter = InfoAdapter(lifecycle)
@@ -45,7 +45,7 @@ class PlayerFragment : BaseFragment<PlayerPresenter, PlayerView>(), PlayerView {
 
         setupButtons()
         setupSeekBar()
-        setupBehavior()
+        setupBehavior(view)
         setupInfo()
     }
 
@@ -71,10 +71,10 @@ class PlayerFragment : BaseFragment<PlayerPresenter, PlayerView>(), PlayerView {
         })
     }
 
-    private fun setupBehavior() {
+    private fun setupBehavior(view: View) {
         requireView().post {
             playerBehavior = BottomSheetBehavior.from(view)
-            playerBehavior.setBottomSheetCallback(object : BottomSheetBehavior.BottomSheetCallback() {
+            playerBehavior?.setBottomSheetCallback(object : BottomSheetBehavior.BottomSheetCallback() {
                 override fun onSlide(bottomSheet: View, slideOffset: Float) {
                     setOffset(slideOffset)
                 }
@@ -214,20 +214,23 @@ class PlayerFragment : BaseFragment<PlayerPresenter, PlayerView>(), PlayerView {
     }
 }
 
-var BottomSheetBehavior<View>.isExpanded
-    get() = state == BottomSheetBehavior.STATE_EXPANDED
+var BottomSheetBehavior<View>?.isExpanded
+    get() = this?.state == BottomSheetBehavior.STATE_EXPANDED
     set(value) {
+        this ?: return
         state = if (value) BottomSheetBehavior.STATE_EXPANDED
         else BottomSheetBehavior.STATE_COLLAPSED
     }
-var BottomSheetBehavior<View>.isCollapsed
-    get() = state == BottomSheetBehavior.STATE_COLLAPSED
+var BottomSheetBehavior<View>?.isCollapsed
+    get() = this?.state == BottomSheetBehavior.STATE_COLLAPSED
     set(value) {
+        this ?: return
         if (value) state = BottomSheetBehavior.STATE_COLLAPSED
     }
-var BottomSheetBehavior<View>.isHidden
-    get() = state == BottomSheetBehavior.STATE_HIDDEN
+var BottomSheetBehavior<View>?.isHidden
+    get() = this?.state == BottomSheetBehavior.STATE_HIDDEN
     set(value) {
+        this ?: return
         state = if (value) BottomSheetBehavior.STATE_HIDDEN
         else BottomSheetBehavior.STATE_COLLAPSED
     }

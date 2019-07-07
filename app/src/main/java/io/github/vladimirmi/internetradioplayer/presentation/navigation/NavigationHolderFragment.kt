@@ -63,8 +63,8 @@ abstract class NavigationHolderFragment : Fragment(), BackPressListener {
     }
 
     private fun backTo(screenContext: ScreenContext?): Boolean {
-        if (screenContext == null) return false
         childFragmentManager.popBackStack()
+        if (screenContext == null) return false
         setupNavigation(screenContext, animate = true, isForward = false)
         return true
     }

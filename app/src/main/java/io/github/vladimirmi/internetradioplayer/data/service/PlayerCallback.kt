@@ -10,10 +10,11 @@ import com.google.android.exoplayer2.trackselection.TrackSelectionArray
 import io.github.vladimirmi.internetradioplayer.data.service.extensions.*
 import io.github.vladimirmi.internetradioplayer.domain.model.Media
 import io.github.vladimirmi.internetradioplayer.extensions.runOnUiThread
+import io.github.vladimirmi.internetradioplayer.utils.MessageException
 import timber.log.Timber
-import java.net.ConnectException
 import java.util.*
 import kotlin.concurrent.schedule
+import kotlin.math.max
 
 const val EVENT_SESSION_START = "EVENT_SESSION_START"
 const val EVENT_SESSION_END = "EVENT_SESSION_END"
@@ -55,7 +56,7 @@ abstract class PlayerCallback : Player.EventListener {
                 postMetadata()
             } else {
                 // take in to account buffered duration
-                val bufferedMs = player!!.bufferedPosition - player!!.currentPosition
+                val bufferedMs = max(player!!.bufferedPosition - player!!.currentPosition, 0)
                 metadataPostTask = Timer().schedule(bufferedMs) { postMetadata() }
             }
         }
@@ -82,13 +83,13 @@ abstract class PlayerCallback : Player.EventListener {
     override fun onPlayerError(error: ExoPlaybackException) {
         val exception = when (error.type) {
             ExoPlaybackException.TYPE_RENDERER -> {
-                RuntimeException("Renderer error occurred: ${error.rendererException.message}")
+                MessageException("Renderer error occurred: ${error.rendererException.message}")
             }
             ExoPlaybackException.TYPE_SOURCE -> {
-                ConnectException("Source error occurred: ${error.sourceException.message}")
+                MessageException("Source error occurred: ${error.sourceException.message}")
             }
             else -> {
-                RuntimeException("Unexpected error occurred: ${error.unexpectedException.message}")
+                MessageException("Unexpected error occurred: ${error.unexpectedException.message}")
             }
         }
         onPlayerError(exception)

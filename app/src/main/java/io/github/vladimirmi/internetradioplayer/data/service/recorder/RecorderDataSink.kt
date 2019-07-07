@@ -7,6 +7,7 @@ import com.google.android.exoplayer2.util.Util
 import io.github.vladimirmi.internetradioplayer.domain.interactor.RecordsInteractor
 import io.github.vladimirmi.internetradioplayer.domain.model.Record
 import io.github.vladimirmi.internetradioplayer.extensions.subscribeX
+import timber.log.Timber
 import java.io.FileOutputStream
 import java.io.IOException
 import javax.inject.Inject
@@ -73,6 +74,7 @@ class RecorderDataSink
             interactor.commitRecord(dataSpec.uri, record!!)
         } catch (ex: IOException) {
             interactor.deleteRecord(record!!).subscribeX()
+            Timber.e(ex)
         } finally {
             Util.closeQuietly(outputStream)
             outputStream = null

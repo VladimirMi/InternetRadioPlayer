@@ -20,6 +20,7 @@ import io.github.vladimirmi.internetradioplayer.presentation.base.BaseFragment
 import io.github.vladimirmi.internetradioplayer.presentation.data.DataAdapter
 import kotlinx.android.synthetic.main.fragment_search_manual.*
 import toothpick.Toothpick
+import kotlin.math.min
 
 /**
  * Created by Vladimir Mikhalev 12.11.2018.
@@ -200,7 +201,7 @@ class ManualSearchFragment : BaseFragment<ManualSearchPresenter, ManualSearchVie
         }
         val xy = IntArray(2)
         suggestionsRv.getLocationInWindow(xy)
-        val maxHeight = Math.min(visibleRect.bottom - xy[1], requireView().height)
+        val maxHeight = min(visibleRect.bottom - xy[1], requireView().height)
 
         val heightSpec = View.MeasureSpec.makeMeasureSpec(maxHeight, View.MeasureSpec.AT_MOST)
         val widthSpec = View.MeasureSpec.makeMeasureSpec(0, View.MeasureSpec.UNSPECIFIED)

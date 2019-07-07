@@ -184,8 +184,11 @@ class PlayerService : MediaBrowserServiceCompat(), SessionCallback.Interface {
     private val playerCallback = object : PlayerCallback() {
 
         override fun onPlaybackStateChanged(state: PlaybackStateCompat) {
-            session.setPlaybackState(state)
-            notification.update()
+            try {
+                session.setPlaybackState(state)
+                notification.update()
+            } catch (ignore: Exception) {
+            }
         }
 
         override fun onPlayerError(error: Exception) {

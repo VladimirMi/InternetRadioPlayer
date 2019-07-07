@@ -13,7 +13,6 @@ import io.reactivex.Completable
 import org.xmlpull.v1.XmlPullParser
 import org.xmlpull.v1.XmlSerializer
 import java.io.File
-import java.io.InputStream
 import java.io.StringWriter
 import java.util.*
 import javax.inject.Inject
@@ -111,13 +110,14 @@ class BackupRestoreHelper
         serializer.endTag(ns, GROUPS_TAG)
     }
 
-    fun restoreBackup(inS: InputStream): Completable {
-        val parser = Xml.newPullParser()
-        parser.setFeature(XmlPullParser.FEATURE_PROCESS_NAMESPACES, false)
+    fun restoreBackup(uri: Uri): Completable {
+        val parser = Xml.newPullParser().apply {
+            setFeature(XmlPullParser.FEATURE_PROCESS_NAMESPACES, false)
+        }
         val stations = arrayListOf<Pair<Station, String>>()
         val groups = arrayListOf<Group>()
         val parse = Completable.fromCallable {
-            inS.use {
+            context.contentResolver.openInputStream(uri).use {
                 parser.setInput(it, null)
                 while (parser.next() != XmlPullParser.END_DOCUMENT) {
 

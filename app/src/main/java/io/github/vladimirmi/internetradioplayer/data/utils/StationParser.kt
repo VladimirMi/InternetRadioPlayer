@@ -4,6 +4,7 @@ import android.content.Context
 import android.net.Uri
 import io.github.vladimirmi.internetradioplayer.data.db.entity.Station
 import io.github.vladimirmi.internetradioplayer.extensions.toURL
+import io.github.vladimirmi.internetradioplayer.utils.MessageException
 import okhttp3.*
 import timber.log.Timber
 import java.io.InputStream
@@ -75,7 +76,7 @@ class StationParser
         return when {
             uri.scheme?.startsWith(SCHEME_HTTP, true) == true -> parseFromNet(uri.toURL(), name) // also https
             uri.scheme == SCHEME_FILE || uri.scheme == SCHEME_CONTENT -> parseFromPlaylistFile(uri)
-            else -> throw IllegalArgumentException("Error: Unsupported uri $uri")
+            else -> throw MessageException("Error: Unsupported uri $uri")
         }
     }
 
@@ -92,16 +93,16 @@ class StationParser
     }
 
     private fun parseFromNet(url: URL, name: String?): Station {
-        if (!networkChecker.isAvailable()) throw IllegalStateException("Error: No connection")
+        if (!networkChecker.isAvailable()) throw MessageException("Error: No connection")
 
         val request = Request.Builder().url(url).build()
         val response = client.newCall(request).execute()
         val code = response.code()
         Timber.d("parseFromNet: $response")
 
-        if (code !in IntRange(200, 299)) throw IllegalStateException("${response.message()} : $code")
-        val body = response.body() ?: throw IllegalStateException("Error: Empty body")
-        val type = body.contentType() ?: throw IllegalStateException("Error: Empty content type")
+        if (code !in IntRange(200, 299)) throw MessageException("Error : $code ${response.message()}")
+        val body = response.body() ?: throw MessageException("Error: Empty body")
+        val type = body.contentType() ?: throw MessageException("Error: Empty content type")
 
         Timber.d("parseFromNet: $type")
         return (if (type.isPlaylistFile()) {
@@ -114,7 +115,7 @@ class StationParser
             createStation(name, originUrl, finalUrl, response.headers(), type.encoding)
 
         } else {
-            throw IllegalStateException("Error: Unsupported content type $type")
+            throw MessageException("Error: Unsupported content type $type")
 
         }).also { body.close() }
     }
@@ -154,7 +155,7 @@ class StationParser
                 line.startsWith(PLS_TITLE, true) -> title = line.substring(PLS_TITLE.length).trim()
             }
         }
-        if (url == null) throw IllegalStateException("Error: Playlist file does not contain stream uri")
+        if (url == null) throw MessageException("Error: Playlist file does not contain stream uri")
         if (title == null) {
             title = url.host ?: url.toString()
         }
@@ -181,7 +182,7 @@ class StationParser
                 }
             }
         }
-        if (url == null) throw IllegalStateException("Error: Playlist file does not contain stream uri")
+        if (url == null) throw MessageException("Error: Playlist file does not contain stream uri")
         if (title == null) {
             title = url.host ?: url.toString()
         }

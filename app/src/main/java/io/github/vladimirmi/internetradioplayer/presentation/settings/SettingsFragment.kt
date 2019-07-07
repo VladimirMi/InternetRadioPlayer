@@ -50,10 +50,10 @@ class SettingsFragment : PreferenceFragmentCompat(), BackPressListener {
     }
 
     override fun onDisplayPreferenceDialog(preference: Preference) {
-        if (preference is SeekBarDialogPreference) {
+        if (preference is SeekBarDialogPreference && !requireFragmentManager().isStateSaved) {
             val fragment = SeekBarDialogFragment.newInstance(preference.key)
             fragment.setTargetFragment(this, 0)
-            fragment.show(requireFragmentManager(), "SeekBarDialogFragment")
+            fragment.showNow(requireFragmentManager(), "SeekBarDialogFragment")
         } else {
             super.onDisplayPreferenceDialog(preference)
         }
@@ -62,7 +62,7 @@ class SettingsFragment : PreferenceFragmentCompat(), BackPressListener {
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         if (requestCode == PICK_BACKUP_REQUEST_CODE && resultCode == Activity.RESULT_OK && data?.data != null) {
             //todo to interactor
-            backupRestoreHelper.restoreBackup(requireContext().contentResolver.openInputStream(data.data!!)!!)
+            backupRestoreHelper.restoreBackup(data.data!!)
                     .andThen(Scopes.app.getInstance(FavoriteListInteractor::class.java).initFavoriteList())
                     .observeOn(AndroidSchedulers.mainThread())
                     .subscribeX(onComplete = { router.exit() })

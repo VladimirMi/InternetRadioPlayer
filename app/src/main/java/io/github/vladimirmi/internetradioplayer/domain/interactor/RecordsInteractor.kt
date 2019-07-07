@@ -32,11 +32,7 @@ class RecordsInteractor
     }
 
     fun commitRecord(stationUri: Uri, record: Record) {
-        val newRecord = record.copy(
-                createdAt = System.currentTimeMillis(),
-                duration = record.calculateDuration()
-        )
-        recordsRepository.records += newRecord
+        recordsRepository.records += record.commit()
         mediaInteractor.resetCurrentMediaAndQueue()
         recordsRepository.removeFromCurrentRecording(stationUri)
     }
@@ -55,7 +51,7 @@ class RecordsInteractor
                             recordsRepository.records -= record
                             mediaInteractor.resetCurrentMediaAndQueue()
                         }
-                    } else Completable.error(MessageException("Can not delete record"))
+                    } else Completable.error(MessageException("Cannot delete record"))
                 }
     }
 

@@ -4,7 +4,9 @@ import android.media.MediaMetadataRetriever
 import io.github.vladimirmi.internetradioplayer.data.db.entity.Group
 import io.github.vladimirmi.internetradioplayer.di.Scopes
 import io.github.vladimirmi.internetradioplayer.extensions.Formats
+import timber.log.Timber
 import java.io.File
+import kotlin.math.roundToInt
 
 
 /**
@@ -29,7 +31,7 @@ data class Record(override val id: String,
 
     val createdAtString = Formats.dateTime(createdAt)
     val durationString = Formats.duration(duration)
-    private val sizeMb: Double = run { Math.round(file.length() * 100 / 1024.0 / 1024.0) / 100.0 }
+    private val sizeMb: Double = run { (file.length() * 100 / 1024.0 / 1024.0).roundToInt() / 100.0 }
 
     init {
         specs = "$durationString, $sizeMb MB"
@@ -61,13 +63,18 @@ data class Record(override val id: String,
         }
 
         private fun getDuration(file: File): Long {
-            val mmr = Scopes.app.getInstance(MediaMetadataRetriever::class.java)
-            mmr.setDataSource(file.absolutePath)
-            return mmr.extractMetadata(MediaMetadataRetriever.METADATA_KEY_DURATION).toLong()
+            return try {
+                val mmr = Scopes.app.getInstance(MediaMetadataRetriever::class.java)
+                mmr.setDataSource(file.absolutePath)
+                mmr.extractMetadata(MediaMetadataRetriever.METADATA_KEY_DURATION).toLong()
+            } catch (e: Exception) {
+                Timber.e(e, file.absolutePath)
+                0
+            }
         }
     }
 
-    fun calculateDuration() = getDuration(file)
+    fun commit() = copy(createdAt = System.currentTimeMillis(), duration = getDuration(file))
 }
 
 

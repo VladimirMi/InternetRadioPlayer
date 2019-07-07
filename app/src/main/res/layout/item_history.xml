@@ -7,24 +7,24 @@
     android:layout_height="wrap_content"
     android:layout_marginLeft="8dp"
     android:layout_marginRight="8dp"
-    android:padding="8dp"
+    android:background="@drawable/bg_item_middle"
     android:elevation="2dp"
     android:foreground="?android:attr/selectableItemBackground"
     android:orientation="vertical"
+    android:padding="8dp"
     tools:ignore="UnusedAttribute"
-    android:gravity="center"
     >
 
     <TextView
         android:id="@+id/titleTv"
-        style="@style/TextAppearance.MaterialComponents.Subtitle1"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginBottom="4dp"
+        android:layout_marginBottom="8dp"
         android:ellipsize="end"
         android:maxLines="1"
+        android:textAppearance="@style/TextAppearance.MaterialComponents.Subtitle1"
         android:textStyle="bold"
-        tools:text="Speciess favere! A falsis, epos bassus pes."
+        tools:text="Item name"
         />
 
     <TextView
@@ -33,7 +33,8 @@
         android:layout_height="wrap_content"
         android:ellipsize="end"
         android:maxLines="1"
-        android:textAppearance="@style/TextAppearance.MaterialComponents.Body1"
-        tools:text="Music, Country"
+        android:textAppearance="@style/TextAppearance.MaterialComponents.Caption"
+        tools:text="Item name"
         />
+
 </LinearLayout>

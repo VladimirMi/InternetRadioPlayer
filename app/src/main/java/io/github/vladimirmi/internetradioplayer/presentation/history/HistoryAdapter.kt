@@ -59,7 +59,7 @@ class HistoryAdapter : RecyclerView.Adapter<HistoryVH>() {
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): HistoryVH {
         val inflater = LayoutInflater.from(parent.context)
-        val view = inflater.inflate(R.layout.item_station, parent, false)
+        val view = inflater.inflate(R.layout.item_history, parent, false)
         return HistoryVH(view)
     }
 

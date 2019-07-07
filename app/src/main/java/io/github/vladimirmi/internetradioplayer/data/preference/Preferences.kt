@@ -44,18 +44,31 @@ class Preferences
 
     private val listeners = mutableListOf<SharedPreferences.OnSharedPreferenceChangeListener>()
 
+    private val prefsMap: Map<String, () -> Any> = mapOf(
+            KEY_INITIAL_BUFFER_LENGTH to { initialBufferLength },
+            KEY_BUFFER_LENGTH to { bufferLength },
+            KEY_GLOBAL_PRESET to { globalPreset },
+            KEY_MAIN_PAGE_ID to { mainPageId },
+            KEY_FAVORITE_PAGE_ID to { favoritePageId },
+            KEY_SELECTED_MEDIA_ID to { mediaId },
+            KEY_EQUALIZER_ENABLED to { equalizerEnabled },
+            KEY_SEARCH_SCREEN_PATH to { searchScreenPath },
+            KEY_COVER_ART_ENABLED to { coverArtEnabled },
+            KEY_AUDIO_FOCUS to { audioFocus }
+    )
+
     @Suppress("ThrowableNotThrown", "UNCHECKED_CAST")
     fun <T> observe(key: String): Observable<T> {
         return Observable.create { emitter ->
-            val value = sharedPreferences.all[key]
-            if (value == null) emitter.tryOnError(IllegalStateException("Cannot find Key='$key' in the prefs"))
+            val value = prefsMap[key]
+            if (value == null) emitter.tryOnError(IllegalStateException("Cannot find Key='$key' in the prefsMap"))
 
-            (value as? T)?.let { if (!emitter.isDisposed) emitter.onNext(it) }
-                    ?: emitter.tryOnError(IllegalStateException("Preference(key='$key', value='$value') cannot be casted"))
+            (value?.invoke() as? T)?.let { if (!emitter.isDisposed) emitter.onNext(it) }
+                    ?: emitter.tryOnError(IllegalStateException("Preference(key='$key', value='${value?.invoke()}') cannot be casted"))
 
             val listener: SharedPreferences.OnSharedPreferenceChangeListener =
-                    SharedPreferences.OnSharedPreferenceChangeListener { prefs, k ->
-                        if (k == key && !emitter.isDisposed) emitter.onNext(prefs.all[k] as T)
+                    SharedPreferences.OnSharedPreferenceChangeListener { _, k ->
+                        if (k == key && !emitter.isDisposed) emitter.onNext(value?.invoke() as T)
                     }
             listeners.add(listener)
             sharedPreferences.registerOnSharedPreferenceChangeListener(listener)

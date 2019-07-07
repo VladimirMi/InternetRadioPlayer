@@ -85,6 +85,9 @@
     <string name="setting_backup">Backup stations</string>
     <string name="setting_restore">Restore stations</string>
     <string name="setting_privacy">Privacy policy</string>
+    <string name="setting_audio_focus">Loss of audio focus behavior</string>
+    <string name="setting_summary_duck">Ducking audio</string>
+    <string name="setting_summary_pause">Pause</string>
 
     <string name="info_group">Group</string>
     <string name="info_genre">Genre</string>

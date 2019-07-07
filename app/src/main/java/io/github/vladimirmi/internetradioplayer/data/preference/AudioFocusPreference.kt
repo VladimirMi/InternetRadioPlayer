@@ -2,6 +2,7 @@ package io.github.vladimirmi.internetradioplayer.data.preference
 
 import android.annotation.SuppressLint
 import android.content.SharedPreferences
+import io.github.vladimirmi.internetradioplayer.R
 import kotlin.reflect.KProperty
 
 /**
@@ -11,13 +12,16 @@ import kotlin.reflect.KProperty
 enum class AudioFocusPreference {
 
     Duck {
-        override fun nextState() = Pause
+        override val nextState get() = Pause
+        override val summary = R.string.setting_summary_pause
     },
     Pause {
-        override fun nextState() = Duck
+        override val nextState get() = Duck
+        override val summary = R.string.setting_summary_duck
     };
 
-    abstract fun nextState(): AudioFocusPreference
+    abstract val nextState: AudioFocusPreference
+    abstract val summary: Int
 
 }
 

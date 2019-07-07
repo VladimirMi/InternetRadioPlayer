@@ -87,10 +87,10 @@ class SettingsFragment : PreferenceFragmentCompat(), BackPressListener {
 
     private fun setupAudioFocusPref() {
         val audioFocusPreference: Preference? = findPreference(Preferences.KEY_AUDIO_FOCUS)
-        audioFocusPreference?.summary = preferences.audioFocus.name
+        audioFocusPreference?.setSummary(preferences.audioFocus.summary)
         audioFocusPreference?.setOnPreferenceClickListener {
-            val nextState = preferences.audioFocus.nextState()
-            it.summary = nextState.name
+            val nextState = preferences.audioFocus.nextState
+            it.setSummary(nextState.summary)
             preferences.audioFocus = nextState
             true
         }

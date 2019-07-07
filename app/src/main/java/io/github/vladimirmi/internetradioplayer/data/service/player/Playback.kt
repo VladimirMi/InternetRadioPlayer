@@ -5,7 +5,6 @@ import android.content.BroadcastReceiver
 import android.content.Context
 import android.content.Intent
 import android.content.IntentFilter
-import android.media.AudioManager
 import android.media.AudioManager.ACTION_AUDIO_BECOMING_NOISY
 import android.net.Uri
 import android.net.wifi.WifiManager
@@ -21,10 +20,13 @@ import com.google.android.exoplayer2.upstream.FileDataSource
 import com.google.android.exoplayer2.util.Util
 import io.github.vladimirmi.internetradioplayer.BuildConfig
 import io.github.vladimirmi.internetradioplayer.R
+import io.github.vladimirmi.internetradioplayer.data.preference.AudioFocusPreference
+import io.github.vladimirmi.internetradioplayer.data.preference.Preferences
 import io.github.vladimirmi.internetradioplayer.data.service.PlayerCallback
 import io.github.vladimirmi.internetradioplayer.data.service.PlayerService
 import io.github.vladimirmi.internetradioplayer.di.Scopes
 import io.github.vladimirmi.internetradioplayer.extensions.runOnUiThread
+import io.github.vladimirmi.internetradioplayer.extensions.subscribeX
 import io.github.vladimirmi.internetradioplayer.extensions.wifiManager
 import okhttp3.OkHttpClient
 
@@ -33,7 +35,8 @@ const val STOP_DELAY = 60000L // default stop delay 1 min
 private const val STOP_DELAY_HEADSET = 3 * 60000L // stop delay on headset unplug
 
 class Playback(private val service: PlayerService,
-               private val playerCallback: PlayerCallback) {
+               private val playerCallback: PlayerCallback,
+               private val preferences: Preferences) {
 
     private var playAgainOnHeadset = false
     private var player: SimpleExoPlayer? = null
@@ -49,6 +52,11 @@ class Playback(private val service: PlayerService,
         override fun onAudioSessionId(eventTime: AnalyticsListener.EventTime?, audioSessionId: Int) {
             playerCallback.setStartAudioSessionId(audioSessionId)
         }
+    }
+
+    init {
+        preferences.observe<AudioFocusPreference>(Preferences.KEY_AUDIO_FOCUS)
+                .subscribeX { setupAudioAttributes(it) }
     }
 
     fun prepare(uri: Uri) {
@@ -101,18 +109,24 @@ class Playback(private val service: PlayerService,
         }
     }
 
+
     private fun createPlayer() {
         player = ExoPlayerFactory.newSimpleInstance(service, AudioRenderersFactory(service),
                 DefaultTrackSelector(), loadControl)
         player?.addListener(playerCallback)
         playerCallback.player = player
         player?.addAnalyticsListener(analyticsListener)
+        setupAudioAttributes(preferences.audioFocus)
+    }
 
-        val audioAttributes = AudioAttributes.Builder()
-                .setUsage(C.USAGE_MEDIA)
-                .setContentType(C.CONTENT_TYPE_MUSIC)
-                .build()
-        player?.setAudioAttributes(audioAttributes, true)
+    private fun setupAudioAttributes(preference: AudioFocusPreference) {
+        player ?: return
+        val builder = AudioAttributes.Builder().setUsage(C.USAGE_MEDIA)
+        when (preference) {
+            AudioFocusPreference.Duck -> builder.setContentType(C.CONTENT_TYPE_MUSIC)
+            AudioFocusPreference.Pause -> builder.setContentType(C.CONTENT_TYPE_SPEECH)
+        }
+        player?.setAudioAttributes(builder.build(), true)
     }
 
     private fun prepareHttpPlayer(uri: Uri) {
@@ -152,7 +166,7 @@ class Playback(private val service: PlayerService,
         override fun onReceive(context: Context, intent: Intent) {
             val action = intent.action
             when {
-                action == AudioManager.ACTION_AUDIO_BECOMING_NOISY -> {
+                action == ACTION_AUDIO_BECOMING_NOISY -> {
                     playAgainOnHeadset = player?.playWhenReady ?: false
                     service.onPauseCommand(stopDelay = STOP_DELAY_HEADSET)
 

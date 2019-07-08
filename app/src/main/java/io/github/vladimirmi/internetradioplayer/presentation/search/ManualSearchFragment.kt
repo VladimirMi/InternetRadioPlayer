@@ -54,6 +54,7 @@ class ManualSearchFragment : BaseFragment<ManualSearchPresenter, ManualSearchVie
             suggestionsRv.visible(hasFocus)
             presenter.intervalSearchEnabled = !hasFocus
             if (!hasFocus && !stationsRv.canScrollVertically(-1)) searchView.isSelected = false
+            if (hasFocus) showPlaceholder(false)
         }
 
         searchView.setOnQueryTextListener(object : SearchView.OnQueryTextListener {

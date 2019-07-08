@@ -71,7 +71,7 @@ abstract class NavigationHolderFragment : Fragment(), BackPressListener {
     }
 
     private fun setupNavigation(screenContext: ScreenContext, animate: Boolean, isForward: Boolean) {
-        dataContainer.removeAllViews()
+        dataScroll.visible(screenContext is DataScreen || screenContext is FragmentScreen)
         setupParent(screenContext, animate, isForward)
         setupChildren(screenContext, animate, isForward)
         currentScreenContext = screenContext

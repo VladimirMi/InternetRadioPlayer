@@ -12,16 +12,16 @@ import kotlin.reflect.KProperty
 enum class AudioFocusPreference {
 
     Duck {
+        override val summary = R.string.setting_summary_duck
         override val nextState get() = Pause
-        override val summary = R.string.setting_summary_pause
     },
     Pause {
+        override val summary = R.string.setting_summary_pause
         override val nextState get() = Duck
-        override val summary = R.string.setting_summary_duck
     };
 
-    abstract val nextState: AudioFocusPreference
     abstract val summary: Int
+    abstract val nextState: AudioFocusPreference
 
 }
 

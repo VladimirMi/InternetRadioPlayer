@@ -46,5 +46,5 @@ data class Station(
         specs = sb.trim(' ', ',').toString()
     }
 
-    var isFavorite = false
+    @Ignore var isFavorite = false
 }

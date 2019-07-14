@@ -137,8 +137,7 @@ class StationParser
                 genre = headers[HEADER_GENRE],
                 encoding = encoding,
                 bitrate = headers[HEADER_BITRATE],
-                sample = headers[HEADER_SAMPLE],
-                remoteId = ""
+                sample = headers[HEADER_SAMPLE]
         )
     }
 

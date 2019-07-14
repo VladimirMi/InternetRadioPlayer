@@ -7,7 +7,6 @@ package io.github.vladimirmi.internetradioplayer.domain.model
 interface Media {
 
     val id: String
-    val remoteId: String
     val name: String
     val uri: String
     val group: String
@@ -23,7 +22,6 @@ interface Media {
             override val id = ""
             override val name = ""
             override val uri = ""
-            override val remoteId = ""
             override val group = ""
             override val specs = null
             override val description = null

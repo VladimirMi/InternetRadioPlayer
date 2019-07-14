@@ -23,9 +23,8 @@ import kotlinx.android.synthetic.main.item_station.*
 
 class DataAdapter : RecyclerView.Adapter<DataVH>() {
 
-    private var selectedId: String? = null
+    private var selectedUri: String? = null
 
-    var longClickedItem: Media? = null
     var onItemClickListener: ((Media) -> Unit)? = null
 
     var data: List<Media> = emptyList()
@@ -65,31 +64,29 @@ class DataAdapter : RecyclerView.Adapter<DataVH>() {
 
     override fun onBindViewHolder(holder: DataVH, position: Int, payloads: MutableList<Any>) {
         val media = data[position]
-        if (payloads.contains(PAYLOAD_SELECTED_CHANGE)) holder.select(media.remoteId == selectedId)
+        if (payloads.contains(PAYLOAD_SELECTED_CHANGE)) holder.select(media.uri == selectedUri)
         if (payloads.contains(PAYLOAD_BACKGROUND_CHANGE)) holder.setBackground(position, itemCount)
         if (payloads.contains(PAYLOAD_FAVORITE_CHANGE)) holder.setFavorite(media is Station && media.isFavorite)
         if (payloads.isEmpty()) super.onBindViewHolder(holder, position, payloads)
-
     }
 
     override fun onBindViewHolder(holder: DataVH, position: Int) {
         val media = data[position]
         holder.bind(media)
         holder.setFavorite(media is Station && media.isFavorite)
-        holder.select(media.remoteId == selectedId)
+        holder.select(media.uri == selectedUri)
         holder.setBackground(position, itemCount)
         holder.itemView.setOnClickListener { onItemClickListener?.invoke(media) }
-        holder.itemView.setOnLongClickListener { longClickedItem = media; false }
     }
 
     override fun getItemCount(): Int {
         return data.size
     }
 
-    fun selectMedia(id: String): Int {
-        val oldPos = data.indexOfFirst { it.remoteId == selectedId }
-        val newPos = data.indexOfFirst { it.remoteId == id }
-        selectedId = id
+    fun selectMedia(uri: String): Int {
+        val oldPos = data.indexOfFirst { it.uri == selectedUri }
+        val newPos = data.indexOfFirst { it.uri == uri }
+        selectedUri = uri
         notifyItemChanged(oldPos, PAYLOAD_SELECTED_CHANGE)
         notifyItemChanged(newPos, PAYLOAD_SELECTED_CHANGE)
         return newPos

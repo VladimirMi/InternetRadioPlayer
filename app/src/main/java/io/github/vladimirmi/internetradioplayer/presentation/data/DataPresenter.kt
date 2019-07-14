@@ -26,7 +26,7 @@ class DataPresenter
     override fun onAttach(view: DataView) {
         mediaInteractor.currentMediaObs
                 .observeOn(AndroidSchedulers.mainThread())
-                .subscribeX(onNext = { view.selectMedia(it.remoteId) })
+                .subscribeX(onNext = { view.selectMedia(it) })
                 .addTo(viewSubs)
     }
 
@@ -52,7 +52,7 @@ class DataPresenter
             is SearchState.Data -> {
                 val data = state.data
                 view?.setData(data)
-                view?.selectMedia(mediaInteractor.currentMedia.remoteId)
+                view?.selectMedia(mediaInteractor.currentMedia)
                 view?.showLoading(false)
             }
             is SearchState.Error -> {

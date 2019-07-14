@@ -26,7 +26,6 @@ class StationResult(
         val desc = if (a.isBlank() || t.isBlank()) genre else "$a - $t"
         return Station(
                 id = UUID.randomUUID().toString(),
-                remoteId = id.toString(),
                 name = callsign,
                 uri = uri,
                 description = desc

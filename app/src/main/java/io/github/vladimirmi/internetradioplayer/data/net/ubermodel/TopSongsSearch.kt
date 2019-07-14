@@ -23,7 +23,6 @@ class TopSongResult(
     fun toStation(): Station {
         return Station(
                 id = UUID.randomUUID().toString(),
-                remoteId = id.toString(),
                 uri = uri,
                 name = callsign,
                 description = "$artist - $title"

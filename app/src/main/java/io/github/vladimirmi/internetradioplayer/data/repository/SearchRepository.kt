@@ -25,8 +25,8 @@ class SearchRepository
                 .subscribeOn(Schedulers.io())
     }
 
-    fun searchStation(id: String): Single<StationIdResult> {
-        return uberStationsService.getStation(id)
+    fun searchStation(station: Station): Single<StationIdResult> {
+        return uberStationsService.getStation(station.getUberId())
                 .map(StationIdSearch::getResult)
                 .subscribeOn(Schedulers.io())
     }

@@ -13,12 +13,14 @@ import java.util.*
  */
 
 @Entity(indices = [Index(value = ["name"], unique = true)])
-data class Group(@PrimaryKey
-                 val id: String = UUID.randomUUID().toString(),
-                 val name: String,
-                 val expanded: Boolean = true,
-                 val order: Int = 0,
-                 val equalizerPreset: String? = null) {
+data class Group(
+        @PrimaryKey
+        val id: String = UUID.randomUUID().toString(),
+        val name: String,
+        val expanded: Boolean = true,
+        val order: Int = 0,
+        val equalizerPreset: String? = null
+) {
 
     @Ignore var stations: List<Station> = arrayListOf()
 

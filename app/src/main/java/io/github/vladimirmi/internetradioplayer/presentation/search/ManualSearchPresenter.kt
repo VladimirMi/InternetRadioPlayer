@@ -46,7 +46,7 @@ class ManualSearchPresenter
     override fun onAttach(view: ManualSearchView) {
         mediaInteractor.currentMediaObs
                 .observeOn(AndroidSchedulers.mainThread())
-                .subscribeX(onNext = { view.selectMedia(it.remoteId) })
+                .subscribeX(onNext = { view.selectMedia(it) })
                 .addTo(viewSubs)
     }
 
@@ -81,7 +81,7 @@ class ManualSearchPresenter
                 val data = state.data
                 view?.setData(data)
                 view?.showPlaceholder(data.isEmpty())
-                view?.selectMedia(mediaInteractor.currentMedia.remoteId)
+                view?.selectMedia(mediaInteractor.currentMedia)
                 view?.showLoading(false)
             }
             is SearchState.Error -> {

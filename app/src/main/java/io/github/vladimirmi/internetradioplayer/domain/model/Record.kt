@@ -27,7 +27,6 @@ data class Record(override val id: String,
     override val language: String? = null
     override val location: String? = null
     override val url: String? = null
-    override val remoteId = id
 
     val createdAtString = Formats.dateTime(createdAt)
     val durationString = Formats.duration(duration)

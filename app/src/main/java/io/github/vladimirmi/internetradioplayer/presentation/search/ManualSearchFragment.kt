@@ -154,8 +154,8 @@ class ManualSearchFragment : BaseFragment<ManualSearchPresenter, ManualSearchVie
         stationsRv.scrollToPosition(0)
     }
 
-    override fun selectMedia(id: String) {
-        dataAdapter.selectMedia(id)
+    override fun selectMedia(media: Media) {
+        dataAdapter.selectMedia(media.uri)
     }
 
     override fun selectSuggestion(suggestion: Suggestion) {

@@ -84,8 +84,8 @@ class DataFragment : BaseFragment<DataPresenter, DataView>(), DataView {
         dataRv.visible(data.isNotEmpty())
     }
 
-    override fun selectMedia(id: String) {
-        dataAdapter.selectMedia(id)
+    override fun selectMedia(media: Media) {
+        dataAdapter.selectMedia(media.uri)
     }
 
     override fun showLoading(loading: Boolean) {

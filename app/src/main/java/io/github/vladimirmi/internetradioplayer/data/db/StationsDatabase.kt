@@ -15,7 +15,7 @@ import io.github.vladimirmi.internetradioplayer.data.db.entity.Station
  */
 
 @Database(entities = [Station::class, Group::class],
-        version = 4, exportSchema = true)
+        version = 5, exportSchema = true)
 abstract class StationsDatabase : RoomDatabase() {
 
     //todo rename dao to favorites
@@ -25,7 +25,7 @@ abstract class StationsDatabase : RoomDatabase() {
         fun newInstance(context: Context): StationsDatabase {
             return Room.databaseBuilder(context.applicationContext,
                     StationsDatabase::class.java, "data.db")
-                    .addMigrations(MIGRATION_1_2, MIGRATION_2_3, MIGRATION_3_4)
+                    .addMigrations(MIGRATION_1_2, MIGRATION_2_3, MIGRATION_3_4, MIGRATION_4_5)
                     .fallbackToDestructiveMigration()
                     .build()
         }
@@ -63,5 +63,21 @@ private val MIGRATION_3_4 = object : Migration(3, 4) {
         database.execSQL("ALTER TABLE station ADD COLUMN genre TEXT")
         database.execSQL("ALTER TABLE station ADD COLUMN language TEXT")
         database.execSQL("ALTER TABLE station ADD COLUMN location TEXT")
+    }
+}
+
+private val MIGRATION_4_5 = object : Migration(4, 5) {
+    override fun migrate(database: SupportSQLiteDatabase) {
+        database.execSQL("CREATE TABLE `station_temp` (`id` TEXT NOT NULL, `name` TEXT NOT NULL, `uri` TEXT NOT NULL, " +
+                "`url` TEXT, `encoding` TEXT, `bitrate` TEXT, `sample` TEXT, `order` INTEGER NOT NULL, " +
+                "`group_id` TEXT NOT NULL, `equalizerPreset` TEXT, `description` TEXT, `genre` TEXT, " +
+                "`language` TEXT, `location` TEXT, PRIMARY KEY(`id`))")
+
+        database.execSQL("INSERT INTO station_temp SELECT id, name, uri, url, encoding, bitrate, sample, " +
+                "`order`, group_id, equalizerPreset, description, genre, language, location FROM station")
+
+        database.execSQL("DROP TABLE IF EXISTS station")
+        database.execSQL("ALTER TABLE station_temp RENAME TO station")
+        database.execSQL("CREATE UNIQUE INDEX `index_Station_uri` ON `station` (`uri`)")
     }
 }

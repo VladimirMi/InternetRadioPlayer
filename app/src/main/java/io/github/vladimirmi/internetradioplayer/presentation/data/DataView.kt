@@ -11,7 +11,7 @@ interface DataView : BaseView {
 
     fun setData(data: List<Media>)
 
-    fun selectMedia(id: String)
+    fun selectMedia(media: Media)
 
     fun showLoading(loading: Boolean)
 }

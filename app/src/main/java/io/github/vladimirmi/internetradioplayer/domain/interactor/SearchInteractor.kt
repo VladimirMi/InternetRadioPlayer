@@ -54,7 +54,7 @@ class SearchInteractor
     }
 
     private fun selectStation(station: Station): Completable {
-        return searchRepository.searchStation(station.remoteId)
+        return searchRepository.searchStation(station)
                 .flatMapObservable { response ->
                     val newStation = response.toStation()
                     searchRepository.parseFromNet(newStation)

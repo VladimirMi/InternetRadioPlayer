@@ -9,12 +9,13 @@ import okhttp3.internal.io.FileSystem
 import okio.Okio
 import timber.log.Timber
 import java.io.FileWriter
+import java.io.IOException
 
 /**
  * Created by Vladimir Mikhalev 31.03.2019.
  */
 
-class DiskCahceInterceptor(private val cacheManager: DiskCacheManager) : Interceptor {
+class DiskCacheInterceptor(private val cacheManager: DiskCacheManager) : Interceptor {
 
     override fun intercept(chain: Interceptor.Chain): Response {
         cacheManager.cleanExpiredCache()
@@ -24,11 +25,13 @@ class DiskCahceInterceptor(private val cacheManager: DiskCacheManager) : Interce
         if (!cacheFile.exists() || cacheFile.length() == 0L) {
             val response = chain.proceed(chain.request())
             if (response.isSuccessful) {
-                Timber.d("Write ${cacheFile.name}")
-                val fileWriter = FileWriter(cacheFile)
-
-                fileWriter.write(response.body()!!.string())
-                fileWriter.close()
+                try {
+                    Timber.d("Write ${cacheFile.name}")
+                    FileWriter(cacheFile).use { it.write(response.body()!!.string()) }
+                } catch (e: IOException) {
+                    Timber.e(e)
+                    return response
+                }
             } else {
                 return response
             }

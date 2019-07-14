@@ -24,7 +24,7 @@ abstract class HistoryDatabase : RoomDatabase() {
             return Room.databaseBuilder(context.applicationContext,
                     HistoryDatabase::class.java, "history.db")
                     .addMigrations(MIGRATION_2_3, MIGRATION_3_4, MIGRATION_4_5)
-                    .fallbackToDestructiveMigration()
+                    .fallbackToDestructiveMigrationFrom(1)
                     .build()
         }
     }
@@ -49,12 +49,13 @@ private val MIGRATION_3_4 = object : Migration(3, 4) {
 private val MIGRATION_4_5 = object : Migration(4, 5) {
     override fun migrate(database: SupportSQLiteDatabase) {
         database.execSQL("CREATE TABLE `history_temp` (`timestamp` INTEGER NOT NULL, `id` TEXT NOT NULL, " +
-                "`name` TEXT NOT NULL, `uri` TEXT NOT NULL, `encoding` TEXT, `bitrate` TEXT, `sample` TEXT, " +
+                "`name` TEXT NOT NULL, `uri` TEXT NOT NULL, `url` TEXT, " +
+                "`encoding` TEXT, `bitrate` TEXT, `sample` TEXT, " +
                 "`order` INTEGER NOT NULL, `group_id` TEXT NOT NULL, `equalizerPreset` TEXT, " +
-                "`description` TEXT, `genre` TEXT, `language` TEXT, `location` TEXT, `url` TEXT, PRIMARY KEY(`uri`))")
+                "`description` TEXT, `genre` TEXT, `language` TEXT, `location` TEXT, PRIMARY KEY(`uri`))")
 
         database.execSQL("INSERT INTO history_temp SELECT timestamp, id, name, uri, url, encoding, bitrate, sample, " +
-                "`order`, group_id, equalizerPreset, description, genre, language, location FROM station")
+                "`order`, group_id, equalizerPreset, description, genre, language, location FROM history")
 
         database.execSQL("DROP TABLE IF EXISTS history")
         database.execSQL("ALTER TABLE history_temp RENAME TO history")

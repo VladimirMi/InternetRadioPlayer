@@ -18,9 +18,9 @@ import java.util.concurrent.TimeUnit
 
 object RestServiceProvider {
 
-    private const val CONNECT_TIMEOUT = 5000L
-    private const val READ_TIMEOUT = 5000L
-    private const val WRITE_TIMEOUT = 5000L
+    private const val CONNECT_TIMEOUT = 10000L
+    private const val READ_TIMEOUT = 10000L
+    private const val WRITE_TIMEOUT = 10000L
 
 
     val okHttpClient: OkHttpClient = OkHttpClient.Builder()
@@ -31,7 +31,7 @@ object RestServiceProvider {
             .build()
 
     fun cachedOkHttpClient(cacheManager: DiskCacheManager): OkHttpClient = OkHttpClient.Builder()
-            .addInterceptor(DiskCahceInterceptor(cacheManager))
+            .addInterceptor(DiskCacheInterceptor(cacheManager))
             .addNetworkInterceptor(ApiKeyInterceptor())
             .addNetworkInterceptor(HttpLoggingInterceptor().setLevel(HttpLoggingInterceptor.Level.BASIC))
             .connectTimeout(CONNECT_TIMEOUT, TimeUnit.MILLISECONDS)

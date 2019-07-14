@@ -17,7 +17,7 @@ import javax.inject.Inject
  */
 
 const val SCHEME_HTTP = "http"
-private const val SCHEME_FILE = "file"
+const val SCHEME_FILE = "file"
 private const val SCHEME_CONTENT = "content"
 
 private const val EXT_PLS = "pls"

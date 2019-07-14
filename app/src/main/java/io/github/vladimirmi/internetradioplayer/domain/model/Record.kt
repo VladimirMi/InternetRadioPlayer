@@ -68,6 +68,7 @@ data class Record(override val id: String,
                 mmr.extractMetadata(MediaMetadataRetriever.METADATA_KEY_DURATION).toLong()
             } catch (e: Exception) {
                 Timber.e(e, file.absolutePath)
+                //todo handle unknown duration (-1)
                 0
             }
         }

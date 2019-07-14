@@ -1,13 +1,18 @@
 package io.github.vladimirmi.internetradioplayer.presentation.root
 
+import android.Manifest
 import android.content.Intent
+import android.content.pm.PackageManager
 import android.net.Uri
 import android.os.Bundle
 import android.view.View
 import android.view.ViewGroup
+import androidx.core.app.ActivityCompat
+import androidx.core.content.ContextCompat
 import com.google.android.material.bottomsheet.BottomSheetBehavior
 import io.github.vladimirmi.internetradioplayer.R
 import io.github.vladimirmi.internetradioplayer.data.service.PlayerService
+import io.github.vladimirmi.internetradioplayer.data.utils.SCHEME_FILE
 import io.github.vladimirmi.internetradioplayer.data.utils.ShortcutHelper
 import io.github.vladimirmi.internetradioplayer.di.Scopes
 import io.github.vladimirmi.internetradioplayer.di.module.RootActivityModule
@@ -24,6 +29,7 @@ import toothpick.Toothpick
 /**
  * Created by Vladimir Mikhalev 01.10.2017.
  */
+private const val WRITE_PERMISSION_REQUEST = 100
 
 class RootActivity : BaseActivity<RootPresenter, RootView>(), RootView {
 
@@ -75,12 +81,12 @@ class RootActivity : BaseActivity<RootPresenter, RootView>(), RootView {
         val stationName = intent.getStringExtra(ShortcutHelper.EXTRA_STATION_NAME)
         if (intent.hasExtra(PlayerService.EXTRA_STATION_ID)) {
             presenter.showStation(intent.getStringExtra(PlayerService.EXTRA_STATION_ID), startPlay)
+            intent = null
         } else {
             intent.data?.let {
                 createStation(it, stationName, addToFavorite = false, startPlay = startPlay)
-            }
+            } ?: run { intent = null }
         }
-        intent = null
     }
 
     override fun showLoadingIndicator(visible: Boolean) {
@@ -106,7 +112,10 @@ class RootActivity : BaseActivity<RootPresenter, RootView>(), RootView {
     }
 
     override fun createStation(uri: Uri, name: String?, addToFavorite: Boolean, startPlay: Boolean) {
-        presenter.createStation(uri, name, addToFavorite, startPlay)
+        if (uri.scheme != SCHEME_FILE || uri.scheme == SCHEME_FILE && checkWritePermission()) {
+            intent = null
+            presenter.createStation(uri, name, addToFavorite, startPlay)
+        }
     }
 
     override fun setOffset(offset: Float) {
@@ -116,4 +125,28 @@ class RootActivity : BaseActivity<RootPresenter, RootView>(), RootView {
     }
 
     //endregion
+
+    private fun checkWritePermission(): Boolean {
+        return if (ContextCompat.checkSelfPermission(this, Manifest.permission.WRITE_EXTERNAL_STORAGE)
+                != PackageManager.PERMISSION_GRANTED) {
+            ActivityCompat.requestPermissions(
+                    this,
+                    arrayOf(Manifest.permission.WRITE_EXTERNAL_STORAGE),
+                    WRITE_PERMISSION_REQUEST
+            )
+            false
+        } else true
+    }
+
+    override fun onRequestPermissionsResult(requestCode: Int, permissions: Array<String>, grantResults: IntArray) {
+        when (requestCode) {
+            WRITE_PERMISSION_REQUEST -> {
+                if ((grantResults.isNotEmpty() && grantResults[0] == PackageManager.PERMISSION_GRANTED)) {
+                    checkIntent()
+                }
+            }
+            else -> {
+            }
+        }
+    }
 }

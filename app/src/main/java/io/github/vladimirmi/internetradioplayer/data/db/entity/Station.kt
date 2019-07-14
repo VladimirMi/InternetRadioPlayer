@@ -16,6 +16,7 @@ data class Station(
         override val id: String = UUID.randomUUID().toString(),
         override val name: String,
         override val uri: String,
+        override val url: String? = null,
         val encoding: String? = null,
         val bitrate: String? = null,
         val sample: String? = null,
@@ -26,8 +27,7 @@ data class Station(
         override val description: String? = null,
         override val genre: String? = null,
         override val language: String? = null,
-        override val location: String? = null,
-        override val url: String? = null
+        override val location: String? = null
 ) : Media {
 
     @Ignore override val specs: String

@@ -27,7 +27,7 @@ private const val BACKUP_ENCODING = "UTF-8"
 private const val BACKUP_VERSION = 5
 
 private const val DATA_TAG = "data"
-private const val STATIONS_TAG = "data"
+private const val STATIONS_TAG = "stations"
 private const val STATION_TAG = "station"
 private const val GROUPS_TAG = "groups"
 private const val GROUP_TAG = "group"
@@ -130,7 +130,11 @@ class BackupRestoreHelper
                 while (parser.next() != XmlPullParser.END_DOCUMENT) {
 
                     if (parser.eventType == XmlPullParser.START_TAG) {
-                        if (parser.name == STATIONS_TAG) stations.addAll(parseStations(parser))
+                        val version = parser.getAttributeValue(ns, VERSION_ATTR)?.toInt()
+                        val stationsTag = if (version == 3) "data" else STATIONS_TAG
+
+                        if (parser.name == stationsTag) stations.addAll(parseStations(parser, version
+                                ?: BACKUP_VERSION))
                         if (parser.name == GROUPS_TAG) groups.addAll(parseGroups(parser))
                     }
                 }
@@ -154,9 +158,10 @@ class BackupRestoreHelper
                 })
     }
 
-    private fun parseStations(parser: XmlPullParser): List<Station> {
+    private fun parseStations(parser: XmlPullParser, version: Int): List<Station> {
+        val stationsTag = if (version == 3) "data" else STATIONS_TAG
         val list = arrayListOf<Station>()
-        while (!(parser.next() == XmlPullParser.END_TAG && parser.name == STATIONS_TAG)) {
+        while (!(parser.next() == XmlPullParser.END_TAG && parser.name == stationsTag)) {
             if (parser.eventType == XmlPullParser.START_TAG && parser.name == STATION_TAG) {
                 val station = Station(
                         id = UUID.randomUUID().toString(),

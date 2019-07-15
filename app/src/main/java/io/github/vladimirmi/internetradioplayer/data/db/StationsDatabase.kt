@@ -1,6 +1,7 @@
 package io.github.vladimirmi.internetradioplayer.data.db
 
 import android.content.Context
+import android.database.sqlite.SQLiteDatabase
 import androidx.room.Database
 import androidx.room.Room
 import androidx.room.RoomDatabase
@@ -9,6 +10,7 @@ import androidx.sqlite.db.SupportSQLiteDatabase
 import io.github.vladimirmi.internetradioplayer.data.db.dao.StationDao
 import io.github.vladimirmi.internetradioplayer.data.db.entity.Group
 import io.github.vladimirmi.internetradioplayer.data.db.entity.Station
+import timber.log.Timber
 
 /**
  * Created by Vladimir Mikhalev 28.08.2018.
@@ -24,8 +26,13 @@ abstract class StationsDatabase : RoomDatabase() {
     companion object {
         fun newInstance(context: Context): StationsDatabase {
             return Room.databaseBuilder(context.applicationContext,
-                    StationsDatabase::class.java, "data.db")
+                    StationsDatabase::class.java, "stations.db")
                     .addMigrations(MIGRATION_1_2, MIGRATION_2_3, MIGRATION_3_4, MIGRATION_4_5)
+                    .addCallback(object : RoomDatabase.Callback() {
+                        override fun onCreate(db: SupportSQLiteDatabase) {
+                            dataDatabaseMigrateTo(db)
+                        }
+                    })
                     .build()
         }
     }
@@ -78,5 +85,27 @@ private val MIGRATION_4_5 = object : Migration(4, 5) {
         database.execSQL("DROP TABLE IF EXISTS station")
         database.execSQL("ALTER TABLE station_temp RENAME TO station")
         database.execSQL("CREATE UNIQUE INDEX `index_Station_uri` ON `station` (`uri`)")
+
+        dataDatabaseMigrateTo(database)
+    }
+}
+
+private fun dataDatabaseMigrateTo(database: SupportSQLiteDatabase) {
+    val db = DataDatabaseVer4Fix()
+    if (db.open()) {
+        database.beginTransaction()
+        try {
+            val groups = db.getGroups()
+            val stations = db.getStations()
+            groups.forEach { database.insert("`group`", SQLiteDatabase.CONFLICT_IGNORE, it) }
+            stations.forEach { database.insert("`station`", SQLiteDatabase.CONFLICT_IGNORE, it) }
+            database.setTransactionSuccessful()
+        } catch (e: Exception) {
+            Timber.e(e)
+            return
+        } finally {
+            database.endTransaction()
+            db.close()
+        }
     }
 }

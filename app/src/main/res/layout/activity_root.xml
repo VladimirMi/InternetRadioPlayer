@@ -16,28 +16,27 @@
 
         <include layout="@layout/view_toolbar"/>
 
-        <FrameLayout
-            android:id="@+id/mainFr"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            app:layout_behavior="@string/appbar_scrolling_view_behavior"
-            />
-
-        <ProgressBar
-            android:id="@+id/loadingPb"
-            android:layout_width="48dp"
-            android:layout_height="48dp"
-            android:indeterminate="true"
-            android:visibility="gone"
-            android:layout_gravity="center"
-            tools:visibility="visible"
-            />
-
         <androidx.coordinatorlayout.widget.CoordinatorLayout
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             app:layout_behavior="@string/appbar_scrolling_view_behavior"
             >
+
+            <FrameLayout
+                android:id="@+id/rootContainer"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                />
+
+            <ProgressBar
+                android:id="@+id/loadingPb"
+                android:layout_width="48dp"
+                android:layout_height="48dp"
+                android:layout_gravity="center"
+                android:indeterminate="true"
+                android:visibility="gone"
+                tools:visibility="visible"
+                />
 
             <fragment
                 android:id="@+id/playerFragment"
@@ -54,15 +53,14 @@
 
     </androidx.coordinatorlayout.widget.CoordinatorLayout>
 
-    <com.google.android.material.navigation.NavigationView
-        android:id="@+id/navigationView"
-        android:layout_width="wrap_content"
+    <fragment
+        android:id="@+id/drawerFr"
+        android:name="io.github.vladimirmi.internetradioplayer.presentation.navigation.drawer.DrawerFragment"
+        android:layout_width="260dp"
         android:layout_height="match_parent"
         android:layout_gravity="start"
-        android:fitsSystemWindows="false"
-        app:headerLayout="@layout/view_drawer_header"
-        app:menu="@menu/menu_drawer"
-        android:background="?attr/colorSurface"
+        app:layout="@layout/fragment_drawer"
+        tools:layout="@layout/fragment_drawer"
         />
 
 </androidx.drawerlayout.widget.DrawerLayout>

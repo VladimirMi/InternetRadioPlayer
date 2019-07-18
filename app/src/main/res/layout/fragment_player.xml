@@ -11,53 +11,37 @@
     >
 
     <include
-        android:id="@+id/stationInfoView"
-        layout="@layout/view_station_info"
+        android:id="@+id/mediaTitleView"
+        layout="@layout/view_media_title"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
+        android:layout_height="@dimen/player_collapsed_height"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
         />
 
-    <LinearLayout
-        android:id="@+id/metadataInfoView"
+    <androidx.viewpager.widget.ViewPager
+        android:id="@+id/mediaInfoVp"
         android:layout_width="match_parent"
         android:layout_height="0dp"
         android:background="?attr/colorSurface"
-        android:orientation="vertical"
-        android:padding="8dp"
         app:layout_constraintBottom_toTopOf="@id/controlsView"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/stationInfoView"
-        >
+        app:layout_constraintTop_toBottomOf="@id/mediaTitleView"
+        />
 
-        <TextView
-            android:id="@+id/metaTitleTv"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:ellipsize="marquee"
-            android:marqueeRepeatLimit="marquee_forever"
-            android:padding="8dp"
-            android:singleLine="true"
-            android:textAppearance="@style/TextAppearance.MaterialComponents.Headline6"
-            tools:text="Festus vigils ducunt ad gemna."
-            />
-
-        <TextView
-            android:id="@+id/metaSubtitleTv"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:ellipsize="marquee"
-            android:marqueeRepeatLimit="marquee_forever"
-            android:padding="8dp"
-            android:singleLine="true"
-            android:textAppearance="@style/TextAppearance.MaterialComponents.Subtitle1"
-            tools:text="Festus vigils ducunt ad gemna."
-            />
-
-    </LinearLayout>
+    <com.google.android.material.tabs.TabLayout
+        android:id="@+id/pagerIndicator"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        app:layout_constraintTop_toTopOf="@id/mediaInfoVp"
+        app:tabGravity="center"
+        app:tabBackground="@drawable/sel_tab_indicator"
+        app:tabIndicatorGravity="bottom"
+        android:background="@color/transparent"
+        app:tabIndicatorHeight="0dp"
+        />
 
     <include
         android:id="@+id/controlsView"
@@ -91,16 +75,8 @@
         android:textAllCaps="true"
         android:textAppearance="@style/TextAppearance.MaterialComponents.Caption"
         android:visibility="invisible"
-        app:layout_constraintBottom_toTopOf="@id/guideline"
+        app:layout_constraintBottom_toBottomOf="@id/mediaTitleView"
         app:layout_constraintStart_toStartOf="parent"
-        />
-
-    <androidx.constraintlayout.widget.Guideline
-        android:id="@+id/guideline"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:orientation="horizontal"
-        app:layout_constraintGuide_begin="@dimen/player_collapsed_height"
         />
 
     <ImageButton

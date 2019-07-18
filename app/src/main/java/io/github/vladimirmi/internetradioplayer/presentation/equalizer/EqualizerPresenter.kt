@@ -29,6 +29,11 @@ class EqualizerPresenter
                     view.showReset(equalizerInteractor.isCurrentPresetCanReset())
                 })
                 .addTo(viewSubs)
+
+        equalizerInteractor.equalizerEnabledObs
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribeX(onNext = { view.enableEqualizer(it) })
+                .addTo(viewSubs)
     }
 
     override fun onDestroy() {
@@ -68,5 +73,9 @@ class EqualizerPresenter
         equalizerInteractor.resetCurrentPreset()
                 .subscribeX()
                 .addTo(dataSubs)
+    }
+
+    fun enableEqualizer(enabled: Boolean) {
+        equalizerInteractor.enableEqualizer(enabled)
     }
 }

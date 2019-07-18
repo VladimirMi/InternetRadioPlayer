@@ -13,7 +13,6 @@ import io.reactivex.Completable
 import org.xmlpull.v1.XmlPullParser
 import org.xmlpull.v1.XmlSerializer
 import java.io.File
-import java.io.InputStream
 import java.io.StringWriter
 import java.util.*
 import javax.inject.Inject
@@ -25,7 +24,7 @@ import javax.inject.Inject
 const val BACKUP_TYPE = "text/xml"
 private const val BACKUP_NAME = "stations_backup.xml"
 private const val BACKUP_ENCODING = "UTF-8"
-private const val BACKUP_VERSION = 2
+private const val BACKUP_VERSION = 5
 
 private const val DATA_TAG = "data"
 private const val STATIONS_TAG = "stations"
@@ -42,6 +41,10 @@ private const val ENCODING_ATTR = "encoding"
 private const val BITRATE_ATTR = "bitrate"
 private const val SAMPLE_ATTR = "sample"
 private const val ORDER_ATTR = "order"
+private const val DESCRIPTION_ATTR = "description"
+private const val GENRE_ATTR = "genre"
+private const val LANGUAGE_ATTR = "language"
+private const val LOCATION_ATTR = "location"
 private const val EXPANDED_ATTR = "expanded"
 
 class BackupRestoreHelper
@@ -88,6 +91,10 @@ class BackupRestoreHelper
                 bitrate?.let { serializer.attribute(ns, BITRATE_ATTR, it) }
                 sample?.let { serializer.attribute(ns, SAMPLE_ATTR, it) }
                 serializer.attribute(ns, ORDER_ATTR, order.toString())
+                description?.let { serializer.attribute(ns, DESCRIPTION_ATTR, it) }
+                genre?.let { serializer.attribute(ns, GENRE_ATTR, it) }
+                language?.let { serializer.attribute(ns, LANGUAGE_ATTR, it) }
+                location?.let { serializer.attribute(ns, LOCATION_ATTR, it) }
             }
             serializer.endTag(ns, STATION_TAG)
         }
@@ -111,18 +118,23 @@ class BackupRestoreHelper
         serializer.endTag(ns, GROUPS_TAG)
     }
 
-    fun restoreBackup(inS: InputStream): Completable {
-        val parser = Xml.newPullParser()
-        parser.setFeature(XmlPullParser.FEATURE_PROCESS_NAMESPACES, false)
-        val stations = arrayListOf<Pair<Station, String>>()
+    fun restoreBackup(uri: Uri): Completable {
+        val parser = Xml.newPullParser().apply {
+            setFeature(XmlPullParser.FEATURE_PROCESS_NAMESPACES, false)
+        }
+        val stations = arrayListOf<Station>()
         val groups = arrayListOf<Group>()
         val parse = Completable.fromCallable {
-            inS.use {
+            context.contentResolver.openInputStream(uri).use {
                 parser.setInput(it, null)
                 while (parser.next() != XmlPullParser.END_DOCUMENT) {
 
                     if (parser.eventType == XmlPullParser.START_TAG) {
-                        if (parser.name == STATIONS_TAG) stations.addAll(parseStations(parser))
+                        val version = parser.getAttributeValue(ns, VERSION_ATTR)?.toInt()
+                        val stationsTag = if (version == 3) "data" else STATIONS_TAG
+
+                        if (parser.name == stationsTag) stations.addAll(parseStations(parser, version
+                                ?: BACKUP_VERSION))
                         if (parser.name == GROUPS_TAG) groups.addAll(parseGroups(parser))
                     }
                 }
@@ -133,21 +145,23 @@ class BackupRestoreHelper
                     Completable.merge(groups.map { repository.addGroup(it) })
                 })
                 .andThen(Completable.defer {
-                    repository.getAllGroups()
-                            .flatMapCompletable { groups ->
-                                Completable.merge(stations.map { stationGroupName ->
-                                    val group = groups.find { it.name == stationGroupName.second }
-                                            ?: Group.default()
-                                    val station = stationGroupName.first.copy(groupId = group.id)
-                                    repository.addStation(station)
-                                })
-                            }
+                    repository.getAllGroups().flatMapCompletable { groups ->
+                        Completable.merge(stations.map { station ->
+
+                            groups.find { it.name == station.group }?.let {
+                                repository.addStation(station.copy(groupId = it.id))
+
+                            } ?: repository.addGroup(Group.default())
+                                    .andThen(repository.addStation(station))
+                        })
+                    }
                 })
     }
 
-    private fun parseStations(parser: XmlPullParser): List<Pair<Station, String>> {
-        val list = arrayListOf<Pair<Station, String>>()
-        while (!(parser.next() == XmlPullParser.END_TAG && parser.name == STATIONS_TAG)) {
+    private fun parseStations(parser: XmlPullParser, version: Int): List<Station> {
+        val stationsTag = if (version == 3) "data" else STATIONS_TAG
+        val list = arrayListOf<Station>()
+        while (!(parser.next() == XmlPullParser.END_TAG && parser.name == stationsTag)) {
             if (parser.eventType == XmlPullParser.START_TAG && parser.name == STATION_TAG) {
                 val station = Station(
                         id = UUID.randomUUID().toString(),
@@ -158,10 +172,15 @@ class BackupRestoreHelper
                         bitrate = parser.getAttributeValue(ns, BITRATE_ATTR),
                         sample = parser.getAttributeValue(ns, SAMPLE_ATTR),
                         order = parser.getAttributeValue(ns, ORDER_ATTR).toInt(),
-                        groupId = Group.DEFAULT_ID
+                        groupId = Group.DEFAULT_ID,
+                        description = parser.getAttributeValue(ns, DESCRIPTION_ATTR),
+                        genre = parser.getAttributeValue(ns, GENRE_ATTR),
+                        language = parser.getAttributeValue(ns, LANGUAGE_ATTR),
+                        location = parser.getAttributeValue(ns, LOCATION_ATTR)
                 )
                 val groupName = parser.getAttributeValue(ns, GROUP_NAME_ATTR)
-                list.add(station to groupName)
+                station.group = groupName
+                list.add(station)
             }
         }
         return list

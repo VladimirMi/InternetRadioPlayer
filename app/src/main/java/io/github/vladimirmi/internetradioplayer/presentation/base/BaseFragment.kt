@@ -2,7 +2,6 @@ package io.github.vladimirmi.internetradioplayer.presentation.base
 
 import android.os.Bundle
 import android.view.LayoutInflater
-import android.view.Menu
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
@@ -56,10 +55,6 @@ abstract class BaseFragment<P : BasePresenter<V>, V : BaseView> : Fragment(), Ba
         super.onDestroy()
     }
 
-    override fun onPrepareOptionsMenu(menu: Menu) {
-        menu.clear()
-    }
-
     //region =============== BaseView =============s=
 
     override fun handleBackPressed(): Boolean {
@@ -73,9 +68,7 @@ abstract class BaseFragment<P : BasePresenter<V>, V : BaseView> : Fragment(), Ba
     }
 
     override fun showSnackbar(resId: Int) {
-        view?.let {
-            Snackbar.make(it, resId, Snackbar.LENGTH_SHORT).show()
-        }
+        Snackbar.make(requireView(), resId, Snackbar.LENGTH_SHORT).show()
     }
 
     //endregion

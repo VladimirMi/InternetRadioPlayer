@@ -23,8 +23,8 @@ val errorHandler: (Throwable) -> Unit = {
         if (it is MessageResException) {
             Toast.makeText(Scopes.context, it.resId, Toast.LENGTH_SHORT).show()
         } else {
-            Toast.makeText(Scopes.context, it.message, Toast.LENGTH_SHORT).show()
             if (it !is MessageException) Timber.e(it)
+            Toast.makeText(Scopes.context, it.message, Toast.LENGTH_SHORT).show()
         }
     }
 }

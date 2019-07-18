@@ -14,11 +14,7 @@ interface PlayerView : BaseView {
 
     fun setRecord(record: Record)
 
-    fun setFavorite(isFavorite: Boolean)
-
-    fun setMetadata(artist: String, title: String)
-
-    fun setSimpleMetadata(metadata: String)
+    fun setMetadata(metadata: String)
 
     fun setStatus(resId: Int)
 
@@ -27,10 +23,6 @@ interface PlayerView : BaseView {
     fun showPrevious()
 
     fun showNext()
-
-    fun setRecording(isRecording: Boolean)
-
-    fun setGroup(group: String)
 
     fun setDuration(duration: Long)
 
@@ -41,4 +33,6 @@ interface PlayerView : BaseView {
     fun enableSeek(isEnabled: Boolean)
 
     fun enableSkip(isEnabled: Boolean)
+
+    fun enableCoverArt(isEnabled: Boolean)
 }

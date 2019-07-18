@@ -1,9 +1,12 @@
 package io.github.vladimirmi.internetradioplayer.domain.model
 
 import android.media.MediaMetadataRetriever
+import io.github.vladimirmi.internetradioplayer.data.db.entity.Group
 import io.github.vladimirmi.internetradioplayer.di.Scopes
 import io.github.vladimirmi.internetradioplayer.extensions.Formats
+import timber.log.Timber
 import java.io.File
+import kotlin.math.roundToInt
 
 
 /**
@@ -16,6 +19,22 @@ data class Record(override val id: String,
                   val file: File,
                   val createdAt: Long,
                   val duration: Long) : Media {
+
+    override val group: String = Group.DEFAULT_NAME
+    override val specs: String
+    override val description: String? = null
+    override val genre: String? = null
+    override val language: String? = null
+    override val location: String? = null
+    override val url: String? = null
+
+    val createdAtString = Formats.dateTime(createdAt)
+    val durationString = Formats.duration(duration)
+    private val sizeMb: Double = run { (file.length() * 100 / 1024.0 / 1024.0).roundToInt() / 100.0 }
+
+    init {
+        specs = "$durationString, $sizeMb MB"
+    }
 
     companion object {
         fun fromFile(file: File): Record {
@@ -43,16 +62,19 @@ data class Record(override val id: String,
         }
 
         private fun getDuration(file: File): Long {
-            val mmr = Scopes.app.getInstance(MediaMetadataRetriever::class.java)
-            mmr.setDataSource(file.absolutePath)
-            return mmr.extractMetadata(MediaMetadataRetriever.METADATA_KEY_DURATION).toLong()
+            return try {
+                val mmr = Scopes.app.getInstance(MediaMetadataRetriever::class.java)
+                mmr.setDataSource(file.absolutePath)
+                mmr.extractMetadata(MediaMetadataRetriever.METADATA_KEY_DURATION).toLong()
+            } catch (e: Exception) {
+                Timber.e(e, file.absolutePath)
+                //todo handle unknown duration (-1)
+                0
+            }
         }
     }
 
-    val createdAtString = Formats.dateTime(createdAt)
-    val durationString = Formats.duration(duration)
-
-    fun culculateDuration() = getDuration(file)
+    fun commit() = copy(createdAt = System.currentTimeMillis(), duration = getDuration(file))
 }
 
 

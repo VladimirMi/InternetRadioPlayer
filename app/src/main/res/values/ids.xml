@@ -7,4 +7,6 @@
     <item type="id" name="context_menu_suggestion"/>
     <item type="id" name="context_menu_action_edit"/>
     <item type="id" name="context_menu_action_delete"/>
+
+    <item type="id" name="equalizerSwitch"/>
 </resources>

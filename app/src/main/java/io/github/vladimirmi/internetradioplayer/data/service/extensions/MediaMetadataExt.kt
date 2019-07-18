@@ -75,3 +75,7 @@ fun MediaMetadataCompat.setDuration(durationMs: Long): MediaMetadataCompat {
             .putLong(MediaMetadataCompat.METADATA_KEY_DURATION, durationMs)
             .build()
 }
+
+fun MediaMetadataCompat.eq(other: MediaMetadataCompat?): Boolean {
+    return other != null && artist == other.artist && title == other.title
+}

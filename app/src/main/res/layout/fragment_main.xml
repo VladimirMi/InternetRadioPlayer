@@ -1,42 +1,34 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.coordinatorlayout.widget.CoordinatorLayout
+<LinearLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/mainContent"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@color/grey_300"
+    android:orientation="vertical"
     >
 
-    <LinearLayout
-        android:id="@+id/mainContent"
+    <io.github.vladimirmi.internetradioplayer.ui.FilledTabLayout
+        android:id="@+id/mainTl"
+        style="@style/Widget.MaterialComponents.TabLayout.Colored"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:elevation="4dp"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintRight_toRightOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:tabIndicatorColor="@color/secondary"
+        app:tabIndicatorHeight="6dp"
+        app:tabsNumber="3"
+        tools:ignore="UnusedAttribute"
+        />
+
+    <androidx.viewpager.widget.ViewPager
+        android:id="@+id/mainPager"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:orientation="vertical"
-        >
+        />
 
-        <io.github.vladimirmi.internetradioplayer.ui.FilledTabLayout
-            android:id="@+id/mainTl"
-            style="@style/Widget.MaterialComponents.TabLayout.Colored"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:elevation="4dp"
-            app:layout_constraintLeft_toLeftOf="parent"
-            app:layout_constraintRight_toRightOf="parent"
-            app:layout_constraintTop_toTopOf="parent"
-            app:tabIndicatorColor="@color/secondary"
-            app:tabIndicatorHeight="6dp"
-            app:tabsNumber="3"
-            tools:ignore="UnusedAttribute"
-            />
-
-        <androidx.viewpager.widget.ViewPager
-            android:id="@+id/mainPager"
-            android:layout_width="match_parent"
-            android:layout_height="0dp"
-            android:layout_weight="1"
-            />
-
-    </LinearLayout>
-
-</androidx.coordinatorlayout.widget.CoordinatorLayout>
+</LinearLayout>

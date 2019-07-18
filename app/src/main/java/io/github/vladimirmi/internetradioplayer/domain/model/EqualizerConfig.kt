@@ -25,13 +25,18 @@ class EqualizerConfig(val bands: List<String>,
                         EqualizerPreset.create(equalizer.getPresetName(it.toShort()), equalizer.properties)
                     }
             return EqualizerConfig(
-                    bands,
-                    levelRange[0].toInt(),
-                    levelRange[1].toInt(),
-                    presets
+                    bands = bands,
+                    minLevel = levelRange[0].toInt(),
+                    maxLevel = levelRange[1].toInt(),
+                    defaultPresets = presets
             )
         }
 
-        fun empty() = EqualizerConfig(emptyList(), 0, 0, emptyList())
+        fun empty() = EqualizerConfig(
+                bands = emptyList(),
+                minLevel = 0,
+                maxLevel = 0,
+                defaultPresets = emptyList()
+        )
     }
 }

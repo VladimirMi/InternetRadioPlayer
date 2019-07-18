@@ -43,18 +43,18 @@ class FlatStationsList(private val flatList: MutableList<Any> = arrayListOf()) :
         return stations[(stations.size + currIndex - 1) % stations.size]
     }
 
-    fun isGroup(position: Int) = flatList[position] is Group
+    fun isGroup(position: Int) = get(position) is Group
 
-    fun isStation(position: Int) = flatList[position] is Station
+    fun isStation(position: Int) = get(position) is Station
 
-    operator fun get(position: Int): Any = flatList[position]
+    operator fun get(position: Int): Any? = flatList.getOrNull(position)
 
     fun getGroup(position: Int): Group {
-        return flatList[position] as? Group ?: throw IllegalStateException("It is station")
+        return get(position) as? Group ?: throw IllegalStateException("It is station")
     }
 
     fun getStation(position: Int): Station {
-        return flatList[position] as? Station ?: throw IllegalStateException("It is group")
+        return get(position) as? Station ?: throw IllegalStateException("It is group")
     }
 
     fun getId(position: Int): String {

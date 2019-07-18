@@ -10,6 +10,7 @@ import android.support.v4.media.session.PlaybackStateCompat
 import androidx.media.MediaBrowserServiceCompat
 import io.github.vladimirmi.internetradioplayer.R
 import io.github.vladimirmi.internetradioplayer.data.db.entity.Station
+import io.github.vladimirmi.internetradioplayer.data.preference.Preferences
 import io.github.vladimirmi.internetradioplayer.data.service.extensions.PlayerActions
 import io.github.vladimirmi.internetradioplayer.data.service.player.Playback
 import io.github.vladimirmi.internetradioplayer.data.utils.AudioEffects
@@ -44,6 +45,7 @@ class PlayerService : MediaBrowserServiceCompat(), SessionCallback.Interface {
     @Inject lateinit var mediaInteractor: MediaInteractor
     @Inject lateinit var equalizerInteractor: EqualizerInteractor
     @Inject lateinit var historyInteractor: HistoryInteractor
+    @Inject lateinit var preferences: Preferences
 
     private val subs = CompositeDisposable()
     private lateinit var session: MediaSessionCompat
@@ -59,7 +61,7 @@ class PlayerService : MediaBrowserServiceCompat(), SessionCallback.Interface {
         super.onCreate()
         Toothpick.inject(this, Scopes.app)
 
-        playback = Playback(this, playerCallback)
+        playback = Playback(this, playerCallback, preferences)
         initSession()
         initEqualizer()
 
@@ -101,14 +103,14 @@ class PlayerService : MediaBrowserServiceCompat(), SessionCallback.Interface {
 
     override fun onGetRoot(clientPackageName: String,
                            clientUid: Int,
-                           rootHints: Bundle?): MediaBrowserServiceCompat.BrowserRoot? {
+                           rootHints: Bundle?): BrowserRoot? {
 
-        return MediaBrowserServiceCompat.BrowserRoot(getString(R.string.app_name), null)
+        return BrowserRoot(getString(R.string.app_name), null)
     }
 
     override fun onLoadChildren(
             parentId: String,
-            result: MediaBrowserServiceCompat.Result<List<MediaBrowserCompat.MediaItem>>) {
+            result: Result<List<MediaBrowserCompat.MediaItem>>) {
 
         result.sendResult(emptyList())
     }
@@ -182,8 +184,11 @@ class PlayerService : MediaBrowserServiceCompat(), SessionCallback.Interface {
     private val playerCallback = object : PlayerCallback() {
 
         override fun onPlaybackStateChanged(state: PlaybackStateCompat) {
-            session.setPlaybackState(state)
-            notification.update()
+            try {
+                session.setPlaybackState(state)
+                notification.update()
+            } catch (ignore: Exception) {
+            }
         }
 
         override fun onPlayerError(error: Exception) {

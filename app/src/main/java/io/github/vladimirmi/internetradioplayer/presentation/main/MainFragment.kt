@@ -4,7 +4,7 @@ import android.os.Bundle
 import android.view.View
 import androidx.viewpager.widget.ViewPager
 import io.github.vladimirmi.internetradioplayer.R
-import io.github.vladimirmi.internetradioplayer.data.utils.Preferences
+import io.github.vladimirmi.internetradioplayer.data.preference.Preferences
 import io.github.vladimirmi.internetradioplayer.di.Scopes
 import io.github.vladimirmi.internetradioplayer.presentation.base.BaseFragment
 import kotlinx.android.synthetic.main.fragment_main.*
@@ -35,7 +35,8 @@ class MainFragment : BaseFragment<MainPresenter, MainView>(), MainView {
     }
 
     override fun setupView(view: View) {
-        mainPager.adapter = MainPagerAdapter(context!!, childFragmentManager)
+        mainPager.adapter = MainPagerAdapter(requireContext(), childFragmentManager)
+        mainPager.offscreenPageLimit = 2
         mainTl.setupWithViewPager(mainPager)
         val pageId = arguments?.getInt(Preferences.KEY_MAIN_PAGE_ID) ?: 0
         setPageId(pageId)

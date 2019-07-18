@@ -10,8 +10,8 @@ import com.jakewharton.rxrelay2.BehaviorRelay
 import io.github.vladimirmi.internetradioplayer.data.db.EqualizerDatabase
 import io.github.vladimirmi.internetradioplayer.data.db.StationsDatabase
 import io.github.vladimirmi.internetradioplayer.data.db.entity.EqualizerPresetEntity
+import io.github.vladimirmi.internetradioplayer.data.preference.Preferences
 import io.github.vladimirmi.internetradioplayer.data.utils.AudioEffects
-import io.github.vladimirmi.internetradioplayer.data.utils.Preferences
 import io.github.vladimirmi.internetradioplayer.domain.model.EqualizerConfig
 import io.github.vladimirmi.internetradioplayer.domain.model.EqualizerPreset
 import io.github.vladimirmi.internetradioplayer.domain.model.PresetBinder
@@ -50,6 +50,13 @@ class EqualizerRepository
             equalizer?.ifHasControl { value.applyTo(equalizer, bassBoost, virtualizer) }
             currentPresetObs.accept(value)
         }
+    private var equalizerEnabled = preferences.equalizerEnabled
+        set(value) {
+            preferences.equalizerEnabled = value
+            field = value
+        }
+    val equalizerEnabledObs = BehaviorRelay.createDefault(equalizerEnabled)
+
     lateinit var binder: PresetBinder
 
     init {
@@ -70,13 +77,13 @@ class EqualizerRepository
     }
 
     fun createEqualizer(sessionId: Int, checkControl: Boolean = true) {
+        this.sessionId = sessionId
+        if (!equalizerEnabled || sessionId == 0) return
         try {
-            this.sessionId = sessionId
-
             if (audioEffects.isEqualizerSupported()) equalizer = Equalizer(0, sessionId)
             if (audioEffects.isBassBoostSupported()) bassBoost = BassBoost(0, sessionId)
             if (audioEffects.isVirtualizerSupported()) virtualizer = Virtualizer(0, sessionId)
-//
+
             // on some devices with built-in equalizer the audio effect loses control right after creation
             runOnUiThreadDelayed(300) {
                 equalizer?.enabled = true
@@ -101,6 +108,18 @@ class EqualizerRepository
         virtualizer?.release()
         virtualizer = null
         unbindEqualizer(sessionId)
+    }
+
+    fun enableEqualizer(enabled: Boolean) {
+        equalizerEnabled = enabled
+        if (enabled && equalizer == null) {
+            createEqualizer(sessionId)
+        } else {
+            equalizer?.enabled = enabled
+            bassBoost?.enabled = enabled
+            virtualizer?.enabled = enabled
+        }
+        equalizerEnabledObs.accept(enabled)
     }
 
     fun setBandLevel(band: Int, level: Int) {
@@ -178,7 +197,7 @@ class EqualizerRepository
             block(this)
         } else if (sessionId != 0) {
             releaseEqualizer(sessionId)
-            createEqualizer(sessionId, false)
+            createEqualizer(sessionId, checkControl = false)
         }
     }
 }

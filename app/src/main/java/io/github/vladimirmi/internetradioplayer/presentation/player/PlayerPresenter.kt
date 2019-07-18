@@ -6,12 +6,14 @@ import android.support.v4.media.session.PlaybackStateCompat
 import com.google.android.exoplayer2.C
 import io.github.vladimirmi.internetradioplayer.R
 import io.github.vladimirmi.internetradioplayer.data.db.entity.Station
+import io.github.vladimirmi.internetradioplayer.data.preference.Preferences
 import io.github.vladimirmi.internetradioplayer.data.service.PlayerService
 import io.github.vladimirmi.internetradioplayer.data.service.extensions.*
-import io.github.vladimirmi.internetradioplayer.domain.interactor.*
+import io.github.vladimirmi.internetradioplayer.domain.interactor.MediaInteractor
+import io.github.vladimirmi.internetradioplayer.domain.interactor.PlayerInteractor
+import io.github.vladimirmi.internetradioplayer.domain.interactor.StationInteractor
 import io.github.vladimirmi.internetradioplayer.domain.model.Record
 import io.github.vladimirmi.internetradioplayer.extensions.subscribeX
-import io.github.vladimirmi.internetradioplayer.navigation.Router
 import io.github.vladimirmi.internetradioplayer.presentation.base.BasePresenter
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.rxkotlin.addTo
@@ -25,11 +27,9 @@ import kotlin.concurrent.schedule
 
 class PlayerPresenter
 @Inject constructor(private val stationInteractor: StationInteractor,
-                    private val favoriteListInteractor: FavoriteListInteractor,
                     private val playerInteractor: PlayerInteractor,
-                    private val recordsInteractor: RecordsInteractor,
                     private val mediaInteractor: MediaInteractor,
-                    private val router: Router)
+                    private val preferences: Preferences)
     : BasePresenter<PlayerView>() {
 
     private var playTask: TimerTask? = null
@@ -37,6 +37,9 @@ class PlayerPresenter
     override fun onAttach(view: PlayerView) {
         setupStation()
         setupPlayer()
+        preferences.observe<Boolean>(Preferences.KEY_COVER_ART_ENABLED)
+                .subscribeX(onNext = { view.enableCoverArt(it) })
+                .addTo(viewSubs)
     }
 
     private fun setupStation() {
@@ -45,11 +48,8 @@ class PlayerPresenter
                 .subscribeX(onNext = {
                     if (it is Station) {
                         view?.setStation(it)
-                        view?.setFavorite(favoriteListInteractor.isFavorite(it))
-                        view?.setGroup(favoriteListInteractor.findGroup(it.groupId)?.name ?: "")
                     } else if (it is Record) {
                         view?.setRecord(it)
-                        view?.setDuration(it.duration)
                     }
                 })
                 .addTo(viewSubs)
@@ -69,11 +69,6 @@ class PlayerPresenter
         playerInteractor.sessionEventObs
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribeX(onNext = { handleSessionEvent(it) })
-                .addTo(viewSubs)
-
-        recordsInteractor.isCurrentRecordingObs()
-                .observeOn(AndroidSchedulers.mainThread())
-                .subscribeX(onNext = { view?.setRecording(it) })
                 .addTo(viewSubs)
     }
 
@@ -138,10 +133,9 @@ class PlayerPresenter
     }
 
     private fun handleMetadata(metadata: MediaMetadataCompat) {
-        view?.setMetadata(metadata.artist, metadata.title)
         val metadataLine = if (metadata.isEmpty() || metadata.isNotSupported()) metadata.album
         else "${metadata.artist} - ${metadata.title}"
-        view?.setSimpleMetadata(metadataLine)
+        view?.setMetadata(metadataLine)
         if (metadata.duration != C.TIME_UNSET) view?.setDuration(metadata.duration)
     }
 
@@ -152,12 +146,4 @@ class PlayerPresenter
         }
     }
 
-    fun openEqualizer() {
-        router.navigateTo(R.id.nav_equalizer)
-    }
-
-    fun startStopRecording() {
-        recordsInteractor.startStopRecordingCurrentStation()
-                .subscribeX()
-    }
 }

@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="utf-8"?>
+<selector xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <item android:state_enabled="false">
+
+        <shape android:shape="oval">
+            <size
+                android:width="52dp"
+                android:height="52dp"/>
+            <solid android:color="#2A586E"/>
+        </shape>
+    </item>
+
+    <item android:state_pressed="true">
+        <layer-list>
+            <item>
+                <shape android:shape="oval">
+                    <size
+                        android:width="52dp"
+                        android:height="52dp"/>
+                    <gradient
+                        android:angle="90"
+                        android:endColor="#012130"
+                        android:startColor="#94A9B4"/>
+                </shape>
+            </item>
+            <item
+                android:bottom="2dp"
+                android:left="2dp"
+                android:right="2dp"
+                android:top="2dp">
+                <shape android:shape="oval">
+                    <solid android:color="#dddddd"/>
+                </shape>
+            </item>
+        </layer-list>
+    </item>
+
+    <item android:drawable="@drawable/bg_button"/>
+
+</selector>

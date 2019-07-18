@@ -11,6 +11,7 @@ import android.view.ViewTreeObserver
 import android.view.animation.AccelerateDecelerateInterpolator
 import android.widget.SeekBar
 import android.widget.TextView
+import androidx.annotation.IdRes
 import androidx.drawerlayout.widget.DrawerLayout
 import androidx.dynamicanimation.animation.DynamicAnimation
 import androidx.dynamicanimation.animation.SpringAnimation
@@ -54,7 +55,7 @@ inline fun View.waitForLayout(crossinline handler: () -> Boolean) {
     viewTreeObserver.addOnGlobalLayoutListener(object : ViewTreeObserver.OnGlobalLayoutListener {
         override fun onGlobalLayout() {
             val observer = viewTreeObserver
-            if (handler.invoke() && observer.isAlive) {
+            if (handler() && observer.isAlive) {
                 observer.removeOnGlobalLayoutListener(this)
             }
         }
@@ -68,6 +69,12 @@ fun View.visible(visible: Boolean, gone: Boolean = true) {
 val View?.isVisible: Boolean
     get() = this?.visibility == View.VISIBLE
 
+fun View.findParent(@IdRes id: Int): View? {
+    val parentView = parent as? View ?: return null
+    return if (parentView.id == id) parentView
+    else parentView.findParent(id)
+}
+
 fun TextView.onTextChanges(listener: (String) -> Unit) {
     addTextChangedListener(object : TextWatcher {
         override fun afterTextChanged(s: Editable) {
@@ -78,6 +85,17 @@ fun TextView.onTextChanges(listener: (String) -> Unit) {
         override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {}
     })
 }
+
+
+fun TextView.setTextOrHide(text: String?) {
+    if (text == null || text.isBlank()) {
+        visible(false)
+    } else {
+        visible(true)
+        this.text = text
+    }
+}
+
 
 fun SeekBar.setProgressX(progress: Int, animate: Boolean) {
     if (animate) {

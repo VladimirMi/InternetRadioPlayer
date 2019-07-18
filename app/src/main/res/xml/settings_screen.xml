@@ -24,6 +24,20 @@
             app:iconSpaceReserved="false"
             />
 
+        <Preference
+            android:key="AUDIO_FOCUS"
+            android:title="@string/setting_audio_focus"
+            android:persistent="false"
+            app:iconSpaceReserved="false"
+            />
+
+        <SwitchPreference
+            android:key="COVER_ART_ENABLED"
+            android:title="@string/setting_load_cover_art"
+            app:iconSpaceReserved="false"
+            android:defaultValue="true"
+            />
+
     </PreferenceCategory>
 
     <PreferenceCategory

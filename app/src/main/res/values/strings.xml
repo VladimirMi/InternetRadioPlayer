@@ -28,7 +28,7 @@
 
     <string name="metadata_buffering">Loading…</string>
     <string name="metadata_not_available">Metadata not available</string>
-    <string name="default_folder">Other</string>
+    <string name="default_group">Other</string>
     <string name="title">Title</string>
     <string name="reset">Reset</string>
 
@@ -43,7 +43,7 @@
     <string name="desc_skip_previous_button">Skip to previous</string>
     <string name="desc_skip_next_button">Skip to next</string>
     <string name="desc_stop_button">Stop</string>
-    <string name="desc_add_remove_favorite">Add/Remove favorite</string>
+    <string name="desc_favorite">Favorite</string>
     <string name="desc_create_shortcut_button">Create shortcut</string>
     <string name="desc_equalizer">Equalizer</string>
     <string name="desc_record">Record</string>
@@ -67,6 +67,8 @@
     <string name="history_placeholder">History is empty</string>
     <string name="favorite_list_placeholder">Stations list is empty</string>
     <string name="search_placeholder">Search result is empty</string>
+    <string name="search_manual">Manual search</string>
+    <string name="search_genre">Genres</string>
 
     <string name="player_channel_name" translatable="false">Radio player notifications</string>
     <string name="recorder_channel_name" translatable="false">Radio recorder notification</string>
@@ -81,6 +83,10 @@
     <string name="setting_backup">Backup stations</string>
     <string name="setting_restore">Restore stations</string>
     <string name="setting_privacy">Privacy policy</string>
+    <string name="setting_audio_focus">Loss of audio focus behavior</string>
+    <string name="setting_summary_duck">Ducking audio</string>
+    <string name="setting_summary_pause">Pause playback</string>
+    <string name="setting_load_cover_art">Load cover art</string>
 
     <string name="preset_bind_station">Apply to station</string>
     <string name="preset_bind_group">Apply to group</string>
@@ -94,6 +100,8 @@
     <string name="virtualizer" translatable="false">Virtualizer</string>
     <string name="min" translatable="false">min</string>
     <string name="max" translatable="false">max</string>
+
+    <string name="recording">Recording…</string>
 
     <plurals name="plural_second">
         <item quantity="one">@string/second</item>

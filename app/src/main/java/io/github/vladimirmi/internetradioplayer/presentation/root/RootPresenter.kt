@@ -5,8 +5,8 @@ import android.net.Uri
 import io.github.vladimirmi.internetradioplayer.R
 import io.github.vladimirmi.internetradioplayer.domain.interactor.*
 import io.github.vladimirmi.internetradioplayer.extensions.subscribeX
-import io.github.vladimirmi.internetradioplayer.navigation.Router
 import io.github.vladimirmi.internetradioplayer.presentation.base.BasePresenter
+import io.github.vladimirmi.internetradioplayer.presentation.navigation.Router
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.disposables.Disposable
 import io.reactivex.rxkotlin.addTo
@@ -75,9 +75,8 @@ class RootPresenter
                 .doOnSubscribe { view?.showLoadingIndicator(true) }
                 .doFinally { view?.showLoadingIndicator(false) }
                 .subscribeX(onComplete = {
-                    if (addToFavorite) navigateTo(R.id.nav_favorites)
+                    if (addToFavorite) router.replaceScreen(R.id.nav_favorites)
                     if (startPlay) playerInteractor.play()
-                    view?.expandPlayer()
                 }).addTo(viewSubs)
     }
 
@@ -88,24 +87,10 @@ class RootPresenter
         val station = favoriteListInteractor.getStation(id)
         if (station != null) {
             mediaInteractor.currentMedia = station
-            navigateTo(R.id.nav_favorites)
+            router.replaceScreen(R.id.nav_favorites)
             if (startPlay) playerInteractor.play()
         } else {
             view?.showSnackbar(R.string.msg_shortcut_remove)
         }
-    }
-
-    fun navigateTo(navId: Int) {
-        when (navId) {
-            R.id.nav_exit -> exitApp()
-            R.id.nav_settings -> router.navigateTo(navId)
-            else -> router.replaceScreen(navId)
-        }
-    }
-
-    private fun exitApp() {
-        playerInteractor.stop()
-        recordsInteractor.stopAllRecordings()
-        router.finishChain()
     }
 }

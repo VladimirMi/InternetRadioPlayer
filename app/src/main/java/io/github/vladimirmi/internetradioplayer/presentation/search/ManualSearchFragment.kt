@@ -10,32 +10,32 @@ import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import io.github.vladimirmi.internetradioplayer.R
-import io.github.vladimirmi.internetradioplayer.data.net.model.StationSearchRes
 import io.github.vladimirmi.internetradioplayer.di.Scopes
-import io.github.vladimirmi.internetradioplayer.domain.model.FlatStationsList
+import io.github.vladimirmi.internetradioplayer.domain.model.Media
 import io.github.vladimirmi.internetradioplayer.domain.model.Suggestion
 import io.github.vladimirmi.internetradioplayer.extensions.isVisible
 import io.github.vladimirmi.internetradioplayer.extensions.visible
 import io.github.vladimirmi.internetradioplayer.extensions.waitForLayout
 import io.github.vladimirmi.internetradioplayer.presentation.base.BaseFragment
-import kotlinx.android.synthetic.main.fragment_search.*
+import io.github.vladimirmi.internetradioplayer.presentation.data.DataAdapter
+import kotlinx.android.synthetic.main.fragment_search_manual.*
 import toothpick.Toothpick
+import kotlin.math.min
 
 /**
  * Created by Vladimir Mikhalev 12.11.2018.
  */
 
-class ManualSearchFragment : BaseFragment<SearchPresenter, ManualSearchView>(), ManualSearchView {
+class ManualSearchFragment : BaseFragment<ManualSearchPresenter, ManualSearchView>(), ManualSearchView {
 
-    override val layout = R.layout.fragment_search
+    override val layout = R.layout.fragment_search_manual
 
     private val suggestionsAdapter = SearchSuggestionsAdapter()
-    private val stationsAdapter = SearchStationsAdapter()
+    private val dataAdapter = DataAdapter()
 
-
-    override fun providePresenter(): SearchPresenter {
+    override fun providePresenter(): ManualSearchPresenter {
         return Toothpick.openScopes(Scopes.ROOT_ACTIVITY, this)
-                .getInstance(SearchPresenter::class.java).also {
+                .getInstance(ManualSearchPresenter::class.java).also {
                     Toothpick.closeScope(this)
                 }
     }
@@ -51,8 +51,10 @@ class ManualSearchFragment : BaseFragment<SearchPresenter, ManualSearchView>(), 
         searchView.setIconifiedByDefault(false)
         searchView.setOnQueryTextFocusChangeListener { _, hasFocus ->
             adjustSuggestionsRecyclerHeight(hasFocus)
-            suggestionsRv.itemAnimator?.isRunning { suggestionsRv.visible(hasFocus) }
+            suggestionsRv.visible(hasFocus)
             presenter.intervalSearchEnabled = !hasFocus
+            if (!hasFocus && !stationsRv.canScrollVertically(-1)) searchView.isSelected = false
+            if (hasFocus) showPlaceholder(false)
         }
 
         searchView.setOnQueryTextListener(object : SearchView.OnQueryTextListener {
@@ -70,25 +72,27 @@ class ManualSearchFragment : BaseFragment<SearchPresenter, ManualSearchView>(), 
     }
 
     private fun setupStations() {
-        val lm = LinearLayoutManager(context)
-        stationsRv.layoutManager = lm
-        stationsRv.adapter = stationsAdapter
+        stationsRv.layoutManager = LinearLayoutManager(context)
+        stationsRv.adapter = dataAdapter
+        dataAdapter.onItemClickListener = { presenter.selectMedia(it) }
 
-        stationsAdapter.onAddToFavListener = { presenter.switchFavorite() }
-        stationsAdapter.onItemClickListener = { presenter.selectStation(it) }
+        stationsRv.addOnScrollListener(object : RecyclerView.OnScrollListener() {
+            override fun onScrolled(recyclerView: RecyclerView, dx: Int, dy: Int) {
+                searchView.isSelected = recyclerView.canScrollVertically(-1)
+            }
+        })
     }
 
     private fun setupSuggestions() {
-        val lm = LinearLayoutManager(context)
-        suggestionsRv.layoutManager = lm
+        suggestionsRv.layoutManager = LinearLayoutManager(context)
         suggestionsRv.adapter = suggestionsAdapter
-        suggestionsRv.addItemDecoration(DividerItemDecoration(context, lm.orientation))
+        suggestionsRv.itemAnimator = null
+        suggestionsRv.addItemDecoration(DividerItemDecoration(context, RecyclerView.VERTICAL))
         suggestionsAdapter.onItemClickListener = this::selectSuggestion
-        suggestionsRv.itemAnimator?.isRunning { suggestionsRv.visible(false) }
 
         suggestionsRv.addOnScrollListener(object : RecyclerView.OnScrollListener() {
             override fun onScrolled(recyclerView: RecyclerView, dx: Int, dy: Int) {
-                searchView.isSelected = suggestionsRv.canScrollVertically(-1)
+                searchView.isSelected = recyclerView.canScrollVertically(-1)
             }
         })
     }
@@ -136,26 +140,22 @@ class ManualSearchFragment : BaseFragment<SearchPresenter, ManualSearchView>(), 
     override fun addRecentSuggestions(list: List<Suggestion>) {
         suggestionsAdapter.addRecentSuggestions(list)
         adjustSuggestionsRecyclerHeight()
-        suggestionsRv.itemAnimator?.isRunning { suggestionsRv.scrollToPosition(0) }
+        suggestionsRv.scrollToPosition(0)
     }
 
     override fun addRegularSuggestions(list: List<Suggestion>) {
         suggestionsAdapter.addRegularSuggestions(list)
         adjustSuggestionsRecyclerHeight()
-        suggestionsRv.itemAnimator?.isRunning { suggestionsRv.scrollToPosition(0) }
+        suggestionsRv.scrollToPosition(0)
     }
 
-    override fun setStations(stations: List<StationSearchRes>) {
-        stationsAdapter.stations = stations
+    override fun setData(data: List<Media>) {
+        dataAdapter.data = data
+        stationsRv.scrollToPosition(0)
     }
 
-    override fun setFavorites(favorites: FlatStationsList) {
-        stationsAdapter.setFavorites(favorites)
-    }
-
-    override fun selectStation(uri: String) {
-        val position = stationsAdapter.selectStation(uri)
-        stationsRv.scrollToPosition(position)
+    override fun selectMedia(media: Media) {
+        dataAdapter.selectMedia(media.uri)
     }
 
     override fun selectSuggestion(suggestion: Suggestion) {
@@ -170,16 +170,19 @@ class ManualSearchFragment : BaseFragment<SearchPresenter, ManualSearchView>(), 
         placeholderView.visible(show)
     }
 
+    override fun enableRefresh(enable: Boolean) {
+        swipeToRefresh.isEnabled = enable
+    }
+
     //endregion
 
     private fun adjustSuggestionsRecyclerHeight(keyboardDisplayed: Boolean) {
         if (keyboardDisplayed) {
             val rect = Rect()
             suggestionsRv.getWindowVisibleDisplayFrame(rect)
-            frameLayout.waitForLayout {
-                if (view == null) return@waitForLayout true
+            requireView().waitForLayout {
                 val oldVisibleHeight = rect.bottom - rect.top
-                suggestionsRv.getWindowVisibleDisplayFrame(rect)
+                suggestionsRv?.getWindowVisibleDisplayFrame(rect)
                 val newVisibleHeight = rect.bottom - rect.top
                 if (oldVisibleHeight == newVisibleHeight) return@waitForLayout false
 
@@ -199,7 +202,7 @@ class ManualSearchFragment : BaseFragment<SearchPresenter, ManualSearchView>(), 
         }
         val xy = IntArray(2)
         suggestionsRv.getLocationInWindow(xy)
-        val maxHeight = Math.min(visibleRect.bottom - xy[1], frameLayout.height)
+        val maxHeight = min(visibleRect.bottom - xy[1], requireView().height)
 
         val heightSpec = View.MeasureSpec.makeMeasureSpec(maxHeight, View.MeasureSpec.AT_MOST)
         val widthSpec = View.MeasureSpec.makeMeasureSpec(0, View.MeasureSpec.UNSPECIFIED)

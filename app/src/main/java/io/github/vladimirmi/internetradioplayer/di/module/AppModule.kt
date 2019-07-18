@@ -2,22 +2,20 @@ package io.github.vladimirmi.internetradioplayer.di.module
 
 import android.content.Context
 import android.media.MediaMetadataRetriever
-import com.google.gson.Gson
-import com.google.gson.GsonBuilder
 import io.github.vladimirmi.internetradioplayer.data.db.EqualizerDatabase
 import io.github.vladimirmi.internetradioplayer.data.db.HistoryDatabase
 import io.github.vladimirmi.internetradioplayer.data.db.StationsDatabase
 import io.github.vladimirmi.internetradioplayer.data.db.SuggestionsDatabase
+import io.github.vladimirmi.internetradioplayer.data.net.CoverArtService
+import io.github.vladimirmi.internetradioplayer.data.net.RestServiceProvider
 import io.github.vladimirmi.internetradioplayer.data.net.UberStationsService
-import io.github.vladimirmi.internetradioplayer.data.net.createClient
-import io.github.vladimirmi.internetradioplayer.data.net.getUberStationsService
 import io.github.vladimirmi.internetradioplayer.data.repository.*
 import io.github.vladimirmi.internetradioplayer.data.service.player.LoadControl
+import io.github.vladimirmi.internetradioplayer.data.utils.DiskCacheManager
 import io.github.vladimirmi.internetradioplayer.data.utils.ShortcutHelper
 import io.github.vladimirmi.internetradioplayer.data.utils.StationParser
 import io.github.vladimirmi.internetradioplayer.domain.interactor.*
 import okhttp3.OkHttpClient
-import retrofit2.converter.gson.GsonConverterFactory
 import toothpick.config.Module
 
 /**
@@ -29,16 +27,14 @@ class AppModule(context: Context) : Module() {
     init {
         bind(Context::class.java).toInstance(context)
 
-        bind(OkHttpClient::class.java).toInstance(OkHttpClient())
+        val cacheManager = DiskCacheManager(context)
+        val cachedOkHttpClient = RestServiceProvider.cachedOkHttpClient(cacheManager)
 
-        val gson = GsonBuilder().create()
-        val gsonConverterFactory = GsonConverterFactory.create(gson)
-        val httpClient = OkHttpClient.Builder().createClient()
-
-        bind(Gson::class.java).toInstance(gson)
-        bind(OkHttpClient::class.java).toInstance(httpClient)
+        bind(OkHttpClient::class.java).toInstance(RestServiceProvider.okHttpClient)
         bind(UberStationsService::class.java)
-                .toInstance(httpClient.getUberStationsService(gsonConverterFactory))
+                .toInstance(RestServiceProvider.getUberStationsService(cachedOkHttpClient))
+        bind(CoverArtService::class.java)
+                .toInstance(RestServiceProvider.getCoverArtService(cachedOkHttpClient))
 
         bind(StationsDatabase::class.java).toInstance(StationsDatabase.newInstance(context))
         bind(SuggestionsDatabase::class.java).toInstance(SuggestionsDatabase.newInstance(context))
@@ -57,6 +53,7 @@ class AppModule(context: Context) : Module() {
         bind(EqualizerRepository::class.java).singletonInScope()
         bind(MediaRepository::class.java).singletonInScope()
         bind(RecordsRepository::class.java).singletonInScope()
+        bind(SuggestionRepository::class.java).singletonInScope()
 
         bind(MainInteractor::class.java).singletonInScope()
         bind(SearchInteractor::class.java).singletonInScope()
@@ -67,6 +64,7 @@ class AppModule(context: Context) : Module() {
         bind(EqualizerInteractor::class.java).singletonInScope()
         bind(MediaInteractor::class.java).singletonInScope()
         bind(RecordsInteractor::class.java).singletonInScope()
+        bind(SuggestionInteractor::class.java).singletonInScope()
 
         bind(LoadControl::class.java).singletonInScope()
     }

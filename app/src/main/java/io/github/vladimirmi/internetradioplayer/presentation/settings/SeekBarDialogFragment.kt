@@ -18,12 +18,10 @@ class SeekBarDialogFragment : PreferenceDialogFragmentCompat() {
     private lateinit var seekBarValue: TextView
 
     companion object {
-        fun newInstance(key: String): SeekBarDialogFragment {
-            val fragment = SeekBarDialogFragment()
-            val b = Bundle(1)
-            b.putString(ARG_KEY, key)
-            fragment.arguments = b
-            return fragment
+        fun newInstance(key: String) = SeekBarDialogFragment().apply {
+            arguments = Bundle(1).apply {
+                putString(ARG_KEY, key)
+            }
         }
     }
 

@@ -13,12 +13,14 @@ import java.util.*
  */
 
 @Entity(indices = [Index(value = ["name"], unique = true)])
-data class Group(@PrimaryKey
-                 val id: String = UUID.randomUUID().toString(),
-                 val name: String,
-                 val expanded: Boolean = true,
-                 val order: Int = 0,
-                 val equalizerPreset: String? = null) {
+data class Group(
+        @PrimaryKey
+        val id: String = UUID.randomUUID().toString(),
+        val name: String,
+        val expanded: Boolean = true,
+        val order: Int = 0,
+        val equalizerPreset: String? = null
+) {
 
     @Ignore var stations: List<Station> = arrayListOf()
 
@@ -32,13 +34,13 @@ data class Group(@PrimaryKey
         fun nullObj() = Group(NULL_ID, "", true, 0)
 
         fun getViewName(name: String, context: Context): String {
-            return if (name == DEFAULT_NAME) context.getString(R.string.default_folder)
+            return if (name == DEFAULT_NAME) context.getString(R.string.default_group)
             else name
         }
 
         fun getDbName(name: String, context: Context): String {
-            return if (name == context.getString(R.string.default_folder) || name.isBlank()) {
-                Group.DEFAULT_NAME
+            return if (name == context.getString(R.string.default_group) || name.isBlank()) {
+                DEFAULT_NAME
             } else name
         }
     }

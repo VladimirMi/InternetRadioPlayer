@@ -28,13 +28,13 @@ class IcyHttpDataSource(callFactory: Call.Factory,
         var metadataWindow = 0
 
         try {
-            val field = javaClass.superclass?.getDeclaredField("responseByteStream")
-            field!!.isAccessible = true
-
-            val inS = field.get(this) as InputStream
             metadataWindow = responseHeaders[RESPONSE_ICY_METAINT_HEADER]?.get(0)?.toInt() ?: 0
-
-            field.set(this, IcyInputStream(inS, metadataWindow, playerCallback))
+            if (metadataWindow > 0) {
+                val field = javaClass.superclass?.getDeclaredField("responseByteStream")
+                field!!.isAccessible = true
+                val inS = field.get(this) as InputStream
+                field.set(this, IcyInputStream(inS, metadataWindow, playerCallback))
+            }
         } catch (ex: Exception) {
         }
 

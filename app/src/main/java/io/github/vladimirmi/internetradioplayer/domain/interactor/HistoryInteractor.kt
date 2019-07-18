@@ -1,10 +1,12 @@
 package io.github.vladimirmi.internetradioplayer.domain.interactor
 
 import io.github.vladimirmi.internetradioplayer.data.db.entity.Station
+import io.github.vladimirmi.internetradioplayer.data.repository.FavoritesRepository
 import io.github.vladimirmi.internetradioplayer.data.repository.HistoryRepository
 import io.github.vladimirmi.internetradioplayer.extensions.subscribeX
 import io.reactivex.Completable
 import io.reactivex.Observable
+import io.reactivex.rxkotlin.Observables
 import javax.inject.Inject
 
 /**
@@ -13,6 +15,7 @@ import javax.inject.Inject
 
 class HistoryInteractor
 @Inject constructor(private val historyRepository: HistoryRepository,
+                    private val favoritesRepository: FavoritesRepository,
                     private val mediaInteractor: MediaInteractor) {
 
     fun initHistory(): Completable {
@@ -25,7 +28,13 @@ class HistoryInteractor
     }
 
     fun getHistoryObs(): Observable<List<Station>> {
-        return historyRepository.getHistoryObs()
+        return Observables.combineLatest(historyRepository.getHistoryObs(),
+                favoritesRepository.stationsListObs) { history, _ ->
+            history.map { station ->
+                favoritesRepository.getStation { it.uri == station.uri }
+                        ?: station.apply { isFavorite = false }
+            }
+        }
     }
 
     fun createHistory(station: Station) {
@@ -35,4 +44,6 @@ class HistoryInteractor
     fun deleteHistory(station: Station): Completable {
         return historyRepository.deleteHistory(station.id)
     }
+
+    fun getStation(predicate: (Station) -> Boolean) = historyRepository.getStation(predicate)
 }

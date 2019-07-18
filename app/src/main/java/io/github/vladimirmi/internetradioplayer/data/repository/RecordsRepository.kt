@@ -97,7 +97,7 @@ class RecordsRepository
     private fun loadRecords(): List<Record> {
         return recordsDirectory
                 .listFiles { pathname -> pathname.extension == RECORD_EXT }
-                .map { Record.fromFile(it) }
+                ?.map { Record.fromFile(it) } ?: emptyList()
     }
 
     private fun getNewRecordName(stationName: String): String {

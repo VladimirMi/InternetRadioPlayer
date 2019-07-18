@@ -8,97 +8,8 @@
     android:background="@color/primary"
     >
 
-    <ImageButton
-        android:id="@+id/previousBt"
-        android:layout_width="48dp"
-        android:layout_height="48dp"
-        android:background="@null"
-        android:contentDescription="@string/desc_skip_previous_button"
-        android:foreground="?actionBarItemBackground"
-        android:scaleType="fitCenter"
-        android:src="@drawable/ic_skip_previous"
-        app:layout_constraintEnd_toStartOf="@id/stopBt"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="@id/playPauseBtEnd"
-        app:tint="@color/grey_50"
-        tools:ignore="UnusedAttribute"
-        />
-
-    <ImageButton
-        android:id="@+id/stopBt"
-        android:layout_width="48dp"
-        android:layout_height="48dp"
-        android:background="@null"
-        android:contentDescription="@string/desc_stop_button"
-        android:foreground="?actionBarItemBackground"
-        android:scaleType="fitCenter"
-        android:src="@drawable/ic_stop"
-        app:layout_constraintEnd_toStartOf="@id/playPauseBtEnd"
-        app:layout_constraintStart_toEndOf="@id/previousBt"
-        app:layout_constraintTop_toTopOf="@id/playPauseBtEnd"
-        app:tint="@color/stop"
-        tools:ignore="UnusedAttribute"
-        />
-
-    <Space
-        android:id="@+id/playPauseBtEnd"
-        android:layout_width="48dp"
-        android:layout_height="48dp"
-        android:layout_marginTop="24dp"
-        android:layout_marginBottom="24dp"
-        app:layout_constraintBottom_toTopOf="@id/progressSb"
-        app:layout_constraintEnd_toStartOf="@id/nextBt"
-        app:layout_constraintStart_toEndOf="@id/stopBt"
-        app:layout_constraintTop_toTopOf="parent"
-        />
-
-    <Space
-        android:id="@+id/playPauseBtStart"
-        android:layout_width="48dp"
-        android:layout_height="48dp"
-        android:layout_marginTop="8dp"
-        android:layout_marginEnd="8dp"
-        android:layout_marginRight="8dp"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        />
-
-    <io.github.vladimirmi.playerbutton.PlayerButton
-        android:id="@+id/playPauseBt"
-        android:layout_width="48dp"
-        android:layout_height="48dp"
-        android:layout_marginTop="24dp"
-        android:layout_marginBottom="24dp"
-        app:layout_goneMarginBottom="72dp"
-        android:contentDescription="@string/desc_play_pause_button"
-        android:foreground="?actionBarItemBackground"
-        app:layout_constraintBottom_toTopOf="@id/progressSb"
-        app:layout_constraintEnd_toStartOf="@id/nextBt"
-        app:layout_constraintStart_toEndOf="@id/stopBt"
-        app:layout_constraintTop_toTopOf="parent"
-        app:pb_pauseColor="@color/pause"
-        app:pb_playColor="@color/play"
-        tools:ignore="UnusedAttribute"
-        />
-
-    <ImageButton
-        android:id="@+id/nextBt"
-        android:layout_width="48dp"
-        android:layout_height="48dp"
-        android:background="@null"
-        android:contentDescription="@string/desc_skip_next_button"
-        android:foreground="?actionBarItemBackground"
-        android:scaleType="fitCenter"
-        android:src="@drawable/ic_skip_next"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toEndOf="@id/playPauseBtEnd"
-        app:layout_constraintTop_toTopOf="@id/playPauseBtEnd"
-        app:tint="@color/grey_50"
-        tools:ignore="UnusedAttribute"
-        />
-
     <FrameLayout
-        android:id="@+id/simpleMetaFl"
+        android:id="@+id/metadataFl"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginStart="16dp"
@@ -106,13 +17,11 @@
         android:layout_marginTop="16dp"
         android:layout_marginEnd="48dp"
         android:layout_marginRight="48dp"
-        android:layout_marginBottom="16dp"
-        android:visibility="gone"
         app:layout_constraintTop_toTopOf="parent"
         >
 
         <TextView
-            android:id="@+id/simpleMetaTv"
+            android:id="@+id/metadataTv"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:ellipsize="marquee"
@@ -124,6 +33,95 @@
             />
     </FrameLayout>
 
+    <ImageButton
+        android:id="@+id/previousBt"
+        android:layout_width="44dp"
+        android:layout_height="44dp"
+        android:background="@drawable/sel_skip_btn"
+        android:contentDescription="@string/desc_skip_previous_button"
+        android:padding="4dp"
+        android:scaleType="fitCenter"
+        android:src="@drawable/ic_skip_previous"
+        app:layout_constraintBottom_toBottomOf="@id/playPauseBtEnd"
+        app:layout_constraintEnd_toStartOf="@id/stopBt"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="@id/playPauseBtEnd"
+        tools:ignore="UnusedAttribute"
+        />
+
+    <ImageButton
+        android:id="@+id/stopBt"
+        android:layout_width="52dp"
+        android:layout_height="52dp"
+        android:background="@drawable/sel_skip_btn"
+        android:contentDescription="@string/desc_stop_button"
+        android:padding="4dp"
+        android:scaleType="fitCenter"
+        android:src="@drawable/ic_stop"
+        app:layout_constraintEnd_toStartOf="@id/playPauseBtEnd"
+        app:layout_constraintStart_toEndOf="@id/previousBt"
+        app:layout_constraintTop_toTopOf="@id/playPauseBtEnd"
+        app:tint="@color/stop"
+        tools:ignore="UnusedAttribute"
+        />
+
+    <Space
+        android:id="@+id/playPauseBtEnd"
+        android:layout_width="52dp"
+        android:layout_height="52dp"
+        android:layout_marginTop="8dp"
+        android:layout_marginBottom="8dp"
+        app:layout_constraintBottom_toTopOf="@id/progressSb"
+        app:layout_constraintEnd_toStartOf="@id/nextBt"
+        app:layout_constraintStart_toEndOf="@id/stopBt"
+        app:layout_constraintTop_toBottomOf="@id/metadataFl"
+        app:layout_goneMarginBottom="48dp"
+        />
+
+    <Space
+        android:id="@+id/playPauseBtStart"
+        android:layout_width="52dp"
+        android:layout_height="52dp"
+        android:layout_marginTop="8dp"
+        android:layout_marginEnd="8dp"
+        android:layout_marginRight="8dp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        />
+
+    <io.github.vladimirmi.playerbutton.PlayerButton
+        android:id="@+id/playPauseBt"
+        android:layout_width="52dp"
+        android:layout_height="52dp"
+        android:layout_marginTop="8dp"
+        android:layout_marginBottom="8dp"
+        android:background="@drawable/sel_skip_btn"
+        android:contentDescription="@string/desc_play_pause_button"
+        android:padding="4dp"
+        tools:layout_constraintBottom_toTopOf="@id/progressSb"
+        tools:layout_constraintEnd_toStartOf="@id/nextBt"
+        tools:layout_constraintStart_toEndOf="@id/stopBt"
+        tools:layout_constraintTop_toBottomOf="@id/metadataFl"
+        app:pb_pauseColor="@color/pause"
+        app:pb_playColor="@color/play"
+        tools:ignore="UnusedAttribute"
+        />
+
+    <ImageButton
+        android:id="@+id/nextBt"
+        android:layout_width="44dp"
+        android:layout_height="44dp"
+        android:background="@drawable/sel_skip_btn"
+        android:contentDescription="@string/desc_skip_next_button"
+        android:padding="4dp"
+        android:scaleType="fitCenter"
+        android:src="@drawable/ic_skip_next"
+        app:layout_constraintBottom_toBottomOf="@id/playPauseBtEnd"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toEndOf="@id/playPauseBtEnd"
+        app:layout_constraintTop_toTopOf="@id/playPauseBtEnd"
+        tools:ignore="UnusedAttribute"
+        />
 
     <SeekBar
         android:id="@+id/progressSb"
@@ -134,7 +132,7 @@
         android:layout_marginBottom="32dp"
         android:clickable="true"
         android:focusable="true"
-        android:padding="16dp"
+        android:padding="8dp"
         app:layout_constraintBottom_toBottomOf="parent"
         />
 

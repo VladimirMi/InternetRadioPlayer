@@ -1,21 +1,13 @@
 package io.github.vladimirmi.internetradioplayer.presentation.player
 
-import android.text.Spannable
-import android.text.SpannableString
-import android.text.style.ForegroundColorSpan
-import android.text.style.URLSpan
 import android.view.View
 import android.widget.SeekBar
-import android.widget.TextView
 import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.constraintlayout.widget.ConstraintSet
-import androidx.core.content.ContextCompat
 import com.google.android.exoplayer2.util.Util
 import com.google.android.material.bottomsheet.BottomSheetBehavior
 import io.github.vladimirmi.internetradioplayer.R
-import io.github.vladimirmi.internetradioplayer.data.db.entity.Group
 import io.github.vladimirmi.internetradioplayer.data.db.entity.Station
-import io.github.vladimirmi.internetradioplayer.data.utils.AudioEffects
 import io.github.vladimirmi.internetradioplayer.di.Scopes
 import io.github.vladimirmi.internetradioplayer.domain.model.Record
 import io.github.vladimirmi.internetradioplayer.extensions.*
@@ -24,22 +16,21 @@ import io.github.vladimirmi.internetradioplayer.presentation.root.RootView
 import io.github.vladimirmi.internetradioplayer.utils.SimpleOnSeekBarChangeListener
 import kotlinx.android.synthetic.main.fragment_player.*
 import kotlinx.android.synthetic.main.view_controls.*
-import kotlinx.android.synthetic.main.view_station_info.*
+import kotlinx.android.synthetic.main.view_media_title.*
 import toothpick.Toothpick
 
 /**
  * Created by Vladimir Mikhalev 20.02.2019.
  */
-
-const val PLAYER_STATE = "PLAYER_STATE"
-
 class PlayerFragment : BaseFragment<PlayerPresenter, PlayerView>(), PlayerView {
-
 
     override val layout = R.layout.fragment_player
 
-    private lateinit var playerBehavior: BottomSheetBehavior<View>
+    private var playerBehavior: BottomSheetBehavior<View>? = null
     private var isSeekEnabled = false
+    private var isCoverArtEnabled = false
+    private val infoAdapter = InfoAdapter(lifecycle)
+
 
     override fun providePresenter(): PlayerPresenter {
         return Toothpick.openScopes(Scopes.ROOT_ACTIVITY, this)
@@ -50,32 +41,25 @@ class PlayerFragment : BaseFragment<PlayerPresenter, PlayerView>(), PlayerView {
 
     override fun setupView(view: View) {
         titleTv.isSelected = true
-        metaTitleTv.isSelected = true
-        metaSubtitleTv.isSelected = true
-        simpleMetaTv.isSelected = true
-        playPauseBt.setManualMode(true)
+        metadataTv.isSelected = true
 
         setupButtons()
         setupSeekBar()
-        setupBehavior()
+        setupBehavior(view)
+        setupInfo()
     }
 
     private fun setupButtons() {
-        favoriteBt.setOnClickListener { presenter.switchFavorite() }
-        addShortcutBt.setOnClickListener { openAddShortcutDialog() }
+        favoriteIv.setOnClickListener { presenter.switchFavorite() }
         previousBt.setOnClickListener { presenter.skipToPrevious() }
         nextBt.setOnClickListener { presenter.skipToNext() }
         stopBt.setOnClickListener { presenter.stop() }
-        recordBt.setOnClickListener { presenter.startStopRecording() }
         pointerIv.setOnClickListener { switchState() }
-        equalizerBt.setOnClickListener {
-            if (playerBehavior.isExpanded) switchState()
-            presenter.openEqualizer()
-        }
         playPauseBt.setOnClickListener {
             presenter.playPause()
             if (isSeekEnabled) presenter.seekTo(progressSb.progress)
         }
+        playPauseBt.setManualMode(true)
     }
 
     private fun setupSeekBar() {
@@ -87,10 +71,10 @@ class PlayerFragment : BaseFragment<PlayerPresenter, PlayerView>(), PlayerView {
         })
     }
 
-    private fun setupBehavior() {
+    private fun setupBehavior(view: View) {
         requireView().post {
             playerBehavior = BottomSheetBehavior.from(view)
-            playerBehavior.setBottomSheetCallback(object : BottomSheetBehavior.BottomSheetCallback() {
+            playerBehavior?.setBottomSheetCallback(object : BottomSheetBehavior.BottomSheetCallback() {
                 override fun onSlide(bottomSheet: View, slideOffset: Float) {
                     setOffset(slideOffset)
                 }
@@ -100,6 +84,12 @@ class PlayerFragment : BaseFragment<PlayerPresenter, PlayerView>(), PlayerView {
             })
             setupOffset()
         }
+    }
+
+    private fun setupInfo() {
+        mediaInfoVp.adapter = infoAdapter
+        mediaInfoVp.currentItem = 0
+        pagerIndicator.setupWithViewPager(mediaInfoVp)
     }
 
     override fun handleBackPressed(): Boolean {
@@ -113,31 +103,18 @@ class PlayerFragment : BaseFragment<PlayerPresenter, PlayerView>(), PlayerView {
 
     override fun setStation(station: Station) {
         titleTv.text = station.name
-        specsTv.text = station.specs
-        addShortcutBt.visible(true)
-        equalizerBt.visible(AudioEffects.isEqualizerSupported())
-        favoriteBt.visible(true)
-        recordBt.visible(true)
+        favoriteIv.visible(true)
+        val tint = if (station.isFavorite) R.color.orange_500 else R.color.primary_variant
+        favoriteIv.background.setTintExt(requireContext().color(tint))
+        infoAdapter.coverArtEnabled = isCoverArtEnabled
     }
 
     override fun setRecord(record: Record) {
         titleTv.text = record.name
-        specsTv.text = record.createdAtString
-        setGroup("")
-        addShortcutBt.visible(false)
-        equalizerBt.visible(false)
-        favoriteBt.visible(false)
-        recordBt.visible(false)
-    }
-
-    override fun setFavorite(isFavorite: Boolean) {
-        //todo refactor (create field inside station)
-        val tint = if (isFavorite) R.color.orange_500 else R.color.primary_variant
-        favoriteBt.background.setTintExt(context!!.color(tint))
-    }
-
-    override fun setGroup(group: String) {
-        groupTv.setTextOrHide(Group.getViewName(group, requireContext()))
+        setDuration(record.duration)
+        favoriteIv.visible(false)
+        infoAdapter.coverArtEnabled = false
+        mediaInfoVp.currentItem = 0
     }
 
     override fun setStatus(resId: Int) {
@@ -156,18 +133,8 @@ class PlayerFragment : BaseFragment<PlayerPresenter, PlayerView>(), PlayerView {
         previousBt.bounceXAnimation(-200f).start()
     }
 
-    override fun setRecording(isRecording: Boolean) {
-        val tint = requireContext().color(if (isRecording) R.color.secondary else R.color.primary_variant)
-        recordBt.setColorFilter(tint)
-    }
-
-    override fun setMetadata(artist: String, title: String) {
-        metaTitleTv.setTextOrHide(artist)
-        metaSubtitleTv.setTextOrHide(title)
-    }
-
-    override fun setSimpleMetadata(metadata: String) {
-        simpleMetaTv.text = metadata
+    override fun setMetadata(metadata: String) {
+        metadataTv.text = metadata
     }
 
     override fun setPosition(position: Long) {
@@ -191,11 +158,13 @@ class PlayerFragment : BaseFragment<PlayerPresenter, PlayerView>(), PlayerView {
     }
 
     override fun enableSkip(isEnabled: Boolean) {
-        val tint = requireContext().color(if (isEnabled) R.color.grey_50 else R.color.grey_600)
-        nextBt.setColorFilter(tint)
-        previousBt.setColorFilter(tint)
         nextBt.isEnabled = isEnabled
         previousBt.isEnabled = isEnabled
+    }
+
+    override fun enableCoverArt(isEnabled: Boolean) {
+        isCoverArtEnabled = isEnabled
+        infoAdapter.coverArtEnabled = isEnabled
     }
 
     //endregion
@@ -228,43 +197,12 @@ class PlayerFragment : BaseFragment<PlayerPresenter, PlayerView>(), PlayerView {
             positionTv.visible(visible, false)
             durationTv.visible(visible, false)
         }
-        simpleMetaFl.visible(state == 0f)
 
         playPauseBt.x = playPauseBtStart.x + (playPauseBtEnd.x - playPauseBtStart.x) * state
         playPauseBt.y = playPauseBtStart.y + (playPauseBtEnd.y - playPauseBtStart.y) * state
         statusTv.y = statusTvStart.y + (playerView.height - statusTv.height - statusTvStart.y) * state
 
         pointerIv.rotationX = 180 * state
-    }
-
-    private fun openLinkDialog(url: String) {
-        LinkDialog.newInstance(url).show(childFragmentManager, "link_dialog")
-    }
-
-    private fun openAddShortcutDialog() {
-        AddShortcutDialog().show(childFragmentManager, "add_shortcut_dialog")
-    }
-
-    private fun TextView.setTextOrHide(text: String?) {
-        if (text == null || text.isBlank()) {
-            visible(false)
-        } else {
-            visible(true)
-            this.text = text
-        }
-    }
-
-    private fun TextView.linkStyle(enable: Boolean) {
-        val string = text.toString()
-        val color = ContextCompat.getColor(context, R.color.blue_500)
-        text = if (enable) {
-            val spannable = SpannableString(string)
-            spannable.setSpan(URLSpan(string), 0, spannable.length, Spannable.SPAN_EXCLUSIVE_EXCLUSIVE)
-            spannable.setSpan(ForegroundColorSpan(color), 0, spannable.length, Spannable.SPAN_EXCLUSIVE_EXCLUSIVE)
-            spannable
-        } else {
-            string
-        }
     }
 
     private fun switchState() {
@@ -276,20 +214,23 @@ class PlayerFragment : BaseFragment<PlayerPresenter, PlayerView>(), PlayerView {
     }
 }
 
-var BottomSheetBehavior<View>.isExpanded
-    get() = state == BottomSheetBehavior.STATE_EXPANDED
+var BottomSheetBehavior<View>?.isExpanded
+    get() = this?.state == BottomSheetBehavior.STATE_EXPANDED
     set(value) {
+        this ?: return
         state = if (value) BottomSheetBehavior.STATE_EXPANDED
         else BottomSheetBehavior.STATE_COLLAPSED
     }
-var BottomSheetBehavior<View>.isCollapsed
-    get() = state == BottomSheetBehavior.STATE_COLLAPSED
+var BottomSheetBehavior<View>?.isCollapsed
+    get() = this?.state == BottomSheetBehavior.STATE_COLLAPSED
     set(value) {
+        this ?: return
         if (value) state = BottomSheetBehavior.STATE_COLLAPSED
     }
-var BottomSheetBehavior<View>.isHidden
-    get() = state == BottomSheetBehavior.STATE_HIDDEN
+var BottomSheetBehavior<View>?.isHidden
+    get() = this?.state == BottomSheetBehavior.STATE_HIDDEN
     set(value) {
+        this ?: return
         state = if (value) BottomSheetBehavior.STATE_HIDDEN
         else BottomSheetBehavior.STATE_COLLAPSED
     }

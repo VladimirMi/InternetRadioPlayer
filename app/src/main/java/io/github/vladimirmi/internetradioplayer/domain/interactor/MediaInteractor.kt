@@ -74,7 +74,6 @@ class MediaInteractor
         val queue = if (favoritesRepository.getStation { it.id == station.id } != null) {
             favoritesRepository.stations
         } else {
-            playerRepository.sendCommand(COMMAND_DISABLE_SKIP)
             SingletonMediaQueue()
         }
         mediaRepository.mediaQueue = queue
